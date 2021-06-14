@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50mm" height="50mm" version="1.1" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+ <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <g stroke-width="2.8">
+   <path d="m20.911 38.75-5.9115-5.8233z"/>
+   <path d="m14.346 32.371-0.30842 4.314z"/>
+   <path d="m14.381 32.354 4.3123-0.33119z"/>
+   <path d="m25.071 35.922-0.062428-8.2978z"/>
+   <path d="m24.94 26.769-3.2685 2.8324z"/>
+   <path d="m24.977 26.783 3.2834 2.8151z"/>
+  </g>
+  <circle cx="8.1959" cy="24.803" r="5.4241" stroke-width="3.5"/>
+  <circle cx="24.929" cy="17.426" r="5.4241" stroke-width="3.5"/>
+  <g stroke-width="2.8">
+   <path d="m29.089 38.75 5.9115-5.8233z"/>
+   <path d="m35.654 32.371 0.30842 4.314z"/>
+   <path d="m35.619 32.354-4.3123-0.33119z"/>
+  </g>
+  <circle transform="scale(-1,1)" cx="-41.804" cy="24.803" r="5.4241" stroke-width="3.5"/>
+ </g>
+</svg>

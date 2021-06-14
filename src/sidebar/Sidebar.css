@@ -1,0 +1,130 @@
+.Sidebar {
+  width: 500px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  left: -400px;
+  background-color: #444141;
+  border-top-right-radius: 45px;
+
+  transition: left linear 0.2s;
+}
+
+.Sidebar-open {
+  left: 0;
+}
+
+.Sidebar-header {
+  height: 90px;
+  width: 100%;
+  background-color: #373535;
+  border-top-right-radius: 45px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.Sidebar-headername {
+  color: whitesmoke;
+  font-size: 2em;
+  flex-grow: 1;
+  margin-left: 120px;
+}
+
+.Sidebar-logo {
+  width: 80px;
+  height: 80px;
+}
+
+.Sidebar-logocont {
+  width: 100px;
+  height: 90px;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  border-top-right-radius: 45px;
+  background-color: #0077BD;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  transition: border-bottom-right-radius linear 0.2s;
+}
+
+.Sidebar-logocont-open {
+  border-bottom-right-radius: 45px;
+}
+
+.Sidebar-closebtn {
+  margin-right: 10px;
+  cursor: pointer;
+  color: whitesmoke;
+}
+
+.Sidebar-iconscont {
+  position: fixed;
+  top: 90px;
+  left: 0;
+  z-index: 3;
+  width: 100px;
+  height: calc(100vh - 90px - 40px);
+  padding: 40px 0 0 0;
+  color: whitesmoke;
+  /* background-color: #444141; */
+  /* overflow-y: auto; */
+}
+
+.Sidebar-iconscont > div {
+  width: 60px;
+  height: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Sidebar-iconscont > * + * {
+  margin-top: 40px;
+}
+
+.Sidebar-icon-sel {
+  border-radius: 100%;
+  background-color: whitesmoke;
+}
+
+.Sidebar-icon-sel > svg {
+  color: #373535;
+}
+
+.Sidebar-icon-open {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.Sidebar-pagelink {
+  color: whitesmoke;
+  height: 60px;
+  margin-left: 100px;
+  font-size: 1.6em;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  border-top-right-radius: 60px;
+  border-bottom-right-radius: 60px;
+}
+
+.Sidebar-pagelink + .Sidebar-pagelink {
+  margin-top: 40px;
+}
+
+.Sidebar-pagelink-sel {
+  background-color: whitesmoke;
+  color: #373535;
+  margin-left: 50px;
+  padding-left: 50px;
+}

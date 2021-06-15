@@ -5,6 +5,7 @@ import { useAppDispatch } from '../storeHooks'
 import { openEditorPage, useCurrentPage, usePages } from '../editors/editorPages'
 import logoImg from './logo.png'
 import './Sidebar.css'
+import {getEditorType} from '../editors'
 
 const ICON_SIZE = '40px'
 
@@ -20,11 +21,13 @@ export default function () {
         <img className='Sidebar-logo' src={logoImg}/>
       </div>
       <div className='Sidebar-iconscont'>
-        { pages.map(({ name, Icon }) => 
+        { Object.keys(pages)
+          .map(getEditorType)
+          .map(({ name, Icon }) => 
           <div
             key={name}
-            className={(name === currentPage ? 'Sidebar-icon-sel' : '') + (isOpen ? ' Sidebar-icon-open' : '')}
-            onClick={() => dispatch(openEditorPage(name))}
+            className={(name === currentPage[0] ? 'Sidebar-icon-sel' : '') + (isOpen ? ' Sidebar-icon-open' : '')}
+            onClick={() => dispatch(openEditorPage([name]))}
           >
             <Icon iconSize={ICON_SIZE}/>
           </div>
@@ -36,11 +39,11 @@ export default function () {
           <div className='Sidebar-headername'>Deepy 3000</div>
         </div>
 
-        { isOpen && pages.map(({ name }) => 
+        { isOpen && Object.keys(pages).map(name => 
           <div
             key={name}
-            className={'Sidebar-pagelink ' + (name === currentPage ? 'Sidebar-pagelink-sel' : '')}
-            onClick={() => dispatch(openEditorPage(name))}
+            className={'Sidebar-pagelink ' + (name === currentPage[0] ? 'Sidebar-pagelink-sel' : '')}
+            onClick={() => dispatch(openEditorPage([name]))}
           >
             { name }
           </div>

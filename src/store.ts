@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { editorPagesReducer } from "./editors/editorPages";
+import { editorPagesReducer } from "./editor/editorPages";
 
 const store = configureStore({
   reducer: {

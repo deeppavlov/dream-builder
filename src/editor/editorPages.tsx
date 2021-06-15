@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import editors from ".";
+import editors from "./editors";
 import { useAppSelector } from "../storeHooks";
 import type { RootState } from "../store";
 

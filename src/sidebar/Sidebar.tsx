@@ -6,10 +6,10 @@ import {
   openEditorPage,
   useCurrentPage,
   usePages,
-} from "../editors/editorPages";
+} from "../editor/editorPages";
 import logoImg from "./logo.png";
 import "./Sidebar.css";
-import { getEditorType } from "../editors";
+import { getEditorType } from "../editor/editors";
 
 const ICON_SIZE = "40px";
 

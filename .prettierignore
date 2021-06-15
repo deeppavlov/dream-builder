@@ -1,0 +1,8 @@
+.snowpack
+build
+node_modules
+pnpm-lock.yaml
+public
+*.json
+*.svg
+snowpack.config.mjs

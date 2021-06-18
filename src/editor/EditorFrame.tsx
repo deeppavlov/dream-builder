@@ -1,5 +1,5 @@
 import React from "react";
-import {useCurrentPage} from "./editorPages";
+import {useCurrentPage} from "./pagesSlice";
 
 import './EditorFrame.css'
 import {getEditorType} from "./editors";

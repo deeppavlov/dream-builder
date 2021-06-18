@@ -4,14 +4,14 @@ import editors from "./editors";
 import { useAppSelector } from "../storeHooks";
 import type { RootState } from "../store";
 
-export interface EditorPagesState {
+export interface PagesSliceState {
   openPages: {
     [edName: string]: string[];
   };
   currentPage: [string] | [string, string];
 }
 
-const initialState: EditorPagesState = {
+const initialState: PagesSliceState = {
   openPages: {},
   currentPage: [editors[0].name],
 };
@@ -20,23 +20,23 @@ Object.values(editors).forEach(
   ({ name }) => (initialState.openPages[name] = [])
 );
 
-export const editorPagesSlice = createSlice({
-  name: "editorPages",
+export const pagesSlice = createSlice({
+  name: "pages",
   initialState,
   reducers: {
-    openEditorPage(
-      state: EditorPagesState,
-      action: PayloadAction<EditorPagesState["currentPage"]>
+    openPage(
+      state: PagesSliceState,
+      action: PayloadAction<PagesSliceState["currentPage"]>
     ) {
       state.currentPage = action.payload;
     },
   },
 });
 
-export const { openEditorPage } = editorPagesSlice.actions;
-export const editorPagesReducer = editorPagesSlice.reducer;
+export const { openPage } = pagesSlice.actions;
+export const pagesReducer = pagesSlice.reducer;
 
 export const usePages = () =>
-  useAppSelector(({ editorPages }: RootState) => editorPages.openPages);
+  useAppSelector(({ pages }: RootState) => pages.openPages);
 export const useCurrentPage = () =>
-  useAppSelector(({ editorPages }: RootState) => editorPages.currentPage);
+  useAppSelector(({ pages }: RootState) => pages.currentPage);

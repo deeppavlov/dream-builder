@@ -3,10 +3,10 @@ import { IoIosArrowBack } from "react-icons/io";
 
 import { useAppDispatch } from "../storeHooks";
 import {
-  openEditorPage,
+  openPage,
   useCurrentPage,
   usePages,
-} from "../editor/editorPages";
+} from "../editor/pagesSlice";
 import logoImg from "./logo.png";
 import "./Sidebar.css";
 import { getEditorType } from "../editor/editors";
@@ -39,7 +39,7 @@ export default function () {
                 (name === currentPage[0] ? "Sidebar-icon-sel" : "") +
                 (isOpen ? " Sidebar-icon-open" : "")
               }
-              onClick={() => dispatch(openEditorPage([name]))}
+              onClick={() => dispatch(openPage([name]))}
             >
               <Icon iconSize={ICON_SIZE} />
             </div>
@@ -63,7 +63,7 @@ export default function () {
                 "Sidebar-pagelink " +
                 (name === currentPage[0] ? "Sidebar-pagelink-sel" : "")
               }
-              onClick={() => dispatch(openEditorPage([name]))}
+              onClick={() => dispatch(openPage([name]))}
             >
               {name}
             </div>

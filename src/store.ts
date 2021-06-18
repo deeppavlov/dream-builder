@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { editorPagesReducer } from "./editor/editorPages";
+import { pagesReducer } from "./editor/pagesSlice";
+import { resourcesReducer } from "./editor/resourcesSlice";
 
 const store = configureStore({
   reducer: {
-    editorPages: editorPagesReducer,
+    pages: pagesReducer,
+    resources: resourcesReducer,
   },
 });
 

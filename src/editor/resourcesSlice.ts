@@ -57,3 +57,7 @@ export const resourcesReducer = resourcesSlice.reducer;
 
 export const useResource = (resId: string) =>
   useAppSelector(({ resources }) => resources[resId]);
+export const useResourcesWithType = (resType: Resource["type"]) =>
+  useAppSelector(({ resources }) =>
+    Object.values(resources).filter((res) => res.type === resType)
+  );

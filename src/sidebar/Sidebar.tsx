@@ -2,14 +2,10 @@ import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 
 import { useAppDispatch } from "../storeHooks";
-import {
-  openPage,
-  useCurrentPage,
-  usePages,
-} from "../editor/pagesSlice";
+import { openPage, useCurrentPage, usePages } from "../editor/pagesSlice";
 import logoImg from "./logo.png";
 import "./Sidebar.css";
-import { getEditorType } from "../editor/editors";
+import { getEditorType } from "../editor/main-editors";
 
 const ICON_SIZE = "40px";
 

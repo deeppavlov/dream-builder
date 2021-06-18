@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import editors from "./editors";
+import mainEditors from "./main-editors";
 import { useAppSelector } from "../storeHooks";
 import type { RootState } from "../store";
 
@@ -13,10 +13,10 @@ export interface PagesSliceState {
 
 const initialState: PagesSliceState = {
   openPages: {},
-  currentPage: [editors[0].name],
+  currentPage: [mainEditors[0].name],
 };
 
-Object.values(editors).forEach(
+Object.values(mainEditors).forEach(
   ({ name }) => (initialState.openPages[name] = [])
 );
 

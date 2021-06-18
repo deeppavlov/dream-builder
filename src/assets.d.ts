@@ -15,4 +15,3 @@ declare module "*.svg" {
   >;
   export default ref;
 }
-

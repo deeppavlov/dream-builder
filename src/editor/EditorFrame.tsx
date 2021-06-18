@@ -1,16 +1,16 @@
 import React from "react";
-import {useCurrentPage} from "./pagesSlice";
+import { useCurrentPage } from "./pagesSlice";
 
-import './EditorFrame.css'
-import {getEditorType} from "./editors";
+import "./EditorFrame.css";
+import { getEditorType } from "./main-editors";
 
 export default function ({}) {
-  const [ curPage ] = useCurrentPage()
-  const { Editor } = getEditorType(curPage)
+  const [curPage] = useCurrentPage();
+  const { Editor } = getEditorType(curPage);
 
   return (
-    <div className='EditorFrame'>
-      <Editor/>
+    <div className="EditorFrame">
+      <Editor />
     </div>
-  )
+  );
 }

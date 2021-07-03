@@ -1,4 +1,6 @@
 .snowpack
 build
 node_modules
-pnpm-lock.yaml
+
+api-types
+api_types

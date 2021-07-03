@@ -1,16 +1,8 @@
 import { nanoid } from "nanoid";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import type { Resource } from "@dp-builder/api-types";
 import { useAppSelector } from "../storeHooks";
-
-export interface IntentResource {
-  type: "intent";
-  content: {
-    name: string;
-    examples: string[];
-  };
-}
-
-export type Resource = IntentResource;
 
 export interface ResourcesSliceState {
   [resId: string]: Resource;
@@ -57,7 +49,8 @@ export const resourcesReducer = resourcesSlice.reducer;
 
 export const useResource = (resId: string) =>
   useAppSelector(({ resources }) => resources[resId]);
+export const useResources = () => useAppSelector(({ resources }) => resources);
 export const useResourcesWithType = (resType: Resource["type"]) =>
   useAppSelector(({ resources }) =>
-    Object.values(resources).filter((res) => res.type === resType)
+    Object.keys(resources).filter((id) => resources[id].type === resType)
   );

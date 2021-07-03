@@ -21,6 +21,7 @@ export interface EditorType {
   name: string;
   Icon: React.ComponentType<{ iconSize: string }>;
   Editor: EditorComponent;
+  subeditors?: EditorType[];
 }
 
 const editors: EditorType[] = [
@@ -30,39 +31,38 @@ const editors: EditorType[] = [
     Editor: Discourse,
   },
   {
-    name: "Intents",
-    Icon: ({ iconSize }) => <BiUserVoice size={iconSize} />,
-    Editor: Intents,
-  },
-  {
     name: "Pipeline",
     Icon: ({ iconSize }) => (
       <PipelineIcon style={{ width: iconSize, height: iconSize }} />
     ),
     Editor: Pipeline,
+    subeditors: [
+      {
+        name: "Skills",
+        Icon: ({ iconSize }) => <HiOutlineLightBulb size={iconSize} />,
+        Editor: Skills,
+      },
+      {
+        name: "Response Selector",
+        Icon: ({ iconSize }) => (
+          <SelectorIcon style={{ width: iconSize, height: iconSize }} />
+        ),
+        Editor: Selector,
+      },
+      {
+        name: "Annotators",
+        Icon: ({ iconSize }) => (
+          <RiMarkPenLine size={iconSize} style={{ transform: "scale(0.9)" }} />
+        ),
+        Editor: Annotators,
+      },
+    ],
   },
   {
-    name: "Skills",
-    Icon: ({ iconSize }) => <HiOutlineLightBulb size={iconSize} />,
-    Editor: Skills,
-  },
-  {
-    name: "Response Selector",
-    Icon: ({ iconSize }) => (
-      <SelectorIcon style={{ width: iconSize, height: iconSize }} />
-    ),
-    Editor: Selector,
-  },
-  {
-    name: "Annotators",
-    Icon: ({ iconSize }) => (
-      <RiMarkPenLine size={iconSize} style={{ transform: "scale(0.9)" }} />
-    ),
-    Editor: Annotators,
+    name: "Intents",
+    Icon: ({ iconSize }) => <BiUserVoice size={iconSize} />,
+    Editor: Intents,
   },
 ];
-
-export const getEditorType = (edName: string) =>
-  editors.find(({ name }) => name === edName) as EditorType;
 
 export default editors;

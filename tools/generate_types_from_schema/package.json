@@ -1,0 +1,7 @@
+{
+  "name": "generate_types_from_schema",
+  "version": "1.0.0",
+  "dependencies": {
+    "json-schema-to-typescript": "^10.1.4"
+  }
+}

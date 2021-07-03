@@ -2,17 +2,37 @@
 
 DP-Builder is a graphical interface for creating and configuring multi-skill AI assistants, built on top of DeepPavlov
 
+## Repository structure
+
+```
+/
+├─ py/          - python packages
+│  ├─ server/   - API backend
+├─ ts/          - PNPM workspace with TypeScript packages
+│  ├─ packages/
+│  │  ├─ web/   - web frontend
+```
+
 ## Building
 
-First:
+Requirements:
+ - GNU Make
+ - Node 16+
+ - Python 3.9+
+ - [pnpm](https://pnpm.io)
+ - [poetry](https://python-poetry.org/)
 
-`npm install`
+To run a local development version at http://localhost:8080:
+```
+make dev
+```
 
-`npm start`
+To run tests
+```
+make test
+```
 
-Runs the app in the development mode.
-Open http://localhost:8080 to view it in the browser.
-
-`npm run build`
-
-Builds a static copy of your site to the `build/` folder.
+To create a production build:
+```
+make
+```

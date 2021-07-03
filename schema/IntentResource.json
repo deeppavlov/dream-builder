@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "IntentResource.json",
+  "title": "Intent",
+  "type": "object",
+  "required": ["type", "content"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "intent"
+    },
+
+    "content": {
+      "type": "object",
+      "required": ["name", "examples"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

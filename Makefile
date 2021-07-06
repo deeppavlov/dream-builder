@@ -5,11 +5,6 @@ install:
 	cd ts; $(MAKE) install
 	cd py; $(MAKE) install
 
-.PHONY: dev
-dev:
-	cd ts; $(MAKE) dev
-	cd py; $(MAKE) dev
-
 .PHONY: test
 test:
 	cd ts; $(MAKE) test

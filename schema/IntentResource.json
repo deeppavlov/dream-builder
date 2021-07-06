@@ -3,8 +3,12 @@
   "$id": "IntentResource.json",
   "title": "Intent",
   "type": "object",
-  "required": ["type", "content"],
+  "required": ["resid", "type", "content"],
   "properties": {
+    "resid": {
+      "type": "string"
+    },
+
     "type": {
       "type": "string",
       "const": "intent"

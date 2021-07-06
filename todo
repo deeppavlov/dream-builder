@@ -1,0 +1,9 @@
++ docker compose
++ setup and connect to mongodb
+CRUD resources in mongo
+link type resources
+connect to s3
+setup celery (redis and whatnot)
+create training worker
+create deploy worker
+deploy by rebuilding dp-agent

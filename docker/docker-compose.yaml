@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+      - "2222:22"
+    volumes:
+      - ../py:/code/py
+      - ../ts:/code/ts
+      - ../tools:/code/tools
+    links:
+      - redis
+    stdin_open: true
+    tty: true
+  redis:
+    image: redis

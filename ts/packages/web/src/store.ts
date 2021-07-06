@@ -1,27 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { pagesReducer } from "./editor/pagesSlice";
-import { resourcesReducer } from "./editor/resourcesSlice";
+import { setupListeners } from '@reduxjs/toolkit/query/react'
 
-const serverMiddleware = (store) => (next) => (action) => {
-  fetch("/api/res", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(store.getState()),
-  });
-  next(action);
-};
+import { pagesReducer } from "./editor/pagesSlice";
+import { resourceApi } from './editor/resourcesSlice'
 
 const store = configureStore({
   reducer: {
+    [resourceApi.reducerPath]: resourceApi.reducer,
     pages: pagesReducer,
-    resources: resourcesReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(serverMiddleware),
+    getDefaultMiddleware().concat(resourceApi.middleware),
 });
+
+setupListeners(store.dispatch);
 
 export default store;
 export type RootState = ReturnType<typeof store.getState>;

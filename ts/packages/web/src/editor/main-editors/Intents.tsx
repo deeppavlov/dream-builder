@@ -3,17 +3,15 @@ import { styled, css } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
 
 import {
-  useResourcesWithType,
-  createResource,
-  useResources,
-  updateResource,
+  useCreateResourceMutation,
+  useGetResourcesWithTypeQuery,
+  useUpdateResourceMutation
 } from "../resourcesSlice";
 import type { Intent } from "@dp-builder/api-types"
-import { useAppDispatch } from "../../storeHooks";
 
 const IntentEntry: React.FC<{
   selected: boolean;
-  onSelected: () => void;
+  onSelected?: () => void;
   onChange: (newVal: string) => void;
 }> = ({ children, selected, onSelected, onChange }) => {
   const [beingEdited, setBeignEdited] = useState(false);
@@ -36,8 +34,8 @@ const IntentEntry: React.FC<{
       onKeyDown={(e) =>
         e.key === "Enter" &&
         (e.preventDefault(),
-        setBeignEdited(false),
-        onChange(divRef.current?.innerText || ""))
+          setBeignEdited(false),
+          onChange(divRef.current?.innerText || ""))
       }
     >
       {children}
@@ -53,139 +51,120 @@ const renderPhraseName = (name: string) => {
 };
 
 export default () => {
-  const intentIds = useResourcesWithType("intent");
-  const intents = useResources() as { [id: string]: Intent };
-  const dispatch = useAppDispatch();
+  const { data: intents } = useGetResourcesWithTypeQuery("intent");
+  const [createRes] = useCreateResourceMutation();
+  const [updateRes] = useUpdateResourceMutation();
+  console.log('RENDER\n', JSON.stringify(intents, null, 4))
 
-  const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
-  const [selectedPhrase, setSelectedPhrase] = useState<number | null>(null);
+  const [selectedIntentId, setSelectedIntentId] = useState<string | null>(null);
+  const selectedIntent: Intent | null = selectedIntentId && intents ? intents.find(({ resid }) => resid === selectedIntentId) || null : null
+
+  const handleOnNewIntent = () => createRes({
+    type: "intent",
+    content: { name: "New Intent", examples: [] },
+  })
+
+  const handleIntentRename = (int: Intent) => (newName: string) => updateRes({
+    ...int,
+    content: {
+      ...int.content,
+      name: newName
+    }
+  });
+
+  const handleAddPhrase = (int: Intent) => (ev: React.KeyboardEvent<HTMLInputElement>) =>
+    ev.key === "Enter" && (ev.target as HTMLInputElement).value !== "" &&
+    (
+      updateRes({
+        ...int,
+        content: {
+          ...int.content,
+          examples: [
+            ...int.content.examples,
+            (ev.target as HTMLInputElement).value
+          ]
+        }
+      }),
+      (ev.target as HTMLInputElement).value = ""
+    )
+
+  const handlePharseEdit = (int: Intent, phraseIdx: number) => (newVal: string) => updateRes({
+    ...int,
+    content: {
+      ...int.content,
+      examples: [
+        ...int.content.examples.slice(0, phraseIdx),
+        newVal,
+        ...int.content.examples.slice(phraseIdx + 1),
+      ]
+    }
+  })
 
   useEffect(() => {
-    if (!selectedIntent && intentIds.length > 0)
-      setSelectedIntent(intentIds[0]);
+    if (!selectedIntent && intents && intents.length > 0)
+      setSelectedIntentId(intents[0].resid);
   }, [intents, selectedIntent]);
 
   return (
-    <ColumnsContainer>
-      <Column maxwidth="300px">
-        <ColumnHeader>
-          <ColumnTitle>common intents</ColumnTitle>
-          <PlusBtn
-            onClick={() =>
-              dispatch(
-                createResource({
-                  type: "intent",
-                  content: { name: "New Intent", examples: [] },
-                })
-              )
-            }
-          />
-        </ColumnHeader>
+    intents
+      ? <ColumnsContainer>
+        <Column maxwidth="300px">
+          <ColumnHeader>
+            <ColumnTitle>common intents</ColumnTitle>
+            <PlusBtn onClick={handleOnNewIntent} />
+          </ColumnHeader>
 
-        {intentIds.map((id) => (
-          <IntentEntry
-            key={id}
-            selected={id === selectedIntent}
-            onSelected={() => setSelectedIntent(id)}
-            onChange={(newVal) =>
-              dispatch(
-                updateResource({
-                  resId: id,
-                  newRes: {
-                    type: "intent",
-                    content: { ...intents[id].content, name: newVal },
-                  },
-                })
-              )
-            }
-          >
-            {intents[id].content.name}
-          </IntentEntry>
-        ))}
-      </Column>
+          {intents.map((intent) => (
+            <IntentEntry
+              key={intent.resid}
+              selected={intent.resid === selectedIntent?.resid}
+              onSelected={() => setSelectedIntentId(intent.resid)}
+              onChange={handleIntentRename(intent)}
+            >
+              {intent.content.name}
+            </IntentEntry>
+          ))}
+        </Column>
 
-      <Column>
-        <ColumnHeader>
-          <ColumnTitle>phrases</ColumnTitle>
-        </ColumnHeader>
-        <RowContainer>
-          <Row>
-            {intentIds.length === 0 ? (
-              <CenterMessage>
-                You don't have any intents! Create one on the left
-              </CenterMessage>
-            ) : (
-              selectedIntent !== null &&
-              intents[selectedIntent].content.examples.map((phrase, idx) => (
-                <IntentEntry
-                  key={idx}
-                  selected={false}
-                  onSelected={() => setSelectedPhrase(idx)}
-                  onChange={(newPhrase) =>
-                    dispatch(
-                      updateResource({
-                        resId: selectedIntent,
-                        newRes: {
-                          type: "intent",
-                          content: {
-                            name: intents[selectedIntent].content.name,
-                            examples: [
-                              ...intents[selectedIntent].content.examples.slice(
-                                0,
-                                idx
-                              ),
-                              newPhrase,
-                              ...intents[selectedIntent].content.examples.slice(
-                                idx + 1
-                              ),
-                            ],
-                          },
-                        },
-                      })
-                    )
-                  }
-                >
-                  {renderPhraseName(phrase)}
-                </IntentEntry>
-              ))
-            )}
-            {selectedIntent !== null && intentIds.length > 0 && 
-              <input
-              type="text"
-              placeholder="Type in a new phrase (enter to create)..."
-              onKeyDown={(e) =>
-                selectedIntent &&
-                  //@ts-ignore
-                e.key === "Enter" && e.target.value !== "" &&
-                (dispatch(
-                  updateResource({
-                    resId: selectedIntent,
-                    newRes: {
-                      type: "intent",
-                      content: {
-                        name: intents[selectedIntent].content.name,
-                        examples: [
-                          ...intents[selectedIntent].content.examples,
-                          //@ts-ignore
-                          e.target.value,
-                        ],
-                      },
-                    },
-                  })
-                ),
-                //@ts-ignore
-                (e.target.value = ""))
+        <Column>
+          <ColumnHeader>
+            <ColumnTitle>phrases</ColumnTitle>
+          </ColumnHeader>
+          <RowContainer>
+            <Row>
+              {intents.length === 0 ? (
+                <CenterMessage>
+                  You don't have any intents! Create one on the left
+                </CenterMessage>
+              ) : (
+                selectedIntent !== null &&
+                selectedIntent.content.examples.map((phrase, idx) => (
+                  <IntentEntry
+                    key={idx}
+                    selected={false}
+                    onChange={handlePharseEdit(selectedIntent, idx)}
+                  >
+                    {renderPhraseName(phrase)}
+                  </IntentEntry>
+                ))
+              )}
+              {selectedIntent !== null && intents.length > 0 &&
+                <input
+                  type="text"
+                  placeholder="Type in a new phrase (enter to create)..."
+                  onKeyDown={handleAddPhrase(selectedIntent)}
+                />
               }
-            />
-            }
-          </Row>
-          {selectedIntent !== null && <Row maxheight="400px">
-<ColumnHeader><ColumnTitle>test out your intent</ColumnTitle></ColumnHeader>
-<_CentMsgCont><p>The model hasn't been trained</p> <button>Click here to train!</button></_CentMsgCont>
-          </Row>}
-        </RowContainer>
-      </Column>
-    </ColumnsContainer>
+            </Row>
+            {selectedIntent !== null && <Row maxheight="400px">
+              <ColumnHeader><ColumnTitle>test out your intent</ColumnTitle></ColumnHeader>
+              <_CentMsgCont><p>The model hasn't been trained</p> <button>Click here to train!</button></_CentMsgCont>
+            </Row>}
+          </RowContainer>
+        </Column>
+      </ColumnsContainer>
+
+      : <div>Loading...</div>
   );
 };
 

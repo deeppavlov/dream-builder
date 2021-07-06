@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../py:/code/py
+      - ../ts:/code/ts
+      - ../tools:/code/tools
+    links:
+      - redis
+  redis:
+    image: redis

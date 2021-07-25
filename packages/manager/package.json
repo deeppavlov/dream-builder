@@ -1,0 +1,11 @@
+{
+  "name": "manager",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nodemon --exec \"poetry run python\" manager/main.py",
+    "install": "poetry install"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}

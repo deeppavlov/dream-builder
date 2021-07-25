@@ -1,0 +1,51 @@
+version: "3.7"
+services:
+  # web:
+  #   build:
+  #     context: .
+  #   ports:
+  #     - "80:8080"
+  #   command: ["sh", "-c", "cd packages/frontend && pnpm start"]
+  #   volumes:
+  #     - pnpm-store:/root/.pnpm-store
+  #     - pipcache:/root/.cache/pip
+  #     - ./:/code
+  #   environment:
+  #     API_URL: "server"
+  # server:
+  #   build:
+  #     context: .
+  #   command: ["sh", "-c", "cd packages/api_server && pnpm start"]
+  #   volumes:
+  #     - pnpm-store:/root/.pnpm-store
+  #     - pipcache:/root/.cache/pip
+  #     - ./:/code
+  #   environment:
+  #     MONGODB_URL: "mongodb://mongo:27017/dp-builder"
+  mongo:
+    command: mongod
+    image: mongo:4.0.0
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio:/data
+  git:
+    image: cirocosta/gitserver-http:latest
+    ports:
+     - 8888:80
+    volumes:
+      - ./.cache/repos:/var/lib/git
+volumes:
+  mongo:
+  minio:

@@ -1,12 +1,18 @@
 [tool.poetry]
-name = "generate_types_from_schema"
+name = "api_server"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
-datamodel-code-generator = "^0.11.8"
+python = "^3.6"
+motor = "^2.4.0"
+nanoid = "^2.0.0"
+api-types-py = {path = "../api_types_py", develop = true}
+uvicorn = "^0.14.0"
+fastapi = "^0.66.0"
+pyzmq = "^22.1.0"
 
 [tool.poetry.dev-dependencies]
 

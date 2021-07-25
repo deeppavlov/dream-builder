@@ -1,7 +1,11 @@
 {
   "name": "generate_types_from_schema",
   "version": "1.0.0",
-  "dependencies": {
+  "scripts": {
+    "postinstall": "poetry install",
+    "generate": "pnpm i --filter generate_types_from_schema && poetry run sh -c 'cd ../../ && python tools/generate_types_from_schema/generate.py'"
+  },
+  "devDependencies": {
     "json-schema-to-typescript": "^10.1.4"
   }
 }

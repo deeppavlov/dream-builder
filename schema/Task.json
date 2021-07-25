@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "IntentResource.json",
-  "title": "IntentResource",
+  "$id": "Task.json",
+  "title": "Task",
   "type": "object",
   "required": ["resid", "type", "content"],
   "properties": {
@@ -11,18 +11,25 @@
 
     "type": {
       "type": "string",
-      "const": "intent"
+      "const": "task"
     },
 
     "content": {
       "type": "object",
-      "required": ["name", "examples"],
+      "required": ["component", "inputs"],
       "properties": {
-        "name": {
+        "component": {
+          "type": "string"
+        },
+        "task": {
           "type": "string"
         },
 
-        "examples": {
+        "deploygroup": {
+          "type": "string"
+        },
+
+        "inputs": {
           "type": "array",
           "items": {
             "type": "string"

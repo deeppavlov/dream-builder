@@ -1,0 +1,23 @@
+{
+  "name": "dp-builder",
+  "version": "1.0.0",
+  "description": "DP-Builder is a graphical interface for creating and configuring multi-skill AI assistants, built on top of DeepPavlov",
+  "scripts": {
+    "preinstall": "pnpm run generate",
+    "generate": "cd ./tools/generate_types_from_schema && pnpm run generate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepmipt/dp-builder.git"
+  },
+  "author": "mablin7",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deepmipt/dp-builder/issues"
+  },
+  "homepage": "https://github.com/deepmipt/dp-builder#readme",
+  "workspaces": [
+    "dp-builder",
+    "@dp-builder/api_types_ts"
+  ]
+}

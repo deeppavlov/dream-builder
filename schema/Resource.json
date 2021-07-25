@@ -2,9 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "Resource.json",
   "title": "Resource",
-  "anyOf": [
-    {
-      "$ref": "IntentResource.json"
+  "type": "object",
+  "required": ["resid", "type", "content"],
+  "properties": {
+    "resid": {
+      "type": "string"
+    },
+
+    "type": {
+      "type": "string",
+      "const": "intent"
+    },
+
+    "content": {
+      "type": "object"
     }
-  ]
+  }
 }

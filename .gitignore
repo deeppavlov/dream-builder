@@ -1,6 +1,11 @@
 .snowpack
 build
 node_modules
+__pycache__
 
 api-types
 api_types
+data
+.cache
+.pnpm-debug.log
+api_types_*

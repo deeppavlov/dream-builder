@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Link.json",
+  "title": "Link",
+  "type": "object",
+  "required": ["resid", "type", "content"],
+  "properties": {
+    "resid": {
+      "type": "string"
+    },
+
+    "type": {
+      "type": "string",
+      "const": "link"
+    },
+
+    "content": {
+      "type": "object",
+      "required": ["link"],
+      "properties": {
+        "link": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

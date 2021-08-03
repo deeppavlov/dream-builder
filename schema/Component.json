@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Component.json",
+  "title": "Component",
+  "type": "object",
+  "required": ["resid", "type", "content"],
+  "properties": {
+    "resid": {
+      "type": "string"
+    },
+
+    "type": {
+      "type": "string",
+      "const": "component"
+    },
+
+    "content": {
+      "type": "object",
+      "required": ["source", "inputs"],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["running", "stopped"]
+        },
+
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "model": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

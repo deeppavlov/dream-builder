@@ -163,7 +163,7 @@ const SidebarCont = styled("div")<PageItemState>(({ $open: open }) => ({
 }));
 
 const SidebarBg = styled(SidebarCont)(({ theme }) => ({
-  zIndex: 1,
+  zIndex: 15,
   backgroundColor: theme.sidebarBg,
 }));
 
@@ -171,7 +171,7 @@ const LogoCont = styled("div")<PageItemState>(({ theme, $open: open }) => ({
   position: "absolute",
   top: 0,
   left: 0,
-  zIndex: 4,
+  zIndex: 18,
 
   display: "flex",
   justifyContent: "center",
@@ -202,7 +202,7 @@ const PageItemEntry = styled("div")<PageItemState>(
     alignItems: "center",
     height: "60px",
 
-    zIndex: 3,
+    zIndex: 17,
     cursor: selected ? "default" : "pointer",
     userSelect: "none",
     color: selected ? theme.sidebarBg : theme.sidebarPrimary,
@@ -259,7 +259,7 @@ const PageItemSelectedOverlay = styled("div")<{
   top: `${idx * 100 + 140}px`,
   left: open ? `${level * 50 + 10}px` : "410px",
   right: "10px",
-  zIndex: 2,
+  zIndex: 16,
 
   height: "60px",
 

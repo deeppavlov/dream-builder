@@ -4,13 +4,13 @@ import zmq
 from zmq.asyncio import Context
 from typing import Dict, Any
 
-from api_types_py import Task
+from api_types_py import Component
 
 context = Context.instance() 
 socket = context.socket(zmq.REQ)
 socket.bind("tcp://*:5555")
 
-async def new_task(task: Task):
+async def new_task(task: Component):
     msg_to_send = {
         "type": "new",
         "task": task.content.dict()

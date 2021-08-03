@@ -40,12 +40,14 @@ services:
       MINIO_ROOT_PASSWORD: minio123
     volumes:
       - minio:/data
-  git:
-    image: cirocosta/gitserver-http:latest
-    ports:
-     - 8888:80
-    volumes:
-      - ./.cache/repos:/var/lib/git
+  # git:
+  #   image: emarcs/nginx-git
+  #   ports:
+  #     - 8888:80
+  #   volumes:
+  #     - ./cache/repos:/srv/git
+  #   environment:
+  #     GIT_POSTBUFFER: 1048576
 volumes:
   mongo:
   minio:

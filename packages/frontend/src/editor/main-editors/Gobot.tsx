@@ -4,16 +4,16 @@ import { styled } from "goober";
 import { nanoid } from "nanoid";
 
 import {
-  useCreateResourceMutation,
-  useGetResourcesWithTypeQuery,
-  useUpdateResourceMutation,
+  useGetComponentsWithTypeQuery,
+  useCreateComponentMutation,
+  useCreateDataMutation,
+  useGetComponentDataWithTypeQuery,
+  useUpdateDataMutation
 } from "../resourcesSlice";
-import type { IntentResource, Resource } from "@dp-builder/api_types_ts"
+// import type { Intent, Resource } from "@dp-builder/api_types_ts"
 
 interface FlowRes {
-  type: "flow"
-  resid?: string
-  content: { el: Elements } 
+  el: Elements; 
 }
 
 interface NodeData {
@@ -21,6 +21,7 @@ interface NodeData {
 }
 
 const UpdateNodeDataContext = React.createContext((_: string, __: NodeData) => {})
+const ActiveComponentIdContext = React.createContext<null | string>(null)
 
 const Dropdown = ({ options, onSelect, selected }: { options: string[], onSelect: (opt: string) => void, selected?: string }) => {
   if (!selected) selected = options[0]
@@ -34,14 +35,16 @@ const Dropdown = ({ options, onSelect, selected }: { options: string[], onSelect
 
 const UtteranceNode = ({ id, data: { selectedIntent } }: { id: string, data: NodeData }) => {
   const onDataChange = useContext(UpdateNodeDataContext)
-  const { data: intents } = useGetResourcesWithTypeQuery("intent") as { data?: IntentResource[] };
+  const compId = useContext(ActiveComponentIdContext)
+  const { data: intentsObj } = useGetComponentDataWithTypeQuery({ compId: compId || "", dataType: "intent" }, { skip: !compId });
+  const intents = intentsObj ? Object.values(intentsObj) : []
 
   return (
     <NodeContainer>
       <NodeTitle>User Utterance</NodeTitle>
       <NodeBody>
-        {(intents && intents.length > 0 &&
-          <Dropdown options={intents.map((int) => int.content.name)} onSelect={(newOpt) => onDataChange(id, { selectedIntent: newOpt })} selected={selectedIntent}/>
+        {(intents.length > 0 &&
+          <Dropdown options={intents.map((int) => int.name)} onSelect={(newOpt) => onDataChange(id, { selectedIntent: newOpt })} selected={selectedIntent}/>
           || "No intents to select, create one"
         )}
       </NodeBody>
@@ -133,22 +136,32 @@ export default () => {
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams | null>(null);
 
-  const { data: flowsRes } = useGetResourcesWithTypeQuery("flow") as { data?: FlowRes[] };
-  const [currentFlowRes, setCurrentFlowRes] = useState<FlowRes | undefined>()
-  const [createRes] = useCreateResourceMutation();
-  const [updateRes] = useUpdateResourceMutation();
+  const { data: icComps } = useGetComponentsWithTypeQuery("gobot")
+  const [ createComp ] = useCreateComponentMutation()
+  useEffect(() => {
+    if (icComps && Object.keys(icComps).length === 0) createComp({ type: "gobot" })
+  }, [icComps, createComp])
+  const compId = icComps && Object.keys(icComps).length > 0 ? Object.keys(icComps)[0] : null
+
+  const { data: flowsRes } = useGetComponentDataWithTypeQuery({ compId: compId || "", dataType: "flow" }, { skip: !compId }) as { data?: { [id: string]: FlowRes } };
+  const [currentFlowId, setCurrentFlowId] = useState<string | undefined>()
+  const currentFlowRes = currentFlowId && flowsRes ? flowsRes[currentFlowId] : null
+  const [createData] = useCreateDataMutation()
+  const [updateData] = useUpdateDataMutation();
 
   useEffect(() => {
-    if (flowsRes) {
-      if (flowsRes.length === 0) createRes({ type: "flow", content: { el: []  } })
-      else (setCurrentFlowRes(flowsRes[0]), setElements(flowsRes[0].content.el))
+    if (compId && flowsRes) {
+      if (Object.keys(flowsRes).length === 0) createData({ compId, dataType: "flow", data: { el: [] } })
+      else (setCurrentFlowId(Object.keys(flowsRes)[0]), setElements(flowsRes[Object.keys(flowsRes)[0]].el))
     }
   }, [flowsRes])
 
   useEffect(() => {
-    if (currentFlowRes)
-    updateRes(({ ...currentFlowRes, content: { el: elements } } as unknown) as Resource);
+    if (currentFlowRes && compId)
+    updateData({ compId, dataType: "flow", dataId: currentFlowId as string, newData: { el: elements }});
   }, [elements])
+
+  if (!compId) return <div>Loading...</div>
 
   const onElementsRemove = (elementsToRemove: any) =>
     setElements((els) => removeElements(elementsToRemove, els) as any);
@@ -165,7 +178,7 @@ export default () => {
 
   const onLoad = (reactFlowInstance: OnLoadParams) => {
     setReactFlowInstance(reactFlowInstance)
-    reactFlowInstance.fitView();
+    // reactFlowInstance.fitView();
   };
 
   const onDragOver = (event: React.DragEvent) => {
@@ -200,6 +213,7 @@ export default () => {
   return (
     <ColumnsContainer>
       <Column>
+        <ActiveComponentIdContext.Provider value={compId}>
         <UpdateNodeDataContext.Provider value={onDataChange}>
           <FlowWrapper ref={reactFlowWrapper}>
             <ReactFlow
@@ -225,6 +239,7 @@ export default () => {
             </ReactFlow>
           </FlowWrapper>
         </UpdateNodeDataContext.Provider>
+        </ActiveComponentIdContext.Provider>
       </Column>
 
       <Column maxwidth="300px">

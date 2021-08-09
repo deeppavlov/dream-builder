@@ -3,14 +3,13 @@ import { styled } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
 
 import {
-  useCreateResourceMutation,
-  useGetResourcesWithTypeQuery,
-  useUpdateResourceMutation,
-  useStartTaskMutation,
-  useGetTaskStateQuery,
-  useTestModelQuery
+  useGetComponentDataWithTypeQuery,
+  useCreateComponentMutation,
+  useGetComponentsWithTypeQuery,
+  useCreateDataMutation,
+  useUpdateDataMutation
 } from "../resourcesSlice";
-import type { IntentResource } from "@dp-builder/api_types_ts"
+import type { Intent } from "@dp-builder/api_types_ts"
 
 const Editable: React.FC<{
   defaultValue?: string;
@@ -88,101 +87,87 @@ const PhraseEntry: React.FC<{
   );
 };
 
-export default () => {
-  const { data: intents } = useGetResourcesWithTypeQuery("intent") as { data?: IntentResource[] };
-  const [createRes] = useCreateResourceMutation();
-  const [updateRes] = useUpdateResourceMutation();
-  const [startTask, { data: taskId }] = useStartTaskMutation();
-  const { data: trainState = "none" } = useGetTaskStateQuery(taskId || "", { skip: !taskId, pollingInterval: 1000 })
+export default ({ componentType = "intent_catcher" }) => {
+  const { data: icComps } = useGetComponentsWithTypeQuery(componentType)
+  const [ createComp ] = useCreateComponentMutation()
+  useEffect(() => {
+    if (icComps && Object.keys(icComps).length === 0) createComp({ type: componentType })
+  }, [icComps, createComp])
+  const compId = icComps && Object.keys(icComps).length > 0 ? Object.keys(icComps)[0] : null
 
-  const [testQuery, setTestQuery] = useState("");
-  const { data: testRes, isFetching: loadingTestRes } = useTestModelQuery({ target: "intent", param: testQuery }, { skip: trainState !== "done" })
+  const { data: intents } = useGetComponentDataWithTypeQuery({ compId: compId || "", dataType: "intent"  }, { skip: !compId })
+  const intentIds = intents ? Object.keys(intents) : []
+  const [createData] = useCreateDataMutation();
+  const [updateData] = useUpdateDataMutation();
 
   const [selectedIntentId, setSelectedIntentId] = useState<string | null>(null);
-  const selectedIntent: IntentResource | null = selectedIntentId && intents ? intents.find(({ resid }) => resid === selectedIntentId) as IntentResource || null : null
-  const [hasChanged, setChanged] = useState(false);
-  const canTrain = (intents && intents.length > 0 && trainState === 'none') || (trainState !== 'none' && hasChanged)
+  const selectedIntent: Intent | null = selectedIntentId && intents ? intents[selectedIntentId] as Intent || null : null
+  // const [hasChanged, setChanged] = useState(false);
+  // const canTrain = (intents && intents.length > 0 && trainState === 'none') || (trainState !== 'none' && hasChanged)
 
-  const handleOnNewIntent = () => (createRes({
-    type: "intent",
-    content: { name: "New Intent", examples: [] },
-  }), setChanged(true))
+  useEffect(() => {
+    if (!selectedIntent && intentIds.length > 0)
+      setSelectedIntentId(intentIds[0]);
+  }, [intents, selectedIntent]);
 
-  const handleIntentRename = (int: IntentResource) => (newName: string) => updateRes({
-    ...int,
-    content: {
-      ...int.content,
-      name: newName
-    }
-  });
+  if (!compId || !intents) return <div>Loading</div>
 
-  const handleAddPhrase = (int: IntentResource) => (ev: React.KeyboardEvent<HTMLInputElement>) =>
+  const handleOnNewIntent = () =>
+    createData({
+      compId, dataType: "intent",
+      data: { name: "New Intent", examples: [] },
+    });
+
+  const handleIntentRename = (intId: string, int: Intent) => (newName: string) => updateData({
+    compId, dataType: "intent", dataId: intId,
+    newData: { ...int, name: newName }
+  })
+
+  const handleAddPhrase = (intId: string, int: Intent) => (ev: React.KeyboardEvent<HTMLInputElement>) =>
     ev.key === "Enter" && (ev.target as HTMLInputElement).value !== "" &&
     (
-      updateRes({
-        ...int,
-        content: {
-          ...int.content,
+      updateData({
+        compId, dataType: "intent", dataId: intId,
+        newData: {
+          ...int,
           examples: [
-            ...int.content.examples,
+            ...int.examples,
             (ev.target as HTMLInputElement).value
           ]
         }
       }),
-      (ev.target as HTMLInputElement).value = "",
-      setChanged(true)
+      (ev.target as HTMLInputElement).value = ""
     )
 
-  const handlePharseEdit = (int: IntentResource, phraseIdx: number) => (newVal: string) => (updateRes({
-    ...int,
-    content: {
-      ...int.content,
+  const handlePharseEdit = (intId: string, int: Intent, phraseIdx: number) => (newVal: string) => (updateData({
+    compId, dataType: "intent", dataId: intId,
+    newData: {
+      ...int,
       examples: [
-        ...int.content.examples.slice(0, phraseIdx),
+        ...int.examples.slice(0, phraseIdx),
         newVal,
-        ...int.content.examples.slice(phraseIdx + 1),
+        ...int.examples.slice(phraseIdx + 1),
       ]
     }
-  }), setChanged(true))
+  }))
 
-  const handleTrain = () => {
-    if (!intents) return
-    setChanged(false)
-    startTask({ type: "train", target: "intent", inputs: intents.map(({ resid }) => resid) })
-  }
-
-  const handleTest = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    setTestQuery(value)
-  }
-
-  useEffect(() => {
-    if (!selectedIntent && intents && intents.length > 0)
-      setSelectedIntentId(intents[0].resid);
-  }, [intents, selectedIntent]);
-
-  // useEffect(() => {
-  //   if (testRes) {
-  //     console.log("testRes", testRes)
-  //   }
-  // }, [testRes])
 
   return (
-    intents
-      ? <ColumnsContainer>
+      <ColumnsContainer>
         <Column maxwidth="400px">
           <ColumnHeader>
-            <ColumnTitle>common intents</ColumnTitle>
+            <ColumnTitle>{ componentType.replaceAll("_", " ") } intents</ColumnTitle>
             <PlusBtn onClick={handleOnNewIntent} />
           </ColumnHeader>
 
-          {intents.map((intent) => (
+          {Object.entries(intents).sort(([_, a], [__, b]) => a.name < b.name ? -1 : 1).map(([resid, int]) => (
             <IntentEntry
-              key={intent.resid}
-              intentName={intent.content.name}
-              examples={intent.content.examples}
-              selected={intent.resid === selectedIntent?.resid}
-              onSelected={() => setSelectedIntentId(intent.resid)}
-              onChange={handleIntentRename(intent)}
+              key={resid}
+              intentName={int.name}
+              examples={int.examples}
+              selected={resid === selectedIntentId}
+              onSelected={() => setSelectedIntentId(resid)}
+              onChange={handleIntentRename(resid, int as Intent)}
             />
           ))}
 
@@ -194,27 +179,27 @@ export default () => {
           </ColumnHeader>
           <RowContainer>
             <Row>
-              {intents.length === 0
+              {intentIds.length === 0
                 ? <CenterMessage>
                   You don't have any intents! Create one on the left
                 </CenterMessage>
                 : selectedIntent !== null
                   ? <IntentView>
-                    {selectedIntent.content.examples.map((phrase, idx) => (
+                    {selectedIntent.examples.map((phrase, idx) => (
                       <PhraseEntry
                         key={idx}
                         selected={false}
-                        onChange={handlePharseEdit(selectedIntent, idx)}
+                        onChange={handlePharseEdit(selectedIntentId as string, selectedIntent, idx)}
                       >
                         {phrase}
                       </PhraseEntry>
                     ))}
 
-                    {selectedIntent !== null && intents.length > 0 &&
+                    {selectedIntent !== null &&
                       <input
                         type="text"
                         placeholder="Type in a new phrase (enter to create)..."
-                        onKeyDown={handleAddPhrase(selectedIntent)}
+                        onKeyDown={handleAddPhrase(selectedIntentId as string, selectedIntent)}
                       />}
                   </IntentView>
                   : <div />}
@@ -223,23 +208,21 @@ export default () => {
             <Row maxheight="300px">
               <ColumnHeader><ColumnTitle>test out your intents</ColumnTitle></ColumnHeader>
 
-              {canTrain
-                ? <_CentMsgCont><button onClick={handleTrain}>Click here to train!</button></_CentMsgCont>
-                : trainState === "running"
-                  ? <_CentMsgCont>Training...</_CentMsgCont>
-                  : (
-                    <_CentMsgCont>
-                      <input type="text" placeholder="Test out your intent here" onChange={handleTest} />
-                      <p>{loadingTestRes ? "Initializing..." : testRes && Math.max(...testRes[1][0]) > 0.4 ? `Guessed intent: ${testRes[0]}` : "Unknown intent. Try adding more examples!"}</p>
-                    </_CentMsgCont>
-                  )
-              }
+              {/* {canTrain */}
+              {/*   ? <_CentMsgCont><button onClick={handleTrain}>Click here to train!</button></_CentMsgCont> */}
+              {/*   : trainState === "running" */}
+              {/*     ? <_CentMsgCont>Training...</_CentMsgCont> */}
+              {/*     : ( */}
+              {/*       <_CentMsgCont> */}
+              {/*         <input type="text" placeholder="Test out your intent here" onChange={handleTest} /> */}
+              {/*         <p>{loadingTestRes ? "Initializing..." : testRes && Math.max(...testRes[1][0]) > 0.4 ? `Guessed intent: ${testRes[0]}` : "Unknown intent. Try adding more examples!"}</p> */}
+              {/*       </_CentMsgCont> */}
+              {/*     ) */}
+              {/* } */}
             </Row>
           </RowContainer>
         </Column>
       </ColumnsContainer>
-
-      : <div>Loading...</div>
   );
 };
 

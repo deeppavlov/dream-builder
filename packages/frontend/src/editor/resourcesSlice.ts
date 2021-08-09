@@ -1,61 +1,52 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 
-import type { Resource } from "@dp-builder/api_types_ts";
+import type { Component, Intent } from "@dp-builder/api_types_ts";
 
-export interface Task {
-  type: string;
-  target: string;
-  inputs: string[];
-}
+export type Data = Intent | { [k: string]: any }; // TODO: add flow type
+type Result<T> = { [resid: string]: T }
 
 export const resourceApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  tagTypes: ["Resource"],
+  tagTypes: ["Component", "Data"],
   endpoints: (build) => ({
-    getResourcesWithType: build.query<Resource[], string>({
-      query: (type: string) => ({ url: `/res?type=${type}` }),
-      providesTags: (result) => [...(result ? result.map(({ resid }) => ({ type: "Resource" as const, id: resid })) : []), { type: "Resource", id: "LIST" }]
+    getComponentsWithType: build.query<Result<Component>, string>({
+      query: (type) => ({ url: `/components?type=${type}` }),
+      providesTags: (res) => [...(res ? Object.keys(res).map((resid) => ({ type: "Component" as const, id: resid })) : []), { type: "Component", id: "LIST" }]
     }),
-    getResource: build.query<Resource, string>({
-      query: (resId: string) => ({ url: `/res/${resId}` }),
-      providesTags: (result) => result ? [{ type: "Resource", id: result.resid }] : []
+    createComponent: build.mutation<string, Component>({
+      query: (comp) => ({
+        url: `/components`,
+        method: "POST",
+        body: comp
+      }),
+      invalidatesTags: [{ type: 'Component', id: 'LIST' }]
     }),
 
-    createResource: build.mutation<Resource, Omit<Resource, "resid">>({
-      query: (body) => ({
-        url: `/res`,
-        method: "POST",
-        body: { ...body, resid: "" }
-      }),
-      invalidatesTags: [{ type: 'Resource', id: 'LIST' }]
+    getComponentDataWithType: build.query<Result<Data>, {compId: string; dataType: string}>({
+      query: ({ compId, dataType }) => ({ url: `/components/${compId}/${dataType}s` }),
+      providesTags: (res) => [...(res ? Object.keys(res).map((resid) => ({ type: "Data" as const, id: resid })) : []), { type: "Data", id: "LIST" }]
     }),
-    updateResource: build.mutation<Resource, Partial<Resource>>({
-      query: (body) => ({
-        url: `/res/${body.resid}`,
+    createData: build.mutation<null, { compId: string, dataType: string, data: Data }>({
+      query: ({ compId, dataType, data }) => ({
+        url: `/components/${compId}/${dataType}s`,
+        method: "POST",
+        body: data
+      }),
+      invalidatesTags: (id) => id ? [{ type: 'Data', id: "LIST" }] : []
+    }),
+
+    updateData: build.mutation<null, { compId: string, dataType: string, dataId: string, newData: Data }>({
+      query: ({ compId, dataType, dataId, newData }) => ({
+        url: `/components/${compId}/${dataType}s/${dataId}`,
         method: "PUT",
-        body
+        body: newData
       }),
-      invalidatesTags: (result) => result ? [{ type: 'Resource', id: result.resid }] : []
+      invalidatesTags: (_, __, { dataId }) => [{ type: 'Data', id: dataId }]
     }),
 
-    startTask: build.mutation<string, Task>({
-      query: ({ type, target, inputs }) => ({
-        url: `/tasks/${type}/${target}`,
-        method: "POST",
-        body: { input: inputs }
-      })
-    }),
-
-    getTaskState: build.query<string, string>({
-      query: (taskId) => ({ url: `/tasks/state/${taskId}` })
-    }),
-
-    testModel: build.query<[string, number[][]], { param: string, target: string }>({
-      query: ({ param, target }) => ({ url: `/test/${target}`, method: "POST", body: { input: [param] } })
-    })
   })
 })
 
-export const { useGetResourcesWithTypeQuery, useCreateResourceMutation, useUpdateResourceMutation, useStartTaskMutation, useGetTaskStateQuery, useTestModelQuery } = resourceApi;
+export const { useGetComponentsWithTypeQuery, useCreateComponentMutation, useGetComponentDataWithTypeQuery, useUpdateDataMutation, useCreateDataMutation } = resourceApi;
 

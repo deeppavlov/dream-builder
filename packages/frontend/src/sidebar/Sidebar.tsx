@@ -69,6 +69,7 @@ const PageItem: React.FC<{
   const selected = !collapsed && openPagePath.length === 1;
   const { Icon } = useEditorTypeFromPath(selfPath) || {};
   const dispatch = useAppDispatch();
+  const displayIcon = Icon ? <Icon iconSize="40px"/> : <LetterIcon>{ name.split(" ").map(s => s.charAt(0)).join("").toUpperCase() }</LetterIcon>
 
   return (
     <PageItemCont>
@@ -81,7 +82,7 @@ const PageItem: React.FC<{
           $selected={selected}
           $moving={sidebarMoving}
         >
-          {Icon && <Icon iconSize={"40px"} />}
+          {displayIcon}
         </PageItemIcon>
         <PageItemName $open={sidebarOpen} $selected={selected}>
           {name}
@@ -267,3 +268,11 @@ const PageItemSelectedOverlay = styled("div")<{
   borderRadius: "60px",
   transition: `width linear ${OPEN_DURATION}, padding-left linear ${OPEN_DURATION}, top linear ${SLIDE_DURATION}, left linear ${SLIDE_DURATION}`,
 }));
+
+const LetterIcon = styled("div")({
+  textAlign: "center",
+  verticalAlign: "center",
+  width: "100%",
+  height: "100%",
+  fontSize: "28px"
+})

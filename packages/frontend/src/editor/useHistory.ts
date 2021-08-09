@@ -10,7 +10,7 @@ export default () => {
   useEffect(() => {
     const popHandler = (ev?: PopStateEvent) => {
       ev?.preventDefault()
-      dispatch(openPage(parsePath(document.location.pathname)))
+      dispatch(openPage(parsePath(document.location.pathname.replaceAll("%20", " "))))
     }
 
     window.history.pushState({}, "", window.location.pathname)

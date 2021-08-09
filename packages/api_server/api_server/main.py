@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import FastAPI, Depends
 
@@ -9,10 +9,10 @@ app = FastAPI()
 app.add_event_handler("startup", init_db)
 app.add_event_handler("shutdown", close_db)
 
-@app.get("/components", response_model=List[Component])
+@app.get("/components", response_model=Dict[str, Component])
 async def list_comps(type: Optional[str] = None, db: AsyncIOMotorDatabase = Depends(get_db)):
     resources = await get_resources_with_type(db, type="component")
-    return [ res.content for res in resources if type is None or res.content['type'] == type ]
+    return { res.resid: res.content for res in resources if type is None or res.content['type'] == type }
 
 @app.post("/components")
 async def post_comp(comp: Component, db: AsyncIOMotorDatabase = Depends(get_db)):
@@ -32,10 +32,10 @@ async def get_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 # async def delete_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 #     pass
 
-@app.get("/components/{resid}/models", response_model=List[Model])
+@app.get("/components/{resid}/models", response_model=Dict[str, Model])
 async def list_models(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     resources = await get_children_with_type(db, parentid=resid, children_type="model")
-    return [ res.content for res in resources ]
+    return { res.resid: res.content for res in resources }
 
 @app.post("/components/{resid}/models")
 async def post_model(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
@@ -48,7 +48,7 @@ async def post_model(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 async def list_data(resid: str, data_type_plural: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     data_type = data_type_plural.rstrip("s")
     resources = await get_children_with_type(db, parentid=resid, children_type=data_type)
-    return [ res.content for res in resources ]
+    return { res.resid: res.content for res in resources }
 
 @app.post("/components/{resid}/{data_type_plural}")
 async def post_data(resid: str, data_type_plural: str, data: Dict[str, Any], db: AsyncIOMotorDatabase = Depends(get_db)):

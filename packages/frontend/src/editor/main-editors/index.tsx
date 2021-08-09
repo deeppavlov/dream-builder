@@ -20,7 +20,7 @@ type EditorComponent = React.ComponentType<{ openSubpage?: string }>;
 
 export interface EditorType {
   name: string;
-  Icon: React.ComponentType<{ iconSize: string }>;
+  Icon?: React.ComponentType<{ iconSize: string }>;
   Editor: EditorComponent;
   subeditors?: EditorType[];
 }
@@ -34,7 +34,7 @@ const editors: EditorType[] = [
   {
     name: "Intents",
     Icon: ({ iconSize }) => <BiUserVoice size={iconSize} />,
-    Editor: Intents,
+    Editor: Intents as EditorComponent,
   },
   {
     name: "Architecture",
@@ -65,7 +65,21 @@ const editors: EditorType[] = [
           {
             name: "Gobot",
             Icon: ({ iconSize }) => <BiBot size={iconSize}/>,
-            Editor: Gobot
+            Editor: Skills,
+            subeditors: [
+              {
+                name: "Local Intents", 
+                Editor: () => <Intents componentType="gobot"/>
+              },
+              {
+                name: "Flows", 
+                Editor: Gobot
+              },
+              {
+                name: "Settings", 
+                Editor: Skills
+              },
+            ]
           }
         ]
       },

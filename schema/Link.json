@@ -3,25 +3,10 @@
   "$id": "Link.json",
   "title": "Link",
   "type": "object",
-  "required": ["resid", "type", "content"],
+  "required": ["link"],
   "properties": {
-    "resid": {
+    "link": {
       "type": "string"
-    },
-
-    "type": {
-      "type": "string",
-      "const": "link"
-    },
-
-    "content": {
-      "type": "object",
-      "required": ["link"],
-      "properties": {
-        "link": {
-          "type": "string"
-        }
-      }
     }
   }
 }

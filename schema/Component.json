@@ -3,43 +3,13 @@
   "$id": "Component.json",
   "title": "Component",
   "type": "object",
-  "required": ["resid", "type", "content"],
+  "required": ["type"],
   "properties": {
-    "resid": {
+    "type": {
       "type": "string"
     },
-
-    "type": {
-      "type": "string",
-      "const": "component"
-    },
-
-    "content": {
-      "type": "object",
-      "required": ["source", "inputs"],
-      "properties": {
-        "source": {
-          "type": "string"
-        },
-        "target": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "enum": ["running", "stopped"]
-        },
-
-        "data": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-
-        "model": {
-          "type": "string"
-        }
-      }
+    "label": {
+      "type": "string"
     }
   }
 }

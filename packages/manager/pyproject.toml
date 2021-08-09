@@ -6,7 +6,7 @@ authors = ["mablin7 <magyarb0201@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.7.9"
+python = "^3.6"
 PyYAML = "^5.4.1"
 minio = "^7.1.0"
 api-types-py = {path = "../api_types_py", develop = true}

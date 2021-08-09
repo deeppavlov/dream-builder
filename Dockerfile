@@ -6,4 +6,9 @@ RUN apt-get update || : && apt-get install python curl -y \
 
 WORKDIR /code
 COPY ./ /code
-RUN PATH=$PATH:/root/.poetry/bin pnpm run generate && pnpm install
+
+ENV PATH "$PATH:/root/.poetry/bin"
+
+RUN cd tools/generate_types_from_schema && pnpm install && poetry install \
+    && cd ../../ && pnpm run generate && pnpm install \
+    && ./tools/run-in-all-dirs.sh poetry install

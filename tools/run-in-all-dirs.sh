@@ -1,8 +1,8 @@
 #!/bin/sh
 
-for fname in ./*/pyproject.toml; do
+for fname in ./packages/*/pyproject.toml; do
   dname=$(dirname $fname)
   cd $dname
   eval "$@"
-  cd ../
+  cd ../../
 done

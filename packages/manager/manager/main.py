@@ -163,9 +163,10 @@ async def deploy_single(comp: Component):
                     minio.fget_object("models", res['content']['link'], tarpath)
                     shutil.unpack_archive(tarpath, f'./data/{comp.resid}/input')
 
-            write_nlu(nlu_content, f'./data/{comp.resid}/input/nlu.yml')
-            write_domain(domain_content, f'./data/{comp.resid}/input/domain.yml')
-            write_stories(stories_content, f'./data/{comp.resid}/input/stories.yml')
+            if comp.content.source in ["intent_catcher", "gobot"]:
+                write_nlu(nlu_content, f'./data/{comp.resid}/input/nlu.yml')
+                write_domain(domain_content, f'./data/{comp.resid}/input/domain.yml')
+                write_stories(stories_content, f'./data/{comp.resid}/input/stories.yml')
 
             services["component"]["volumes"].append(os.path.abspath(f'./data/{comp.resid}/input:/input'))
 

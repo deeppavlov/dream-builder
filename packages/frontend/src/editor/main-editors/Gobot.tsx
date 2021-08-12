@@ -2,13 +2,15 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import ReactFlow, { Handle, Controls, Background, updateEdge, addEdge, removeElements, OnLoadParams, Elements, NodeTypesType, Position, BackgroundVariant } from 'react-flow-renderer';
 import { styled } from "goober";
 import { nanoid } from "nanoid";
+import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import {
   useGetComponentsWithTypeQuery,
   useCreateComponentMutation,
   useCreateDataMutation,
   useGetComponentDataWithTypeQuery,
-  useUpdateDataMutation
+  useUpdateDataMutation,
+  // useDeleteDataMutation
 } from "../resourcesSlice";
 // import type { Intent, Resource } from "@dp-builder/api_types_ts"
 
@@ -21,6 +23,7 @@ interface NodeData {
 }
 
 const UpdateNodeDataContext = React.createContext((_: string, __: NodeData) => {})
+const DeleteNoteCbContext = React.createContext((_: string) => {})
 const ActiveComponentIdContext = React.createContext<null | string>(null)
 
 const Dropdown = ({ options, onSelect, selected }: { options: string[], onSelect: (opt: string) => void, selected?: string }) => {
@@ -33,7 +36,20 @@ const Dropdown = ({ options, onSelect, selected }: { options: string[], onSelect
   )
 }
 
-const UtteranceNode = ({ id, data: { selectedIntent } }: { id: string, data: NodeData }) => {
+const withMenu = <P extends React.PropsWithChildren<{ id: string }>>(Comp: React.FC<P>): React.FC<P> => ({ ...props }) => {
+  const id = nanoid()
+  const onDelete = React.useContext(DeleteNoteCbContext)
+  return <>
+    <ContextMenuTrigger id={id}><Comp {...props}/></ContextMenuTrigger>
+    <ContextMenu id={id}>
+      <MenuItem onClick={() => onDelete(props.id)}>
+        Delete
+      </MenuItem>
+    </ContextMenu>
+  </>
+}
+
+const UtteranceNode = withMenu(({ id, data: { selectedIntent } }: { id: string, data: NodeData }) => {
   const onDataChange = useContext(UpdateNodeDataContext)
   const compId = useContext(ActiveComponentIdContext)
   const { data: intentsObj } = useGetComponentDataWithTypeQuery({ compId: compId || "", dataType: "intent" }, { skip: !compId });
@@ -56,9 +72,9 @@ const UtteranceNode = ({ id, data: { selectedIntent } }: { id: string, data: Nod
       />
     </NodeContainer>
   )
-}
+})
 
-const ApiCallNode = ({ id, data }: { id: string, data: NodeData }) => {
+const ApiCallNode = withMenu(({ id, data }: { id: string, data: NodeData }) => {
   const onDataChange = useContext(UpdateNodeDataContext)
   const onInputChange = (field: string) => (ev: React.ChangeEvent<HTMLInputElement>) => onDataChange(id, { ...data, [field]: ev.target.value })
 
@@ -83,9 +99,9 @@ const ApiCallNode = ({ id, data }: { id: string, data: NodeData }) => {
       />
     </NodeContainer>
   )
-}
+})
 
-const ResponseNode = ({ id, data: { respStr } }: { id: string, data: NodeData }) => {
+const ResponseNode = withMenu(({ id, data: { respStr } }: { id: string, data: NodeData }) => {
   const onDataChange = useContext(UpdateNodeDataContext)
   const onInputChange = (ev: React.ChangeEvent<HTMLInputElement>) => (onDataChange(id, { respStr: ev.target.value }), console.log('input', ev.target.value))
 
@@ -104,7 +120,7 @@ const ResponseNode = ({ id, data: { respStr } }: { id: string, data: NodeData })
       </NodeBody>
     </NodeContainer>
   )
-}
+})
 
 const nodeTypes: NodeTypesType = {
   utterance: UtteranceNode,
@@ -176,6 +192,11 @@ export default () => {
     })
   ))
 
+  const onDelete = (nodeId: string) => (console.log(elements), setElements(
+    //@ts-ignore
+    (els) => els.filter((el) => el.id !== nodeId && el.source !== nodeId && el.target !== nodeId)
+  ))
+
   const onLoad = (reactFlowInstance: OnLoadParams) => {
     setReactFlowInstance(reactFlowInstance)
     // reactFlowInstance.fitView();
@@ -213,6 +234,7 @@ export default () => {
   return (
     <ColumnsContainer>
       <Column>
+        <DeleteNoteCbContext.Provider value={onDelete}>
         <ActiveComponentIdContext.Provider value={compId}>
         <UpdateNodeDataContext.Provider value={onDataChange}>
           <FlowWrapper ref={reactFlowWrapper}>
@@ -240,6 +262,7 @@ export default () => {
           </FlowWrapper>
         </UpdateNodeDataContext.Provider>
         </ActiveComponentIdContext.Provider>
+        </DeleteNoteCbContext.Provider>
       </Column>
 
       <Column maxwidth="300px">

@@ -19,6 +19,7 @@ importers:
       nanoid: ^3.1.23
       prettier: ^2.3.1
       react: ^17.0.2
+      react-contextmenu: ^2.14.0
       react-dom: ^17.0.2
       react-flow-renderer: ^9.6.5
       react-icons: ^4.2.0
@@ -35,6 +36,7 @@ importers:
       immer: 9.0.5
       nanoid: 3.1.23
       react: 17.0.2
+      react-contextmenu: 2.14.0_react-dom@17.0.2+react@17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-flow-renderer: 9.6.5_react-dom@17.0.2+react@17.0.2
       react-icons: 4.2.0_react@17.0.2
@@ -4847,6 +4849,19 @@ packages:
       minimist: 1.2.5
       strip-json-comments: 2.0.1
     dev: true
+
+  /react-contextmenu/2.14.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-ktqMOuad6sCFNJs/ltEwppN8F0YeXmqoZfwycgtZR/MxOXMYx1xgYC44SzWH259HdGyshk1/7sXGuIRwj9hzbw==}
+    peerDependencies:
+      prop-types: ^15.0.0
+      react: ^0.14.0 || ^15.0.0 || ^16.0.1
+      react-dom: ^0.14.0 || ^15.0.0 || ^16.0.1
+    dependencies:
+      classnames: 2.3.1
+      object-assign: 4.1.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /react-dom/17.0.2_react@17.0.2:
     resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}

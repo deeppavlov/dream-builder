@@ -45,6 +45,14 @@ export const resourceApi = createApi({
       invalidatesTags: (_, __, { dataId }) => [{ type: 'Data', id: dataId }]
     }),
 
+    deleteData: build.mutation<null, { compId: string, dataType: string, dataId: string }>({
+      query: ({ compId, dataType, dataId }) => ({
+        url: `/components/${compId}/${dataType}s/${dataId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_, __, { dataId }) => [{ type: 'Data', id: dataId }, { type: 'Data', id: 'LIST' }]
+    }),
+
   })
 })
 

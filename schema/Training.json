@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Training.json",
+  "title": "Training",
+  "type": "object",
+  "required": ["status", "data"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["running", "failed", "succes"]
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "trainedmodel": {
+      "type": "string"
+    }
+  }
+}

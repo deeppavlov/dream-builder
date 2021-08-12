@@ -53,7 +53,7 @@ async def on_shutdown():
         docker_client = None
 
 async def clone_component(comp: Component, _: str):
-    source = comp.content.source
+    source = comp.type
     return os.path.abspath(os.path.join("components", source))
     # url = f"{GITREMOTE}/{comp.content.source}.git"
     # repo_path = os.path.join(path, source)

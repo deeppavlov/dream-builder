@@ -71,13 +71,15 @@ async def post_data(resid: str, data_type_plural: str, data: Dict[str, Any], db:
     return datares.resid
 
 @app.put("/components/{resid}/{data_type_plural}/{dataid}")
+@app.put("/data/{data_type_plural}/{dataid}")
 async def put_data(dataid: str, newData: Dict[str, Any], db: AsyncIOMotorDatabase = Depends(get_db)):
     datares = await get_resource(db, dataid)
     [comp, *_] = await get_resources_linking_to(db, dataid, datares.hash, type="component")
     updated_data = await update_resource_content(db, resid=dataid, content=newData)
     await update_linked(db, comp.resid, updated_data)
 
-@app.delete("/components/{resid}/{data_type}/{dataid}")
+@app.delete("/components/{resid}/{data_type_plural}/{dataid}")
+@app.delete("/data/{data_type_plural}/{dataid}")
 async def delete_data(dataid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     await delete_resource(db, dataid)
 

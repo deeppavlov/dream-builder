@@ -1,5 +1,7 @@
 from typing import Optional, List
 import asyncio, tempfile, os, json, logging
+from pathlib import Path
+
 import hashlib
 import shutil
 import yaml
@@ -89,6 +91,32 @@ def hash_file(path: str):
             sha1.update(data)
     sha1.hexdigest()
 
+
+def _write_yml(content, path, pipe_style=False):
+    default_style = "|" if pipe_style else None
+    with open(path, "w") as yml_f:
+        yaml.dump(content, yml_f, default_style=default_style)
+
+
+def write_nlu(nlu_content, path):
+    content = {"nlu": nlu_content, "version": "2.0"}
+    _write_yml(content, path, pipe_style=True)
+
+
+def write_domain(domain_content, path):
+    content = {"intents": domain_content, "version": "2.0"}
+    _write_yml(content, path)
+
+
+def write_stories(stories_content, path):
+    content = {"stories": stories_content}
+    path = Path(path)
+    _write_yml(content, path)
+    _write_yml(content, path.with_stem(f"{path.stem}-trn"))
+    _write_yml(content, path.with_stem(f"{path.stem}-tst"))
+    _write_yml(content, path.with_stem(f"{path.stem}-val"))
+
+
 async def deploy_single(comp: Component):
     with tempfile.TemporaryDirectory() as tmpdir:
         repo_path = await clone_component(comp, tmpdir)
@@ -114,12 +142,32 @@ async def deploy_single(comp: Component):
             inputs = await get_resources(comp.content.data)
             with open(f'./data/{comp.resid}/input/input.json', "w") as f:
                 json.dump(inputs, f)
+
+            nlu_content = []
+            domain_content = []
+            stories_content = []
+
             for res in inputs:
+                if res['type'] == 'intent':
+                    intent_name = res['content']['name']
+                    intent_examples = "\n".join(res['content']['examples'])
+
+                    nlu_content.append({"intent": intent_name, "examples": intent_examples})
+                    domain_content.append(intent_name)
+                    stories_content.append({"story": "randomstory", "steps": [{"intent": intent_name},
+                                                                              {"action": "system_bye"}]})
+
                 if res['type'] == 'link':
                     minio = get_minio_client()
                     tarpath = os.path.join(tmpdir, res['content']['link'])
                     minio.fget_object("models", res['content']['link'], tarpath)
                     shutil.unpack_archive(tarpath, f'./data/{comp.resid}/input')
+
+            if comp.content.source in ["intent_catcher", "gobot"]:
+                write_nlu(nlu_content, f'./data/{comp.resid}/input/nlu.yml')
+                write_domain(domain_content, f'./data/{comp.resid}/input/domain.yml')
+                write_stories(stories_content, f'./data/{comp.resid}/input/stories.yml')
+
             services["component"]["volumes"].append(os.path.abspath(f'./data/{comp.resid}/input:/input'))
 
         if comp.content.target is not None:

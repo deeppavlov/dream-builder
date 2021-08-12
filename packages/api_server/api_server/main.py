@@ -2,7 +2,7 @@ from typing import Dict, Any, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import FastAPI, Depends
 
-from .resdb.mongodb import DBResChild, init_db, close_db, get_db, get_resource, get_resources_with_type, get_children_with_type, insert_resource
+from .resdb.mongodb import DBResChild, init_db, close_db, get_db, get_resource, get_resources_with_type, get_children_with_type, insert_resource, delete_resource
 from api_types_py import Component, Model
 
 app = FastAPI()
@@ -28,9 +28,9 @@ async def get_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 # async def patch_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 #     pass
 
-# @app.delete("/components/{resid}")
-# async def delete_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
-#     pass
+@app.delete("/components/{resid}")
+async def delete_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
+    await delete_resource(db, resid)
 
 @app.get("/components/{resid}/models", response_model=Dict[str, Model])
 async def list_models(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
@@ -63,7 +63,7 @@ async def put_data(dataid: str, newData: Dict[str, Any], db: AsyncIOMotorDatabas
     await insert_resource(db, resid=dataid, content=newData)
 
 
-# @app.delete("/components/{resid}/{data_type}/{dataid}")
-# async def delete_data(resid: str, data_type: str, dataid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
-#     return f"delete data with type {data_type} and id {dataid} in component id {resid}"
+@app.delete("/components/{resid}/{data_type}/{dataid}")
+async def delete_data(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
+    await delete_resource(db, resid)
 

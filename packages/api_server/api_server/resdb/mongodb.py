@@ -49,6 +49,9 @@ async def get_children_with_type(db: AsyncIOMotorDatabase, parentid: str, childr
     res = db.resources.find({ 'type': children_type, 'resid': { '$in': children_ids }, 'latest': True })
     return [DBResource(**r) for r in await res.to_list(None)]
 
+async def delete_resource(db: AsyncIOMotorDatabase, resid: str):
+    await db.resources.update_many({ 'resid': resid }, { '$set': { 'latest': False } })
+
 async def insert_resource(db: AsyncIOMotorDatabase, *, resid: Optional[str] = None, type: Optional[str] = None, content: Optional[Any] = None, children: Optional[List[DBResChild]] = None) -> DBResource:
     if resid is None:
         resid = generate()

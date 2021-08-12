@@ -1,7 +1,6 @@
 from typing import Dict, Any, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import FastAPI, Depends, HTTPException
-from devtools import debug
 
 from .resdb.mongodb import DBResLink, init_db, close_db, get_db, get_resource, get_resources_with_type, get_linked_resources, insert_resource, delete_resource, get_resources_linking_to, add_linked, update_resource_content, update_linked
 from api_types_py import Component, Training
@@ -36,9 +35,7 @@ async def delete_comp(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 @app.get("/components/{resid}/training", response_model=Training)
 async def get_training(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     comp = await get_resource(db, resid)
-    debug(comp)
     resources = await get_resources_linking_to(db, resid, comp.hash, type="training")
-    debug(resources)
     if len(resources) == 0:
         raise HTTPException(status_code=404)
     if len(resources) > 1:
@@ -48,9 +45,7 @@ async def get_training(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 @app.post("/components/{resid}/training")
 async def post_training(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     comp = await get_resource(db, resid)
-    debug(comp)
     resources = await get_resources_linking_to(db, resid, comp.hash, type="training")
-    debug(resources)
     if len(resources) > 0 :
         raise HTTPException(status_code=400, detail="There's already a training for this version of the component")
     training = await insert_resource(db, type="training", content=Training(status="running", data=[]), linkedres=[DBResLink(resid=resid, hash=comp.hash)])
@@ -60,7 +55,6 @@ async def post_training(resid: str, db: AsyncIOMotorDatabase = Depends(get_db)):
 async def list_data(resid: str, data_type_plural: str, db: AsyncIOMotorDatabase = Depends(get_db)):
     data_type = data_type_plural.rstrip("s")
     resources = await get_linked_resources(db, resid, type=data_type)
-    debug(resources)
     return { res.resid: res.content for res in resources }
 
 @app.post("/components/{resid}/{data_type_plural}")

@@ -3,20 +3,11 @@
   "$id": "Training.json",
   "title": "Training",
   "type": "object",
-  "required": ["status", "data"],
+  "required": ["status"],
   "properties": {
     "status": {
       "type": "string",
-      "enum": ["running", "failed", "succes"]
-    },
-    "data": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "trainedmodel": {
-      "type": "string"
+      "enum": ["running", "failed", "success"]
     }
   }
 }

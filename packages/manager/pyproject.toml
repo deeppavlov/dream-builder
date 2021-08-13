@@ -8,12 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.6"
 PyYAML = "^5.4.1"
-minio = "^7.1.0"
-api-types-py = {path = "../api_types_py", develop = true}
-fastapi = "^0.68.0"
-uvicorn = "^0.14.0"
 aiohttp = "^3.7.4"
-aiodocker = "^0.21.0"
+deeppavlov = {git = "https://github.com/deepmipt/DeepPavlov.git", rev = "rulebased_gobot"}
 
 [tool.poetry.dev-dependencies]
 

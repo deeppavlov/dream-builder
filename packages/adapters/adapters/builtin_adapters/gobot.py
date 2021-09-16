@@ -283,7 +283,7 @@ class GobotDataAdapter(ComponentDataAdapter):
         for story_name, steps in cls._parse_md(files['stories-trn.md']):
             md_stories.append(Story(story_name, steps))
         domain = yaml.load(files['domain.yml'], Loader=yaml.SafeLoader)
-        responses = { resp_name: resp['text'] for resp_name, resp in domain['responses'].items() }
+        responses = { resp_name: resp[0]['text'] for resp_name, resp in domain['responses'].items() }
         flow = Stories.from_stories(md_stories, responses).flow
 
         return cast(Resources, {
@@ -307,7 +307,7 @@ class GobotDataAdapter(ComponentDataAdapter):
         domain_dict = {
             'actions': list(stories.responses.keys()),
             'intents': list(intents.keys()),
-            'responses': { resp_name: { 'text': resp } for resp_name, resp in stories.responses.items() }
+            'responses': { resp_name: [{ 'text': resp }] for resp_name, resp in stories.responses.items() }
         }
 
         nlu_md_lines = []

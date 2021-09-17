@@ -1,0 +1,15 @@
+{
+  "name": "@dp-builder/cotypes",
+  "version": "1.0.0",
+  "main": "ts/index.d.ts",
+  "scripts": {
+    "generate": "poetry run python generate.py",
+    "postinstall": "if-prod && poetry install --no-dev || poetry install"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^10.1.4"
+  },
+  "dependencies": {
+    "if-prod": "^1.0.1"
+  }
+}

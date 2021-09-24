@@ -5,10 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface Training {
-  id: number;
-  timestamp: string;
-  status: "RUNNING" | "FAILED" | "SUCCESS";
-  template_link: string;
-  trained_model_link?: string;
+export interface Project {
+  name: string;
+  export_root: string;
 }

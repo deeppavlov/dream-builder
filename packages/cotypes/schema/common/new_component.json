@@ -1,26 +1,22 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "Component",
-    "title": "Component",
+    "$id": "NewComponent",
+    "title": "NewComponent",
     "type": "object",
     "required": [
-        "id",
         "type",
-        "label",
         "group",
+        "label",
         "template_link"
     ],
     "properties": {
-        "id": {
-            "type": "integer"
-        },
         "type": {
             "type": "string"
         },
-        "label": {
+        "group": {
             "type": "string"
         },
-        "group": {
+        "label": {
             "type": "string"
         },
         "template_link": {

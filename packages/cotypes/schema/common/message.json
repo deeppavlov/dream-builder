@@ -1,0 +1,40 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "Message",
+    "title": "Message",
+    "type": "object",
+    "required": [
+        "user_type"
+    ],
+    "properties": {
+        "user_type": {
+            "type": "string",
+            "enum": [
+                "bot",
+                "user"
+            ]
+        },
+        "text": {
+            "type": "string"
+        },
+        "annotations": {
+            "type": "object"
+        },
+        "date_time": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "hypotheses": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+        },
+        "attributes": {
+            "type": "object"
+        },
+        "confidence": {
+            "type": "number"
+        }
+    }
+}

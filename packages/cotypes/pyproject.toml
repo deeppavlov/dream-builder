@@ -6,6 +6,7 @@ authors = ["mablin7 <magyarb0201@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+pydantic = "^1.8.2"
 
 [tool.poetry.dev-dependencies]
 datamodel-code-generator = "^0.11.13"

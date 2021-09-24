@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "Project",
+    "title": "Project",
+    "type": "object",
+    "required": [
+        "name",
+        "export_root"
+    ],
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "export_root": {
+            "type": "string"
+        }
+    }
+}

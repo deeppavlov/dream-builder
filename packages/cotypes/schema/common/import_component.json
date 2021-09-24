@@ -1,29 +1,21 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "Component",
-    "title": "Component",
+    "$id": "ImportComponent",
+    "title": "ImportComponent",
     "type": "object",
     "required": [
-        "id",
         "type",
-        "label",
         "group",
-        "template_link"
+        "import_path"
     ],
     "properties": {
-        "id": {
-            "type": "integer"
-        },
         "type": {
-            "type": "string"
-        },
-        "label": {
             "type": "string"
         },
         "group": {
             "type": "string"
         },
-        "template_link": {
+        "import_path": {
             "type": "string"
         }
     }

@@ -1,7 +1,12 @@
-import { Model } from './model';
+import { ImportComponent } from './import_component';
+import { NewComponent } from './new_component';
+import { Project } from './project';
 import { Training } from './training';
 import { Component } from './component';
-export { Model } from './model';
+import { Message } from './message';
+export { ImportComponent } from './import_component';
+export { NewComponent } from './new_component';
+export { Project } from './project';
 export { Training } from './training';
 export { Component } from './component';
-export type Resource = Model | Training | Component;
+export { Message } from './message';

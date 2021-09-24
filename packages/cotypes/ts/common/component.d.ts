@@ -6,6 +6,9 @@
  */
 
 export interface Component {
+  id: number;
   type: string;
-  label?: string;
+  label: string;
+  group: string;
+  template_link: string;
 }

@@ -1,4 +1,5 @@
 import subprocess, os, shutil, json
+import black
 from glob import glob
 from pathlib import Path
 from datamodel_code_generator import InputFileType, generate
@@ -12,15 +13,28 @@ TSDIR = Path("ts")
 PYDIR = Path("cotypes")
 SCHEMADIR = Path("schema")
 
+def path2name(path: str):
+    return ''.join(s.title() for s in path.split('_'))
+
+py_schema_dict = {}
 for schema_path in glob(os.path.join(SCHEMADIR, "*", "*.json")):
+    schema_path = Path(schema_path)
     schema = json.load(open(schema_path))
     schema['$schema'] = "https://json-schema.org/draft/2020-12/schema"
-    name = Path(schema_path).stem.capitalize()
+    name = path2name(Path(schema_path).stem)
     schema['$id'] = name
-    schema['title'] = Path(schema_path).stem.capitalize()
-    if schema['type'] == 'object':
-        schema['additionalProperties'] = False
+    schema['title'] = name
     json.dump(schema, open(schema_path, 'w'), indent=4)
+
+    if schema_path.parent.name == 'data':
+        dat_type = schema_path.stem
+        schema = json.load(open(schema_path))
+        py_schema_dict[dat_type] = schema
+
+with open(PYDIR / "data_schemas.py", "w") as f:
+    code = f"schemas = {repr(py_schema_dict)}"
+    formatted = black.format_str(code, mode=black.Mode())
+    f.write(formatted)
 
 for target in ["data", "common"]:
     py_out_dir = PYDIR / target
@@ -33,7 +47,7 @@ for target in ["data", "common"]:
     )
 
     res_types = [ '.'.join(n.split('.')[:-1]) for n in os.listdir(py_out_dir) if n != "__init__.py" ]
-    py_exports = '\n'.join([ f"from .{r} import {r.capitalize()}" for r in res_types ]) + '\n'
+    py_exports = '\n'.join([ f"from .{r} import {path2name(r)}" for r in res_types ]) + '\n'
     py_all = ', '.join([ f"'{r}'" for r in res_types ])
     py_all = f"__all__ = [{py_all}]\n"
 
@@ -44,9 +58,19 @@ for target in ["data", "common"]:
     _ensure_dir_empty(ts_out_dir)
 
     subprocess.run(f"pnpm exec json2ts -i {SCHEMADIR / target} -o {ts_out_dir} --cwd {SCHEMADIR / target}".split(" "))
-    ts_imports = '\n'.join([ f"import {{ {r.capitalize()} }} from './{r}';" for r in res_types ]) + '\n'
-    ts_exports = '\n'.join([ f"export {{ {r.capitalize()} }} from './{r}';" for r in res_types ]) + '\n'
-    ts_resunion =  f"export type Resource = {' | '.join([ r.capitalize() for r in res_types ])};\n"
+
+    for res in res_types:
+        path = (ts_out_dir / res).with_suffix(".d.ts")
+        with open(path) as f:
+            cont = f.read()
+        cont = cont.replace("  [k: string]: unknown;\n", "")
+        with open(path, "w") as f:
+            f.write(cont)
+
+    ts_imports = '\n'.join([ f"import {{ {path2name(r)} }} from './{r}';" for r in res_types ]) + '\n'
+    ts_exports = '\n'.join([ f"export {{ {path2name(r)} }} from './{r}';" for r in res_types ]) + '\n'
+    if target == 'data':
+        ts_exports +=  f"export type Data = {' | '.join([ path2name(r) for r in res_types ])};\n"
 
     with open(ts_out_dir / "index.d.ts", 'w') as f:
-        f.write(ts_imports + ts_exports + ts_resunion)
+        f.write(ts_imports + ts_exports)

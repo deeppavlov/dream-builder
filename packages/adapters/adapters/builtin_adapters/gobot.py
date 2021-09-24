@@ -6,16 +6,21 @@ from typing import Dict, List, Any, Tuple, TypedDict, Union, Optional, Set, cast
 from adapters.registry import register
 from cotypes.adapters import ComponentDataAdapter, FilesDict, Resources
 
+
 class IntentDict(TypedDict):
     name: str
     examples: List[str]
+
+
 SlotsDict = IntentDict
 SlotNamesDict = Dict[str, List[str]]
+
 
 @dataclass
 class NLUIntent:
     name: str
     examples: List[str]
+
 
 class Intent:
     name: str
@@ -58,9 +63,15 @@ class Intent:
                     slot_names_dict[slot_name].add(slot_val)
                 ex_without_vals = re.sub(slot_pat, r"$\g<2>", ex)
                 int_examples.add(ex_without_vals)
-            int_dict: IntentDict = { 'name': nlu_int.name, 'examples': list(int_examples) }
+            int_dict: IntentDict = {
+                "name": nlu_int.name,
+                "examples": list(int_examples),
+            }
             intent_dicts.append(int_dict)
-        slots = [ { 'name': name, 'examples': list(examples) } for name, examples in slot_names_dict.items() ]
+        slots = [
+            {"name": name, "examples": list(examples)}
+            for name, examples in slot_names_dict.items()
+        ]
         return intent_dicts, slots
 
     def get_nlu_intent_variations(self):
@@ -69,14 +80,23 @@ class Intent:
             for s in slot_vals.keys():
                 ex_with_vals = ex_with_vals.replace(f"${s}", f"[{slot_vals[s]}]({s})")
             yield ex_with_vals
+
+
 IntentNamesDict = Dict[str, Intent]
+
 
 class StoryPath:
     def __init__(self, steps: List[Union[str, Intent]]):
         self.steps = steps
 
     def get_variations(self):
-        max_len = max([len(int.variations_with_slot_values) for int in self.steps if isinstance(int, Intent)])
+        max_len = max(
+            [
+                len(int.variations_with_slot_values)
+                for int in self.steps
+                if isinstance(int, Intent)
+            ]
+        )
         for i in range(max_len):
             story: List[str] = []
             for step in self.steps:
@@ -88,10 +108,12 @@ class StoryPath:
                     story.append(f"{step.name}{json.dumps(slot_vals)}")
             yield story
 
+
 @dataclass
 class Story:
     name: str
     steps: List[str]
+
 
 class Stories:
     flow: List[Dict[str, Any]]
@@ -107,7 +129,7 @@ class Stories:
         for story in stories:
             stripped = tuple(step.split("{")[0] for step in story.steps)
             unique_paths.add(stripped)
-        stories_inst.story_paths = [ StoryPath(steps) for steps in unique_paths ]
+        stories_inst.story_paths = [StoryPath(steps) for steps in unique_paths]
         stories_inst.flow = stories_inst._get_flow()
         return stories_inst
 
@@ -117,17 +139,19 @@ class Stories:
         stories_inst.flow = flow
         stories_inst.intents = intents
         paths_node_ids = stories_inst._get_all_paths()
-        stories_inst.story_paths, stories_inst.responses = stories_inst._parse_steps(paths_node_ids)
+        stories_inst.story_paths, stories_inst.responses = stories_inst._parse_steps(
+            paths_node_ids
+        )
         return stories_inst
 
     def _find_starts(self):
         all_nodes = set()
         for el in self.flow:
-            if 'type' in el:
-                all_nodes.add(el['id'])
+            if "type" in el:
+                all_nodes.add(el["id"])
         for el in self.flow:
-            if 'target' in el and el['target'] in all_nodes:
-                all_nodes.remove(el['target'])
+            if "target" in el and el["target"] in all_nodes:
+                all_nodes.remove(el["target"])
         return all_nodes
 
     def _recurse_path(self, source_id: str, steps: List[str]):
@@ -135,8 +159,8 @@ class Stories:
         steps = [*steps, source_id]
         is_last = True
         for el in self.flow:
-            if 'source' in el and el['source'] == source_id:
-                paths += self._recurse_path(el['target'], steps)
+            if "source" in el and el["source"] == source_id:
+                paths += self._recurse_path(el["target"], steps)
                 is_last = False
         if is_last:
             return [steps]
@@ -153,24 +177,24 @@ class Stories:
         next_resp_idx = 0
         response_names = {}
         story_paths = []
-        nodes = { n['id']: n for n in self.flow if 'type' in n }
+        nodes = {n["id"]: n for n in self.flow if "type" in n}
         for path in paths_node_ids:
             path_steps = []
             for step_node_id in path:
                 node = nodes[step_node_id]
-                node_type = node['type']
-                if node_type == 'utterance':
-                    intent_name = node['data']['selectedIntent']
+                node_type = node["type"]
+                if node_type == "utterance":
+                    intent_name = node["data"]["selectedIntent"]
                     intent = self.intents[intent_name]
                     path_steps.append(intent)
-                elif node_type == 'response':
-                    resp = node['data']['respStr']
+                elif node_type == "response":
+                    resp = node["data"]["respStr"]
                     if resp not in response_names:
                         response_names[resp] = f"system_{next_resp_idx}"
                         next_resp_idx += 1
                     path_steps.append(response_names[resp])
             story_paths.append(StoryPath(path_steps))
-        responses = { resp_name: resp for resp, resp_name in response_names.items() }
+        responses = {resp_name: resp for resp, resp_name in response_names.items()}
         return story_paths, responses
 
     def _get_flow(self):
@@ -179,29 +203,28 @@ class Stories:
         nodes = []
         node_ids = set()
         columns = defaultdict(list)
+
         def _add_node(id: int, step_name: str, col_idx: int):
-            if id in node_ids: return id
+            if id in node_ids:
+                return id
             node_ids.add(id)
-            type = 'response' if step_name in self.responses else 'utterance'
+            type = "response" if step_name in self.responses else "utterance"
             data = {}
-            if type == 'response':
-                data['respStr'] = self.responses[step_name]
-            elif type == 'utterance':
-                data['selectedIntent'] = step_name
+            if type == "response":
+                data["respStr"] = self.responses[step_name]
+            elif type == "utterance":
+                data["selectedIntent"] = step_name
             for neighbor in columns[col_idx]:
-                if neighbor['type'] == type and neighbor['data'] == data:
-                    return neighbor['id']
+                if neighbor["type"] == type and neighbor["data"] == data:
+                    return neighbor["id"]
             idx_in_col = len(columns[col_idx])
             node = {
-                'id': str(id),
-                'type': type,
-                'position': {
-                    'x': COL_WIDTH * col_idx,
-                    'y': idx_in_col * NODE_HEIGHT
-                },
-                'sourcePosition': 'right',
-                'targetPosition': 'left',
-                'data': data
+                "id": str(id),
+                "type": type,
+                "position": {"x": COL_WIDTH * col_idx, "y": idx_in_col * NODE_HEIGHT},
+                "sourcePosition": "right",
+                "targetPosition": "left",
+                "data": data,
             }
 
             columns[col_idx].append(node)
@@ -210,30 +233,33 @@ class Stories:
 
         edges = []
         edge_ids = set()
+
         def _add_edge(source: int, target: int):
             id = f"reactflow__edge-{source}a-{target}a"
-            if id in edge_ids: return
+            if id in edge_ids:
+                return
             edge_ids.add(id)
-            edges.append({
-                'source': str(source),
-                'target': str(target),
-                'sourceHandle': 'a',
-                'targetHandle': 'a',
-                'id': id
-            })
+            edges.append(
+                {
+                    "source": str(source),
+                    "target": str(target),
+                    "sourceHandle": "a",
+                    "targetHandle": "a",
+                    "id": id,
+                }
+            )
 
-        max_len = max([ len(path.steps) for path in self.story_paths ])
+        max_len = max([len(path.steps) for path in self.story_paths])
         unique_first_nodes = set(str(path.steps[0]) for path in self.story_paths)
         for node_type in unique_first_nodes:
             _add_node(hash((node_type,)), node_type, 0)
         for i in range(1, max_len):
-            unique_paths = set(tuple(path.steps[:i + 1]) for path in self.story_paths)
+            unique_paths = set(tuple(path.steps[: i + 1]) for path in self.story_paths)
             for path in unique_paths:
                 node_id = hash(path)
                 id_to_connect_to = _add_node(node_id, str(path[-1]), i)
                 _add_edge(hash(path[:-1]), id_to_connect_to)
         return nodes + edges
-
 
     def get_all_stories(self):
         story_idx = 0
@@ -243,50 +269,54 @@ class Stories:
                 story_idx += 1
                 yield Story(name=story_name, steps=variation)
 
+
 def _parse_md(md_file: str):
     block_name: Optional[str] = None
     block_lines: List[str] = []
-    for line in md_file.split('\n'):
+    for line in md_file.split("\n"):
         line = line.strip()
-        if line.startswith('##'):
+        if line.startswith("##"):
             if block_name is not None:
                 yield (block_name, block_lines)
                 block_lines = []
-            block_name = line.lstrip('##').strip()
-        elif line.startswith('-'):
-            bline = line.lstrip('-').strip()
+            block_name = line.lstrip("##").strip()
+        elif line.startswith("-"):
+            bline = line.lstrip("-").strip()
             block_lines.append(bline)
-        elif line.startswith('*'):
-            bline = line.lstrip('*').strip()
+        elif line.startswith("*"):
+            bline = line.lstrip("*").strip()
             block_lines.append(bline)
     if len(block_lines) != 0:
         yield (cast(str, block_name), block_lines)
 
+
 @register(component_type="gobot")
 class GobotDataAdapter(ComponentDataAdapter):
     def override_configs(self, files: FilesDict) -> FilesDict:
-        GOBOT = 'config.json'
-        INTENT = 'intents_config.json'
-        SLOT = 'slotfill_config.json'
+        GOBOT = "config.json"
+        INTENT = "intents_config.json"
+        SLOT = "slotfill_config.json"
         for conf in [GOBOT, INTENT, SLOT]:
             if conf not in files:
-                raise FileNotFoundError(f"{conf.capitalize()} config is required for gobot!")
+                raise FileNotFoundError(
+                    f"{conf.capitalize()} config is required for gobot!"
+                )
 
         gobot_conf = json.loads(files[GOBOT])
         int_conf = json.loads(files[INTENT])
         slot_conf = json.loads(files[SLOT])
-        gobot_conf['metadata']['variables']['DATA_PATH'] = 'data'
-        int_conf['metadata']['variables']['DATA_PATH'] = 'data'
-        slot_conf['metadata']['variables']['DATA_PATH'] = 'data'
-        int_pipe = int_conf['chainer']['pipe']
+        gobot_conf["metadata"]["variables"]["DATA_PATH"] = "data"
+        int_conf["metadata"]["variables"]["DATA_PATH"] = "data"
+        slot_conf["metadata"]["variables"]["DATA_PATH"] = "data"
+        int_pipe = int_conf["chainer"]["pipe"]
         for comp in int_pipe:
-            if 'number_of_intents' in comp:
-                comp['number_of_intents'] = len(self.data['intent'])
-        gobot_conf['chainer']['pipe'][-1]['slot_filler'] = { 'config_path': SLOT }
-        gobot_conf['chainer']['pipe'][-1]['intent_classifier'] = { 'config_path': INTENT }
-        slot_names = [ s['name'] for s in self.data['slot'] ]
-        gobot_conf['chainer']['pipe'][-1]['tracker']['slot_names'] = slot_names
-        gobot_conf['train']['epochs'] = 50
+            if "number_of_intents" in comp:
+                comp["number_of_intents"] = len(self.data["intent"])
+        gobot_conf["chainer"]["pipe"][-1]["slot_filler"] = {"config_path": SLOT}
+        gobot_conf["chainer"]["pipe"][-1]["intent_classifier"] = {"config_path": INTENT}
+        slot_names = [s["name"] for s in self.data["slot"]]
+        gobot_conf["chainer"]["pipe"][-1]["tracker"]["slot_names"] = slot_names
+        gobot_conf["train"]["epochs"] = 50
 
         return {
             GOBOT: json.dumps(gobot_conf, indent=4),
@@ -296,50 +326,58 @@ class GobotDataAdapter(ComponentDataAdapter):
 
     @classmethod
     def from_files(cls, files: FilesDict) -> ComponentDataAdapter:
-        if 'domain.yml' not in files:
+        if "domain.yml" not in files:
             raise FileNotFoundError("Missing domain.yml")
-        if 'nlu.md' not in files:
+        if "nlu.md" not in files:
             raise FileNotFoundError("Missing nlu.md")
-        if 'stories-trn.md' not in files:
+        if "stories-trn.md" not in files:
             raise FileNotFoundError("Missing stories-trn.md")
 
         nlu_intents: List[NLUIntent] = []
-        for block_name, examples in _parse_md(files['nlu.md']):
+        for block_name, examples in _parse_md(files["nlu.md"]):
             int_name = block_name[7:]
             nlu_intents.append(NLUIntent(int_name, examples))
         intents, slots = Intent.from_nlu_intents(nlu_intents)
         md_stories: List[Story] = []
-        for story_name, steps in _parse_md(files['stories-trn.md']):
+        for story_name, steps in _parse_md(files["stories-trn.md"]):
             md_stories.append(Story(story_name, steps))
-        domain = yaml.load(files['domain.yml'], Loader=yaml.SafeLoader)
-        responses = { resp_name: resp[0]['text'] for resp_name, resp in domain['responses'].items() }
+        domain = yaml.load(files["domain.yml"], Loader=yaml.SafeLoader)
+        responses = {
+            resp_name: resp[0]["text"]
+            for resp_name, resp in domain["responses"].items()
+        }
         flow = Stories.from_stories(md_stories, responses).flow
 
         adapter = cls()
         adapter.files = files
-        adapter.data = cast(Resources, {
-            'flow': [{ 'el': flow }],
-            'intent': intents,
-            'slot': slots
-        })
+        adapter.data = cast(
+            Resources, {"flow": [{"el": flow}], "intent": intents, "slot": slots}
+        )
         return adapter
-        
 
     @classmethod
     def from_data(cls, res: Resources) -> ComponentDataAdapter:
-        if 'flow' not in res or len(res['flow']) != 1:
+        if "flow" not in res or len(res["flow"]) != 1:
             raise RuntimeError("Exactly one flow is required to export a gobot")
-        flow = res['flow'][0]['el']
+        flow = res["flow"][0]["el"]
         slot_dicts = res.get("slot", [])
-        slot_names_dict: SlotNamesDict = { slot['name']: slot['examples'] for slot in slot_dicts }
-        intent_dicts = cast(List[IntentDict], res.get('intent', []))
-        intents: IntentNamesDict = { int['name']: Intent.from_intent(int, slot_names_dict) for int in intent_dicts }
+        slot_names_dict: SlotNamesDict = {
+            slot["name"]: slot["examples"] for slot in slot_dicts
+        }
+        intent_dicts = cast(List[IntentDict], res.get("intent", []))
+        intents: IntentNamesDict = {
+            int["name"]: Intent.from_intent(int, slot_names_dict)
+            for int in intent_dicts
+        }
         stories = Stories.from_flow(flow, intents)
 
         domain_dict = {
-            'actions': list(stories.responses.keys()),
-            'intents': list(intents.keys()),
-            'responses': { resp_name: [{ 'text': resp }] for resp_name, resp in stories.responses.items() }
+            "actions": list(stories.responses.keys()),
+            "intents": list(intents.keys()),
+            "responses": {
+                resp_name: [{"text": resp}]
+                for resp_name, resp in stories.responses.items()
+            },
         }
 
         nlu_md_lines = []
@@ -358,15 +396,14 @@ class GobotDataAdapter(ComponentDataAdapter):
         stories_md = "\n".join(stories_lines)
 
         files = {
-            'domain.yml': yaml.dump(domain_dict),
-            'nlu.md': "\n".join(nlu_md_lines),
-            'stories-trn.md': stories_md,
-            'stories-tst.md': stories_md,
-            'stories-val.md': stories_md
+            "domain.yml": yaml.dump(domain_dict),
+            "nlu.md": "\n".join(nlu_md_lines),
+            "stories-trn.md": stories_md,
+            "stories-tst.md": stories_md,
+            "stories-val.md": stories_md,
         }
 
         adapter = cls()
         adapter.files = files
         adapter.data = res
         return adapter
-        

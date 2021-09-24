@@ -92,9 +92,9 @@ class StoryPath:
     def get_variations(self):
         max_len = max(
             [
-                len(int.variations_with_slot_values)
-                for int in self.steps
-                if isinstance(int, Intent)
+                len(current_intent.variations_with_slot_values)
+                for current_intent in self.steps
+                if isinstance(current_intent, Intent)
             ]
         )
         for i in range(max_len):

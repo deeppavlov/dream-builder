@@ -2,6 +2,9 @@ lockfileVersion: 5.3
 
 importers:
 
+  .:
+    specifiers: {}
+
   packages/frontend:
     specifiers:
       '@dp-builder/api_types_ts': workspace:^1.0.0
@@ -64,6 +67,15 @@ importers:
       nodemon: ^2.0.12
     devDependencies:
       nodemon: 2.0.12
+
+  packages/types:
+    specifiers:
+      if-prod: ^1.0.1
+      json-schema-to-typescript: ^10.1.4
+    dependencies:
+      if-prod: 1.0.1
+    devDependencies:
+      json-schema-to-typescript: 10.1.4
 
   tools/generate_types_from_schema:
     specifiers:
@@ -3516,6 +3528,11 @@ packages:
     dependencies:
       postcss: 8.3.5
     dev: true
+
+  /if-prod/1.0.1:
+    resolution: {integrity: sha512-Gb5IQnj0Jhnhqyb/Av540S8MmuXbkZ328f9lXEowh4Oj8H++/LjOD4j6Q0h4A1tpUxAcRm2JJXp1i6ZOB1bB9Q==}
+    hasBin: true
+    dev: false
 
   /ignore-by-default/1.0.1:
     resolution: {integrity: sha1-SMptcvbGo68Aqa1K5odr44ieKwk=}

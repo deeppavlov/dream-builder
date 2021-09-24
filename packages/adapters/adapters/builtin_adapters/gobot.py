@@ -30,25 +30,25 @@ class Intent:
 
     @classmethod
     def from_intent(cls, intent: IntentDict, slots: SlotNamesDict):
-        int = Intent()
-        int.name = intent['name']
-        int.examples = intent['examples']
-        int.slots = slots
+        current_intent = Intent()
+        current_intent.name = intent['name']
+        current_intent.examples = intent['examples']
+        current_intent.slots = slots
 
-        int.variations_with_slot_values = []
-        for ex in int.examples:
+        current_intent.variations_with_slot_values = []
+        for ex in current_intent.examples:
             slot_names = set(re.findall(r"(?<=\$)\w+", ex))
             if len(slot_names) == 0:
-                int.variations_with_slot_values.append((ex, {}))
+                current_intent.variations_with_slot_values.append((ex, {}))
             else:
-                max_len = max([len(int.slots[slot]) for slot in slot_names])
+                max_len = max([len(current_intent.slots[slot]) for slot in slot_names])
                 for i in range(max_len):
                     slot_vals = {}
                     for slot in slot_names:
-                        slot_val_idx = i % len(int.slots[slot])
-                        slot_vals[slot] = int.slots[slot][slot_val_idx]
-                    int.variations_with_slot_values.append((ex, slot_vals))
-        return int
+                        slot_val_idx = i % len(current_intent.slots[slot])
+                        slot_vals[slot] = current_intent.slots[slot][slot_val_idx]
+                    current_intent.variations_with_slot_values.append((ex, slot_vals))
+        return current_intent
 
     @staticmethod
     def from_nlu_intents(nlu_intents: List[NLUIntent]):

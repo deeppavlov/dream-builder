@@ -8,7 +8,7 @@ type Result<T> = { [resid: string]: T }
 
 export const resourceApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  tagTypes: ["Component", "Data"],
+  tagTypes: ["Component", "Data", "Training"],
   endpoints: (build) => ({
     getComponentsWithType: build.query<Result<Component>, string>({
       query: (type) => ({ url: `/components?type=${type}` }),
@@ -36,6 +36,27 @@ export const resourceApi = createApi({
       invalidatesTags: (id) => id ? [{ type: 'Data', id: "LIST" }] : []
     }),
 
+    postTraining: build.mutation<null, { compId: string }>({
+      query: ({ compId }) => ({
+        url: `/components/${compId}/training`,
+        method: "POST"
+      }),
+      invalidatesTags: (_, __, {compId}) => [{ type: 'Training', id: compId }]
+    }),
+
+    getTraining: build.query<{ status: string }, { compId: string }>({
+      query: ({ compId }) => ({ url: `/components/${compId}/training` }),
+      providesTags: (_, __, {compId}) => [{ type: 'Training', id: compId }]
+    }),
+
+    interact: build.mutation<[[[string]]], { compId: string, msg: string[] }>({
+      query: ({ compId, msg }) => ({
+        url: `/components/${compId}/interact`,
+        method: "POST",
+        body: {msg}
+      }),
+    }),
+
     updateData: build.mutation<null, { compId: string, dataType: string, dataId: string, newData: Data }>({
       query: ({ compId, dataType, dataId, newData }) => ({
         url: `/components/${compId}/${dataType}s/${dataId}`,
@@ -56,5 +77,5 @@ export const resourceApi = createApi({
   })
 })
 
-export const { useGetComponentsWithTypeQuery, useCreateComponentMutation, useGetComponentDataWithTypeQuery, useUpdateDataMutation, useCreateDataMutation } = resourceApi;
+export const { useGetComponentsWithTypeQuery, useCreateComponentMutation, useGetComponentDataWithTypeQuery, useUpdateDataMutation, useCreateDataMutation, usePostTrainingMutation, useGetTrainingQuery, useInteractMutation } = resourceApi;
 

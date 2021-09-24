@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import ReactFlow, { Handle, Controls, Background, updateEdge, addEdge, removeElements, OnLoadParams, Elements, NodeTypesType, Position, BackgroundVariant } from 'react-flow-renderer';
 import { styled } from "goober";
 import { nanoid } from "nanoid";
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+// import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import {
   useGetComponentsWithTypeQuery,
@@ -10,7 +10,9 @@ import {
   useCreateDataMutation,
   useGetComponentDataWithTypeQuery,
   useUpdateDataMutation,
-  // useDeleteDataMutation
+  usePostTrainingMutation,
+  useGetTrainingQuery,
+  useInteractMutation
 } from "../resourcesSlice";
 // import type { Intent, Resource } from "@dp-builder/api_types_ts"
 
@@ -37,16 +39,8 @@ const Dropdown = ({ options, onSelect, selected }: { options: string[], onSelect
 }
 
 const withMenu = <P extends React.PropsWithChildren<{ id: string }>>(Comp: React.FC<P>): React.FC<P> => ({ ...props }) => {
-  const id = nanoid()
-  const onDelete = React.useContext(DeleteNoteCbContext)
-  return <>
-    <ContextMenuTrigger id={id}><Comp {...props}/></ContextMenuTrigger>
-    <ContextMenu id={id}>
-      <MenuItem onClick={() => onDelete(props.id)}>
-        Delete
-      </MenuItem>
-    </ContextMenu>
-  </>
+  const onDelete = React.useContext(DeleteNoteCbContext) 
+  return <div onDoubleClick={() => onDelete(props.id)}><Comp {...props}/></div>
 }
 
 const UtteranceNode = withMenu(({ id, data: { selectedIntent } }: { id: string, data: NodeData }) => {
@@ -58,6 +52,12 @@ const UtteranceNode = withMenu(({ id, data: { selectedIntent } }: { id: string, 
   return (
     <NodeContainer>
       <NodeTitle>User Utterance</NodeTitle>
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="a"
+        style={{ top: '50%', borderRadius: 0 }}
+      />
       <NodeBody>
         {(intents.length > 0 &&
           <Dropdown options={intents.map((int) => int.name)} onSelect={(newOpt) => onDataChange(id, { selectedIntent: newOpt })} selected={selectedIntent}/>
@@ -118,6 +118,12 @@ const ResponseNode = withMenu(({ id, data: { respStr } }: { id: string, data: No
       <NodeBody>
         <input type="text" value={respStr || ""} onChange={onInputChange} style={{width: "100%"}}/>
       </NodeBody>
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="b"
+        style={{ top: '50%', borderRadius: 0 }}
+      />
     </NodeContainer>
   )
 })
@@ -164,6 +170,16 @@ export default () => {
   const currentFlowRes = currentFlowId && flowsRes ? flowsRes[currentFlowId] : null
   const [createData] = useCreateDataMutation()
   const [updateData] = useUpdateDataMutation();
+
+  const { data: trainStatus } = useGetTrainingQuery({ compId: compId || "" }, { skip: !compId, pollingInterval: 3000 })
+  const [startTrain] = usePostTrainingMutation()
+  const canTrain = compId && currentFlowRes && (!trainStatus || trainStatus.status === "failed")
+  const [sendMsg, { data: testRes, isLoading: isFetchingTestRes }] = useInteractMutation()
+  const [msgHist, setMsgHist] = useState<string[]>([])
+  useEffect(() => {
+    //@ts-ignore
+    if (testRes) setMsgHist(h => [...h, testRes.text])
+  }, [testRes])
 
   useEffect(() => {
     if (compId && flowsRes) {
@@ -231,6 +247,9 @@ export default () => {
     setElements((es) => es.concat(newNode));
   };
 
+  const handleTrain = () => (startTrain({ compId }), setMsgHist([]))
+  const handleTest = (testMsg: string) => (sendMsg({ compId, msg: [testMsg] }), setMsgHist(h => [...h, testMsg]))
+
   return (
     <ColumnsContainer>
       <Column>
@@ -266,11 +285,72 @@ export default () => {
       </Column>
 
       <Column maxwidth="300px">
-        <Palette/>
+        <RowContainer>
+        <Row maxheight="50%"><Palette/></Row>
+            <Row>
+              <ColumnHeader><ColumnTitle>test out the bot</ColumnTitle></ColumnHeader>
+
+              {canTrain
+                ? <_CentMsgCont><button onClick={handleTrain}>Click here to train!</button></_CentMsgCont>
+                : trainStatus?.status === "running"
+                  ? <_CentMsgCont>Training...</_CentMsgCont>
+                  : ( isFetchingTestRes ? 
+                    <_CentMsgCont>Fetching...</_CentMsgCont>
+                    : <Chat>
+                        {msgHist.map((m, idx) => idx % 2 == 0 ? <ChatBubbleLeft><ChatBubbleCont>{m}</ChatBubbleCont></ChatBubbleLeft> : <ChatBubbleRight><ChatBubbleContDark>{m}</ChatBubbleContDark></ChatBubbleRight>)}
+                        <ChatInput type="text" placeholder="Type a message here..." onKeyDown={(ev) => ev.key === "Enter" && (ev.target as HTMLInputElement).value !== "" && handleTest((ev.target as HTMLInputElement).value)} />
+                      </Chat>
+                  )
+              }
+            </Row>
+        </RowContainer>
       </Column>
     </ColumnsContainer>
   );
 };
+
+const Chat = styled("div")({
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "stretch",
+  overflowY: "auto",
+  position: "relative",
+  marginBottom: "10px"
+})
+
+const ChatInput = styled("input")({
+  width: "100%",
+  height: "2rem",
+  position: "absolute",
+  bottom: 0
+})
+
+const ChatBubbleLeft = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "start"
+})
+
+const ChatBubbleRight = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "end"
+})
+
+const ChatBubbleCont = styled("div")({
+  padding: "10px",
+  margin: "7px",
+  borderRadius: "20px",
+  maxWidth: "50%",
+  border: "solid 1px #444141",
+})
+
+const ChatBubbleContDark = styled(ChatBubbleCont)({
+  backgroundColor: "#444141",
+  color: 'white'
+})
 
 const NodeContainer = styled("div")(({ theme }) => ({
   width: "250px",
@@ -327,4 +407,49 @@ const Column = styled("div")(
     },
   })
 );
+
+const RowContainer = styled("div")({
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "stretch",
+});
+
+const Row = styled("div")(
+  ({ maxheight = "unset" }: { maxheight?: string }) => ({
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+    maxHeight: maxheight,
+    "&:not(:last-child)": {
+      borderBottom: "#DDDDDD 1px solid",
+    },
+  })
+);
+
+const ColumnHeader = styled("div")({
+  padding: "10px 10px",
+  borderBottom: "1px solid #DDDDDD",
+  display: "flex",
+  alignItems: "center",
+  height: "50px",
+});
+
+const ColumnTitle = styled("span")({
+  fontVariant: "small-caps",
+  color: "gray",
+  fontWeight: "bold",
+  fontSize: "1.15em",
+  flexGrow: 1,
+});
+
+const _CentMsgCont = styled("div")({
+  alignSelf: "stretch",
+  flexGrow: 1,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+});
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 /* import { IoIosArrowBack } from "react-icons/io"; */
 import { styled } from "goober";
 
@@ -106,6 +106,15 @@ const PageItem: React.FC<{
   );
 };
 
+function ImportBtn() {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  return <>
+    <input type='file' id='file' ref={fileRef} style={{display: 'none'}}/> 
+    <button onClick={() => fileRef.current?.click()}/>
+    </>
+}
+
 export default function () {
   const [isOpen, _setIsOpen] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
@@ -164,6 +173,7 @@ const SidebarCont = styled("div")<PageItemState>(({ $open: open }) => ({
 }));
 
 const SidebarBg = styled(SidebarCont)(({ theme }) => ({
+  paddingTop: "10px",
   zIndex: 15,
   backgroundColor: theme.sidebarBg,
 }));

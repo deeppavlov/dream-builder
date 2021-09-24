@@ -10,6 +10,7 @@ import SelectorIcon from "./icons/selectorIcon.svg";
 
 import Discourse from "./Discourse";
 import Intents from "./Intents";
+import Slots from "./Slots";
 import Pipeline from "./Pipeline";
 import Skills from "./Skills";
 import Gobot from "./Gobot";
@@ -70,6 +71,10 @@ const editors: EditorType[] = [
               {
                 name: "Local Intents", 
                 Editor: () => <Intents componentType="gobot"/>
+              },
+              {
+                name: "Local Slots", 
+                Editor: () => <Slots componentType="gobot"/>
               },
               {
                 name: "Flows", 

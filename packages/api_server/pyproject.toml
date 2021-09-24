@@ -6,18 +6,19 @@ authors = ["Your Name <you@example.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
-motor = "^2.4.0"
-nanoid = "^2.0.0"
-api-types-py = {path = "../api_types_py", develop = true}
+python = "^3.9"
+cotypes = {path = "../cotypes", develop = true}
+adapters = {path = "../adapters", develop = true}
 uvicorn = "^0.14.0"
 fastapi = "^0.66.0"
-pyzmq = "^22.1.0"
-aiohttp = "^3.7.4"
+sqlalchemy = ">=1.4,<1.4.23"
+databases = {extras = ["sqlite"], version = "^0.5.2"}
+jsonschema = "^3.2.0"
 
 [tool.poetry.dev-dependencies]
-devtools = {extras = ["pygments"], version = "^0.6.1"}
+manager = {path = "../manager", develop = true}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+

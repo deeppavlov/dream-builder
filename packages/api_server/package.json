@@ -2,7 +2,7 @@
   "name": "api_server",
   "version": "1.0.0",
   "scripts": {
-    "start": "poetry run uvicorn api_server.main:app --reload --port $API_PORT",
+    "dev": "poetry run uvicorn api_server.dev:app --reload --port 8000",
     "install": "poetry install"
   }
 }

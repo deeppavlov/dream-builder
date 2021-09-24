@@ -1,0 +1,12 @@
+{
+  "name": "@dp-builder/adapters",
+  "version": "1.0.0",
+  "main": "",
+  "scripts": {
+    "postinstall": "if-prod && poetry install --no-dev || poetry install"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "if-prod": "^1.0.1"
+  }
+}

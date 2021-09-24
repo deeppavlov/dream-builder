@@ -1,10 +1,10 @@
 import re, json, yaml
 from dataclasses import dataclass
 from collections import defaultdict
-from typing import Dict, List, Any, Tuple, TypedDict, Union, Optional, cast
+from typing import Dict, List, Any, Tuple, TypedDict, Union, Optional, Set, cast
 
 from adapters.registry import register
-from adapters.adapter import ComponentDataAdapter, FilesDict, Resources
+from cotypes.adapters import ComponentDataAdapter, FilesDict, Resources
 
 class IntentDict(TypedDict):
     name: str
@@ -48,18 +48,19 @@ class Intent:
     @staticmethod
     def from_nlu_intents(nlu_intents: List[NLUIntent]):
         slot_pat = r"\[([\w ]+)\]\(([\w ]+)\)"
-        slot_names_dict: SlotNamesDict = defaultdict(list)
+        slot_names_dict: Dict[str, Set] = defaultdict(set)
         intent_dicts: List[IntentDict] = []
         for nlu_int in nlu_intents:
-            int_dict: IntentDict = { 'name': nlu_int.name, 'examples': [] }
+            int_examples = set()
             for ex in nlu_int.examples:
                 ex_slots = re.findall(slot_pat, ex)
                 for slot_val, slot_name in ex_slots:
-                    slot_names_dict[slot_name].append(slot_val)
+                    slot_names_dict[slot_name].add(slot_val)
                 ex_without_vals = re.sub(slot_pat, r"$\g<2>", ex)
-                int_dict['examples'].append(ex_without_vals)
+                int_examples.add(ex_without_vals)
+            int_dict: IntentDict = { 'name': nlu_int.name, 'examples': list(int_examples) }
             intent_dicts.append(int_dict)
-        slots = [ { 'name': name, 'examples': examples } for name, examples in slot_names_dict.items() ]
+        slots = [ { 'name': name, 'examples': list(examples) } for name, examples in slot_names_dict.items() ]
         return intent_dicts, slots
 
     def get_nlu_intent_variations(self):
@@ -181,7 +182,7 @@ class Stories:
         def _add_node(id: int, step_name: str, col_idx: int):
             if id in node_ids: return id
             node_ids.add(id)
-            type = 'response' if step_name.startswith('system_') else 'utterance'
+            type = 'response' if step_name in self.responses else 'utterance'
             data = {}
             if type == 'response':
                 data['respStr'] = self.responses[step_name]
@@ -242,31 +243,59 @@ class Stories:
                 story_idx += 1
                 yield Story(name=story_name, steps=variation)
 
+def _parse_md(md_file: str):
+    block_name: Optional[str] = None
+    block_lines: List[str] = []
+    for line in md_file.split('\n'):
+        line = line.strip()
+        if line.startswith('##'):
+            if block_name is not None:
+                yield (block_name, block_lines)
+                block_lines = []
+            block_name = line.lstrip('##').strip()
+        elif line.startswith('-'):
+            bline = line.lstrip('-').strip()
+            block_lines.append(bline)
+        elif line.startswith('*'):
+            bline = line.lstrip('*').strip()
+            block_lines.append(bline)
+    if len(block_lines) != 0:
+        yield (cast(str, block_name), block_lines)
 
-@register(component_type="gobot", format="md")
+@register(component_type="gobot")
 class GobotDataAdapter(ComponentDataAdapter):
-    @staticmethod
-    def _parse_md(md_file: str):
-        block_name: Optional[str] = None
-        block_lines: List[str] = []
-        for line in md_file.split('\n'):
-            line = line.strip()
-            if line.startswith('##'):
-                if block_name is not None:
-                    yield (block_name, block_lines)
-                    block_lines = []
-                block_name = line.lstrip('##').strip()
-            elif line.startswith('-'):
-                bline = line.lstrip('-').strip()
-                block_lines.append(bline)
-            elif line.startswith('*'):
-                bline = line.lstrip('*').strip()
-                block_lines.append(bline)
-        if len(block_lines) != 0:
-            yield (cast(str, block_name), block_lines)
+    def override_configs(self, files: FilesDict) -> FilesDict:
+        GOBOT = 'config.json'
+        INTENT = 'intents_config.json'
+        SLOT = 'slotfill_config.json'
+        for conf in [GOBOT, INTENT, SLOT]:
+            if conf not in files:
+                raise FileNotFoundError(f"{conf.capitalize()} config is required for gobot!")
+
+        gobot_conf = json.loads(files[GOBOT])
+        int_conf = json.loads(files[INTENT])
+        slot_conf = json.loads(files[SLOT])
+        gobot_conf['metadata']['variables']['DATA_PATH'] = 'data'
+        int_conf['metadata']['variables']['DATA_PATH'] = 'data'
+        slot_conf['metadata']['variables']['DATA_PATH'] = 'data'
+        int_pipe = int_conf['chainer']['pipe']
+        for comp in int_pipe:
+            if 'number_of_intents' in comp:
+                comp['number_of_intents'] = len(self.data['intent'])
+        gobot_conf['chainer']['pipe'][-1]['slot_filler'] = { 'config_path': SLOT }
+        gobot_conf['chainer']['pipe'][-1]['intent_classifier'] = { 'config_path': INTENT }
+        slot_names = [ s['name'] for s in self.data['slot'] ]
+        gobot_conf['chainer']['pipe'][-1]['tracker']['slot_names'] = slot_names
+        gobot_conf['train']['epochs'] = 50
+
+        return {
+            GOBOT: json.dumps(gobot_conf, indent=4),
+            INTENT: json.dumps(int_conf, indent=4),
+            SLOT: json.dumps(slot_conf, indent=4),
+        }
 
     @classmethod
-    def import_data(cls, files: FilesDict) -> Resources:
+    def from_files(cls, files: FilesDict) -> ComponentDataAdapter:
         if 'domain.yml' not in files:
             raise FileNotFoundError("Missing domain.yml")
         if 'nlu.md' not in files:
@@ -275,26 +304,29 @@ class GobotDataAdapter(ComponentDataAdapter):
             raise FileNotFoundError("Missing stories-trn.md")
 
         nlu_intents: List[NLUIntent] = []
-        for block_name, examples in cls._parse_md(files['nlu.md']):
-            int_name = block_name.lstrip("intent:")
+        for block_name, examples in _parse_md(files['nlu.md']):
+            int_name = block_name[7:]
             nlu_intents.append(NLUIntent(int_name, examples))
         intents, slots = Intent.from_nlu_intents(nlu_intents)
         md_stories: List[Story] = []
-        for story_name, steps in cls._parse_md(files['stories-trn.md']):
+        for story_name, steps in _parse_md(files['stories-trn.md']):
             md_stories.append(Story(story_name, steps))
         domain = yaml.load(files['domain.yml'], Loader=yaml.SafeLoader)
         responses = { resp_name: resp[0]['text'] for resp_name, resp in domain['responses'].items() }
         flow = Stories.from_stories(md_stories, responses).flow
 
-        return cast(Resources, {
+        adapter = cls()
+        adapter.files = files
+        adapter.data = cast(Resources, {
             'flow': [{ 'el': flow }],
             'intent': intents,
             'slot': slots
         })
+        return adapter
         
 
-    @staticmethod
-    def export_data(res: Resources) -> FilesDict:
+    @classmethod
+    def from_data(cls, res: Resources) -> ComponentDataAdapter:
         if 'flow' not in res or len(res['flow']) != 1:
             raise RuntimeError("Exactly one flow is required to export a gobot")
         flow = res['flow'][0]['el']
@@ -333,7 +365,8 @@ class GobotDataAdapter(ComponentDataAdapter):
             'stories-val.md': stories_md
         }
 
-        return files
-
-
+        adapter = cls()
+        adapter.files = files
+        adapter.data = res
+        return adapter
         

@@ -1,15 +1,17 @@
-from typing import Type, TypeVar
-from collections import defaultdict
-from adapters import ComponentDataAdapter
+from typing import Type, TypeVar, List
+from cotypes.adapters import ComponentDataAdapter
 
-_adapters_registry = defaultdict(dict)
+_adapters_registry = {}
 
 T = TypeVar('T', Type[ComponentDataAdapter], None)
-def register(component_type: str, format: str):
+def register(component_type: str):
     def decorate(cls: T) -> T:
-        _adapters_registry[component_type][format] = cls
+        _adapters_registry[component_type] = cls
         return cls
     return decorate
 
-def get_component_data_adapter(component_type: str, format: str) -> Type[ComponentDataAdapter]:
-    return _adapters_registry[component_type][format]
+def get_component_data_adapter(component_type: str) -> Type[ComponentDataAdapter]:
+    return _adapters_registry[component_type]
+
+def get_supported_components() -> List[str]:
+    return list(_adapters_registry.keys())

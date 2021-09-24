@@ -6,10 +6,10 @@ authors = ["mablin7 <magyarb0201@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
-PyYAML = "^5.4.1"
+python = "^3.9"
+cotypes = {path = "../cotypes", develop = true}
+adapters = {path = "../adapters", develop = true}
 aiohttp = "^3.7.4"
-deeppavlov = {git = "https://github.com/deepmipt/DeepPavlov.git", rev = "rulebased_gobot"}
 
 [tool.poetry.dev-dependencies]
 

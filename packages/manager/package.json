@@ -2,10 +2,8 @@
   "name": "manager",
   "version": "1.0.0",
   "scripts": {
-    "start": "poetry run uvicorn manager.main:app --port 5555 --reload",
+    "start": "poetry run uvicorn manager.main_dp:app --port 5555 --reload",
     "install": "poetry install"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.12"
-  }
+  "devDependencies": {}
 }

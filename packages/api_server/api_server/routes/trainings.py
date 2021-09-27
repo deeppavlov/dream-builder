@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from api_server.db import DB
 from cotypes.data_schemas import schemas as data_schemas
 from cotypes.manager import ComponentRunner
-from cotypes.common import Training, Message, Component
+from cotypes.common import Training, Message, Component, Data
 
 router = APIRouter(prefix='/trainings')
 
@@ -32,11 +32,11 @@ async def create_message(train_id: int, msg: Message, db: DB = Depends(), runner
     await db.create_message(train_id, msg.dict(), response.dict())
     return response
 
-@router.get("/{train_id}/data")
+@router.get("/{train_id}/data", response_model=Dict[str, List[Data]])
 async def get_training_data(train_id: int, db: DB = Depends()):
     return await db.list_all_training_data(train_id)
 
-@router.get("/{train_id}/{data_type_plural}")
+@router.get("/{train_id}/{data_type_plural}", response_model=List[Data])
 async def get_training_data_by_type(train_id: int, data_type_plural: str, db: DB = Depends()):
     data_type = data_type_plural[:-1]
     if data_type not in data_schemas:

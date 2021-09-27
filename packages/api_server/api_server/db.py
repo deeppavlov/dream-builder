@@ -262,7 +262,7 @@ class DB:
     def _sort_data_into_dict(self, data_list: List[Union[Dict, Mapping]]):
         data_dict = defaultdict(list)
         for item in data_list:
-            data_dict[item['type']].append(item['content'])
+            data_dict[item['type']].append(item)
         return data_dict
 
     async def _get_one(self, table: sa.Table, *conds):

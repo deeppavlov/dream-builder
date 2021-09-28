@@ -7,7 +7,7 @@ from cotypes.adapters import Resources
 
 class ComponentRunner(ABC):
     @abstractmethod
-    async def start_training(self, training_hash: str, comp: Component, data: Resources) -> Status:
+    async def start_training(self, training_hash: str, template_link: str, comp: Component, data: Resources) -> Status:
         """Builds the component and runs a training."""
         raise NotImplementedError()
 

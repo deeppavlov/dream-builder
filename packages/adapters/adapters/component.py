@@ -3,8 +3,7 @@ from typing import List
 from pathlib import Path
 
 from adapters.registry import get_component_data_adapter
-from adapters import store
-from cotypes.adapters import ImportedComponent, Resources, FilesDict
+from cotypes.adapters import Resources, FilesDict
 from cotypes.common import Component
 
 def _read_files(dir_path: Path, ignore_dirs: List[str] = []) -> FilesDict:
@@ -32,15 +31,9 @@ def import_component(comp_root: Path, comp_type: str):
     Adapter = get_component_data_adapter(comp_type)
     files_dict = _read_files(comp_root / 'data')
     adapter = Adapter.from_files(files_dict)
-    template_link = store.store(comp_root, driver_name="git")
-    return ImportedComponent(
-        data=adapter.data,
-        template_link=template_link)
+    return adapter.data
 
 def export_component(comp: Component, data: Resources, comp_root: Path):
-    if not comp_root.exists():
-        os.makedirs(comp_root)
-    store.dump(comp.template_link, comp_root)
     Adapter = get_component_data_adapter(comp.type)
     adapter = Adapter.from_data(data)
     data_dir = comp_root / 'data'

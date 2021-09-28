@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from typing import Optional, List
 from pathlib import Path
 
+from adapters import store
 from adapters.concurrent import export_component
 from cotypes.common.training import Status
 from cotypes.common import Component, Message
@@ -77,7 +78,7 @@ class DockerRunner(ComponentRunner):
         self.gpus = "--gpus all" if gpus_ok == 0 else ""
 
 
-    async def start_training(self, training_hash: str, comp: Component, data: Resources) -> Status:
+    async def start_training(self, training_hash: str, template_link: str, comp: Component, data: Resources) -> Status:
         """Builds the component in a container and runs a training. 
 
         The component is first exported to a temporary directory, then built and the
@@ -99,6 +100,7 @@ class DockerRunner(ComponentRunner):
             tmpdir = Path(tmpdir)
             logger.info(f"Exporting data for training {label}")
             try:
+                store.dump(template_link, tmpdir)
                 await export_component(comp, data, tmpdir)
             except RuntimeError as e:
                 logger.error(f"Error exporting {label}:\n{e}")
@@ -212,5 +214,5 @@ class DockerRunner(ComponentRunner):
                 response = await req.json()
                 logger.info(f"Received reply from {cont_name}:\n{json.dumps(response, indent=4)}")
                 formatted = agent.format_reply(comp, response)
-                logger.info(f"Formatted reply from {cont_name}:\n{json.dumps(formatted.dict(), indent=4)}")
+                logger.info(f"Formatted reply from {cont_name}:\n{formatted.json(indent=4)}")
                 return formatted

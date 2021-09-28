@@ -37,11 +37,6 @@ class StoreDriver(ABC):
         pass
 
 @dataclass
-class ImportedComponent:
-    data: Resources
-    template_link: str
-
-@dataclass
 class StorePath:
     driver: str
     path: str

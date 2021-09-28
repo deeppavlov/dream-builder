@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 
 from api_server.db import DB, NotFoundError
 from adapters.concurrent import export_component
+from adapters import store
 from cotypes.data_schemas import schemas as data_schemas
 from cotypes.manager import ComponentRunner
 from cotypes.common import Component, Training, Data
@@ -55,14 +56,17 @@ async def create_training(comp_id: int, db: DB = Depends(), runner: ComponentRun
             raise HTTPException(status_code=400, detail="This component has already been trained with this data")
     except NotFoundError:
         pass
-    new_train_id = await db.create_training(comp_id)
-    new_training = await db.get_training(new_train_id)
-    data_with_ids = await db.list_all_component_data(comp_id)
-    data = { type: [ item['content'] for item in items ] for type, items in data_with_ids.items() }
 
-    training_cor = runner.start_training(new_training['data_hash'], Component(**comp), data)
-    asyncio.create_task(_run_train_and_save_status(training_cor, new_train_id, db))
-    return jsonable_encoder(new_training)
+    async with db.db.transaction():
+        template_link = store.store(Path(comp['template_link']), driver_name="git")
+        new_train_id = await db.create_training(comp_id, template_link)
+        new_training = await db.get_training(new_train_id)
+        data_with_ids = await db.list_all_component_data(comp_id)
+        data = { type: [ item['content'] for item in items ] for type, items in data_with_ids.items() }
+
+        training_cor = runner.start_training(new_training['data_hash'], template_link, Component(**comp), data)
+        asyncio.create_task(_run_train_and_save_status(training_cor, new_train_id, db))
+        return jsonable_encoder(new_training)
 
 @router.get("/{comp_id}/last_training", response_model=Training)
 async def get_last_training(comp_id: int, db: DB = Depends()):

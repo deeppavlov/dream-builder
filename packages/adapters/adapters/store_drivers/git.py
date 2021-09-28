@@ -4,12 +4,18 @@ from pathlib import Path
 from zipfile import ZipFile
 from cotypes.adapters import StorePath, StoreDriver
 
+class DirtyRepoError(Exception):
+    pass
+
 class GitDriver(StoreDriver):
     def store(self, path: Path) -> StorePath:
-        git_proc = subprocess.run(["git", "rev-parse", "HEAD"], cwd=path, capture_output=True, text=True)
-        if git_proc.returncode != 0:
+        diff_proc = subprocess.run(["git", "diff-index", "--quiet", "HEAD", "--"], cwd=path)
+        if diff_proc.returncode != 0:
+            raise DirtyRepoError("The repository contains uncommited changes. Commit or stash and try again!")
+        revaprse_proc = subprocess.run(["git", "rev-parse", "HEAD"], cwd=path, capture_output=True, text=True)
+        if revaprse_proc.returncode != 0:
             raise RuntimeError(f"{path} is not inside a git repo")
-        hash = git_proc.stdout.strip()
+        hash = revaprse_proc.stdout.strip()
         return StorePath(driver="git", path=str(path), hash=hash)
 
     def dump(self, path: str, hash: str, target_dir: Path):

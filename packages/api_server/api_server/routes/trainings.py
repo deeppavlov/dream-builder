@@ -34,8 +34,8 @@ async def create_message(train_id: int, msg: Message, db: DB = Depends(), runner
     message_hist.append(msg)
 
     response = await runner.interact(training['data_hash'], comp, message_hist)
-    await db.create_message(train_id, msg.dict(), response.dict())
-    return response
+    await db.create_message(train_id, jsonable_encoder(msg), jsonable_encoder(response))
+    return jsonable_encoder(response)
 
 @router.get("/{train_id}/data", response_model=Dict[str, List[Data]])
 async def get_training_data(train_id: int, db: DB = Depends()):

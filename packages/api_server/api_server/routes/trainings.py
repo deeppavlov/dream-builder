@@ -13,9 +13,14 @@ router = APIRouter(prefix='/trainings')
 async def get_training(train_id: int, db: DB = Depends()):
     return jsonable_encoder(await db.get_training(train_id))
 
-# @router.get("/{train_id}/messages", response_model=List[Message])
-# async def get_messages(train_id: int, db: DB = Depends()):
-#     return await db.list_messages(train_id)
+@router.get("/{train_id}/messages", response_model=List[Message])
+async def get_messages(train_id: int, db: DB = Depends()):
+    db_messages = await db.list_messages(train_id)
+    out_messages = []
+    for msg in db_messages:
+        out_messages.append(msg['request'])
+        out_messages.append(msg['response'])
+    return out_messages
 
 @router.post("/{train_id}/messages", response_model=Message)
 async def create_message(train_id: int, msg: Message, db: DB = Depends(), runner: ComponentRunner = Depends()):

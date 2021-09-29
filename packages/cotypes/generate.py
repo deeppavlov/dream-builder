@@ -63,7 +63,10 @@ for target in ["data", "common"]:
         path = (ts_out_dir / res).with_suffix(".d.ts")
         with open(path) as f:
             cont = f.read()
-        cont = cont.replace("  [k: string]: unknown;\n", "")
+            if "message" in path.name:
+                cont  = "".join(cont.rsplit("  [k: string]: unknown;\n", 1))
+            else:
+                cont = cont.replace("  [k: string]: unknown;\n", "")
         with open(path, "w") as f:
             f.write(cont)
 

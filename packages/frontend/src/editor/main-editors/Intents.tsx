@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import { styled } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
+import { Menu, Item, useContextMenu } from "react-contexify";
 
-import {
-  useGetComponentDataWithTypeQuery,
-  useCreateComponentMutation,
-  useGetComponentsWithTypeQuery,
-  useCreateDataMutation,
-  useUpdateDataMutation,
-  usePostTrainingMutation,
-  useGetTrainingQuery,
-  useInteractMutation,
-} from "../resourcesSlice";
-import type { Intent } from "@dp-builder/api_types_ts";
+import "react-contexify/dist/ReactContexify.css";
+
+import { useComponent, useData } from "../resourcesSlice";
+
+const MENU_ID = "intent-entry-menu";
 
 const Editable: React.FC<{
   defaultValue?: string;
+  defaultEditing?: boolean;
   onChange: (newVal: string) => void;
   children: (value: string) => JSX.Element;
-}> = ({ onChange, defaultValue, children: renderChild }) => {
-  const [beingEdited, setBeignEdited] = useState(false);
+}> = ({
+  onChange,
+  defaultValue,
+  children: renderChild,
+  defaultEditing = false,
+}) => {
+  const [beingEdited, setBeignEdited] = useState(defaultEditing);
   const [value, setValue] = useState(defaultValue || "");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -28,8 +29,20 @@ const Editable: React.FC<{
   }, [defaultValue]);
 
   useEffect(() => {
-    if (beingEdited) inputRef.current?.focus();
-  }, [beingEdited]);
+    if (beingEdited) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [beingEdited, inputRef.current]);
+
+  const handleKeyDown: React.KeyboardEventHandler = (ev) => {
+    if (ev.key === "Escape") {
+      setBeignEdited(false);
+    } else if (ev.key === "Enter" && value !== "") {
+      setBeignEdited(false);
+      onChange(value);
+    }
+  };
 
   return beingEdited ? (
     <EditableInput
@@ -37,9 +50,7 @@ const Editable: React.FC<{
       defaultValue={value}
       onChange={(ev) => setValue(ev.target.value)}
       onBlur={() => (setBeignEdited(false), onChange(value))}
-      onKeyDown={(ev) =>
-        ev.key === "Enter" && value !== "" && (setBeignEdited(false), onChange(value))
-      }
+      onKeyDown={handleKeyDown}
     />
   ) : (
     React.cloneElement(renderChild(value), {
@@ -48,17 +59,32 @@ const Editable: React.FC<{
   );
 };
 
-const IntentEntry: React.FC<{
-  intentName: string;
-  examples: string[];
-  selected: boolean;
-  onSelected?: () => void;
-  onChange: (newVal: string) => void;
-}> = ({ selected, onSelected, onChange, intentName, examples }) => {
+const IntentEntry: React.FC<
+  {
+    intentName: string;
+    examples: string[];
+    selected: boolean;
+    isNew: boolean;
+    onSelected?: () => void;
+    onNameChange: (newVal: string) => void;
+  } & React.HTMLAttributes<HTMLDivElement>
+> = ({
+  selected,
+  onSelected,
+  onNameChange,
+  intentName,
+  examples,
+  isNew,
+  ...divProps
+}) => {
   return (
-    <Editable onChange={onChange} defaultValue={intentName}>
+    <Editable
+      onChange={onNameChange}
+      defaultValue={intentName}
+      defaultEditing={isNew}
+    >
       {(val) => (
-        <IntentEntryDiv selected={selected} onClick={onSelected}>
+        <IntentEntryDiv selected={selected} onClick={onSelected} {...divProps}>
           <IntentName selected={selected}>{val}</IntentName>
           <IntentDetail>{examples.join(", ")}</IntentDetail>
         </IntentEntryDiv>
@@ -77,7 +103,7 @@ const PhraseEntry: React.FC<{
     <PhraseEntryDiv>
       <Editable onChange={onChange} defaultValue={children}>
         {(val) => (
-          <div style={{minHeight:"1em"}}>
+          <div style={{ minHeight: "1em" }}>
             {val
               .split(" ")
               .map((w, idx) =>
@@ -95,200 +121,207 @@ const PhraseEntry: React.FC<{
 };
 
 export default ({ componentType = "intent_catcher" }) => {
-  const { data: icComps } = useGetComponentsWithTypeQuery(componentType);
-  const [createComp] = useCreateComponentMutation();
-  useEffect(() => {
-    if (icComps && Object.keys(icComps).length === 0)
-      createComp({ type: componentType });
-  }, [icComps, createComp]);
-  const compId =
-    icComps && Object.keys(icComps).length > 0 ? Object.keys(icComps)[0] : null;
+  const {
+    component,
+    canTrain,
+    trainingStatus,
+    isFetchingTestRes,
+    messages,
+    interact,
+    train,
+  } = useComponent(componentType);
 
-  const { data: intents } = useGetComponentDataWithTypeQuery(
-    { compId: compId || "", dataType: "intent" },
-    { skip: !compId }
+  const lastMessage = messages?.slice(-1).pop();
+  const lastResponse =
+    lastMessage?.user_type === "bot"
+      ? (lastMessage.annotations?.intent as [string, number][])
+      : undefined;
+  const bestIntent = lastResponse?.reduce(
+    (best, cur) => (cur[1] > best[1] ? cur : best),
+    ["", -1]
   );
-  const intentIds = intents ? Object.keys(intents) : [];
-  const [createData] = useCreateDataMutation();
-  const [updateData] = useUpdateDataMutation();
 
-  const [selectedIntentId, setSelectedIntentId] = useState<string | null>(null);
-  const selectedIntent: Intent | null =
-    selectedIntentId && intents
-      ? (intents[selectedIntentId] as Intent) || null
+  const {
+    data: intents,
+    createData,
+    updateData,
+    deleteData,
+  } = useData(component?.id, "intent");
+
+  const [selectedIntentId, setSelectedIntentId] = useState<number | null>(null);
+  const [newlyAddedIntentId, setNewlyAddedIntentId] = useState<number | null>(
+    null
+  );
+
+  const selectedIntent =
+    setSelectedIntentId !== null
+      ? (intents.find(
+          ({ id }) => id === selectedIntentId
+        ) as typeof intents[number])
       : null;
 
-  const { data: trainStatus, error: trainError } = useGetTrainingQuery(
-    { compId: compId || "" },
-    { skip: !compId, pollingInterval: 3000 }
-  );
-  const [startTrain] = usePostTrainingMutation();
-  const canTrain =
-    compId &&
-    intents &&
-    (!trainStatus || trainError || trainStatus.status === "failed");
-  const [sendMsg, { data: _testRes, isLoading: isFetchingTestRes }] =
-    useInteractMutation();
-  const testRes = _testRes as unknown as [[string], [number[]]];
-
   useEffect(() => {
-    if (!selectedIntent && intentIds.length > 0)
-      setSelectedIntentId(intentIds[0]);
-  }, [intents, selectedIntent]);
+    if (intents && selectedIntentId === null && intents.length > 0)
+      setSelectedIntentId(intents[0].id);
+  }, [intents, selectedIntentId]);
 
-  if (!compId || !intents) return <div>Loading</div>;
+  const { show: showMenu } = useContextMenu({ id: MENU_ID });
+
+  if (!intents) return <div>Loading...</div>;
 
   const handleOnNewIntent = () =>
     createData({
-      compId,
-      dataType: "intent",
-      data: { name: "New Intent", examples: [] },
+      name: "New Intent",
+      examples: [],
+    }).then((newIntent) => {
+      if (newIntent) {
+        setSelectedIntentId(newIntent.id);
+        setNewlyAddedIntentId(newIntent.id);
+      }
     });
 
   const handleIntentRename =
-    (intId: string, int: Intent) => (newName: string) =>
-      updateData({
-        compId,
-        dataType: "intent",
-        dataId: intId,
-        newData: { ...int, name: newName },
-      });
+    (int: typeof intents[number]) => (newName: string) => {
+      updateData(int.id, { ...int.content, name: newName });
+      setNewlyAddedIntentId(null);
+    };
 
   const handleAddPhrase =
-    (intId: string, int: Intent) =>
-    (ev: React.KeyboardEvent<HTMLInputElement>) =>
-      ev.key === "Enter" &&
-      (ev.target as HTMLInputElement).value !== "" &&
-      (updateData({
-        compId,
-        dataType: "intent",
-        dataId: intId,
-        newData: {
-          ...int,
-          examples: [...int.examples, (ev.target as HTMLInputElement).value],
-        },
-      }),
-      ((ev.target as HTMLInputElement).value = ""));
+    (int: typeof intents[number]) =>
+    (ev: React.KeyboardEvent<HTMLInputElement>) => {
+      const target = ev.target as HTMLInputElement;
+      if (ev.key === "Enter" && target.value !== "") {
+        updateData(int.id, {
+          ...int.content,
+          examples: [...int.content.examples, target.value],
+        });
+        target.value = "";
+      }
+    };
 
   const handlePharseEdit =
-    (intId: string, int: Intent, phraseIdx: number) => (newVal: string) =>
-      updateData({
-        compId,
-        dataType: "intent",
-        dataId: intId,
-        newData: {
-          ...int,
+    (int: typeof intents[number], phraseIdx: number) => (newVal: string) => {
+      if (newVal !== "") {
+        updateData(int.id, {
+          ...int.content,
           examples: [
-            ...int.examples.slice(0, phraseIdx),
+            ...int.content.examples.slice(0, phraseIdx),
             newVal,
-            ...int.examples.slice(phraseIdx + 1),
+            ...int.content.examples.slice(phraseIdx + 1),
           ],
-        },
-      });
+        });
+      }
+    };
 
-  const handleTrain = () => startTrain({ compId });
-  const handleTest = (testMsg: string) => sendMsg({ compId, msg: [testMsg] });
+  const handleTrain = train;
+  const handleTest = (testMsg: string) =>
+    interact({ user_type: "user", text: testMsg });
 
   return (
-    <ColumnsContainer>
-      <Column maxwidth="400px">
-        <ColumnHeader>
-          <ColumnTitle>
-            {componentType.replaceAll("_", " ")} intents
-          </ColumnTitle>
-          <PlusBtn onClick={handleOnNewIntent} />
-        </ColumnHeader>
+    <>
+      <Menu id={MENU_ID} theme="dark" animation={false}>
+        <Item onClick={({ props }) => deleteData(props.intId)}>Delete</Item>
+      </Menu>
 
-        <IntentEntriesCont>
-          {Object.entries(intents)
-            .sort(([_, a], [__, b]) => (a.name < b.name ? -1 : 1))
-            .map(([resid, int]) => (
-              <IntentEntry
-                key={resid}
-                intentName={int.name}
-                examples={int.examples}
-                selected={resid === selectedIntentId}
-                onSelected={() => setSelectedIntentId(resid)}
-                onChange={handleIntentRename(resid, int as Intent)}
-              />
-            ))}
-        </IntentEntriesCont>
-      </Column>
+      <ColumnsContainer>
+        <Column maxwidth="400px">
+          <ColumnHeader>
+            <ColumnTitle>
+              {componentType.replaceAll("_", " ")} intents
+            </ColumnTitle>
+            <PlusBtn onClick={handleOnNewIntent} />
+          </ColumnHeader>
 
-      <Column>
-        <ColumnHeader>
-          <ColumnTitle>phrases</ColumnTitle>
-        </ColumnHeader>
-        <RowContainer>
-          <Row>
-            {intentIds.length === 0 ? (
-              <CenterMessage>
-                You don't have any intents! Create one on the left
-              </CenterMessage>
-            ) : selectedIntent !== null ? (
-              <IntentView>
-                {selectedIntent.examples.map((phrase, idx) => (
-                  <PhraseEntry
-                    key={idx}
-                    selected={false}
-                    onChange={handlePharseEdit(
-                      selectedIntentId as string,
-                      selectedIntent,
-                      idx
-                    )}
-                  >
-                    {phrase}
-                  </PhraseEntry>
-                ))}
-
-                {selectedIntent !== null && (
-                  <PhraseInput
-                    type="text"
-                    placeholder="Type in a new phrase (enter to create)..."
-                    onKeyDown={handleAddPhrase(
-                      selectedIntentId as string,
-                      selectedIntent
-                    )}
-                  />
-                )}
-              </IntentView>
-            ) : (
-              <div />
-            )}
-          </Row>
-
-          <Row maxheight="300px">
-            <ColumnHeader>
-              <ColumnTitle>test out your intents</ColumnTitle>
-            </ColumnHeader>
-
-            {canTrain ? (
-              <_CentMsgCont>
-                <button onClick={handleTrain}>Click here to train!</button>
-              </_CentMsgCont>
-            ) : trainStatus?.status === "running" ? (
-              <_CentMsgCont>Training...</_CentMsgCont>
-            ) : (
-              <_CentMsgCont>
-                <input
-                  type="text"
-                  placeholder="Test out your intent here"
-                  onChange={(ev) => handleTest(ev.target.value)}
+          <IntentEntriesCont>
+            {intents
+              .concat()
+              .sort((a, b) => (a.id < b.id ? -1 : 1))
+              .map((int) => (
+                <IntentEntry
+                  key={int.id}
+                  isNew={newlyAddedIntentId === int.id}
+                  intentName={int.content.name}
+                  examples={int.content.examples}
+                  selected={int.id === selectedIntentId}
+                  onSelected={() => setSelectedIntentId(int.id)}
+                  onNameChange={handleIntentRename(int)}
+                  onContextMenu={(ev) =>
+                    showMenu(ev, { props: { intId: int.id } })
+                  }
                 />
-                <p>
-                  {isFetchingTestRes
-                    ? "Initializing..."
-                    : testRes && Math.max(...testRes[1][0]) > 0.4
-                    ? `Guessed intent: ${testRes[0]}`
-                    : "Unknown intent. Try adding more examples!"}
-                </p>
-              </_CentMsgCont>
-            )}
-          </Row>
-        </RowContainer>
-      </Column>
+              ))}
+          </IntentEntriesCont>
+        </Column>
 
-    </ColumnsContainer>
+        <Column>
+          <ColumnHeader>
+            <ColumnTitle>phrases</ColumnTitle>
+          </ColumnHeader>
+          <RowContainer>
+            <Row>
+              {intents.length === 0 ? (
+                <CenterMessage>
+                  You don't have any intents! Create one on the left
+                </CenterMessage>
+              ) : selectedIntent ? (
+                <IntentView>
+                  {selectedIntent.content.examples.map((phrase, idx) => (
+                    <PhraseEntry
+                      key={idx}
+                      selected={false}
+                      onChange={handlePharseEdit(selectedIntent, idx)}
+                    >
+                      {phrase}
+                    </PhraseEntry>
+                  ))}
+
+                  {selectedIntent !== null && (
+                    <PhraseInput
+                      type="text"
+                      placeholder="Type in a new phrase (enter to create)..."
+                      onKeyDown={handleAddPhrase(selectedIntent)}
+                    />
+                  )}
+                </IntentView>
+              ) : (
+                <div />
+              )}
+            </Row>
+
+            {componentType === "intent" && (
+              <Row maxheight="300px">
+                <ColumnHeader>
+                  <ColumnTitle>test out your intents</ColumnTitle>
+                </ColumnHeader>
+
+                {canTrain ? (
+                  <_CentMsgCont>
+                    <button onClick={handleTrain}>Click here to train!</button>
+                  </_CentMsgCont>
+                ) : trainingStatus === "RUNNING" ? (
+                  <_CentMsgCont>Training...</_CentMsgCont>
+                ) : (
+                  <_CentMsgCont>
+                    <input
+                      type="text"
+                      placeholder="Test out your intent here"
+                      onChange={(ev) => handleTest(ev.target.value)}
+                    />
+                    <p>
+                      {isFetchingTestRes || !lastResponse
+                        ? "Initializing..."
+                        : messages && bestIntent
+                        ? `Guessed intent: ${bestIntent[0]}`
+                        : "Unknown intent. Try adding more examples!"}
+                    </p>
+                  </_CentMsgCont>
+                )}
+              </Row>
+            )}
+          </RowContainer>
+        </Column>
+      </ColumnsContainer>
+    </>
   );
 };
 
@@ -374,15 +407,21 @@ const PlusBtn = styled(AiOutlinePlus)({
 
 const IntentEntriesCont = styled("div")({
   padding: "10px",
+  overflowY: "auto",
 });
 
 const IntentEntryDiv = styled("div")(
   ({ selected = false }: { selected?: boolean }) => ({
     padding: "15px",
+    margin: "10px 0",
     backgroundColor: selected ? "#444141" : "unset",
     color: selected ? "white" : "inherit",
     cursor: "pointer",
     borderRadius: "20px",
+    "&:hover": {
+      backgroundColor: "#e6e5e5",
+      color: "white",
+    },
   })
 );
 
@@ -420,7 +459,7 @@ const EditableInput = styled(
   border: "none",
   outline: theme.logoBg,
   display: "block",
-  color: "inherit"
+  color: "inherit",
 }));
 
 const VarName = styled("span")(({ theme }) => ({
@@ -435,5 +474,5 @@ const PhraseInput = styled("input")({
   borderRadius: "15px",
   width: "350px",
   padding: "7px",
-  border: "1px solid #DDDDDD"
-})
+  border: "1px solid #DDDDDD",
+});

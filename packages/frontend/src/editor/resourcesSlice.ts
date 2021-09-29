@@ -1,19 +1,28 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 
+import type { Intent, Slot, Flow } from "@dp-builder/cotypes/ts/data";
+
 import type {
   Data,
   Component,
   Training,
   Message,
 } from "@dp-builder/cotypes/ts/common";
-import type { Intent, Slot } from "@dp-builder/cotypes/ts/data";
 
-export type DataContent = Intent | Slot | { [k: string]: any }; // TODO: add flow type
+export interface DataWithContent<T> extends Data {
+  content: T;
+}
+
+type DataTypes = {
+  flow: Flow;
+  intent: Intent;
+  slot: Slot;
+};
 
 export const resourceApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["Project", "Component", "Data", "Training"],
+  tagTypes: ["Project", "Component", "Data", "Training", "Message"],
   endpoints: (build) => ({
     getComponents: build.query<Component[], string>({
       query: (proj_name) => ({ url: `/projects/${proj_name}/components` }),
@@ -32,7 +41,7 @@ export const resourceApi = createApi({
       }),
       providesTags: (res = []) => [
         ...(res
-          ? res.map((_, id) => ({
+          ? res.map(({ id }) => ({
               type: "Data" as const,
               id: id,
             }))
@@ -41,38 +50,37 @@ export const resourceApi = createApi({
       ],
     }),
     createData: build.mutation<
-      null,
-      { compId: number; dataType: string; data: DataContent }
+      DataWithContent<object>,
+      { compId: number; dataType: string; data: object }
     >({
       query: ({ compId, dataType, data }) => ({
         url: `/components/${compId}/${dataType}s`,
         method: "POST",
         body: data,
       }),
-      invalidatesTags: (id) => (id ? [{ type: "Data", id: "LIST" }] : []),
+      invalidatesTags: (id) =>
+        id ? [{ type: "Data", id: "LIST" }, "Training"] : [],
     }),
-    updateData: build.mutation<
-      null,
-      { compId: number; dataType: string; dataId: number; newData: DataContent }
-    >({
-      query: ({ compId, dataType, dataId, newData }) => ({
-        url: `/components/${compId}/${dataType}s/${dataId}`,
+    updateData: build.mutation<null, { dataId: number; newData: object }>({
+      query: ({ dataId, newData }) => ({
+        url: `/data/${dataId}`,
         method: "PUT",
         body: newData,
       }),
-      invalidatesTags: (_, __, { dataId }) => [{ type: "Data", id: dataId }],
+      invalidatesTags: (_, __, { dataId }) => [
+        { type: "Data", id: dataId },
+        "Training",
+      ],
     }),
-    deleteData: build.mutation<
-      null,
-      { compId: number; dataType: string; dataId: number }
-    >({
-      query: ({ compId, dataType, dataId }) => ({
-        url: `/components/${compId}/${dataType}s/${dataId}`,
+    deleteData: build.mutation<null, { dataId: number }>({
+      query: ({ dataId }) => ({
+        url: `/data/${dataId}`,
         method: "DELETE",
       }),
       invalidatesTags: (_, __, { dataId }) => [
         { type: "Data", id: dataId },
         { type: "Data", id: "LIST" },
+        "Training",
       ],
     }),
 
@@ -81,21 +89,27 @@ export const resourceApi = createApi({
         url: `/components/${compId}/trainings`,
         method: "POST",
       }),
-      invalidatesTags: (_, __, { compId }) => [
-        { type: "Training", id: compId },
-      ],
+      invalidatesTags: ["Training"],
     }),
     getTraining: build.query<Training, { compId: number }>({
       query: ({ compId }) => ({ url: `/components/${compId}/last_training` }),
-      providesTags: (_, __, { compId }) => [{ type: "Training", id: compId }],
+      providesTags: ["Training"],
+      // transformResponse: (a, b) => {a, b?.response.ok}
     }),
 
-    interact: build.mutation<Message, { compId: number; msg: Message }>({
-      query: ({ compId, msg }) => ({
-        url: `/components/${compId}/interact`,
+    messages: build.query<Message[], number>({
+      query: (trainId) => `/trainings/${trainId}/messages`,
+      providesTags: (_, __, trainId) => [{ type: "Message", id: trainId }],
+    }),
+    interact: build.mutation<Message, { trainId: number; msg: Message }>({
+      query: ({ trainId, msg }) => ({
+        url: `/trainings/${trainId}/messages`,
         method: "POST",
         body: msg,
       }),
+      invalidatesTags: (_, __, { trainId }) => [
+        { type: "Message", id: trainId },
+      ],
     }),
   }),
 });
@@ -104,12 +118,29 @@ export function useComponent(compType: string) {
   const { data: components = [] } =
     resourceApi.useGetComponentsQuery("default");
   const comp = components.find(({ type }) => type === compType);
-  const { data: lastTraining } = resourceApi.useGetTrainingQuery(
+
+  const lastTraining = resourceApi.endpoints.getTraining.useQueryState(
     { compId: comp?.id as number },
-    { skip: !comp }
+    {
+      skip: !comp,
+      selectFromResult: (res) => (res.error ? undefined : res.data),
+    }
   );
+  resourceApi.endpoints.getTraining.useQuerySubscription(
+    { compId: comp?.id as number },
+    {
+      skip: !comp,
+      pollingInterval: lastTraining?.status === "RUNNING" ? 3000 : undefined,
+    }
+  );
+
+  const { data: messages, isFetching: isFetchingMessages } =
+    resourceApi.useMessagesQuery(lastTraining?.id as number, {
+      skip: !lastTraining,
+    });
   const [_postTraining] = resourceApi.usePostTrainingMutation();
-  const [_postMessage] = resourceApi.useInteractMutation();
+  const [_postMessage, { isLoading: isInteractInProgress }] =
+    resourceApi.useInteractMutation();
 
   const train = () => {
     if (!comp) return;
@@ -117,44 +148,59 @@ export function useComponent(compType: string) {
   };
 
   const interact = (msg: Message) => {
-    if (!comp) return;
-    _postMessage({ compId: comp.id, msg });
+    if (!comp || !lastTraining?.id) return;
+    _postMessage({ trainId: lastTraining.id, msg });
   };
 
   return {
     component: comp,
     canTrain: comp && (!lastTraining || lastTraining.status === "FAILED"),
+    trainingStatus: lastTraining?.status,
+    isFetchingTestRes: isInteractInProgress || isFetchingMessages,
     train,
     interact,
+    messages,
   };
 }
 
-export function useData(comp: Component | undefined, dataType: string) {
-  const { data = [] } = resourceApi.useGetComponentDataWithTypeQuery(
-    { compId: comp?.id || 0, dataType },
-    { skip: !comp }
+export function useData<
+  D extends string & keyof DataTypes,
+  T extends object = DataTypes[D]
+>(compId: number | undefined, dataType: D) {
+  const { data, isFetching } = resourceApi.useGetComponentDataWithTypeQuery(
+    { compId: compId as number, dataType },
+    { skip: compId === undefined }
   );
   const [_createData] = resourceApi.useCreateDataMutation();
   const [_updateData] = resourceApi.useUpdateDataMutation();
   const [_deleteData] = resourceApi.useDeleteDataMutation();
 
-  const createData = (newDataContent: DataContent) => {
-    if (!comp) return;
-    _createData({ compId: comp.id, dataType, data: newDataContent });
+  const createData = async (
+    newDataContent: T
+  ): Promise<DataWithContent<T> | null> => {
+    if (compId === undefined) return null;
+
+    const res = await _createData({
+      compId: compId,
+      dataType,
+      data: newDataContent,
+    });
+    return "data" in res ? (res.data as DataWithContent<T>) : null;
   };
 
-  const updateData = (dataId: number, newDataContent: DataContent) => {
-    if (!comp) return;
-    _updateData({ compId: comp.id, dataType, newData: newDataContent, dataId });
+  const updateData = (dataId: number, newDataContent: T) => {
+    if (compId === undefined) return;
+    _updateData({ newData: newDataContent, dataId });
   };
 
   const deleteData = (dataId: number) => {
-    if (!comp) return;
-    _deleteData({ compId: comp.id, dataType, dataId });
+    if (compId === undefined) return;
+    _deleteData({ dataId });
   };
 
   return {
-    data,
+    data: (data || []) as DataWithContent<T>[],
+    isLoading: isFetching || !compId || !data,
     createData,
     updateData,
     deleteData,

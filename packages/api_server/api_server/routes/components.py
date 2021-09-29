@@ -80,7 +80,7 @@ async def list_data_by_type(comp_id: int, data_type_plural: str, db: DB = Depend
     if data_type not in data_schemas:
         raise HTTPException(404, detail=f"Invalid data type {data_type}")
     data_items = await db.list_data(comp_id, data_type)
-    return [ item['content'] for item in data_items ]
+    return [ item for item in data_items ]
 
 @router.post("/{comp_id}/{data_type_plural}")
 async def create_data(comp_id: int, data_type_plural: str, data_cont: Dict[str, Any], db: DB = Depends()):

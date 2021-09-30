@@ -7,10 +7,10 @@ from adapters import (
     export_component as export_component_sync,
 )
 from cotypes.common.component import Component
-from cotypes.adapters import ImportedComponent, Resources
+from cotypes.adapters import Resources
 
 
-async def import_component(comp_root: Path, comp_type: str) -> ImportedComponent:
+async def import_component(comp_root: Path, comp_type: str):
     with ProcessPoolExecutor(1) as executor:
         fut = executor.submit(import_project_sync, comp_root, comp_type)
         return await asyncio.wrap_future(fut)

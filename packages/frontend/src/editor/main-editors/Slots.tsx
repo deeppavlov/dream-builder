@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import { styled } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
+import { Menu, Item, useContextMenu } from "react-contexify";
 
-import {
-  useGetComponentDataWithTypeQuery,
-  useCreateComponentMutation,
-  useGetComponentsWithTypeQuery,
-  useCreateDataMutation,
-  useUpdateDataMutation,
-  usePostTrainingMutation,
-  useGetTrainingQuery,
-  useInteractMutation,
-} from "../resourcesSlice";
-import type { Slot } from "@dp-builder/api_types_ts";
+import "react-contexify/dist/ReactContexify.css";
+
+import { useComponent, useData } from "../resourcesSlice";
+
+const MENU_ID = "slot-entry-menu";
 
 const Editable: React.FC<{
   defaultValue?: string;
+  defaultEditing?: boolean;
   onChange: (newVal: string) => void;
   children: (value: string) => JSX.Element;
-}> = ({ onChange, defaultValue, children: renderChild }) => {
-  const [beingEdited, setBeignEdited] = useState(false);
+}> = ({
+  onChange,
+  defaultValue,
+  children: renderChild,
+  defaultEditing = false,
+}) => {
+  const [beingEdited, setBeignEdited] = useState(defaultEditing);
   const [value, setValue] = useState(defaultValue || "");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -28,8 +29,20 @@ const Editable: React.FC<{
   }, [defaultValue]);
 
   useEffect(() => {
-    if (beingEdited) inputRef.current?.focus();
-  }, [beingEdited]);
+    if (beingEdited) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [beingEdited, inputRef.current]);
+
+  const handleKeyDown: React.KeyboardEventHandler = (ev) => {
+    if (ev.key === "Escape") {
+      setBeignEdited(false);
+    } else if (ev.key === "Enter" && value !== "") {
+      setBeignEdited(false);
+      onChange(value);
+    }
+  };
 
   return beingEdited ? (
     <EditableInput
@@ -37,9 +50,7 @@ const Editable: React.FC<{
       defaultValue={value}
       onChange={(ev) => setValue(ev.target.value)}
       onBlur={() => (setBeignEdited(false), onChange(value))}
-      onKeyDown={(ev) =>
-        ev.key === "Enter" && value !== "" && (setBeignEdited(false), onChange(value))
-      }
+      onKeyDown={handleKeyDown}
     />
   ) : (
     React.cloneElement(renderChild(value), {
@@ -48,36 +59,51 @@ const Editable: React.FC<{
   );
 };
 
-const IntentEntry: React.FC<{
-  intentName: string;
-  examples: string[];
-  selected: boolean;
-  onSelected?: () => void;
-  onChange: (newVal: string) => void;
-}> = ({ selected, onSelected, onChange, intentName, examples }) => {
+const SlotEntry: React.FC<
+  {
+    slotName: string;
+    examples: string[];
+    selected: boolean;
+    isNew: boolean;
+    onSelected?: () => void;
+    onNameChange: (newVal: string) => void;
+  } & React.HTMLAttributes<HTMLDivElement>
+> = ({
+  selected,
+  onSelected,
+  onNameChange,
+  slotName,
+  examples,
+  isNew,
+  ...divProps
+}) => {
   return (
-    <Editable onChange={onChange} defaultValue={intentName}>
+    <Editable
+      onChange={onNameChange}
+      defaultValue={slotName}
+      defaultEditing={isNew}
+    >
       {(val) => (
-        <IntentEntryDiv selected={selected} onClick={onSelected}>
-          <IntentName selected={selected}>{val}</IntentName>
-          <IntentDetail>{examples.join(", ")}</IntentDetail>
-        </IntentEntryDiv>
+        <SlotEntryDiv selected={selected} onClick={onSelected} {...divProps}>
+          <SlotName selected={selected}>{val}</SlotName>
+          <SlotDetail>{examples.join(", ")}</SlotDetail>
+        </SlotEntryDiv>
       )}
     </Editable>
   );
 };
 
-const PhraseEntry: React.FC<{
+const ExampleEntry: React.FC<{
   children: string;
   selected: boolean;
   onSelected?: () => void;
   onChange: (newVal: string) => void;
 }> = ({ onChange, children }) => {
   return (
-    <PhraseEntryDiv>
+    <ExampleEntryDiv>
       <Editable onChange={onChange} defaultValue={children}>
         {(val) => (
-          <div style={{minHeight:"1em"}}>
+          <div style={{ minHeight: "1em" }}>
             {val
               .split(" ")
               .map((w, idx) =>
@@ -90,181 +116,165 @@ const PhraseEntry: React.FC<{
           </div>
         )}
       </Editable>
-    </PhraseEntryDiv>
+    </ExampleEntryDiv>
   );
 };
 
-export default ({ componentType = "gobot" }) => {
-  const { data: icComps } = useGetComponentsWithTypeQuery(componentType);
-  const [createComp] = useCreateComponentMutation();
-  useEffect(() => {
-    if (icComps && Object.keys(icComps).length === 0)
-      createComp({ type: componentType });
-  }, [icComps, createComp]);
-  const compId =
-    icComps && Object.keys(icComps).length > 0 ? Object.keys(icComps)[0] : null;
+export default () => {
+  const {
+    component,
+  } = useComponent("gobot");
 
-  const { data: intents } = useGetComponentDataWithTypeQuery(
-    { compId: compId || "", dataType: "slot" },
-    { skip: !compId }
+  const {
+    data: slots,
+    createData,
+    updateData,
+    deleteData,
+  } = useData(component?.id, "slot");
+
+  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+  const [newlyAddedSlotId, setNewlyAddedSlotId] = useState<number | null>(
+    null
   );
-  const intentIds = intents ? Object.keys(intents) : [];
-  const [createData] = useCreateDataMutation();
-  const [updateData] = useUpdateDataMutation();
 
-  const [selectedIntentId, setSelectedIntentId] = useState<string | null>(null);
-  const selectedIntent: Slot | null =
-    selectedIntentId && intents
-      ? (intents[selectedIntentId] as Slot) || null
+  const selectedSlot =
+    setSelectedSlotId !== null
+      ? (slots.find(
+          ({ id }) => id === selectedSlotId
+        ) as typeof slots[number])
       : null;
 
-  // const { data: trainStatus, error: trainError } = useGetTrainingQuery(
-  //   { compId: compId || "" },
-  //   { skip: !compId, pollingInterval: 3000 }
-  // );
-  // const [startTrain] = usePostTrainingMutation();
-  // const canTrain =
-  //   compId &&
-  //   intents &&
-  //   (!trainStatus || trainError || trainStatus.status === "failed");
-  // const [sendMsg, { data: _testRes, isLoading: isFetchingTestRes }] =
-  //   useInteractMutation();
-  // const testRes = _testRes as unknown as [[string], [number[]]];
-
   useEffect(() => {
-    if (!selectedIntent && intentIds.length > 0)
-      setSelectedIntentId(intentIds[0]);
-  }, [intents, selectedIntent]);
+    if (slots && selectedSlotId === null && slots.length > 0)
+      setSelectedSlotId(slots[0].id);
+  }, [slots, selectedSlotId]);
 
-  if (!compId || !intents) return <div>Loading</div>;
+  const { show: showMenu } = useContextMenu({ id: MENU_ID });
 
-  const handleOnNewIntent = () =>
+  if (!slots) return <div>Loading...</div>;
+
+  const handleOnNewSlot = () =>
     createData({
-      compId,
-      dataType: "slot",
-      data: { name: "New Slot", examples: [] },
+      name: "New Slot",
+      examples: [],
+    }).then((newSlot) => {
+      if (newSlot) {
+        setSelectedSlotId(newSlot.id);
+        setNewlyAddedSlotId(newSlot.id);
+      }
     });
 
-  const handleIntentRename =
-    (intId: string, int: Slot) => (newName: string) =>
-      updateData({
-        compId,
-        dataType: "slot",
-        dataId: intId,
-        newData: { ...int, name: newName },
-      });
+  const handleSlotRename =
+    (slot: typeof slots[number]) => (newName: string) => {
+      updateData(slot.id, { ...slot.content, name: newName.toLowerCase() });
+      setNewlyAddedSlotId(null);
+    };
 
-  const handleAddPhrase =
-    (intId: string, int: Slot) =>
-    (ev: React.KeyboardEvent<HTMLInputElement>) =>
-      ev.key === "Enter" &&
-      (ev.target as HTMLInputElement).value !== "" &&
-      (updateData({
-        compId,
-        dataType: "slot",
-        dataId: intId,
-        newData: {
-          ...int,
-          examples: [...int.examples, (ev.target as HTMLInputElement).value],
-        },
-      }),
-      ((ev.target as HTMLInputElement).value = ""));
+  const handleAddExample =
+    (slot: typeof slots[number]) =>
+    (ev: React.KeyboardEvent<HTMLInputElement>) => {
+      const target = ev.target as HTMLInputElement;
+      if (ev.key === "Enter" && target.value !== "") {
+        updateData(slot.id, {
+          ...slot.content,
+          examples: [...slot.content.examples, target.value],
+        });
+        target.value = "";
+      }
+    };
 
   const handlePharseEdit =
-    (intId: string, int: Slot, phraseIdx: number) => (newVal: string) =>
-      updateData({
-        compId,
-        dataType: "slot",
-        dataId: intId,
-        newData: {
-          ...int,
+    (slot: typeof slots[number], exampleIdx: number) => (newVal: string) => {
+      if (newVal !== "") {
+        updateData(slot.id, {
+          ...slot.content,
           examples: [
-            ...int.examples.slice(0, phraseIdx),
+            ...slot.content.examples.slice(0, exampleIdx),
             newVal,
-            ...int.examples.slice(phraseIdx + 1),
+            ...slot.content.examples.slice(exampleIdx + 1),
           ],
-        },
-      });
-
-  // const handleTrain = () => startTrain({ compId });
-  // const handleTest = (testMsg: string) => sendMsg({ compId, msg: [testMsg] });
+        });
+      }
+    };
 
   return (
-    <ColumnsContainer>
-      <Column maxwidth="400px">
-        <ColumnHeader>
-          <ColumnTitle>
-            {componentType.replaceAll("_", " ")} slots
-          </ColumnTitle>
-          <PlusBtn onClick={handleOnNewIntent} />
-        </ColumnHeader>
+    <>
+      <Menu id={MENU_ID} theme="dark" animation={false}>
+        <Item onClick={({ props }) => deleteData(props.slotId)}>Delete</Item>
+      </Menu>
 
-        <IntentEntriesCont>
-          {Object.entries(intents)
-            .sort(([_, a], [__, b]) => (a.name < b.name ? -1 : 1))
-            .map(([resid, int]) => (
-              <IntentEntry
-                key={resid}
-                intentName={int.name}
-                examples={int.examples}
-                selected={resid === selectedIntentId}
-                onSelected={() => setSelectedIntentId(resid)}
-                onChange={handleIntentRename(resid, int as Slot)}
-              />
-            ))}
-        </IntentEntriesCont>
-      </Column>
+      <ColumnsContainer>
+        <Column maxwidth="400px">
+          <ColumnHeader>
+            <ColumnTitle>
+              gobot slots
+            </ColumnTitle>
+            <PlusBtn onClick={handleOnNewSlot} />
+          </ColumnHeader>
 
-      <Column>
-        <ColumnHeader>
-          <ColumnTitle>phrases</ColumnTitle>
-        </ColumnHeader>
-        <RowContainer>
-          <Row>
-            {intentIds.length === 0 ? (
-              <CenterMessage>
-                You don't have any slots! Create one on the left
-              </CenterMessage>
-            ) : selectedIntent !== null ? (
-              <IntentView>
-                {selectedIntent.examples.map((phrase, idx) => (
-                  <PhraseEntry
-                    key={idx}
-                    selected={false}
-                    onChange={handlePharseEdit(
-                      selectedIntentId as string,
-                      selectedIntent,
-                      idx
-                    )}
-                  >
-                    {phrase}
-                  </PhraseEntry>
-                ))}
+          <SlotEntriesCont>
+            {slots
+              .concat()
+              .sort((a, b) => (a.id < b.id ? -1 : 1))
+              .map((slot) => (
+                <SlotEntry
+                  key={slot.id}
+                  isNew={newlyAddedSlotId === slot.id}
+                  slotName={slot.content.name}
+                  examples={slot.content.examples}
+                  selected={slot.id === selectedSlotId}
+                  onSelected={() => setSelectedSlotId(slot.id)}
+                  onNameChange={handleSlotRename(slot)}
+                  onContextMenu={(ev) =>
+                    showMenu(ev, { props: { slotId: slot.id } })
+                  }
+                />
+              ))}
+          </SlotEntriesCont>
+        </Column>
 
-                {selectedIntent !== null && (
-                  <PhraseInput
-                    type="text"
-                    placeholder="Type in a new phrase (enter to create)..."
-                    onKeyDown={handleAddPhrase(
-                      selectedIntentId as string,
-                      selectedIntent
-                    )}
-                  />
-                )}
-              </IntentView>
-            ) : (
-              <div />
-            )}
-          </Row>
+        <Column>
+          <ColumnHeader>
+            <ColumnTitle>examples</ColumnTitle>
+          </ColumnHeader>
+          <RowContainer>
+            <Row>
+              {slots.length === 0 ? (
+                <CenterMessage>
+                  You don't have any slots! Create one on the left
+                </CenterMessage>
+              ) : selectedSlot ? (
+                <SlotView>
+                  {selectedSlot.content.examples.map((example, idx) => (
+                    <ExampleEntry
+                      key={idx}
+                      selected={false}
+                      onChange={handlePharseEdit(selectedSlot, idx)}
+                    >
+                      {example}
+                    </ExampleEntry>
+                  ))}
 
-        </RowContainer>
-      </Column>
-
-    </ColumnsContainer>
+                  {selectedSlot !== null && (
+                    <ExampleInput
+                      type="text"
+                      placeholder="Type in a new example (enter to create)..."
+                      onKeyDown={handleAddExample(selectedSlot)}
+                    />
+                  )}
+                </SlotView>
+              ) : (
+                <div />
+              )}
+            </Row>
+          </RowContainer>
+        </Column>
+      </ColumnsContainer>
+    </>
   );
 };
 
-const IntentView = styled("div")({
+const SlotView = styled("div")({
   padding: "10px",
 });
 
@@ -344,27 +354,33 @@ const PlusBtn = styled(AiOutlinePlus)({
   cursor: "pointer",
 });
 
-const IntentEntriesCont = styled("div")({
+const SlotEntriesCont = styled("div")({
   padding: "10px",
+  overflowY: "auto",
 });
 
-const IntentEntryDiv = styled("div")(
+const SlotEntryDiv = styled("div")(
   ({ selected = false }: { selected?: boolean }) => ({
     padding: "15px",
+    margin: "10px 0",
     backgroundColor: selected ? "#444141" : "unset",
     color: selected ? "white" : "inherit",
     cursor: "pointer",
     borderRadius: "20px",
+    "&:hover": {
+      backgroundColor: "#e6e5e5",
+      color: "white",
+    },
   })
 );
 
-const IntentName = styled("div")(({ selected }: { selected: boolean }) => ({
+const SlotName = styled("div")(({ selected }: { selected: boolean }) => ({
   color: selected ? "white" : "black",
   fontWeight: "bold",
   marginBottom: "5px",
 }));
 
-const IntentDetail = styled("div")({
+const SlotDetail = styled("div")({
   color: "#A8A8A8",
   width: "100%",
   overflow: "hidden",
@@ -372,7 +388,7 @@ const IntentDetail = styled("div")({
   whiteSpace: "nowrap",
 });
 
-const PhraseEntryDiv = styled("div")({
+const ExampleEntryDiv = styled("div")({
   padding: "15px",
   cursor: "pointer",
   borderRadius: "25px",
@@ -392,7 +408,7 @@ const EditableInput = styled(
   border: "none",
   outline: theme.logoBg,
   display: "block",
-  color: "inherit"
+  color: "inherit",
 }));
 
 const VarName = styled("span")(({ theme }) => ({
@@ -403,9 +419,10 @@ const VarName = styled("span")(({ theme }) => ({
   padding: "2px",
 }));
 
-const PhraseInput = styled("input")({
+const ExampleInput = styled("input")({
   borderRadius: "15px",
   width: "350px",
   padding: "7px",
-  border: "1px solid #DDDDDD"
-})
+  border: "1px solid #DDDDDD",
+});
+

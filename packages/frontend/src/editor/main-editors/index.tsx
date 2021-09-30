@@ -74,7 +74,7 @@ const editors: EditorType[] = [
               },
               {
                 name: "Local Slots", 
-                Editor: () => <Slots componentType="gobot"/>
+                Editor: () => <Slots/>
               },
               {
                 name: "Flows", 

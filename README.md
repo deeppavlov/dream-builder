@@ -2,24 +2,43 @@
 
 DP-Builder is a graphical interface for creating and configuring multi-skill AI assistants, built on top of DeepPavlov
 
-## Repository structure
+## How to run
 
-TODO
+Warning: DP-Builder is currently still under development. For now, you can try out the development version and please report any issues you encounter.
 
-## Building
+Right now, you need to build DP-Builder yourself to try it out. More convenient installation methods are coming soon!
 
-Requirements:
+DP-Builder has been only tested on Linux, but it should work fine on MacOS and in WSL too. If you experience any issues on those systems, let us know!
+Also, there will definitely be a native Windows build of the first official release.
+
+First, make sure you have the following requirements set up on your system:
+ - tmux
  - Node 16+
  - Python 3.9+
  - [pnpm](https://pnpm.io)
  - [poetry](https://python-poetry.org/)
+ - [Docker](https://docs.docker.com/engine/install/)
+ 
+Optional, but recommended for training: 
+ - Nvidia GPU
+ - [Nvidia docker runtime](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
-To run a local development version at http://localhost:8080:
+Once you have those in place, clone the repository:
+
 ```
-pnpm run dev
+git clone https://github.com/deepmipt/dp-builder.git
+cd dp-builder
 ```
 
-To run tests
+Then install the dependencies:
+
 ```
-pnpm test
+pnpm install
 ```
+
+And finally, start everything up:
+
+```
+./dev.sh
+```
+

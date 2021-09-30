@@ -140,14 +140,14 @@ class DB:
         ]
         return await self._get_one(trainings, *conds)
 
-    async def create_training(self, comp_id: int):
+    async def create_training(self, comp_id: int, template_link: str):
         async with self.db.transaction():
             comp = await self.get_component(comp_id)
             query = trainings.insert().values(
                 data_hash=comp['data_hash'],
                 component_id=comp_id,
                 status=TrainStatus.RUNNING,
-                template_link=comp['template_link']
+                template_link=template_link
             )
             train_id = await self.db.execute(query)
             comp_data = await self.list_data(comp_id)
@@ -262,7 +262,7 @@ class DB:
     def _sort_data_into_dict(self, data_list: List[Union[Dict, Mapping]]):
         data_dict = defaultdict(list)
         for item in data_list:
-            data_dict[item['type']].append(item['content'])
+            data_dict[item['type']].append(item)
         return data_dict
 
     async def _get_one(self, table: sa.Table, *conds):

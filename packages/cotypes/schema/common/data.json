@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "Data",
+    "title": "Data",
+    "type": "object",
+    "required": [
+        "id",
+        "type",
+        "content"
+    ],
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "type": {
+            "type": "string"
+        },
+        "content": {
+            "type": "object",
+            "additionalProperties": true
+        }
+    }
+}

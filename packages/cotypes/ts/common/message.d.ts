@@ -9,11 +9,14 @@ export interface Message {
   user_type: "bot" | "user";
   text?: string;
   annotations?: {
-    };
+    [k: string]: unknown;
+  };
   date_time?: string;
   hypotheses?: {
-    }[];
+    [k: string]: unknown;
+  }[];
   attributes?: {
-    };
+    [k: string]: unknown;
+  };
   confidence?: number;
 }

@@ -4,12 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from api_server.db import DB
 from cotypes.data_schemas import schemas as data_schemas
+from cotypes.common import Data
 
 router = APIRouter(prefix='/data')
 
-@router.get("/{data_id}")
+@router.get("/{data_id}", response_model=Data)
 async def get_data(data_id: int, db: DB = Depends()):
-    return (await db.get_data(data_id))['content']
+    return await db.get_data(data_id)
 
 @router.put("/{data_id}")
 async def put_data(data_id: int, new_data: Dict[str, Any], db: DB = Depends()):

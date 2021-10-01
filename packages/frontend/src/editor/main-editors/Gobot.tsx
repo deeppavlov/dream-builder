@@ -123,7 +123,7 @@ const ApiCallNode = withMenu(({ id, data }: { id: string; data: NodeData }) => {
 
       <NodeTitle>Api Call</NodeTitle>
       <NodeBody>
-        {["endpoint", "method", "payload"].map((n) => (
+        {["endpoint"].map((n) => (
           <div key={n}>
             <span>{n.charAt(0).toUpperCase() + n.slice(1)}:</span>{" "}
             <input

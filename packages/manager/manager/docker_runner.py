@@ -1,11 +1,12 @@
 import asyncio, logging, json
 import subprocess
+import adapters
 import aiohttp
 from tempfile import TemporaryDirectory
 from typing import Optional, List
 from pathlib import Path
 
-from adapters import store
+from adapters import store, get_component_data_adapter
 from adapters.concurrent import export_component
 from cotypes.common.training import Status
 from cotypes.common import Component, Message
@@ -117,8 +118,12 @@ class DockerRunner(ComponentRunner):
                 return Status.FAILED
             logger.info(f"Image {img_name} built")
 
+            Adapter = get_component_data_adapter(comp.type)
+            adapter = Adapter()
             if (tmpdir / "train.py").exists():
                 train_command = "python train.py"
+            elif hasattr(adapter, "train_cmd"):
+                train_command = adapter.train_cmd # type:ignore
             else:
                 train_command = "python -m deeppavlov train ./config.json"
 

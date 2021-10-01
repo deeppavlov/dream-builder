@@ -169,6 +169,12 @@ class Stories:
                         response_names[resp] = f"system_{next_resp_idx}"
                         next_resp_idx += 1
                     path_steps.append(response_names[resp])
+                elif node_type == 'apicall':
+                    url = node['data']['endpoint']
+                    if url not in response_names:
+                        response_names[url] = f"system_apicall_{next_resp_idx}"
+                        next_resp_idx += 1
+                    path_steps.append(response_names[url])
             story_paths.append(StoryPath(path_steps))
         responses = { resp_name: resp for resp, resp_name in response_names.items() }
         return story_paths, responses
@@ -264,6 +270,8 @@ def _parse_md(md_file: str):
 
 @register(component_type="gobot")
 class GobotDataAdapter(ComponentDataAdapter):
+    train_cmd = "python -m deeppavlov train intents_config.json && python -m deeppavlov train config.json"
+
     def override_configs(self, files: FilesDict) -> FilesDict:
         GOBOT = 'config.json'
         INTENT = 'intents_config.json'
@@ -339,6 +347,7 @@ class GobotDataAdapter(ComponentDataAdapter):
         domain_dict = {
             'actions': list(stories.responses.keys()),
             'intents': list(intents.keys()),
+            'slots': { slot_name: { 'type': 'text' } for slot_name in slot_names_dict.keys() },
             'responses': { resp_name: [{ 'text': resp }] for resp_name, resp in stories.responses.items() }
         }
 
@@ -353,7 +362,10 @@ class GobotDataAdapter(ComponentDataAdapter):
         for story in stories.get_all_stories():
             stories_lines.append(f"## {story.name}")
             for step in story.steps:
-                stories_lines.append(f" - {step}")
+                if step.startswith("system"):
+                    stories_lines.append(f" - {step}")
+                else:
+                    stories_lines.append(f"* {step}")
             stories_lines.append("")
         stories_md = "\n".join(stories_lines)
 

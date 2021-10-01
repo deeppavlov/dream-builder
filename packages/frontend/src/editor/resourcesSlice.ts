@@ -130,7 +130,7 @@ export function useComponent(compType: string) {
     { compId: comp?.id as number },
     {
       skip: !comp,
-      pollingInterval: lastTraining?.status === "RUNNING" ? 3000 : undefined,
+      pollingInterval: 3000//lastTraining?.status === "RUNNING" ? 3000 : undefined,
     }
   );
 

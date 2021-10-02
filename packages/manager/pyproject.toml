@@ -6,7 +6,7 @@ authors = ["mablin7 <magyarb0201@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 cotypes = {path = "../cotypes", develop = true}
 adapters = {path = "../adapters", develop = true}
 aiohttp = "^3.7.4"

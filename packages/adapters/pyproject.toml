@@ -5,7 +5,7 @@ description = ""
 authors = ["mablin7 <magyarb0201@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 PyYAML = "^5.4.1"
 cotypes = {path = "../cotypes", develop = true}
 GitPython = {version = "^3.1.24", optional = true}

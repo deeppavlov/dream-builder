@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { styled } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
-import { Menu, Item, useContextMenu } from "react-contexify";
 
-import "react-contexify/dist/ReactContexify.css";
+import type { Slot as SlotContent } from "@dp-builder/cotypes/ts/data";
+import { useMenu } from "../contextMenu";
+import { useComponent, useData, DataWithContent } from "../resourcesSlice";
 
-import { useComponent, useData } from "../resourcesSlice";
-
-const MENU_ID = "slot-entry-menu";
+type Slot = DataWithContent<SlotContent>;
 
 const Editable: React.FC<{
   defaultValue?: string;
@@ -98,9 +97,10 @@ const ExampleEntry: React.FC<{
   selected: boolean;
   onSelected?: () => void;
   onChange: (newVal: string) => void;
-}> = ({ onChange, children }) => {
+  onContextMenu?: React.MouseEventHandler;
+}> = ({ onChange, onContextMenu, children }) => {
   return (
-    <ExampleEntryDiv>
+    <ExampleEntryDiv onContextMenu={onContextMenu}>
       <Editable onChange={onChange} defaultValue={children}>
         {(val) => (
           <div style={{ minHeight: "1em" }}>
@@ -121,9 +121,7 @@ const ExampleEntry: React.FC<{
 };
 
 export default () => {
-  const {
-    component,
-  } = useComponent("gobot");
+  const { component } = useComponent("gobot");
 
   const {
     data: slots,
@@ -133,15 +131,11 @@ export default () => {
   } = useData(component?.id, "slot");
 
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
-  const [newlyAddedSlotId, setNewlyAddedSlotId] = useState<number | null>(
-    null
-  );
+  const [newlyAddedSlotId, setNewlyAddedSlotId] = useState<number | null>(null);
 
   const selectedSlot =
     setSelectedSlotId !== null
-      ? (slots.find(
-          ({ id }) => id === selectedSlotId
-        ) as typeof slots[number])
+      ? (slots.find(({ id }) => id === selectedSlotId) as typeof slots[number])
       : null;
 
   useEffect(() => {
@@ -149,7 +143,26 @@ export default () => {
       setSelectedSlotId(slots[0].id);
   }, [slots, selectedSlotId]);
 
-  const { show: showMenu } = useContextMenu({ id: MENU_ID });
+  const { show: showMenu } = useMenu<{ slot: Slot; phraseIdx?: number }>({
+    onDelete: ({ slot, phraseIdx }) => {
+      if (phraseIdx === undefined) {
+        deleteData(slot.id);
+      } else {
+        updateData(
+          slot.id,
+          {
+            ...slot.content,
+            examples: [
+              ...slot.content.examples.slice(0, phraseIdx),
+              ...slot.content.examples.slice(phraseIdx + 1),
+            ],
+          },
+          0
+        );
+      }
+    },
+    onRename: () => {},
+  });
 
   if (!slots) return <div>Loading...</div>;
 
@@ -166,7 +179,7 @@ export default () => {
 
   const handleSlotRename =
     (slot: typeof slots[number]) => (newName: string) => {
-      updateData(slot.id, { ...slot.content, name: newName.toLowerCase() });
+      updateData(slot.id, { ...slot.content, name: newName.toLowerCase() }, 0);
       setNewlyAddedSlotId(null);
     };
 
@@ -175,10 +188,14 @@ export default () => {
     (ev: React.KeyboardEvent<HTMLInputElement>) => {
       const target = ev.target as HTMLInputElement;
       if (ev.key === "Enter" && target.value !== "") {
-        updateData(slot.id, {
-          ...slot.content,
-          examples: [...slot.content.examples, target.value],
-        });
+        updateData(
+          slot.id,
+          {
+            ...slot.content,
+            examples: [...slot.content.examples, target.value],
+          },
+          0
+        );
         target.value = "";
       }
     };
@@ -186,29 +203,27 @@ export default () => {
   const handlePharseEdit =
     (slot: typeof slots[number], exampleIdx: number) => (newVal: string) => {
       if (newVal !== "") {
-        updateData(slot.id, {
-          ...slot.content,
-          examples: [
-            ...slot.content.examples.slice(0, exampleIdx),
-            newVal,
-            ...slot.content.examples.slice(exampleIdx + 1),
-          ],
-        });
+        updateData(
+          slot.id,
+          {
+            ...slot.content,
+            examples: [
+              ...slot.content.examples.slice(0, exampleIdx),
+              newVal,
+              ...slot.content.examples.slice(exampleIdx + 1),
+            ],
+          },
+          0
+        );
       }
     };
 
   return (
     <>
-      <Menu id={MENU_ID} theme="dark" animation={false}>
-        <Item onClick={({ props }) => deleteData(props.slotId)}>Delete</Item>
-      </Menu>
-
       <ColumnsContainer>
         <Column maxwidth="400px">
           <ColumnHeader>
-            <ColumnTitle>
-              gobot slots
-            </ColumnTitle>
+            <ColumnTitle>gobot slots</ColumnTitle>
             <PlusBtn onClick={handleOnNewSlot} />
           </ColumnHeader>
 
@@ -225,9 +240,7 @@ export default () => {
                   selected={slot.id === selectedSlotId}
                   onSelected={() => setSelectedSlotId(slot.id)}
                   onNameChange={handleSlotRename(slot)}
-                  onContextMenu={(ev) =>
-                    showMenu(ev, { props: { slotId: slot.id } })
-                  }
+                  onContextMenu={(ev) => showMenu(ev, { slot })}
                 />
               ))}
           </SlotEntriesCont>
@@ -250,6 +263,9 @@ export default () => {
                       key={idx}
                       selected={false}
                       onChange={handlePharseEdit(selectedSlot, idx)}
+                      onContextMenu={(ev) =>
+                        showMenu(ev, { slot: selectedSlot, phraseIdx: idx })
+                      }
                     >
                       {example}
                     </ExampleEntry>
@@ -425,4 +441,3 @@ const ExampleInput = styled("input")({
   padding: "7px",
   border: "1px solid #DDDDDD",
 });
-

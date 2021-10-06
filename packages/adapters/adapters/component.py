@@ -24,6 +24,7 @@ def _read_files(dir_path: Path, ignore_dirs: List[str] = []) -> FilesDict:
 def _write_files(file_dict: FilesDict, dir_path: Path):
     for rel_path, file_cont in file_dict.items():
         path = dir_path / rel_path
+        print(f"Writing {path.name}:\n", file_cont)
         with open(path, 'w') as f:
             f.write(file_cont)
 

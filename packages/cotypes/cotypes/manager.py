@@ -16,4 +16,9 @@ class ComponentRunner(ABC):
         """Sends a message to a trained component and returns the reply."""
         raise NotImplementedError()
 
+    @abstractmethod
+    async def reset(self, training_hash: str, comp: Component):
+        """Resets the component if applicable"""
+        raise NotImplementedError()
+
 

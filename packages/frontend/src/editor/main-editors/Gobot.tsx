@@ -11,10 +11,12 @@ import ReactFlow, {
   NodeTypesType,
   Position,
   BackgroundVariant,
+  Node
 } from "react-flow-renderer";
 import { styled } from "goober";
 import { nanoid } from "nanoid";
 
+import { useMenu } from "../contextMenu"
 import { useComponent, useData } from "../resourcesSlice";
 import type { Flow } from "@dp-builder/cotypes/ts/data";
 
@@ -25,7 +27,6 @@ interface NodeData {
 const UpdateNodeDataContext = React.createContext(
   (_: string, __: NodeData) => {}
 );
-const DeleteNodeCbContext = React.createContext((_: string) => {});
 const ActiveComponentIdContext = React.createContext<undefined | number>(
   undefined
 );
@@ -54,25 +55,18 @@ const Dropdown = ({
   );
 };
 
-const withMenu =
-  <P extends React.PropsWithChildren<{ id: string }>>(
-    Comp: React.FC<P>
-  ): React.FC<P> =>
-  ({ ...props }) => {
-    const onDelete = React.useContext(DeleteNodeCbContext);
-    return (
-      <div onDoubleClick={() => onDelete(props.id)}>
-        <Comp {...props} />
-      </div>
-    );
-  };
-
-const UtteranceNode = withMenu(
+const UtteranceNode = 
   ({ id, data: { selectedIntent } }: { id: string; data: NodeData }) => {
     const onDataChange = useContext(UpdateNodeDataContext);
     const compId = useContext(ActiveComponentIdContext);
     const { data: intentsData } = useData(compId, "intent");
     const intents = intentsData.map((d) => d.content);
+
+    useEffect(() => {
+      if (intentsData && !selectedIntent) {
+        onDataChange(id, { selectedIntent: intentsData[0] });
+      }
+    }, [intentsData, selectedIntent]);
 
     return (
       <NodeContainer>
@@ -104,13 +98,16 @@ const UtteranceNode = withMenu(
       </NodeContainer>
     );
   }
-);
 
-const ApiCallNode = withMenu(({ id, data }: { id: string; data: NodeData }) => {
+const ApiCallNode = ({ id, data }: { id: string; data: NodeData }) => {
   const onDataChange = useContext(UpdateNodeDataContext);
   const onInputChange =
     (field: string) => (ev: React.ChangeEvent<HTMLInputElement>) =>
       onDataChange(id, { ...data, [field]: ev.target.value });
+
+  useEffect(() => {
+    if (!data.endpoint) onInputChange("");
+  }, []);
 
   return (
     <NodeContainer>
@@ -143,13 +140,17 @@ const ApiCallNode = withMenu(({ id, data }: { id: string; data: NodeData }) => {
       />
     </NodeContainer>
   );
-});
+};
 
-const ResponseNode = withMenu(
+const ResponseNode = 
   ({ id, data: { respStr } }: { id: string; data: NodeData }) => {
     const onDataChange = useContext(UpdateNodeDataContext);
     const onInputChange = (ev: React.ChangeEvent<HTMLInputElement>) =>
       onDataChange(id, { respStr: ev.target.value });
+
+    useEffect(() => {
+      if (!respStr) onDataChange(id, { respStr: "" });
+    }, []);
 
     return (
       <NodeContainer>
@@ -178,7 +179,7 @@ const ResponseNode = withMenu(
       </NodeContainer>
     );
   }
-);
+;
 
 const nodeTypes: NodeTypesType = {
   utterance: UtteranceNode,
@@ -223,6 +224,7 @@ export default () => {
     messages,
     interact,
     train,
+    reset,
   } = useComponent("gobot");
 
   const {
@@ -251,6 +253,15 @@ export default () => {
     if (flow) setElements(flow.el as Elements);
   }, [flow]);
 
+  const { show: showMenu } = useMenu<Node<any>>({
+    onDelete: (node) => setElements((els) =>
+      removeElements(
+        els.filter(({ id }) => id === node.id),
+        els
+      )),
+      onRename: () => {}
+  })
+
   if (!flow || !component) return <div>Loading...</div>;
 
   const onElementsRemove = (elementsToRemove: any) =>
@@ -260,23 +271,15 @@ export default () => {
   const onConnect = (params: any) =>
     setElements((els) => addEdge(params, els) as any);
 
-  const onDataChange = (nodeId: string, newData: object) => (
-    console.log("update", nodeId, newData),
+  const onDataChange = (nodeId: string, newData: object) =>
     setElements((els) =>
       els.map((el) => {
         if (el.id === nodeId) return { ...el, data: { ...newData } };
         else return el;
       })
-    )
-  );
-
-  const onDelete = (nodeId: string) =>
-    setElements((els) =>
-      removeElements(
-        els.filter(({ id }) => id === nodeId),
-        els
-      )
     );
+
+  const onNodeDragStop = () => reactFlowInstance && setElements(reactFlowInstance.getElements())
 
   const onLoad = (reactFlowInstance: OnLoadParams) => {
     setReactFlowInstance(reactFlowInstance);
@@ -322,7 +325,6 @@ export default () => {
   return (
     <ColumnsContainer>
       <Column>
-        <DeleteNodeCbContext.Provider value={onDelete}>
           <ActiveComponentIdContext.Provider value={component.id}>
             <UpdateNodeDataContext.Provider value={onDataChange}>
               <FlowWrapper ref={reactFlowWrapper}>
@@ -338,6 +340,8 @@ export default () => {
                   onElementsRemove={onElementsRemove}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
+                  onNodeDragStop={onNodeDragStop}
+                  onNodeContextMenu={showMenu}
                 >
                   <Controls />
                   <Background
@@ -350,10 +354,9 @@ export default () => {
               </FlowWrapper>
             </UpdateNodeDataContext.Provider>
           </ActiveComponentIdContext.Provider>
-        </DeleteNodeCbContext.Provider>
       </Column>
 
-      <Column maxwidth="300px">
+      <Column maxwidth="400px">
         <RowContainer>
           <Row>
             <Palette />
@@ -386,15 +389,18 @@ export default () => {
                     )
                   )}
                 </Chat>
-                <ChatInput
-                  type="text"
-                  placeholder="Type a message here..."
-                  onKeyDown={(ev) =>
-                    ev.key === "Enter" &&
-                    (ev.target as HTMLInputElement).value !== "" &&
-                    handleTest((ev.target as HTMLInputElement).value)
-                  }
-                />
+                <ChatBottomCont>
+                  <button onClick={reset}>Reset</button>
+                  <ChatInput
+                    type="text"
+                    placeholder="Type a message here..."
+                    onKeyDown={(ev) =>
+                      ev.key === "Enter" &&
+                      (ev.target as HTMLInputElement).value !== "" &&
+                      handleTest((ev.target as HTMLInputElement).value)
+                    }
+                  />
+                </ChatBottomCont>
               </>
             )}
           </Row>
@@ -403,6 +409,12 @@ export default () => {
     </ColumnsContainer>
   );
 };
+
+const ChatBottomCont = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  margin: "5px 5px 10px 5px",
+});
 
 const Chat = styled("div")({
   width: "100%",
@@ -417,8 +429,9 @@ const Chat = styled("div")({
 
 const ChatInput = styled("input")({
   height: "2rem",
-  margin: "5px 5px 10px 5px",
-  borderRadius: "5px"
+  borderRadius: "5px",
+  flex: 1,
+  marginLeft: "5px",
 });
 
 const ChatBubbleLeft = styled("div")({
@@ -437,16 +450,17 @@ const ChatBubbleCont = styled("div")({
   padding: "10px",
   margin: "7px",
   borderRadius: "20px",
-  maxWidth: "50%",
+  maxWidth: "60%",
   border: "solid 1px #444141",
   borderBottomLeftRadius: 0,
+  wordWrap: "break-word",
 });
 
 const ChatBubbleContDark = styled(ChatBubbleCont)({
   backgroundColor: "#444141",
   color: "white",
-  borderBottomLeftRadius: "20px",
-  borderBottomRightRadius: 0,
+  borderBottomLeftRadius: "20px !important",
+  borderBottomRightRadius: "0 !important",
 });
 
 const NodeContainer = styled("div")(({ theme }) => ({

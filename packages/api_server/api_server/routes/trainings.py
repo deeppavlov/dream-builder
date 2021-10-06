@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Union, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from api_server.db import DB
 from cotypes.data_schemas import schemas as data_schemas
 from cotypes.manager import ComponentRunner
-from cotypes.common import Training, Message, Component, Data
+from cotypes.common import Training, Message, Component, Data, ResetMessage
 
 router = APIRouter(prefix='/trainings')
 
@@ -22,20 +22,24 @@ async def get_messages(train_id: int, db: DB = Depends()):
         out_messages.append(msg['response'])
     return out_messages
 
-@router.post("/{train_id}/messages", response_model=Message)
-async def create_message(train_id: int, msg: Message, db: DB = Depends(), runner: ComponentRunner = Depends()):
+@router.post("/{train_id}/messages", response_model=Optional[Message])
+async def create_message(train_id: int, msg: Union[Message, ResetMessage], db: DB = Depends(), runner: ComponentRunner = Depends()):
     training = await db.get_training(train_id)
     comp = Component(**(await db.get_component(training['component_id'])))
 
-    message_hist: List[Message] = []
-    for prev_msg in await db.list_messages(train_id):
-        message_hist.append(Message(**prev_msg['request']))
-        message_hist.append(Message(**prev_msg['response']))
-    message_hist.append(msg)
+    if isinstance(msg, Message):
+        message_hist: List[Message] = []
+        for prev_msg in await db.list_messages(train_id):
+            message_hist.append(Message(**prev_msg['request']))
+            message_hist.append(Message(**prev_msg['response']))
+        message_hist.append(msg)
 
-    response = await runner.interact(training['data_hash'], comp, message_hist)
-    await db.create_message(train_id, jsonable_encoder(msg), jsonable_encoder(response))
-    return jsonable_encoder(response)
+        response = await runner.interact(training['data_hash'], comp, message_hist)
+        await db.create_message(train_id, jsonable_encoder(msg), jsonable_encoder(response))
+        return jsonable_encoder(response)
+    else:
+        await runner.reset(training['data_hash'], comp)
+        await db.create_session(train_id)
 
 @router.get("/{train_id}/data", response_model=Dict[str, List[Data]])
 async def get_training_data(train_id: int, db: DB = Depends()):

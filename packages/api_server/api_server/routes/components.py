@@ -1,3 +1,4 @@
+import traceback
 import asyncio
 import logging
 import jsonschema
@@ -22,7 +23,7 @@ async def _run_train_and_save_status(cor, train_id: int, db: DB):
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as e:
-        logging.error(f"Training crashed:\n{e}")
+        logging.error(f"Training crashed:{traceback.format_exc()}\n{e}")
         status = Status.FAILED
     await db.update_training_status(train_id, status)
 
@@ -51,7 +52,7 @@ async def list_trainings(comp_id: int, db: DB = Depends()):
 async def create_training(comp_id: int, db: DB = Depends(), runner: ComponentRunner = Depends()):
     comp = await db.get_component(comp_id)
     try:
-        last_training = await db.get_training_by_hash(comp_id, comp['data_hash'])
+        last_training = await db.get_last_training_by_hash(comp_id, comp['data_hash'])
         if last_training is not None and last_training['status'] != Status.FAILED:
             raise HTTPException(status_code=400, detail="This component has already been trained with this data")
     except NotFoundError:
@@ -71,7 +72,7 @@ async def create_training(comp_id: int, db: DB = Depends(), runner: ComponentRun
 @router.get("/{comp_id}/last_training", response_model=Training)
 async def get_last_training(comp_id: int, db: DB = Depends()):
     comp = await db.get_component(comp_id)
-    training = await db.get_training_by_hash(comp_id, comp['data_hash'])
+    training = await db.get_last_training_by_hash(comp_id, comp['data_hash'])
     return jsonable_encoder(training)
 
 @router.get("/{comp_id}/{data_type_plural}", response_model=List[Data])

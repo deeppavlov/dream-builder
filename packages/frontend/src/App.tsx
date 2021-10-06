@@ -4,21 +4,27 @@ import { Provider } from "react-redux";
 
 import { ThemeProvider } from "./theme";
 import store from "./store";
-import useHistory from "./editor/useHistory"
+import useHistory from "./editor/useHistory";
 import EditorFrame from "./editor/EditorFrame";
 import Sidebar from "./sidebar/Sidebar";
+import { MenuProvider } from "./editor/contextMenu";
 
 function App() {
-  useHistory()
+  useHistory();
 
   return (
     <ThemeProvider>
-      <Sidebar />
-      <EditorFrame />
+      <MenuProvider>
+        <Sidebar />
+        <EditorFrame />
+      </MenuProvider>
     </ThemeProvider>
   );
 }
 
-render(<Provider store={store}>
-  <App />
-</Provider>, document.getElementById("root"));
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);

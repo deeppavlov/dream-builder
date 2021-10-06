@@ -63,11 +63,7 @@ schemas = {
                                         },
                                         {
                                             "type": "object",
-                                            "required": [
-                                                "endpoint",
-                                                "method",
-                                                "payload",
-                                            ],
+                                            "required": ["endpoint"],
                                             "properties": {
                                                 "endpoint": {"type": "string"},
                                                 "method": {"type": "string"},

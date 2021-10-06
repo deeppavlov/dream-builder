@@ -5,4 +5,5 @@ from .training import Training
 from .component import Component
 from .message import Message
 from .data import Data
-__all__ = ['import_component', 'new_component', 'project', 'training', 'component', 'message', 'data']
+from .reset_message import ResetMessage
+__all__ = ['import_component', 'new_component', 'project', 'training', 'component', 'message', 'data', 'reset_message']

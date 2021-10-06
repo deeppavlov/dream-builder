@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { styled } from "goober";
 import { AiOutlinePlus } from "react-icons/ai";
-import { Menu, Item, useContextMenu } from "react-contexify";
 
-import "react-contexify/dist/ReactContexify.css";
+import type { Intent as IntentContent } from "@dp-builder/cotypes/ts/data";
+import { useMenu } from "../contextMenu";
+import { useComponent, useData, DataWithContent } from "../resourcesSlice";
 
-import { useComponent, useData } from "../resourcesSlice";
-
-const MENU_ID = "intent-entry-menu";
+type Intent = DataWithContent<IntentContent>;
 
 const Editable: React.FC<{
   defaultValue?: string;
@@ -33,7 +32,12 @@ const Editable: React.FC<{
       inputRef.current?.focus();
       inputRef.current?.select();
     }
-  }, [beingEdited, inputRef.current]);
+  }, [beingEdited]);
+
+  // useEffect(() => {
+  //   if (defaultEditing && !beingEdited) setBeignEdited(true);
+  //   if (!defaultEditing && beingEdited) setBeignEdited(false);
+  // }, [defaultEditing, beingEdited]);
 
   const handleKeyDown: React.KeyboardEventHandler = (ev) => {
     if (ev.key === "Escape") {
@@ -64,7 +68,7 @@ const IntentEntry: React.FC<
     intentName: string;
     examples: string[];
     selected: boolean;
-    isNew: boolean;
+    beingEdited: boolean;
     onSelected?: () => void;
     onNameChange: (newVal: string) => void;
   } & React.HTMLAttributes<HTMLDivElement>
@@ -74,14 +78,14 @@ const IntentEntry: React.FC<
   onNameChange,
   intentName,
   examples,
-  isNew,
+  beingEdited,
   ...divProps
 }) => {
   return (
     <Editable
       onChange={onNameChange}
       defaultValue={intentName}
-      defaultEditing={isNew}
+      defaultEditing={beingEdited}
     >
       {(val) => (
         <IntentEntryDiv selected={selected} onClick={onSelected} {...divProps}>
@@ -98,10 +102,14 @@ const PhraseEntry: React.FC<{
   selected: boolean;
   onSelected?: () => void;
   onChange: (newVal: string) => void;
-}> = ({ onChange, children }) => {
+  onContextMenu?: React.MouseEventHandler;
+}> = ({ onChange, children, onContextMenu }) => {
   return (
-    <PhraseEntryDiv>
-      <Editable onChange={onChange} defaultValue={children}>
+    <PhraseEntryDiv onContextMenu={onContextMenu}>
+      <Editable
+        onChange={onChange}
+        defaultValue={children}
+      >
         {(val) => (
           <div style={{ minHeight: "1em" }}>
             {val
@@ -120,7 +128,7 @@ const PhraseEntry: React.FC<{
   );
 };
 
-export default ({ componentType = "intent_catcher" }) => {
+export default ({ componentType = "intent" }) => {
   const {
     component,
     canTrain,
@@ -134,12 +142,13 @@ export default ({ componentType = "intent_catcher" }) => {
   const lastMessage = messages?.slice(-1).pop();
   const lastResponse =
     lastMessage?.user_type === "bot"
-      ? (lastMessage.annotations?.intent as [string, number][])
+      ? (lastMessage.annotations?.intent as [string])
       : undefined;
-  const bestIntent = lastResponse?.reduce(
-    (best, cur) => (cur[1] > best[1] ? cur : best),
-    ["", -1]
-  );
+  // const bestIntent = lastResponse?.reduce(
+  //   (best, cur) => (cur[1] > best[1] ? cur : best),
+  //   ["", -1]
+  // );
+  const bestIntent = (lastResponse || [[undefined]])[0]
 
   const {
     data: intents,
@@ -152,12 +161,11 @@ export default ({ componentType = "intent_catcher" }) => {
   const [newlyAddedIntentId, setNewlyAddedIntentId] = useState<number | null>(
     null
   );
+  // const [editedPhraseIdx, setEditedPhraseIdx] = useState<number | null>(null);
 
   const selectedIntent =
     setSelectedIntentId !== null
-      ? (intents.find(
-          ({ id }) => id === selectedIntentId
-        ) as typeof intents[number])
+      ? (intents.find(({ id }) => id === selectedIntentId) as Intent)
       : null;
 
   useEffect(() => {
@@ -165,7 +173,26 @@ export default ({ componentType = "intent_catcher" }) => {
       setSelectedIntentId(intents[0].id);
   }, [intents, selectedIntentId]);
 
-  const { show: showMenu } = useContextMenu({ id: MENU_ID });
+  const { show: showMenu } = useMenu<{ int: Intent; phraseIdx?: number }>({
+    onDelete: ({ int, phraseIdx }) => {
+      console.log('delete', int, phraseIdx)
+      if (phraseIdx === undefined) {
+        deleteData(int.id);
+      } else {
+        updateData(int.id, {
+          ...int.content,
+          examples: [
+            ...int.content.examples.slice(0, phraseIdx),
+            ...int.content.examples.slice(phraseIdx + 1),
+          ],
+        }, 0);
+      }
+    },
+    onRename: () => {
+      // if (phraseIdx === undefined) setNewlyAddedIntentId(int.id);
+      // else setEditedPhraseIdx(phraseIdx);
+    },
+  });
 
   if (!intents) return <div>Loading...</div>;
 
@@ -180,27 +207,25 @@ export default ({ componentType = "intent_catcher" }) => {
       }
     });
 
-  const handleIntentRename =
-    (int: typeof intents[number]) => (newName: string) => {
-      updateData(int.id, { ...int.content, name: newName });
-      setNewlyAddedIntentId(null);
-    };
+  const handleIntentRename = (int: Intent) => (newName: string) => {
+    updateData(int.id, { ...int.content, name: newName }, 0);
+    setNewlyAddedIntentId(null);
+  };
 
   const handleAddPhrase =
-    (int: typeof intents[number]) =>
-    (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    (int: Intent) => (ev: React.KeyboardEvent<HTMLInputElement>) => {
       const target = ev.target as HTMLInputElement;
       if (ev.key === "Enter" && target.value !== "") {
         updateData(int.id, {
           ...int.content,
           examples: [...int.content.examples, target.value],
-        });
+        }, 0);
         target.value = "";
       }
     };
 
   const handlePharseEdit =
-    (int: typeof intents[number], phraseIdx: number) => (newVal: string) => {
+    (int: Intent, phraseIdx: number) => (newVal: string) => {
       if (newVal !== "") {
         updateData(int.id, {
           ...int.content,
@@ -209,7 +234,7 @@ export default ({ componentType = "intent_catcher" }) => {
             newVal,
             ...int.content.examples.slice(phraseIdx + 1),
           ],
-        });
+        }, 0);
       }
     };
 
@@ -219,10 +244,6 @@ export default ({ componentType = "intent_catcher" }) => {
 
   return (
     <>
-      <Menu id={MENU_ID} theme="dark" animation={false}>
-        <Item onClick={({ props }) => deleteData(props.intId)}>Delete</Item>
-      </Menu>
-
       <ColumnsContainer>
         <Column maxwidth="400px">
           <ColumnHeader>
@@ -239,15 +260,13 @@ export default ({ componentType = "intent_catcher" }) => {
               .map((int) => (
                 <IntentEntry
                   key={int.id}
-                  isNew={newlyAddedIntentId === int.id}
+                  beingEdited={newlyAddedIntentId === int.id}
                   intentName={int.content.name}
                   examples={int.content.examples}
                   selected={int.id === selectedIntentId}
                   onSelected={() => setSelectedIntentId(int.id)}
                   onNameChange={handleIntentRename(int)}
-                  onContextMenu={(ev) =>
-                    showMenu(ev, { props: { intId: int.id } })
-                  }
+                  onContextMenu={(ev) => showMenu(ev, { int })}
                 />
               ))}
           </IntentEntriesCont>
@@ -270,6 +289,9 @@ export default ({ componentType = "intent_catcher" }) => {
                       key={idx}
                       selected={false}
                       onChange={handlePharseEdit(selectedIntent, idx)}
+                      onContextMenu={(ev) =>
+                        showMenu(ev, { int: selectedIntent, phraseIdx: idx })
+                      }
                     >
                       {phrase}
                     </PhraseEntry>

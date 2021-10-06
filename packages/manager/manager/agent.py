@@ -54,7 +54,7 @@ def get_agent_state(message_hist: List[Message]):
     for msg in message_hist:
         utterance: Dict[str, Any] = {
             "text": msg.text,
-            "annotations": msg.annotations or [],
+            "annotations": msg.annotations or {},
             "date_time": str(msg.date_time or datetime.now()),
         }
 
@@ -112,10 +112,9 @@ def format_reply(comp: Component, reply: Union[List, Dict]) -> Message:
     """
     if comp.group == 'annotators':
         msg = Message(
-            user_type = UserType.user,
-            annotations = { [comp.type]: reply }
+            user_type = UserType.bot,
+            annotations = { comp.type: reply }
         )
-        msg.annotations = {}
     elif comp.group == 'skills':
         best_reply = max((_parse_skill_response(resp) for resp in reply), key=lambda r: r[1])[0]
         msg = Message(

@@ -1,4 +1,4 @@
-import json, hashlib
+import json, hashlib, time
 import databases
 import sqlalchemy as sa
 from typing import List, Dict, Optional, Mapping, Union
@@ -6,7 +6,7 @@ from collections import defaultdict
 from sqlalchemy import select, Column, Integer, String, Enum, ForeignKey, JSON, DateTime
 
 from cotypes.common.training import Status as TrainStatus
-from cotypes.common import Project, NewComponent
+from cotypes.common import Project, NewComponent, component
 
 class NotFoundError(Exception):
     pass
@@ -45,11 +45,19 @@ trainings = sa.Table(
     Column('trained_model_link', String),
 )
 
+test_sessions = sa.Table(
+    'test_sessions',
+    metadata,
+    Column('id', Integer, primary_key=True),
+    Column('training_id', ForeignKey('trainings.id')),
+    Column('timestamp', DateTime, server_default=sa.func.now()),
+)
+
 messages = sa.Table(
     'messages',
     metadata,
     Column('id', Integer, primary_key=True),
-    Column('training_id', ForeignKey('trainings.id')),
+    Column('session_id', ForeignKey('test_sessions.id')),
     Column('timestamp', DateTime, server_default=sa.func.now()),
     Column('request', JSON),
     Column('response', JSON)
@@ -62,7 +70,7 @@ data = sa.Table(
     Column('type', String),
     Column('component_id', ForeignKey('components.id')),
     Column('content', JSON),
-    Column('hash', String)
+    Column('hash', String),
 )
 
 data_archive = sa.Table(
@@ -133,12 +141,19 @@ class DB:
     async def get_training(self, train_id: int):
         return await self._get_one(trainings, trainings.c.id == train_id)
 
-    async def get_training_by_hash(self, comp_id: int, hash: str):
-        conds = [
+    async def get_last_training_by_hash(self, comp_id: int, hash: str):
+        query = trainings.select().where(
             trainings.c.data_hash == hash,
             trainings.c.component_id == comp_id
-        ]
-        return await self._get_one(trainings, *conds)
+        )
+        trainings_with_hash = await self.db.fetch_all(query)
+        if len(trainings_with_hash) == 0:
+            raise NotFoundError()
+        for train in trainings_with_hash:
+            if train['status'] == TrainStatus.RUNNING:
+                return train
+        return trainings_with_hash[-1]
+
 
     async def create_training(self, comp_id: int, template_link: str):
         async with self.db.transaction():
@@ -168,13 +183,35 @@ class DB:
         await self.db.execute(query)
 
     ## MESSAGES
+    async def get_latest_test_session(self, train_id: int):
+        session_query = test_sessions.select() \
+        .where(test_sessions.c.training_id == train_id) \
+        .order_by(test_sessions.c.id.desc())
+        latest_session = await self.db.fetch_one(session_query)
+        return latest_session
+
+    async def create_session(self, train_id: int):
+        new_sess_query = test_sessions.insert().values(
+            training_id=train_id
+        )
+        return await self.db.execute(new_sess_query)
+
     async def list_messages(self, train_id: int):
-        query = messages.select().where(messages.c.training_id == train_id)
+        latest_session = await self.get_latest_test_session(train_id)
+        if not latest_session:
+            return []
+        query = messages.select().where(messages.c.session_id == latest_session['id'])\
+        .order_by(messages.c.timestamp)
         return await self.db.fetch_all(query)
 
     async def create_message(self, train_id: int, request: Dict, response: Dict):
+        latest_session = await self.get_latest_test_session(train_id)
+        if not latest_session:
+            latest_session_id = await self.create_session(train_id)
+        else:
+            latest_session_id = latest_session['id']
         query = messages.insert().values(
-            training_id=train_id,
+            session_id=latest_session_id,
             request=request,
             response=response
         )
@@ -229,11 +266,16 @@ class DB:
             await self._update_component_hash(comp_id)
 
     async def update_data(self, data_id: int, new_cont: Dict):
+        # start = time.time()
         async with self.db.transaction():
+            # print(f"  Update {data_id}: In transaction: {time.time() - start}")
             hash = self._hash_data(new_cont)
             query = data.update().where(data.c.id == data_id).values(content=new_cont, hash=hash)
             await self.db.execute(query)
+            # print(f"  Update {data_id}: After update: {time.time() - start}")
             data_item = await self.get_data(data_id)
+            query = components.update().where(components.c.id == data_item['id']).values(data_hash='')
+            await self.db.execute(query)
             await self._update_component_hash(data_item['component_id'])
             return data_item
 
@@ -273,10 +315,8 @@ class DB:
         return res
 
     def _hash_data(self, data: Dict):
-        hasher = hashlib.sha1()
         data_str = json.dumps(data, sort_keys=True, ensure_ascii=True).encode()
-        hasher.update(data_str)
-        return hasher.hexdigest()
+        return hashlib.sha1(data_str).hexdigest()
 
     async def _update_component_hash(self, comp_id: int):
         hashes_query = select(data.c.hash)

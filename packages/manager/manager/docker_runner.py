@@ -1,12 +1,12 @@
+import traceback
 import asyncio, logging, json
 import subprocess
-import adapters
 import aiohttp
 from tempfile import TemporaryDirectory
 from typing import Optional, List
 from pathlib import Path
 
-from adapters import store, get_component_data_adapter
+from adapters import store
 from adapters.concurrent import export_component
 from cotypes.common.training import Status
 from cotypes.common import Component, Message
@@ -102,9 +102,10 @@ class DockerRunner(ComponentRunner):
             logger.info(f"Exporting data for training {label}")
             try:
                 store.dump(template_link, tmpdir)
+                logger.info(f"Exported data: \n" + json.dumps(data, indent=4))
                 await export_component(comp, data, tmpdir)
             except RuntimeError as e:
-                logger.error(f"Error exporting {label}:\n{e}")
+                logger.error(f"Error exporting {label}:\n{traceback.format_exc()}\n{e}")
                 return Status.FAILED
 
             img_name = f"{label}-train:{training_hash}"
@@ -118,12 +119,10 @@ class DockerRunner(ComponentRunner):
                 return Status.FAILED
             logger.info(f"Image {img_name} built")
 
-            Adapter = get_component_data_adapter(comp.type)
-            adapter = Adapter()
             if (tmpdir / "train.py").exists():
                 train_command = "python train.py"
-            elif hasattr(adapter, "train_cmd"):
-                train_command = adapter.train_cmd # type:ignore
+            elif (tmpdir / "train.sh").exists():
+                train_command = "sh train.sh"
             else:
                 train_command = "python -m deeppavlov train ./config.json"
 
@@ -135,57 +134,51 @@ class DockerRunner(ComponentRunner):
         logger.info(f"Inspect result of {img_name}: {ins_out.decode()}")
         original_cmd = json.loads(ins_out.decode())[0]['Config']['Cmd']
         logger.info(f"Original command of {img_name}: {original_cmd}")
+
+        # Kill previous testing containers as they can take up a lot of memory
+        running_containers = await self._get_running_containers()
+        await self._kill_containers(running_containers, f"{label}-test-")
         
         container_name = f"dp_manager_{training_hash}_training"
-        logger.info(f"Running training in container {container_name}")
-        train_return, _, _ = await _run_cmd(
-            f"docker run {self.gpus} --name {container_name} {img_name} {train_command}",
-            log=True,
-            log_prefix=f"[TRAIN {label}]    ")
-        if train_return != 0:
-            return Status.FAILED
-        logger.info(f"Training {training_hash} exited")
+        try:
+            logger.info(f"Running training in container {container_name}")
+            train_return, _, _ = await _run_cmd(
+                f"docker run {self.gpus} --name {container_name} {img_name} sh -c \"{train_command}\"",
+                log=True,
+                log_prefix=f"[TRAIN {label}]    ")
+            if train_return != 0:
+                return Status.FAILED
+            logger.info(f"Training {training_hash} exited")
 
-        trained_img_name = f"{label}-trained:{training_hash}"
-        logger.info(f"Commiting trained container to image {trained_img_name}")
-        commit_return, _, commit_err = await _run_cmd(f"docker commit --change='CMD {json.dumps(original_cmd)}' {container_name} {trained_img_name}")
-        if commit_return != 0:
-            logger.error(f"Commiting {label} failed:\n{commit_err.decode()}")
-            return Status.FAILED
+            trained_img_name = f"{label}-trained:{training_hash}"
+            logger.info(f"Commiting trained container to image {trained_img_name}")
+            commit_return, _, commit_err = await _run_cmd(f"docker commit --change='CMD {json.dumps(original_cmd)}' {container_name} {trained_img_name}")
+            if commit_return != 0:
+                logger.error(f"Commiting {label} failed:\n{commit_err.decode()}")
+                return Status.FAILED
+            return Status.SUCCESS
+        finally:
+            logger.info(f"Deleting trainer container {container_name}")
+            commit_return, _, commit_err = await _run_cmd(f"docker rm {container_name}")
+            if commit_return != 0:
+                logger.error(f"Deleting {label} failed:\n{commit_err.decode()}")
+                return Status.FAILED
 
-        logger.info(f"Deleting trained container {container_name}")
-        commit_return, _, commit_err = await _run_cmd(f"docker rm {container_name}")
-        if commit_return != 0:
-            logger.error(f"Deleting {label} failed:\n{commit_err.decode()}")
-            return Status.FAILED
-
-        return Status.SUCCESS
         
-
     async def interact(self, training_hash: str, comp: Component, message_history: List[Message]) -> Message:
         """Sends a message to a trained component and returns the reply.
             
         """
         label = comp.label or comp.type
         cont_name = f"{label}-test-{training_hash}"
+        running_containers = await self._get_running_containers()
 
-        logger.info(f"Executing ps to find running containers")
-        ps_return, ps_out, ps_err = await _run_cmd('docker ps --format "{{.Names}}"')
-        if ps_return != 0:
-            raise RuntimeError(f"Docker ps failed: {ps_err.decode()}")
-        running_containers = ps_out.decode().split('\n')
-        logger.info(f"Running docker containers: {', '.join(running_containers)}")
-        
         if cont_name not in running_containers:
-            # Kill all previous versions
-            for cont in running_containers:
-                if cont.startswith(f"{label}-test-"):
-                    logger.info(f"Stopping {cont}")
-                    await _run_cmd(f"docker stop {cont}")
+            await self._kill_containers(running_containers, f"{label}-test-")
 
             image_name = f"{label}-trained:{training_hash}" # TODO: Use comp.trained_model_link instead.
             logger.info(f"Starting container {cont_name} from {image_name}")
-            run_return, _, run_err = await _run_cmd(f"docker run {self.gpus} --name {cont_name} -P -d {image_name}")
+            run_return, _, run_err = await _run_cmd(f"docker run --rm {self.gpus} --name {cont_name} -P -d {image_name}")
             if run_return != 0:
                 raise RuntimeError(f"Starting {label} failed:\n{run_err.decode()}")
 
@@ -211,13 +204,39 @@ class DockerRunner(ComponentRunner):
         except asyncio.TimeoutError:
             raise RuntimeError(f"Container {label} is not responding")
 
-        msg = agent.get_agent_state(message_history)
+        endpoint = "respond" if comp.type != "intent" else "model"
+        msg = agent.get_agent_state(message_history) if comp.type != "intent" else {"x": [message_history[-1].text]}
         logger.info(f"Sending message to {cont_name}:\n{json.dumps(msg, indent=4)}")
         async with aiohttp.ClientSession() as client:
             # TODO: Don't assume the endpoint, should read it from pipeline_conf
-            async with client.get(f"http://localhost:{port}/respond", json=msg) as req:
+            async with client.post(f"http://localhost:{port}/{endpoint}", json=msg) as req:
                 response = await req.json()
                 logger.info(f"Received reply from {cont_name}:\n{json.dumps(response, indent=4)}")
                 formatted = agent.format_reply(comp, response)
                 logger.info(f"Formatted reply from {cont_name}:\n{formatted.json(indent=4)}")
                 return formatted
+
+    async def reset(self, training_hash: str, comp: Component):
+        label = comp.label or comp.type
+        cont_name = f"{label}-test-{training_hash}"
+        running_containers = await self._get_running_containers()
+        if cont_name in running_containers:
+            logger.info(f"Restarting container {cont_name}")
+            run_return, _, run_err = await _run_cmd(f"docker restart {cont_name}")
+            if run_return != 0:
+                raise RuntimeError(f"Restarting {label} failed:\n{run_err.decode()}")
+
+    async def _kill_containers(self, containers: List[str], prefix: str = ""):
+        for cont in containers:
+            if cont.startswith(prefix):
+                logger.info(f"Stopping {cont}")
+                await _run_cmd(f"docker stop {cont}")
+    
+    async def _get_running_containers(self) -> List[str]:
+        logger.info(f"Executing ps to find running containers")
+        ps_return, ps_out, ps_err = await _run_cmd('docker ps --format "{{.Names}}"')
+        if ps_return != 0:
+            raise RuntimeError(f"Docker ps failed: {ps_err.decode()}")
+        running_containers = ps_out.decode().split('\n')
+        logger.info(f"Running docker containers: {', '.join(running_containers)}")
+        return running_containers

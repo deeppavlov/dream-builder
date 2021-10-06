@@ -2,12 +2,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 
 import type { Intent, Slot, Flow } from "@dp-builder/cotypes/ts/data";
-
 import type {
   Data,
   Component,
   Training,
   Message,
+  ResetMessage,
 } from "@dp-builder/cotypes/ts/common";
 
 export interface DataWithContent<T> extends Data {
@@ -94,14 +94,16 @@ export const resourceApi = createApi({
     getTraining: build.query<Training, { compId: number }>({
       query: ({ compId }) => ({ url: `/components/${compId}/last_training` }),
       providesTags: ["Training"],
-      // transformResponse: (a, b) => {a, b?.response.ok}
     }),
 
     messages: build.query<Message[], number>({
       query: (trainId) => `/trainings/${trainId}/messages`,
       providesTags: (_, __, trainId) => [{ type: "Message", id: trainId }],
     }),
-    interact: build.mutation<Message, { trainId: number; msg: Message }>({
+    interact: build.mutation<
+      Message,
+      { trainId: number; msg: Message | ResetMessage }
+    >({
       query: ({ trainId, msg }) => ({
         url: `/trainings/${trainId}/messages`,
         method: "POST",
@@ -113,6 +115,8 @@ export const resourceApi = createApi({
     }),
   }),
 });
+
+const pendingMessages: { [id: number]: number } = {};
 
 export function useComponent(compType: string) {
   const { data: components = [] } =
@@ -126,30 +130,49 @@ export function useComponent(compType: string) {
       selectFromResult: (res) => (res.error ? undefined : res.data),
     }
   );
-  resourceApi.endpoints.getTraining.useQuerySubscription(
-    { compId: comp?.id as number },
-    {
-      skip: !comp,
-      pollingInterval: 3000//lastTraining?.status === "RUNNING" ? 3000 : undefined,
-    }
-  );
+  const { refetch: refetchTraining } =
+    resourceApi.endpoints.getTraining.useQuerySubscription(
+      { compId: comp?.id as number },
+      {
+        skip: !comp,
+        pollingInterval: lastTraining?.status === "RUNNING" ? 3000 : undefined,
+      }
+    );
 
-  const { data: messages, isFetching: isFetchingMessages } =
-    resourceApi.useMessagesQuery(lastTraining?.id as number, {
-      skip: !lastTraining,
-    });
+  const {
+    data: messages,
+    isFetching: isFetchingMessages,
+    refetch: refetchMessages,
+  } = resourceApi.useMessagesQuery(lastTraining?.id as number, {
+    skip: !lastTraining,
+  });
   const [_postTraining] = resourceApi.usePostTrainingMutation();
   const [_postMessage, { isLoading: isInteractInProgress }] =
     resourceApi.useInteractMutation();
 
   const train = () => {
     if (!comp) return;
-    _postTraining({ compId: comp.id });
+    _postTraining({ compId: comp.id }).then(() => refetchTraining());
   };
 
-  const interact = (msg: Message) => {
-    if (!comp || !lastTraining?.id) return;
-    _postMessage({ trainId: lastTraining.id, msg });
+  const interact = (msg: Message, debounce = 0) => {
+    if (!comp || lastTraining?.id === undefined) return;
+    if (lastTraining?.id in pendingMessages) {
+      clearTimeout(pendingMessages[lastTraining?.id]);
+    }
+    pendingMessages[lastTraining?.id] = setTimeout(() => {
+      _postMessage({ trainId: lastTraining.id, msg }).then(() =>
+        refetchMessages()
+      );
+      delete pendingMessages[lastTraining?.id];
+    }, debounce);
+  };
+
+  const reset = () => {
+    if (!comp || lastTraining?.id === undefined) return;
+    _postMessage({ trainId: lastTraining.id, msg: { type: "reset" } }).then(
+      () => refetchMessages()
+    );
   };
 
   return {
@@ -159,9 +182,12 @@ export function useComponent(compType: string) {
     isFetchingTestRes: isInteractInProgress || isFetchingMessages,
     train,
     interact,
-    messages,
+    reset,
+    messages: messages || [],
   };
 }
+
+const pendingDataUpdates: { [dataId: number]: { timer: number } } = {};
 
 export function useData<
   D extends string & keyof DataTypes,
@@ -188,9 +214,16 @@ export function useData<
     return "data" in res ? (res.data as DataWithContent<T>) : null;
   };
 
-  const updateData = (dataId: number, newDataContent: T) => {
+  const updateData = (dataId: number, newDataContent: T, debounce = 1000) => {
     if (compId === undefined) return;
-    _updateData({ newData: newDataContent, dataId });
+    if (pendingDataUpdates[dataId]) {
+      clearTimeout(pendingDataUpdates[dataId].timer);
+    }
+    const timer = setTimeout(() => {
+      _updateData({ newData: newDataContent, dataId });
+      delete pendingDataUpdates[dataId];
+    }, debounce);
+    pendingDataUpdates[dataId] = { timer };
   };
 
   const deleteData = (dataId: number) => {

@@ -76,6 +76,8 @@ class StoryPath:
         self.steps = steps
 
     def get_variations(self):
+        print("steps", self.steps)
+        print("steps intents", [int.name for int in self.steps if isinstance(int, Intent)])
         max_len = max([len(int.variations_with_slot_values) for int in self.steps if isinstance(int, Intent)])
         for i in range(max_len):
             story: List[str] = []
@@ -123,7 +125,7 @@ class Stories:
     def _find_starts(self):
         all_nodes = set()
         for el in self.flow:
-            if 'type' in el:
+            if 'data' in el:
                 all_nodes.add(el['id'])
         for el in self.flow:
             if 'target' in el and el['target'] in all_nodes:
@@ -144,16 +146,18 @@ class Stories:
 
     def _get_all_paths(self):
         starts = self._find_starts()
+        print("flow starting nodes", starts)
         paths_node_ids = []
         for start in starts:
             paths_node_ids += self._recurse_path(start, [])
         return paths_node_ids
 
     def _parse_steps(self, paths_node_ids: List[List[str]]):
+        print("path node ids", paths_node_ids)
         next_resp_idx = 0
         response_names = {}
         story_paths = []
-        nodes = { n['id']: n for n in self.flow if 'type' in n }
+        nodes = { n['id']: n for n in self.flow if 'data' in n }
         for path in paths_node_ids:
             path_steps = []
             for step_node_id in path:
@@ -172,7 +176,7 @@ class Stories:
                 elif node_type == 'apicall':
                     url = node['data']['endpoint']
                     if url not in response_names:
-                        response_names[url] = f"system_apicall_{next_resp_idx}"
+                        response_names[url] = f"action_api_call_{next_resp_idx}"
                         next_resp_idx += 1
                     path_steps.append(response_names[url])
             story_paths.append(StoryPath(path_steps))
@@ -270,7 +274,6 @@ def _parse_md(md_file: str):
 
 @register(component_type="gobot")
 class GobotDataAdapter(ComponentDataAdapter):
-    train_cmd = "python -m deeppavlov train intents_config.json && python -m deeppavlov train config.json"
 
     def override_configs(self, files: FilesDict) -> FilesDict:
         GOBOT = 'config.json'
@@ -278,7 +281,7 @@ class GobotDataAdapter(ComponentDataAdapter):
         SLOT = 'slotfill_config.json'
         for conf in [GOBOT, INTENT, SLOT]:
             if conf not in files:
-                raise FileNotFoundError(f"{conf.capitalize()} config is required for gobot!")
+                raise FileNotFoundError(f"{conf} config is required for gobot!")
 
         gobot_conf = json.loads(files[GOBOT])
         int_conf = json.loads(files[INTENT])
@@ -362,7 +365,7 @@ class GobotDataAdapter(ComponentDataAdapter):
         for story in stories.get_all_stories():
             stories_lines.append(f"## {story.name}")
             for step in story.steps:
-                if step.startswith("system"):
+                if step.startswith("system_") or step.startswith("action_"):
                     stories_lines.append(f" - {step}")
                 else:
                     stories_lines.append(f"* {step}")

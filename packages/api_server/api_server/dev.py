@@ -5,6 +5,7 @@ from pathlib import Path
 from api_server import create_app
 from api_server.routes.projects import create_project
 from api_server.db import DB
+from adapters import component
 from manager.docker_runner import DockerRunner
 from cotypes.common import Project
 

@@ -31,14 +31,15 @@ async def create_project(new_project: Project, db: DB = Depends()):
             comp_path = Path(comp_dir)
             comp_type = next((t for t in comp_types if t in comp_path.name), None)
             if comp_type is not None:
-                data = await import_component(comp_path, comp_type)
                 new_comp = NewComponent(
                     type=comp_type,
                     label=comp_path.name,
                     group=comp_path.parent.name,
                     template_link=str(comp_path.absolute()))
                 created_comp = await db.create_component(new_project.name, new_comp)
-                await db.import_data(created_comp['id'], data)
+                if (comp_path / "data").exists():
+                    data = await import_component(comp_path, comp_type)
+                    await db.import_data(created_comp['id'], data)
     else:
         os.makedirs(proj_path)
     return created_proj
@@ -53,24 +54,22 @@ async def list_components(project_name: str, db: DB = Depends()):
 
 @router.post("/{project_name}/components", response_model=Component)
 async def create_component(project_name: str, new_comp: Union[NewComponent, ImportComponent], db: DB = Depends()):
-    proj = await db.get_project(project_name)
+    # proj = await db.get_project(project_name)
     if isinstance(new_comp, NewComponent):
         created_comp = await db.create_component(project_name, new_comp)
         data = {}
     else:
         import_path = Path(new_comp.import_path)
-        data = await import_component(import_path, new_comp.type)
-        if data is None:
-            raise HTTPException(status_code=400, detail="Couldn't find importer for the component")
-        data = data
         comp = NewComponent(
             type=new_comp.type,
             label=import_path.name,
             group=new_comp.group,
             template_link=str(import_path.absolute()))
         created_comp = await db.create_component(project_name, comp)
-        await db.import_data(created_comp['id'], data)
-    comp = Component(**created_comp)
-    comp_path = Path(proj['export_root']) / comp.group / comp.label
-    asyncio.create_task(export_component(comp, data, comp_path))
+        if (import_path / "data").exists():
+            data = await import_component(import_path, new_comp.type)
+            await db.import_data(created_comp['id'], data)
+    # comp = Component(**created_comp)
+    # comp_path = Path(proj['export_root']) / comp.group / comp.label
+    # asyncio.create_task(export_component(comp, data, comp_path))
     return created_comp

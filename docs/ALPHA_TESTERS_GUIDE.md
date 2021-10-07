@@ -36,7 +36,7 @@ pnpm install
 
 ### Component templates
 
-DP-Builder is designed to edit existing deeppavlov-based components (annotators, skills, etc.). It does not yet have the capability to create one from scratch, so in order to use it you'll need to provide some basic component templates for all the skills/annotators you'd like work with. You can bring your own templates, or use mine [TODO: link to zip here]. If you decide to use your own, here's how your project folder should look:
+DP-Builder is designed to edit existing deeppavlov-based components (annotators, skills, etc.). It does not yet have the capability to create one from scratch, so in order to use it you'll need to provide some basic component templates for all the skills/annotators you'd like work with. You can bring your own templates, or [use mine](https://github.com/deepmipt/dp-builder/releases/download/v0.1-alpha/components.zip). If you decide to use your own, here's how your project folder should look:
 
 - 📂 __components__
    - 📂 __annotators__
@@ -101,7 +101,7 @@ Once you see the interface in your browser, you can start editing your imported 
 
 Select the second icon from the top in the sidebar and the intent editor should appear:
 
-[TODO: intent catcher screenshot here]()
+![intent catcher](imgs/intent_catcher.png)
 
 __Creating intents:__
 - You can create new intents by clicking the plus button at the top of the column on the left.
@@ -126,7 +126,7 @@ __Editing intents:__
 
 Open the sidebar, select Architecture > Skills > Gobot. Then you can choose from three editors, which are part of the gobot skill:
 
-[TODO: screenshot of the sidebar with the three editors visible]()
+![sidebar](imgs/sidebar.png)
 
 - Slot editor
 - Intent editor
@@ -135,7 +135,7 @@ Open the sidebar, select Architecture > Skills > Gobot. Then you can choose from
 
 #### Slot editor
 
-[TODO: screenshot slot editor]()
+![slot editor](imgs/slots.png)
 
 Using the slot editor is quite similar to the global intent editor:
 - Create slots on the left, and give them unique names. (Lowercase, single word names recommended)
@@ -145,19 +145,19 @@ Using the slot editor is quite similar to the global intent editor:
 
 #### Intent editor
 
-[TODO: screenshot intent editor]()
+![intent editor](imgs/local_intent.png)
 
 The usage of the intent editor is identical to the intent catcher editor, with one difference: you can insert slots into your intent examples. To reference a slot use `$` + the name of the slot. For examples: `My name is $name`; `I'd like some $food`. Make sure you create the corresponding slots first in the slot editor.
 
 #### Flow editor
 
-[TODO: screenshot flow editor]()
+![flow editor](imgs/gobot_flow.png)
 
 This is where you define the general structure of the dialogue. If you're familiar with the RASA config format, the previous two windows correspond to the `nlu` file. The flow editor creates the `stories` file, but it might not be immediately obvious how.
 
 The flow editor lets you create a graph. Individual nodes either represent a user utterance, or a response to an utterance. If two nodes are connected, that means that they follow each other in the stories. Nodes can have branches, meaning that the output of one node can connect to the inputs of multiple nodes. This would generate multiple stories, one for each possible path on the graph. Loops (a node connecting to an earlier node) are not allowed. As an example the following simple graph:
 
-[TODO: screenshot of simple flow]()
+![simple flow](imgs/simple_flow.png)
 
 would generate the following stories:
 

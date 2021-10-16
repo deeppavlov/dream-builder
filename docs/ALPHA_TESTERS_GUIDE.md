@@ -6,6 +6,15 @@ First of all, thank you for helping the development by giving DP-Builder a try. 
 
 ## Setup
 
+**UPDATE:** To simplify testing I've created a single file executable which has everything bundled. You can download it from [here](https://github.com/deepmipt/dp-builder/releases/download/v0.1-alpha/alpha-bundle-linux-x86_64.zip). Just extract the zip file, and run `./dpb-dev --project-dir ./components`. If this is working for you, skip ahead to [usage](#usage).
+Caveats of the bundle:
+ - Linux x86_64 only (WSL should work too)
+ - Not thoroughly tested
+ - Will try it's best to open the interface in a browser automatically, but if nothing happens just open http://localhost:8000/Intents
+ - You still need docker and preferably the nvidia docker runtime installed and set up
+
+### Building from source
+
 Right now, you need to build DP-Builder yourself to try it out. I am working on a more user-friendly method, but for now this is the only working way.
 
 DP-Builder has been only tested on Linux, but it should work fine on MacOS. If you're under windows, please try building in [WSL](https://docs.microsoft.com/en-us/windows/wsl/install). You'll also need to use the terminal a little bit, but it's just a few commands.

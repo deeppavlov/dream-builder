@@ -2,6 +2,6 @@
 build
 node_modules
 __pycache__
-
+.idea
 .cache
 .pnpm-debug.log

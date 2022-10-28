@@ -10,6 +10,8 @@ python = "^3.8"
 cotypes = {path = "../cotypes", develop = true}
 adapters = {path = "../adapters", develop = true}
 aiohttp = "^3.7.4"
+fastapi = "^0.73.0"
+uvicorn = "^0.17.6"
 
 [tool.poetry.dev-dependencies]
 

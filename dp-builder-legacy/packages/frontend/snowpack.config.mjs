@@ -24,7 +24,7 @@ export default {
       dest: (req, res) => {
         req.url = req.url.replace(/^\/api/g, '');
         return proxy.web(req, res, {
-          hostname: process.env.API_URL || 'localhost',
+          hostname: process.env.API_URL || '127.0.0.1',
           port: parseInt(process.env.API_PORT) || 80
         });
       },

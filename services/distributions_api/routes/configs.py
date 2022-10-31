@@ -11,7 +11,7 @@ from deeppavlov_dreamtools.distconfigs.manager import (
 router = APIRouter(prefix="api/configs/")
 
 
-@router.post("/add_service/", status_code=status.HTTP_201_CREATED)
+@router.put("/add_service/", status_code=status.HTTP_201_CREATED)
 async def add_new_service(
     config_type: ConfigClassLiteral,
     current_config: AnyConfig,
@@ -38,12 +38,34 @@ async def add_new_service(
     return config
 
 
-@router.post("/remove_service", status_code=status.HTTP_200_OK)
-async def remove_service_from_config():
+@router.put("/remove_service", status_code=status.HTTP_200_OK)
+async def remove_service_from_config(
+    config_type: ConfigClassLiteral,
+    current_config: AnyConfig,
+    name: str,
+    service_type: str = None,
+):
     """
-    Waiting for merge feat/add_services into main 🙄
+    Removes the service from current config
+
+    Args:
+        config_type: Literal["DreamPipeline", "DreamComposeOverride", "DreamComposeDev", "DreamComposeProxy"]
+        current_config: config to be changed
+        new_service: service to be added
+        name: service name
+        service_type: optional (if config is DreamPipeline), service type in pipeline
     """
-    pass
+    # example: config = DreamPipeline(config=current_config)
+    config: AnyConfigClass = CONFIG_NAME_OBJECT[config_type](current_config)
+
+    if config_type == "DreamPipeline":
+        config.remove_service(service_type=service_type, name=name, inplace=True)
+    else:
+        config.remove_service(name=name, inplace=True)
+
+    return config
+
+
 
 
 @router.post("/{dist_name}", )

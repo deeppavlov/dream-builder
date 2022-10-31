@@ -1,0 +1,7 @@
+@import "../../../styles/variables/dimensions.scss";
+
+.icon {
+  width: $topbar_btn;
+  height: $topbar_btn;
+  background-image: url(../../../assets/icons/home.svg);
+}

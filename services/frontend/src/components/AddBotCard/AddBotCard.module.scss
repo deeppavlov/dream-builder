@@ -1,0 +1,14 @@
+.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 280px;
+  height: 182px;
+  border-radius: 12px;
+  background: #ffcc00;
+  border: 1px solid #d8dbe5;
+  img {
+    width: 32px;
+    height: 32px;
+  }
+}

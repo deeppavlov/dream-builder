@@ -1,0 +1,21 @@
+@import '../../styles/variables/colors.scss';
+@import '../../styles/variables/dimensions.scss';
+.sidebar {
+  position: absolute;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: $sidebar-width;
+  height: calc(100% - $topbar-height);
+  background-color: $bcgrnd1;
+  box-shadow: $shadow;
+  border-right: 1px solid $bcgrnd3;
+  z-index: 1;
+  padding: 24px 12px;
+
+}
+.work_info {
+  background-color: black;
+}

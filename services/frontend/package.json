@@ -13,7 +13,6 @@
   "dependencies": {
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
-    "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
@@ -29,7 +28,7 @@
     "@storybook/builder-vite": "^0.2.4",
     "@storybook/react": "^6.5.12",
     "@storybook/testing-library": "^0.0.13",
-    "@types/react": "^18.0.17",
+    "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",

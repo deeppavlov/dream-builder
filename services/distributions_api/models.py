@@ -7,17 +7,24 @@ from deeppavlov_dreamtools.distconfigs.manager import (
     DreamComposeLocal,
 )
 from deeppavlov_dreamtools.distconfigs.generics import AnyConfig
+from deeppavlov_dreamtools.distconfigs.generics import (
+    PipelineConf,
+    ComposeOverride,
+    ComposeDev,
+    ComposeProxy,
+    ComposeLocal,
+)
 
 
 class DreamDistModel(BaseModel):
     dist_path: str
     name: str
     dream_root: str
-    pipeline_conf: DreamPipeline = None
-    compose_override: DreamComposeOverride = None
-    compose_dev: DreamComposeDev = None
-    compose_proxy: DreamComposeProxy = None
-    compose_local: DreamComposeLocal = None
+    pipeline_conf: PipelineConf = None
+    compose_override: ComposeOverride = None
+    compose_dev: ComposeDev = None
+    compose_proxy: ComposeProxy = None
+    compose_local: ComposeLocal = None
 
 
 class DreamDistConfigsImport(BaseModel):

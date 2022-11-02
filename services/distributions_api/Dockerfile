@@ -7,10 +7,12 @@ RUN git clone https://github.com/deeppavlov/dream.git
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
+ENV DREAM_ROOT_PATH="/src/dream/"
 
-COPY ./ ./deeppavlov_dreamtools/
+COPY ./ ./distributions/
 
 COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r /src/requirements-api.txt
 
-CMD ["python3" ,"-m", "uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+WORKDIR ./distributions/
+RUN ["python3" ,"-m", "uvicorn", "main:app", "--port", "80"]

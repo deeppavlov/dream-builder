@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Literal
 
@@ -7,17 +8,31 @@ from deeppavlov_dreamtools.distconfigs.manager import (
     DreamComposeProxy,
     DreamPipeline,
 )
+from deeppavlov_dreamtools.distconfigs.generics import (
+    PipelineConf,
+    ComposeOverride,
+    ComposeDev,
+    ComposeProxy,
+)
 
-DREAM_ROOT_PATH = Path(__file__).parents[4] / "dream"  # TODO: transfer to system env or to .env file
+
+# DREAM_ROOT_PATH = Path(__file__).parents[4] / "dream"  # TODO: transfer to system env or to .env file
+DREAM_ROOT_PATH = Path(os.environ["DREAM_ROOT_PATH"])
 
 ASSISTANT_DISTS_PATH = DREAM_ROOT_PATH / "assistant_dists"
 
-DreamConfigLiteral = Literal["pipeline_conf", "compose_override", "compose_dev", "compose_proxy", "compose_local"]
-ConfigClassLiteral = Literal["DreamPipeline", "DreamComposeOverride", "DreamComposeDev", "DreamComposeProxy"]
+DreamConfigLiteral = Literal["pipeline_conf", "compose_override", "compose_dev", "compose_proxy"]
 
-CONFIG_NAME_OBJECT = {
-    "DreamPipeline": DreamPipeline,
-    "DreamComposeOverride": DreamComposeOverride,
-    "DreamComposeDev": DreamComposeDev,
-    "DreamComposeProxy": DreamComposeProxy,
+CONFIGNAME_DREAMOBJECT = {
+    "pipeline_conf": DreamPipeline,
+    "compose_override": DreamComposeOverride,
+    "compose_dev": DreamComposeDev,
+    "compose_proxy": DreamComposeProxy,
+}
+
+CONFIGNAME_CONFIGOBJECT = {
+    "pipeline_conf": PipelineConf,
+    "compose_override": ComposeOverride,
+    "compose_dev": ComposeDev,
+    "compose_proxy": ComposeProxy,
 }

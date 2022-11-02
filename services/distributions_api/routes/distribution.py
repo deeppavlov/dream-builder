@@ -1,11 +1,17 @@
 from fastapi import APIRouter, status
 
-from services.distributions_api.const import DREAM_ROOT_PATH, DreamConfigLiteral
-from services.distributions_api.models import DreamDistConfigsImport, DreamDistModel
+from const import DREAM_ROOT_PATH, DreamConfigLiteral
+from models import DreamDistConfigsImport, DreamDistModel
 from deeppavlov_dreamtools.distconfigs.manager import AnyConfigClass, DreamDist, list_dists
+from deeppavlov_dreamtools.distconfigs.manager import (
+    DreamComposeDev,
+    DreamComposeOverride,
+    DreamComposeProxy,
+    DreamPipeline,
+)
 
 
-router = APIRouter(prefix="api/assistant_dists")
+router = APIRouter(prefix="/api/assistant_dists")
 
 
 def _dist_to_distmodel(dream_dist: DreamDist) -> DreamDistModel:
@@ -32,10 +38,10 @@ def _distmodel_to_dist(dream_dist_model: DreamDistModel) -> DreamDist:
         dist_path=dream_dist_model.dist_path,
         name=dream_dist_model.name,
         dream_root=dream_dist_model.dream_root,
-        pipeline_conf=dream_dist_model.pipeline_conf,
-        compose_override=dream_dist_model.compose_override,
-        compose_dev=dream_dist_model.compose_dev,
-        compose_proxy=dream_dist_model.compose_proxy,
+        pipeline_conf=DreamPipeline(dream_dist_model.pipeline_conf),
+        compose_override=DreamComposeOverride(dream_dist_model.compose_override),
+        compose_dev=DreamComposeDev(dream_dist_model.compose_dev),
+        compose_proxy=DreamComposeProxy(dream_dist_model.compose_proxy),
     )
 
 
@@ -143,5 +149,3 @@ async def remove_service_from_dist(dist_name: str, service_name: str):
     dream_dist.remove_service(service_name, inplace=True)
 
     dream_dist.save(overwrite=True)
-
-

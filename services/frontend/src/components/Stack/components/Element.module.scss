@@ -1,0 +1,40 @@
+@import '../../../styles/typography/mixins.scss';
+
+.element {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0px;
+  h6 {
+    margin: 0px;
+    padding: 5px;
+  }
+  .top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 10px 0px;
+    .btn_group {
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+  }
+  .links_btn {
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    background-image: url('@/assets/links_button.svg');
+  }
+  .data {
+    text-align: start;
+    padding: 0px 10px 0px;
+    margin: 0px;
+  }
+  .switch {
+    background-image: url(@/assets/switch.svg);
+    background-repeat: no-repeat;
+  }
+}

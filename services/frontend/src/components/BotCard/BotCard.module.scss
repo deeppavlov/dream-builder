@@ -1,0 +1,111 @@
+@import '../../styles/ui/mixins.scss';
+@import '../../styles/variables/colors.scss';
+
+.bot {
+  min-width: 255.5px;
+  max-height: 248px;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  background-color: $bcgrnd1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  width: 100%;
+  padding: 8px 16px;
+  background-color: $bcgrnd5;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 16px;
+  gap: 4px;
+}
+.date {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  gap: 4px;
+}
+.name {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 4px;
+}
+.version {
+  padding: 2px 6px;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 149, 0, 0.1);
+  border: 1px solid $orange;
+  border-radius: 4px;
+  p {
+    color: $orange;
+    font-size: 12px;
+    line-height: 160%;
+  }
+}
+.icon {
+  @include icon_size_24;
+}
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  gap: 4px;
+}
+.bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+}
+.clone_btn {
+  width: 100%;
+  height: 36px;
+  color: $text4;
+  background-color: $primary1;
+  border-radius: 10px;
+}
+li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+hr {
+  border: none;
+  border: 1px dashed $text3;
+}
+.icon_calendar {
+  @include icon_size_24;
+  background-image: url(../../assets/images/calendar.svg);
+}
+h6 {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 160%;
+  color: $text1;
+}
+.params_item {
+  font-size: 14px;
+  line-height: 140%;
+  color: $text2;
+}
+.params_item__units {
+  font-size: 14px;
+  line-height: 140%;
+  color: $text1;
+}

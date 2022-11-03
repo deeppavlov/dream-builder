@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-import db_models
-from . import db
+from db import db_models
 from security.password_utils import hash_password
 
 

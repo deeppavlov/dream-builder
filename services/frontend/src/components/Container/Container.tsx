@@ -6,10 +6,12 @@ export const Container = ({
   flexDirection,
   overflowX,
   flexWrap,
+  height,
 }: any) => {
   return (
     <div
       style={{
+        height: `${height}`,
         flexWrap: `${flexWrap}`,
         justifyContent: `${justifyContent}`,
         flexDirection: `${flexDirection}`,

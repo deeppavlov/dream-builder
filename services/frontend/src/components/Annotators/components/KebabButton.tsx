@@ -1,10 +1,10 @@
-import styles from "./KebabButton.module.scss"
+import styles from './KebabButton.module.scss'
 export const KebabButton = () => {
   return (
-    <div className={styles.kebab}>
+    <button className={styles.kebab}>
       <figure className={styles.dots}></figure>
       <figure className={styles.dots}></figure>
       <figure className={styles.dots}></figure>
-    </div>
+    </button>
   )
 }

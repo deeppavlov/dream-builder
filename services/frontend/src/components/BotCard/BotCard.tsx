@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Stack/components/KebabButton'
+import { KebabButton } from '../Annotators/components/KebabButton'
 import Calendar from '../../assets/images/calendar.svg'
 import IMG from '../../assets/images/pavlovInCard.svg'
 import s from './BotCard.module.scss'

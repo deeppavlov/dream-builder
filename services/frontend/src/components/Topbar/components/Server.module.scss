@@ -1,0 +1,6 @@
+@import '../../../styles/ui/mixins.scss';
+
+.server {
+  @include icon_size_24;
+  background-image: url(../../../assets/icons/server.svg);
+}

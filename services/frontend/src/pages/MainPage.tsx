@@ -20,7 +20,7 @@ export const MainPage = () => {
             alignItems='start'
             title='Public Bots'
             amount='5'
-            linkTo='bots'>
+            linkTo='/bots'>
             <Container justifyContent='space-around' flexDirection='row'>
               <BotCard />
               <BotCard />

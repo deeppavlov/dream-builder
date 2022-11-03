@@ -6,22 +6,22 @@ export const Home = () => {
     <>
       <div className={s.home}>
         <div className={s.left}>
-          <h6>Construct your bot as you used to play lego</h6>
+          <h6>Build your bot as you used to play lego</h6>
           <div className={s.info}>
             <h2>
               The Global Bots
               <br /> Platform Place
             </h2>
             <p>
-              Find the Best Ways Worldwide <br /> and Discover How Easy to Make
-              a Bot.
+              The Easiest Way to Create Virtual Assistant <br /> and Your Own
+              Bot
             </p>
             <div className={s.btns}>
               <Link to='/start'>
-                <button className={s.db}>Go To Dream Builder</button>
+                <button className={s.db}>Start Building</button>
               </Link>
               <button className={s.watch}>
-                <span> Watch Our Demo Release</span>
+                <span>Watch Demo</span>
                 <span className={s.icon} />
               </button>
             </div>

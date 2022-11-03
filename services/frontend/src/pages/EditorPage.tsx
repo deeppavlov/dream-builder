@@ -1,16 +1,23 @@
-import { Container } from '../components/Container/Container'
 import { Main } from '../components/Main/Main'
-import { Stack } from '../components/Stack/Stack'
 import { Topbar } from '../components/Topbar/Topbar'
+import { Sidebar } from '../components/Sidebar/Sidebar'
+import { Container } from '../components/Container/Container'
+import { Annotators } from '../components/Annotators/Annotators'
+import { Skills } from '../components/Skills/Skills'
+import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
+import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 
 export const EditorPage = () => {
   return (
     <>
-      <Topbar />
+      <Topbar type='editor' />
+      <Sidebar type='editor' />
       <Main>
-        <Container>
-          <Stack />
-          <Stack />
+        <Container height='100%'>
+          <Annotators />
+          <SkillSelector />
+          <Skills />
+          <CandidateAnnotators />
         </Container>
       </Main>
     </>

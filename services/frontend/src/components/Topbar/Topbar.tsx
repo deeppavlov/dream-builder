@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { TopbarMenu } from '../Topbar/components/Menu'
-import { SignInButton } from '../Topbar/components/SignInButton'
-import { SignUpButton } from '../Topbar/components/SignUpButton'
 import { Breadcrumbs } from './components/Breadcrumbs'
 import { Search } from './components/Search'
 import { Categories } from './components/Categories'
 import { Filter } from './components/Filter'
 import { Display } from './components/Display'
 import { Profile } from './components/Profile'
+import { History } from './components/History'
 import s from './Topbar.module.scss'
+import { Test } from './components/Test'
+import { Server } from './components/Server'
 
 export const Topbar = ({ children, type }: any) => {
   switch (type) {
@@ -46,6 +47,29 @@ export const Topbar = ({ children, type }: any) => {
             <button className={s.sign}>Sign&nbsp;Up</button>
           </div>
         </div>
+      )
+    case 'editor':
+      return (
+        <>
+          <div className={s.topbar}>
+            <TopbarMenu />
+            <div className={s.logo_area}>
+              <Breadcrumbs />
+            </div>
+            <div className={s.another_area}>
+              <Search />
+              <Categories />
+              <Filter />
+            </div>
+            <div className={s.yet_another_area} />
+            <div className={s.btns_area}>
+              <History />
+              <Server />
+              <Test />
+              <Profile />
+            </div>
+          </div>
+        </>
       )
   }
 

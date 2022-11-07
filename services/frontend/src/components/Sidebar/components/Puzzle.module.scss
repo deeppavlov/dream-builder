@@ -1,0 +1,6 @@
+@import '../../../styles/ui/mixins.scss';
+
+.puzzle {
+  @include icon_size_24;
+  background-image: url(../../../assets/icons/puzzle.svg);
+}

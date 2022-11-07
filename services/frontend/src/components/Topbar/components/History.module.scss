@@ -1,0 +1,6 @@
+@import '../../../styles/ui/mixins.scss';
+
+.history {
+  @include icon_size_24;
+  background-image: url(../../../assets/icons/history.svg);
+}

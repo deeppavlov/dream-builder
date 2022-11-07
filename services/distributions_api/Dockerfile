@@ -1,18 +1,20 @@
 FROM python:3.10.5-slim-buster
 
-WORKDIR src/
-
-RUN apt-get update && apt-get install -y --no-install-recommends git
-RUN git clone https://github.com/deeppavlov/dream.git
+ARG DREAM_ROOT_PATH
+ARG PORT
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
-ENV DREAM_ROOT_PATH="/src/dream/"
+ENV DREAM_ROOT_PATH=$DREAM_ROOT_PATH
+ENV PORT=$PORT
 
-COPY ./ ./distributions/
+RUN apt-get update && apt-get install -y --no-install-recommends git
+RUN git clone https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 
-COPY requirements-api.txt .
-RUN pip install --no-cache-dir -r /src/requirements-api.txt
+COPY services/distributions_api/requirements.txt /src/requirements.txt
+RUN pip install --no-cache-dir -r /src/requirements.txt
 
-WORKDIR ./distributions/
-RUN ["python3" ,"-m", "uvicorn", "main:app", "--port", "80"]
+COPY services/distributions_api /src
+
+WORKDIR src/
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT --reload

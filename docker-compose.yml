@@ -36,6 +36,9 @@ services:
     build:
       context: ./
       dockerfile: ./services/distributions_api/Dockerfile
+      args:
+        DREAM_ROOT_PATH: /dream
+        PORT: 7000
     ports:
       - "7000:7000"
     volumes:

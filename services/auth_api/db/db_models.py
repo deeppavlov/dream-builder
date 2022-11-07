@@ -1,20 +1,11 @@
-from pydantic import BaseModel
+from db.db import Base
+from sqlalchemy import Column, Integer, String, Boolean
 
 
-class User(BaseModel):
-    id: int
-    email: str
-    username: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
+class User(Base):
+    __tablename__ = "users"
 
-    class Config:
-        orm_mode = True
-
-
-class UserInDB(User):
-    hashed_password: str
-
-class UserCreate(BaseModel):
-    email: str
-    password: str
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True)
+    hashed_password = Column(String)
+    fullname = Column(String)

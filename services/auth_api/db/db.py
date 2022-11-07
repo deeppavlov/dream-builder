@@ -3,9 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 db_url = '{engine}://{user}:{password}@{host}:{port}/{database}'.format(
-    engine='postgresql',
+    engine='postgresql+psycopg2',
     user='postgres',
-    password='postgres',
+    password='zzz',
     host='localhost',
     port=5432,
     database='postgres',

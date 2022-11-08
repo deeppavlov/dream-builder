@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from typing import Union
-from pydantic import BaseModel
-from jose import JWTError, jwt
 
-from security.security import SECRET_KEY, ALGORITHM
+from jose import JWTError, jwt
+from pydantic import BaseModel
+
+from security.security import ALGORITHM, SECRET_KEY
 
 
 class Token(BaseModel):

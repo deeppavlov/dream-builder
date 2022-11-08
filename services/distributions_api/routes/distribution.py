@@ -19,13 +19,13 @@ def _dist_to_distmodel(dream_dist: DreamDist) -> DreamDistModel:
     DreamDist -> DreamDistModel
     """
     return DreamDistModel(
-        dist_path=dream_dist.dist_path,
+        dist_path=str(dream_dist.dist_path),
         name=dream_dist.name,
-        dream_root=dream_dist.dream_root,
-        pipeline_conf=dream_dist.pipeline_conf,
-        compose_override=dream_dist.compose_override,
-        compose_dev=dream_dist.compose_dev,
-        compose_proxy=dream_dist.compose_proxy,
+        dream_root=str(dream_dist.dream_root),
+        pipeline_conf=dream_dist.pipeline_conf.config if dream_dist.pipeline_conf else None,
+        compose_override=dream_dist.compose_override.config if dream_dist.compose_override else None,
+        compose_dev=dream_dist.compose_dev.config if dream_dist.compose_dev else None,
+        compose_proxy=dream_dist.compose_proxy.config if dream_dist.compose_proxy else None,
     )
 
 
@@ -50,6 +50,7 @@ async def get_list_of_distributions() -> dict[str, DreamDistModel]:
     """
     Returns list of dream distributions in format {name: DreamDistModel}, i.e. {"deepy_adv": DreamDistModel}
 
+    Very expensive endpoint. Run it carefully.
     """
     list_of_distributions = list_dists(DREAM_ROOT_PATH)
     distname__distribution = {dist.name: _dist_to_distmodel(dist) for dist in list_of_distributions}

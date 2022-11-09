@@ -1,0 +1,15 @@
+@import '../../../styles/variables/dimensions.scss';
+.breadcrumbs {
+  display: flex;
+  font-display: row;
+  align-items: center;
+  font-size: 14px;
+  line-height: 140%;
+  text-align: center;
+  color: #3300ff;
+}
+.home {
+  width: $topbar_btn;
+  height: $topbar_btn;
+  background-image: url(../../../assets/icons/home.svg);
+}

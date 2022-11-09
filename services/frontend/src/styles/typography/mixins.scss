@@ -1,0 +1,42 @@
+@import '../typography/variables.scss';
+@import '../variables/colors.scss';
+
+@mixin h1_styles {
+  font-weight: $bold;
+  font-size: 72px;
+  line-height: 110%;
+  letter-spacing: $letter_spacing;
+}
+@mixin h2_styles {
+  font-weight: $bold;
+  font-size: 64px;
+  line-height: 120%;
+  letter-spacing: $letter_spacing;
+}
+@mixin h3_styles {
+  font-weight: $bold;
+  font-size: 48px;
+  line-height: 120%;
+}
+@mixin h4_styles {
+  font-weight: $bold;
+  font-size: 32px;
+  line-height: 140%;
+  letter-spacing: $letter_spacing;
+}
+@mixin h5_styles {
+  font-weight: $bold;
+  font-size: 24px;
+  line-height: 150%;
+}
+@mixin h6_styles {
+  font-weight: $bold;
+  font-size: 14px;
+  line-height: 160%;
+}
+@mixin b1 {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 160%;
+  color: $text2;
+}

@@ -1,0 +1,66 @@
+@import '../../../styles/ui/mixins.scss';
+@import '../../../styles/variables/colors.scss';
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 80px;
+  img {
+    width: 40px;
+    height: 40px;
+  }
+  .arrow {
+    cursor: pointer;
+    stroke: #8d96b5;
+    @include icon_size_24;
+    &:hover {
+      stroke: #3300ff;
+    }
+    &:active {
+      stroke: #190080;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
+  }
+}
+.menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 1 !important;
+  padding: 12px 0px;
+  .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    gap: 12px;
+    padding: 0px 24px;
+    &:hover {
+      p {
+        color: #fff;
+      }
+      color: #fff;
+    }
+    p {
+      padding: 8px 0px;
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 160%;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.9);
+      cursor: pointer;
+    }
+    svg {
+      stroke: rgba(0, 0, 0, 0.9);
+      @include icon_size_24;
+    }
+    &:hover {
+      color: #fff;
+    }
+  }
+}

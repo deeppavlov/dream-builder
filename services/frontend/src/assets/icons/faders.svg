@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-width='1.5' d="M16.75 22v-7.5c0-.41.34-.75.75-.75s.75.34.75.75V22c0 .41-.34.75-.75.75s-.75-.34-.75-.75Zm0-16V2c0-.41.34-.75.75-.75s.75.34.75.75v4c0 .41-.34.75-.75.75s-.75-.34-.75-.75Zm-11 16v-4c0-.41.34-.75.75-.75s.75.34.75.75v4c0 .41-.34.75-.75.75s-.75-.34-.75-.75Zm0-12V2c0-.41.34-.75.75-.75s.75.34.75.75v8c0 .41-.34.75-.75.75s-.75-.34-.75-.75Z"/>
+  <circle cx="6.5" cy="15.5" r="2.5" stroke="currentColor" stroke-opacity=".9" stroke-width="1.5" transform="rotate(180 6.5 15.5)"/>
+  <circle cx="17.5" cy="11.5" r="2.5" stroke="currentColor" stroke-opacity=".9" stroke-width="1.5" transform="rotate(180 17.5 11.5)"/>
+</svg>

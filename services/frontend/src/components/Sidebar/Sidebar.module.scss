@@ -1,0 +1,26 @@
+@import '../../styles/variables/colors.scss';
+@import '../../styles/variables/dimensions.scss';
+.sidebar {
+  position: absolute;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: $sidebar-width;
+  height: calc(100% - $topbar-height);
+  background-color: $bcgrnd1;
+  box-shadow: 20px rgba(100, 99, 99, 0.15);
+  border-right: 1px solid $bcgrnd3;
+  z-index: 1;
+  gap: 24px;
+  padding: 24px 12px;
+}
+.btns_area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.work_info {
+  background-color: black;
+}

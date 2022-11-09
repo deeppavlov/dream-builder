@@ -1,9 +1,50 @@
 services:
   frontend:
-    build: ./services/frontend/
-    container_name: frontend
+    env_file: [ .env ]
+    build:
+      context: ./
+      dockerfile: ./services/frontend/Dockerfile
     ports:
-      - "5173:5173" 
+      - "5173:5173"
     volumes:
-     - ./services/frontend:/src
-    
+      - ./services/frontend:/src
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
+  auth-api:
+    env_file: [ .env ]
+    build:
+      context: ./
+      dockerfile: ./services/auth_api/Dockerfile
+    ports:
+      - "6000:6000"
+    volumes:
+      - ./services/auth_api:/src
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
+  distributions-api:
+    env_file: [ .env ]
+    build:
+      context: ./
+      dockerfile: ./services/distributions_api/Dockerfile
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./services/distributions_api:/src
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
+version: '3.7'

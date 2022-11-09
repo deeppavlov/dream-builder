@@ -1,7 +1,7 @@
 FROM node:latest
 
+WORKDIR /app
+COPY . .
 RUN npm install
 
-WORKDIR /code
-
-CMD ["npm", "dev"]
+CMD ["npm", "run", "dev"]

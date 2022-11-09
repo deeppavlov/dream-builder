@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
-
+import svgr from 'vite-plugin-svgr'
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), svgr()],
   resolve: {
     alias: {
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
@@ -13,5 +13,5 @@ export default defineConfig({
       '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
     },
   },
-  server: { port: 3000, open: 'http://localhost:3000/' },
+  server: { port: 8080 },
 })

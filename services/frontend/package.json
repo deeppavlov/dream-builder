@@ -4,20 +4,23 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@floating-ui/react-dom-interactions": "^0.10.3",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
+    "react-tooltip": "^4.4.3",
     "sort-by": "^1.2.0",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "vite-plugin-svgr": "^2.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

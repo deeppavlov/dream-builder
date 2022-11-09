@@ -13,5 +13,5 @@ export default defineConfig({
       '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
     },
   },
-  server: { port: 8080 },
+  server: { host: '0.0.0.0', },
 })

@@ -1,7 +1,8 @@
 FROM node:latest
 
-WORKDIR /usr/app
-COPY ./ /usr/app
+WORKDIR /app
+COPY package.json .
 RUN npm install
+COPY . .
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev"] 

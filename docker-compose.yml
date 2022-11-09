@@ -3,5 +3,7 @@ services:
     build: ./services/frontend/
     container_name: frontend
     ports:
-      - "5000:5000"
+      - "5173:5173" 
+    volumes:
+     - ./services/frontend:/src
     

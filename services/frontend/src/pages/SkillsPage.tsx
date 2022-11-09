@@ -9,11 +9,7 @@ export const SkillsPage = () => {
   return (
     <>
       <Topbar type='main' />
-      <Main
-        sidebar='none'
-        title='Skills'
-        firstLine=' List of all the owned or assigned to you.'
-        secondLine='Select a skill to view or edit in the Skill Builder'>
+      <Main sidebar='none'>
         <Container flexDirection='column'>
           <Wrapper
             alignItems='start'

@@ -1,8 +1,8 @@
 FROM node:latest
 
 WORKDIR /app
-COPY package.json .
+COPY ./services/frontend/package.json .
 RUN npm install
-COPY . .
+COPY ./services/frontend .
 
-CMD ["npm", "run", "dev"] 
+CMD ["npm", "run", "dev"]

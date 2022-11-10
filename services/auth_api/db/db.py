@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from auth import config
+from config import config
 
 
 db_url = "{engine}://{user}:{password}@{host}:{port}/{database}".format(

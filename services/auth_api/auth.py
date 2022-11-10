@@ -1,5 +1,4 @@
 from datetime import timedelta
-import configparser
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -18,8 +17,6 @@ router = APIRouter(prefix="/auth")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 Base.metadata.create_all(bind=engine)
 
-config = configparser.ConfigParser()
-config.read(".env")
 
 def authenticate_user(username: str, password: str):
     db = SessionLocal()

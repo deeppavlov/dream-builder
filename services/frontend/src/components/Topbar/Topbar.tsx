@@ -7,9 +7,9 @@ import { Filter } from './components/Filter'
 import { Display } from './components/Display'
 import { Profile } from './components/Profile'
 import { History } from './components/History'
-import s from './Topbar.module.scss'
 import { Test } from './components/Test'
 import { Server } from './components/Server'
+import s from './Topbar.module.scss'
 
 export const Topbar = ({ children, type }: any) => {
   switch (type) {
@@ -34,15 +34,16 @@ export const Topbar = ({ children, type }: any) => {
       )
     case 'dff':
       return <>DFF Topbar</>
-    case 'welcome':
+    case 'home':
       return (
         <div className={s.topbar}>
           <div className={s.logo_area}>
-            <button className={s.logo}></button>
-            <div>Dream&nbsp;Builder</div>
+            <span className={s.logo}></span>
+            <h3>Dream&nbsp;Builder</h3>
           </div>
           <div className={s.btns_area}>
-            <button>Demo</button>
+            <button className={s.watch}>Watch Demo</button>
+            <button data-tip='Open Source on GitHub' className={s.github} />
             <button className={s.sign}>Sign&nbsp;In</button>
             <button className={s.sign}>Sign&nbsp;Up</button>
           </div>
@@ -76,12 +77,10 @@ export const Topbar = ({ children, type }: any) => {
   return (
     <div className={s.topbar}>
       <TopbarMenu />
-      {/* <div className={s.logo_area}>
-        <Link to='/'>
-          <button className={s.logo}></button>
-        </Link>
-        <h3>Welcome&nbsp;to&nbsp;Dream&nbsp;Builder</h3>
-      </div> */}
+      <div className={s.logo_area}>
+        <span className={s.logo} />
+        <h3>Dream&nbsp;Builder</h3>
+      </div>
       <div className={s.btns_area}>
         <Profile />
       </div>

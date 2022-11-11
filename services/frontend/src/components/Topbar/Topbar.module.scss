@@ -1,6 +1,6 @@
 @import '../../styles/variables/dimensions.scss';
 @import '../../styles/variables/colors.scss';
-
+@import '../../styles/ui/mixins.scss';
 .topbar {
   display: flex;
   justify-content: start;
@@ -9,7 +9,7 @@
   height: $topbar_height;
   background-color: $bcgrnd1;
   border-bottom: 1px solid $bcgrnd3;
-  box-shadow: $shadow;
+  box-shadow: 78px 0px 20px rgba(100, 99, 99, 0.15);
   z-index: 2;
   .btns_area {
     display: flex;
@@ -22,6 +22,14 @@
       width: 40px;
       height: 40px;
     }
+    .watch {
+      &:active {
+        color: #3300ff;
+      }
+      &:disabled {
+        opacity: 0.3;
+      }
+    }
     .sign {
       padding: 0px 24px;
       gap: 9px;
@@ -31,6 +39,16 @@
       border-radius: 8px;
       font-size: 14px;
       line-height: 160%;
+      &:hover {
+        background-color: #3300ff;
+        color: #fff;
+      }
+      &:active {
+        background-color: #e3e3e8;
+      }
+      &:disabled {
+        opacity: 0.3;
+      }
     }
   }
   .logo_area {
@@ -51,6 +69,7 @@
       background-color: $bcgrnd1;
     }
     h3 {
+      font-weight: 600;
       font-size: 18px;
       line-height: 160%;
     }
@@ -59,5 +78,21 @@
     display: flex;
     flex-direction: row;
     gap: 16px;
+  }
+}
+.github {
+  height: $topbar-height;
+  width: 40px;
+  background-repeat: no-repeat;
+  background-image: url(../../assets/icons/github.svg);
+  background-position: center;
+  &:hover {
+    background-color: #f0f0f3;
+  }
+  &:active {
+    background-color: #e3e3e8;
+  }
+  &:disabled {
+    opacity: 0.3;
   }
 }

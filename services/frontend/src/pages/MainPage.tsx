@@ -10,11 +10,7 @@ export const MainPage = () => {
   return (
     <>
       <Topbar type='main' />
-      <Main
-        sidebar='none'
-        title='Bots'
-        firstLine=' List of all the owned or assigned to you.'
-        secondLine='Select a bot to view or edit in the Bot Builder'>
+      <Main sidebar='none'>
         <Container flexDirection='column'>
           <Wrapper
             alignItems='start'

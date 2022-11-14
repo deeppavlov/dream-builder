@@ -24,10 +24,10 @@ export const Topbar = ({ children, type }: any) => {
             <Search />
             <Categories />
             <Filter />
+            <Display />
           </div>
           <div className={s.yet_another_area} />
           <div className={s.btns_area}>
-            <Display />
             <Profile />
           </div>
         </div>
@@ -59,8 +59,8 @@ export const Topbar = ({ children, type }: any) => {
             </div>
             <div className={s.another_area}>
               <Search />
-              <Categories />
-              <Filter />
+              {/* <Categories />
+              <Filter /> */}
             </div>
             <div className={s.yet_another_area} />
             <div className={s.btns_area}>

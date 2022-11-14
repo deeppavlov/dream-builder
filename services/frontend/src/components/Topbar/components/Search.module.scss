@@ -20,15 +20,7 @@
     line-height: 160%;
     color: $text1;
     outline: none;
-    &:hover {
-      border-color: $text6;
-    }
-    &::placeholder {
-      color: $text3;
-    }
-    &:focus {
-      border: 1px solid $primary1;
-      box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
-    }
+    cursor: text;
+    @include input_behavior;
   }
 }

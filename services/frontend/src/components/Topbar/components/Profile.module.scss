@@ -39,10 +39,12 @@
     gap: 12px;
     padding: 0px 24px;
     &:hover {
+      background: #f9fafc;
       p {
-        color: #fff;
+        color: rgba(0, 0, 0, 0.7);
+        // color: #fff;
       }
-      color: #fff;
+      // color: #fff;
     }
     p {
       padding: 8px 0px;
@@ -59,8 +61,8 @@
       stroke: rgba(0, 0, 0, 0.9);
       @include icon_size_24;
     }
-    &:hover {
-      color: #fff;
-    }
+    // &:hover {
+    //   // color: #fff;
+    // }
   }
 }

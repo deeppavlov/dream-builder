@@ -35,15 +35,7 @@
     font-weight: 600;
     font-size: 16px;
     line-height: 160%;
-    &:hover {
-      box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-    }
-    &:active {
-      background: #cfd3e2;
-    }
-    &:disabled {
-      opacity: 0.3;
-    }
+    @include btn_secondary_behavior;
   }
   .info {
     h2 {
@@ -66,23 +58,7 @@
     line-height: 160%;
     background-color: #3300ff;
     border-radius: 12px;
-    margin-right: 0px;
-    &:hover {
-      box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-    }
-    &:active {
-      background-color: #190080;
-    }
-    &:disabled {
-      opacity: 0.3;
-    }
-    .icon {
-      padding: auto;
-      width: 52px;
-      height: 40px;
-      background-image: url(../../assets/icons/watch.svg);
-      background-repeat: no-repeat;
-    }
+    @include btn_primary_behavior;
   }
 }
 .btns {

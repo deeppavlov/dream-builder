@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from db import models
+import models
 from db.db_models import User
 from security.password_utils import hash_password
 
@@ -28,3 +28,9 @@ def create_user(db: Session, user: models.UserCreate):
     db.commit()
     db.refresh(db_user)  # if contains any new data from the database, like the generated ID
     return db_user
+
+
+def check_user_email_exists(db: Session, email):
+    if db.query(User).filter(User.email == email):
+        return True
+    return False

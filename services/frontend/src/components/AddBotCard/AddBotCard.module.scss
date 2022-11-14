@@ -1,12 +1,15 @@
+@import '../../styles/ui/mixins.scss';
 .add {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 280px;
-  height: 100%x;
+  min-width: 280px;
+  min-height: 182px;
   border-radius: 12px;
   background: #ffcc00;
   border: 1px solid #d8dbe5;
+  user-select: none;
+  @include btn_add-bot-card_behavior;
   img {
     width: 32px;
     height: 32px;

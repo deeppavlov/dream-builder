@@ -1,10 +1,18 @@
-import s from './AddBotCard.module.scss'
 import Add from '../../assets/images/+.svg'
+import s from './AddBotCard.module.scss'
 
-export const AddBotCard = () => {
+export const AddBotCard = ({ addCard }: any) => {
+  const handleClick = () => {
+    console.log('clicked');
+    addCard()
+  }
   return (
-    <div className={s.add}>
+    <button
+      onClick={() => {
+        handleClick()
+      }}
+      className={s.add}>
       <img src={Add} />
-    </div>
+    </button>
   )
 }

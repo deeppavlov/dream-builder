@@ -1,36 +1,27 @@
 @import '@styles/variables/colors.scss';
+@import '../../styles/ui/mixins.scss';
 .wrapper {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: start;
   max-height: 590px;
   width: 100%;
   background-color: $bcgrnd3;
   border-radius: 20px;
   padding: 24px;
   gap: 24px;
-
   .close {
     right: 12px;
     top: 12px;
     position: absolute;
-
     svg {
       cursor: pointer;
       stroke: #8d96b5;
       width: 24px;
       height: 24px;
-      &:hover {
-        stroke: #ff3333;
-      }
-      &:active {
-        stroke: #190080;
-      }
-      &:disabled {
-        opacity: 0.3;
-      }
+      @include btn_close_behavior;
     }
   }
   .header {
@@ -39,7 +30,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    button {
+    .ghost_btn {
       padding: 0px 12px;
       width: 80px;
       height: 36px;
@@ -49,6 +40,7 @@
       font-size: 14px;
       line-height: 140%;
       color: rgba(0, 0, 0, 0.9);
+      @include btn_ghost_behavior;
     }
     span {
       font-family: 'Inter';
@@ -60,4 +52,3 @@
     }
   }
 }
-

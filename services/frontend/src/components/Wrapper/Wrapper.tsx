@@ -30,7 +30,7 @@ export const Wrapper = ({
               {amount > 4 ? (
                 <div>
                   <Link to={linkTo}>
-                    <button>Show&nbsp;All</button>
+                    <button className={s.ghost_btn}>Show&nbsp;All</button>
                   </Link>
                   <span>{amount ? amount : '...'}</span>
                 </div>

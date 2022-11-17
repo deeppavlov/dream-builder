@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Header
 from google.auth import jwt
+from sqlalchemy.orm import Session
+from datetime import datetime
 
+from config import config
 import db.crud as crud
 from db.db import Base, engine, get_db
 from models import UserCreate
@@ -11,12 +13,38 @@ router = APIRouter(prefix="/auth")
 Base.metadata.create_all(bind=engine)
 
 
-@router.get("/auth")
-async def validate_jwt(jwt_data: str, db: Session = Depends(get_db)):
-    data = jwt.decode(jwt_data, verify=False)
+@router.get("/token", status_code=200)
+async def validate_jwt(response: Response, jwt_data: str = Header(default=None), db: Session = Depends(get_db)):
+    """
+    Decode input jwt-token, validate date, check user in db and sign him up in case of user is not in db
+    """
+    try:
+        data = jwt.decode(jwt_data, verify=False)
+
+        # noinspection PyTypeChecker
+        _check_date_is_valid(data["nbf"], data["exp"])  # nbf and exp fields are int
+        _check_aud_is_valid(data["aud"])
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     user = UserCreate(**data)
-    if crud.check_user_exists(db, user):
-        return HTTPException(detail="User in database", status_code=401)
-    else:
+
+    if not crud.check_user_exists(db, user.email):
         crud.add_google_user(db, user)
+        response.status_code = status.HTTP_201_CREATED
+
+
+def _check_aud_is_valid(input_aud: str) -> None:
+    base = config["security"]["aud"]
+
+    if input_aud != base:
+        raise ValueError("Audience is not valid! ")
+
+
+def _check_date_is_valid(nbf: int, exp: int) -> None:
+    nbf = datetime.fromtimestamp(nbf)
+    exp = datetime.fromtimestamp(exp)
+    now = datetime.now()
+
+    if now < nbf or now > exp:
+        raise ValueError("Date of token is not valid!")

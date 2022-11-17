@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 
 from config import config
 
-
 db_url = "{engine}://{user}:{password}@{host}:{port}/{database}".format(
     engine="postgresql+psycopg2",
     user="postgres" if not config["db"]["user"] else config["db"]["user"],

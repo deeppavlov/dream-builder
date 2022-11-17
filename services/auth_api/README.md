@@ -1,14 +1,9 @@
-# Dream Builder Authentication Service
-
-## Requirements:
-### 1. Set google client id in [auth.html](templates/auth.html)
+# Dream Builder Authorization Service
 
 <br><br>
-#### Example of content of .env file
+#### Example of .env file
 ```
 [security]
-ACCESS_TOKEN_EXPIRE_MIN=30
-SECRET_KEY=6dfc0cbfe20d9432f542fd7e371f76fc2b72be717131b0937c29b1da4acd6080
 GOOGLE_CLIENT_ID=19152022-oldschoolgangchikatilo.apps.googleusercontent.com
 [db]
 user=postgres

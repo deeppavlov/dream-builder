@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r /src/requirements-auth.txt
 
 COPY ./ ./auth_api/
 WORKDIR ./auth_api
-RUN ["python3" ,"-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["python3" ,"-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "6000"]

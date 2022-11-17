@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String
 
 from db.db import Base
 
+
 class GoogleUser(Base):
     __tablename__ = "google"
 

@@ -1,6 +1,19 @@
-import configparser
-import os
+from pydantic import BaseSettings
+
 from pathlib import Path
 
-config = configparser.ConfigParser()
-config.read(Path(__file__).with_name(".env").absolute())
+
+class Settings(BaseSettings):
+    google_client_id: str
+    db_user: str
+    db_password: str
+    db_host: str
+    db_port: int
+    db_name: str
+
+    class Config:
+        env_file = Path(__file__).with_name(".env").absolute()
+        env_file_encoding = "utf-8"
+
+
+settings = Settings()

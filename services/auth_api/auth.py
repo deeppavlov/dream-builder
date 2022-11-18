@@ -5,7 +5,7 @@ from google.auth import jwt
 from sqlalchemy.orm import Session
 
 import db.crud as crud
-from config import config
+from config import Settings
 from db.db import Base, engine, get_db
 from models import UserCreate
 
@@ -36,7 +36,7 @@ async def validate_jwt(response: Response, jwt_data: str = Header(default=None),
 
 
 def _check_aud_is_valid(input_aud: str) -> None:
-    base = config["security"]["aud"]
+    base = Settings.google_client_id
 
     if input_aud != base:
         raise ValueError("Audience is not valid! ")

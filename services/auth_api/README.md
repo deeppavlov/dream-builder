@@ -3,13 +3,11 @@
 <br><br>
 #### Example of .env file
 ```
-[security]
 GOOGLE_CLIENT_ID=19152022-oldschoolgangchikatilo.apps.googleusercontent.com
-[db]
-user=postgres
-password=postgres
-host=localhost
-port=5432
-database=postgres
+db_user=postgres
+db_password=postgres
+db_host=localhost
+db_port=5432
+db_name=postgres
 ```
 

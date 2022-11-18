@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Header
-from google.auth import jwt
-from sqlalchemy.orm import Session
 from datetime import datetime
 
-from config import config
+from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
+from google.auth import jwt
+from sqlalchemy.orm import Session
+
 import db.crud as crud
+from config import config
 from db.db import Base, engine, get_db
 from models import UserCreate
 

@@ -6,12 +6,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  max-height: 590px;
+  max-height: 100%;
   width: 100%;
   background-color: $bcgrnd3;
   border-radius: 20px;
   padding: 24px;
-  gap: 24px;
+  gap: 16px;
   .close {
     right: 12px;
     top: 12px;

@@ -10,6 +10,7 @@ export const Wrapper = ({
   amount,
   linkTo,
   closable,
+  flexDirection,
 }: any) => {
   const [visible, setVisible] = useState(true)
   const onClose = () => {
@@ -18,10 +19,15 @@ export const Wrapper = ({
   return (
     <>
       {visible && (
-        <div style={{ alignItems: `${alignItems}` }} className={s.wrapper}>
+        <div
+          style={{
+            alignItems: `${alignItems}`,
+            flexDirection: `${flexDirection}`,
+          }}
+          className={s.wrapper}>
           {closable && (
             <button onClick={onClose} className={s.close}>
-              <Close/>
+              <Close />
             </button>
           )}
           {title || amount ? (

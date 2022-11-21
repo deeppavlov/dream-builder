@@ -2,7 +2,19 @@
   width: 24px;
   height: 24px;
 }
-
+@mixin large_btn {
+  padding: 0px 24px;
+  height: 48px;
+  border-radius: 12px;
+}
+@mixin primary_btn {
+  color: $text4;
+  background-color: $primary_btn;
+}
+@mixin secondary_btn {
+  color: $text1;
+  background-color: $secondary_btn;
+}
 @mixin btn_primary_behavior {
   &:hover {
     box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
@@ -122,4 +134,12 @@
   &:disabled {
     opacity: 0.3;
   }
+}
+
+@mixin min_h-w {
+  min-height: 720px;
+  min-width: 1200px;
+}
+@mixin max_h-w {
+  max-width: 1290px;
 }

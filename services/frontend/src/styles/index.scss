@@ -1,7 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+Mono:wght@400;700&display=swap');
 @import './variables/colors.scss';
+@import './variables/dimensions.scss';
+@import './variables/spacings.scss';
 @import './typography/mixins.scss';
+@import './typography/variables.scss';
+@import './ui/mixins.scss';
 *,
 *::before,
 *::after {
@@ -10,10 +14,14 @@
   box-sizing: border-box;
   cursor: default;
 }
+a {
+  text-decoration: none;
+}
 body {
   color: $text1;
   font-family: Inter;
   font-size: 18px;
+  user-select: none;
 }
 button {
   background-color: inherit;
@@ -24,22 +32,22 @@ li {
   list-style: none;
 }
 h1 {
-  @include h1_styles;
+  @include h1;
 }
 h2 {
-  @include h2_styles;
+  @include h2;
 }
 h3 {
-  @include h3_styles;
+  @include h3;
 }
 h4 {
-  @include h4_styles;
+  @include h4;
 }
 h5 {
-  @include h5_styles;
+  @include h5;
 }
 h6 {
-  @include h6_styles;
+  @include h6;
 }
 p {
   @include b1;
@@ -48,46 +56,24 @@ p {
   height: 100vh;
   width: 100vw;
 }
-.tooltips {
-  height: 45px;
-  background: #8d96b5 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  padding: 4px 12px !important;
-  gap: 10px !important;
-  border-radius: 8px !important;
-  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-  z-index: 3;
-  offset: 30%;
+
+.accent_text {
+  color: $primary1;
+}
+.li {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
   font-size: 18px;
   line-height: 160%;
-  color: #ffffff;
-  &::after {
-    left: 20% !important;
-  }
-}
-.tooltip_menu {
-  width: 264px;
-  padding: 0px !important;
-  font-family: 'Inter' !important;
-  font-style: normal !important;
-  font-weight: 400 !important;
-  font-size: 14px !important;
-  line-height: 160% !important;
-  text-align: center !important;
-  color: rgba(0, 0, 0, 0.9) !important;
-  background: #8d96b5 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 10px !important;
-  border-radius: 8px !important;
-  background: #8d96b5 !important;
-  box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
-  border-radius: 8px !important;
-  opacity: 1 !important;
-  &::after {
-    left: 84% !important;
+  li {
+    font-family: 'Inter';
+    font-style: normal;
+    display: list-item;
+    margin-left: 30px;
+    list-style-type: disc;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 160%;
   }
 }

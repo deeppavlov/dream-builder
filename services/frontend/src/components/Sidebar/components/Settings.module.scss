@@ -1,6 +1,14 @@
 @import '../../../styles/ui/mixins.scss';
+@import '../../../styles/variables/colors.scss';
 
 .settings {
   @include icon_size_24;
-  background-image: url(../../../assets/icons/gear.svg);
+  stroke: #8d96b5;
+  cursor: pointer;
+  svg {
+    cursor: pointer;
+  }
+  &:hover {
+    stroke: $text5;
+  }
 }

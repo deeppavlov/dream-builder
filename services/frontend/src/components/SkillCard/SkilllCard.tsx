@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Annotators/components/KebabButton'
-import Calendar from '../../assets/images/calendar.svg'
-import IMG from '../../assets/images/skillIcon.svg'
+import Calendar from '../../assets/icons/calendar.svg'
+import IMG from '../../assets/icons/skillIcon.svg'
 import s from './SkillCard.module.scss'
 
 export const SkillCard = ({
@@ -17,7 +16,7 @@ export const SkillCard = ({
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <KebabButton />
+     <input type='checkbox'/>
       </div>
       <div className={s.info}>
         <div className={s.top}>

@@ -1,6 +1,5 @@
-@import '../../styles/variables/dimensions.scss';
-@import '../../styles/variables/colors.scss';
-@import '../../styles/ui/mixins.scss';
+@import '../../styles/index.scss';
+
 .topbar {
   display: flex;
   justify-content: start;
@@ -9,12 +8,14 @@
   height: $topbar_height;
   background-color: $bcgrnd1;
   border-bottom: 1px solid $bcgrnd3;
-  box-shadow: 78px 0px 20px rgba(100, 99, 99, 0.15);
+  box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
+  position: relative;
   z-index: 2;
   .btns_area {
     display: flex;
     align-items: center;
     justify-content: end;
+    height: 64px;
     width: 100%;
     padding: 16px;
     gap: 24px;
@@ -42,6 +43,12 @@
       @include btn_secondary_small_behavior;
     }
   }
+  .signin {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .logo_area {
     display: flex;
     flex-direction: row;
@@ -54,7 +61,7 @@
     .logo {
       width: 45px;
       height: 36px;
-      background-image: url(../../assets/images/dream_logo.svg);
+      background-image: url(../../assets/icons/dream_logo.svg);
       background-repeat: no-repeat;
       background-position: center;
       background-color: $bcgrnd1;
@@ -70,21 +77,58 @@
     flex-direction: row;
     align-items: center;
     gap: 16px;
+    padding: 12px;
+  }
+  .yet_another_area {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    padding: 0px 24px;
+    gap: 12px;
+    height: 63px;
+    background: #f9fafc;
+    border: 1px solid #f0f0f3;
+    border-bottom: none;
+    border-top: none;
   }
 }
-.github {
-  height: $topbar-height;
-  width: 40px;
-  background-repeat: no-repeat;
-  background-image: url(../../assets/icons/github.svg);
-  background-position: center;
-  &:hover {
-    background-color: #f0f0f3;
+a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .github {
+    height: 64px;
+    width: 40px;
+    background-repeat: no-repeat;
+    background-image: url(../../assets/icons/github.svg);
+    background-position: center;
+    &:hover {
+      background-color: #f0f0f3;
+    }
+    &:active {
+      background-color: #e3e3e8;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
   }
-  &:active {
-    background-color: #e3e3e8;
-  }
-  &:disabled {
-    opacity: 0.3;
+}
+.tooltips {
+  height: 45px;
+  background: #8d96b5 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  gap: 10px !important;
+  border-radius: 8px !important;
+  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  z-index: 3;
+  offset: 30%;
+  font-size: 18px;
+  line-height: 160%;
+  color: #ffffff;
+  &::after {
+    left: 20% !important;
   }
 }

@@ -9,10 +9,12 @@ export const Card = ({ img, link, btnTitle, button, text, title }: any) => {
   return (
     <div className={s.card}>
       <div className={s.top}>
-        <h5>{title}</h5>
-        <p>{text}</p>
+        <div>
+          <h5>{title}</h5>
+          <p>{text}</p>
+        </div>
+        <img src={img == 'GoToVA' ? GoToVA : img == 'GoToS' ? GoToS : null} />
       </div>
-      <img src={img == 'GoToVA' ? GoToVA : img == 'GoToS' ? GoToS : null} />
       <Link to={link}>
         <button
           style={{ backgroundColor: `${button}` }}

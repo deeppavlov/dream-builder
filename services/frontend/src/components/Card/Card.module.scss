@@ -1,6 +1,6 @@
 @import '../../styles/variables/colors.scss';
 @import '../../styles/variables/dimensions.scss';
-
+@import '../../styles//ui/mixins.scss';
 .card {
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   gap: 12px;
   .top {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
     h5 {
       font-weight: 600;
@@ -37,17 +37,10 @@
     background-color: $primary1;
     border-radius: $radius2;
     padding: 12px;
-    &:hover {
-      box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-    }
-    &:active {
-      background-color: #190080 !important;
-    }
-    &:disabled {
-      opacity: 0.3;
-    }
+    @include btn_primary_behavior;
   }
   img {
+    padding: 12px;
     width: auto;
     height: 160px;
   }

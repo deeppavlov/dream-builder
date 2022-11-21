@@ -13,4 +13,5 @@ COPY ./services/auth_api ./auth_api/
 WORKDIR ./auth_api
 
 CMD ["python3" ,"-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "6000"]
-RUN ["python3", "-m", "pytest", "./tests"]
+WORKDIR ./tests/
+CMD ["pytest", "."]

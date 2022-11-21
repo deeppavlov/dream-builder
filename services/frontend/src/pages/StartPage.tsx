@@ -9,12 +9,17 @@ export const StartPage = () => {
       <Topbar />
       <Main sidebar='none'>
         <Wrapper alignItems='start' closable={true}>
-          <h5>Irina, welcome to Dream Builder Console!</h5>
-          <ul>
+          <h5>
+            Irina, welcome to
+            <span className='accent_text'> Dream Builder</span> Console!
+          </h5>
+          <ul className='li'>
             You can now build and manage your own virtual assistants & chatbots!
-            <li> Construct it as a lego.</li>
-            <li>No more coding, compose it visually on your board</li>
-            <li>
+            <li className='li'> Construct it as a lego.</li>
+            <li className='li'>
+              No more coding, compose it visually on your board
+            </li>
+            <li className='li'>
               Control, manage, chat with your virtual assistant in a single
               place.
             </li>

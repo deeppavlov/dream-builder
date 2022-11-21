@@ -1,6 +1,5 @@
 import { Element } from './components/Element'
 import { KebabButton } from './components/KebabButton'
-
 import s from './Annotators.module.scss'
 
 export const Annotators = () => {

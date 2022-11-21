@@ -6,12 +6,18 @@ export const Main = ({
   title,
   firstLine,
   secondLine,
+  gap,
+  flexDirection,
+  alignItems,
 }: any) => {
   return (
     <div
       style={{
+        gap: `${gap}`,
         width: `${sidebar === 'none' ? '100vw' : null}`,
         left: `${sidebar === 'none' ? null : '80px'}`,
+        flexDirection: `${flexDirection}`,
+        alignItems: `${alignItems}`,
       }}
       className={s.main}>
       {title || firstLine || secondLine ? (

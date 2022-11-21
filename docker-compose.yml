@@ -1,25 +1,43 @@
 services:
-  frontend:
-    env_file: [ .env ]
-    build:
-      context: ./
-      dockerfile: ./services/frontend/Dockerfile
-    ports:
-      - "5000:5000"
+  postgres:
+    image: postgres:15.1
+    env_file: [ services/auth_api/.env ]
+    build: ./
     volumes:
-      - ./services/frontend:/src
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 256M
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${db_user}
+      POSTGRES_PASSWORD: ${db_password}
+      POSTGRES_DB: ${db_name}
+
+    ports:
+      - "5432:5432"
+
+#  frontend:
+#    env_file: [ .env ]
+#    build:
+#      context: ./
+#      dockerfile: ./services/frontend/Dockerfile
+#    ports:
+#      - "5000:5000"
+#    volumes:
+#      - ./services/frontend:/src
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 256M
+#        reservations:
+#          memory: 256M
+
+
 
   auth-api:
-    env_file: [ .env ]
+    env_file: [ services/auth_api/.env ]
     build:
       context: ./
       dockerfile: ./services/auth_api/Dockerfile
+    depends_on:
+      - postgres
     ports:
       - "6000:6000"
     volumes:
@@ -31,20 +49,22 @@ services:
         reservations:
           memory: 256M
 
-  distributions-api:
-    env_file: [ .env ]
-    build:
-      context: ./
-      dockerfile: ./services/distributions_api/Dockerfile
-    ports:
-      - "7000:7000"
-    volumes:
-      - ./services/distributions_api:/src
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 256M
+#  distributions-api:
+#    env_file: [ .env ]
+#    build:
+#      context: ./
+#      dockerfile: ./services/distributions_api/Dockerfile
+#    ports:
+#      - "7000:7000"
+#    volumes:
+#      - ./services/distributions_api:/src
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 256M
+#        reservations:
+#          memory: 256M
+
+
 
 version: '3.7'

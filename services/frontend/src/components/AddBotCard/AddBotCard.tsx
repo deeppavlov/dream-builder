@@ -1,4 +1,4 @@
-import Add from '../../assets/images/+.svg'
+import Add from '../../assets/icons/+.svg'
 import s from './AddBotCard.module.scss'
 
 export const AddBotCard = ({ addCard }: any) => {

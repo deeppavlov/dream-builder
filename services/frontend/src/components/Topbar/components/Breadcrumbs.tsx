@@ -3,7 +3,10 @@ import s from './Breadcrumbs.module.scss'
 
 export const Breadcrumbs = () => {
   return (
-    <div className={s.breadcrumbs}>
+    <div
+      data-tip='Go to Home Page'
+      data-for='topbar_tooltip'
+      className={s.breadcrumbs}>
       <Link to='/start'>
         <button className={s.home} />
       </Link>

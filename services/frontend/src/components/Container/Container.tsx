@@ -4,7 +4,6 @@ export const Container = ({
   children,
   justifyContent,
   flexDirection,
-  overflowX,
   flexWrap,
   height,
 }: any) => {

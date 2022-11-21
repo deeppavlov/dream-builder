@@ -44,8 +44,15 @@
     overflow: hidden;
     .item {
       button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
         text-align: start;
         width: 100%;
+        svg {
+          @include icon_size_24;
+        }
       }
       display: flex;
       flex-direction: row;

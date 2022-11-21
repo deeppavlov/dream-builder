@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useCheckClickOutside } from '../../../hooks/useCheckClickOutside'
+import { ReactComponent as Arrow } from '../../../assets/icons/arrow_left.svg'
 import s from './Categories.module.scss'
 
 export const Categories = () => {
@@ -20,16 +21,28 @@ export const Categories = () => {
         <div className={s.menu}>
           <ul>
             <li className={s.item}>
-              <button onClick={handleClick}>Size</button>
+              <button onClick={handleClick}>
+                <Arrow />
+                Size
+              </button>
             </li>
             <li className={s.item}>
-              <button onClick={handleClick}>Language</button>
+              <button onClick={handleClick}>
+                <Arrow />
+                Language
+              </button>
             </li>
             <li className={s.item}>
-              <button onClick={handleClick}>Type</button>
+              <button onClick={handleClick}>
+                <Arrow />
+                Type
+              </button>
             </li>
             <li className={s.item}>
-              <button onClick={handleClick}>Source</button>
+              <button onClick={handleClick}>
+                <Arrow />
+                Source
+              </button>
             </li>
           </ul>
         </div>

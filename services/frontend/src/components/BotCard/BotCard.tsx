@@ -1,7 +1,8 @@
+import ReactTooltip from 'react-tooltip'
 import { Link } from 'react-router-dom'
 import { KebabButton } from '../Annotators/components/KebabButton'
-import Calendar from '../../assets/images/calendar.svg'
-import IMG from '../../assets/images/pavlovInCard.svg'
+import Calendar from '../../assets/icons/calendar.svg'
+import IMG from '../../assets/icons/pavlovInCard.svg'
 import s from './BotCard.module.scss'
 
 export const BotCard = ({
@@ -12,12 +13,12 @@ export const BotCard = ({
   ram,
   gpu,
   space,
+  type,
 }: any) => {
   return (
     <div className={s.card}>
       <div className={s.header}>
         <h6>{botName ? botName : 'Name of The Bot'} </h6>
-        <KebabButton />
       </div>
       <div className={s.body}>
         <div className={s.top}>
@@ -69,6 +70,17 @@ export const BotCard = ({
             <Link to='/editor'>
               <button className={s.clone_btn}>Clone</button>
             </Link>
+            <div className={s.kebab}>
+              <KebabButton />
+              <ReactTooltip
+                place='bottom'
+                effect='solid'
+                className={s.tooltips}
+                arrowColor='#8d96b5'
+                offset={{ right: 55 }}
+                delayShow={1000}
+              />
+            </div>
           </div>
         </div>
       </div>

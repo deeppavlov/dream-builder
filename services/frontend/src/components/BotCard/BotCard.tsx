@@ -1,6 +1,5 @@
-import ReactTooltip from 'react-tooltip'
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Annotators/components/KebabButton'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import Calendar from '../../assets/icons/calendar.svg'
 import IMG from '../../assets/icons/pavlovInCard.svg'
 import s from './BotCard.module.scss'
@@ -29,7 +28,6 @@ export const BotCard = ({
           <div className={s.info}>
             <p>
               Our fouray into building consumer friendly virtual assistants.
-              Clone t ...
             </p>
           </div>
           <div
@@ -67,19 +65,9 @@ export const BotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
-              <button className={s.clone_btn}>Clone</button>
-            </Link>
+            <button className={s.clone_btn}>Clone</button>
             <div className={s.kebab}>
               <KebabButton />
-              <ReactTooltip
-                place='bottom'
-                effect='solid'
-                className={s.tooltips}
-                arrowColor='#8d96b5'
-                offset={{ right: 55 }}
-                delayShow={1000}
-              />
             </div>
           </div>
         </div>

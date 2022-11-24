@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Annotators/components/KebabButton'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import Calendar from '../../assets/icons/calendar.svg'
 import s from './YourBotCard.module.scss'
 
@@ -21,7 +21,10 @@ export const YourBotCard = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.info}>
-            <p>SpaceX Starman tells you about the future of ...</p>
+            <p>
+              Small description about the project maximum 4 lines. Small
+              description about the project maximum{' '}
+            </p>
           </div>
           <div
             style={{
@@ -58,9 +61,9 @@ export const YourBotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
+            {/* <Link to='/editor'> */}
               <button className={s.clone_btn}>Clone</button>
-            </Link>
+            {/* </Link> */}
             <div className={s.kebab}>
               <KebabButton />
             </div>

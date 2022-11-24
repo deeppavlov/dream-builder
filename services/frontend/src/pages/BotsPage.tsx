@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
-import { Container } from '../components/Container/Container'
-import { Table } from '../components/Table/Table'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Wrapper } from '../components/Wrapper/Wrapper'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 
 export const BotsPage = () => {
   const [listView, setListView] = useState(false)
@@ -21,9 +21,8 @@ export const BotsPage = () => {
         {!listView ? (
           <Wrapper alignItems='start'>
             <Container
-              justifyContent='start'
-              flexWrap='wrap'
-              flexDirection='row'>
+              display='grid'
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               <BotCard />
               <BotCard />
               <BotCard />

@@ -2,7 +2,7 @@ import s from "./Banner.module.scss"
 
 export const Banner = () => {
   return (
-    <div className={s.modalWindow}>
+    <div className={s.banner}>
       <div className={s.header}>
         <h2>
           Welcome To <span className={s.accentText}> Dream Builder </span>

@@ -1,5 +1,5 @@
-import { KebabButton } from '../Annotators/components/KebabButton'
-import { Element } from './components/Element'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Element } from './Element'
 import s from './CandidateAnnotators.module.scss'
 
 export const CandidateAnnotators = () => {

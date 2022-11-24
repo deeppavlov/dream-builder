@@ -1,5 +1,4 @@
-@import '../../styles/variables/colors.scss';
-@import '../../styles/ui/mixins.scss';
+@import '../../styles/index.scss';
 
 .td {
   border: none;
@@ -72,12 +71,13 @@
     line-height: 160%;
     display: flex;
     align-items: center;
-    color: #3399CC;
+    color: #3300ff;
   }
 }
 .name {
   display: flex;
   flex-direction: column;
+  white-space: nowrap;
   p {
     font-family: 'Inter';
     font-style: normal;

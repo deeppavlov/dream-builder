@@ -1,5 +1,5 @@
-import { KebabButton } from '../Annotators/components/KebabButton'
-import { Skill } from './components/Skill'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
 
 export const SkillSelector = () => {

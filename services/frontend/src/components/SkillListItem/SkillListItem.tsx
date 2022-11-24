@@ -1,5 +1,5 @@
 import { ReactComponent as Logo } from '../../assets/icons/generative.svg'
-import { KebabButton } from '../Annotators/components/KebabButton'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './SkillListItem.module.scss'
 
 export const SkillListItem = ({ ...props }) => {

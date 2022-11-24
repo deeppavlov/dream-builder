@@ -1,10 +1,9 @@
-@import '../../styles/ui/mixins.scss';
-@import '../../styles/variables/colors.scss';
+@import '../../styles/index.scss';
 
 .card {
-  min-width: 271px;
-  max-width: 290px;
-  width: 271px;
+  min-width: 275px;
+  max-width: 345px;
+  height: 300px;
   min-height: 300px;
   border: 1px solid $text3;
   border-radius: 12px;
@@ -58,10 +57,13 @@
   align-items: center;
   justify-content: start;
   gap: 4px;
+  img {
+    @include icon_size_24;
+  }
 }
 .version {
   padding: 2px 6px;
-  width: 44px;
+  width: fit-content;
   height: 24px;
   background: rgba(255, 149, 0, 0.1);
   border: 1px solid $orange;
@@ -89,11 +91,10 @@
   gap: 4px;
 }
 .bottom {
-  width: 100%;
   padding-top: 12px;
 }
 .clone_btn {
-  width: 200px;
+  width: 100%;
   height: 36px;
   color: $text4;
   background-color: $primary1;
@@ -101,11 +102,11 @@
   @include btn_primary_small_behavior;
 }
 .btns_area {
-  width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: baseline;
+  // align-items: center;
+  // justify-content: space-between;
+  width: 100%;
   gap: 12px;
 }
 .kebab {

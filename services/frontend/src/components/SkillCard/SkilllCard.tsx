@@ -16,13 +16,13 @@ export const SkillCard = ({
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-     <input type='checkbox'/>
+        <input type='checkbox' />
       </div>
-      <div className={s.info}>
+      <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
             <img src={IMG} />
-            <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            <h6>{companyName ? companyName : 'Retrieval Skill'}</h6>
           </div>
           <div className={s.twoLines}>
             <p>
@@ -46,7 +46,7 @@ export const SkillCard = ({
           </div>
         </div>
         <hr />
-        <div className={s.bottom}>
+        <div className={s.middle}>
           <ul className={s.params}>
             <li>
               <p className={s.params_item}>RAM</p>
@@ -61,9 +61,13 @@ export const SkillCard = ({
               <p className={s.params_item__units}>0.0 GB</p>
             </li>
           </ul>
-          <Link to='/editor'>
-            <button className={s.clone_btn}>Add</button>
-          </Link>
+        </div>
+        <div className={s.bottom}>
+          <div className={s.btns_area}>
+            <Link to='/editor'>
+              <button className={s.clone_btn}>Add</button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

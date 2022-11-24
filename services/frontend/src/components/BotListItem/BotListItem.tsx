@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
-import { KebabButton } from '../Annotators/components/KebabButton'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './BotListItem.module.scss'
+
 export const BotListItem = ({ ...props }) => {
   return (
     <tr className={s.tr}>
@@ -26,7 +27,7 @@ export const BotListItem = ({ ...props }) => {
       </td>
       <td className={s.td}>
         <div className={s.version}>
-          <span>{props.version ? props.version : 'v.0.3.45'}</span>
+          <span>{props.version ? props.version : 'v.0.3.4'}</span>
         </div>
       </td>
       <td className={s.td}>

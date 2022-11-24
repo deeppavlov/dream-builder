@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Container } from '../components/Container/Container'
+import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
 import { Sidebar } from '../components/Sidebar/Sidebar'
 import { SkillCard } from '../components/SkillCard/SkilllCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { Table } from '../components/Table/Table'
+import { Table } from '../ui/Table/Table'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Wrapper } from '../components/Wrapper/Wrapper'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 
 export const SkillsAllPage = () => {
   const [listView, setListView] = useState(false)
@@ -18,11 +18,12 @@ export const SkillsAllPage = () => {
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Sidebar />
-      <Main>
+      <Main sidebar='none'>
         {!listView ? (
           <Wrapper alignItems='start'>
-            <Container flexWrap='wrap' flexDirection='row'>
+            <Container
+              display='grid'
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               <SkillCard />
               <SkillCard />
               <SkillCard />

@@ -1,8 +1,9 @@
-import { Main } from '../components/Main/Main'
-import { Wrapper } from '../components/Wrapper/Wrapper'
-import { Card } from '../components/Card/Card'
-import { Container } from '../components/Container/Container'
 import { Topbar } from '../components/Topbar/Topbar'
+import { Main } from '../components/Main/Main'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
+import { Container } from '../ui/Container/Container'
+import { Card } from '../components/Card/Card'
+
 export const StartPage = () => {
   return (
     <>

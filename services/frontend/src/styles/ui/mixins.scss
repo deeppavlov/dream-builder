@@ -2,6 +2,10 @@
   width: 24px;
   height: 24px;
 }
+@mixin icon_size_12 {
+  width: 12px;
+  height: 12px;
+}
 @mixin large_btn {
   padding: 0px 24px;
   height: 48px;
@@ -142,4 +146,7 @@
 }
 @mixin max_h-w {
   max-width: 1290px;
+}
+@mixin min-w{
+  min-Width:1200px;
 }

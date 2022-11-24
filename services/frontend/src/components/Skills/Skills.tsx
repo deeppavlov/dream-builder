@@ -1,5 +1,5 @@
-import { KebabButton } from '../Annotators/components/KebabButton'
-import { Element } from './components/Element'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Element } from './Element'
 import s from './Skills.module.scss'
 
 export const Skills = () => {
@@ -21,10 +21,10 @@ export const Skills = () => {
         <span className={s.icon} />
         <p>Add Skills</p>
       </button>
-   <Element/>
-   <Element/>
-   <Element/>
-   <Element/>
+      <Element />
+      <Element />
+      <Element />
+      <Element />
     </div>
   )
 }

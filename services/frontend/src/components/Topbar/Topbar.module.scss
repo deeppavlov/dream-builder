@@ -5,6 +5,7 @@
   justify-content: start;
   align-items: center;
   width: 100vw;
+  @include min-w;
   height: $topbar_height;
   background-color: $bcgrnd1;
   border-bottom: 1px solid $bcgrnd3;

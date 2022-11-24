@@ -1,5 +1,5 @@
-@import '../../styles/variables/colors.scss';
-@import '../../styles/variables/dimensions.scss';
+@import '../../styles/index.scss';
+
 .main {
   display: flex;
   flex-direction: column;
@@ -11,4 +11,5 @@
   padding: 24px 40px;
   z-index: 0;
   overflow-x: scroll;
+  @include min_h-w;
 }

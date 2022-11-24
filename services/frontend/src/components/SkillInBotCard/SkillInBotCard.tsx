@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { SliderButton } from '../Annotators/components/SliderButton'
-import Calendar from '../../assets/icons/calendar.svg'
+import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
+import { ReactComponent as Calendar } from '../../assets/icons/calendar.svg'
 import { ReactComponent as Logo } from '../../assets/icons/fallbacks.svg'
-import { KebabButton } from '../Annotators/components/KebabButton'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './SkillInBotCard.module.scss'
 
 export const SkillInBotCard = ({
@@ -16,7 +16,7 @@ export const SkillInBotCard = ({
   space,
   type,
 }: any) => {
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState(true)
 
   const sliderHandler = () => {
     setDisabled(!disabled)
@@ -27,13 +27,13 @@ export const SkillInBotCard = ({
     <div style={{ opacity: !disabled && '0.3' }} className={s.card}>
       <div className={s.header}>
         <h6>{botName ? botName : 'Name of The Skill'} </h6>
-        <SliderButton sliderHandler={sliderHandler} />
+        <ToggleButton sliderHandler={sliderHandler} />
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
             <Logo />
-            <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            <h6>{companyName ? companyName : 'Fallbacks'}</h6>
           </div>
           <div className={s.info}>
             <p>
@@ -49,7 +49,7 @@ export const SkillInBotCard = ({
               justifyContent: 'space-between',
             }}>
             <div className={s.date}>
-              <img className={s.icon} src={Calendar} />
+              <Calendar />
               <p style={{ fontSize: '14px' }}>{date ? date : '27.10.2022'}</p>
             </div>
             <div className={s.version}>

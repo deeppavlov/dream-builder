@@ -1,37 +1,41 @@
 import { useState } from 'react'
-import { AddBotCard } from '../components/AddBotCard/AddBotCard'
+import { AddButton } from '../ui/AddButton/AddButton'
 import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
-import { Container } from '../components/Container/Container'
+import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
-import { Table } from '../components/Table/Table'
+import { Table } from '../ui/Table/Table'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Wrapper } from '../components/Wrapper/Wrapper'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { YourBotCard } from '../components/YourBotCard/YourBotCard'
 
 export const MainPage = () => {
-  const [botCards, setBotCards] = useState([])
+  const [bots, setBots] = useState([])
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
     console.log('view has changed')
     setListView(!listView)
+    setBots([])
     console.log(listView)
   }
-  const addCard = () => {
-    setBotCards(botCards.concat(<YourBotCard />))
+  const addBot = () => {
+    !listView
+      ? setBots(bots.concat(<YourBotCard />))
+      : setBots(bots.concat(<BotListItem />))
   }
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
       <Main sidebar='none'>
-        <Container flexDirection='column'>
-          {!listView ? (
+        {!listView ? (
+          <>
             <Wrapper
-              alignItems='start'
-              title='Public Bots'
+              title='Public Virtual Assistants & Chatbots'
               amount='5'
-              linkTo='/bots'>
-              <Container justifyContent='start' flexDirection='row'>
+              linkTo='/bots'
+              paddingBottom='12px'>
+              <Container paddingBottom='22px'>
+                <BotCard />
                 <BotCard />
                 <BotCard />
                 <BotCard />
@@ -40,8 +44,21 @@ export const MainPage = () => {
                 <BotCard />
               </Container>
             </Wrapper>
-          ) : (
-            <Wrapper>
+            <Wrapper
+              paddingBottom='12px'
+              title='Your Virtual Assistants & Chatbots'>
+              <Container paddingBottom='22px'>
+                <AddButton listView={listView} addBot={addBot} />
+                {bots}
+              </Container>
+            </Wrapper>
+          </>
+        ) : (
+          <>
+            <Wrapper
+              title='Public Virtual Assistants & Chatbots'
+              amount='5'
+              linkTo='/bots'>
               <Table>
                 <BotListItem />
                 <BotListItem />
@@ -49,14 +66,14 @@ export const MainPage = () => {
                 <BotListItem />
               </Table>
             </Wrapper>
-          )}
-          <Wrapper alignItems='start' title='Your Bots'>
-            <Container justifyContent='start' flexDirection='row'>
-              <AddBotCard addCard={addCard} />
-              {botCards}
-            </Container>
-          </Wrapper>
-        </Container>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
+              <Table>
+                <AddButton addBot={addBot} listView={listView} />
+                {bots}
+              </Table>
+            </Wrapper>
+          </>
+        )}
       </Main>
     </>
   )

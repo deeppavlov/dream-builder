@@ -1,5 +1,5 @@
 @import '../../styles/ui/mixins.scss';
-
+@import '../../styles/variables/colors.scss';
 .home {
   padding: 0px 25px;
   position: relative;
@@ -10,6 +10,7 @@
   top: 120px;
   position: absolute;
   min-width: 651px;
+  z-index: 2;
   h6 {
     font-size: 12px;
     line-height: 160%;
@@ -24,13 +25,25 @@
     color: rgba(0, 0, 0, 0.9);
   }
   .db {
-    color: white;
+    color: $text1;
     padding: 0px 24px;
     gap: 9px;
     width: 203px;
     height: 48px;
-    background: #3300ff;
+    background: #e6e8f0;
     border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 160%;
+    &:hover {
+      box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+    }
+    &:active {
+      background: #cfd3e2;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
   }
   .info {
     h2 {
@@ -46,12 +59,23 @@
     align-items: center;
     padding: 12px 24px;
     gap: 12px;
-    // width: 300px;
-    height: 64px;
-    background: #ffffff;
-    box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
+    height: 48px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 160%;
+    background-color: #3300ff;
     border-radius: 12px;
     margin-right: 0px;
+    &:hover {
+      box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+    }
+    &:active {
+      background-color: #190080;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
     .icon {
       padding: auto;
       width: 52px;
@@ -73,11 +97,15 @@
   display: flex;
   flex-direction: column;
   align-items: end;
+  z-index: 2;
   .circle {
-    margin-top: 101px;
+    position: absolute;
+    top: 101px;
+    right: 51px;
     width: 427.57px;
     height: 427.57px;
     background: #ffcc00;
     border-radius: 50%;
+    z-index: 0;
   }
 }

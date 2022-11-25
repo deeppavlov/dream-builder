@@ -1,11 +1,5 @@
 from pydantic import BaseModel
-from deeppavlov_dreamtools.distconfigs.manager import (
-    DreamPipeline,
-    DreamComposeOverride,
-    DreamComposeDev,
-    DreamComposeProxy,
-    DreamComposeLocal,
-)
+
 from deeppavlov_dreamtools.distconfigs.generics import AnyConfig
 from deeppavlov_dreamtools.distconfigs.generics import (
     PipelineConf,

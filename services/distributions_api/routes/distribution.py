@@ -52,32 +52,10 @@ async def get_list_of_distributions() -> dict[str, DreamDistModel]:
 
     Very expensive endpoint. Run it carefully.
     """
-    list_of_distributions = list_dists(DREAM_ROOT_PATH)
-    distname__distribution = {dist.name: _dist_to_distmodel(dist) for dist in list_of_distributions}
+    distributions = list_dists(DREAM_ROOT_PATH)
+    distributions = {dist.name: _dist_to_distmodel(dist) for dist in distributions}
 
-    return distname__distribution
-
-
-@router.post("/{dist_name}", status_code=status.HTTP_201_CREATED)
-async def create_config(dist_name: str, configs: DreamDistConfigsImport):
-    """
-    Initializes config attribute into dream_dist object. If config is empty it won't be saved in dream distribution
-
-    Args:
-        dist_name: name of the distribution
-        configs: json with config parameters. Example of json: { "name": name, "data": { "pipeline_conf": ...,
-        "override": ..., ...}
-    """
-    dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-
-    for config_name, config_value in configs.data.items():
-        if not config_value:
-            continue
-
-        # for example, dream_dist.pipeline_conf = config.data.pipeline_conf]
-        setattr(dream_dist, config_name, config_value)
-
-    dream_dist.save(overwrite=True)
+    return distributions
 
 
 @router.get("/{dist_name}")
@@ -106,6 +84,30 @@ async def replace_dist(dist_name: str, replacement: DreamDistModel) -> None:
     replacement.name = dist_name
 
     replacement.save(overwrite=True)
+    return _dist_to_distmodel(replacement)
+
+
+@router.post("/{dist_name}", status_code=status.HTTP_201_CREATED)
+async def create_config(dist_name: str, configs: DreamDistConfigsImport):
+    """
+    Initializes config attribute into dream_dist object. If config is empty it won't be saved in dream distribution
+
+    Args:
+        dist_name: name of the distribution
+        configs: json with config parameters. Example of json: { "name": name, "data": { "pipeline_conf": ...,
+        "override": ..., ...}
+    """
+    dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+
+    for config_name, config_value in configs.data.items():
+        if not config_value:
+            continue
+
+        # for example, dream_dist.pipeline_conf = config.data.pipeline_conf
+        setattr(dream_dist, config_name, config_value)
+
+    dream_dist.save(overwrite=True)
+    return _dist_to_distmodel(dream_dist)
 
 
 @router.get("/{dist_name}/{config_name}")
@@ -132,6 +134,7 @@ async def replace_config_of_dist(
     setattr(dream_dist, config_name, getattr(new_config.data, config_name))
 
     dream_dist.save(overwrite=True)
+    return _dist_to_distmodel(dream_dist)
 
 
 @router.post("/{dist_name}/add_service/", status_code=status.HTTP_201_CREATED)
@@ -141,6 +144,7 @@ async def add_service_to_dist(dist_name: str, service_name: str, port: int):
     dream_dist.add_service(name=service_name, port=port)
 
     dream_dist.save(overwrite=True)
+    return _dist_to_distmodel(dream_dist)
 
 
 @router.post("/{dist_name}/remove_service", status_code=status.HTTP_200_OK)
@@ -150,3 +154,4 @@ async def remove_service_from_dist(dist_name: str, service_name: str):
     dream_dist.remove_service(service_name, inplace=True)
 
     dream_dist.save(overwrite=True)
+    return _dist_to_distmodel(dream_dist)

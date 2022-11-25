@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 # Logs
 logs
@@ -81,6 +82,13 @@ web_modules/
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
+=======
+.snowpack
+build
+node_modules
+__pycache__
+/.idea
+>>>>>>> auth
 .cache
 .parcel-cache
 
@@ -297,6 +305,7 @@ cython_debug/
 # Dream-Builder specific
 .snowpack
 .pnpm-debug.log
+<<<<<<< HEAD
 
 pnpm-debug.log*
 
@@ -313,3 +322,7 @@ src/.DS_Store
 *.njsproj
 *.sln
 *.sw?
+=======
+.env
+.gitignore
+>>>>>>> auth

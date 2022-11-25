@@ -32,7 +32,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
     case 'main':
       return (
         <div className={s.topbar}>
-          <BurgerButton />
+          {/* <BurgerButton /> */}
           <div className={s.logo_area}>
             <Breadcrumbs />
           </div>
@@ -63,7 +63,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
             <a href='https://github.com/deeppavlov/dream'>
               <button data-tip='Open Source on GitHub' className={s.github} />
             </a>
-            <div id='signin' className={s.signin}></div>
+            {/* <div id='signin' className={s.signin}></div> */}
           </div>
           <ReactTooltip
             place='bottom'
@@ -79,7 +79,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
       return (
         <>
           <div className={s.topbar}>
-            <BurgerButton />
+            {/* <BurgerButton /> */}
             <div className={s.logo_area}>
               <Breadcrumbs data-tip='Open Source on GitHub' />
             </div>
@@ -100,7 +100,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
 
   return (
     <div className={s.topbar}>
-      <BurgerButton />
+      {/* <BurgerButton /> */}
       <div className={s.logo_area}>
         <span className={s.logo} />
         <h3>Dream&nbsp;Builder</h3>

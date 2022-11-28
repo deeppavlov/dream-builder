@@ -1,27 +1,27 @@
 services:
 
-#
-#  frontend:
-#    env_file: [ .env ]
-#    build:
-#      context: ./
-#      dockerfile: ./services/frontend/Dockerfile
-#    ports:
-#      - "5000:5000"
-#    volumes:
-#      - ./services/frontend:/src
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 256M
-#        reservations:
-#          memory: 256M
-#
+
+  frontend:
+    env_file: [ .env ]
+    build:
+      context: ./
+      dockerfile: ./services/frontend/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./services/frontend:/src
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
 
 
   postgres:
     image: postgres:15.1
-#    env_file: [ .env ]
+    env_file: [ .env ]
     restart: always
     volumes:
       - ./.database/postgres/data:/var/lib/postgresql/data
@@ -58,21 +58,21 @@ services:
         reservations:
           memory: 256M
 
-#  distributions-api:
-#    env_file: [ .env ]
-#    build:
-#      context: ./
-#      dockerfile: ./services/distributions_api/Dockerfile
-#    ports:
-#      - "7000:7000"
-#    volumes:
-#      - ./services/distributions_api:/src
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 256M
-#        reservations:
-#          memory: 256M
+  distributions-api:
+    env_file: [ .env ]
+    build:
+      context: ./
+      dockerfile: ./services/distributions_api/Dockerfile
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./services/distributions_api:/src
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
 
 
 

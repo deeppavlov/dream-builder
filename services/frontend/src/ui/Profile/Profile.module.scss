@@ -51,7 +51,7 @@
     }
     p {
       padding: 8px 0px;
-      font-family: 'Inter';
+      font-family: $main-font;
       font-style: normal;
       font-weight: 400;
       font-size: 14px;
@@ -73,7 +73,7 @@
 .tooltip_menu {
   width: 264px;
   padding: 0px !important;
-  font-family: 'Inter' !important;
+  font-family: $main-font !important;
   font-style: normal !important;
   font-weight: 400 !important;
   font-size: 14px !important;

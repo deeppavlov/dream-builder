@@ -33,7 +33,7 @@
     gap: 8px;
     .icon {
       @include icon_size_24;
-      background-image: url(../../assets/icons/skills.svg);
+      background-image: url(@assets/icons/skills.svg);
     }
   }
   h5 {

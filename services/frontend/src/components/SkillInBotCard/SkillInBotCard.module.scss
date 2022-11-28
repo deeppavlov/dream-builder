@@ -1,5 +1,4 @@
-@import '../../styles/ui/mixins.scss';
-@import '../../styles/variables/colors.scss';
+@import '../../styles/index.scss';
 
 .card {
   min-width: 275px;
@@ -43,7 +42,7 @@
   p {
     hyphens: auto;
     width: 100%;
-    font-family: 'Inter';
+    font-family: $main-font;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;

@@ -1,5 +1,4 @@
-@import '../../../styles/variables/colors.scss';
-@import '../../../styles/ui/mixins.scss';
+@import '../../styles/index.scss';
 
 .dropdown {
   position: relative;
@@ -15,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: start;
-    font-family: 'Inter';
+    font-family: $main-font;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -62,7 +61,7 @@
       gap: 12px;
       width: 158px;
       height: 36px;
-      font-family: 'Inter';
+      font-family: $main-font;
       font-style: normal;
       font-weight: 400;
       font-size: 14px;

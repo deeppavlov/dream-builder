@@ -2,7 +2,7 @@
 
 .card {
   min-width: 275px;
-  width:275px;
+  width: 275px;
   // max-width: 345px;
   height: 300px;
   min-height: 300px;
@@ -46,7 +46,7 @@
   p {
     hyphens: auto;
     width: 100%;
-    font-family: 'Inter';
+    font-family: $main-font;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;

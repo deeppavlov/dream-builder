@@ -1,7 +1,7 @@
 import Add from '../../assets/icons/+.svg'
 import s from './AddButton.module.scss'
 
-export const AddButton = ({ addBot, listView }: any) => {
+export const AddButton = ({ addBot, listView, ...props }: any) => {
   const handleClick = () => {
     console.log('clicked')
     addBot()
@@ -10,6 +10,7 @@ export const AddButton = ({ addBot, listView }: any) => {
     <>
       {!listView ? (
         <button
+          style={{ ...props }}
           onClick={() => {
             handleClick()
           }}

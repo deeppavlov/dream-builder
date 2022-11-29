@@ -3,8 +3,8 @@ import ReactTooltip from 'react-tooltip'
 import { useEffect } from 'react'
 import { BurgerButton } from '../../ui/BurgerButton/BurgerButton'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
-import { Display } from './components/Display'
 import { Profile } from '../../ui/Profile/Profile'
+import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
 import { Server } from './components/Server'
@@ -32,7 +32,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
     case 'main':
       return (
         <div className={s.topbar}>
-          {/* <BurgerButton /> */}
+          <BurgerButton />
           <div className={s.logo_area}>
             <Breadcrumbs />
           </div>
@@ -79,12 +79,10 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
       return (
         <>
           <div className={s.topbar}>
-            {/* <BurgerButton /> */}
+            <BurgerButton />
             <div className={s.logo_area}>
-              <Breadcrumbs data-tip='Open Source on GitHub' />
+              <Breadcrumbs />
             </div>
-            <div className={s.another_area}>{/* <Search /> */}</div>
-            {/* <div className={s.yet_another_area} /> */}
             <div className={s.btns_area}>
               <History />
               <Server />
@@ -100,7 +98,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
 
   return (
     <div className={s.topbar}>
-      {/* <BurgerButton /> */}
+      <BurgerButton />
       <div className={s.logo_area}>
         <span className={s.logo} />
         <h3>Dream&nbsp;Builder</h3>

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { AddButton } from '../ui/AddButton/AddButton'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
 import { Container } from '../ui/Container/Container'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Table } from '../ui/Table/Table'
+import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { Main } from '../components/Main/Main'
+import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 
@@ -31,6 +31,7 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
+              showAll={true}
               amount='5'
               linkTo='/allskills'
               paddingBottom='12px'>
@@ -44,7 +45,7 @@ export const SkillsPage = () => {
                 <SkillCard />
               </Container>
             </Wrapper>
-            <Wrapper paddingBottom='12px' title='Your Skills'>
+            <Wrapper  showAll={true} paddingBottom='12px' title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'

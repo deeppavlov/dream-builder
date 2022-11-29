@@ -20,7 +20,7 @@ export const SkillsAllPage = () => {
       <Topbar viewHandler={viewHandler} type='main' />
       <Main sidebar='none'>
         {!listView ? (
-          <Wrapper alignItems='start'>
+          <Wrapper title='Public Skills' showAll={false} amount='5'>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
@@ -35,7 +35,7 @@ export const SkillsAllPage = () => {
             </Container>
           </Wrapper>
         ) : (
-          <Wrapper>
+          <Wrapper title='Public Skills' amount='5' showAll={false}>
             <Table>
               <SkillListItem />
               <SkillListItem />

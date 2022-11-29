@@ -12,8 +12,24 @@ import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { SkillCard } from '../components/SkillCard/SkilllCard'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
+import { AddButton } from '../ui/AddButton/AddButton'
+import { useState } from 'react'
+import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 
 export const EditorPage = () => {
+  const [skills, setSkills] = useState([])
+  const [listView, setListView] = useState(false)
+  const viewHandler = () => {
+    console.log('view has changed')
+    setListView(!listView)
+    setSkills([])
+    console.log(listView)
+  }
+  const addSkill = () => {
+    !listView
+      ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
+      : setSkills(skills.concat(<SkillListItem />))
+  }
   return (
     <>
       <Topbar type='editor' />
@@ -28,31 +44,36 @@ export const EditorPage = () => {
             </Tab>
           </TabList>
         </Sidebar>
-        <Main flexDirection='row' gap='0px'>
-          <TabPanel>
-            <Container height='100%'>
-              <Annotators />
-              <Annotators />
-              <SkillSelector />
-              <Skills />
-              <CandidateAnnotators />
-            </Container>
-          </TabPanel>
-          <TabPanel>
-            <Wrapper flexDirection='row'>
+        <TabPanel>
+          <Main flexDirection='row'>
+            <Annotators />
+            <Annotators />
+            <SkillSelector />
+            <Skills />
+            <CandidateAnnotators />
+          </Main>
+        </TabPanel>
+        <TabPanel>
+          <Main>
+            <Wrapper>
               <Container
-                justifyContent='start'
-                flexWrap='wrap'
-                flexDirection='row'>
-                <SkillInBotCard />
-                <SkillInBotCard />
-                <SkillInBotCard />
-                <SkillInBotCard />
-                <SkillInBotCard />
+                display='grid'
+                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                <AddButton
+                  listView={listView}
+                  addBot={addSkill}
+                  maxWidth='345px'
+                />
+                <SkillInBotCard maxWidth='345px' />
+                <SkillInBotCard maxWidth='345px' />
+                <SkillInBotCard maxWidth='345px' />
+                <SkillInBotCard maxWidth='345px' />
+                <SkillInBotCard maxWidth='345px' />
+                {skills}
               </Container>
             </Wrapper>
-          </TabPanel>
-        </Main>
+          </Main>
+        </TabPanel>
       </Tabs>
     </>
   )

@@ -1,24 +1,26 @@
 @import '../../styles/index.scss';
 
+.scroll {
+  width: 100%;
+  max-height: 480px;
+  overflow: auto;
+  overscroll-behavior: none;
+  border-radius: 12px;
+}
 .table {
   width: 100%;
-  table-layout: auto;
   border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
+}
+.thead {
+  tr {
+    @include sticky;
+  }
 }
 .th {
   padding: 24px 24px 8px;
   background: #ffffff;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 160%;
   color: #8d96b5;
   text-align: start;
   border: none;
-}
-.thead {
-  border: none;
+  @include b3;
 }

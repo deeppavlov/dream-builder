@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import Calendar from '../../assets/icons/calendar.svg'
-import IMG from '../../assets/icons/skillIcon.svg'
+import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
+import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import s from './SkillCard.module.scss'
 
 export const SkillCard = ({
@@ -11,18 +13,25 @@ export const SkillCard = ({
   ram,
   gpu,
   space,
+  skillType,
 }: any) => {
   return (
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <input type='checkbox' />
+        <Checkbox />
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
-            <img src={IMG} />
-            <h6>{companyName ? companyName : 'Retrieval Skill'}</h6>
+            <div className={s.type}>
+              <img src={SkillTypeLogo} />
+              <h6>{skillType ? skillType : 'Retrieval Skill'}</h6>
+            </div>
+            <div className={s.company}>
+              <img src={CompanyLogo} />
+              <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            </div>
           </div>
           <div className={s.twoLines}>
             <p>

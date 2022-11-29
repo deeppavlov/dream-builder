@@ -1,8 +1,9 @@
-@import '../../styles/variables/colors.scss';
-@import '../../styles/variables/dimensions.scss';
+@import '../../styles/index.scss';
+
 .sidebar {
   position: absolute;
   left: 0;
+  top: $topbar-height;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -21,6 +22,4 @@
   flex-direction: column;
   gap: 24px;
 }
-.work_info {
-  background-color: black;
-}
+

@@ -15,6 +15,7 @@ export const SkillInBotCard = ({
   gpu,
   space,
   type,
+  ...props
 }: any) => {
   const [disabled, setDisabled] = useState(true)
 
@@ -24,7 +25,7 @@ export const SkillInBotCard = ({
     console.log(disabled)
   }
   return (
-    <div style={{ opacity: !disabled && '0.3' }} className={s.card}>
+    <div style={{ ...props, opacity: !disabled && '0.3' }} className={s.card}>
       <div className={s.header}>
         <h6>{botName ? botName : 'Name of The Skill'} </h6>
         <ToggleButton sliderHandler={sliderHandler} />

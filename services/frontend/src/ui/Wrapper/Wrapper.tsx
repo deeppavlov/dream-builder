@@ -9,6 +9,8 @@ export const Wrapper = ({
   linkTo,
   title,
   closable,
+  showAll,
+  listView,
   ...props
 }: any) => {
   const [visible, setVisible] = useState(true)
@@ -25,13 +27,17 @@ export const Wrapper = ({
             </button>
           )}
           {title || amount ? (
-            <div className={s.header}>
+            <div style={listView?{paddingRight:'12px'}:{}} className={s.header}>
               {title ? <h5>{title}</h5> : null}
               {amount > 4 ? (
                 <div className={s.btns_area}>
-                  <Link to={linkTo}>
-                    <button className={s.ghost_btn}>Show&nbsp;All</button>
-                  </Link>
+                  {showAll ? (
+                    <Link to={linkTo}>
+                      <button className={s.ghost_btn}>Show&nbsp;All</button>
+                    </Link>
+                  ) : (
+                    null
+                  )}
                   <span>{amount ? amount : '...'}</span>
                 </div>
               ) : null}

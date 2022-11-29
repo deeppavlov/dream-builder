@@ -8,20 +8,27 @@ export const Table = ({
   fourth,
   fifth,
   sixth,
+  addButton,
+  ...props
 }: any) => {
   return (
-    <table className={s.table}>
-      <thead className={s.thead}>
-        <tr>
-          <th className={s.th}>{first ? first : 'Name'}</th>
-          <th className={s.th}>{second ? second : 'Author'}</th>
-          <th className={s.th}>{third ? third : 'Description'}</th>
-          <th className={s.th}>{fourth ? fourth : 'Version'}</th>
-          <th className={s.th}>{fifth ? fifth : 'Date'}</th>
-          <th className={s.th}>{sixth ? sixth : 'Action'}</th>
-        </tr>
-      </thead>
-      <tbody className={s.tbody}>{children}</tbody>
-    </table>
+    <>
+      <div className={s.scroll}>
+        <table style={{ ...props }} className={s.table}>
+          <thead className={s.thead}>
+            <tr>
+              <th className={s.th}>{first ? first : 'Name'}</th>
+              <th className={s.th}>{second ? second : 'Author'}</th>
+              <th className={s.th}>{third ? third : 'Description'}</th>
+              <th className={s.th}>{fourth ? fourth : 'Version'}</th>
+              <th className={s.th}>{fifth ? fifth : 'Date'}</th>
+              <th className={s.th}>{sixth ? sixth : 'Action'}</th>
+            </tr>
+          </thead>
+          {addButton}
+          <tbody className={s.body}>{children}</tbody>
+        </table>
+      </div>
+    </>
   )
 }

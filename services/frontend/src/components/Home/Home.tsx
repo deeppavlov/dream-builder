@@ -4,7 +4,6 @@ import Avatar_2 from '../../assets/images/comments_avatar(2).png'
 import Avatar_3 from '../../assets/images/comments_avatar(3).png'
 import Avatar_4 from '../../assets/images/comments_avatar(4).png'
 import Robot from '../../assets/images/robot.png'
-import RobotCM from '../../assets/images/robot_comments.png'
 import { Comment } from './components/Comment'
 import s from './Home.module.scss'
 

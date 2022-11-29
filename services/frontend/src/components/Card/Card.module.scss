@@ -3,7 +3,6 @@
 .card {
   display: flex;
   flex-direction: column;
-
   justify-content: space-between;
   background-color: $bcgrnd1;
   border: 1px solid $bcgrnd5;
@@ -14,7 +13,6 @@
   gap: 12px;
   h5 {
     text-align: start;
-    // display: block;
     font-weight: 600;
     font-size: 18px;
     line-height: 160%;

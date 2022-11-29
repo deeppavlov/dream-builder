@@ -15,7 +15,7 @@ export const Display = ({ viewHandler }: any) => {
       data-for='topbar_tooltip'
       onClick={changeView}
       className={s.display}>
-      {view ? <CardsView /> : <ListView />}
+      {!view ? <CardsView /> : <ListView />}
     </button>
   )
 }

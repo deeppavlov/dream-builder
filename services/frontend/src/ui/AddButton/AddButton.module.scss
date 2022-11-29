@@ -9,9 +9,9 @@
   justify-content: center;
   user-select: none;
   padding: 0px 24px;
+  overscroll-behavior: none;
   gap: 4px;
-  width: 275px;
-  min-width: 80px;
+  min-width: 275px;
   height: 300px;
   background: #f9fafc;
   border: 1px dashed #8d96b5;
@@ -23,6 +23,9 @@
   }
 }
 .tr {
+  position: sticky;
+  left: 0;
+  top: 54.9px;
   .td {
     border: none;
     max-height: 64px;

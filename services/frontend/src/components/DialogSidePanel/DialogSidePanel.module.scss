@@ -1,0 +1,75 @@
+@import '../../styles/index.scss';
+
+.dialogSidePanel {
+  width: 368px;
+  height: 100%;
+  background-color: $bcgrnd1;
+
+  &__title {
+    @include h6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 24px;
+    border: 1px solid $bcgrnd3;
+  }
+
+  &__close {
+    cursor: pointer;
+    width: 24px;
+    path {
+      stroke: $text3;
+    }
+  }
+
+  &__chat-box {
+    background-color: $bcgrnd2;
+    width: 100%;
+    min-height: 327px;
+  }
+
+  &__controls {
+    display: flex;
+    padding: 8px 24px;
+    border: 1px solid $bcgrnd3;
+  }
+
+  &__control-btn {
+    cursor: pointer;
+    width: 32px;
+    height: 32px
+  }
+
+  &__textarea {
+    @include b1;
+    height: 160px;
+    width: 100%;
+    resize: none;
+    outline: none;
+    border: none;
+    padding: 24px;
+    color: $text3;
+
+    &::-webkit-input-placeholder, /* Webkit based */
+    &::placeholder {
+      color: $text3;
+    }
+  }
+
+  &__btns {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 12px;
+    bottom: 0;
+    right: 24px;
+
+    button {
+      @include large_btn;
+      @include lnks_n_btns3;
+      @include primary_btn;
+      @include btn_primary_behavior;
+    }
+  }
+}

@@ -11,5 +11,5 @@
   padding: 24px 40px;
   z-index: 0;
   overflow-x: scroll;
-  @include min_h-w;
+  // @include min_h-w; Extra scrollbars
 }

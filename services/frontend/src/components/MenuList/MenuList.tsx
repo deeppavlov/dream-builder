@@ -1,24 +1,23 @@
 import ReactTooltip from 'react-tooltip'
-import s from './BurgerMenu.module.scss'
+import s from './MenuList.module.scss'
 
-export const BurgerMenu = () => {
+export const MenuList = () => {
   return (
     <ReactTooltip
       event='click'
       globalEventOff='click'
       arrowColor='#fff'
       clickable={true}
-      className={s.burgermenu}
+      className={s.menulist}
       offset={{ right: 90, top: -3 }}
-      type='dark'
-      id='burgermenu'
+      id='main_menu'
       place='bottom'
       effect='solid'>
       <ul className={s.menu}>
         <li className={s.item}>
-          <button>Save</button>
+          <button>About</button>
         </li>
-        <li className={s.item}>
+        {/* <li className={s.item}>
           <button>Save As...</button>
         </li>
         <li className={s.item}>
@@ -38,7 +37,7 @@ export const BurgerMenu = () => {
         <hr />
         <li className={s.item}>
           <button>Delete Your Bot</button>
-        </li>
+        </li> */}
       </ul>
     </ReactTooltip>
   )

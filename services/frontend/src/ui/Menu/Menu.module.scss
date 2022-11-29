@@ -1,0 +1,24 @@
+@import '../../styles/index.scss';
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 100%;
+  border-right: 1px solid $primary3;
+  border-bottom: none;
+  padding: 16px 14px;
+  background-color: #fff;
+  img {
+    width: 30px;
+    height: auto;
+  }
+  svg {
+    cursor: pointer;
+    @include icon_size_24;
+    @include icon_color;
+    @include icon_behavior;
+  }
+}

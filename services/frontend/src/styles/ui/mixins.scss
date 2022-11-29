@@ -155,3 +155,17 @@
   top: 0;
   left: 0;
 }
+@mixin icon_color {
+  fill: #8d96b5;
+}
+@mixin icon_behavior {
+  &:hover {
+    fill: #3300ff;
+  }
+  &:active {
+    fill: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}

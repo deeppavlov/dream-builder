@@ -1,4 +1,4 @@
-import { BurgerMenu } from '../../components/BurgerMenu/BurgerMenu'
+import { BurgerMenu } from '../../components/MenuList/MenuList'
 import s from './BurgerButton.module.scss'
 
 export const BurgerButton = () => {

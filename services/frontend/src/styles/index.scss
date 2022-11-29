@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+Mono:wght@400;700&display=swap');
 @import './variables/colors.scss';
 @import './variables/dimensions.scss';
 @import './variables/spacings.scss';
 @import './typography/mixins.scss';
 @import './typography/variables.scss';
 @import './ui/mixins.scss';
+
 *,
 *::before,
 *::after {
@@ -13,6 +13,10 @@
   padding: 0px;
   box-sizing: border-box;
   cursor: default;
+}
+html,
+body {
+  overflow: hidden;
 }
 a {
   text-decoration: none;
@@ -57,23 +61,4 @@ p {
   width: 100vw;
 }
 
-.accent_text {
-  color: $primary1;
-}
-.li {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 160%;
-  li {
-    font-family: 'Inter';
-    font-style: normal;
-    display: list-item;
-    margin-left: 30px;
-    list-style-type: disc;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 160%;
-  }
-}
+

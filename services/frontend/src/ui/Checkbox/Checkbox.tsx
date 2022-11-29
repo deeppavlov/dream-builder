@@ -1,10 +1,10 @@
 import s from './Checkbox.module.scss'
 
-export const CheckBox = () => {
+export const Checkbox = () => {
   return (
     <label className={s.container}>
       <input type='checkbox' />
-      <span className={s.checkmark}></span>
+      <span className={s.checkmark} />
     </label>
   )
 }

@@ -13,7 +13,7 @@ export const Profile = () => {
         arrowColor='#8d96b5'
         clickable={true}
         event='click'
-        className={s.tooltip_menu}
+        className={s.profile_menu}
         offset={{ left: 90, top: -13 }}
         id='menu'
         place='bottom'

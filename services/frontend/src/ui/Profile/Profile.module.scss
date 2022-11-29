@@ -31,8 +31,6 @@
     padding: 0px 12px;
     p {
       padding: 8px 0px;
-      text-align: center;
-      color: rgba(0, 0, 0, 0.9);
       cursor: pointer;
       @include b3;
     }
@@ -48,8 +46,7 @@
     }
   }
 }
-
-.tooltip_menu {
+.profile_menu {
   width: 264px;
   padding: 0px !important;
   color: rgba(0, 0, 0, 0.9) !important;

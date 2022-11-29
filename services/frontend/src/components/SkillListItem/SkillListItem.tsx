@@ -1,10 +1,14 @@
 import { ReactComponent as Logo } from '../../assets/icons/generative.svg'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './SkillListItem.module.scss'
 
 export const SkillListItem = ({ ...props }) => {
   return (
     <tr className={s.tr}>
+      <td className={s.checkboxArea}>
+        <Checkbox />
+      </td>
       <td className={s.td}>
         <div className={s.name}>
           <p>convert_reddit</p>

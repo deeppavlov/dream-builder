@@ -12,17 +12,25 @@
     fill: rgba(0, 0, 0, 0.7);
   }
 }
+.checkboxArea {
+  background: #fff;
+  padding-left: 24px;
+}
 .tr {
   border-top: 1px solid #f0f0f3;
   gap: 32px;
   height: 64px;
   padding: 12px;
+  
   &:hover {
     * {
       cursor: pointer;
     }
     td {
       p {
+        color: #3300ff;
+      }
+      .params {
         color: #3300ff;
       }
       background-color: rgba(51, 0, 255, 0.1);

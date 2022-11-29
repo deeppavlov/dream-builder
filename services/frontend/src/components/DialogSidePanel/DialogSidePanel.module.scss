@@ -4,6 +4,9 @@
   width: 368px;
   height: 100%;
   background-color: $bcgrnd1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   &__title {
     @include h6;
@@ -26,23 +29,21 @@
     background-color: $bcgrnd2;
     width: 100%;
     min-height: 327px;
+    height: 100%;
+    padding: 24px 24px;
   }
 
   &__controls {
     display: flex;
     padding: 8px 24px;
     border: 1px solid $bcgrnd3;
-  }
-
-  &__control-btn {
-    cursor: pointer;
-    width: 32px;
-    height: 32px
+    background-color: inherit;
   }
 
   &__textarea {
     @include b1;
-    height: 160px;
+    min-height: 160px;
+    max-height: 160px;
     width: 100%;
     resize: none;
     outline: none;
@@ -57,19 +58,61 @@
   }
 
   &__btns {
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-bottom: 12px;
-    bottom: 0;
-    right: 24px;
+    padding: 0 24px 12px;
+    background-color: inherit;
 
     button {
       @include large_btn;
       @include lnks_n_btns3;
       @include primary_btn;
       @include btn_primary_behavior;
+    }
+  }
+}
+
+.chat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  gap: 24px;
+
+  &__message {
+    @include b2;
+    background-color: $bcgrnd3;
+    padding: 12px;
+    border-radius: 12px 12px 0px 12px;
+    width: fit-content;
+
+    &_bot {
+      background: rgba(255, 204, 0, 0.1);
+      border-radius: 12px 12px 12px 0px;
+    }
+  }
+
+  &__avatar {
+    max-width: 40px;
+    max-height: 40px;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 204, 0, 0.1);
+    border-radius: 50%;
+  }
+
+  &__container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-end;
+
+    &_bot {
+      justify-content: flex-start;
     }
   }
 }

@@ -7,9 +7,10 @@ import { Profile } from '../../ui/Profile/Profile'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
-import { Server } from './components/Server'
+import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
 import { Menu } from '../../ui/Menu/Menu'
+import { Notifications } from './components/Notifications'
 
 export const Topbar = ({ children, type, viewHandler }: any) => {
   const handleCallbackResponse = response => {
@@ -86,7 +87,8 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
             </div>
             <div className={s.btns_area}>
               <History />
-              <Server />
+              <Resources />
+              <Notifications />
               <Test />
               <Profile />
             </div>

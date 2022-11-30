@@ -1,6 +1,7 @@
-import s from './Settings.module.scss'
 import { ReactComponent as Gear } from '../../../assets/icons/gear.svg'
-export const Settings = () => {
+import s from './SettingsTab.module.scss'
+
+export const SettingsTab = () => {
   return (
     <button className={s.settings}>
       <Gear />

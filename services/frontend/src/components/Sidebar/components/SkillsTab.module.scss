@@ -1,14 +1,15 @@
-@import '../../../styles/ui/mixins.scss';
-@import '../../../styles/variables/colors.scss';
+@import '../../../styles/index.scss';
 
 .puzzle {
-  @include icon_size_24;
-  stroke: #8d96b5;
   cursor: pointer;
+  width: $sidebar-width;
+  @include sidebar_btn_height;
   svg {
     cursor: pointer;
-  }
-  &:hover {
-    stroke: $text5;
+    stroke: #8d96b5;
+    @include icon_size_24;
+    &:hover {
+      stroke: $text5;
+    }
   }
 }

@@ -1,12 +1,12 @@
 @import '../../../styles/index.scss';
 
-.cpu {
+.settings {
   cursor: pointer;
   width: $sidebar-width;
   @include sidebar_btn_height;
   svg {
     cursor: pointer;
-    @include icon_color;
+    fill: #8d96b5;
     @include icon_size_24;
     &:hover {
       fill: $text5;

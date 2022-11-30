@@ -1,4 +1,4 @@
-import { Settings } from './components/Settings'
+import {SettingsTab } from './components/SettingsTab'
 import s from './Sidebar.module.scss'
 
 export const Sidebar = ({ children, sidebar, type, buttons }: any) => {
@@ -8,7 +8,7 @@ export const Sidebar = ({ children, sidebar, type, buttons }: any) => {
         <>
           <div className={s.sidebar}>
             <div className={s.btns_area}>{children}</div>
-            <Settings />
+            <SettingsTab />
           </div>
         </>
       )

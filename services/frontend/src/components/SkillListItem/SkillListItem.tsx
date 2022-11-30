@@ -40,9 +40,6 @@ export const SkillListItem = ({ ...props }) => {
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <input type='checkbox' />
-          {/* <button className={s.area}> */}
-          {/* </button> */}
           <div>
             <KebabButton type='row' color='#8D96B5' />
           </div>

@@ -5,12 +5,15 @@ import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import s from './BotListItem.module.scss'
 
-export const BotListItem = ({ ...props }) => {
+export const BotListItem = ({ checkbox, ...props }: any) => {
+  console.log(checkbox)
   return (
     <tr className={s.tr}>
-      <td className={s.checkboxArea}>
-        <Checkbox />
-      </td>
+      {checkbox && (
+        <td className={s.checkboxArea}>
+          <Checkbox />
+        </td>
+      )}
       <td className={s.td}>
         <div className={s.name}>
           <p>Dream Virtual Assistant</p>

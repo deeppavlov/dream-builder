@@ -19,7 +19,7 @@ export const AddButton = ({ addBot, listView, ...props }: any) => {
         </button>
       ) : (
         <tr className={s.tr}>
-          <td colSpan={6} className={s.td}>
+          <td colSpan={7} className={s.td}>
             <button
               className={s.add_list_item}
               onClick={() => {

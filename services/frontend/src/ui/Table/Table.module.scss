@@ -11,6 +11,8 @@
     border-collapse: collapse;
     .thead {
       tr {
+        height: 60px;
+        min-height: 60px;
         z-index: 1;
         @include sticky;
         .th {
@@ -25,6 +27,8 @@
           @include b3;
         }
         .checkboxArea {
+          height: 60px;
+          min-height: 60px;
           display: flex;
           font-display: row;
           align-items: center;

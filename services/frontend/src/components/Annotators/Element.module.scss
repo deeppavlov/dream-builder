@@ -2,49 +2,32 @@
 
 .element {
   display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   padding: 12px;
-
   height: 104px;
   .left {
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    gap: 4px;
     .top {
-      width: 100%;
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: start;
       gap: 8px;
+      .icon {
+        @include icon_size_24;
+      }
+      .name {
+        @include t3;
+      }
     }
   }
   .right {
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
+    height: 100%;
   }
   .data {
-    text-align: start;
-    font-size: 14px;
-    line-height: 140%;
-    display: flex;
-    align-items: center;
     color: rgba(0, 0, 0, 0.7);
+    @include b4;
   }
-  .switch {
-    background-image: url(@/assets/switch.svg);
-    background-repeat: no-repeat;
-  }
-}
-.icon {
-  @include icon_size_24;
-  background-image: url(../../../assets/icons/book.svg);
-  background-repeat: no-repeat;
 }

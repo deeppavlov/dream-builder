@@ -15,7 +15,7 @@ Base.metadata.create_all(bind=engine)
 
 
 @router.get("/token", status_code=200)
-async def validate_jwt(response: Response, jwt_data: str = Header(default=None), db: Session = Depends(get_db)):
+async def validate_jwt(jwt_data: str = Header(), db: Session = Depends(get_db)):
     """
     Decode input jwt-token, validate date, check user in db and sign him up in case of user is not in db
     """
@@ -32,7 +32,6 @@ async def validate_jwt(response: Response, jwt_data: str = Header(default=None),
 
     if not crud.check_user_exists(db, user.email):
         crud.add_google_user(db, user)
-        response.status_code = status.HTTP_201_CREATED
 
 
 def _check_aud_is_valid(input_aud: str) -> None:

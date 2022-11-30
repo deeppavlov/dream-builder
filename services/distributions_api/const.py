@@ -16,7 +16,8 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 )
 
 
-DREAM_ROOT_PATH = Path(os.environ["DREAM_ROOT_PATH"])
+# DREAM_ROOT_PATH = Path(os.environ["DREAM_ROOT_PATH"])
+DREAM_ROOT_PATH = Path(__file__).parents[2] / "dream"
 
 ASSISTANT_DISTS_PATH = DREAM_ROOT_PATH / "assistant_dists"
 

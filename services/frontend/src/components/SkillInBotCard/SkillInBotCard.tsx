@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { ReactComponent as Calendar } from '../../assets/icons/calendar.svg'
-import { ReactComponent as Logo } from '../../assets/icons/fallbacks.svg'
+import { ReactComponent as SkillTypeLogo } from '../../assets/icons/fallbacks.svg'
+import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './SkillInBotCard.module.scss'
 
@@ -15,6 +16,7 @@ export const SkillInBotCard = ({
   gpu,
   space,
   type,
+  skillType,
   ...props
 }: any) => {
   const [disabled, setDisabled] = useState(true)
@@ -33,8 +35,14 @@ export const SkillInBotCard = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
-            <Logo />
-            <h6>{companyName ? companyName : 'Fallbacks'}</h6>
+            <div className={s.type}>
+              <SkillTypeLogo />
+              <h6>{skillType ? skillType : 'Retrieval Skill'}</h6>
+            </div>
+            <div className={s.company}>
+              <img src={CompanyLogo} />
+              <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            </div>
           </div>
           <div className={s.info}>
             <p>
@@ -73,9 +81,7 @@ export const SkillInBotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
-              <button className={s.clone_btn}>Edit Skill</button>
-            </Link>
+            <button className={s.clone_btn}>Edit Skill</button>
             <div className={s.kebab}>
               <KebabButton />
             </div>

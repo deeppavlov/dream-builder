@@ -128,3 +128,34 @@
 @mixin accent_text {
   color: $primary1;
 }
+@mixin ultra_bold {
+  font-weight: 700;
+}
+@mixin bold {
+  font-weight: 600;
+}
+
+@mixin t2 {
+  font-size: 18px;
+  line-height: 22px;
+  @include font;
+  @include bold;
+}
+@mixin t2_bold {
+  font-size: 18px;
+  line-height: 22px;
+  @include font;
+  @include ultra_bold;
+}
+@mixin t3 {
+  font-size: 16px;
+  line-height: 160%;
+  @include font;
+  @include bold;
+}
+@mixin t4 {
+  font-size: 18px;
+  line-height: 160%;
+  @include font;
+  @include bold;
+}

@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px;
   }
   .data {
     text-align: start;
@@ -47,4 +47,32 @@
   @include icon_size_24;
   background-image: url(@assets/icons/book.svg);
   background-repeat: no-repeat;
+  justify-content: space-between;
+  padding: 12px;
+  height: fit-content;
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    .top {
+      display: flex;
+      gap: 8px;
+      .icon {
+        @include icon_size_24;
+      }
+      .name {
+        @include t3;
+      }
+    }
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+  }
+  .data {
+    color: rgba(0, 0, 0, 0.7);
+    @include b4;
+  }
 }

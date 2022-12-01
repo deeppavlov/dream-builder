@@ -1,3 +1,6 @@
+import SkillsLogo from '../../assets/icons/skills.svg'
+import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Element } from './Element'
 import s from './Skills.module.scss'
@@ -8,23 +11,27 @@ export const Skills = () => {
       <div className={s.header}>
         <div className={s.top}>
           <div className={s.title}>
-            <span className={s.icon} />
-            <h5>Skills</h5>
+            <img src={SkillsLogo} className={s.icon} />
+            <p className={s.type}>Skills</p>
           </div>
           <KebabButton />
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>0 Gb RAM | 0.000 Gb GPU</p>
+          <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>
         </div>
       </div>
-      <button className={s.add_btn}>
-        <span className={s.icon} />
-        <p>Add Skills</p>
-      </button>
-      <Element />
-      <Element />
-      <Element />
-      <Element />
+
+      <AddButtonStack text='Add Skills' />
+      <div className={s.elements}>
+        <Accordeon title='Customizable'>
+          <Element />
+          <Element />
+        </Accordeon>
+        <Accordeon title='Non-customizable'>
+          <Element />
+          <Element />
+        </Accordeon>
+      </div>
     </div>
   )
 }

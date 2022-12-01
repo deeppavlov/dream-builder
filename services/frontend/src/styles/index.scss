@@ -60,4 +60,18 @@ p {
   height: 100vh;
   width: 100vw;
 }
-
+.__react_component_tooltip {
+  border: none !important;
+}
+.react-tabs__tab--selected {
+  position: relative;
+  &::after {
+    content: url(../assets/icons/indicator.svg);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    display: block;
+    width: 4px;
+    height: 40px;
+  }
+}

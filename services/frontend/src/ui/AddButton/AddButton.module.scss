@@ -13,6 +13,7 @@
   gap: 4px;
   min-width: 275px;
   height: 300px;
+  max-height: 100%;
   background: #f9fafc;
   border: 1px dashed #8d96b5;
   border-radius: 8px;
@@ -25,15 +26,15 @@
 .tr {
   position: sticky;
   left: 0;
-  top: 54.9px;
+  top: 60px;
+  z-index: 1;
   .td {
     border: none;
-    max-height: 64px;
+    height: 64px;
     background: #ffffff;
     color: #313030;
     padding: 16px 12px;
   }
-  border-top: 1px solid #f0f0f3;
   gap: 32px;
   height: 64px;
   padding: 12px;

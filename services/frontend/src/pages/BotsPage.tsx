@@ -43,10 +43,10 @@ export const BotsPage = () => {
                 <BotCard />
                 <BotCard />
                 <BotCard />
-              <BotCard />
-              <BotCard />
-              <BotCard />
-              <BotCard />
+                <BotCard />
+                <BotCard />
+                <BotCard />
+                <BotCard />
               </Container>
             </Wrapper>
             <Wrapper
@@ -69,13 +69,10 @@ export const BotsPage = () => {
         ) : (
           <>
             <Wrapper
-              listView={listView}
               title='Public Virtual Assistants & Chatbots'
               showAll={true}
               amount='5'
-              linkTo='/bots'
-              gap='0px'
-              paddingRight='14px'>
+              linkTo='/bots'>
               <Table>
                 <BotListItem />
                 <BotListItem />
@@ -84,15 +81,13 @@ export const BotsPage = () => {
                 <BotListItem />
                 <BotListItem />
                 <BotListItem />
-              <BotListItem />
-              <BotListItem />
+                <BotListItem />
+                <BotListItem />
               </Table>
             </Wrapper>
-            <Wrapper
-              paddingRight='12px'
-              gap='0px'
-              title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
+                checkbox={true}
                 addButton={<AddButton addBot={addBot} listView={listView} />}>
                 {bots}
               </Table>

@@ -1,17 +1,5 @@
 @import '../../styles/index.scss';
 
-.td {
-  border: none;
-  text-align: start;
-  max-height: 64px;
-  background: #ffffff;
-  color: #313030;
-  padding: 0px 24px;
-  svg {
-    @include icon_size_24;
-    fill: rgba(0, 0, 0, 0.7);
-  }
-}
 .tr {
   border-top: 1px solid #f0f0f3;
   gap: 32px;
@@ -25,8 +13,30 @@
       p {
         color: #3300ff;
       }
+      .params {
+        color: #3300ff;
+      }
       background-color: rgba(51, 0, 255, 0.1);
     }
+  }
+  .td {
+    &:nth-child(2) {
+      padding-left: 0;
+    }
+    border: none;
+    text-align: start;
+    max-height: 64px;
+    background: #fff;
+    color: #313030;
+    padding: 0px 24px;
+    svg {
+      @include icon_size_24;
+      fill: rgba(0, 0, 0, 0.7);
+    }
+  }
+  .checkboxArea {
+    background: #fff;
+    padding-left: 24px;
   }
 }
 .version {
@@ -46,7 +56,7 @@
   }
 }
 .description {
-  font-family: $main-font;
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -64,7 +74,7 @@
     @include icon_size_24;
   }
   p {
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -79,7 +89,7 @@
   flex-direction: column;
   white-space: nowrap;
   p {
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -87,7 +97,7 @@
     color: rgba(0, 0, 0, 0.7);
   }
   .params {
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 10px;
@@ -102,7 +112,7 @@
   flex-direction: column;
   justify-content: center;
   .ddmmyyyy {
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -110,7 +120,7 @@
     color: rgba(0, 0, 0, 0.7);
   }
   .time {
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 12px;

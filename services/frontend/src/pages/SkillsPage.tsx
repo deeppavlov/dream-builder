@@ -45,7 +45,7 @@ export const SkillsPage = () => {
                 <SkillCard />
               </Container>
             </Wrapper>
-            <Wrapper  showAll={true} paddingBottom='12px' title='Your Skills'>
+            <Wrapper showAll={true} paddingBottom='12px' title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'
@@ -54,7 +54,11 @@ export const SkillsPage = () => {
                   width='275px'
                   minWidth='275px'
                   paddingBottom='22px'>
-                  <AddButton listView={listView} addBot={addBot} />
+                  <AddButton
+                    height='330px'
+                    listView={listView}
+                    addBot={addBot}
+                  />
                 </Container>
                 <Container>{skills}</Container>
               </Container>
@@ -62,8 +66,17 @@ export const SkillsPage = () => {
           </>
         ) : (
           <>
-            <Wrapper title='Public Skills' amount='5' linkTo='/allskills'>
-              <Table second='Type' third='About' fifth='Date' sixth='Action'>
+            <Wrapper
+              title='Public Skills'
+              showAll={true}
+              amount='5'
+              linkTo='/allskills'>
+              <Table
+                checkbox={true}
+                second='Type'
+                third='About'
+                fifth='Date'
+                sixth='Action'>
                 <SkillListItem />
                 <SkillListItem />
                 <SkillListItem />
@@ -71,7 +84,7 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
-              <Table>
+              <Table checkbox={true}>
                 <AddButton addBot={addBot} listView={listView} />
                 {skills}
               </Table>

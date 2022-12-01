@@ -1,14 +1,15 @@
-@import '../../../styles/ui/mixins.scss';
-@import '../../../styles/variables/colors.scss';
+@import '../../../styles/index.scss';
 
 .cpu {
-  @include icon_size_24;
-  stroke: #8d96b5;
   cursor: pointer;
+  width: $sidebar-width;
+  @include sidebar_btn_height;
   svg {
     cursor: pointer;
-  }
-  &:hover {
-    stroke: $text5;
+    @include icon_color;
+    @include icon_size_24;
+    &:hover {
+      fill: $text5;
+    }
   }
 }

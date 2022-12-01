@@ -1,0 +1,35 @@
+@import '../../styles/index.scss';
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: fit-content;
+  min-width: 310px;
+  width: 310px;
+  border-radius: 12px;
+  box-shadow: 0px 1px 35px rgba(3, 15, 26, 0.05);
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  height: $stack_header_height;
+  padding: 12px;
+  gap: 8px;
+  background: #ffcc00;
+  .top {
+    display: flex;
+    justify-content: space-between;
+    .title {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      .icon {
+        @include icon_size_24;
+      }
+      .type {
+        @include t2;
+      }
+    }
+  }
+}

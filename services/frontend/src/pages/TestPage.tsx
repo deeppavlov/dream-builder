@@ -1,7 +1,7 @@
 import { AddSkillModal } from '../components/ModalWindows/AddSkillModal'
 import { CreateAssistantModal } from '../components/ModalWindows/CreateAssistantModal'
 import { EditModal } from '../components/ModalWindows/EditModal'
-import { CheckBox } from '../ui/Checkbox/Checkbox'
+import { Checkbox } from '../ui/Checkbox/Checkbox'
 
 export const TestPage = () => (
   <div
@@ -16,6 +16,6 @@ export const TestPage = () => (
     <CreateAssistantModal>Create Assistant</CreateAssistantModal>
     <AddSkillModal>Add Skill</AddSkillModal>
     <EditModal>Edit Bot Description</EditModal>
-    <CheckBox />
+    <Checkbox />
   </div>
 )

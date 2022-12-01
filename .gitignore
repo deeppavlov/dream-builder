@@ -31,4 +31,5 @@ src/.DS_Store
 *.sln
 *.sw?
 
+*.env
 

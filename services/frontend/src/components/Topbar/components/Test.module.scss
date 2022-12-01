@@ -1,18 +1,16 @@
-@import '../../../styles/ui/mixins.scss';
-@import '../../../styles/variables/dimensions.scss';
-@import '../../../styles/variables/colors.scss';
+@import '../../../styles/index.scss';
 
 .test {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 52px;
+  width: 76px;
   height: $topbar-height;
-  cursor: pointer;
-
   svg {
+    cursor: pointer;
     fill: $text3;
-    @include icon_size_24;
+    width: 52px;
+    height: $topbar-height;
   }
   &:hover {
     background: #f0f0f3;

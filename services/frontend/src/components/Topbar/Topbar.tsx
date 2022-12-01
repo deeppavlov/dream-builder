@@ -7,8 +7,10 @@ import { Profile } from '../../ui/Profile/Profile'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
-import { Server } from './components/Server'
+import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+import { Menu } from '../../ui/Menu/Menu'
+import { Notifications } from './components/Notifications'
 
 export const Topbar = ({ children, type, viewHandler }: any) => {
   const handleCallbackResponse = response => {
@@ -32,7 +34,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
     case 'main':
       return (
         <div className={s.topbar}>
-          <BurgerButton />
+          <Menu />
           <div className={s.logo_area}>
             <Breadcrumbs />
           </div>
@@ -79,13 +81,14 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
       return (
         <>
           <div className={s.topbar}>
-            <BurgerButton />
+            <Menu />
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
             <div className={s.btns_area}>
               <History />
-              <Server />
+              <Resources />
+              <Notifications />
               <Test />
               <Profile />
             </div>
@@ -98,7 +101,7 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
 
   return (
     <div className={s.topbar}>
-      <BurgerButton />
+      <Menu />
       <div className={s.logo_area}>
         <span className={s.logo} />
         <h3>Dream&nbsp;Builder</h3>

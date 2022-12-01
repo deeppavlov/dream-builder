@@ -1,0 +1,8 @@
+@import '../../styles/index.scss';
+
+.modalBtn {
+  @include large_btn;
+  @include lnks_n_btns4;
+  @include primary_btn;
+  @include btn_primary_behavior;
+}

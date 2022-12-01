@@ -6,7 +6,7 @@ import { SkillsAllPage } from '../pages/SkillsAllPage'
 import { SkillsPage } from '../pages/SkillsPage'
 import { StartPage } from '../pages/StartPage'
 import { HomePage } from '../pages/HomePage'
-import { TestPage } from '../pages/TestPage'
+import { TestPage } from '../pages/TestPage/TestPage'
 
 export const Router = () => {
   return (

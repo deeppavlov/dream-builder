@@ -1,3 +1,6 @@
+import SkillSelectorLogo from '../../assets/icons/skill_selector.svg'
+import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
@@ -8,18 +11,23 @@ export const SkillSelector = () => {
       <div className={s.header}>
         <div className={s.top}>
           <div className={s.title}>
-            <span className={s.icon} />
-            <h5>Skill Selector</h5>
+            <img src={SkillSelectorLogo} className={s.icon} />
+            <p className={s.type}>Skill Selector</p>
           </div>
           <KebabButton />
         </div>
       </div>
-      <button className={s.add_btn}>
-        <span className={s.icon} />
-        <p>Add Skill Selector</p>
-      </button>
-      <Skill title='Rule Base Selector' />
-      <Skill title='Default' />
+      <AddButtonStack disabled='true' text='Add Skill Selector' />
+      <Accordeon title='Customizable'>
+        <form>
+          <Skill title='Rule Base Selector' />
+          <Skill title='Single Skill' />
+          <Skill title='Multiple Skill' />
+        </form>
+      </Accordeon>
+      <Accordeon title='Non-customizable'>
+        <Skill title='All Skills' />
+      </Accordeon>
     </div>
   )
 }

@@ -42,7 +42,7 @@
   p {
     hyphens: auto;
     width: 100%;
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -104,8 +104,6 @@
 .btns_area {
   display: flex;
   flex-direction: row;
-  // align-items: center;
-  // justify-content: space-between;
   width: 100%;
   gap: 12px;
 }

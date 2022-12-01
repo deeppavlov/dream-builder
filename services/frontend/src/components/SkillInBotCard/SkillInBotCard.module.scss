@@ -1,9 +1,10 @@
-@import '../../styles/index.scss';
+@import '../../styles/ui/mixins.scss';
+@import '../../styles/variables/colors.scss';
 
 .card {
   min-width: 275px;
   max-width: 275px;
-  height: 300px;
+  height: 330px;
   min-height: 300px;
   border: 1px solid $text3;
   border-radius: 12px;
@@ -42,7 +43,7 @@
   p {
     hyphens: auto;
     width: 100%;
-    font-family: $main-font;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -57,11 +58,31 @@
   align-items: center;
   justify-content: start;
   gap: 4px;
-  h6 {
-    color: $magenta;
+  gap: 4px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  .company {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 4px;
+    img {
+      @include icon_size_24;
+    }
   }
-  svg {
-    @include icon_size_24;
+  .type {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 8px;
+    h6 {
+      color: $magenta;
+    }
+    svg {
+      @include icon_size_24;
+    }
   }
 }
 .version {
@@ -98,7 +119,7 @@
   padding: 8px 0px;
 }
 .clone_btn {
-  width: 175px;
+  width: 100%;
   height: 36px;
   color: #000;
   background-color: #f0f0f3;

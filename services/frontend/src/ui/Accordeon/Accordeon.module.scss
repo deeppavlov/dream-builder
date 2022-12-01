@@ -1,0 +1,33 @@
+@import '../../styles/index.scss';
+
+.elements {
+  height: 0;
+  overflow: hidden;
+  transition: height ease 0.2s;
+}
+.arrowDropdown {
+  display: flex;
+  padding: 4px 12px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0f0f3;
+  color: rgba(0, 0, 0, 0.7);
+  svg {
+    cursor: pointer;
+    fill: rgba(0, 0, 0, 0.7);
+    transition: ease 0.2s;
+    @include icon_size_24;
+  }
+  p {
+    cursor: pointer;
+    @include t3;
+  }
+}
+.open {
+  svg {
+    transition: ease 0.2s;
+    transform: rotate(180deg);
+  }
+}

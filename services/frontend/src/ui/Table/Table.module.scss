@@ -6,21 +6,42 @@
   overflow: auto;
   overscroll-behavior: none;
   border-radius: 12px;
-}
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.thead {
-  tr {
-    @include sticky;
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    .thead {
+      tr {
+        height: 60px;
+        min-height: 60px;
+        z-index: 1;
+        @include sticky;
+        .th {
+          &:nth-child(2) {
+            padding-left: 0;
+          }
+          padding: 24px 24px 8px;
+          background: #fff;
+          color: #8d96b5;
+          text-align: start;
+          border: none;
+          @include b3;
+        }
+        .checkboxArea {
+          height: 60px;
+          min-height: 60px;
+          display: flex;
+          font-display: row;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          padding: 24px 24px 8px;
+          padding-right: 0;
+          svg {
+            @include icon_color;
+            @include icon_size_24;
+          }
+        }
+      }
+    }
   }
-}
-.th {
-  padding: 24px 24px 8px;
-  background: #ffffff;
-  color: #8d96b5;
-  text-align: start;
-  border: none;
-  @include b3;
 }

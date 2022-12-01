@@ -2,11 +2,18 @@ import { Link } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './BotListItem.module.scss'
 
-export const BotListItem = ({ ...props }) => {
+export const BotListItem = ({ checkbox, ...props }: any) => {
+  console.log(checkbox)
   return (
     <tr className={s.tr}>
+      {checkbox && (
+        <td className={s.checkboxArea}>
+          <CheckBox />
+        </td>
+      )}
       <td className={s.td}>
         <div className={s.name}>
           <p>Dream Virtual Assistant</p>

@@ -3,78 +3,32 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  height: fit-content;
   min-width: 310px;
   width: 310px;
-  background: #ffffff;
-  box-shadow: 0px 1px 35px rgba(3, 15, 26, 0.05);
   border-radius: 12px;
-  height: 176px;
+  box-shadow: 0px 1px 35px rgba(3, 15, 26, 0.05);
 }
 .header {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  height: $stack_header_height;
   padding: 12px;
-  height: 77px;
+  gap: 8px;
   background: #ffcc00;
-  border-radius: 12px 12px 0px 0px;
   .top {
-    width: 100%;
     display: flex;
-    font-display: row;
-    align-items: center;
     justify-content: space-between;
-  }
-  .title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    .icon {
-      @include icon_size_24;
-      background-image: url(../../assets/icons/skill_selector.svg);
+    .title {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      .icon {
+        @include icon_size_24;
+      }
+      .type {
+        @include t2;
+      }
     }
-  }
-  h5 {
-    font-size: 18px;
-    line-height: 160%;
-  }
-  .header_top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .data {
-    display: flex;
-    align-items: center;
-    // height: 100%;
-    font-size: 14px;
-    line-height: 140%;
-    color: rgba(0, 0, 0, 0.7);
-  }
-}
-.add_btn {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #000;
-  padding: 3px 8px;
-  gap: 10px;
-  height: 48px;
-  background: #ffffff;
-  border: 1px solid #8d96b5;
-  .icon {
-    width: 12px;
-    height: 12px;
-    background-image: url(../../assets/icons/plus.svg);
-    background-repeat: no-repeat;
-  }
-  p {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 160%;
-    text-align: center;
-    color: rgba(0, 0, 0, 0.7);
   }
 }

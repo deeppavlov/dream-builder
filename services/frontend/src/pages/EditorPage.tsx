@@ -15,6 +15,8 @@ import { AnotherTab } from '../components/Sidebar/components/AnotherTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
+import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
+import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 
 export const EditorPage = () => {
   const [skills, setSkills] = useState([])
@@ -60,6 +62,8 @@ export const EditorPage = () => {
             <SkillSelector />
             <Skills />
             <CandidateAnnotators />
+            <ResponseSelector />
+            <ResponseAnnotators />
           </Main>
         </TabPanel>
         <TabPanel>

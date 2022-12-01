@@ -1,17 +1,17 @@
-import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg'
+import ResponseAnnotatorsLogo from '../../assets/icons/response_annotators.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordeon } from '../../ui/Accordeon/Accordeon'
 import { Element } from './Element'
-import s from './CandidateAnnotators.module.scss'
+import s from './ResponseAnnotators.module.scss'
 
-export const CandidateAnnotators = () => {
+export const ResponseAnnotators = () => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
         <div className={s.top}>
           <div className={s.title}>
-            <img src={CandidateAnnotatorsLogo} className={s.icon} />
+            <img src={ResponseAnnotatorsLogo} className={s.icon} />
             <p className={s.type}>CandidateAnnotators</p>
           </div>
           <KebabButton />

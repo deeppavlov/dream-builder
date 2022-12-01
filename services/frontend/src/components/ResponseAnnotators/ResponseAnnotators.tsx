@@ -12,7 +12,7 @@ export const ResponseAnnotators = () => {
         <div className={s.top}>
           <div className={s.title}>
             <img src={ResponseAnnotatorsLogo} className={s.icon} />
-            <p className={s.type}>CandidateAnnotators</p>
+            <p className={s.type}>Response Annotators</p>
           </div>
           <KebabButton />
         </div>

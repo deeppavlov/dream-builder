@@ -12,7 +12,7 @@ export const CandidateAnnotators = () => {
         <div className={s.top}>
           <div className={s.title}>
             <img src={CandidateAnnotatorsLogo} className={s.icon} />
-            <p className={s.type}>CandidateAnnotators</p>
+            <p className={s.type}>Candidate Annotators</p>
           </div>
           <KebabButton />
         </div>

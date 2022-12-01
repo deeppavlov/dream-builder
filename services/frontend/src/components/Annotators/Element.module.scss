@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   padding: 12px;
-  height: 104px;
+  height: fit-content;
   .left {
     display: flex;
     flex-direction: column;
@@ -23,7 +23,7 @@
   .right {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 8px;
     height: 100%;
   }
   .data {

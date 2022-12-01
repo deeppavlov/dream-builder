@@ -10,3 +10,4 @@ git+https://github.com/deeppavlov/deeppavlov_dreamtools.git
 databases==0.6.1
 sqlalchemy==1.4.42
 requests==2.28.1
+python-dotenv

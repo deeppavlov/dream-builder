@@ -1,0 +1,33 @@
+@import '../../styles/index.scss';
+
+.element {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  height: fit-content;
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    .top {
+      display: flex;
+      gap: 8px;
+      .icon {
+        @include icon_size_24;
+      }
+      .name {
+        @include t3;
+      }
+    }
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+  }
+  .data {
+    color: rgba(0, 0, 0, 0.7);
+    @include b4;
+  }
+}

@@ -322,7 +322,6 @@ src/.DS_Store
 *.njsproj
 *.sln
 *.sw?
-=======
-.env
-.gitignore
->>>>>>> auth
+
+*.env
+

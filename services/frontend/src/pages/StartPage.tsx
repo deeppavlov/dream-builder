@@ -1,25 +1,16 @@
-import { Main } from '../components/Main/Main'
-import { Wrapper } from '../components/Wrapper/Wrapper'
-import { Card } from '../components/Card/Card'
-import { Container } from '../components/Container/Container'
 import { Topbar } from '../components/Topbar/Topbar'
+import { Main } from '../components/Main/Main'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
+import { Container } from '../ui/Container/Container'
+import { Card } from '../components/Card/Card'
+import { Banner } from '../components/Banner/Banner'
+
 export const StartPage = () => {
   return (
     <>
       <Topbar />
       <Main sidebar='none'>
-        <Wrapper alignItems='start' closable={true}>
-          <h5>Irina, welcome to Dream Builder Console!</h5>
-          <ul>
-            You can now build and manage your own virtual assistants & chatbots!
-            <li> Construct it as a lego.</li>
-            <li>No more coding, compose it visually on your board</li>
-            <li>
-              Control, manage, chat with your virtual assistant in a single
-              place.
-            </li>
-          </ul>
-        </Wrapper>
+        <Banner />
         <Wrapper>
           <Container>
             <Card

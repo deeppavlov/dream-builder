@@ -1,27 +1,27 @@
-import s from "./Banner.module.scss"
+import { Wrapper } from '../../ui/Wrapper/Wrapper'
+import s from './Banner.module.scss'
 
 export const Banner = () => {
   return (
-    <div className={s.modalWindow}>
-      <div className={s.header}>
-        <h2>
-          Welcome To <span className={s.accentText}> Dream Builder </span>
-          Console!
-        </h2>
-        <button className={s.close}></button>
-      </div>
-      <div className={s.body}>
-        <p className={s.info}>
-          Now you can build and manage bots with more ease
-        </p>
+    <>
+      <Wrapper alignItems='start' closable={true}>
+        <h5>
+          Irina, welcome to
+          <span className={s.accent_text}> Dream Builder</span> Console!
+        </h5>
         <ul>
-          <li>🤖</li>
-          <li>👾</li>
-          <li>💻</li>
-          <li>💾</li>
-          <li>🧑‍💻</li>
+          <p className={s.annotations}>
+            You can now build and manage your own virtual assistants & chatbots!
+          </p>
+          <li className={s.li}> Construct it as a lego.</li>
+          <li className={s.li}>
+            No more coding, compose it visually on your board
+          </li>
+          <li className={s.li}>
+            Control, manage, chat with your virtual assistant in a single place.
+          </li>
         </ul>
-      </div>
-    </div>
+      </Wrapper>
+    </>
   )
 }

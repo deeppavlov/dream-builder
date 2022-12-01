@@ -1,18 +1,17 @@
+@import '../../../styles/index.scss';
+
 .comment {
   position: absolute;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: start;
-  background: #ffffff;
+  background: $bcgrnd1;
   padding: 8px;
   gap: 8px;
   box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
-  z-index: 1;
   p {
     font-weight: 400;
-    font-size: 11px;
+    font-size: 10.9px;
     line-height: 160%;
-    color: rgba(0, 0, 0, 0.7);
+    color: $text2;
   }
 }

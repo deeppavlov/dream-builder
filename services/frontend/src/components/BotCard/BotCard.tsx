@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Annotators/components/KebabButton'
-import Calendar from '../../assets/images/calendar.svg'
-import IMG from '../../assets/images/pavlovInCard.svg'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import Calendar from '../../assets/icons/calendar.svg'
+import IMG from '../../assets/icons/pavlovInCard.svg'
 import s from './BotCard.module.scss'
 
 export const BotCard = ({
@@ -12,18 +12,23 @@ export const BotCard = ({
   ram,
   gpu,
   space,
+  type,
 }: any) => {
   return (
-    <div className={s.bot}>
+    <div className={s.card}>
       <div className={s.header}>
         <h6>{botName ? botName : 'Name of The Bot'} </h6>
-        <KebabButton />
       </div>
-      <div className={s.info}>
+      <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
             <img src={IMG} />
             <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+          </div>
+          <div className={s.info}>
+            <p>
+              Our fouray into building consumer friendly virtual assistants.
+            </p>
           </div>
           <div
             style={{
@@ -41,8 +46,8 @@ export const BotCard = ({
             </div>
           </div>
         </div>
-        <hr />
-        <div className={s.bottom}>
+        <span className={s.separator} />
+        <div className={s.middle}>
           <ul className={s.params}>
             <li>
               <p className={s.params_item}>RAM</p>
@@ -57,10 +62,13 @@ export const BotCard = ({
               <p className={s.params_item__units}>0.0 GB</p>
             </li>
           </ul>
+        </div>
+        <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
-              <button className={s.clone_btn}>Clone</button>
-            </Link>
+            <button className={s.clone_btn}>Clone</button>
+            <div className={s.kebab}>
+              <KebabButton />
+            </div>
           </div>
         </div>
       </div>

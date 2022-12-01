@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../Annotators/components/KebabButton'
-import Calendar from '../../assets/images/calendar.svg'
-import IMG from '../../assets/images/skillIcon.svg'
+import Calendar from '../../assets/icons/calendar.svg'
+import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
+import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import s from './SkillCard.module.scss'
 
 export const SkillCard = ({
@@ -12,18 +13,25 @@ export const SkillCard = ({
   ram,
   gpu,
   space,
+  skillType,
 }: any) => {
   return (
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <KebabButton />
+        <Checkbox />
       </div>
-      <div className={s.info}>
+      <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
-            <img src={IMG} />
-            <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            <div className={s.type}>
+              <img src={SkillTypeLogo} />
+              <h6>{skillType ? skillType : 'Retrieval Skill'}</h6>
+            </div>
+            <div className={s.company}>
+              <img src={CompanyLogo} />
+              <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+            </div>
           </div>
           <div className={s.twoLines}>
             <p>
@@ -47,7 +55,7 @@ export const SkillCard = ({
           </div>
         </div>
         <hr />
-        <div className={s.bottom}>
+        <div className={s.middle}>
           <ul className={s.params}>
             <li>
               <p className={s.params_item}>RAM</p>
@@ -62,9 +70,13 @@ export const SkillCard = ({
               <p className={s.params_item__units}>0.0 GB</p>
             </li>
           </ul>
-          <Link to='/editor'>
-            <button className={s.clone_btn}>Add</button>
-          </Link>
+        </div>
+        <div className={s.bottom}>
+          <div className={s.btns_area}>
+            <Link to='/editor'>
+              <button className={s.clone_btn}>Add</button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

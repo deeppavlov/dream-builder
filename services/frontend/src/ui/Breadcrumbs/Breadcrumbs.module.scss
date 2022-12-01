@@ -1,0 +1,55 @@
+@import '../../styles/index.scss';
+
+.breadcrumbs {
+  display: flex;
+  font-display: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 140%;
+  text-align: center;
+  color: #3300ff;
+  height: 63px;
+  width: 40px;
+  &:hover {
+    background: #f0f0f3;
+  }
+}
+.home {
+  width: $topbar_btn;
+  height: $topbar_btn;
+  background-image: url(../../assets/icons/home.svg);
+}
+.tooltips {
+  height: 45px;
+  background: #8d96b5 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  gap: 10px !important;
+  border-radius: 8px !important;
+  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  z-index: 3;
+  offset: 30%;
+  font-size: 18px;
+  line-height: 160%;
+  color: #ffffff;
+  &::after {
+    left: 20% !important;
+  }
+}
+.routes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  .slash {
+    @include lnks_n_btns4;
+    color: #8d96b5;
+  }
+  span {
+    @include b3;
+    @include accent_text;
+  }
+}

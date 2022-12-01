@@ -1,0 +1,21 @@
+@import '../../styles/index.scss';
+
+.add_btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 310px;
+  height: 48px;
+  padding: 3px 8px;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #8d96b5;
+  .icon {
+    @include icon_size_12;
+  }
+  p {
+    color: rgba(0, 0, 0, 0.7);
+    @include lnks_n_btns3;
+  }
+}

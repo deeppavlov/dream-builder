@@ -1,42 +1,161 @@
 @import '../typography/variables.scss';
 @import '../variables/colors.scss';
 
-@mixin h1_styles {
+@mixin h1 {
   font-weight: $bold;
   font-size: 72px;
   line-height: 110%;
   letter-spacing: $letter_spacing;
 }
-@mixin h2_styles {
+@mixin h2 {
   font-weight: $bold;
   font-size: 64px;
   line-height: 120%;
   letter-spacing: $letter_spacing;
 }
-@mixin h3_styles {
+@mixin h3 {
   font-weight: $bold;
   font-size: 48px;
   line-height: 120%;
 }
-@mixin h4_styles {
+@mixin h4 {
   font-weight: $bold;
   font-size: 32px;
   line-height: 140%;
   letter-spacing: $letter_spacing;
 }
-@mixin h5_styles {
+@mixin h5 {
   font-weight: $bold;
   font-size: 24px;
   line-height: 150%;
 }
-@mixin h6_styles {
+@mixin h6 {
   font-weight: $bold;
   font-size: 14px;
   line-height: 160%;
 }
-@mixin b1 {
+@mixin font {
+  font-family: 'Inter';
+  font-style: normal;
+}
+@mixin b {
+  @include font;
   font-weight: 400;
+  line-height: 160%;
+}
+@mixin b1 {
+  @include b;
+  font-size: 18px;
+}
+@mixin b2 {
+  @include b;
+  font-size: 16px;
+}
+@mixin b3 {
+  @include b;
+  font-size: 14px;
+}
+@mixin b4 {
+  @include b;
+  font-size: 12px;
+}
+@mixin b5 {
+  @include b;
+  font-size: 10px;
+}
+@mixin d {
+  @include font;
+  font-weight: 700;
+  line-height: 160%;
+  text-transform: uppercase;
+}
+@mixin d1 {
+  @include d;
+  font-size: 18px;
+  letter-spacing: 0.2em;
+}
+@mixin d2 {
+  @include d;
+  font-size: 14px;
+  letter-spacing: 0.3em;
+}
+@mixin d3 {
+  @include d;
+  font-size: 14px;
+}
+@mixin d4 {
+  @include d;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+@mixin lnks_n_btns1 {
+  @include font;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 27px;
+}
+@mixin lnks_n_btns2 {
+  @include font;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+}
+@mixin lnks_n_btns3 {
+  @include font;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 160%;
+}
+@mixin lnks_n_btns4 {
+  @include font;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+}
+@mixin lnks_n_btns5 {
+  @include font;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 160%;
+}
+@mixin lnks_n_btns6 {
+  @include font;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 160%;
+}
+@mixin accent_text {
+  color: $primary1;
+}
+@mixin ultra_bold {
+  font-weight: 700;
+}
+@mixin bold {
+  font-weight: 600;
+}
+
+@mixin t2 {
+  font-size: 18px;
+  line-height: 22px;
+  @include font;
+  @include bold;
+}
+@mixin t2_bold {
+  font-size: 18px;
+  line-height: 22px;
+  @include font;
+  @include ultra_bold;
+}
+@mixin t3 {
+  font-size: 16px;
+  line-height: 160%;
+  @include font;
+  @include bold;
+}
+@mixin t4 {
   font-size: 18px;
   line-height: 160%;
-  color: $text2;
+  @include font;
+  @include bold;
 }

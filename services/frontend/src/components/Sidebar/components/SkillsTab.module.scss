@@ -1,0 +1,15 @@
+@import '../../../styles/index.scss';
+
+.puzzle {
+  cursor: pointer;
+  width: $sidebar-width;
+  @include sidebar_btn_height;
+  svg {
+    cursor: pointer;
+    stroke: #8d96b5;
+    @include icon_size_24;
+    &:hover {
+      stroke: $text5;
+    }
+  }
+}

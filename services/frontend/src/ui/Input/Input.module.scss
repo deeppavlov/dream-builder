@@ -1,0 +1,19 @@
+@import '../../styles/index.scss';
+
+.input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 24px;
+  gap: 16px;
+  width: 456px;
+  height: 40px;
+  border: 1px solid $text3;
+  outline: none;
+  cursor: text;
+  background: $bcgrnd1;
+  border-radius: 8px;
+  @include b2;
+  color: $text1;
+  @include input_behavior;
+}

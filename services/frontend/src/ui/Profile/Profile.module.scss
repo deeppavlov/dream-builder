@@ -1,0 +1,60 @@
+@import '../../styles/index.scss';
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 80px;
+  cursor: pointer;
+  img {
+    cursor: pointer;
+    width: 40px;
+    height: auto;
+  }
+  .arrow {
+    cursor: pointer;
+    @include icon_color;
+    @include icon_size_24;
+    @include icon_behavior;
+  }
+}
+.menu {
+  width: 100%;
+  gap: 4px;
+  padding: 12px 12px;
+  .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    gap: 12px;
+    padding: 0px 12px;
+    p {
+      padding: 8px 0px;
+      cursor: pointer;
+      @include b3;
+    }
+    svg {
+      stroke: rgba(0, 0, 0, 0.9);
+      @include icon_size_24;
+    }
+    &:hover {
+      background: #f9fafc;
+      p {
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+}
+.profile_menu {
+  width: 264px;
+  padding: 0px !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+  background: #8d96b5 !important;
+  border-radius: 8px !important;
+  box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
+  opacity: 1 !important;
+  &::after {
+    left: 84% !important;
+  }
+}

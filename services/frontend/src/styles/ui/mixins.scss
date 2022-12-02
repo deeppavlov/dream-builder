@@ -172,3 +172,17 @@
 @mixin sidebar_btn_height {
   height: 40px;
 }
+@mixin stack_element_behavior {
+  &:hover {
+    color: $primary1;
+    .data {
+      color: $primary1;
+    }
+  }
+  &:active {
+    color: #190080;
+    .data {
+      color: #190080;
+    }
+  }
+}

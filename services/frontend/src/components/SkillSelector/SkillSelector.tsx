@@ -20,7 +20,7 @@ export const SkillSelector = () => {
       <AddButtonStack disabled='true' text='Add Skill Selector' />
       <Accordeon title='Customizable'>
         <form>
-          <Skill title='Rule Base Selector' />
+          <Skill title='Rule Based' />
           <Skill title='Single Skill' />
           <Skill title='Multiple Skill' />
         </form>

@@ -1,57 +1,43 @@
 @import '../../styles/index.scss';
 
 .element {
+  @include stack_element_behavior;
+  cursor: pointer;
   display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   padding: 12px;
   height: fit-content;
   .left {
-    height: 100%;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    gap: 4px;
     .top {
-      width: 100%;
+      cursor: pointer;
       display: flex;
-      flex-direction: row;
       align-items: center;
-      justify-content: start;
       gap: 8px;
+      .icon {
+        cursor: pointer;
+        @include icon_size_24;
+      }
+      .name {
+        cursor: pointer;
+        @include t3;
+      }
     }
   }
   .right {
-    height: 100%;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
+    height: 100%;
   }
   .data {
-    display: flex;
-    align-items: center;
-    text-align: start;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 160%;
+    cursor: pointer;
+    padding-left: 32px;
     color: rgba(0, 0, 0, 0.7);
+    @include b4;
   }
-  .switch {
-    background-image: url(@/assets/switch.svg);
-    background-repeat: no-repeat;
-  }
-}
-.date {
-  font-size: 14px;
-  line-height: 140%;
-  display: flex;
-  align-items: center;
-  color: rgba(0, 0, 0, 0.7);
-}
-.icon {
-  @include icon_size_24;
-  background-image: url(../../../assets/icons/Skillls.svg);
-  background-repeat: no-repeat;
 }

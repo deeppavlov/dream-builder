@@ -7,7 +7,7 @@ export const Skill = ({ title }: any) => {
     <div className={s.skill}>
       <div className={s.left}>
      <RadioButton/>
-        <p>{title}</p>
+        <p className={s.name}>{title}</p>
       </div>
       <div className={s.right}>
         <KebabButton />

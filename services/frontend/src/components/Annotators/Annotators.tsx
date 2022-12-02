@@ -20,7 +20,6 @@ export const Annotators = () => {
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>
         </div>
       </div>
-      <div className={s.body}></div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
         <Accordeon title='Customizable'>

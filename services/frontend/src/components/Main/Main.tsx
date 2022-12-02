@@ -9,6 +9,8 @@ export const Main = ({
   gap,
   flexDirection,
   alignItems,
+  placeItems,
+  ...props
 }: any) => {
   return (
     <div
@@ -18,6 +20,8 @@ export const Main = ({
         left: `${sidebar === 'none' ? null : '80px'}`,
         flexDirection: `${flexDirection}`,
         alignItems: `${alignItems}`,
+        placeItems: `${placeItems}`,
+        ...props
       }}
       className={s.main}>
       {title || firstLine || secondLine ? (

@@ -11,6 +11,12 @@
   height: 48px;
   border-radius: 12px;
 }
+@mixin small_btn {
+  padding: 0px 24px;
+  gap: 4px;
+  height: 36px;
+  border-radius: 8px;
+}
 @mixin primary_btn {
   color: $text4;
   background-color: $primary_btn;

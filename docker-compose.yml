@@ -26,10 +26,7 @@ services:
     volumes:
       - ./.database/postgres/data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: google
-    hostname: "0.0.0.0"
     ports:
       - "5000:5432"
     healthcheck:
@@ -66,6 +63,8 @@ services:
       args:
         DREAM_ROOT_PATH: /dream
         PORT: 7000
+    depends_on:
+      - auth-api
     ports:
       - "7000:7000"
     volumes:

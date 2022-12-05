@@ -1,3 +1,4 @@
+import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import s from './Skill.module.scss'
 
 export const Skill = ({ title }: any) => {

@@ -14,7 +14,11 @@ export const Test = () => {
         className={s.test}
         onClick={() => setIsOpen(true)}
       />
-      <DialogSidePanel isOpen={modalIsOpen} setIsOpen={setIsOpen} />
+      <DialogSidePanel
+        isOpen={modalIsOpen}
+        setIsOpen={setIsOpen}
+        positions={{ top: 64 }}
+      />
     </button>
   )
 }

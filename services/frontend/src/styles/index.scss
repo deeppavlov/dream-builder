@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './typography/fonts.scss';
+@import './typography/variables.scss';
 @import './variables/colors.scss';
 @import './variables/dimensions.scss';
 @import './variables/spacings.scss';
 @import './typography/mixins.scss';
-@import './typography/variables.scss';
 @import './ui/mixins.scss';
 
 *,
@@ -23,7 +23,7 @@ a {
 }
 body {
   color: $text1;
-  font-family: Inter;
+  font-family: $main-font;
   font-size: 18px;
   user-select: none;
 }
@@ -77,4 +77,18 @@ p {
   svg {
     fill: $primary1;
   }
+}
+
+// Global ScrollBar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+// ::-webkit-scrollbar-track {
+//   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+// }
+
+::-webkit-scrollbar-thumb {
+  background-color: $text3;
+  border-radius: 4px;
 }

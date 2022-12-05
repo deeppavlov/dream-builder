@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
+import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './BotListItem.module.scss'
 
 export const BotListItem = ({ checkbox, ...props }: any) => {
@@ -11,7 +11,7 @@ export const BotListItem = ({ checkbox, ...props }: any) => {
     <tr className={s.tr}>
       {checkbox && (
         <td className={s.checkboxArea}>
-          <Checkbox />
+          <CheckBox />
         </td>
       )}
       <td className={s.td}>

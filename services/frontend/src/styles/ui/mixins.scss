@@ -2,4 +2,173 @@
   width: 24px;
   height: 24px;
 }
+@mixin icon_size_12 {
+  width: 12px;
+  height: 12px;
+}
+@mixin large_btn {
+  padding: 0px 24px;
+  height: 48px;
+  border-radius: 12px;
+}
+@mixin primary_btn {
+  color: $text4;
+  background-color: $primary_btn;
+}
+@mixin secondary_btn {
+  color: $text1;
+  background-color: $secondary_btn;
+}
+@mixin btn_primary_behavior {
+  &:hover {
+    box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  }
+  &:active {
+    background-color: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin btn_secondary_behavior {
+  &:hover {
+    box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  }
+  &:active {
+    background: #cfd3e2;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin btn_primary_small_behavior {
+  &:hover {
+    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+  }
+  &:active {
+    background-color: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin btn_secondary_small_behavior {
+  &:hover {
+    background-color: #3300ff;
+    color: #fff;
+  }
+  &:active {
+    background-color: #e3e3e8;
+    color: rgba(0, 0, 0, 0.9);
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin input_behavior {
+  &:hover {
+    border: 1px solid #190080;
+  }
+  &::placeholder {
+    color: $text3;
+  }
+  &:focus {
+    border: 1px solid $primary1;
+    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+  }
+  &:active {
+    border: 1px solid $text3;
+    color: $text1;
+  }
+}
+@mixin btn_add-bot-card_behavior {
+  &:hover {
+    border: 1px solid #3300ff;
+  }
+  &:active {
+    border: 1.5px solid #3300ff;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin bot-card_behavior {
+  &:hover {
+    border: 1px solid #3300ff;
+    box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
+  }
+  &:active {
+    border: 1px solid #3300ff;
+    box-shadow: none;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin btn_ghost_behavior {
+  &:hover {
+    color: #3300ff;
+  }
+  &:active {
+    color: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+    text-decoration: none;
+  }
+}
+@mixin btn_close_behavior {
+  &:hover {
+    stroke: #ff3333;
+  }
+  &:active {
+    stroke: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin btn_topbar_behavior {
+  &:hover {
+    stroke: #ff3333;
+  }
+  &:active {
+    stroke: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
 
+@mixin min_h-w {
+  min-height: 720px;
+  min-width: 1200px;
+}
+@mixin max_h-w {
+  max-width: 1290px;
+}
+@mixin min-w {
+  min-width: 1200px;
+}
+@mixin sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+@mixin icon_color {
+  fill: #8d96b5;
+}
+@mixin icon_behavior {
+  &:hover {
+    fill: #3300ff;
+  }
+  &:active {
+    fill: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+@mixin sidebar_btn_height {
+  height: 40px;
+}

@@ -1,0 +1,15 @@
+@import '../../../styles/index.scss';
+
+.cpu {
+  cursor: pointer;
+  width: $sidebar-width;
+  @include sidebar_btn_height;
+  svg {
+    cursor: pointer;
+    @include icon_color;
+    @include icon_size_24;
+    &:hover {
+      fill: $text5;
+    }
+  }
+}

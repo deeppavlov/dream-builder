@@ -13,6 +13,7 @@ export const Comment = (props: any) => {
         border: `${props.border}`,
         padding: `${props.padding}`,
         gap: `${props.gap}`,
+        boxShadow: `${props.boxShadow}`,
       }}
       className={s.comment}>
       <img

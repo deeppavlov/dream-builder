@@ -1,6 +1,8 @@
-import { Element } from './components/Element'
-import { KebabButton } from './components/KebabButton'
-
+import AnnotatorsLogo from '../../assets/icons/annotators.svg'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
+import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Element } from './Element'
 import s from './Annotators.module.scss'
 
 export const Annotators = () => {
@@ -9,8 +11,8 @@ export const Annotators = () => {
       <div className={s.header}>
         <div className={s.top}>
           <div className={s.title}>
-            <span className={s.icon} />
-            <h5>Annotators</h5>
+            <img src={AnnotatorsLogo} className={s.icon} />
+            <p className={s.type}>Annotators</p>
           </div>
           <KebabButton />
         </div>
@@ -18,15 +20,18 @@ export const Annotators = () => {
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>
         </div>
       </div>
-      <button className={s.add_btn}>
-        <span className={s.icon} />
-        <p>Add Annotators</p>
-      </button>
-      <Element />
-      <Element />
-      <Element />
-      <Element />
-      <Element />
+      <div className={s.body}></div>
+      <AddButtonStack disabled={true} text='Add Annotators' />
+      <div className={s.elements}>
+        <Accordeon title='Customizable'>
+          <Element />
+          <Element />
+        </Accordeon>
+        <Accordeon title='Non-customizable'>
+          <Element />
+          <Element />
+        </Accordeon>
+      </div>
     </div>
   )
 }

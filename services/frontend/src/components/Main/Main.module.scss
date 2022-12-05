@@ -1,5 +1,5 @@
-@import '../../styles/variables/colors.scss';
-@import '../../styles/variables/dimensions.scss';
+@import '../../styles/index.scss';
+
 .main {
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
   width: calc(100vw - $sidebar-width);
   height: calc(100vh - $topbar-height);
   gap: 24px;
-  padding: 40px;
+  padding: 24px 40px;
   z-index: 0;
-  overflow-y: scroll;
+  overflow: scroll;
 }

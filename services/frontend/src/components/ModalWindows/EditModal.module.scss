@@ -1,0 +1,64 @@
+@import '../../styles/index.scss';
+.open {
+  @include large_btn;
+  @include lnks_n_btns4;
+  @include primary_btn;
+  @include btn_primary_behavior;
+}
+.modal {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: fit-content;
+  gap: 40px;
+  padding: 64px;
+  border-radius: 24px;
+  background: $bcgrnd1;
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  p {
+    @include b3;
+    .accentText {
+      @include accent_text;
+    }
+  }
+  .close {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    svg {
+      cursor: pointer;
+      stroke: $text3;
+      @include icon_size_24;
+      @include btn_close_behavior;
+    }
+  }
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 24px;
+    .cancel {
+      @include lnks_n_btns3;
+      @include large_btn;
+      @include secondary_btn;
+      @include btn_secondary_behavior;
+    }
+    .continue {
+      @include lnks_n_btns3;
+      @include large_btn;
+      @include primary_btn;
+      @include btn_primary_behavior;
+    }
+  }
+}

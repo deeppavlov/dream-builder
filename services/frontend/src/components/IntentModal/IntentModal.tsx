@@ -83,10 +83,18 @@ const IntentModal = ({ intent, isOpen, setIsOpen }: Props) => {
                 <ExpandableDropdownn />
                 <span className={s['intentModal__block-name']}>Examples</span>
                 <ul>
-                  <li><Input value={'want pizza'} /></li>
-                  <li><Input value={'love pizza'} /></li>
-                  <li><Input value={'pizza is my favorite'} /></li>
-                  <li><Input value={'wanna pizza'} /></li>
+                  <li>
+                    <Input value={'want pizza'} />
+                  </li>
+                  <li>
+                    <Input value={'love pizza'} />
+                  </li>
+                  <li>
+                    <Input value={'pizza is my favorite'} />
+                  </li>
+                  <li>
+                    <Input value={'wanna pizza'} />
+                  </li>
                 </ul>
                 <ExpandableDropdownn />
               </div>

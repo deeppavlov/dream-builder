@@ -1,0 +1,48 @@
+import React from 'react'
+import Modal from 'react-modal'
+import s from './SidePanel.module.scss'
+
+interface props extends React.PropsWithChildren {
+  isOpen: boolean
+  setIsOpen: (state: boolean) => void
+  position?: Partial<{
+    top: number
+    left: number
+    right: number
+    bottom: number
+  }>
+}
+
+const SidePanel = ({ isOpen, setIsOpen, position, children }: props) => {
+  const customStyles = {
+    overlay: {
+      background: 'transparent',
+    },
+    content: {
+      top: position?.top ?? 0,
+      left: position?.left ?? 'auto',
+      right: position?.right ?? 0,
+      bottom: position?.bottom ?? 0,
+      background: 'none',
+      border: 'none',
+      borderRadius: 'none',
+      padding: 'none',
+    },
+  }
+  const closeModal = () => setIsOpen(false)
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={closeModal}
+      style={customStyles}
+      contentLabel='SidePanel'
+      closeTimeoutMS={500}>
+      <div className={s.sidePanel} data-modal-type='side-panel'>
+        {children}
+      </div>
+    </Modal>
+  )
+}
+
+export default SidePanel

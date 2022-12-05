@@ -39,7 +39,7 @@
     color: rgba(0, 0, 0, 0.7);
   }
   .switch {
-    background-image: url(@/assets/switch.svg);
+    background-image: url(@assets/switch.svg);
     background-repeat: no-repeat;
   }
 }
@@ -52,6 +52,6 @@
 }
 .icon {
   @include icon_size_24;
-  background-image: url(../../../assets/icons/Skillls.svg);
+  background-image: url(@assets/icons/Skills.svg);
   background-repeat: no-repeat;
 }

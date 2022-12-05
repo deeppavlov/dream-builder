@@ -1,0 +1,32 @@
+@import './../../../styles/ui/mixins.scss';
+@import '../../../styles/variables/dimensions.scss';
+@import '../../../styles/variables/colors.scss';
+
+.server {
+  @include icon_size_24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: $topbar-height;
+  width: 40px;
+  cursor: pointer;
+  svg {
+    cursor: pointer;
+    stroke: $text3;
+    @include icon_size_24;
+  }
+  &:hover {
+    background: #f0f0f3;
+    svg {
+      stroke: #3300ff;
+    }
+  }
+  &:active {
+    svg {
+      stroke: #190080;
+    }
+  }
+  &:disable {
+    opacity: 0.3;
+  }
+}

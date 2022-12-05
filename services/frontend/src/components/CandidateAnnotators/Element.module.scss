@@ -37,6 +37,10 @@
     align-items: center;
     color: rgba(0, 0, 0, 0.7);
   }
+}
+.icon {
+  @include icon_size_24;
+  background-image: url(@assets/icons/book.svg);
 
 }
 .icon {

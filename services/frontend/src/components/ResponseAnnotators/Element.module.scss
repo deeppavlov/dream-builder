@@ -40,6 +40,6 @@
 }
 .icon {
   @include icon_size_24;
-  background-image: url(../../../assets/icons/book.svg);
+  background-image: url(@assets/icons/book.svg);
   background-repeat: no-repeat;
 }

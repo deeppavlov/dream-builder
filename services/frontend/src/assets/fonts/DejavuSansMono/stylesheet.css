@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'DejaVu Sans Mono';
+    src: url('DejaVuSansMono.eot');
+    src: url('DejaVuSansMono.eot?#iefix') format('embedded-opentype'),
+        url('DejaVuSansMono.woff2') format('woff2'),
+        url('DejaVuSansMono.woff') format('woff'),
+        url('DejaVuSansMono.ttf') format('truetype'),
+        url('DejaVuSansMono.svg#DejaVuSansMono') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DejaVu Sans Mono';
+    src: url('DejaVuSansMono-Bold.eot');
+    src: url('DejaVuSansMono-Bold.eot?#iefix') format('embedded-opentype'),
+        url('DejaVuSansMono-Bold.woff2') format('woff2'),
+        url('DejaVuSansMono-Bold.woff') format('woff'),
+        url('DejaVuSansMono-Bold.ttf') format('truetype'),
+        url('DejaVuSansMono-Bold.svg#DejaVuSansMono-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+

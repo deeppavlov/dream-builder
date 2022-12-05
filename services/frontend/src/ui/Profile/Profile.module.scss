@@ -5,45 +5,68 @@
   align-items: center;
   justify-content: end;
   width: 80px;
-  cursor: pointer;
   img {
-    cursor: pointer;
     width: 40px;
-    height: auto;
+    height: 40px;
   }
   .arrow {
     cursor: pointer;
-    @include icon_color;
+    stroke: #8d96b5;
+    fill: #8d96b5;
     @include icon_size_24;
-    @include icon_behavior;
+    &:hover {
+      fill: #3300ff;
+      stroke: #3300ff;
+    }
+    &:active {
+      fill: #190080;
+      stroke: #190080;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
   }
 }
 .menu {
   width: 100%;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
-  padding: 12px 12px;
+  opacity: 1 !important;
+  padding: 12px 0px;
   .item {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: start;
     gap: 12px;
-    padding: 0px 12px;
+    padding: 0px 24px;
+    &:hover {
+      background: #f9fafc;
+      p {
+        color: rgba(0, 0, 0, 0.7);
+        // color: #fff;
+      }
+      // color: #fff;
+    }
     p {
       padding: 8px 0px;
+      font-family: $main-font;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 160%;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.9);
       cursor: pointer;
-      @include b3;
     }
     svg {
       stroke: rgba(0, 0, 0, 0.9);
       @include icon_size_24;
     }
-    &:hover {
-      background: #f9fafc;
-      p {
-        color: rgba(0, 0, 0, 0.7);
-      }
-    }
+    // &:hover {
+    //   // color: #fff;
+    // }
   }
 }
 .profile_menu {

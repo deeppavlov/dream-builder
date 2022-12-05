@@ -1,0 +1,130 @@
+@import '../../styles/index.scss';
+
+.dialogSidePanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &_start,
+  &_error {
+    padding: 52px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    button {
+      @include large_btn;
+      @include lnks_n_btns3;
+      @include primary_btn;
+      @include btn_primary_behavior;
+    }
+  }
+
+  &_error {
+    color: #ff3b30;
+    button {
+      background-color: #ff3b30;
+    }
+  }
+
+  &__alert-name {
+    margin-bottom: 16px;
+    font-weight: $bold;
+  }
+
+  &__alert-desc {
+    @include b3;
+    margin-bottom: 40px;
+  }
+
+  &__chat {
+    background-color: $bcgrnd2;
+    width: 100%;
+    min-height: 327px;
+    height: 100%;
+    padding: 24px 24px;
+  }
+
+  &__controls {
+    display: flex;
+    padding: 8px 24px;
+    border: 1px solid $bcgrnd3;
+    background-color: inherit;
+  }
+
+  &__textarea {
+    @include b1;
+    min-height: 160px;
+    max-height: 160px;
+    width: 100%;
+    resize: none;
+    outline: none;
+    border: none;
+    padding: 24px;
+    color: $text3;
+
+    &::-webkit-input-placeholder, /* Webkit based */
+    &::placeholder {
+      color: $text3;
+    }
+  }
+
+  &__btns {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px 12px;
+    background-color: inherit;
+
+    button {
+      @include large_btn;
+      @include lnks_n_btns3;
+      @include primary_btn;
+      @include btn_primary_behavior;
+    }
+  }
+}
+
+.chat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  gap: 24px;
+
+  &__message {
+    @include b2;
+    background-color: $bcgrnd3;
+    padding: 12px;
+    border-radius: 12px 12px 0px 12px;
+    width: fit-content;
+
+    &_bot {
+      background: rgba(255, 204, 0, 0.1);
+      border-radius: 12px 12px 12px 0px;
+    }
+  }
+
+  &__avatar {
+    max-width: 40px;
+    max-height: 40px;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 204, 0, 0.1);
+    border-radius: 50%;
+  }
+
+  &__container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-end;
+
+    &_bot {
+      justify-content: flex-start;
+    }
+  }
+}

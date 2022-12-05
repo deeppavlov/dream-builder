@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import React, { InputHTMLAttributes, useState } from 'react'
 import s from './Input.module.scss'
 
-export const Input = () => {
+export const Input = (
+  props: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >
+) => {
   const [value, setValue] = useState('')
   const handleSubmit = (e: any) => {
     e.preventDefault()
@@ -14,6 +19,7 @@ export const Input = () => {
       type='text'
       onChange={event => setValue(event.target.value)}
       value={value}
+      {...props}
     />
   )
 }

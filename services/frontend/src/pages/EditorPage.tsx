@@ -32,7 +32,6 @@ export const EditorPage = () => {
       ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
       : setSkills(skills.concat(<SkillListItem />))
   }
-
   return (
     <>
       <Topbar type='editor' />

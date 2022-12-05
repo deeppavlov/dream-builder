@@ -1,0 +1,149 @@
+@import '../../styles/index.scss';
+
+.button {
+  min-height: 48px;
+  height: fit-content;
+  width: fit-content;
+  padding: 11px 24px;
+  border-radius: 12px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  @include lnks_n_btns3;
+
+  &:disabled {
+    opacity: 0.3;
+  }
+
+  &_small {
+    min-height: 36px;
+    border-radius: 8px;
+    padding: 6px;
+    @include lnks_n_btns5;
+  }
+
+  &_long {
+    width: 100%;
+  }
+
+  &_theme {
+    &_primary {
+      background-color: $primary1;
+      color: $text4;
+
+      &:hover {
+        box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+      }
+      &:active {
+        background-color: $primary4;
+      }
+
+      &_small:hover {
+        box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+      }
+    }
+
+    &_secondary {
+      background-color: $secondary_btn;
+      color: $text1;
+
+      &:hover {
+        box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+      }
+
+      &:active {
+        background: #cfd3e2;
+      }
+
+      &_small:hover {
+        box-shadow: none;
+        background-color: $primary1;
+        color: $text4;
+      }
+    }
+
+    &_tertiary {
+      min-height: 28px;
+      padding: 11px 8px;
+      gap: 4px;
+      border-radius: 0;
+      border: 1px solid $text3;
+      background-color: $bcgrnd1;
+      color: $text2;
+
+      &:hover {
+        background-color: $primary1;
+        border-color: $text4;
+        color: $text4;
+      }
+
+      &:active {
+        background-color: $primary4;
+        border-color: $text4;
+        color: $text4;
+      }
+
+      &_small {
+        padding: 2px 8px;
+        border-radius: 8px;
+        background-color: $secondary_btn;
+        border: 1px solid $secondary_btn;
+        color: $text1;
+        @include lnks_n_btns6;
+
+        &:hover {
+          background-color: $secondary_btn;
+          color: $text1;
+          border: 1px solid #3300ff;
+        }
+
+        &:active {
+          border: 1px solid $secondary_btn;
+          color: $text3;
+        }
+      }
+    }
+
+    &_ghost {
+      @include b3;
+      text-decoration-line: underline;
+      color: $primary1;
+      gap: 12px;
+
+      &:disabled {
+        color: $text3;
+      }
+
+      &:hover,
+      &:active {
+        color: $primary4;
+      }
+    }
+  }
+
+  &__icon {
+    max-width: 24px;
+    max-height: 24px;
+    width: 100%;
+    height: 100%;
+  }
+
+  &_theme_tertiary_small &__icon path {
+    stroke: $text1;
+  }
+
+  &_theme_ghost &__icon path {
+    fill: $primary1;
+  }
+
+  &_theme_ghost:disabled &__icon path {
+    fill: $text3;
+  }
+
+  &_theme_ghost:hover &__icon path,
+  &_theme_ghost:active &__icon path {
+    fill: $primary4;
+  }
+}

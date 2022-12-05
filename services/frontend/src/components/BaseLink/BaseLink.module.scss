@@ -1,0 +1,48 @@
+@import '../../styles/index.scss';
+
+.baseLink {
+  @include b3;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  color: $primary1;
+
+  &:hover {
+    color: $text6;
+  }
+
+  &_theme_link:hover &__icon svg {
+    fill: $text6;
+  }
+
+  &[disabled] {
+    opacity: 0.3;
+    color: $text3;
+  }
+
+  &[disabled] &__icon svg {
+    fill: $text3;
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+
+    svg {
+      fill: $primary1;
+    }
+  }
+
+  &_theme_expand &__icon svg,
+  &_disabled &__icon svg {
+    fill: $text3;
+  }
+
+  &,
+  &__icon,
+  svg,
+  path {
+    cursor: pointer;
+  }
+}

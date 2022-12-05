@@ -1,7 +1,6 @@
 @import '../../styles/index.scss';
 
 .elements {
-  height: 0;
   overflow: hidden;
   transition: height ease 0.2s;
 }
@@ -25,7 +24,7 @@
     @include t3;
   }
 }
-.open {
+.close {
   svg {
     transition: ease 0.2s;
     transform: rotate(180deg);

@@ -4,8 +4,8 @@ export const Skill = ({ title }: any) => {
   return (
     <div className={s.skill}>
       <div className={s.left}>
-
-        <p>{title}</p>
+        <RadioButton/>
+        <p className={s.name}>{title}</p>
       </div>
       <div className={s.arrow}></div>
     </div>

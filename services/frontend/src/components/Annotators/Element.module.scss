@@ -1,6 +1,8 @@
 @import '../../styles/index.scss';
 
 .element {
+  @include stack_element_behavior;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -51,27 +53,35 @@
   padding: 12px;
   height: fit-content;
   .left {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     gap: 4px;
     .top {
+      cursor: pointer;
       display: flex;
+      align-items: center;
       gap: 8px;
       .icon {
+        cursor: pointer;
         @include icon_size_24;
       }
       .name {
+        cursor: pointer;
         @include t3;
       }
     }
   }
   .right {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     gap: 8px;
     height: 100%;
   }
   .data {
+    cursor: pointer;
+    padding-left: 32px;
     color: rgba(0, 0, 0, 0.7);
     @include b4;
   }

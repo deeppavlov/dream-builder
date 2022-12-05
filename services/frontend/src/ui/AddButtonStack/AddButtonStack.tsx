@@ -1,4 +1,4 @@
-import PlusLogo from '../../assets/icons/plus.svg'
+import { ReactComponent as PlusLogo } from '../../assets/icons/plus.svg'
 import s from './AddButtonStack.module.scss'
 
 export const AddButtonStack = ({ onClick, text, disabled }: any) => {
@@ -10,7 +10,7 @@ export const AddButtonStack = ({ onClick, text, disabled }: any) => {
       }}
       disabled={disabled}
       onClick={onClick}>
-      <img src={PlusLogo} className={s.icon} />
+      <PlusLogo />
       <p>{text}</p>
     </button>
   )

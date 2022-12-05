@@ -9,7 +9,7 @@ export const Element = ({}) => {
       <div className={s.left}>
         <div className={s.top}>
           <img src={BadWordsLogo} className={s.icon} />
-          <h6>Badlisted Words Detector</h6>
+          <p className={s.name}>Badlisted Words Detector</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>2.0 Gb RAM | 0.0 Gb GPU</p>

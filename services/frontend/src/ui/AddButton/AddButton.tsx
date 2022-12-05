@@ -26,7 +26,7 @@ export const AddButton = ({ addBot, listView, ...props }: any) => {
                 handleClick()
               }}>
               <img src={Add} />
-              <p>Create From a Scratch</p>
+              <p>Create From Template</p>
             </button>
           </td>
         </tr>

@@ -1,0 +1,20 @@
+@import '../../styles/index.scss';
+
+.dateCard {
+  @include b4;
+  width: 84px;
+  height: 96px;
+  padding: 12px 24px;
+  background: $bcgrnd3;
+  border: 1px solid $text1;
+  border-radius: 12px;
+  color: $text1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  &__day {
+    @include h4;
+  }
+}

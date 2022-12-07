@@ -1,0 +1,85 @@
+@import '../../styles/index.scss';
+
+.notificationCard {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  background-color: $bcgrnd2;
+  position: relative;
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    background-color: $bcgrnd3;
+  }
+
+  &:hover &__more-btn,
+  &:active &__more-btn {
+    opacity: 1;
+  }
+
+  &_status_success &__topic-name::before {
+    background-color: $salad;
+  }
+  &_status_training &__topic-name::before {
+  }
+  &_status_error &__topic-name::before {
+    background-color: $red;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__topic {
+    display: flex;
+    align-items: center;
+  }
+
+  &__topic-name {
+    @include t3;
+    color: $text2;
+    padding-left: 16px;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: $primary1;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__more-btn {
+    display: flex;
+    opacity: 0;
+    svg {
+      fill: $text2;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__status-tag {
+    @include b3;
+    display: flex;
+    gap: 4px;
+    color: $text3;
+  }
+
+  &__about {
+    @include b2;
+    color: $text2;
+    padding: 0 12px;
+    display: inline-flex;
+    gap: 8px;
+  }
+}

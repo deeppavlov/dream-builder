@@ -5,7 +5,7 @@ import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './BotInfoSidePanel.module.scss'
 import SmallTag from '../SmallTag/SmallTag'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import DateCard from '../DateCard/DateCard'
 
 const BotInfoSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
@@ -50,12 +50,12 @@ const BotInfoSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
             distribution.
           </p>
         </div>
-        <Accordeon title='Annotators'></Accordeon>
-        <Accordeon title='Skills'>
+        <Accordion title='Annotators'></Accordion>
+        <Accordion title='Skills'>
           <div>DFF Program-Y Skill</div>
           <div>DFF Intent Responder Skill</div>
           <div>Dummy Skill</div>
-        </Accordeon>
+        </Accordion>
         <div className={s.botInfoSidePanel__btns}>
           <Button theme='primary'>Clone</Button>
         </div>

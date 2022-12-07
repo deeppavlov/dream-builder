@@ -20,7 +20,7 @@ import NotificationCard, {
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import SmallTag from '../../components/SmallTag/SmallTag'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import s from './TestPage.module.scss'
@@ -283,23 +283,23 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>Accordeon</span>
         <div className={s.testPage__component}>
           <span>default</span>
-          <Accordeon title='Lorem ipsum is placeholder text commonly'>
+          <Accordion title='Lorem ipsum is placeholder text commonly'>
             <p>
               Lorem ipsum is placeholder text commonly used in the graphic,
               print, and publishing industries for previewing layouts and visual
               mockups
             </p>
-          </Accordeon>
+          </Accordion>
         </div>
       </div>
       <div className={s.testPage__component}>
         <span>small</span>
-        <Accordeon title='Lorem ipsum is placeholder text commonly' small>
+        <Accordion title='Lorem ipsum is placeholder text commonly' small>
           <p>
             Lorem ipsum is placeholder text commonly used in the graphic, print,
             and publishing industries for previewing layouts and visual mockups
           </p>
-        </Accordeon>
+        </Accordion>
       </div>
     </div>
   )

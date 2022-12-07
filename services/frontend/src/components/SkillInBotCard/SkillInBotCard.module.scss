@@ -124,7 +124,7 @@
   color: #000;
   background-color: #f0f0f3;
   border-radius: 10px;
-  @include btn_primary_small_behavior;
+  @include btn_secondary_small_behavior;
 }
 .btns_area {
   width: 100%;
@@ -142,6 +142,7 @@
   min-height: 36px;
   background-color: #f0f0f3;
   border-radius: 8px;
+  @include btn_secondary_small_behavior
 }
 li {
   display: flex;

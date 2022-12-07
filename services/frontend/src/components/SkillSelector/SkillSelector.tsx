@@ -1,5 +1,5 @@
 import SkillSelectorLogo from '../../assets/icons/skill_selector.svg'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Skill } from './Skill'
@@ -17,17 +17,17 @@ export const SkillSelector = () => {
           <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled='true' text='Add Skill Selector' />
-      <Accordeon title='Customizable'>
+      <AddButtonStack disabled={true} text='Add Skill Selector' />
+      <Accordion title='Customizable'>
         <form>
           <Skill title='Rule Based' />
           <Skill title='Single Skill' />
           <Skill title='Multiple Skill' />
         </form>
-      </Accordeon>
-      <Accordeon title='Non-customizable'>
+      </Accordion>
+      <Accordion title='Non-customizable'>
         <Skill title='All Skills' />
-      </Accordeon>
+      </Accordion>
     </div>
   )
 }

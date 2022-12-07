@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
@@ -67,7 +67,7 @@ const IntentResponderSidePanel = ({
           Add Intent Responder
         </Button>
         <IntentList>
-          <Accordeon title='User-customized' small>
+          <Accordion title='User-customized' small>
             {intentsMock.map(({ name, about, status }, i) => (
               <IntentListItem
                 key={name + i}
@@ -76,8 +76,8 @@ const IntentResponderSidePanel = ({
                 status={status}
               />
             ))}
-          </Accordeon>
-          <Accordeon title='Prebuilt' small>
+          </Accordion>
+          <Accordion title='Prebuilt' small>
             {intentsMock.map(({ name, about }, i) => (
               <IntentListItem
                 key={name + i}
@@ -86,7 +86,7 @@ const IntentResponderSidePanel = ({
                 status='default'
               />
             ))}
-          </Accordeon>
+          </Accordion>
         </IntentList>
         <div className={s.attention}>
           <span className={s.attention__name}>Attention!</span>

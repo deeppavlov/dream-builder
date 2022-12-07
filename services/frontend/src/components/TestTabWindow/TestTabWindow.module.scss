@@ -59,11 +59,13 @@
   ul {
     .header {
       li[aria-selected='true'] {
+        height: 100%;
         &::after {
           content: '' !important;
         }
         button {
           color: $text1;
+          border-bottom: 2px solid $primary1;
         }
       }
     }

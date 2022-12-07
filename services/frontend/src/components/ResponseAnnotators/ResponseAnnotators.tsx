@@ -1,7 +1,7 @@
 import ResponseAnnotatorsLogo from '../../assets/icons/response_annotators.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
 
@@ -23,9 +23,9 @@ export const ResponseAnnotators = () => {
       <div className={s.body}></div>
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
-        <Accordeon title='Non-customizable'>
+        <Accordion title='Non-customizable'>
           <Element />
-        </Accordeon>
+        </Accordion>
       </div>
     </div>
   )

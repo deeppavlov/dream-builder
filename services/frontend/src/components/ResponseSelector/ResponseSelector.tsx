@@ -1,5 +1,5 @@
 import ResponseSelectorLogo from '../../assets/icons/response_selector.svg'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Skill } from './Skill'
@@ -17,13 +17,13 @@ export const ResponseSelector = () => {
           <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled='true' text='Add Response Selector' />
-      <Accordeon title='Customizable'>
+      <AddButtonStack disabled={true} text='Add Response Selector' />
+      <Accordion title='Customizable'>
         <Skill title='Tag-& Evaluation-Based' />
-      </Accordeon>
-      <Accordeon title='Non-customizable'>
+      </Accordion>
+      <Accordion title='Non-customizable'>
         <Skill title='Confidence Based' />
-      </Accordeon>
+      </Accordion>
     </div>
   )
 }

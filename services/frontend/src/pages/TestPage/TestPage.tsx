@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import BaseLink from '../../components/BaseLink/BaseLink'
 import BaseSidePanel from '../../components/BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
+import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentList from '../../components/IntentList/IntentList'
 import IntentListItem, {
@@ -54,26 +56,31 @@ const notificMock: NotificationCardProps[] = [
 const intentItemsMock: IntentListItemProps[] = [
   {
     name: 'Yes',
-    similar: 'yes, yeah, alright, ok',
+    about: 'yes, yeah, alright, ok',
+    status: 'default',
   },
   {
     name: 'Want_pizza',
-    similar: 'want pizza, wanna pizza, love pizza, like pizza...',
+    about: 'want pizza, wanna pizza, love pizza, like pizza...',
     status: 'error',
   },
   {
     name: "what_time | don't_understand Sorry, I might sound confusing, I am still ...",
-    similar: 'Sorry, I might sound confusing, I am still ...',
+    about: 'Sorry, I might sound confusing, I am still ...',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     status: 'success',
   },
   {
+    name: 'What is the preparatory course?',
+    about: 'The preparatory course is a special educational ',
+  },
+  {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     disabled: true,
   },
 ]
@@ -138,6 +145,14 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>ResourcesSidePanel</span>
           {getBtnWithModal(ResourcesSidePanel, 'Resources')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>FAQSidePanel</span>
+          {getBtnWithModal(FAQSidePanel, 'FAQ')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>BotInfoSidePanel</span>
+          {getBtnWithModal(BotInfoSidePanel, 'Bot Info')}
         </div>
       </div>
       <div className={s.testPage__block}>
@@ -215,14 +230,14 @@ export const TestPage = () => {
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>IntentListItem</span>
-        {intentItemsMock.map(({ name, similar, disabled, status }, i) => (
-          <div className={s.testPage__component} key={name + i}>
-            <span>{disabled ? 'disabled' : status ?? 'default'}</span>
+        {intentItemsMock.map(({ name, about, status, disabled }, i) => (
+          <div key={name + i} className={s.testPage__component}>
+            <span>{disabled ? 'disabled' : status ?? 'no status'}</span>
             <IntentListItem
               name={name}
-              similar={similar}
-              disabled={disabled}
+              about={about}
               status={status}
+              disabled={disabled}
             />
           </div>
         ))}
@@ -230,11 +245,11 @@ export const TestPage = () => {
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>IntentList</span>
         <IntentList>
-          {intentItemsMock.map(({ name, similar, disabled, status }, i) => (
+          {intentItemsMock.map(({ name, about, disabled, status }, i) => (
             <IntentListItem
               key={name + i}
               name={name}
-              similar={similar}
+              about={about}
               disabled={disabled}
               status={status}
             />

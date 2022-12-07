@@ -14,87 +14,87 @@ import s from './IntentCatcherSidePanel.module.scss'
 const intentsMock: IntentListItemProps[] = [
   {
     name: 'Want_pizza',
-    similar: 'want pizza, wanna pizza, love pizza, like pizza...',
+    about: 'want pizza, wanna pizza, love pizza, like pizza...',
     status: 'error',
   },
   {
     name: 'Hello',
-    similar: 'Hey, Hello, Hi',
+    about: 'Hey, Hello, Hi',
     status: 'error',
   },
   {
     name: 'Yes',
-    similar: 'yes, yeah, alright, ok',
+    about: 'yes, yeah, alright, ok',
     status: 'error',
   },
   {
     name: 'No',
-    similar: 'No, Nope, Do not do it',
+    about: 'No, Nope, Do not do it',
     status: 'error',
   },
   {
     name: 'Help',
-    similar: 'sos, help, help me',
+    about: 'sos, help, help me',
     status: 'error',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
+    about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
+    about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
+    about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
 ]
@@ -155,11 +155,11 @@ const IntentCatcherSidePanel = ({
             Add Intent
           </Button>
           <IntentList>
-            {intentsMock.map(({ name, similar, status }, i) => (
+            {intentsMock.map(({ name, about, status }, i) => (
               <IntentListItem
                 key={name + i}
                 name={name}
-                similar={similar}
+                about={about}
                 status={status}
                 disabled={isTraining}
               />

@@ -13,42 +13,46 @@ import s from './IntentResponderSidePanel.module.scss'
 const intentsMock: IntentListItemProps[] = [
   {
     name: 'Exit',
-    similar: 'Bye-bye!',
+    about: 'Bye-bye!',
     status: 'error',
   },
   {
     name: 'Exit',
-    similar: 'Bye-bye!',
+    about: 'Bye-bye!',
     status: 'success',
   },
   {
     name: "what_time | don't_understand",
-    similar: 'Sorry, I might sound confusing, I am still ...',
+    about: 'Sorry, I might sound confusing, I am still ...',
     status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
+    about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
+    about: 'Fallback',
     status: 'success',
   },
 ]
 
-const IntentResponderSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
+const IntentResponderSidePanel = ({
+  isOpen,
+  setIsOpen,
+  position,
+}: SidePanelProps) => {
   const [addModalIsOpen, setAddModalIsOpen] = useState(false)
 
   return (
@@ -64,18 +68,23 @@ const IntentResponderSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProp
         </Button>
         <IntentList>
           <Accordeon title='User-customized' small>
-            {intentsMock.map(({ name, similar, status }, i) => (
+            {intentsMock.map(({ name, about, status }, i) => (
               <IntentListItem
                 key={name + i}
                 name={name}
-                similar={similar}
+                about={about}
                 status={status}
               />
             ))}
           </Accordeon>
           <Accordeon title='Prebuilt' small>
-            {intentsMock.map(({ name, similar }, i) => (
-              <IntentListItem key={name + i} name={name} similar={similar} />
+            {intentsMock.map(({ name, about }, i) => (
+              <IntentListItem
+                key={name + i}
+                name={name}
+                about={about}
+                status='default'
+              />
             ))}
           </Accordeon>
         </IntentList>

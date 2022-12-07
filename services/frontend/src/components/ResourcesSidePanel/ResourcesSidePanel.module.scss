@@ -1,0 +1,41 @@
+@import '../../styles/index.scss';
+
+.resourcesSidePanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 24px 24px 24px;
+
+  &__btns {
+    margin-top: auto;
+    align-self: flex-end;
+  }
+}
+
+.resourcesBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__name {
+    @include t3;
+    color: $text1;
+  }
+
+  &__about,
+  &__table {
+    @include b3;
+    color: $text2;
+  }
+
+  &__table-count {
+    color: $text1;
+  }
+}

@@ -1,8 +1,8 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
-import s from './TestTab.module.scss'
+import s from './TestTabWindow.module.scss'
 
-export const TestTab = () => {
+export const TestTabWindow = () => {
   return (
     <Wrapper height='100%'>
       <div className={s.container}>

@@ -17,7 +17,7 @@ export const Test = () => {
       <DialogSidePanel
         isOpen={modalIsOpen}
         setIsOpen={setIsOpen}
-        positions={{ top: 64 }}
+        position={{ top: 64 }}
       />
     </button>
   )

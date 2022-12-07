@@ -16,7 +16,7 @@ import NotificationCard, {
   NotificationCardProps,
 } from '../../components/NotificationCard/NotificationCard'
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
-// import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
+import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import SmallTag from '../../components/SmallTag/SmallTag'
 import { Accordeon } from '../../ui/Accordeon/Accordeon'
 import Button from '../../ui/Button/Button'
@@ -135,10 +135,10 @@ export const TestPage = () => {
           <span>NotificationsSidePanel</span>
           {getBtnWithModal(NotificationsSidePanel, 'Notifications')}
         </div>
-        {/* <div className={s.testPage__component}>
+        <div className={s.testPage__component}>
           <span>ResourcesSidePanel</span>
           {getBtnWithModal(ResourcesSidePanel, 'Resources')}
-        </div> */}
+        </div>
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Buttons</span>

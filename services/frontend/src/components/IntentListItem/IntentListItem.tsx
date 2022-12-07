@@ -5,14 +5,14 @@ import s from './IntentListItem.module.scss'
 
 export interface IntentListItemProps {
   name: string
-  similar: string
-  status?: 'success' | 'warning' | 'error'
+  about: string
+  status?: 'default' | 'success' | 'warning' | 'error'
   disabled?: boolean
 }
 
 const IntentListItem = ({
   name,
-  similar,
+  about,
   status,
   disabled,
 }: IntentListItemProps) => {
@@ -22,12 +22,12 @@ const IntentListItem = ({
   return (
     <div
       className={`${s.intentListItem} ${
-        status ? s[`intentListItem_status_${status}`] : ''
-      }`}
+        status ? s.intentListItem_status : ''
+      } ${status ? s[`intentListItem_status_${status}`] : ''}`}
       data-disabled={disabled}>
       <div className={s.intentListItem__container}>
         <span className={s.intentListItem__name}>{name}</span>
-        <p className={s.intentListItem__similar}>{similar}</p>
+        <p className={s.intentListItem__about}>{about}</p>
       </div>
       <button
         className={s.intentListItem__edit}

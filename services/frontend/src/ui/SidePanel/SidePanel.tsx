@@ -17,6 +17,7 @@ const SidePanel = ({ isOpen, setIsOpen, position, children }: SidePanelProps) =>
   const customStyles = {
     overlay: {
       background: 'transparent',
+       zIndex: 4,
     },
     content: {
       top: position?.top ?? 0,

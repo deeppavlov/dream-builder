@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
-import s from './Accordeon.module.scss'
+import s from './Accordion.module.scss'
 
-export const Accordeon = ({ children, title }: any) => {
+export const Accordion = ({ children, title }: any) => {
   const [close, setClose] = useState(false)
   const contentEl = useRef()
   const handleToggle = () => {
     setClose(!close)
   }
-  console.log(contentEl?.current)
+
   return (
     <>
       <button

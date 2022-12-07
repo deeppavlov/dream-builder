@@ -1,5 +1,5 @@
 import SkillsLogo from '../../assets/icons/skills.svg'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Element } from './Element'
@@ -23,14 +23,14 @@ export const Skills = () => {
 
       <AddButtonStack text='Add Skills' />
       <div className={s.elements}>
-        <Accordeon title='Customizable'>
+        <Accordion title='Customizable'>
           <Element />
           <Element />
-        </Accordeon>
-        <Accordeon title='Non-customizable'>
+        </Accordion>
+        <Accordion title='Non-customizable'>
           <Element />
           <Element />
-        </Accordeon>
+        </Accordion>
       </div>
     </div>
   )

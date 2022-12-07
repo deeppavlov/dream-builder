@@ -1,7 +1,7 @@
 import AnnotatorsLogo from '../../assets/icons/annotators.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './Annotators.module.scss'
 
@@ -22,14 +22,14 @@ export const Annotators = () => {
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        <Accordeon title='Customizable'>
+        <Accordion title='Customizable'>
           <Element />
           <Element />
-        </Accordeon>
-        <Accordeon title='Non-customizable'>
+        </Accordion>
+        <Accordion title='Non-customizable'>
           <Element />
           <Element />
-        </Accordeon>
+        </Accordion>
       </div>
     </div>
   )

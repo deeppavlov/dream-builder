@@ -36,7 +36,7 @@ export const SkillsAllPage = () => {
           </Wrapper>
         ) : (
           <Wrapper title='Public Skills' amount='5' showAll={false}>
-            <Table>
+            <Table checkbox={true}>
               <SkillListItem />
               <SkillListItem />
               <SkillListItem />

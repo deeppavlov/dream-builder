@@ -82,9 +82,9 @@ export const SkillInBotCard = ({
         <div className={s.bottom}>
           <div className={s.btns_area}>
             <button className={s.clone_btn}>Edit Skill</button>
-            <div className={s.kebab}>
-              <KebabButton />
-            </div>
+            {/* <div className={s.kebab}> */}
+            <KebabButton wrapper={true} />
+            {/* </div> */}
           </div>
         </div>
       </div>

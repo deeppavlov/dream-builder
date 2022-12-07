@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
+import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import DialogButton from '../DialogButton/DialogButton'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './DialogSidePanel.module.scss'
@@ -12,23 +13,15 @@ interface ChatMessage {
   byBot: boolean
   text: string
 }
-interface props {
+interface props extends SidePanelProps {
   error?: boolean
   start?: boolean
-  isOpen: boolean
-  setIsOpen: (state: boolean) => void
-  positions?: Partial<{
-    top: number
-    left: number
-    right: number
-    bottom: number
-  }>
 }
 
 const DialogSidePanel = ({
   isOpen,
   setIsOpen,
-  positions,
+  position,
   error,
   start,
 }: props) => {
@@ -59,7 +52,7 @@ const DialogSidePanel = ({
     <BaseSidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      position={positions}
+      position={position}
       name='Dialog'>
       <div
         className={`${s.dialogSidePanel} ${

@@ -1,17 +1,9 @@
 import React from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import SidePanel from '../../ui/SidePanel/SidePanel'
+import SidePanel, { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import s from './BaseSidePanel.module.scss'
 
-interface props extends React.PropsWithChildren {
-  isOpen: boolean
-  setIsOpen: (state: boolean) => void
-  position?: Partial<{
-    top: number
-    left: number
-    right: number
-    bottom: number
-  }>
+interface props extends SidePanelProps, React.PropsWithChildren {
   name?: string
 }
 

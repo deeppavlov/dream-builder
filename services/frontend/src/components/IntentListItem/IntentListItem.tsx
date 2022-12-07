@@ -6,28 +6,38 @@ import s from './IntentListItem.module.scss'
 export interface IntentListItemProps {
   name: string
   similar: string
-  status?: 'good' | 'warning' | 'error'
+  status?: 'success' | 'warning' | 'error'
+  disabled?: boolean
 }
 
-const IntentListItem = ({ name, similar, status }: IntentListItemProps) => {
+const IntentListItem = ({
+  name,
+  similar,
+  status,
+  disabled,
+}: IntentListItemProps) => {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const handleEditButtonClick = () => setModalIsOpen(true)
 
   return (
-    <li
+    <div
       className={`${s.intentListItem} ${
-        status && s[`intentListItem_status_${status}`]
-      }`}>
-      <div>
+        status ? s[`intentListItem_status_${status}`] : ''
+      }`}
+      data-disabled={disabled}>
+      <div className={s.intentListItem__container}>
         <span className={s.intentListItem__name}>{name}</span>
         <p className={s.intentListItem__similar}>{similar}</p>
       </div>
-      <button className={s.intentListItem__edit} onClick={handleEditButtonClick}>
+      <button
+        className={s.intentListItem__edit}
+        onClick={handleEditButtonClick}
+        disabled={disabled}>
         <EditIcon />
       </button>
       {/* Need to send info about intent to modal */}
       <IntentModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
-    </li>
+    </div>
   )
 }
 

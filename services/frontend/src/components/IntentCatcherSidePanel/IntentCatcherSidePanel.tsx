@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
+import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import IntentListItem, {
@@ -9,17 +10,6 @@ import IntentList from '../IntentList/IntentList'
 import IntentModal from '../IntentModal/IntentModal'
 import BaseLink from '../BaseLink/BaseLink'
 import s from './IntentCatcherSidePanel.module.scss'
-
-interface props {
-  isOpen: boolean
-  setIsOpen: (state: boolean) => void
-  positions?: Partial<{
-    top: number
-    left: number
-    right: number
-    bottom: number
-  }>
-}
 
 const intentsMock: IntentListItemProps[] = [
   {
@@ -60,12 +50,12 @@ const intentsMock: IntentListItemProps[] = [
   {
     name: 'Fallback',
     similar: 'Fallback',
-    status: 'good',
+    status: 'success',
   },
   {
     name: 'Bye',
     similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    status: 'success',
   },
   {
     name: 'Stop',
@@ -80,12 +70,12 @@ const intentsMock: IntentListItemProps[] = [
   {
     name: 'Fallback',
     similar: 'Fallback',
-    status: 'good',
+    status: 'success',
   },
   {
     name: 'Bye',
     similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    status: 'success',
   },
   {
     name: 'Stop',
@@ -100,16 +90,20 @@ const intentsMock: IntentListItemProps[] = [
   {
     name: 'Fallback',
     similar: 'Fallback',
-    status: 'good',
+    status: 'success',
   },
   {
     name: 'Bye',
     similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    status: 'success',
   },
 ]
 
-const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
+const IntentCatcherSidePanel = ({
+  isOpen,
+  setIsOpen,
+  position,
+}: SidePanelProps) => {
   /* `isTrainingLoading - training loading status` */
   /* `isTraining` - status from start training to Replace IntentCatcher*/
   const [isTrainingLoading, setIsTrainingLoading] = useState(false)
@@ -141,7 +135,7 @@ const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
     <BaseSidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      position={positions}
+      position={position}
       name='Intent Catcher'>
       <div className={s.intentCatcherSidePanel}>
         <div
@@ -166,7 +160,8 @@ const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
                 key={name + i}
                 name={name}
                 similar={similar}
-                status={!isTrainingLoading ? status : undefined}
+                status={status}
+                disabled={isTraining}
               />
             ))}
           </IntentList>

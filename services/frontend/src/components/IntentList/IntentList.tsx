@@ -1,7 +1,7 @@
 import s from './IntentList.module.scss'
 
 const IntentList = ({ children }: React.PropsWithChildren) => {
-  return <ul className={s.intentList}>{children}</ul>
+  return <div className={s.intentList}>{children}</div>
 }
 
 export default IntentList

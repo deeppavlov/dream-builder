@@ -2,7 +2,7 @@ import React from 'react'
 import Modal from 'react-modal'
 import s from './SidePanel.module.scss'
 
-interface props extends React.PropsWithChildren {
+export interface SidePanelProps extends React.PropsWithChildren {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
   position?: Partial<{
@@ -13,7 +13,7 @@ interface props extends React.PropsWithChildren {
   }>
 }
 
-const SidePanel = ({ isOpen, setIsOpen, position, children }: props) => {
+const SidePanel = ({ isOpen, setIsOpen, position, children }: SidePanelProps) => {
   const customStyles = {
     overlay: {
       background: 'transparent',

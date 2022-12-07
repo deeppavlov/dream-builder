@@ -2,7 +2,12 @@ import { useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
 import s from './Accordeon.module.scss'
 
-export const Accordeon = ({ children, title }: any) => {
+interface AccordeonProps extends React.PropsWithChildren {
+  title: string
+  small?: boolean
+}
+
+export const Accordeon = ({ children, title, small }: AccordeonProps) => {
   const [close, setClose] = useState(false)
   const contentEl = useRef()
   const handleToggle = () => {
@@ -10,11 +15,13 @@ export const Accordeon = ({ children, title }: any) => {
   }
   console.log(contentEl?.current)
   return (
-    <>
+    <div>
       <button
-        className={`${close ? s.close : null} ${s.arrowDropdown}`}
+        className={`${close ? s.close : ''} ${s.arrowDropdown} ${
+          small ? s.arrowDropdown_small : ''
+        }`}
         onClick={handleToggle}>
-        <p>{title}</p>
+        {title}
         <Arrow />
       </button>
       <div
@@ -27,6 +34,6 @@ export const Accordeon = ({ children, title }: any) => {
         }>
         {children}
       </div>
-    </>
+    </div>
   )
 }

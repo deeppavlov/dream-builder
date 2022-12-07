@@ -1,4 +1,4 @@
-import SkillLogo from '../../assets/icons/Skillls.svg'
+import SkillLogo from '../../assets/icons/skill_script.svg'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'

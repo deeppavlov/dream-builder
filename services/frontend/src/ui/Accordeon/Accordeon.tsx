@@ -13,7 +13,7 @@ export const Accordeon = ({ children, title, small }: AccordeonProps) => {
   const handleToggle = () => {
     setClose(!close)
   }
-  console.log(contentEl?.current)
+  // console.log(contentEl?.current)
   return (
     <div>
       <button

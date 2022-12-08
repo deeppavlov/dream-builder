@@ -8,6 +8,7 @@ import { ReactComponent as PublishIcon } from '../../assets/icons/publish.svg'
 import { ReactComponent as RenameIcon } from '../../assets/icons/rename.svg'
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete.svg'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
+import { Link } from 'react-router-dom'
 import s from './MenuList.module.scss'
 
 export const MenuList = ({ type, author, day, time }: any) => {
@@ -138,12 +139,14 @@ export const MenuList = ({ type, author, day, time }: any) => {
           place='right'
           effect='solid'>
           <ul className={s.menu}>
-            <li className={s.item}>
-              <button>
-                <CloneIcon />
-                <p>Clone Bot</p>
-              </button>
-            </li>
+            <Link to='/editor'>
+              <li className={s.item}>
+                <button>
+                  <CloneIcon />
+                  <p>Clone Bot</p>
+                </button>
+              </li>
+            </Link>
             <li className={s.item}>
               <button>
                 <PropertiesIcon />
@@ -213,6 +216,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
+          possibleCustomEventsOff='click'
           globalEventOff='click'
           arrowColor='#fff'
           clickable={true}
@@ -240,12 +244,46 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
+          possibleCustomEventsOff='click'
+          globalEventOff='wheel'
           clickable={true}
           className={s.menulist}
           id='all_annotators'
-          place='right'
+          effect='solid'>
+          <ul className={s.menu}>
+            <li className={s.item}>
+              <button>
+                <AddIcon />
+                <p>Add Annotators</p>
+              </button>
+            </li>
+            <li className={s.item}>
+              <button>
+                <DisableIcon />
+                <p>Disable All Annotators</p>
+              </button>
+            </li>
+            <hr style={{ border: '0.8px solid #8D96B5' }} />
+            <li className={s.item}>
+              <button>
+                <DeleteIcon />
+                <p>Delete All Annotators</p>
+              </button>
+            </li>
+          </ul>
+        </ReactTooltip>
+      )
+    case 'response_annotators':
+      return (
+        <ReactTooltip
+          event='click'
+          possibleCustomEventsOff='click'
+          globalEventOff='wheel'
+          clickable={true}
+          className={s.menulist}
+          place='left'
+          offset={{ top: -90 }}
+          id='response_annotators'
           effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>
@@ -274,12 +312,11 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
+          possibleCustomEventsOff='click'
+          globalEventOff='wheel'
           clickable={true}
           className={s.menulist}
           id='all_skills'
-          place='right'
           effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>
@@ -308,8 +345,8 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
+          globalEventOff='wheel'
+          possibleCustomEventsOff='click'
           clickable={true}
           className={s.menulist}
           id='customizable_annotator'
@@ -472,12 +509,12 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
+          possibleCustomEventsOff='click'
+          globalEventOff='wheel'
           clickable={true}
           className={s.menulist}
           id='skill_selector'
-          place='right'
+          place='bottom'
           effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>
@@ -493,12 +530,11 @@ export const MenuList = ({ type, author, day, time }: any) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
+          globalEventOff='click wheel'
           clickable={true}
           className={s.menulist}
           id='response_selector'
-          place='right'
+          place='left'
           effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>

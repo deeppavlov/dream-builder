@@ -1,5 +1,5 @@
 import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
@@ -14,7 +14,7 @@ export const CandidateAnnotators = () => {
             <img src={CandidateAnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Candidate Annotators</p>
           </div>
-          <KebabButton />
+          <Kebab dataFor='all_annotators' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>

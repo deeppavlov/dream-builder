@@ -1,11 +1,22 @@
+import { useState } from 'react'
 import BadWordsLogo from '../../assets/icons/bad_words.svg'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({}) => {
+export const Element = ({ ...props }) => {
+  const [disabled, setDisabled] = useState(true)
+  const sliderHandler = () => {
+    setDisabled(!disabled)
+    console.log('skill state was changed')
+    console.log(disabled)
+  }
   return (
-    <div className={s.element}>
+    <div
+      style={
+        !disabled ? { ...props, opacity: '0.3', background: '#f0f0f3' } : null
+      }
+      className={s.element}>
       <div className={s.left}>
         <div className={s.top}>
           <img src={BadWordsLogo} className={s.icon} />
@@ -16,9 +27,10 @@ export const Element = ({}) => {
         </div>
       </div>
       <div className={s.right}>
-        <KebabButton />
-        <ToggleButton />
+        <Kebab disabled={!disabled} dataFor='non_customizable_skill' />
+        <ToggleButton sliderHandler={sliderHandler} />
       </div>
     </div>
   )
 }
+

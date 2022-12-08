@@ -10,8 +10,12 @@
   border-radius: 12px !important;
   box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15) !important;
   opacity: 1 !important;
-  &::after {
-    left: 12% !important;
+  z-index: 10 !important;
+  &:after {
+    display: none;
+  }
+  &:before {
+    display: none;
   }
   .edited {
     text-align: start;

@@ -7,6 +7,7 @@
   justify-content: space-between;
   padding: 12px;
   height: fit-content;
+  background-color: $bcgrnd1;
   .left {
     cursor: pointer;
     display: flex;
@@ -41,4 +42,3 @@
     @include b4;
   }
 }
-

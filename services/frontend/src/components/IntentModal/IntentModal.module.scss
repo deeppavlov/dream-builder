@@ -1,5 +1,3 @@
-@import '../../styles/index.scss';
-
 .intentModal {
   position: relative;
   top: 50%;
@@ -13,7 +11,6 @@
   background: $bcgrnd1;
   border-radius: 12px;
   @include b2;
-  
 
   &__header {
     display: flex;

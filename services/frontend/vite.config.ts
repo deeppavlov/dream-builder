@@ -5,6 +5,11 @@ import svgr from 'vite-plugin-svgr'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), svgr()],
+  css: {
+    preprocessorOptions: {
+      scss: { additionalData: `@import "./src/styles/index";` },
+    },
+  },
   resolve: {
     alias: {
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
@@ -13,5 +18,5 @@ export default defineConfig({
       '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
     },
   },
-  server: { host: '0.0.0.0', },
+  server: { host: '0.0.0.0' },
 })

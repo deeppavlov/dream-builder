@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './BotListItem.module.scss'
 
@@ -45,13 +45,13 @@ export const BotListItem = ({ checkbox, ...props }: any) => {
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <button className={s.area}>
-            <Link to='/editor'>
+          <Link to='/editor'>
+            <button className={s.area}>
               <Clone />
-            </Link>
-          </button>
+            </button>
+          </Link>
           <div>
-            <KebabButton type='row' color='#8D96B5' />
+            <Kebab color='#8D96B5' />
           </div>
         </div>
       </td>

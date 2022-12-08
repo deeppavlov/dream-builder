@@ -4,8 +4,9 @@ import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { ReactComponent as Calendar } from '../../assets/icons/calendar.svg'
 import { ReactComponent as SkillTypeLogo } from '../../assets/icons/fallbacks.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillInBotCard.module.scss'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 
 export const SkillInBotCard = ({
   botName,
@@ -82,9 +83,7 @@ export const SkillInBotCard = ({
         <div className={s.bottom}>
           <div className={s.btns_area}>
             <button className={s.clone_btn}>Edit Skill</button>
-            {/* <div className={s.kebab}> */}
-            <KebabButton wrapper={true} />
-            {/* </div> */}
+            <KebabButton />
           </div>
         </div>
       </div>

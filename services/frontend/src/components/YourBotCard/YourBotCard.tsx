@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import Calendar from '../../assets/icons/calendar.svg'
 import s from './YourBotCard.module.scss'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 
 export const YourBotCard = ({
   botName,
@@ -61,11 +62,11 @@ export const YourBotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            {/* <Link to='/editor'> */}
-              <button className={s.clone_btn}>Clone</button>
-            {/* </Link> */}
+            <Link to='editor'>
+            <button className={s.clone_btn}>Clone</button>
+            </Link>
             <div className={s.kebab}>
-              <KebabButton />
+              <KebabButton dataFor='your_bot' />
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Modal from 'react-modal'
+import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import { Input } from '../../ui/Input/Input'
 import s from './CreateAssistantModal.module.scss'
@@ -18,6 +19,16 @@ export const CreateAssistantModal = ({ children }: any) => {
         {children}
       </button>
       <Modal
+        style={{
+          overlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        }}
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         className={s.modal}
@@ -30,7 +41,7 @@ export const CreateAssistantModal = ({ children }: any) => {
           <div className={s.inputArea}>
             <p>
               You will Use
-              <span className={s.accentText}> Deepy w/ GPT-3 </span>{' '}
+              <span className={s.accentText}> Name of the Bot </span>
               Distribution for your virtual assistant
             </p>
             <Input />
@@ -40,7 +51,9 @@ export const CreateAssistantModal = ({ children }: any) => {
           <button onClick={closeModal} className={s.cancel}>
             Cancel
           </button>
-          <button className={s.continue}>Continue</button>
+          <Link to='/editor'>
+            <button className={s.continue}>Continue</button>
+          </Link>
         </div>
       </Modal>
     </>

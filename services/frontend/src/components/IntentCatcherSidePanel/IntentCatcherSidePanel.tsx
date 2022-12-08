@@ -161,7 +161,7 @@ const IntentCatcherSidePanel = ({
                 name={name}
                 about={about}
                 status={status}
-                disabled={isTraining}
+                disabled={isTrainingLoading}
               />
             ))}
           </IntentList>

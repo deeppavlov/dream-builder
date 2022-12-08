@@ -109,22 +109,8 @@ a {
   }
 }
 .tooltips {
-  height: 45px;
-  background: #8d96b5 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  padding: 4px 12px !important;
-  gap: 10px !important;
-  border-radius: 8px !important;
-  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-  z-index: 3;
-  offset: 30%;
-  font-size: 18px;
-  line-height: 160%;
-  color: #ffffff;
+  @include tooltip;
   &::after {
-    background-color: #8d96b5 !important;
     top: -2px !important;
   }
 }

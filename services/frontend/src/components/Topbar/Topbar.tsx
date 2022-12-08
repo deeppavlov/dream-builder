@@ -1,7 +1,4 @@
-import jwtDecode from 'jwt-decode'
 import ReactTooltip from 'react-tooltip'
-import { useEffect } from 'react'
-import { BurgerButton } from '../../ui/BurgerButton/BurgerButton'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Display } from './components/Display'
@@ -12,7 +9,7 @@ import { Menu } from '../../ui/Menu/Menu'
 import { Notifications } from './components/Notifications'
 import s from './Topbar.module.scss'
 
-export const Topbar = ({ children, type, viewHandler }: any) => {
+export const Topbar = ({ type, viewHandler }: any) => {
   switch (type) {
     case 'main':
       return (
@@ -30,7 +27,6 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
             place='bottom'
             effect='solid'
             className={s.tooltips}
-            offset={{ right: 44, top: -5 }}
             delayShow={500}
           />
         </div>
@@ -38,7 +34,9 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
     case 'editor':
       return (
         <>
-          <div className={s.topbar}>
+          <div
+            style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
+            className={s.topbar}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />

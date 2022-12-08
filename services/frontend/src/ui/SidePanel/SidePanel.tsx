@@ -38,7 +38,7 @@ const SidePanel = ({ isOpen, setIsOpen, position, children }: SidePanelProps) =>
       onRequestClose={closeModal}
       style={customStyles}
       contentLabel='SidePanel'
-      closeTimeoutMS={500}>
+      closeTimeoutMS={300}>
       <div className={s.sidePanel} data-modal-type='side-panel'>
         {children}
       </div>

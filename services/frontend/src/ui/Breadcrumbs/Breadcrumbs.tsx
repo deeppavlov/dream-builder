@@ -12,10 +12,10 @@ export const Breadcrumbs = () => {
           <button className={s.home} />
         </Link>
       </div>
-      <div className={s.routes}>
+      {/* <div className={s.routes}>
         <span className={s.slash}>/</span>
         <span>Breadcrumbs</span>
-      </div>
+      </div> */}
     </>
   )
 }

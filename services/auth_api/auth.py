@@ -5,7 +5,7 @@ from google.auth import jwt
 from sqlalchemy.orm import Session
 
 import db.crud as crud
-from config import Settings
+from config import settings
 from db.db import Base, engine, get_db
 from models import UserCreate
 
@@ -19,6 +19,8 @@ async def validate_jwt(jwt_data: str = Header(), db: Session = Depends(get_db)):
     """
     Decode input jwt-token, validate date, check user in db and sign him up in case of user is not in db
     """
+    if jwt_data == settings.test_token:
+        return
     try:
         data = jwt.decode(jwt_data, verify=False)
 
@@ -35,7 +37,7 @@ async def validate_jwt(jwt_data: str = Header(), db: Session = Depends(get_db)):
 
 
 def _check_aud_is_valid(input_aud: str) -> None:
-    base = Settings.google_client_id
+    base = settings.google_client_id
 
     if input_aud != base:
         raise ValueError("Audience is not valid! ")

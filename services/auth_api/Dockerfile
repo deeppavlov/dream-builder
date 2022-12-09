@@ -8,9 +8,6 @@ ENV PYTHONBUFFERED 1
 COPY ./services/auth_api/requirements-auth.txt .
 RUN pip install --no-cache-dir -r /src/requirements-auth.txt
 
-
 COPY /services/auth_api /src
-#WORKDIR src/
 
 CMD ["python3" ,"-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "6000"]
-#CMD ["python3", "-m", "pytest", "."]

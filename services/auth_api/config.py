@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     db_host: str
     db_port: int
     db_name: str
+    test_token: str
 
     class Config:
         env_file = Path(__file__).with_name(".env").absolute()

@@ -1,0 +1,12 @@
+services:
+
+  testrunner:
+    build:
+      context: .
+      dockerfile: ./tests/backend/Dockerfile
+    depends_on:
+      - distributions-api
+    deploy:
+      resources:
+        limits:
+          memory: 256M

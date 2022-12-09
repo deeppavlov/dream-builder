@@ -62,7 +62,7 @@ export const YourBotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='editor'>
+            <Link to='/editor'>
             <button className={s.clone_btn}>Clone</button>
             </Link>
             <div className={s.kebab}>

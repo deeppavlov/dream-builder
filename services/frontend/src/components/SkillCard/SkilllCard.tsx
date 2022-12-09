@@ -3,6 +3,7 @@ import Calendar from '../../assets/icons/calendar.svg'
 import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './SkillCard.module.scss'
 
 export const SkillCard = ({
@@ -73,9 +74,8 @@ export const SkillCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
-              <button className={s.clone_btn}>Add</button>
-            </Link>
+            <button className={s.clone_btn}>Add</button>
+            <KebabButton dataFor='skills' />
           </div>
         </div>
       </div>

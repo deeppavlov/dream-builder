@@ -6,7 +6,6 @@ import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './BotListItem.module.scss'
 
 export const BotListItem = ({ checkbox, ...props }: any) => {
-  console.log(checkbox)
   return (
     <tr className={s.tr}>
       {checkbox && (
@@ -51,7 +50,7 @@ export const BotListItem = ({ checkbox, ...props }: any) => {
             </button>
           </Link>
           <div>
-            <Kebab color='#8D96B5' />
+            <Kebab color='#8D96B5' dataFor='bot_public' />
           </div>
         </div>
       </td>

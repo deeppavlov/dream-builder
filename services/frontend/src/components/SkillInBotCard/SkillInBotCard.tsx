@@ -83,7 +83,7 @@ export const SkillInBotCard = ({
         <div className={s.bottom}>
           <div className={s.btns_area}>
             <button className={s.clone_btn}>Edit Skill</button>
-            <KebabButton />
+            <KebabButton dataFor='customizable_skill' />
           </div>
         </div>
       </div>

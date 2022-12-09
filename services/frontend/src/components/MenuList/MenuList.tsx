@@ -7,6 +7,7 @@ import { ReactComponent as DownloadIcon } from '../../assets/icons/download.svg'
 import { ReactComponent as PublishIcon } from '../../assets/icons/publish.svg'
 import { ReactComponent as RenameIcon } from '../../assets/icons/rename.svg'
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete.svg'
+import { ReactComponent as RollbackIcon } from '../../assets/icons/rollback.svg'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Link } from 'react-router-dom'
 import s from './MenuList.module.scss'
@@ -58,7 +59,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
           </ul>
         </ReactTooltip>
       )
-    case 'skills':
+    case 'skills_page':
       return (
         <ReactTooltip
           event='click'
@@ -67,7 +68,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
           clickable={true}
           className={s.menulist}
           offset={{ right: 90, top: -3 }}
-          id='skills'
+          id='skills_page'
           place='bottom'
           effect='solid'>
           <ul className={s.menu}>
@@ -521,6 +522,12 @@ export const MenuList = ({ type, author, day, time }: any) => {
               <button>
                 <RenameIcon />
                 <p>Edit</p>
+              </button>
+            </li>
+            <li className={s.item}>
+              <button>
+                <RollbackIcon />
+                <p>Rollback</p>
               </button>
             </li>
           </ul>

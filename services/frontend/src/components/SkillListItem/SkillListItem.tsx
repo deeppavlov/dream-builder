@@ -41,7 +41,7 @@ export const SkillListItem = ({ ...props }) => {
       <td className={s.td}>
         <div className={s.btns_area}>
           <div>
-            <Kebab type='row' color='#8D96B5' />
+            <Kebab type='row' color='#8D96B5' dataFor='skills' />
           </div>
         </div>
       </td>

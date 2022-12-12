@@ -18,6 +18,8 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 
 DREAM_ROOT_PATH = Path(os.environ["DREAM_ROOT_PATH"])
 
+AUTH_URL = "http://auth-api:6000/auth/token"
+
 ASSISTANT_DISTS_PATH = DREAM_ROOT_PATH / "assistant_dists"
 
 DreamConfigLiteral = Literal["pipeline_conf", "compose_override", "compose_dev", "compose_proxy"]

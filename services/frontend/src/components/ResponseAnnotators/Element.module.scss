@@ -1,45 +1,44 @@
 @import '../../styles/index.scss';
 
 .element {
+  @include stack_element_behavior;
+  cursor: pointer;
   display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   padding: 12px;
   height: fit-content;
   .left {
-    height: 100%;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    gap: 4px;
     .top {
-      width: 100%;
+      cursor: pointer;
       display: flex;
-      flex-direction: row;
       align-items: center;
-      justify-content: start;
       gap: 8px;
+      .icon {
+        cursor: pointer;
+        @include icon_size_24;
+      }
+      .name {
+        cursor: pointer;
+        @include t3;
+      }
     }
   }
   .right {
-    height: 100%;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
+    height: 100%;
   }
   .data {
-    text-align: start;
-    font-size: 14px;
-    line-height: 140%;
-    display: flex;
-    align-items: center;
+    cursor: pointer;
+    padding-left: 32px;
     color: rgba(0, 0, 0, 0.7);
+    @include b4;
   }
 }
-.icon {
-  @include icon_size_24;
-  background-image: url(../../../assets/icons/book.svg);
-  background-repeat: no-repeat;
-}
+

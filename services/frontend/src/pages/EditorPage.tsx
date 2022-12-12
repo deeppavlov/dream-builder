@@ -17,6 +17,7 @@ import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
+import { TestTab } from '../components/TestTab/TestTab'
 
 export const EditorPage = () => {
   const [skills, setSkills] = useState([])
@@ -32,7 +33,6 @@ export const EditorPage = () => {
       ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
       : setSkills(skills.concat(<SkillListItem />))
   }
-
   return (
     <>
       <Topbar type='editor' />
@@ -43,7 +43,8 @@ export const EditorPage = () => {
               width='100%'
               alignItems='center'
               flexDirection='column'
-              gap='12px'>
+              gap='12px'
+              overflow='hidden'>
               <Tab>
                 <BotTab />
               </Tab>
@@ -89,14 +90,8 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Main>
-            <Wrapper>
-              <Container
-                display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-                New Tab
-              </Container>
-            </Wrapper>
+          <Main justifyContent='center'>
+            <TestTab />
           </Main>
         </TabPanel>
       </Tabs>

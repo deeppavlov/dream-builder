@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import Calendar from '../../assets/icons/calendar.svg'
 import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
+import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './SkillCard.module.scss'
 
 export const SkillCard = ({
@@ -19,7 +19,7 @@ export const SkillCard = ({
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <Checkbox />
+        <CheckBox />
       </div>
       <div className={s.body}>
         <div className={s.top}>

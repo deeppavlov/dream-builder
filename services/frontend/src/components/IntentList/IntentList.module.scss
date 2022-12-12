@@ -1,0 +1,14 @@
+@import '../../styles/index.scss';
+
+.intentList {
+  height: 100%;
+  width: 100%;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $bcgrnd5;
+  }
+}

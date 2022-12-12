@@ -1,5 +1,5 @@
 import { cloneElement } from 'react'
-import { Checkbox } from '../Checkbox/Checkbox'
+import { CheckBox } from '../Checkbox/Checkbox'
 import { ReactComponent as Arrow } from '../../assets/icons/triangle_down.svg'
 import s from './Table.module.scss'
 import React from 'react'
@@ -26,7 +26,7 @@ export const Table = ({
               {props
                 ? checkbox && (
                     <th className={s.checkboxArea}>
-                      <Checkbox />
+                      <CheckBox />
                       <button>
                         <Arrow />
                       </button>

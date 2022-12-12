@@ -5,7 +5,6 @@ import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Skill } from './Skill'
 import s from './ResponseSelector.module.scss'
 
-
 export const ResponseSelector = () => {
   return (
     <div className={s.stack}>
@@ -13,16 +12,14 @@ export const ResponseSelector = () => {
         <div className={s.top}>
           <div className={s.title}>
             <img src={ResponseSelectorLogo} className={s.icon} />
-            <p className={s.type}>Skill Selector</p>
+            <p className={s.type}>Response Selector</p>
           </div>
           <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled='true' text='Add Skill Selector' />
+      <AddButtonStack disabled='true' text='Add Response Selector' />
       <Accordeon title='Customizable'>
-        <form>
-          <Skill title='Multiple Skills' />
-        </form>
+        <Skill title='Tag-& Evaluation-Based' />
       </Accordeon>
       <Accordeon title='Non-customizable'>
         <Skill title='Confidence Based' />

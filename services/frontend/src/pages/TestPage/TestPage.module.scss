@@ -1,0 +1,35 @@
+@import '../../styles/index.scss';
+
+.testPage {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafc;
+  height: 100%;
+  gap: 40px;
+  padding: 20px;
+  overflow: auto;
+
+  &__block {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    gap: 40px;
+  }
+
+  &__block-name {
+    font-weight: $bold;
+    font-size: 24px;
+  }
+
+  &__component {
+    display: flex;
+    gap: 20px;
+    align-items: center
+  }
+}
+.modalBtn {
+  @include large_btn;
+  @include lnks_n_btns4;
+  @include primary_btn;
+  @include btn_primary_behavior;
+}

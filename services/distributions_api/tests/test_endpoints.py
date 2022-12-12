@@ -7,6 +7,7 @@ from const import DREAM_ROOT_PATH
 
 client = TestClient(app)
 
+
 def test_get_list_of_distributions():
     response = client.get("/api/assistant_dists/")
     assert response.status_code == 200

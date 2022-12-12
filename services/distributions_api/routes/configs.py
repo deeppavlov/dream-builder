@@ -13,11 +13,11 @@ router = APIRouter(prefix="/api/configs")
 
 @router.put("/add_service/", status_code=status.HTTP_201_CREATED)
 async def add_new_service(
-        config_type: DreamConfigLiteral,
-        current_config: AnyConfig,
-        name: str,
-        new_service: Union[PipelineConfService, AnyContainer],
-        service_type: str = None,
+    config_type: DreamConfigLiteral,
+    current_config: AnyConfig,
+    name: str,
+    new_service: Union[PipelineConfService, AnyContainer],
+    service_type: str = None,
 ):
     """
     Args:
@@ -40,10 +40,10 @@ async def add_new_service(
 
 @router.put("/remove_service", status_code=status.HTTP_200_OK)
 async def remove_service_from_config(
-        config_type: DreamConfigLiteral,
-        current_config: AnyConfig,
-        name: str,
-        service_type: str = None,
+    config_type: DreamConfigLiteral,
+    current_config: AnyConfig,
+    name: str,
+    service_type: str = None,
 ):
     """
     Removes the service from current config

@@ -9,6 +9,7 @@ interface TextAreaProps {
   about?: string
   errorMessage?: string
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
+  onSubmit?: (value: string) => void
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -16,6 +17,7 @@ export const TextArea: FC<TextAreaProps> = ({
   about,
   errorMessage,
   props,
+  onSubmit,
 }) => {
   const [value, setValue] = useState(props?.value)
   const [isActive, setIsActive] = useState(false)
@@ -36,7 +38,14 @@ export const TextArea: FC<TextAreaProps> = ({
     setIsActive(true)
   }
 
-  const handleEnterBtnClick = () => setIsActive(false)
+  const handleEnterBtnClick = () => {
+    setIsActive(false)
+    setValue('')
+
+    if (onSubmit && value !== undefined && value !== '') {
+      onSubmit(value.toString())
+    }
+  }
 
   return (
     <div className={s.textArea}>

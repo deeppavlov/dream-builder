@@ -9,8 +9,8 @@
   &__container {
     position: relative;
     display: flex;
-    width: fit-content;
-    height: fit-content;
+    max-width: 100%;
+    // width: fit-content;
   }
 
   &__label {

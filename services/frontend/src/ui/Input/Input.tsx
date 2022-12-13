@@ -7,10 +7,16 @@ interface InputProps {
   label?: string
   errorMessage?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
+  onSubmit?: (value: string) => void
 }
 
-export const Input: FC<InputProps> = ({ label, errorMessage, props }) => {
-  const [value, setValue] = useState(props?.value)
+export const Input: FC<InputProps> = ({
+  label,
+  errorMessage,
+  props,
+  onSubmit,
+}) => {
+  const [value, setValue] = useState(props?.value ?? '')
   const [isActive, setIsActive] = useState(false)
   const [errorMsg, setErrorMsg] = useState(errorMessage)
   const inputId = nanoid(8)
@@ -29,7 +35,12 @@ export const Input: FC<InputProps> = ({ label, errorMessage, props }) => {
     setIsActive(true)
   }
 
-  const handleEnterBtnClick = () => setIsActive(false)
+  const handleEnterBtnClick = () => {
+    setIsActive(false)
+    if (onSubmit && value !== undefined && value !== '') {
+      onSubmit(value.toString())
+    }
+  }
 
   return (
     <div className={s.input}>

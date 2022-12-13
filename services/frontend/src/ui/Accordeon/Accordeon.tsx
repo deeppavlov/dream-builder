@@ -5,9 +5,15 @@ import s from './Accordeon.module.scss'
 interface AccordeonProps extends React.PropsWithChildren {
   title: string
   small?: boolean
+  rounded?: boolean
 }
 
-export const Accordeon = ({ children, title, small }: AccordeonProps) => {
+export const Accordeon = ({
+  children,
+  title,
+  small,
+  rounded,
+}: AccordeonProps) => {
   const [close, setClose] = useState(false)
   const contentEl = useRef()
   const handleToggle = () => {
@@ -19,7 +25,7 @@ export const Accordeon = ({ children, title, small }: AccordeonProps) => {
       <button
         className={`${close ? s.close : ''} ${s.arrowDropdown} ${
           small ? s.arrowDropdown_small : ''
-        }`}
+        } ${rounded ? s.arrowDropdown_rounded : ''}`}
         onClick={handleToggle}>
         {title}
         <Arrow />

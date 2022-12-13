@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import AnnotatorsSidePanel from '../../components/AnnotatorsSidePanel/AnnotatorsSidePanel'
 import BaseLink from '../../components/BaseLink/BaseLink'
 import BaseSidePanel from '../../components/BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
@@ -9,7 +10,7 @@ import IntentList from '../../components/IntentList/IntentList'
 import IntentListItem, {
   IntentListItemProps,
 } from '../../components/IntentListItem/IntentListItem'
-import IntentModal from '../../components/IntentModal/IntentModal'
+import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import { AddSkillModal } from '../../components/ModalWindows/AddSkillModal'
 import { CreateAssistantModal } from '../../components/ModalWindows/CreateAssistantModal'
@@ -19,11 +20,15 @@ import NotificationCard, {
 } from '../../components/NotificationCard/NotificationCard'
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
+import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
 import SmallTag from '../../components/SmallTag/SmallTag'
 import { Accordeon } from '../../ui/Accordeon/Accordeon'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import s from './TestPage.module.scss'
+import { Input } from '../../ui/Input/Input'
+import { TextArea } from '../../ui/TextArea/TextArea'
+import { nanoid } from 'nanoid'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -114,8 +119,20 @@ export const TestPage = () => {
         <EditModal>Edit Bot Description</EditModal>
         <div className={s.testPage__component}>
           <span>IntentCatcherModal</span>
-          {getBtnWithModal(IntentModal, 'Add Intent')}
-          {getBtnWithModal(IntentModal, 'Edit Intent')}
+          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (add)')}
+          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (edit)', {
+            intent: {
+              id: nanoid(8),
+              name: 'want_pizza',
+              examples: [
+                'want pizza',
+                'love pizza',
+                'pizza is my favorite',
+                'wanna pizza',
+              ],
+              regexes: ['(i|we) (want|like|wanna) to (order|buy) pizza'],
+            },
+          })}
         </div>
       </div>
       <div className={s.testPage__block}>
@@ -154,6 +171,60 @@ export const TestPage = () => {
           <span>BotInfoSidePanel</span>
           {getBtnWithModal(BotInfoSidePanel, 'Bot Info')}
         </div>
+        <div className={s.testPage__component}>
+          <span>AnnotatorsSidePanel</span>
+          {getBtnWithModal(AnnotatorsSidePanel, 'Annotators')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>SkillSidePanel</span>
+          {getBtnWithModal(SkillSidePanel, 'Skill')}
+        </div>
+        {/* <div className={s.testPage__component}>
+          <span>SelectorSettingsSidePanel</span>
+          {getBtnWithModal(SelectorSettingsSidePanel, 'Selector Settings', {
+            name: 'Tag-& Evaluation-based Selector',
+            type: 'skill',
+            settingKeys: [
+              {
+                name: 'HIGH_PRIORITY_INTENTS',
+                type: 'switch',
+                value: ['1', '0'],
+              },
+              {
+                name: 'RESTRICTION_FOR_SENSITIVE_CASE',
+                type: 'switch',
+                value: ['1', '0'],
+              },
+              {
+                name: 'ALWAYS_TURN_ON_ALL_SKILLS',
+                type: 'switch',
+                value: ['1', '0'],
+              },
+              {
+                name: 'ALWAYS_TURN_ON_GIVEN_SKILL',
+                type: 'switch',
+                value: ['1', '0'],
+              },
+              {
+                name: 'LANGUAGE',
+                type: 'switch',
+                value: ['ENG', 'RU'],
+              },
+              {
+                name: 'GPT-J Chit-Chat',
+                type: 'checkbox',
+              },
+              {
+                name: 'GPT-J Chit-Chat',
+                type: 'radio',
+              },
+              {
+                name: 'GPT-J Chit-Chat',
+                type: 'input',
+              },
+            ],
+          })}
+        </div> */}
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Buttons</span>
@@ -291,15 +362,93 @@ export const TestPage = () => {
             </p>
           </Accordeon>
         </div>
+        <div className={s.testPage__component}>
+          <span>small</span>
+          <Accordeon title='Lorem ipsum is placeholder text commonly' small>
+            <p>
+              Lorem ipsum is placeholder text commonly used in the graphic,
+              print, and publishing industries for previewing layouts and visual
+              mockups
+            </p>
+          </Accordeon>
+        </div>
       </div>
-      <div className={s.testPage__component}>
-        <span>small</span>
-        <Accordeon title='Lorem ipsum is placeholder text commonly' small>
-          <p>
-            Lorem ipsum is placeholder text commonly used in the graphic, print,
-            and publishing industries for previewing layouts and visual mockups
-          </p>
-        </Accordeon>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>Input</span>
+        <div className={s.testPage__component}>
+          <span>default</span>
+          <Input props={{ placeholder: 'Assistive text' }} label='Label' />
+        </div>
+        <div className={s.testPage__component}>
+          <span>with value</span>
+          <Input
+            props={{
+              placeholder: 'Assistive text',
+              value: 'Text input Text input Text input Text input',
+            }}
+            label='Label'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>error</span>
+          <Input
+            props={{ placeholder: 'Assistive text' }}
+            label='Label'
+            errorMessage='Error message'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>disabled</span>
+          <Input
+            props={{ placeholder: 'Assistive text', disabled: true }}
+            label='Label'
+          />
+        </div>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>TextArea</span>
+        <div className={s.testPage__component}>
+          <span>default</span>
+          <TextArea
+            props={{ placeholder: 'Assistive text' }}
+            label='Label'
+            about='Instructions'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>with value</span>
+          <TextArea
+            props={{
+              placeholder: 'Assistive text',
+              value:
+                'Text input Text input Text input Text input Text input Text input Text input Text input',
+            }}
+            label='Label'
+            about='Instructions'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>error</span>
+          <TextArea
+            props={{
+              placeholder: 'Assistive text',
+            }}
+            label='Label'
+            about='Instructions'
+            errorMessage='Error message'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>disabled</span>
+          <TextArea
+            props={{
+              placeholder: 'Assistive text',
+              disabled: true,
+            }}
+            label='Label'
+            about='Instructions'
+          />
+        </div>
       </div>
     </div>
   )

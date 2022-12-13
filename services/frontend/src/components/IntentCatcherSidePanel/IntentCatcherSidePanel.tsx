@@ -7,7 +7,7 @@ import IntentListItem, {
   IntentListItemProps,
 } from '../IntentListItem/IntentListItem'
 import IntentList from '../IntentList/IntentList'
-import IntentModal from '../IntentModal/IntentModal'
+import IntentCatcherModal from '../IntentCatcherModal/IntentCatcherModal'
 import BaseLink from '../BaseLink/BaseLink'
 import s from './IntentCatcherSidePanel.module.scss'
 
@@ -225,7 +225,10 @@ const IntentCatcherSidePanel = ({
 
         {/* Maybe need to organize here Edit/Add intent modals */}
         {/* Add new intent Modal */}
-        <IntentModal isOpen={addModalIsOpen} setIsOpen={setAddModalIsOpen} />
+        <IntentCatcherModal
+          isOpen={addModalIsOpen}
+          setIsOpen={setAddModalIsOpen}
+        />
       </div>
     </BaseSidePanel>
   )

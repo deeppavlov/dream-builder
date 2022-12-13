@@ -1,6 +1,6 @@
 import { ReactComponent as EditIcon } from '@assets/icons/edit_pencil.svg'
 import { useState } from 'react'
-import IntentModal from '../IntentModal/IntentModal'
+import IntentCatcherModal from '../IntentCatcherModal/IntentCatcherModal'
 import s from './IntentListItem.module.scss'
 
 export interface IntentListItemProps {
@@ -36,7 +36,7 @@ const IntentListItem = ({
         <EditIcon />
       </button>
       {/* Need to send info about intent to modal */}
-      <IntentModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
+      <IntentCatcherModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
     </div>
   )
 }

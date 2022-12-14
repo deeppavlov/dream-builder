@@ -140,14 +140,14 @@ export const MenuList = ({ type, author, day, time }: any) => {
           place='right'
           effect='solid'>
           <ul className={s.menu}>
-            <Link to='/editor'>
+            {/* <Link to='/editor'>
               <li className={s.item}>
                 <button>
                   <CloneIcon />
                   <p>Clone Bot</p>
                 </button>
               </li>
-            </Link>
+            </Link> */}
             <li className={s.item}>
               <button>
                 <PropertiesIcon />

@@ -89,7 +89,7 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
-                checkbox={true}
+                // checkbox={true}
                 addButton={<AddButton addBot={addBot} listView={listView} />}>
                 {bots}
               </Table>

@@ -84,7 +84,9 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
-              <Table checkbox={true}>
+                <Table
+                  // checkbox={true}
+                >
                 <AddButton addBot={addBot} listView={listView} />
                 {skills}
               </Table>

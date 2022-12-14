@@ -6,9 +6,9 @@ import s from './SkillListItem.module.scss'
 export const SkillListItem = ({ ...props }) => {
   return (
     <tr className={s.tr}>
-      <td className={s.checkboxArea}>
+      {/* <td className={s.checkboxArea}>
         <CheckBox />
-      </td>
+      </td> */}
       <td className={s.td}>
         <div className={s.name}>
           <p>convert_reddit</p>

@@ -20,7 +20,7 @@ export const SkillCard = ({
     <div className={s.skill}>
       <div className={s.header}>
         <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <CheckBox />
+        {/* <CheckBox /> */}
       </div>
       <div className={s.body}>
         <div className={s.top}>

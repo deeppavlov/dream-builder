@@ -5,7 +5,7 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './Annotators.module.scss'
 
-export const Annotators = () => {
+export const Annotators: React.FC = () => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -14,7 +14,7 @@ export const Annotators = () => {
             <img src={AnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Annotators</p>
           </div>
-          <Kebab dataFor='all_annotators' />
+          <Kebab disabled dataFor='all_annotators' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>

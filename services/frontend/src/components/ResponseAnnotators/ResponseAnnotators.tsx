@@ -14,7 +14,7 @@ export const ResponseAnnotators = () => {
             <img src={ResponseAnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Response Annotators</p>
           </div>
-          <Kebab dataFor='response_annotators' />
+          <Kebab disabled dataFor='response_annotators' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>

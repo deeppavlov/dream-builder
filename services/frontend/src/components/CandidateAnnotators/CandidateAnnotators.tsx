@@ -14,7 +14,7 @@ export const CandidateAnnotators = () => {
             <img src={CandidateAnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Candidate Annotators</p>
           </div>
-          <Kebab dataFor='all_annotators' />
+          <Kebab disabled dataFor='all_annotators' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>

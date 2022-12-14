@@ -8,7 +8,7 @@ export const Kebab = ({ disabled, type, color, dataFor }: any) => {
       disabled={disabled === undefined ? false : disabled}
       data-tip
       data-for={dataFor}
-      style={{ flexDirection: `${type}` }}
+      style={{ opacity: disabled && '0.3', flexDirection: `${type}` }}
       className={s.kebab}>
       <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
       <figure style={{ backgroundColor: `${color}` }} className={s.dots} />

@@ -14,7 +14,7 @@ export const Skills = () => {
             <img src={SkillsLogo} className={s.icon} />
             <p className={s.type}>Skills</p>
           </div>
-          <Kebab dataFor='all_skills' />
+          <Kebab disabled dataFor='all_skills' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>

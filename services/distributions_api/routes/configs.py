@@ -9,10 +9,10 @@ from deeppavlov_dreamtools.distconfigs.manager import (
 
 from services.distributions_api.const import CONFIGNAME_DREAMOBJECT, DREAM_ROOT_PATH, DreamConfigLiteral, CONFIGNAME_CONFIGOBJECT
 
-router = APIRouter(prefix="/api/configs")
+configs_router = APIRouter(prefix="/api/configs")
 
 
-@router.put("/add_service/", status_code=status.HTTP_201_CREATED)
+@configs_router.put("/add_service/", status_code=status.HTTP_201_CREATED)
 async def add_new_service(
     config_type: DreamConfigLiteral,
     current_config: AnyConfig,
@@ -39,7 +39,7 @@ async def add_new_service(
     return config
 
 
-@router.put("/remove_service", status_code=status.HTTP_200_OK)
+@configs_router.put("/remove_service", status_code=status.HTTP_200_OK)
 async def remove_service_from_config(
     config_type: DreamConfigLiteral,
     current_config: AnyConfig,
@@ -67,7 +67,7 @@ async def remove_service_from_config(
     return config
 
 
-@router.post(
+@configs_router.post(
     "/{dist_name}",
 )
 async def dump_config_from_dist(config_type: DreamConfigLiteral, dist_name: str):
@@ -82,7 +82,7 @@ async def dump_config_from_dist(config_type: DreamConfigLiteral, dist_name: str)
         raise exceptions.HTTPException(404, detail="Incorrect name")
 
 
-@router.get("/{dist_name}")
+@configs_router.get("/{dist_name}")
 async def load_config(dist_name: str, config_type: DreamConfigLiteral):
     """
     Loads config with config_type with dist_name

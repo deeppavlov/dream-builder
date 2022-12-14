@@ -1,0 +1,169 @@
+.intentModal {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  max-width: 1133px;
+  max-height: 716px;
+  width: 100%;
+  background: $bcgrnd1;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+
+  &__form {
+    @include b2;
+    max-width: 1133px;
+    max-height: 716px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 20px 12px 24px;
+    background-color: $bcgrnd5;
+    border-bottom: 1px solid $bcgrnd3;
+    border-radius: 12px 12px 0px 0px;
+  }
+
+  &__name {
+    white-space: nowrap;
+    font-weight: $bold;
+  }
+
+  &__close {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    height: 24px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      stroke: $text1;
+    }
+  }
+
+  &__body {
+    height: 100%;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__block-name {
+    @include h6;
+    color: $text1;
+    padding: 0 24px;
+  }
+
+  &__dropdown,
+  &__textArea {
+    padding: 6px 24px;
+  }
+
+  &__list {
+    min-height: 64px;
+    height: auto;
+    overflow-y: overlay;
+    padding: 6px 24px;
+    margin: 6px 8px 6px 0;
+  }
+
+  &__desc {
+    border-top: 1px solid #f0f0f3;
+    padding: 6px 12px;
+  }
+
+  &__alert {
+    @include b3;
+    display: flex;
+    align-items: center;
+    color: $text1;
+
+    b {
+      font-weight: $bold;
+    }
+
+    svg {
+      margin-left: 8px;
+    }
+  }
+
+  &__footer {
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 24px;
+    background: $bcgrnd2;
+  }
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+
+  &__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__icon {
+    cursor: pointer;
+  }
+}
+
+.tabs {
+  @include b2;
+  padding: 0 24px;
+  display: flex;
+  color: $text3;
+  background-color: $bcgrnd2;
+
+  &__tab {
+    padding: 14px 12px 12px 14px;
+    cursor: pointer;
+
+    &_selected {
+      border-bottom: 2px solid $primary1;
+      font-weight: $bold;
+      color: $text1;
+    }
+  }
+}
+
+.tooltips {
+  height: 45px;
+  background: #8d96b5 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  gap: 10px !important;
+  border-radius: 8px !important;
+  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  z-index: 3;
+  offset: 30%;
+  font-size: 18px;
+  line-height: 160%;
+  color: #ffffff;
+  &::after {
+    left: 20% !important;
+  }
+}

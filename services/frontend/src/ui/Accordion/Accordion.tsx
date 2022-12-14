@@ -5,15 +5,15 @@ import s from './Accordion.module.scss'
 interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
+  children: React.ReactNode
 }
 
 export const Accordion = ({ children, title, small }: AccordionProps) => {
   const [close, setClose] = useState(false)
-  const contentEl = useRef()
+  const contentEl = useRef<HTMLDivElement>(null)
   const handleToggle = () => {
     setClose(!close)
   }
-  // console.log(contentEl?.current)
   return (
     <div>
       <button

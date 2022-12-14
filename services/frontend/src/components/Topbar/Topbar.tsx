@@ -9,7 +9,12 @@ import { Menu } from '../../ui/Menu/Menu'
 import { Notifications } from './components/Notifications'
 import s from './Topbar.module.scss'
 
-export const Topbar = ({ type, viewHandler }: any) => {
+interface TopbarProps extends React.PropsWithChildren {
+  type: string
+  viewHandler?: void
+}
+
+export const Topbar = ({ type, viewHandler }: TopbarProps) => {
   switch (type) {
     case 'main':
       return (

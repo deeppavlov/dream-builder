@@ -1,21 +1,31 @@
 import { useState } from 'react'
+import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
+import { ReactComponent as FilterIcon } from '@assets/icons/filter.svg'
+import { Input } from '../Input/Input'
 import s from './Search.module.scss'
 
-export const Search = () => {
+interface SearchProps {
+  placeholder?: string
+  filters?: boolean
+}
+
+const Search = ({ placeholder, filters }: SearchProps) => {
   const [value, setValue] = useState('')
   const handleSubmit = (e: any) => {
     e.preventDefault()
     setValue('')
   }
   return (
-    <form onSubmit={handleSubmit} className={s.search}>
-      <i className={s.loupe} />
-      <input
-        placeholder='Search'
-        type='text'
-        onChange={event => setValue(event.target.value)}
-        value={value}
-      />
-    </form>
+    <div className={s.search}>
+      <button className={s['search__loupe-btn']}>
+        <LoupeIcon className={s.search__icon} />
+      </button>
+      <Input props={{ placeholder: placeholder ?? 'Search' }} />
+      <button className={s['search__filter-btn']}>
+        <FilterIcon className={s.search__icon} />
+      </button>
+    </div>
   )
 }
+
+export default Search

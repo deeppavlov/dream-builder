@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from deeppavlov_dreamtools.distconfigs.generics import AnyConfig
@@ -8,6 +10,23 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     ComposeProxy,
     ComposeLocal,
 )
+
+
+class DreamDistModelMetadata(BaseModel):
+    author: str
+    description: str
+    version: str
+    date: datetime
+    ram_usage: str
+    gpu_usage: str
+    disk_usage: str
+
+
+class DreamDistModelShort(BaseModel):
+    dist_path: str
+    name: str
+    dream_root: str
+    metadata: DreamDistModelMetadata
 
 
 class DreamDistModel(BaseModel):

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status
+from datetime import datetime
 
-from const import DREAM_ROOT_PATH, DreamConfigLiteral
-from models import DreamDistConfigsImport, DreamDistModel
+from fastapi import APIRouter, status, Depends
+
 from deeppavlov_dreamtools.distconfigs.manager import AnyConfigClass, DreamDist, list_dists
 from deeppavlov_dreamtools.distconfigs.manager import (
     DreamComposeDev,
@@ -10,8 +10,31 @@ from deeppavlov_dreamtools.distconfigs.manager import (
     DreamPipeline,
 )
 
+from services.distributions_api.const import DREAM_ROOT_PATH, DreamConfigLiteral
+from services.distributions_api.models import DreamDistConfigsImport, DreamDistModel, DreamDistModelShort, DreamDistModelMetadata
+from services.distributions_api.security.auth import verify_token
 
 router = APIRouter(prefix="/api/assistant_dists")
+
+
+def _dist_to_distmodel_short(dream_dist: DreamDist) -> DreamDistModelShort:
+    """
+    DreamDist -> DreamDistModelShort
+    """
+    return DreamDistModelShort(
+        dist_path=str(dream_dist.dist_path),
+        name=dream_dist.name,
+        dream_root=str(dream_dist.dream_root),
+        metadata=DreamDistModelMetadata(
+            author="DeepPavlov",
+            description="Lorem ipsum dolores est",
+            version="0.1.0",
+            date=datetime(year=2022, month=12, day=12, hour=12, minute=12),
+            ram_usage="10.1 GB",
+            gpu_usage="11.1 GB",
+            disk_usage="12.1 GB",
+        )
+    )
 
 
 def _dist_to_distmodel(dream_dist: DreamDist) -> DreamDistModel:
@@ -53,18 +76,19 @@ async def get_list_of_distributions() -> dict[str, DreamDistModel]:
     Very expensive endpoint. Run it carefully.
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = {dist.name: _dist_to_distmodel(dist) for dist in distributions}
+    distributions = {dist.name: _dist_to_distmodel_short(dist) for dist in distributions}
 
     return distributions
 
 
 @router.get("/{dist_name}")
-async def get_dist_by_name(dist_name: str) -> DreamDistModel:
+async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -> DreamDistModel:
     """
     Returns existing dist with the given name
 
     Args:
         dist_name: name of the distribution
+        token: jwt token
 
     """
     dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
@@ -72,13 +96,14 @@ async def get_dist_by_name(dist_name: str) -> DreamDistModel:
 
 
 @router.put("/{dist_name}", status_code=status.HTTP_200_OK)
-async def replace_dist(dist_name: str, replacement: DreamDistModel) -> None:
+async def replace_dist(dist_name: str, replacement: DreamDistModel, token: str = Depends(verify_token)) -> None:
     """
     Replaces distribution dist_name (assistant_dists/dist_name) with the *replacement_dist_name* distribution
 
     Args:
         dist_name: name of distribution to be replaced
         replacement: replacement DreamDist
+        token:
     """
     replacement = _distmodel_to_dist(replacement)
     replacement.name = dist_name
@@ -88,7 +113,7 @@ async def replace_dist(dist_name: str, replacement: DreamDistModel) -> None:
 
 
 @router.post("/{dist_name}", status_code=status.HTTP_201_CREATED)
-async def create_config(dist_name: str, configs: DreamDistConfigsImport):
+async def create_config(dist_name: str, configs: DreamDistConfigsImport, token: str = Depends(verify_token)):
     """
     Initializes config attribute into dream_dist object. If config is empty it won't be saved in dream distribution
 
@@ -96,6 +121,7 @@ async def create_config(dist_name: str, configs: DreamDistConfigsImport):
         dist_name: name of the distribution
         configs: json with config parameters. Example of json: { "name": name, "data": { "pipeline_conf": ...,
         "override": ..., ...}
+        token:
     """
     dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
 
@@ -111,7 +137,9 @@ async def create_config(dist_name: str, configs: DreamDistConfigsImport):
 
 
 @router.get("/{dist_name}/{config_name}")
-async def get_config_by_name(dist_name: str, config_name: DreamConfigLiteral) -> AnyConfigClass:
+async def get_config_by_name(
+    dist_name: str, config_name: DreamConfigLiteral, token: str = Depends(verify_token)
+) -> AnyConfigClass:
     """
     Returns config (pydantic model)
     """
@@ -122,7 +150,10 @@ async def get_config_by_name(dist_name: str, config_name: DreamConfigLiteral) ->
 
 @router.put("/{dist_name}/{config_name}", status_code=status.HTTP_201_CREATED)
 async def replace_config_of_dist(
-    dist_name: str, config_name: DreamConfigLiteral, new_config: DreamDistConfigsImport
+    dist_name: str,
+    config_name: DreamConfigLiteral,
+    new_config: DreamDistConfigsImport,
+    token: str = Depends(verify_token),
 ) -> None:
     """
     Edits distribution with name=dist_name by adding new_config
@@ -138,7 +169,7 @@ async def replace_config_of_dist(
 
 
 @router.post("/{dist_name}/add_service/", status_code=status.HTTP_201_CREATED)
-async def add_service_to_dist(dist_name: str, service_name: str, port: int):
+async def add_service_to_dist(dist_name: str, service_name: str, port: int, token: str = Depends(verify_token)):
     """ """
     dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
     dream_dist.add_service(name=service_name, port=port)
@@ -148,7 +179,7 @@ async def add_service_to_dist(dist_name: str, service_name: str, port: int):
 
 
 @router.post("/{dist_name}/remove_service", status_code=status.HTTP_200_OK)
-async def remove_service_from_dist(dist_name: str, service_name: str):
+async def remove_service_from_dist(dist_name: str, service_name: str, token: str = Depends(verify_token)):
     """ """
     dream_dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
     dream_dist.remove_service(service_name, inplace=True)

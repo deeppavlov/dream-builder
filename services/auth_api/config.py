@@ -1,20 +1,34 @@
-from pydantic import BaseSettings
+from pydantic import BaseModel, BaseSettings
 
-from pathlib import Path
+
+class UrlSettings(BaseModel):
+    frontend: str
+    auth_api: str
+    distributions_api: str
+
+
+class DatabaseSettings(BaseModel):
+    user: str
+    password: str
+    host: str
+    port: int
+    name: str
+
+
+class AuthSettings(BaseModel):
+    google_client_id: str
+    test_token: str
 
 
 class Settings(BaseSettings):
-    google_client_id: str
-    db_user: str
-    db_password: str
-    db_host: str
-    db_port: int
-    db_name: str
-    test_token: str
+    url: UrlSettings
+    db: DatabaseSettings
+    auth: AuthSettings
 
     class Config:
-        env_file = Path(__file__).with_name(".env").absolute()
+        env_file = ".env"
         env_file_encoding = "utf-8"
+        env_nested_delimiter = "__"
 
 
 settings = Settings()

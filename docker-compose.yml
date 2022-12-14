@@ -1,6 +1,5 @@
 services:
 
-
   frontend:
     env_file: [ .env ]
     build:
@@ -17,14 +16,12 @@ services:
         reservations:
           memory: 256M
 
-
-
   postgres:
     image: postgres:15.1
     env_file: [ .env ]
     restart: always
-    volumes:
-      - ./.database/postgres/data:/var/lib/postgresql/data
+#    volumes:
+#      - ./postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
@@ -36,18 +33,20 @@ services:
       retries: 5
 
   auth-api:
-    env_file: [ services/auth_api/.env ]
+    env_file: [ .env ]
     build:
       context: ./
       dockerfile: ./services/auth_api/Dockerfile
+      args:
+        PORT: 6999
     depends_on:
       - postgres
     links:
       - postgres
     ports:
-      - "6000:6000"
+      - "6999:6999"
     volumes:
-      - ./services/auth_api:/src
+      - ./services/auth_api:/src/services/auth_api
     deploy:
       resources:
         limits:
@@ -68,7 +67,7 @@ services:
     ports:
       - "7000:7000"
     volumes:
-      - ./services/distributions_api:/src
+      - ./services/distributions_api:/src/services/distributions_api
     deploy:
       resources:
         limits:

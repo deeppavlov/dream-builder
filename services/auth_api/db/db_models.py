@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, Integer, String
 
-from db.db import Base
+from services.auth_api.db.db import Base
 
 
 class GoogleUser(Base):

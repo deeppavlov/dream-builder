@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-import models
-from db.db_models import GoogleUser
+from services.auth_api import models
+from services.auth_api.db.db_models import GoogleUser
 
 
 def check_user_exists(db: Session, email):

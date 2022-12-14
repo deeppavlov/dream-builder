@@ -14,7 +14,7 @@ RUN git clone https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 COPY services/distributions_api/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt
 
-COPY services/distributions_api /src
+COPY services/distributions_api /src/services/distributions_api
 
 WORKDIR src/
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT --reload
+CMD uvicorn services.distributions_api.app:app --host 0.0.0.0 --port $PORT --reload

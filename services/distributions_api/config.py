@@ -1,6 +1,34 @@
-import os
+from pydantic import BaseModel, BaseSettings
 
-from dotenv import load_dotenv
 
-load_dotenv()
-AUTH_URL = os.getenv("AUTH_URL")
+class UrlSettings(BaseModel):
+    frontend: str
+    auth_api: str
+    distributions_api: str
+
+
+class DatabaseSettings(BaseModel):
+    user: str
+    password: str
+    host: str
+    port: int
+    name: str
+
+
+class AuthSettings(BaseModel):
+    google_client_id: str
+    test_token: str
+
+
+class Settings(BaseSettings):
+    url: UrlSettings
+    db: DatabaseSettings
+    auth: AuthSettings
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        env_nested_delimiter = "__"
+
+
+settings = Settings()

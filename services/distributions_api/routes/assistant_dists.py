@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from fastapi import APIRouter, status, Depends
 
@@ -69,14 +70,14 @@ def _distmodel_to_dist(dream_dist_model: DreamDistModel) -> DreamDist:
 
 
 @assistant_dists_router.get("/", status_code=status.HTTP_200_OK)
-async def get_list_of_distributions() -> dict[str, DreamDistModel]:
+async def get_list_of_distributions() -> List[DreamDistModelShort]:
     """
     Returns list of dream distributions in format {name: DreamDistModel}, i.e. {"deepy_adv": DreamDistModel}
 
     Very expensive endpoint. Run it carefully.
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = {dist.name: _dist_to_distmodel_short(dist) for dist in distributions}
+    distributions = [_dist_to_distmodel_short(dist) for dist in distributions]
 
     return distributions
 

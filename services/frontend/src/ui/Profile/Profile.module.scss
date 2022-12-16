@@ -3,26 +3,28 @@
   align-items: center;
   justify-content: end;
   width: 80px;
-  img {
+  &__picture {
+    border-radius: 50%;
     width: 40px;
     height: 40px;
+    background-color: $text3;
   }
-  .arrow {
-    cursor: pointer;
-    stroke: #8d96b5;
-    fill: #8d96b5;
-    @include icon_size_24;
-    &:hover {
-      fill: #3300ff;
-      stroke: #3300ff;
-    }
-    &:active {
-      fill: #190080;
-      stroke: #190080;
-    }
-    &:disabled {
-      opacity: 0.3;
-    }
+}
+.arrow {
+  cursor: pointer;
+  stroke: #8d96b5;
+  fill: #8d96b5;
+  @include icon_size_24;
+  &:hover {
+    fill: #3300ff;
+    stroke: #3300ff;
+  }
+  &:active {
+    fill: #190080;
+    stroke: #190080;
+  }
+  &:disabled {
+    opacity: 0.3;
   }
 }
 .menu {

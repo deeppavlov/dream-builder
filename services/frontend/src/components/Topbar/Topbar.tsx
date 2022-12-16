@@ -1,35 +1,35 @@
-import jwtDecode from 'jwt-decode'
 import ReactTooltip from 'react-tooltip'
-import { useEffect } from 'react'
-import { BurgerButton } from '../../ui/BurgerButton/BurgerButton'
+import { useEffect, useState } from 'react'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
+import { Menu } from '../../ui/Menu/Menu'
+import { useAuth } from '../../services/AuthProvider'
+import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
-import { Menu } from '../../ui/Menu/Menu'
-import { Notifications } from './components/Notifications'
 
-export const Topbar = ({ children, type, viewHandler }: any) => {
-  const handleCallbackResponse = response => {
-    console.log('JWT = ' + JSON.stringify(response.credential))
-    console.log(jwtDecode(JSON.stringify(response.credential)))
-  }
+export const Topbar = ({ type, viewHandler }: any) => {
+  const auth = useAuth()
+  const user = auth?.user
+
   useEffect(() => {
+    //Render Google SignIn button
     google.accounts.id.initialize({
-      client_id:
-        '207081743698-inmfpn8fnrqntj4em2298tc5vdf4gptm.apps.googleusercontent.com',
-      callback: handleCallbackResponse,
+      // Getting `GOOGLE_CLIENT_ID` from .env file
+      // Maybe need to get `GOOGLE_CLIENT_ID` from backend
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: auth?.login,
     })
-    google.accounts.id.renderButton(document.getElementById('signin'), {
-      type: 'standart',
-      theme: 'filled_black',
-      size: 'large',
+    google.accounts.id.renderButton(document.getElementById('signin')!, {
+      type: 'standard',
+      size: 'medium',
       text: 'signin',
     })
   }, [])
+
   switch (type) {
     case 'main':
       return (
@@ -40,7 +40,11 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
           </div>
           <div className={s.btns_area}>
             <Display viewHandler={viewHandler} />
-            <Profile />
+            {user ? (
+              <Profile auth={auth} />
+            ) : (
+              <div id='signin' className={s.signin}></div>
+            )}
           </div>
           <ReactTooltip
             id='topbar_tooltip'
@@ -65,7 +69,6 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
             <a href='https://github.com/deeppavlov/dream'>
               <button data-tip='Open Source on GitHub' className={s.github} />
             </a>
-            {/* <div id='signin' className={s.signin}></div> */}
           </div>
           <ReactTooltip
             place='bottom'
@@ -90,7 +93,11 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
               <Resources />
               <Notifications />
               <Test />
-              <Profile />
+              {user ? (
+                <Profile auth={auth} />
+              ) : (
+                <div id='signin' className={s.signin}></div>
+              )}
             </div>
           </div>
         </>
@@ -107,7 +114,11 @@ export const Topbar = ({ children, type, viewHandler }: any) => {
         <h3>Dream&nbsp;Builder</h3>
       </div>
       <div className={s.btns_area}>
-        <Profile />
+        {user ? (
+          <Profile auth={auth} />
+        ) : (
+          <div id='signin' className={s.signin}></div>
+        )}
       </div>
     </div>
   )

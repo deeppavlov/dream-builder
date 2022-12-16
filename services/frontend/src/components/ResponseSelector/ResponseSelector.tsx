@@ -17,7 +17,7 @@ export const ResponseSelector = () => {
           <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled='true' text='Add Response Selector' />
+      <AddButtonStack disabled={true} text='Add Response Selector' />
       <Accordeon title='Customizable'>
         <Skill title='Tag-& Evaluation-Based' />
       </Accordeon>

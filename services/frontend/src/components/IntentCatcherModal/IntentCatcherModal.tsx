@@ -95,7 +95,8 @@ const IntentCatcherModal = ({ intent, isOpen, setIsOpen }: Props) => {
         isOpen={isOpen}
         onRequestClose={closeModal}
         contentLabel='Intet Modal'
-        className={s.intentModal}>
+        className={s.intentModal}
+        style={{ overlay: { zIndex: 5 } }}>
         <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
           <div className={s.intentModal__header}>
             <span className={s.intentModal__name}>

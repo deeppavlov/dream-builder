@@ -17,7 +17,7 @@ export const SkillSelector = () => {
           <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled='true' text='Add Skill Selector' />
+      <AddButtonStack disabled={true} text='Add Skill Selector' />
       <Accordeon title='Customizable'>
         <form>
           <Skill title='Rule Based' />

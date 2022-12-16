@@ -1,3 +1,5 @@
+import json
+
 from deeppavlov_dreamtools import list_components
 from fastapi import APIRouter, status
 
@@ -10,4 +12,4 @@ annotators_router = APIRouter(prefix="/api/annotators")
 async def get_list_of_annotators():
     annotators = list_components(DREAM_ROOT_PATH, "annotators")
 
-    return annotators
+    return [json.loads(annotator.json(exclude_none=True)) for annotator in annotators]

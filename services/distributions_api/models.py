@@ -13,6 +13,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 
 
 class DreamDistModelMetadata(BaseModel):
+    display_name: str
     author: str
     description: str
     version: str

@@ -1,3 +1,5 @@
+import json
+
 from deeppavlov_dreamtools import list_components
 from fastapi import APIRouter, status
 
@@ -10,4 +12,4 @@ skills_router = APIRouter(prefix="/api/skills")
 async def get_list_of_skills():
     skills = list_components(DREAM_ROOT_PATH, "skills")
 
-    return skills
+    return [json.loads(skill.json(exclude_none=True)) for skill in skills]

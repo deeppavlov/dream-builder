@@ -27,8 +27,9 @@ def _dist_to_distmodel_short(dream_dist: DreamDist) -> DreamDistModelShort:
         name=dream_dist.name,
         dream_root=str(dream_dist.dream_root),
         metadata=DreamDistModelMetadata(
+            display_name=dream_dist.name.replace("_", " ").capitalize(),
             author="DeepPavlov",
-            description="Lorem ipsum dolores est",
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             version="0.1.0",
             date=datetime(year=2022, month=12, day=12, hour=12, minute=12),
             ram_usage="10.1 GB",

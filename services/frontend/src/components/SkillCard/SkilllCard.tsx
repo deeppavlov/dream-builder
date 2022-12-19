@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
+import classNames from 'classnames/bind'
 import Calendar from '../../assets/icons/calendar.svg'
-import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { BotCardProps } from '../BotCard/BotCard'
 import { SmallTag } from '../SmallTag/SmallTag'
@@ -9,7 +9,13 @@ import s from './SkillCard.module.scss'
 
 export interface SkillCardProps extends BotCardProps {
   skillName: string
-  skillType: string | 'retrieval'
+  skillType:
+    | 'fallbacks'
+    | 'retrieval'
+    | 'generative'
+    | 'q_a'
+    | 'script'
+    | 'script_with_nns'
   time: string
   checkbox?: boolean
   executionTime: string
@@ -27,6 +33,7 @@ export const SkillCard = ({
   skillType,
   checkbox,
 }: SkillCardProps) => {
+  let cx = classNames.bind(s)
   return (
     <div className={s.card}>
       <div className={s.header}>
@@ -35,8 +42,13 @@ export const SkillCard = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
-            <img className={s.typeLogo} src={SkillTypeLogo} />
-            <p className={s.typeText}>{skillType || 'Retrieval Skill'}</p>
+            <img
+              className={s.typeLogo}
+              src={`./src/assets/icons/${skillType}.svg`}
+            />
+            <p className={cx('typeText', skillType)}>
+              {skillType || 'Type of Skill'}
+            </p>
           </div>
           <div className={s.name}>
             <img className={s.companyLogo} src={CompanyLogo} />

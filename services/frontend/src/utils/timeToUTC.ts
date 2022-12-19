@@ -5,5 +5,5 @@ interface date_created {
 }
 
 export const timeToUTC = (date: any) => {
-  return format(new Date(date), 'shortTime')
+  return format(new Date(date), 'hh:mm A')
 }

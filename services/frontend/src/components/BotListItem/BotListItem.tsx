@@ -32,7 +32,7 @@ export const BotListItem = ({
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p>{botName || 'Name of The Bot'}</p>
+          <p className={s.botName}>{botName || 'Name of The Bot'}</p>
           <span className={s.params}>
             {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
             {'DS ' + space || '300GB'}

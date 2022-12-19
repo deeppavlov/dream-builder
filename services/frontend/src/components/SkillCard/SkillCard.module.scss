@@ -23,7 +23,7 @@
     padding: 8px 16px;
     background-color: $bcgrnd5;
     .botName {
-      color: rgba(0, 0, 0, 0.7);
+      color: rgba(0, 0, 0, 0.9);
       @include t4;
     }
   }
@@ -50,8 +50,10 @@
           @include icon_size_24;
         }
         .typeText {
+          text-transform: capitalize;
           @include t4;
         }
+        @include skillType;
       }
       .name {
         display: flex;
@@ -111,12 +113,12 @@
       gap: 4px;
       .params {
         .item {
-          @include b3;
           color: $text2;
+          @include b3;
         }
         .units {
-          @include b3;
           color: $text1;
+          @include b3;
         }
       }
     }

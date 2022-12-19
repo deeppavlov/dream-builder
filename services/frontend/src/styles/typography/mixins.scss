@@ -24,16 +24,6 @@
   line-height: 140%;
   letter-spacing: $letter_spacing;
 }
-@mixin h5 {
-  font-weight: $bold;
-  font-size: 24px;
-  line-height: 150%;
-}
-@mixin h6 {
-  font-weight: $bold;
-  font-size: 14px;
-  line-height: 160%;
-}
 @mixin font {
   font-family: $main-font;
   font-style: normal;
@@ -134,43 +124,27 @@
 @mixin bold {
   font-weight: 600;
 }
-
-@mixin t2 {
-  font-size: 18px;
-  line-height: 22px;
+@mixin t {
   @include font;
   @include bold;
+  line-height: 160%;
 }
-@mixin t2_bold {
+@mixin t1 {
+  @include t;
+  font-size: 24px;
+  line-height: 150%;
+}
+@mixin t2 {
+  @include t;
   font-size: 18px;
-  line-height: 22px;
-  @include font;
-  @include ultra_bold;
 }
 @mixin t3 {
+  @include t;
   font-size: 16px;
-  line-height: 160%;
-  @include font;
-  @include bold;
 }
 @mixin t4 {
-  font-size: 18px;
-}
-@mixin b2 {
-  @include b;
-  font-size: 16px;
-}
-@mixin b3 {
-  @include b;
+  @include t;
   font-size: 14px;
-}
-@mixin b4 {
-  @include b;
-  font-size: 12px;
-}
-@mixin b5 {
-  @include b;
-  font-size: 10px;
 }
 @mixin d {
   @include font;

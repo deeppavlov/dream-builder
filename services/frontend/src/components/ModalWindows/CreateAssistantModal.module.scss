@@ -1,5 +1,6 @@
 .open {
-  @include large_btn;
+  width: 100%;
+  @include small_btn;
   @include lnks_n_btns4;
   @include primary_btn;
   @include btn_primary_behavior;

@@ -1,99 +1,85 @@
-import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
 import Calendar from '../../assets/icons/calendar.svg'
 import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
-import s from './SkillCard.module.scss'
+import { BotCardProps } from '../BotCard/BotCard'
+import { SmallTag } from '../SmallTag/SmallTag'
+import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import { useAuth } from '../../services/AuthProvider'
-import ReactTooltip from 'react-tooltip'
-import Button from '../../ui/Button/Button'
+import s from './SkillCard.module.scss'
+
+
+export interface SkillCardProps extends BotCardProps {
+  skillName: string
+  skillType: string | 'retrieval'
+  time: string
+  checkbox?: boolean
+  executionTime: string
+}
 
 export const SkillCard = ({
   skillName,
   companyName,
+  description,
   date,
   version,
   ram,
   gpu,
-  space,
+  executionTime,
   skillType,
-}: any) => {
+  checkbox,
+}: SkillCardProps) => {
   const auth = useAuth()
 
   return (
-    <div className={s.skill}>
+    <div className={s.card}>
       <div className={s.header}>
-        <h6>{skillName ? skillName : 'Name of The Skill'} </h6>
-        <CheckBox />
+        <p className={s.botName}>{skillName || 'Name of The Skill'} </p>
       </div>
       <div className={s.body}>
         <div className={s.top}>
-          <div className={s.name}>
-            <div className={s.type}>
-              <img src={SkillTypeLogo} />
-              <h6>{skillType ? skillType : 'Retrieval Skill'}</h6>
-            </div>
-            <div className={s.company}>
-              <img src={CompanyLogo} />
-              <h6>{companyName ? companyName : 'Name of The Company'}</h6>
-            </div>
+          <div className={s.type}>
+            <img className={s.typeLogo} src={SkillTypeLogo} />
+            <p className={s.typeText}>{skillType || 'Retrieval Skill'}</p>
           </div>
-          <div className={s.twoLines}>
-            <p>
-              Helps users locate the nearest store. And we can write 2 lines
+          <div className={s.name}>
+            <img className={s.companyLogo} src={CompanyLogo} />
+            <p className={s.companyName}>
+              {companyName || 'Name of The Company'}
             </p>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
+          <div className={s.description}>
+            <p className={s.descriptionText}>
+              {description || 'Lorem ipsum dolores est'}
+            </p>
+          </div>
+          <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
-              <p style={{ fontSize: '14px' }}>{date ? date : '27.10.2022'}</p>
+              <p className={s.dateText}>{date || '27.10.2022'}</p>
             </div>
-            <div className={s.version}>
-              <p style={{ fontSize: '12px' }}>{version ? version : 'v.0.01'}</p>
-            </div>
+            <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
         </div>
-        <hr />
+        <span className={s.separator} />
         <div className={s.middle}>
           <ul className={s.params}>
             <li>
-              <p className={s.params_item}>RAM</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>RAM</p>
+              <p className={s.units}>{ram || '0.0GB'}</p>
             </li>
             <li>
-              <p className={s.params_item}>GPU</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>GPU</p>
+              <p className={s.units}>{gpu || '0.0GB'}</p>
             </li>
             <li>
-              <p className={s.params_item}>Disk Space</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>Execution Time</p>
+              <p className={s.units}>{executionTime + 's' || '0.0s'}</p>
             </li>
           </ul>
         </div>
         <div className={s.bottom}>
-          <div className={s.btns_area}>
-            <div
-              data-tip
-              data-for='skill-add-interact'
-              style={{ width: '100%' }}>
-              <Button
-                theme='primary'
-                small
-                long
-                props={{
-                  disabled: auth?.user === null,
-                  onClick: () => (location.pathname = '/editor'),
-                }}>
-                Add
-              </Button>
-            </div>
-          </div>
+          <CreateAssistantModal data-tip data-for='skill-add-interact'>Add Skill</CreateAssistantModal>
         </div>
       </div>
       {auth?.user === null && (

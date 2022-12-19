@@ -34,11 +34,11 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll={true}
+              showAll
               amount='5'
               linkTo='/bots'
               paddingBottom='12px'>
-              <Container paddingBottom='22px'>
+              <Container overflowY='hidden' paddingBottom='22px'>
                 <BotCard />
                 <BotCard />
                 <BotCard />
@@ -55,13 +55,15 @@ export const BotsPage = () => {
             <Wrapper
               paddingBottom='12px'
               title='Your Virtual Assistants & Chatbots'>
-              <Container>
+              <Container overflow='hidden'>
                 <Container
                   position='sticky'
                   left='0'
                   top='0'
                   width='275px'
                   minWidth='275px'
+                  overflow='hidden'
+                  padding='0'
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
@@ -71,7 +73,7 @@ export const BotsPage = () => {
                     />
                   </div>
                 </Container>
-                <Container>{bots}</Container>
+                <Container paddingBottom='22px'>{bots}</Container>
               </Container>
             </Wrapper>
           </>
@@ -96,14 +98,8 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
-                checkbox={true}
-                addButton={
-                  <AddButton
-                    listView={listView}
-                    addBot={addBot}
-                    disabled={auth?.user === null}
-                  />
-                }>
+                // checkbox={true}
+                addButton={<AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />}>
                 {bots}
               </Table>
             </Wrapper>

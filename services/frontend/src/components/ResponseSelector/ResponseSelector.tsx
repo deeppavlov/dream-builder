@@ -1,7 +1,6 @@
 import ResponseSelectorLogo from '../../assets/icons/response_selector.svg'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { Skill } from './Skill'
 import s from './ResponseSelector.module.scss'
 
@@ -14,16 +13,20 @@ export const ResponseSelector = () => {
             <img src={ResponseSelectorLogo} className={s.icon} />
             <p className={s.type}>Response Selector</p>
           </div>
-          <KebabButton />
         </div>
       </div>
-      <AddButtonStack disabled={true} text='Add Response Selector' />
-      <Accordeon title='Customizable'>
-        <Skill title='Tag-& Evaluation-Based' />
-      </Accordeon>
-      <Accordeon title='Non-customizable'>
-        <Skill title='Confidence Based' />
-      </Accordeon>
+      {/* <AddButtonStack disabled={true} text='Add Response Selector' /> */}
+      <Skill title='Conversational Evaluational Selector' />
+      <form
+        onSubmit={e => {
+          e.preventDefault()
+        }}>
+        {/* <Accordion title='Customizable'> */}
+        {/* </Accordion> */}
+        {/* <Accordion title='Non-customizable'> */}
+          {/* <Skill title='Confidence Based' /> */}
+        {/* </Accordion> */}
+      </form>
     </div>
   )
 }

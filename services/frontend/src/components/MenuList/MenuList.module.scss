@@ -4,23 +4,43 @@
   padding: 0px !important;
   color: rgba(0, 0, 0, 0.9) !important;
   background: #fff !important;
+  border: none !important;
   border: 1px solid #f0f0f3 !important;
-  border-radius: 0px 0px 12px 12px !important;
+  border-radius: 12px !important;
   box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15) !important;
   opacity: 1 !important;
-  &::after {
-    left: 12% !important;
+  z-index: 10 !important;
+  &:after {
+    display: none;
+  }
+  &:before {
+    display: none;
+  }
+  .edited {
+    text-align: start;
+    color: #8d96b5;
+    @include b4;
   }
   .item {
-    border-radius: 0px 0px 12px 12px !important;
+    border-radius: 12px !important;
     width: 100%;
     color: rgba(0, 0, 0, 0.9);
-    padding: 13px 24px;
+    padding: 13px 12px;
     button {
       width: 100%;
       height: 100%;
       text-align: start;
       @include lnks_n_btns5;
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      svg {
+        @include icon_size_24;
+        fill: #8d96b5;
+      }
+      p {
+        @include lnks_n_btns5;
+      }
     }
     &:hover {
       background-color: $bcgrnd3;

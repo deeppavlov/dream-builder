@@ -37,22 +37,6 @@
     }
   }
 }
-.version {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 6px;
-  width: 44px;
-  height: 24px;
-  background: rgba(255, 149, 0, 0.1);
-  border: 1px solid $orange;
-  border-radius: 4px;
-  span {
-    color: $orange;
-    font-size: 12px;
-    line-height: 160%;
-  }
-}
 .description {
   font-family: 'Inter';
   font-style: normal;

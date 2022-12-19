@@ -90,12 +90,10 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
-              <Table checkbox={true}>
-                <AddButton
-                  addBot={addBot}
-                  listView={listView}
-                  disabled={auth?.user === null}
-                />
+                <Table
+                  // checkbox={true}
+                >
+                <AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />
                 {skills}
               </Table>
             </Wrapper>

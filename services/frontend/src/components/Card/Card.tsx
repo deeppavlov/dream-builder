@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import GoToVA from '../../assets/images/go_to_va.png'
-import GoToS from '../../assets/images/go_to_s.png'
+import VA from '../../assets/images/VA.svg'
+import S from '../../assets/images/Skills.svg'
 import s from './Card.module.scss'
 
 export const Card = ({ img, link, btnTitle, button, text, title }: any) => {
@@ -10,9 +10,9 @@ export const Card = ({ img, link, btnTitle, button, text, title }: any) => {
       <div className={s.top}>
         <div className={s.info}>
           <p>{text}</p>
-        <div className={s.img_container}>
-          <img src={img == 'GoToVA' ? GoToVA : img == 'GoToS' ? GoToS : null} />
-        </div>
+          <div className={s.img_container}>
+            <img src={img == 'GoToVA' ? VA : img == 'GoToS' ? S : null} />
+          </div>
         </div>
       </div>
       <Link to={link}>

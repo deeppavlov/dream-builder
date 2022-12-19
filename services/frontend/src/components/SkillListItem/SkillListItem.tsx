@@ -1,47 +1,65 @@
 import { ReactComponent as Logo } from '../../assets/icons/generative.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
+import { SkillCardProps } from '../SkillCard/SkilllCard'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './SkillListItem.module.scss'
 
-export const SkillListItem = ({ ...props }) => {
+interface SkillListItemProps extends SkillCardProps {}
+
+export const SkillListItem = ({
+  skillName,
+  companyName,
+  description,
+  date,
+  version,
+  ram,
+  gpu,
+  time,
+  skillType,
+  checkbox,
+  executionTime,
+}: SkillListItemProps) => {
   return (
     <tr className={s.tr}>
-      <td className={s.checkboxArea}>
-        <CheckBox />
-      </td>
+      {checkbox && (
+        <td className={s.checkboxArea}>
+          <CheckBox />
+        </td>
+      )}
       <td className={s.td}>
         <div className={s.name}>
-          <p>convert_reddit</p>
-          <span className={s.params}>RAM 60.0GB | GPU 65.0 GB | DS 300GB</span>
+          <p>{skillName || 'Name of The Skill'}</p>
+          <span className={s.params}>
+            {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
+            {'DS ' + executionTime + 's' || '0.0s'}
+          </span>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.author}>
           <Logo />
-          <p>Generative</p>
+          <p>{skillType || 'Skill Type'}</p>
         </div>
       </td>
       <td className={s.td}>
-        <p className={s.description}>
-          Our fouray into building consumer-friendly virtual assistants. Clone
-          to...
-        </p>
+        <p className={s.description}>{description || 'Lorem  '}</p>
       </td>
       <td className={s.td}>
         <div className={s.version}>
-          <span>{props.version ? props.version : 'v.0.01'}</span>
+          <SmallTag theme='version'>{'v' + version || 'v.0.01'}</SmallTag>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>12.31.2022</p>
-          <p className={s.time}>5:21 PM </p>
+          <p className={s.ddmmyyyy}>{date}</p>
+          <p className={s.time}>{time} </p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
           <div>
-            <KebabButton type='row' color='#8D96B5' />
+            {/* <Kebab type='row' color='#8D96B5' dataFor='skills' /> */}
           </div>
         </div>
       </td>

@@ -1,5 +1,5 @@
+import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
-import { useEffect, useState } from 'react'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
@@ -10,6 +10,11 @@ import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+
+interface TopbarProps extends React.PropsWithChildren {
+  type?: 'main' | 'editor' | 'dff'
+  viewHandler?: void
+}
 
 export const Topbar = ({ type, viewHandler }: any) => {
   const auth = useAuth()
@@ -34,7 +39,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
     case 'main':
       return (
         <div className={s.topbar}>
-          <Menu />
+          <Menu type='main' />
           <div className={s.logo_area}>
             <Breadcrumbs />
           </div>
@@ -51,40 +56,17 @@ export const Topbar = ({ type, viewHandler }: any) => {
             place='bottom'
             effect='solid'
             className={s.tooltips}
-            arrowColor='#8d96b5'
-            offset={{ right: 44, top: -5 }}
-            delayShow={1000}
-          />
-        </div>
-      )
-    case 'home':
-      return (
-        <div className={s.topbar}>
-          <div className={s.logo_area}>
-            <span className={s.logo}></span>
-            <h3>Dream&nbsp;Builder</h3>
-          </div>
-          <div className={s.btns_area}>
-            <button className={s.watch}>Watch Demo</button>
-            <a href='https://github.com/deeppavlov/dream'>
-              <button data-tip='Open Source on GitHub' className={s.github} />
-            </a>
-          </div>
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className={s.tooltips}
-            arrowColor='#8d96b5'
-            offset={{ right: 55, top: -5 }}
-            delayShow={1000}
+            delayShow={500}
           />
         </div>
       )
     case 'editor':
       return (
         <>
-          <div className={s.topbar}>
-            <Menu />
+          <div
+            style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
+            className={s.topbar}>
+            <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
@@ -100,6 +82,13 @@ export const Topbar = ({ type, viewHandler }: any) => {
               )}
             </div>
           </div>
+          <ReactTooltip
+            id='topbar_tooltip'
+            place='bottom'
+            effect='solid'
+            className={s.tooltips}
+            delayShow={500}
+          />
         </>
       )
     case 'dff':
@@ -108,7 +97,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
 
   return (
     <div className={s.topbar}>
-      <Menu />
+      <Menu type='main' />
       <div className={s.logo_area}>
         <span className={s.logo} />
         <h3>Dream&nbsp;Builder</h3>

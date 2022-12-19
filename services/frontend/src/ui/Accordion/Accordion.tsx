@@ -1,25 +1,25 @@
 import { useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
-import s from './Accordeon.module.scss'
+import s from './Accordion.module.scss'
 
-interface AccordeonProps extends React.PropsWithChildren {
+interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
   rounded?: boolean
 }
 
-export const Accordeon = ({
+export const Accordion = ({
   children,
   title,
   small,
   rounded,
-}: AccordeonProps) => {
+}: AccordionProps) => {
   const [close, setClose] = useState(false)
-  const contentEl = useRef()
+  const contentEl = useRef<HTMLDivElement>(null)
   const handleToggle = () => {
     setClose(!close)
   }
-  // console.log(contentEl?.current)
+
   return (
     <div>
       <button

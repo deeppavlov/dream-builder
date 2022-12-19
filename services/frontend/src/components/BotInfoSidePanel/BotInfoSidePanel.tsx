@@ -3,9 +3,9 @@ import { ReactComponent as FallbackIcon } from '@assets/icons/fallbacks.svg'
 import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import SmallTag from '../SmallTag/SmallTag'
+import {SmallTag} from '../SmallTag/SmallTag'
 import DateCard from '../DateCard/DateCard'
 import s from './BotInfoSidePanel.module.scss'
 
@@ -69,8 +69,8 @@ const BotInfoSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
           </p>
         </div>
         <div className={s.botInfoSidePanel__accordions}>
-          <Accordeon title='Annotators' rounded></Accordeon>
-          <Accordeon title='Skills' rounded>
+          <Accordion title='Annotators' rounded></Accordion>
+          <Accordion title='Skills' rounded>
             <div className={s['botInfoSidePanel__accordion-item']}>
               <SkillScriptIcon />
               DFF Program-Y Skill
@@ -82,7 +82,7 @@ const BotInfoSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
             <div className={s['botInfoSidePanel__accordion-item']}>
               <FallbackIcon /> Dummy Skill
             </div>
-          </Accordeon>
+          </Accordion>
         </div>
         <div className={s.botInfoSidePanel__btns}>
           <Button theme='primary'>Clone</Button>

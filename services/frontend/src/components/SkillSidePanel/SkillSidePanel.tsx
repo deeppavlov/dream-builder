@@ -4,7 +4,7 @@ import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.sv
 import { ReactComponent as SkillRetrievalIcon } from '@assets/icons/skill_retrieval.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './SkillSidePanel.module.scss'
 
@@ -39,7 +39,7 @@ const SkillSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
           </TabList>
           <TabPanel className={s.tabs__panel}>
             <div className={s.skillSidePanel__accordions}>
-              <Accordeon title='Annotators' rounded>
+              <Accordion title='Annotators' rounded>
                 <div className={s['skillSidePanel__accordion-item']}>
                   <SkillScriptIcon />
                   DFF Program-Y Skill
@@ -51,7 +51,7 @@ const SkillSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
                 <div className={s['skillSidePanel__accordion-item']}>
                   <FallbackIcon /> Dummy Skill
                 </div>
-              </Accordeon>
+              </Accordion>
             </div>
           </TabPanel>
         </Tabs>

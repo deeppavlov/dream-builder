@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import Search from '../../ui/Search/Search'
@@ -41,16 +41,16 @@ const DropboxSearch = ({
             <Input props={{ placeholder: 'Search intents' }} />
           </div> */}
           <Search />
-          <Accordeon title='Custom' small>
+          <Accordion title='Custom' small>
             {intents?.map(({ id, name, status }) => (
               <IntentListItem key={id} id={id} name={name} status={status} />
             ))}
-          </Accordeon>
-          <Accordeon title='Prebuilt' small>
+          </Accordion>
+          <Accordion title='Prebuilt' small>
             {intents?.map(({ id, name }) => (
               <IntentListItem key={id} id={id} name={name} status={'default'} />
             ))}
-          </Accordeon>
+          </Accordion>
         </IntentList>
       </div>
     </div>

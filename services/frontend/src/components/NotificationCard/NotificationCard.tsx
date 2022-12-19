@@ -1,7 +1,7 @@
 import { ReactComponent as AnnotatorNNBased } from '@assets/icons/annotator_nn_based.svg'
 import { ReactComponent as SkillScript } from '@assets/icons/skill_script.svg'
 import { ReactComponent as ArrowRight } from '@assets/icons/arrow_right_link.svg'
-import SmallTag from '../SmallTag/SmallTag'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './NotificationCard.module.scss'
 
 export interface NotificationCardProps {

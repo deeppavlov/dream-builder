@@ -59,14 +59,6 @@
     gap: 12px;
     color: #3300ff;
     background-color: $bcgrnd1;
-    // .logo {
-    //   width: 45px;
-    //   height: 36px;
-    //   background-image: url(../../assets/icons/dream_logo.svg);
-    //   background-repeat: no-repeat;
-    //   background-position: center;
-    //   background-color: $bcgrnd1;
-    // }
     h3 {
       font-weight: 600;
       font-size: 18px;
@@ -97,39 +89,10 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  .github {
-    height: 64px;
-    width: 40px;
-    background-repeat: no-repeat;
-    background-image: url(../../assets/icons/github.svg);
-    background-position: center;
-    &:hover {
-      background-color: #f0f0f3;
-    }
-    &:active {
-      background-color: #e3e3e8;
-    }
-    &:disabled {
-      opacity: 0.3;
-    }
-  }
 }
 .tooltips {
-  height: 45px;
-  background: #8d96b5 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  padding: 4px 12px !important;
-  gap: 10px !important;
-  border-radius: 8px !important;
-  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-  z-index: 3;
-  offset: 30%;
-  font-size: 18px;
-  line-height: 160%;
-  color: #ffffff;
+  @include tooltip;
   &::after {
-    left: 20% !important;
+    top: -2px !important;
   }
 }

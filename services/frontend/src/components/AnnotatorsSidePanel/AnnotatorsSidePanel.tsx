@@ -6,7 +6,7 @@ import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './AnnotatorsSidePanel.module.scss'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
 const AnnotatorsSidePanel = ({
@@ -45,7 +45,7 @@ const AnnotatorsSidePanel = ({
           </TabList>
           <TabPanel className={s.tabs__panel}>
             <div className={s.annotatorsSidePanel__accordions}>
-              <Accordeon title='Annotators' rounded>
+              <Accordion title='Annotators' rounded>
                 <div className={s['annotatorsSidePanel__accordion-item']}>
                   <SkillScriptIcon />
                   DFF Program-Y Skill
@@ -57,8 +57,8 @@ const AnnotatorsSidePanel = ({
                 <div className={s['annotatorsSidePanel__accordion-item']}>
                   <FallbackIcon /> Dummy Skill
                 </div>
-              </Accordeon>
-              <Accordeon title='Skills' rounded></Accordeon>
+              </Accordion>
+              <Accordion title='Skills' rounded></Accordion>
             </div>
           </TabPanel>
           <TabPanel className={s.tabs__panel}></TabPanel>

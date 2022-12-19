@@ -5,9 +5,9 @@
 }
 
 :global {
-  // .ReactModal__Overlay:has([data-modal-type='side-panel']) {
-  //   z-index: 3;
-  // }
+  .ReactModal__Body--open:has([data-modal-type='side-panel']) {
+    overflow: hidden;
+  }
   .ReactModal__Content:has([data-modal-type='side-panel']) {
     transform: translateX(100%);
     transition: all 0.3s linear;

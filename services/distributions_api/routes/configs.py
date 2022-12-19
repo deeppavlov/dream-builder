@@ -7,7 +7,12 @@ from deeppavlov_dreamtools.distconfigs.manager import (
     AnyConfigClass,
 )
 
-from services.distributions_api.const import CONFIGNAME_DREAMOBJECT, DREAM_ROOT_PATH, DreamConfigLiteral, CONFIGNAME_CONFIGOBJECT
+from services.distributions_api.const import (
+    CONFIGNAME_DREAMOBJECT,
+    DREAM_ROOT_PATH,
+    DreamConfigLiteral,
+    CONFIGNAME_CONFIGOBJECT,
+)
 
 configs_router = APIRouter(prefix="/api/configs")
 

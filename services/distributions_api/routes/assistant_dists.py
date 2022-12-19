@@ -12,7 +12,12 @@ from deeppavlov_dreamtools.distconfigs.manager import (
 )
 
 from services.distributions_api.const import DREAM_ROOT_PATH, DreamConfigLiteral
-from services.distributions_api.models import DreamDistConfigsImport, DreamDistModel, DreamDistModelShort, DreamDistModelMetadata
+from services.distributions_api.models import (
+    DreamDistConfigsImport,
+    DreamDistModel,
+    DreamDistModelShort,
+    DreamDistModelMetadata,
+)
 from services.distributions_api.security.auth import verify_token
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists")
@@ -35,7 +40,7 @@ def _dist_to_distmodel_short(dream_dist: DreamDist) -> DreamDistModelShort:
             ram_usage="10.1 GB",
             gpu_usage="11.1 GB",
             disk_usage="12.1 GB",
-        )
+        ),
     )
 
 

@@ -4,6 +4,9 @@ import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import s from './SkillCard.module.scss'
+import { useAuth } from '../../services/AuthProvider'
+import ReactTooltip from 'react-tooltip'
+import Button from '../../ui/Button/Button'
 
 export const SkillCard = ({
   skillName,
@@ -15,6 +18,8 @@ export const SkillCard = ({
   space,
   skillType,
 }: any) => {
+  const auth = useAuth()
+
   return (
     <div className={s.skill}>
       <div className={s.header}>
@@ -73,12 +78,35 @@ export const SkillCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <Link to='/editor'>
-              <button className={s.clone_btn}>Add</button>
-            </Link>
+            <div
+              data-tip
+              data-for='skill-add-interact'
+              style={{ width: '100%' }}>
+              <Button
+                theme='primary'
+                small
+                long
+                props={{
+                  disabled: auth?.user === null,
+                  onClick: () => (location.pathname = '/editor'),
+                }}>
+                Add
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+      {auth?.user === null && (
+        <ReactTooltip
+          place='bottom'
+          effect='solid'
+          className='tooltips'
+          arrowColor='#8d96b5'
+          delayShow={1000}
+          id='skill-add-interact'>
+          You must be signed in to add the skill
+        </ReactTooltip>
+      )}
     </div>
   )
 }

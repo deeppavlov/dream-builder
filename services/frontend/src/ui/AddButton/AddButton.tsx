@@ -1,7 +1,7 @@
 import Add from '../../assets/icons/+.svg'
 import s from './AddButton.module.scss'
 
-export const AddButton = ({ addBot, listView, ...props }: any) => {
+export const AddButton = ({ addBot, listView, disabled, ...props }: any) => {
   const handleClick = () => {
     console.log('clicked')
     addBot()
@@ -14,7 +14,8 @@ export const AddButton = ({ addBot, listView, ...props }: any) => {
           onClick={() => {
             handleClick()
           }}
-          className={s.add_card}>
+          className={s.add_card}
+          disabled={disabled}>
           <img src={Add} />
         </button>
       ) : (
@@ -24,7 +25,8 @@ export const AddButton = ({ addBot, listView, ...props }: any) => {
               className={s.add_list_item}
               onClick={() => {
                 handleClick()
-              }}>
+              }}
+              disabled={disabled}>
               <img src={Add} />
               <p>Create From Template</p>
             </button>

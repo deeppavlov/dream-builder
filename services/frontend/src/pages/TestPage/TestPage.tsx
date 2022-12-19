@@ -182,7 +182,7 @@ export const TestPage = () => {
         </div>
         <div className={s.testPage__component}>
           <span>IntentCatcherSidePanel</span>
-          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher')}
+          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', { disabled: true })}
         </div>
         <div className={s.testPage__component}>
           <span>IntentResponderSidePanel</span>

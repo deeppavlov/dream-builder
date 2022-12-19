@@ -8,8 +8,11 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { YourBotCard } from '../components/YourBotCard/YourBotCard'
+import ReactTooltip from 'react-tooltip'
+import { useAuth } from '../services/AuthProvider'
 
 export const BotsPage = () => {
+  const auth = useAuth()
   const [bots, setBots] = useState([])
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
@@ -60,7 +63,13 @@ export const BotsPage = () => {
                   width='275px'
                   minWidth='275px'
                   paddingBottom='22px'>
-                  <AddButton listView={listView} addBot={addBot} />
+                  <div data-tip data-for='add-btn-new-bot'>
+                    <AddButton
+                      listView={listView}
+                      addBot={addBot}
+                      disabled={auth?.user === null}
+                    />
+                  </div>
                 </Container>
                 <Container>{bots}</Container>
               </Container>
@@ -88,11 +97,28 @@ export const BotsPage = () => {
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
                 checkbox={true}
-                addButton={<AddButton addBot={addBot} listView={listView} />}>
+                addButton={
+                  <AddButton
+                    listView={listView}
+                    addBot={addBot}
+                    disabled={auth?.user === null}
+                  />
+                }>
                 {bots}
               </Table>
             </Wrapper>
           </>
+        )}
+        {auth?.user === null && (
+          <ReactTooltip
+            place='bottom'
+            effect='solid'
+            className='tooltips'
+            arrowColor='#8d96b5'
+            delayShow={1000}
+            id='add-btn-new-bot'>
+            You must be signed in to create the own bot
+          </ReactTooltip>
         )}
       </Main>
     </>

@@ -19,7 +19,7 @@ import NotificationCard, {
 } from '../../components/NotificationCard/NotificationCard'
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
-import SmallTag from '../../components/SmallTag/SmallTag'
+import { SmallTag } from '../../components/SmallTag/SmallTag'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'

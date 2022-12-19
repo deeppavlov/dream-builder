@@ -5,7 +5,6 @@ import s from './Accordion.module.scss'
 interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
-  children: React.ReactNode
 }
 
 export const Accordion = ({ children, title, small }: AccordionProps) => {
@@ -14,6 +13,7 @@ export const Accordion = ({ children, title, small }: AccordionProps) => {
   const handleToggle = () => {
     setClose(!close)
   }
+
   return (
     <div>
       <button

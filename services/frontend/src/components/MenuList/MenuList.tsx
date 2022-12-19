@@ -28,7 +28,9 @@ export const MenuList = ({ type, author, day, time }: any) => {
           effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>
-              <button>About Dream Builder</button>
+              <a href={'http://deepdream.builders'} target='_blank'>
+                <button>About Dream Builder</button>
+              </a>
             </li>
           </ul>
         </ReactTooltip>

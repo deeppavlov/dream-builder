@@ -31,7 +31,7 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll={true}
+              showAll
               amount='5'
               linkTo='/bots'
               paddingBottom='12px'>

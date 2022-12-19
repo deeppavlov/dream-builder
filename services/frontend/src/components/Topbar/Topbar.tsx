@@ -10,7 +10,7 @@ import { Notifications } from './components/Notifications'
 import s from './Topbar.module.scss'
 
 interface TopbarProps extends React.PropsWithChildren {
-  type: string
+  type?: 'main' | 'editor' | 'dff'
   viewHandler?: void
 }
 

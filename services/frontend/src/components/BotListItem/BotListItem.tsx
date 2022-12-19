@@ -1,11 +1,28 @@
 import { Link } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
-import { Kebab } from '../../ui/Kebab/Kebab'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { BotCardProps } from '../BotCard/BotCard'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 
-export const BotListItem = ({ checkbox, ...props }: any) => {
+interface BotListItemProps extends BotCardProps {
+  checkbox?: boolean
+  time: string
+}
+
+export const BotListItem = ({
+  checkbox,
+  botName,
+  companyName,
+  description,
+  date,
+  time,
+  version,
+  ram,
+  gpu,
+  space,
+}: BotListItemProps) => {
   return (
     <tr className={s.tr}>
       {checkbox && (
@@ -15,31 +32,32 @@ export const BotListItem = ({ checkbox, ...props }: any) => {
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p>Dream Virtual Assistant</p>
-          <span className={s.params}>RAM 60.0GB | GPU 65.0 GB | DS 300GB</span>
+          <p>{botName || 'Name of The Bot'}</p>
+          <span className={s.params}>
+            {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
+            {'DS ' + space || '300GB'}
+          </span>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.author}>
           <Logo />
-          <p>DeepPavlov</p>
+          <p>{companyName || 'DeepPavlov'}</p>
         </div>
       </td>
       <td className={s.td}>
         <p className={s.description}>
-          Our fouray into building consumer-friendly virtual assistants. Clone
-          to...
+          {description ||
+            'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
         </p>
       </td>
       <td className={s.td}>
-        <div className={s.version}>
-          <span>{props.version ? props.version : 'v.0.3.4'}</span>
-        </div>
+        <SmallTag theme='version'>v{version || '0.3.4'}</SmallTag>
       </td>
       <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>12.31.2022</p>
-          <p className={s.time}>5:21 PM </p>
+          <p className={s.ddmmyyyy}>{date || 'Dec 12, 2022'}</p>
+          <p className={s.time}>{time || '5:21 PM '}</p>
         </div>
       </td>
       <td className={s.td}>
@@ -49,9 +67,6 @@ export const BotListItem = ({ checkbox, ...props }: any) => {
               <Clone />
             </button>
           </Link>
-          <div>
-            <Kebab color='#8D96B5' dataFor='bot_public' />
-          </div>
         </div>
       </td>
     </tr>

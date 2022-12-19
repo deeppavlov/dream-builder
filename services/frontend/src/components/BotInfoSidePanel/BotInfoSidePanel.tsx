@@ -4,7 +4,7 @@ import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './BotInfoSidePanel.module.scss'
-import SmallTag from '../SmallTag/SmallTag'
+import {SmallTag} from '../SmallTag/SmallTag'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import DateCard from '../DateCard/DateCard'
 

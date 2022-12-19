@@ -213,3 +213,19 @@
     display: none;
   }
 }
+@mixin tr_behavior{
+   &:hover {
+    * {
+      cursor: pointer;
+    }
+    td {
+      p {
+        color: #3300ff;
+      }
+      .params {
+        color: #3300ff;
+      }
+      background-color: rgba(51, 0, 255, 0.1);
+    }
+  }
+}

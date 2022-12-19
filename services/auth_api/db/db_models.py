@@ -13,3 +13,11 @@ class GoogleUser(Base):
     fullname = Column(String(100))
     given_name = Column(String(50))
     family_name = Column(String(50))
+
+
+class UserValid(Base):
+    __tablename__ = "user_valid"
+
+    email = Column(String, primary_key=True)
+    token = Column(String, nullable=False)
+    is_valid = Column(Boolean, nullable=False)

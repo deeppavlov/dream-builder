@@ -14,3 +14,14 @@ class UserCreate(UserBase):
     name: str
     given_name: str
     family_name: str
+
+
+class User(UserCreate):
+    pass
+
+
+class UserValidScheme(UserBase):
+
+    email: EmailStr
+    token: str
+    is_valid: bool

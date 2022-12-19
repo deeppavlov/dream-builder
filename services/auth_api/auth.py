@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from google.auth import jwt
 from sqlalchemy.orm import Session
 
 import services.auth_api.db.crud as crud
 from services.auth_api.config import settings
 from services.auth_api.db.db import init_db
-from services.auth_api.models import UserCreate
+from services.auth_api.models import UserCreate, User, UserValidScheme
 
 router = APIRouter(prefix="/auth")
 
@@ -22,8 +22,8 @@ def get_db():
         db.close()
 
 
-@router.get("/token", status_code=200)
-async def validate_jwt(jwt_data: str = Header(), db: Session = Depends(get_db)):
+@router.get("/token", status_code=status.HTTP_200_OK)
+async def validate_jwt(jwt_data: str = Header()):
     """
     Decode input jwt-token, validate date, check user in db or otherwise sign them up
     """
@@ -37,11 +37,6 @@ async def validate_jwt(jwt_data: str = Header(), db: Session = Depends(get_db)):
         validate_aud(data["aud"])
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-    user = UserCreate(**data)
-
-    if not crud.check_user_exists(db, user.email):
-        crud.add_google_user(db, user)
 
 
 def validate_aud(input_aud: str) -> None:
@@ -58,3 +53,24 @@ def validate_date(nbf: int, exp: int) -> None:
 
     if now < nbf or now > exp:
         raise ValueError("Date of token is not valid!")
+
+
+@router.get("/login", status_code=status.HTTP_200_OK)
+async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
+    data = jwt.decode(jwt_data, verify=False)
+    user_valid = UserValidScheme(email=data["email"], token=jwt_data, is_valid=True)
+
+    if not crud.check_user_exists(db, data["email"]):
+        user = UserCreate(**data)
+        crud.add_google_user(db, user)
+        crud.add_user_to_uservalid(db, user_valid)
+        return User(**data)
+
+    crud.add_user_to_uservalid(db, user_valid)
+    return User(**crud.get_user_by_email(db, data["email"]))
+
+
+@router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def logout(jwt_data: str = Header(), db: Session = Depends(get_db)):
+    data = jwt.decode(jwt_data, verify=False)
+    crud.set_users_token_invalid(db, data["email"])

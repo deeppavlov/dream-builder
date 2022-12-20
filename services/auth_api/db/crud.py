@@ -38,6 +38,6 @@ def add_user_to_uservalid(db: Session, user: models.UserValidScheme):
     return db_user
 
 
-def set_users_token_invalid(db: Session, email: str):
-    db.query(UserValid).filter(UserValid.email == email).update({"is_valid": False})
+def set_users_token_invalid(db: Session, token: str):
+    db.query(UserValid).filter(UserValid.token == token).update({"is_valid": False})
     db.commit()

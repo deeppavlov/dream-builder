@@ -39,11 +39,6 @@ services:
       dockerfile: ./services/auth_api/Dockerfile
       args:
         PORT: 6999
-    depends_on:
-      postgres:
-        condition: service_healthy
-    links:
-      - postgres
     ports:
       - "6999:6999"
     volumes:

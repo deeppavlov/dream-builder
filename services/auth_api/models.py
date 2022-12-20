@@ -22,6 +22,5 @@ class User(UserCreate):
 
 class UserValidScheme(UserBase):
 
-    email: EmailStr
     token: str
     is_valid: bool

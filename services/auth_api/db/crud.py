@@ -29,8 +29,9 @@ def get_user_by_email(db: Session, email: str):
     return db.query(GoogleUser).filter(GoogleUser.c.email == email).first()
 
 
-def add_user_to_uservalid(db: Session, user: models.UserValidScheme):
-    db_user = UserValid(**user.dict())
+def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str):
+    db_user = UserValid(**user.dict(),
+                        id=db.query(GoogleUser).filter(GoogleUser.c.email == email).first())
 
     db.add(db_user)
     db.commit()

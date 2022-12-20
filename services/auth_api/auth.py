@@ -60,7 +60,7 @@ async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
     data = jwt.decode(jwt_data, verify=False)
 
     user_valid = UserValidScheme(email=data["email"], token=jwt_data, is_valid=True)
-    crud.add_user_to_uservalid(db, user_valid)
+    crud.add_user_to_uservalid(db, user_valid, data["email"])
 
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)

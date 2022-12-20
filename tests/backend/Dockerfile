@@ -8,6 +8,6 @@ ENV PYTHONBUFFERED 1
 COPY tests/backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY tests/backend/ .
+COPY tests/backend /src/tests/backend
 
-CMD ["pytest", ".", "-v"]
+CMD ["pytest", "tests/backend", "-v"]

@@ -1,8 +1,9 @@
 services:
 
   testrunner:
+    env_file: [ .env ]
     build:
-      context: .
+      context: ./
       dockerfile: ./tests/backend/Dockerfile
     depends_on:
       - distributions-api

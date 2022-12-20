@@ -1,13 +1,38 @@
-import os
+from pydantic import BaseModel, BaseSettings
+from pathlib import Path
 
-from dotenv import load_dotenv
+class UrlSettings(BaseModel):
+    frontend: str
+    auth_api: str
+    distributions_api: str
 
-load_dotenv(".env")
-AUTH_URL = os.getenv("AUTH_URL")
-DISTRIBUTIONS_URL = os.getenv("AUTH_URL")
-OUTDATED_JWT = os.getenv("TEST_JWT")
-TEST_TOKEN = os.getenv("TEST_TOKEN")
 
-# ASSISTANT_DISTS_URL = DISTRIBUTIONS_URL + "/assistant_dists"
+class DatabaseSettings(BaseModel):
+    user: str
+    password: str
+    host: str
+    port: int
+    name: str
 
-header = {"jwt-data": TEST_TOKEN}
+
+class AuthSettings(BaseModel):
+    google_client_id: str
+    test_token: str
+
+
+class Settings(BaseSettings):
+    url: UrlSettings
+    db: DatabaseSettings
+    auth: AuthSettings
+
+    class Config:
+        env_file = (Path(__file__).parents[2] / ".env").absolute()
+        env_file_encoding = "utf-8"
+        env_nested_delimiter = "__"
+
+
+settings = Settings()
+
+header = {"jwt-data": settings.auth.test_token, 'accept': 'application/json'}
+token_endpoint = f"{settings.url.auth_api}/auth/token"
+assistant_dists_endpoint = f"{settings.url.distributions_api}/api/assistant_dists"

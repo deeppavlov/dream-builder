@@ -1,8 +1,6 @@
-@import '../../../styles/index.scss';
-
 .tab {
   cursor: pointer;
-    width: $sidebar-width;
+  width: $sidebar-width;
   @include sidebar_btn_height;
   svg {
     cursor: pointer;

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
@@ -6,42 +7,49 @@ import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
-  IntentListItemProps,
+  IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
 import s from './IntentResponderSidePanel.module.scss'
 
-const intentsMock: IntentListItemProps[] = [
+export const intentsMock: IntentListItemInterface[] = [
   {
+    id: nanoid(8),
     name: 'Exit',
     about: 'Bye-bye!',
     status: 'error',
   },
   {
+    id: nanoid(8),
     name: 'Exit',
     about: 'Bye-bye!',
     status: 'success',
   },
   {
+    id: nanoid(8),
     name: "what_time | don't_understand",
     about: 'Sorry, I might sound confusing, I am still ...',
     status: 'success',
   },
   {
+    id: nanoid(8),
     name: 'Bye',
     about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
+    id: nanoid(8),
     name: 'Stop',
     about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
+    id: nanoid(8),
     name: 'Cancel',
     about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
+    id: nanoid(8),
     name: 'Fallback',
     about: 'Fallback',
     status: 'success',
@@ -68,9 +76,10 @@ const IntentResponderSidePanel = ({
         </Button>
         <IntentList>
           <Accordion title='User-customized' small>
-            {intentsMock.map(({ name, about, status }, i) => (
+            {intentsMock.map(({ id, name, about, status }) => (
               <IntentListItem
-                key={name + i}
+                key={id}
+                id={id}
                 name={name}
                 about={about}
                 status={status}
@@ -78,9 +87,10 @@ const IntentResponderSidePanel = ({
             ))}
           </Accordion>
           <Accordion title='Prebuilt' small>
-            {intentsMock.map(({ name, about }, i) => (
+            {intentsMock.map(({ id, name, about }) => (
               <IntentListItem
-                key={name + i}
+                key={id}
+                id={id}
                 name={name}
                 about={about}
                 status='default'

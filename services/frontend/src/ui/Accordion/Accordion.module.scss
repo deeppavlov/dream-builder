@@ -1,5 +1,3 @@
-@import '../../styles/index.scss';
-
 .elements {
   overflow: hidden;
   transition: height ease 0.2s;
@@ -21,6 +19,10 @@
   &_small {
     @include b3;
     max-height: 32px;
+  }
+
+  &_rounded {
+    border-radius: 8px;
   }
 
   svg {

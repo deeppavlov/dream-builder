@@ -1,12 +1,14 @@
+import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
+import { Menu } from '../../ui/Menu/Menu'
+import { useAuth } from '../../services/AuthProvider'
+import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
-import { Menu } from '../../ui/Menu/Menu'
-import { Notifications } from './components/Notifications'
 import s from './Topbar.module.scss'
 
 interface TopbarProps extends React.PropsWithChildren {
@@ -14,7 +16,25 @@ interface TopbarProps extends React.PropsWithChildren {
   viewHandler?: void
 }
 
-export const Topbar = ({ type, viewHandler }: TopbarProps) => {
+export const Topbar = ({ type, viewHandler }: any) => {
+  const auth = useAuth()
+  const user = auth?.user
+
+  useEffect(() => {
+    //Render Google SignIn button
+    google.accounts.id.initialize({
+      // Getting `GOOGLE_CLIENT_ID` from .env file
+      // Maybe need to get `GOOGLE_CLIENT_ID` from backend
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: auth?.login,
+    })
+    google.accounts.id.renderButton(document.getElementById('signin')!, {
+      type: 'standard',
+      size: 'medium',
+      text: 'signin',
+    })
+  }, [])
+
   switch (type) {
     case 'main':
       return (
@@ -25,7 +45,11 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
           </div>
           <div className={s.btns_area}>
             <Display viewHandler={viewHandler} />
-            <Profile />
+            {user ? (
+              <Profile auth={auth} />
+            ) : (
+              <div id='signin' className={s.signin}></div>
+            )}
           </div>
           <ReactTooltip
             id='topbar_tooltip'
@@ -51,7 +75,11 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
               <Resources />
               <Notifications />
               <Test />
-              <Profile />
+              {user ? (
+                <Profile auth={auth} />
+              ) : (
+                <div id='signin' className={s.signin}></div>
+              )}
             </div>
           </div>
           <ReactTooltip
@@ -75,7 +103,11 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
         <h3>Dream&nbsp;Builder</h3>
       </div>
       <div className={s.btns_area}>
-        <Profile />
+        {user ? (
+          <Profile auth={auth} />
+        ) : (
+          <div id='signin' className={s.signin}></div>
+        )}
       </div>
     </div>
   )

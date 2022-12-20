@@ -4,13 +4,17 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
+import { useAuth } from '../services/AuthProvider'
 
 export const StartPage = () => {
+  const auth = useAuth()
+  const user = auth?.user
+
   return (
     <>
       <Topbar />
       <Main sidebar='none'>
-        <Banner />
+        {user && <Banner name={user.name} />}
         <Wrapper>
           <Container>
             <Card

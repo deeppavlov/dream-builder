@@ -7,7 +7,7 @@ interface DateCardProps {
 const DateCard = ({ date }: DateCardProps) => {
   const dateFormated = new Date(date)
   const [month, day, year] = [
-    dateFormated.getMonth(),
+    dateFormated.toLocaleString('en-US', { month: 'short' }),
     dateFormated.getDate(),
     dateFormated.getFullYear(),
   ]

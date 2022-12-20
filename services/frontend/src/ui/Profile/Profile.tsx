@@ -1,13 +1,38 @@
 import ReactTooltip from 'react-tooltip'
-import Avatar from '../../assets/images/avatar.png'
-import { ReactComponent as You } from '../../assets/icons/team.svg'
-import { ReactComponent as LogOut } from '../../assets/icons/log_out.svg'
-import { ReactComponent as ArrowDown } from '../../assets/icons/arrow_down_topbar.svg'
+import { ReactComponent as You } from '@assets/icons/team.svg'
+import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
+import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
+import { UserContext } from '../../types/types'
 import s from './Profile.module.scss'
 
-export const Profile = () => {
+interface ProfileProps {
+  auth: UserContext
+}
+
+/**
+ * `TooltipMenu` nedeed for correct render component in `RectTooltip`.
+ * Currently for working LogOut button
+ */
+const TooltipMenu = ({ auth }: ProfileProps) => (
+  <ul className={s.menu}>
+    <li className={s.item}>
+      <You />
+      <p>{auth?.user?.email}</p>
+    </li>
+    <li className={s.item}>
+      <LogOut />
+      <p onClick={auth?.logout}>Log Out</p>
+    </li>
+  </ul>
+)
+
+export const Profile = ({ auth }: ProfileProps) => {
   return (
-    <button className={s.avatar} data-tip data-for='menu'>
+    <>
+      <div className={s.avatar} data-tip data-for='menu'>
+        <img src={auth?.user?.picture} className={s.avatar__picture} />
+        <ArrowDown className={s.arrow} />
+      </div>
       <ReactTooltip
         globalEventOff='click'
         arrowColor='#8d96b5'
@@ -18,19 +43,8 @@ export const Profile = () => {
         id='menu'
         place='bottom'
         effect='solid'>
-        <ul className={s.menu}>
-          <li className={s.item}>
-            <You />
-            <p>irinanikitenkole@gmail.com</p>
-          </li>
-          <li className={s.item}>
-            <LogOut />
-            <p>Log Out</p>
-          </li>
-        </ul>
+        <TooltipMenu auth={auth} />
       </ReactTooltip>
-      <img src={Avatar} />
-      <ArrowDown className={s.arrow} />
-    </button>
+    </>
   )
 }

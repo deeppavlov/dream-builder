@@ -1,5 +1,3 @@
-@import '../../styles/index.scss';
-
 .button {
   min-height: 48px;
   height: fit-content;
@@ -20,7 +18,7 @@
   &_small {
     min-height: 36px;
     border-radius: 8px;
-    padding: 6px;
+    padding: 6px 24px;
     @include lnks_n_btns5;
   }
 

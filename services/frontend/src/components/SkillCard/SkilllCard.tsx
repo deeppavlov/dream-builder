@@ -5,6 +5,7 @@ import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { BotCardProps } from '../BotCard/BotCard'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
+import { useAuth } from '../../services/AuthProvider'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps extends BotCardProps {
@@ -34,6 +35,8 @@ export const SkillCard = ({
   checkbox,
 }: SkillCardProps) => {
   let cx = classNames.bind(s)
+  const auth = useAuth()
+
   return (
     <div className={s.card}>
       <div className={s.header}>
@@ -67,7 +70,7 @@ export const SkillCard = ({
               delayShow={500}
             />
             <div className={s.descriptionText}>
-              {description + '...' || 'Lorem ipsum dolores est'}
+              {description || 'Lorem ipsum dolores est'}
             </div>
           </div>
           <div className={s.info}>
@@ -96,9 +99,22 @@ export const SkillCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal>Add Skill</CreateAssistantModal>
+          <CreateAssistantModal data-tip data-for='skill-add-interact'>
+            Add Skill
+          </CreateAssistantModal>
         </div>
       </div>
+      {auth?.user === null && (
+        <ReactTooltip
+          place='bottom'
+          effect='solid'
+          className='tooltips'
+          arrowColor='#8d96b5'
+          delayShow={1000}
+          id='skill-add-interact'>
+          You must be signed in to add the skill
+        </ReactTooltip>
+      )}
     </div>
   )
 }

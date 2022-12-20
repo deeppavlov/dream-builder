@@ -1,7 +1,109 @@
-@import '../../styles/index.scss';
-
 .botInfoSidePanel {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 16px 0;
+  gap: 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+  }
+
+  &__name {
+    @include t3;
+    color: $text1;
+  }
+
+  &__container {
+    max-height: 290px;
+    overflow: auto;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 20px 0 24px;
+    margin-right: 4px;
+
+    &::-webkit-scrollbar-thumb {
+      background: $bcgrnd5;
+    }
+  }
+
+  &__main {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+  }
+
+  &__table {
+    width: 100%;
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  &__author,
+  &__desc {
+    @include b3;
+  }
+
+  &__accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 24px;
+  }
+
+  &__accordion-item {
+    @include t3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__btns {
+    padding: 0 24px;
+    align-self: flex-end;
+    margin-top: auto;
+  }
+}
+
+.resourcesBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__name {
+    @include t3;
+    color: $text1;
+  }
+
+  &__about,
+  &__table {
+    @include b3;
+    color: $text2;
+  }
+
+  &__table-count {
+    color: $text1;
+  }
 }

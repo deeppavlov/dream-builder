@@ -1,6 +1,7 @@
 import ReactTooltip from 'react-tooltip'
 import Calendar from '../../assets/icons/calendar.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
+import { useAuth } from '../../services/AuthProvider'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import s from './BotCard.module.scss'
@@ -26,6 +27,8 @@ export const BotCard = ({
   gpu,
   space,
 }: BotCardProps) => {
+  const auth = useAuth()
+
   return (
     <div className={s.card}>
       <div className={s.header}>
@@ -79,9 +82,20 @@ export const BotCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal>Clone</CreateAssistantModal>
+          <CreateAssistantModal data-tip data-for='bot-clone-interact'>Clone</CreateAssistantModal>
         </div>
       </div>
+      {auth?.user === null && (
+        <ReactTooltip
+          place='bottom'
+          effect='solid'
+          className='tooltips'
+          arrowColor='#8d96b5'
+          delayShow={1000}
+          id='bot-clone-interact'>
+          You must be signed in to clone the bot
+        </ReactTooltip>
+      )}
     </div>
   )
 }

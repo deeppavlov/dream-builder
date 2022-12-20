@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { BotCardProps } from '../BotCard/BotCard'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
-import ReactTooltip from 'react-tooltip'
 
 interface BotListItemProps extends BotCardProps {
   checkbox?: boolean
@@ -24,7 +24,6 @@ export const BotListItem = ({
   gpu,
   space,
 }: BotListItemProps) => {
-
   return (
     <tr className={s.tr}>
       {checkbox && (

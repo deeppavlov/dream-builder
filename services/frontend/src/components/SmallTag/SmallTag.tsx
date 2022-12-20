@@ -7,7 +7,6 @@ interface SmallTagProps extends React.PropsWithChildren {
 }
 
 export const SmallTag = ({ theme, isLoading, children }: SmallTagProps) => {
-
   return (
     <span
       className={`${s.smallTag} ${theme ? s[`smallTag_theme_${theme}`] : ''} ${

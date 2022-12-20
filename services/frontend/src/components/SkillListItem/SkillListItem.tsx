@@ -1,3 +1,4 @@
+import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -5,7 +6,6 @@ import { SkillCardProps } from '../SkillCard/SkilllCard'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import s from './SkillListItem.module.scss'
-import ReactTooltip from 'react-tooltip'
 
 interface SkillListItemProps extends SkillCardProps {}
 

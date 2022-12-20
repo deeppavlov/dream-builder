@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
+import ReactTooltip from 'react-tooltip'
 import { getSkillList } from '../services/getSkillsList'
+import { useAuth } from '../services/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -12,8 +14,6 @@ import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
-import ReactTooltip from 'react-tooltip'
-import { useAuth } from '../services/AuthProvider'
 
 interface skill_list {
   name: string
@@ -140,10 +140,12 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
-                <Table
-                  // checkbox={true}
-                >
-                <AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />
+              <Table>
+                <AddButton
+                  addBot={addBot}
+                  listView={listView}
+                  disabled={auth?.user === null}
+                />
                 {skills}
               </Table>
             </Wrapper>

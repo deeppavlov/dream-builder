@@ -1,7 +1,6 @@
 import SkillSelectorLogo from '../../assets/icons/skill_selector.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Kebab } from '../../ui/Kebab/Kebab'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'

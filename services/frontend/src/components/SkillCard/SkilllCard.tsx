@@ -72,7 +72,6 @@ export const SkillCard = ({
             <div className={s.descriptionText}>
               {description || 'Lorem ipsum dolores est'}
             </div>
-            <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
           <div className={s.info}>
             <div className={s.date}>
@@ -100,7 +99,9 @@ export const SkillCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal data-tip data-for='skill-add-interact'>Add Skill</CreateAssistantModal>
+          <CreateAssistantModal data-tip data-for='skill-add-interact'>
+            Add Skill
+          </CreateAssistantModal>
         </div>
       </div>
       {auth?.user === null && (

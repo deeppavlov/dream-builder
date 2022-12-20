@@ -1,11 +1,10 @@
 import ReactTooltip from 'react-tooltip'
-import Calendar from '@assets/icons/calendar.svg'
-import CompanyLogo from '@assets/icons/pavlovInCard.svg'
+import Calendar from '../../assets/icons/calendar.svg'
+import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { useAuth } from '../../services/AuthProvider'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import s from './BotCard.module.scss'
-
 
 export interface BotCardProps {
   botName: string
@@ -43,10 +42,19 @@ export const BotCard = ({
               {companyName || 'Name of The Company'}
             </p>
           </div>
-          <div className={s.description}>
-            <p className={s.descriptionText}>
-              {description || 'Lorem ipsum dolores est'}
-            </p>
+          <div
+            className={s.description}
+            data-for='descriptionTooltip'
+            data-tip={description}>
+            <ReactTooltip
+              id='descriptionTooltip'
+              effect='solid'
+              className={s.tooltips}
+              delayShow={500}
+            />
+            <div className={s.descriptionText}>
+              {description + '...' || 'Lorem ipsum dolores est'}
+            </div>
           </div>
           <div className={s.info}>
             <div className={s.date}>

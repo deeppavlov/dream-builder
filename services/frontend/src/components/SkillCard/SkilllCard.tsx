@@ -1,6 +1,6 @@
 import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import Calendar from '../../assets/icons/calendar.svg'
-import SkillTypeLogo from '../../assets/icons/skillIcon.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { BotCardProps } from '../BotCard/BotCard'
 import { SmallTag } from '../SmallTag/SmallTag'
@@ -8,10 +8,15 @@ import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import { useAuth } from '../../services/AuthProvider'
 import s from './SkillCard.module.scss'
 
-
 export interface SkillCardProps extends BotCardProps {
   skillName: string
-  skillType: string | 'retrieval'
+  skillType:
+    | 'fallbacks'
+    | 'retrieval'
+    | 'generative'
+    | 'q_a'
+    | 'script'
+    | 'script_with_nns'
   time: string
   checkbox?: boolean
   executionTime: string
@@ -29,6 +34,7 @@ export const SkillCard = ({
   skillType,
   checkbox,
 }: SkillCardProps) => {
+  let cx = classNames.bind(s)
   const auth = useAuth()
 
   return (
@@ -39,8 +45,13 @@ export const SkillCard = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
-            <img className={s.typeLogo} src={SkillTypeLogo} />
-            <p className={s.typeText}>{skillType || 'Retrieval Skill'}</p>
+            <img
+              className={s.typeLogo}
+              src={`./src/assets/icons/${skillType}.svg`}
+            />
+            <p className={cx('typeText', skillType)}>
+              {skillType || 'Type of Skill'}
+            </p>
           </div>
           <div className={s.name}>
             <img className={s.companyLogo} src={CompanyLogo} />
@@ -48,10 +59,19 @@ export const SkillCard = ({
               {companyName || 'Name of The Company'}
             </p>
           </div>
-          <div className={s.description}>
-            <p className={s.descriptionText}>
+          <div
+            className={s.description}
+            data-for='descriptionTooltip'
+            data-tip={description}>
+            <ReactTooltip
+              id='descriptionTooltip'
+              effect='solid'
+              className={s.tooltips}
+              delayShow={500}
+            />
+            <div className={s.descriptionText}>
               {description || 'Lorem ipsum dolores est'}
-            </p>
+            </div>
           </div>
           <div className={s.info}>
             <div className={s.date}>
@@ -79,7 +99,9 @@ export const SkillCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal data-tip data-for='skill-add-interact'>Add Skill</CreateAssistantModal>
+          <CreateAssistantModal data-tip data-for='skill-add-interact'>
+            Add Skill
+          </CreateAssistantModal>
         </div>
       </div>
       {auth?.user === null && (

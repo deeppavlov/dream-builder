@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
@@ -32,7 +33,7 @@ export const BotListItem = ({
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p>{botName || 'Name of The Bot'}</p>
+          <p className={s.botName}>{botName || 'Name of The Bot'}</p>
           <span className={s.params}>
             {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
             {'DS ' + space || '300GB'}
@@ -46,10 +47,19 @@ export const BotListItem = ({
         </div>
       </td>
       <td className={s.td}>
-        <p className={s.description}>
+        <div
+          className={s.description}
+          data-for='descriptionTooltip'
+          data-tip={description}>
+          <ReactTooltip
+            id='descriptionTooltip'
+            effect='solid'
+            className={s.tooltips}
+            delayShow={500}
+          />
           {description ||
             'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
-        </p>
+        </div>
       </td>
       <td className={s.td}>
         <SmallTag theme='version'>v{version || '0.3.4'}</SmallTag>

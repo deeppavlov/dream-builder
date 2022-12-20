@@ -194,7 +194,7 @@
 }
 
 @mixin tooltip {
-    height: 45px;
+  height: 45px;
   background: #8d96b5 !important;
   display: flex !important;
   flex-direction: row !important;
@@ -203,7 +203,7 @@
   gap: 10px !important;
   border-radius: 8px !important;
   opacity: 1 !important;
-  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  // box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
   color: #ffffff;
   @include b1;
   &::after {
@@ -213,16 +213,22 @@
     display: none;
   }
 }
-@mixin tr_behavior{
-   &:hover {
+@mixin tooltip_for_description {
+  height: fit-content;
+  max-width: 400px;
+}
+@mixin tr_behavior {
+  &:hover {
     * {
       cursor: pointer;
     }
     td {
-      p {
-        color: #3300ff;
-      }
-      .params {
+      .params,
+      .description,
+      .skillName,
+      .botName,
+      .ddmmyyyy,
+      .time {
         color: #3300ff;
       }
       background-color: rgba(51, 0, 255, 0.1);

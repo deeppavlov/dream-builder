@@ -1,8 +1,7 @@
-import { cloneElement } from 'react'
+import React, { cloneElement } from 'react'
 import { CheckBox } from '../Checkbox/Checkbox'
 import { ReactComponent as Arrow } from '../../assets/icons/triangle_down.svg'
 import s from './Table.module.scss'
-import React from 'react'
 
 export const Table = ({
   children,
@@ -37,7 +36,7 @@ export const Table = ({
               <th className={s.th}>{second ? second : 'Author'}</th>
               <th className={s.th}>{third ? third : 'Description'}</th>
               <th className={s.th}>{fourth ? fourth : 'Version'}</th>
-              <th className={s.th}>{fifth ? fifth : 'Date'}</th>
+              <th className={s.th}>{fifth ? fifth : 'Created'}</th>
               <th className={s.th}>{sixth ? sixth : 'Action'}</th>
             </tr>
           </thead>

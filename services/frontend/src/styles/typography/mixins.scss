@@ -147,9 +147,28 @@
   font-size: 14px;
 }
 @mixin d {
-  @include font;
   font-weight: 700;
   line-height: 160%;
   @include font;
   @include bold;
+}
+@mixin skillType {
+  .retrieval {
+    color: $salad;
+  }
+  .generative {
+    color: $turquoise;
+  }
+  .fallbacks {
+    color: $magenta;
+  }
+  .q_a {
+    color: $orange;
+  }
+  .script {
+    color: $pink;
+  }
+  .script_with_nns {
+    color: $purple;
+  }
 }

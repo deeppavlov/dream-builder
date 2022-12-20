@@ -1,8 +1,10 @@
-import { ReactComponent as Logo } from '../../assets/icons/generative.svg'
+import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { SkillCardProps } from '../SkillCard/SkilllCard'
 import { SmallTag } from '../SmallTag/SmallTag'
+import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps extends SkillCardProps {}
@@ -20,6 +22,7 @@ export const SkillListItem = ({
   checkbox,
   executionTime,
 }: SkillListItemProps) => {
+  let cx = classNames.bind(s)
   return (
     <tr className={s.tr}>
       {checkbox && (
@@ -29,7 +32,7 @@ export const SkillListItem = ({
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p>{skillName || 'Name of The Skill'}</p>
+          <p className={s.skillName}>{skillName || 'Name of The Skill'}</p>
           <span className={s.params}>
             {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
             {'DS ' + executionTime + 's' || '0.0s'}
@@ -37,13 +40,29 @@ export const SkillListItem = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.author}>
-          <Logo />
-          <p>{skillType || 'Skill Type'}</p>
+        <div className={s.type}>
+          <img
+            className={s.typeLogo}
+            src={`./src/assets/icons/${skillType}.svg`}
+          />
+          <p className={cx('typeText', skillType)}>
+            {skillType || 'Type of Skill'}
+          </p>
         </div>
       </td>
       <td className={s.td}>
-        <p className={s.description}>{description || 'Lorem  '}</p>
+        <div
+          className={s.description}
+          data-for='descriptionTooltip'
+          data-tip={description}>
+          <ReactTooltip
+            id='descriptionTooltip'
+            effect='solid'
+            className={s.tooltips}
+            delayShow={500}
+          />
+          {description || 'Lorem  '}
+        </div>
       </td>
       <td className={s.td}>
         <div className={s.version}>
@@ -58,9 +77,9 @@ export const SkillListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div>
-            {/* <Kebab type='row' color='#8D96B5' dataFor='skills' /> */}
-          </div>
+          <button className={s.area}>
+            <PlusLogo />
+          </button>
         </div>
       </td>
     </tr>

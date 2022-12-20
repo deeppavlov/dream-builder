@@ -22,91 +22,82 @@
   gap: 32px;
   height: 64px;
   padding: 12px;
-  &:hover {
-    * {
-      cursor: pointer;
+  @include tr_behavior;
+  .td {
+    &:nth-child(2) {
+      padding-left: 0;
     }
-    td {
-      p {
-        color: #3300ff;
-      }
-      .params {
-        color: #3300ff;
-      }
-      background-color: rgba(51, 0, 255, 0.1);
+    border: none;
+    text-align: start;
+    max-height: 64px;
+    background: #fff;
+    color: #313030;
+    padding: 0px 24px;
+    svg {
+      fill: rgba(0, 0, 0, 0.7);
+      @include icon_size_24;
     }
+  }
+  .checkboxArea {
+    background: #fff;
+    padding-left: 24px;
   }
 }
 .description {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 160%;
   display: flex;
   align-items: center;
   color: rgba(0, 0, 0, 0.7);
+  @include b3;
+  .tooltips {
+    @include tooltip;
+    @include tooltip_for_description;
+  }
 }
-.author {
+.type {
   display: flex;
   flex-direction: row;
-  gap: 4px;
   align-items: center;
+  gap: 4px;
+  .typeLogo {
+    @include icon_size_24;
+  }
   svg {
     @include icon_size_24;
   }
-  p {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 160%;
-    display: flex;
-    align-items: center;
-    color: #3399cc;
+
+  .typeText {
+    text-transform: capitalize;
+    @include t4;
   }
+  @include skillType;
 }
 .name {
   display: flex;
   flex-direction: column;
   white-space: nowrap;
-  p {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 160%;
+  .skillName {
     color: rgba(0, 0, 0, 0.7);
+    @include t4;
   }
   .params {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 10px;
-    line-height: 160%;
-    color: rgba(0, 0, 0, 0.7);
     flex-wrap: nowrap;
+    color: rgba(0, 0, 0, 0.7);
+    @include b5;
   }
 }
 .date {
-  padding-top: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: fit-content;
+  padding-top: 12px;
   .ddmmyyyy {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 160%;
+    white-space: nowrap;
     color: rgba(0, 0, 0, 0.7);
+    @include t4;
   }
   .time {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 160%;
+    @include b4;
     color: rgba(0, 0, 0, 0.7);
   }
 }
@@ -125,11 +116,14 @@
   background: #f0f0f3;
   border-radius: 8px;
   cursor: pointer;
+  svg {
+    stroke: rgba(0, 0, 0, 0.9);
+  }
   &:hover {
     background-color: #3300ff;
     cursor: pointer;
     svg {
-      fill: #fff;
+      stroke: #fff;
     }
   }
 }

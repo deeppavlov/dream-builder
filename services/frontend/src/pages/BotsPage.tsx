@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useQuery } from 'react-query'
+import { dateToUTC } from '../utils/dateToUTC'
+import { timeToUTC } from '../utils/timeToUTC'
+import { getAssistantDists } from '../services/getAssistantDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -11,21 +15,40 @@ import { YourBotCard } from '../components/YourBotCard/YourBotCard'
 import ReactTooltip from 'react-tooltip'
 import { useAuth } from '../services/AuthProvider'
 
+interface dist_list {
+  name: string
+  metadata: {
+    display_name: string
+    date: string | number | Date
+    author: string
+    description: string
+    version: string
+    ram_usage: string
+    gpu_usage: string
+    disk_usage: string
+  }
+}
+
 export const BotsPage = () => {
   const auth = useAuth()
   const [bots, setBots] = useState([])
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
-    console.log('view has changed')
     setListView(!listView)
     setBots([])
-    console.log(listView)
   }
   const addBot = () => {
     !listView
       ? setBots(bots.concat(<YourBotCard />))
       : setBots(bots.concat(<BotListItem />))
   }
+  const {
+    isLoading: isAssistantsLoading,
+    error: assistantsError,
+    data: assistantsData,
+  } = useQuery('assistant_dists', getAssistantDists)
+  if (isAssistantsLoading) return 'Loading...'
+  if (assistantsError) return 'An error has occurred: ' + assistantsError
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -35,26 +58,26 @@ export const BotsPage = () => {
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
               showAll
-              amount='5'
+              amount={assistantsData.length}
               linkTo='/bots'
               paddingBottom='12px'>
               <Container overflowY='hidden' paddingBottom='22px'>
-                {(() => {
-                  const botCards = []
-                  for (let i = 0; i < 11; i++) {
-                    botCards.push(
-                      <BotCard
-                        key={i}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  }
-                  return botCards
-                })()}
+                {assistantsData?.map((dist: dist_list) => {
+                  const date = dateToUTC(dist.metadata.date)
+                  return (
+                    <BotCard
+                      key={dist.name}
+                      botName={dist.metadata.display_name}
+                      companyName={dist.metadata.author}
+                      date={date}
+                      description={dist.metadata.description}
+                      version={dist.metadata.version}
+                      ram={dist.metadata.ram_usage}
+                      gpu={dist.metadata.gpu_usage}
+                      space={dist.metadata.disk_usage}
+                    />
+                  )
+                })}
               </Container>
             </Wrapper>
             <Wrapper
@@ -87,18 +110,27 @@ export const BotsPage = () => {
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
               showAll={true}
-              amount='5'
+              amount={assistantsData.length}
               linkTo='/bots'>
               <Table>
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
-                <BotListItem />
+                {assistantsData?.map((dist: dist_list) => {
+                  const date = dateToUTC(dist.metadata.date)
+                  const time = timeToUTC(dist.metadata.date)
+                  return (
+                    <BotListItem
+                      key={dist.name}
+                      botName={dist.metadata.display_name}
+                      companyName={dist.metadata.author}
+                      date={date}
+                      time={time}
+                      description={dist.metadata.description}
+                      version={dist.metadata.version}
+                      ram={dist.metadata.ram_usage}
+                      gpu={dist.metadata.gpu_usage}
+                      space={dist.metadata.disk_usage}
+                    />
+                  )
+                })}
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import Calendar from '../../assets/icons/calendar.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
@@ -56,10 +56,19 @@ export const SkillCard = ({
               {companyName || 'Name of The Company'}
             </p>
           </div>
-          <div className={s.description}>
-            <p className={s.descriptionText}>
-              {description || 'Lorem ipsum dolores est'}
-            </p>
+          <div
+            className={s.description}
+            data-for='descriptionTooltip'
+            data-tip={description}>
+            <ReactTooltip
+              id='descriptionTooltip'
+              effect='solid'
+              className={s.tooltips}
+              delayShow={500}
+            />
+            <div className={s.descriptionText}>
+              {description + '...' || 'Lorem ipsum dolores est'}
+            </div>
           </div>
           <div className={s.info}>
             <div className={s.date}>

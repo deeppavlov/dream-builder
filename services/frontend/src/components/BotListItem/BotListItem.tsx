@@ -5,6 +5,7 @@ import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { BotCardProps } from '../BotCard/BotCard'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
+import ReactTooltip from 'react-tooltip'
 
 interface BotListItemProps extends BotCardProps {
   checkbox?: boolean
@@ -46,10 +47,19 @@ export const BotListItem = ({
         </div>
       </td>
       <td className={s.td}>
-        <p className={s.description}>
+        <div
+          className={s.description}
+          data-for='descriptionTooltip'
+          data-tip={description}>
+          <ReactTooltip
+            id='descriptionTooltip'
+            effect='solid'
+            className={s.tooltips}
+            delayShow={500}
+          />
           {description ||
             'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
-        </p>
+        </div>
       </td>
       <td className={s.td}>
         <SmallTag theme='version'>v{version || '0.3.4'}</SmallTag>

@@ -5,6 +5,7 @@ import { SkillCardProps } from '../SkillCard/SkilllCard'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import s from './SkillListItem.module.scss'
+import ReactTooltip from 'react-tooltip'
 
 interface SkillListItemProps extends SkillCardProps {}
 
@@ -50,7 +51,18 @@ export const SkillListItem = ({
         </div>
       </td>
       <td className={s.td}>
-        <p className={s.description}>{description || 'Lorem  '}</p>
+        <div
+          className={s.description}
+          data-for='descriptionTooltip'
+          data-tip={description}>
+          <ReactTooltip
+            id='descriptionTooltip'
+            effect='solid'
+            className={s.tooltips}
+            delayShow={500}
+          />
+          {description || 'Lorem  '}
+        </div>
       </td>
       <td className={s.td}>
         <div className={s.version}>

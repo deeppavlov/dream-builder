@@ -3,6 +3,8 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import Calendar from '../../assets/icons/calendar.svg'
 import s from './YourBotCard.module.scss'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { useState } from 'react'
 
 export const YourBotCard = ({
   botName,
@@ -14,8 +16,14 @@ export const YourBotCard = ({
   space,
   type,
 }: any) => {
+  const [botPropertiesIsOpen, setBotPropertiesIsOpen] = useState(false)
+
+  const handleBotCardClick = () => {
+    if (!botPropertiesIsOpen) setBotPropertiesIsOpen(true)
+  }
+
   return (
-    <div className={s.card}>
+    <div className={s.card} onClick={handleBotCardClick}>
       <div className={s.header}>
         <h6>{botName ? botName : 'Name of The Bot'} </h6>
       </div>
@@ -63,7 +71,7 @@ export const YourBotCard = ({
         <div className={s.bottom}>
           <div className={s.btns_area}>
             <Link to='/editor'>
-            <button className={s.clone_btn}>Clone</button>
+              <button className={s.clone_btn}>Clone</button>
             </Link>
             <div className={s.kebab}>
               <KebabButton dataFor='your_bot' />
@@ -71,6 +79,11 @@ export const YourBotCard = ({
           </div>
         </div>
       </div>
+      <BotInfoSidePanel
+        isOpen={botPropertiesIsOpen}
+        setIsOpen={setBotPropertiesIsOpen}
+        position={{ top: 64 }}
+      />
     </div>
   )
 }

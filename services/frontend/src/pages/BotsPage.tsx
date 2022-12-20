@@ -39,17 +39,22 @@ export const BotsPage = () => {
               linkTo='/bots'
               paddingBottom='12px'>
               <Container overflowY='hidden' paddingBottom='22px'>
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
-                <BotCard />
+                {(() => {
+                  const botCards = []
+                  for (let i = 0; i < 11; i++) {
+                    botCards.push(
+                      <BotCard
+                        key={i}
+                        disabledMsg={
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to clone the bot'
+                        }
+                      />
+                    )
+                  }
+                  return botCards
+                })()}
               </Container>
             </Wrapper>
             <Wrapper
@@ -99,7 +104,13 @@ export const BotsPage = () => {
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
                 // checkbox={true}
-                addButton={<AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />}>
+                addButton={
+                  <AddButton
+                    addBot={addBot}
+                    listView={listView}
+                    disabled={auth?.user === null}
+                  />
+                }>
                 {bots}
               </Table>
             </Wrapper>

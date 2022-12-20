@@ -12,6 +12,13 @@ export const getCookie = (name: string): string | null => {
   return cookieValue ?? null
 }
 
+export const getUser = (): UserInterface | null => {
+  const jwt = getCookie('jwt_token')
+  if (!jwt) return null
+  const userObject: UserInterface = jwtDecode(jwt)
+  return userObject ?? null
+}
+
 export const deleteCookie = (name: string): void => {
   document.cookie = `${name}=;expires=${new Date().getTime()}`
 }
@@ -29,13 +36,6 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     if (storedUser) setUser(storedUser)
   }, [])
 
-  const getUser = (): UserInterface | null => {
-    const jwt = getCookie('jwt_token')
-    if (!jwt) return null
-    const userObject: UserInterface = jwtDecode(jwt)
-    return userObject ?? null
-  }
-
   const login = (response: any) => {
     const jwt = response.credential
 
@@ -52,8 +52,7 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
 
   const logout = () => {
     deleteCookie('jwt_token')
-    // window.location.reload()
-    location.pathname = '/'
+    window.location.reload()
   }
 
   const userContextValue = useMemo(

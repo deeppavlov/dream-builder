@@ -1,11 +1,12 @@
 import ReactTooltip from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import CompanyLogo from '@assets/icons/pavlovInCard.svg'
-import { useAuth } from '../../services/AuthProvider'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import s from './BotCard.module.scss'
-
+import Button from '../../ui/Button/Button'
+import { useState } from 'react'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 
 export interface BotCardProps {
   botName: string
@@ -16,6 +17,7 @@ export interface BotCardProps {
   ram: string
   gpu: string
   space?: string
+  disabledMsg?: string
 }
 
 export const BotCard = ({
@@ -27,11 +29,16 @@ export const BotCard = ({
   ram,
   gpu,
   space,
+  disabledMsg,
 }: BotCardProps) => {
-  const auth = useAuth()
+  const [botPropertiesIsOpen, setBotPropertiesIsOpen] = useState(false)
+
+  const handleBotCardClick = () => {
+    if (!botPropertiesIsOpen) setBotPropertiesIsOpen(true)
+  }
 
   return (
-    <div className={s.card}>
+    <div className={s.card} onClick={handleBotCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{botName || 'Name of The Bot'} </p>
       </div>
@@ -74,10 +81,26 @@ export const BotCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal data-tip data-for='bot-clone-interact'>Clone</CreateAssistantModal>
+          {/* <CreateAssistantModal>
+            Clone
+          </CreateAssistantModal> */}
+          <div data-tip data-for='bot-clone-interact' style={{ width: '100%' }}>
+            <Button
+              theme='primary'
+              small
+              long
+              props={{ disabled: disabledMsg !== undefined }}>
+              Clone
+            </Button>
+          </div>
         </div>
       </div>
-      {auth?.user === null && (
+      <BotInfoSidePanel
+        isOpen={botPropertiesIsOpen}
+        setIsOpen={setBotPropertiesIsOpen}
+        position={{ top: 64 }}
+      />
+      {disabledMsg && (
         <ReactTooltip
           place='bottom'
           effect='solid'
@@ -85,7 +108,7 @@ export const BotCard = ({
           arrowColor='#8d96b5'
           delayShow={1000}
           id='bot-clone-interact'>
-          You must be signed in to clone the bot
+          {disabledMsg}
         </ReactTooltip>
       )}
     </div>

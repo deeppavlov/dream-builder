@@ -1,0 +1,45 @@
+.dropboxSearch {
+  max-width: 376px;
+  width: 100%;
+  position: relative;
+
+  &__dropdown {
+    @include b2;
+    height: 40px;
+    width: 100%;
+    padding: 7px 24px;
+    border-radius: 12px;
+    background-color: $bcgrnd1;
+    border: 1px solid $text3;
+    color: $text3;
+  }
+
+  &__list {
+    display: none;
+    width: 100%;
+    position: absolute;
+    top: bottom;
+    left: 0;
+    z-index: 2;
+    border-radius: 12px;
+    background-color: $bcgrnd1;
+
+    &_open {
+      display: block;
+    }
+  }
+
+  &__search {
+    width: 100%;
+
+    input {
+      border: none;
+      padding: 11px 16px 11px 48px;
+      height: fit-content;
+      
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+}

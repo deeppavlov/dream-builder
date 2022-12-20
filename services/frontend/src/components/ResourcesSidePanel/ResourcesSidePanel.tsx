@@ -1,7 +1,7 @@
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import SmallTag from '../SmallTag/SmallTag'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './ResourcesSidePanel.module.scss'
 
 const ResourcesSidePanel = ({

@@ -1,9 +1,13 @@
-@import '../../styles/index.scss';
-
 .expandableDropdown {
-  background: #f9fafc;
   border-radius: 12px;
   padding: 7px 12px;
+  width: 100%;
+  background-color: $bcgrnd2;
+
+  &_big {
+    padding: 4px 16px;
+    background-color: $bcgrnd1;
+  }
 
   &_active {
     border: 1px solid #3300ff;

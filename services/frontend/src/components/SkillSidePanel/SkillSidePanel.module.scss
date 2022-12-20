@@ -1,0 +1,100 @@
+.skillSidePanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 24px 24px;
+
+  &__header {
+    @include t3;
+    margin-bottom: 12px;
+    color: $text2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__header-title {
+    color: $text1;
+  }
+
+  &__name {
+    @include t3;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $salad;
+    margin-bottom: 12px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__desc {
+    @include b3;
+    margin-bottom: 24px;
+  }
+
+  &__accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__accordion-item {
+    @include t3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__btns {
+    margin-top: auto;
+    align-self: flex-end;
+  }
+}
+
+.tabs {
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: $bcgrnd3;
+    padding: 4px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__tab {
+    @include b2;
+    font-weight: $bold;
+    padding: 5px;
+    width: 100%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+      background: $primary1;
+      color: $text4;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+
+    &[aria-disabled='true'] {
+      opacity: 0.3;
+    }
+  }
+}

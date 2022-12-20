@@ -8,8 +8,11 @@ import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
+import ReactTooltip from 'react-tooltip'
+import { useAuth } from '../services/AuthProvider'
 
 export const SkillsPage = () => {
+  const auth = useAuth()
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
     console.log('view has changed')
@@ -54,11 +57,14 @@ export const SkillsPage = () => {
                   width='275px'
                   minWidth='275px'
                   paddingBottom='22px'>
-                  <AddButton
-                    height='330px'
-                    listView={listView}
-                    addBot={addBot}
-                  />
+                  <div data-tip data-for='add-btn-new-bot'>
+                    <AddButton
+                      height='330px'
+                      listView={listView}
+                      addBot={addBot}
+                      disabled={auth?.user === null}
+                    />
+                  </div>
                 </Container>
                 <Container>{skills}</Container>
               </Container>
@@ -87,11 +93,22 @@ export const SkillsPage = () => {
                 <Table
                   // checkbox={true}
                 >
-                <AddButton addBot={addBot} listView={listView} />
+                <AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />
                 {skills}
               </Table>
             </Wrapper>
           </>
+        )}
+        {auth?.user === null && (
+          <ReactTooltip
+            place='bottom'
+            effect='solid'
+            className='tooltips'
+            arrowColor='#8d96b5'
+            delayShow={1000}
+            id='add-btn-new-bot'>
+            You must be signed in to create the own skill
+          </ReactTooltip>
         )}
       </Main>
     </>

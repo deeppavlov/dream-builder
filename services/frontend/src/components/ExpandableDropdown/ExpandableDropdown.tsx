@@ -1,19 +1,28 @@
 import { useState } from 'react'
 import s from './ExpandableDropdown.module.scss'
 
-const ExpandableDropdownn = () => {
+interface ExpandableDropdownProps extends React.PropsWithChildren {
+  title: string
+  big?: boolean
+}
+
+const ExpandableDropdownn = ({
+  title,
+  big,
+  children,
+}: ExpandableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <div
       className={`${s.expandableDropdown} ${
         isOpen && s.expandableDropdown_active
-      }`}>
+      } ${big ? s.expandableDropdown_big : ''}`}>
       {!isOpen && (
         <button
           className={s.expandableDropdown__btn}
           onClick={() => setIsOpen(true)}>
-          Instruction (click to expand)
+          {title}
         </button>
       )}
       {isOpen && (

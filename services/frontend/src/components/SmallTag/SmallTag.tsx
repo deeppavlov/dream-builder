@@ -6,7 +6,7 @@ interface SmallTagProps extends React.PropsWithChildren {
   isLoading?: boolean
 }
 
-const SmallTag = ({ theme, isLoading, children }: SmallTagProps) => {
+export const SmallTag = ({ theme, isLoading, children }: SmallTagProps) => {
   return (
     <span
       className={`${s.smallTag} ${theme ? s[`smallTag_theme_${theme}`] : ''} ${
@@ -16,5 +16,3 @@ const SmallTag = ({ theme, isLoading, children }: SmallTagProps) => {
     </span>
   )
 }
-
-export default SmallTag

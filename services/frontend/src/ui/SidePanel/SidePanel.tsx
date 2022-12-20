@@ -11,13 +11,20 @@ export interface SidePanelProps extends React.PropsWithChildren {
     right: number
     bottom: number
   }>
+  disabled?: boolean
 }
 
-const SidePanel = ({ isOpen, setIsOpen, position, children }: SidePanelProps) => {
+const SidePanel = ({
+  isOpen,
+  setIsOpen,
+  position,
+  disabled,
+  children,
+}: SidePanelProps) => {
   const customStyles = {
     overlay: {
       background: 'transparent',
-       zIndex: 4,
+      zIndex: 4,
     },
     content: {
       top: position?.top ?? 0,
@@ -38,7 +45,7 @@ const SidePanel = ({ isOpen, setIsOpen, position, children }: SidePanelProps) =>
       onRequestClose={closeModal}
       style={customStyles}
       contentLabel='SidePanel'
-      closeTimeoutMS={500}>
+      closeTimeoutMS={300}>
       <div className={s.sidePanel} data-modal-type='side-panel'>
         {children}
       </div>

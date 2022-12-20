@@ -1,75 +1,93 @@
-import Calendar from '../../assets/icons/calendar.svg'
-import IMG from '../../assets/icons/pavlovInCard.svg'
+import ReactTooltip from 'react-tooltip'
+import Calendar from '@assets/icons/calendar.svg'
+import CompanyLogo from '@assets/icons/pavlovInCard.svg'
+import { useAuth } from '../../services/AuthProvider'
+import { SmallTag } from '../SmallTag/SmallTag'
 import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './BotCard.module.scss'
+
+
+export interface BotCardProps {
+  botName: string
+  companyName: string
+  description: string
+  date: string
+  version: string
+  ram: string
+  gpu: string
+  space?: string
+}
 
 export const BotCard = ({
   botName,
   companyName,
+  description,
   date,
   version,
   ram,
   gpu,
   space,
-  type,
-}: any) => {
+}: BotCardProps) => {
+  const auth = useAuth()
+
   return (
     <div className={s.card}>
       <div className={s.header}>
-        <h6>{botName ? botName : 'Name of The Bot'} </h6>
+        <p className={s.botName}>{botName || 'Name of The Bot'} </p>
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
-            <img src={IMG} />
-            <h6>{companyName ? companyName : 'Name of The Company'}</h6>
-          </div>
-          <div className={s.info}>
-            <p>
-              Our fouray into building consumer friendly virtual assistants.
+            <img className={s.companyLogo} src={CompanyLogo} />
+            <p className={s.companyName}>
+              {companyName || 'Name of The Company'}
             </p>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
+          <div className={s.description}>
+            <p className={s.descriptionText}>
+              {description || 'Lorem ipsum dolores est'}
+            </p>
+          </div>
+          <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
-              <p style={{ fontSize: '14px' }}>{date ? date : '27.10.2022'}</p>
+              <p className={s.dateText}>{date || '27.10.2022'}</p>
             </div>
-            <div className={s.version}>
-              <p style={{ fontSize: '12px' }}>{version ? version : 'v.0.01'}</p>
-            </div>
+            <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
         </div>
         <span className={s.separator} />
         <div className={s.middle}>
           <ul className={s.params}>
             <li>
-              <p className={s.params_item}>RAM</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>RAM</p>
+              <p className={s.units}>{ram || '0.0GB'}</p>
             </li>
             <li>
-              <p className={s.params_item}>GPU</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>GPU</p>
+              <p className={s.units}>{gpu || '0.0GB'}</p>
             </li>
             <li>
-              <p className={s.params_item}>Disk Space</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.item}>Disk Space</p>
+              <p className={s.units}>{space || '0.0GB'}</p>
             </li>
           </ul>
         </div>
         <div className={s.bottom}>
-          <div className={s.btns_area}>
-            <CreateAssistantModal>Clone</CreateAssistantModal>
-            <KebabButton dataFor='bot_public' />
-          </div>
+          <CreateAssistantModal data-tip data-for='bot-clone-interact'>Clone</CreateAssistantModal>
         </div>
       </div>
+      {auth?.user === null && (
+        <ReactTooltip
+          place='bottom'
+          effect='solid'
+          className='tooltips'
+          arrowColor='#8d96b5'
+          delayShow={1000}
+          id='bot-clone-interact'>
+          You must be signed in to clone the bot
+        </ReactTooltip>
+      )}
     </div>
   )
 }

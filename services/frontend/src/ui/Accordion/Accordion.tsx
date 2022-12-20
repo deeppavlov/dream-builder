@@ -5,10 +5,15 @@ import s from './Accordion.module.scss'
 interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
-  children: React.ReactNode
+  rounded?: boolean
 }
 
-export const Accordion = ({ children, title, small }: AccordionProps) => {
+export const Accordion = ({
+  children,
+  title,
+  small,
+  rounded,
+}: AccordionProps) => {
   const [close, setClose] = useState(false)
   const contentEl = useRef<HTMLDivElement>(null)
   const handleToggle = () => {
@@ -19,7 +24,7 @@ export const Accordion = ({ children, title, small }: AccordionProps) => {
       <button
         className={`${close ? s.close : ''} ${s.arrowDropdown} ${
           small ? s.arrowDropdown_small : ''
-        }`}
+        } ${rounded ? s.arrowDropdown_rounded : ''}`}
         onClick={handleToggle}>
         {title}
         <Arrow />

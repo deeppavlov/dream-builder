@@ -1,47 +1,130 @@
-@import '../../styles/index.scss';
-// .form {
-//   position: relative;
-//   .label {
-//     @include b3;
-//     color: rgba(0, 0, 0, 0.7);
-//   }
-//   width: fit-content;
-//   height: fit-content;
-// }
-
-.textArea-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
 .textArea {
-  padding: 8px 24px;
-  gap: 16px;
-  isolation: isolate;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
   width: 100%;
-  min-width: 260px;
-  height: 80px;
-  min-height: 64px;
-  background: #ffffff;
-  border: 1px solid #8d96b5;
   border-radius: 12px;
-  @include b2;
+  gap: 2px;
 
-  &::-webkit-input-placeholder,
-  &::placeholder {
-    color: #8d96b5;
+  &__container {
+    position: relative;
+    display: flex;
+    max-width: 100%;
+    // width: fit-content;
   }
 
-  &::-webkit-resizer {
+  &__label {
+    @include b3;
+    color: $text2;
+  }
+
+  &__field {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid $text3;
+    border-radius: 12px;
+    padding: 8px 24px;
+    outline: none;
+    background-color: $bcgrnd1;
+    @include b2;
+
+    &::placeholder {
+      color: $text3;
+    }
+
+    &:hover {
+      border-color: $primary1;
+    }
+
+    &:focus {
+      box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+      border-color: $primary1;
+      color: $text1;
+    }
+
+    &:disabled {
+      background-color: $bcgrnd3;
+      color: $text3;
+      border-color: $text3;
+      resize: none;
+
+      &::placeholder {
+        color: $text3;
+      }
+    }
+
+    &:invalid,
+    &_error {
+      border-color: $red !important;
+    }
+
+    &_active {
+      box-shadow: none !important;
+      color: $text1;
+      padding-right: 69px;
+    }
+
+    &::-webkit-resizer {
+      display: none;
+    }
+
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+
+  &__resizer path {
+    stroke: $text3;
+  }
+
+  &:hover &__resizer path {
+    stroke: $primary1;
+  }
+
+  &:has(&__field_error) &__resizer path {
+    stroke: $red;
+  }
+
+  &:has(&__field_active) &__resizer,
+  &:has(&__field:disabled) &__resizer {
     display: none;
   }
+
+  &__submit {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: none;
+
+    svg {
+      display: none;
+    }
+  }
+
+  &__field_active ~ &__submit {
+    display: block;
+  }
+
+  &:has(&__field:disabled) {
+    opacity: 0.3;
+    color: $text3 !important;
+  }
+
+  &__error-msg {
+    color: $red;
+  }
+}
+
+.resizer {
+  position: relative;
+  display: inline-flex;
 }
 
 .textArea-resizer {
   position: absolute;
+  width: 12px;
+  height: 12px;
   bottom: 8px;
   right: 8px;
-  stroke: #8d96b5;
-  @include icon_size_12;
+  pointer-events: none;
 }

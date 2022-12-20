@@ -1,12 +1,17 @@
+import { UserInterface } from '../../types/types'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import s from './Banner.module.scss'
 
-export const Banner = () => {
+interface BannerProps {
+  name: string
+}
+
+export const Banner = ({ name }: BannerProps) => {
   return (
     <>
       <Wrapper alignItems='start' closable={true}>
         <h5>
-          Irina, welcome to
+          {name.split(' ')[0]}, welcome to
           <span className={s.accent_text}> Dream Builder</span> Console!
         </h5>
         <ul>

@@ -14,7 +14,7 @@ export const Element = ({ ...props }) => {
   return (
     <div
       style={
-        !disabled ? { ...props, opacity: '0.3', background: '#f0f0f3' } : null
+        !disabled ? { ...props, opacity: '0.3', background: '#f0f0f3' } : undefined
       }
       className={s.element}>
       <div className={s.left}>

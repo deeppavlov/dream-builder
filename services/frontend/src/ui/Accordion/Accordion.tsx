@@ -19,7 +19,6 @@ export const Accordion = ({
   const handleToggle = () => {
     setClose(!close)
   }
-
   return (
     <div>
       <button

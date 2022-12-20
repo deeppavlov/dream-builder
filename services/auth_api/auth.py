@@ -55,7 +55,7 @@ def validate_date(nbf: int, exp: int) -> None:
         raise ValueError("Date of token is not valid!")
 
 
-@router.get("/login", status_code=status.HTTP_200_OK)
+@router.get("/login", status_code=status.HTTP_200_OK, dependencies=[Depends(validate_jwt)])
 async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
     data = jwt.decode(jwt_data, verify=False)
     user_valid = UserValidScheme(email=data["email"], token=jwt_data, is_valid=True)
@@ -70,7 +70,8 @@ async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
     return User(**crud.get_user_by_email(db, data["email"]))
 
 
-@router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
 async def logout(jwt_data: str = Header(), db: Session = Depends(get_db)):
     data = jwt.decode(jwt_data, verify=False)
     crud.set_users_token_invalid(db, data["email"])
+ 

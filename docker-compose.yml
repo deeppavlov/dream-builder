@@ -40,7 +40,8 @@ services:
       args:
         PORT: 6999
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     links:
       - postgres
     ports:

@@ -213,6 +213,10 @@
     display: none;
   }
 }
+@mixin tooltip_for_description {
+  height: fit-content;
+  max-width: 400px;
+}
 @mixin tr_behavior {
   &:hover {
     * {

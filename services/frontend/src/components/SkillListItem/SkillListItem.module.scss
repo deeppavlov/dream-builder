@@ -50,6 +50,7 @@
   @include b3;
   .tooltips {
     @include tooltip;
+    @include tooltip_for_description;
   }
 }
 .type {

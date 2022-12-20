@@ -60,6 +60,7 @@
         width: 100%;
         .tooltips {
           @include tooltip;
+          @include tooltip_for_description;
         }
         .descriptionText {
           display: -webkit-box;

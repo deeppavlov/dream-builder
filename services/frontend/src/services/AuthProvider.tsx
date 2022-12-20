@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const logout = () => {
     deleteCookie('jwt_token')
     // window.location.reload()
-    location.pathname = '/start'
+    location.pathname = '/'
   }
 
   const userContextValue = useMemo(

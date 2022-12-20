@@ -35,7 +35,7 @@ export const BotsPage = () => {
               amount='5'
               linkTo='/bots'
               paddingBottom='12px'>
-              <Container paddingBottom='22px'>
+              <Container overflowY='hidden' paddingBottom='22px'>
                 <BotCard />
                 <BotCard />
                 <BotCard />
@@ -52,17 +52,19 @@ export const BotsPage = () => {
             <Wrapper
               paddingBottom='12px'
               title='Your Virtual Assistants & Chatbots'>
-              <Container>
+              <Container overflow='hidden'>
                 <Container
                   position='sticky'
                   left='0'
                   top='0'
                   width='275px'
                   minWidth='275px'
+                  overflow='hidden'
+                  padding='0'
                   paddingBottom='22px'>
                   <AddButton listView={listView} addBot={addBot} />
                 </Container>
-                <Container>{bots}</Container>
+                <Container paddingBottom='22px'>{bots}</Container>
               </Container>
             </Wrapper>
           </>
@@ -87,7 +89,7 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
-                checkbox={true}
+                // checkbox={true}
                 addButton={<AddButton addBot={addBot} listView={listView} />}>
                 {bots}
               </Table>

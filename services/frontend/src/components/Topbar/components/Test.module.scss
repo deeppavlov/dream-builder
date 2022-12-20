@@ -4,13 +4,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 76px;
+  width: 68px;
   height: $topbar-height;
   svg {
     cursor: pointer;
     fill: $text3;
     width: 52px;
-    height: $topbar-height;
   }
   &:hover {
     background: #f0f0f3;

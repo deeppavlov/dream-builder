@@ -1,20 +1,27 @@
 import { useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
-import s from './Accordeon.module.scss'
+import s from './Accordion.module.scss'
 
-export const Accordeon = ({ children, title }: any) => {
+interface AccordionProps extends React.PropsWithChildren {
+  title: string
+  small?: boolean
+  children: React.ReactNode
+}
+
+export const Accordion = ({ children, title, small }: AccordionProps) => {
   const [close, setClose] = useState(false)
-  const contentEl = useRef()
+  const contentEl = useRef<HTMLDivElement>(null)
   const handleToggle = () => {
     setClose(!close)
   }
-  console.log(contentEl?.current)
   return (
-    <>
+    <div>
       <button
-        className={`${close ? s.close : null} ${s.arrowDropdown}`}
+        className={`${close ? s.close : ''} ${s.arrowDropdown} ${
+          small ? s.arrowDropdown_small : ''
+        }`}
         onClick={handleToggle}>
-        <p>{title}</p>
+        {title}
         <Arrow />
       </button>
       <div
@@ -27,6 +34,6 @@ export const Accordeon = ({ children, title }: any) => {
         }>
         {children}
       </div>
-    </>
+    </div>
   )
 }

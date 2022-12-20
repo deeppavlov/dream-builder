@@ -3,49 +3,54 @@
 .intentListItem {
   position: relative;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   max-width: 376px;
   width: 100%;
   max-height: 49px;
   min-height: 49px;
   padding: 0 16px;
-  overflow: hidden;
 
   &:hover {
     background-color: #3300ff1a;
   }
 
+  &:active::before {
+    background-color: $primary1;
+  }
+
   &:active &__name,
-  &:active &__similar {
+  &:active &__about {
     color: $primary1;
   }
   &:active &__edit path {
     stroke: $primary1;
   }
 
-  &_status {
-    &_good,
-    &_warning,
-    &_error {
-      padding-left: 32px;
-      padding-right: 12.5px;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 16px;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: transparent;
-        transform: translateY(-50%);
-      }
-
-      &:active::before {
-        background-color: $primary1;
-      }
+  &[data-disabled='true'] {
+    padding: 0 16px;
+    &::before {
+      display: none;
     }
-    &_good::before {
+  }
+
+  &_status {
+    padding-left: 32px;
+    padding-right: 12.5px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: $primary1;
+      transform: translateY(-50%);
+    }
+
+    &_success::before {
       background-color: $salad;
     }
     &_warning::before {
@@ -56,14 +61,23 @@
     }
   }
 
+  &__container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   &__name {
     @include b2;
     color: $text1;
   }
 
-  &__similar {
+  &__about {
     @include b4;
     color: $text2;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__edit {

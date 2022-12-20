@@ -3,7 +3,10 @@ import s from './Resources.module.scss'
 
 export const Resources = () => {
   return (
-    <button className={s.server}>
+    <button
+    data-tip='Storage'
+    data-for='topbar_tooltip'
+      className={s.resources}>
       <Icon />
     </button>
   )

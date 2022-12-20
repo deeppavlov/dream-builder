@@ -5,9 +5,11 @@ import s from './Test.module.scss'
 
 export const Test = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
-
   return (
-    <button data-tip='Chat With Your Bot' className={s.test}>
+    <button
+      data-tip='Chat With Your Bot'
+      data-for='topbar_tooltip'
+      className={s.test}>
       <img
         src={Play}
         alt='Play'
@@ -17,7 +19,7 @@ export const Test = () => {
       <DialogSidePanel
         isOpen={modalIsOpen}
         setIsOpen={setIsOpen}
-        positions={{ top: 64 }}
+        position={{ top: 64 }}
       />
     </button>
   )

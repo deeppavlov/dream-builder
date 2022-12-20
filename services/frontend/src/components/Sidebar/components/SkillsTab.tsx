@@ -3,7 +3,7 @@ import s from './SkillsTab.module.scss'
 
 export const SkillsTab = () => {
   return (
-    <button className={s.puzzle}>
+    <button data-tip='Skills' data-for='sidebar_tooltip' className={s.puzzle}>
       <Puzzle />
     </button>
   )

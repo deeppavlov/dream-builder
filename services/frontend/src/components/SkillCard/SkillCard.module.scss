@@ -1,5 +1,4 @@
-@import '../../styles/ui/mixins.scss';
-@import '../../styles/variables/colors.scss';
+@import '../../styles/index.scss';
 
 .skill {
   min-width: 275px;
@@ -102,13 +101,6 @@
     color: $text2;
   }
 }
-.clone_btn {
-  width: 100%;
-  height: 36px;
-  color: $text4;
-  background-color: $primary1;
-  border-radius: 10px;
-}
 
 li {
   display: flex;
@@ -124,7 +116,7 @@ hr {
 
 .icon_calendar {
   @include icon_size_24;
-  background-image: url(../../assets/images/calendar.svg);
+  // background-image: url(../../assets/images/calendar.svg);
 }
 
 h6 {
@@ -149,12 +141,21 @@ h6 {
   justify-content: space-between;
 }
 .bottom {
+  width: 100%;
   padding-top: 12px;
 }
+.btns_area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
 .clone_btn {
-  height: 36px;
-  color: $text4;
-  background-color: $primary1;
-  border-radius: 10px;
+  width: 100%;
+  @include lnks_n_btns5;
+  @include primary_btn;
+  @include small_btn;
   @include btn_primary_small_behavior;
 }

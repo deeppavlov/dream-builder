@@ -11,13 +11,13 @@ import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { AnotherTab } from '../components/Sidebar/components/AnotherTab'
+import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTab } from '../components/TestTab/TestTab'
+import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
 
 export const EditorPage = () => {
   const [skills, setSkills] = useState([])
@@ -52,7 +52,7 @@ export const EditorPage = () => {
                 <SkillsTab />
               </Tab>
               <Tab>
-                <AnotherTab />
+                <TestTab />
               </Tab>
             </Container>
           </TabList>
@@ -91,7 +91,7 @@ export const EditorPage = () => {
         </TabPanel>
         <TabPanel>
           <Main justifyContent='center'>
-            <TestTab />
+            <TestTabWindow />
           </Main>
         </TabPanel>
       </Tabs>

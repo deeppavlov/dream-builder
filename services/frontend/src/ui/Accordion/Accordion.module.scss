@@ -3,25 +3,31 @@
 .elements {
   overflow: hidden;
   transition: height ease 0.2s;
+  max-width: 440px;
 }
 .arrowDropdown {
+  @include t3;
   display: flex;
   padding: 4px 12px;
   width: 100%;
+  max-height: 34px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background: #f0f0f3;
   color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+
+  &_small {
+    @include b3;
+    max-height: 32px;
+  }
+
   svg {
     cursor: pointer;
     fill: rgba(0, 0, 0, 0.7);
     transition: ease 0.2s;
     @include icon_size_24;
-  }
-  p {
-    cursor: pointer;
-    @include t3;
   }
 }
 .close {

@@ -1,14 +1,14 @@
 import { ReactComponent as Logo } from '../../assets/icons/generative.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillListItem.module.scss'
 
 export const SkillListItem = ({ ...props }) => {
   return (
     <tr className={s.tr}>
-      <td className={s.checkboxArea}>
+      {/* <td className={s.checkboxArea}>
         <CheckBox />
-      </td>
+      </td> */}
       <td className={s.td}>
         <div className={s.name}>
           <p>convert_reddit</p>
@@ -41,7 +41,7 @@ export const SkillListItem = ({ ...props }) => {
       <td className={s.td}>
         <div className={s.btns_area}>
           <div>
-            <KebabButton type='row' color='#8D96B5' />
+            <Kebab type='row' color='#8D96B5' dataFor='skills' />
           </div>
         </div>
       </td>

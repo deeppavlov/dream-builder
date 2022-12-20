@@ -1,7 +1,7 @@
 import SkillsLogo from '../../assets/icons/skills.svg'
-import { Accordeon } from '../../ui/Accordeon/Accordeon'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import { Element } from './Element'
 import s from './Skills.module.scss'
 
@@ -14,23 +14,22 @@ export const Skills = () => {
             <img src={SkillsLogo} className={s.icon} />
             <p className={s.type}>Skills</p>
           </div>
-          <KebabButton />
+          <Kebab disabled dataFor='all_skills' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>
         </div>
       </div>
-
       <AddButtonStack text='Add Skills' />
       <div className={s.elements}>
-        <Accordeon title='Customizable'>
+        <Accordion title='Customizable'>
           <Element />
           <Element />
-        </Accordeon>
-        <Accordeon title='Non-customizable'>
+        </Accordion>
+        <Accordion title='Non-customizable'>
           <Element />
           <Element />
-        </Accordeon>
+        </Accordion>
       </div>
     </div>
   )

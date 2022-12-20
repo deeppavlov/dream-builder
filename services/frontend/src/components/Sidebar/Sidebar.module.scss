@@ -23,4 +23,27 @@
   justify-content: center;
   width: 100%;
   gap: 24px;
+  li[aria-selected='true'] {
+    position: relative;
+    button {
+      &::after {
+        content: url(../../assets/icons/indicator.svg);
+        position: absolute;
+        left: 2px;
+        top: 0px;
+        display: block;
+        width: 4px;
+        height: 40px;
+      }
+      svg {
+        fill: $primary1;
+      }
+    }
+  }
+}
+.tooltips {
+  @include tooltip;
+  &::after {
+    left: -2px !important;
+  }
 }

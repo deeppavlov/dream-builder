@@ -12,7 +12,6 @@
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  cursor: default;
 }
 html,
 body {
@@ -62,33 +61,4 @@ p {
 }
 .__react_component_tooltip {
   border: none !important;
-}
-.react-tabs__tab--selected {
-  position: relative;
-  &::after {
-    content: url(../assets/icons/indicator.svg);
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    display: block;
-    width: 4px;
-    height: 40px;
-  }
-  svg {
-    fill: $primary1;
-  }
-}
-
-// Global ScrollBar
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-// ::-webkit-scrollbar-track {
-//   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-// }
-
-::-webkit-scrollbar-thumb {
-  background-color: $text3;
-  border-radius: 4px;
 }

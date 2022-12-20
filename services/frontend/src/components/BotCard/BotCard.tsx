@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import Calendar from '../../assets/icons/calendar.svg'
 import IMG from '../../assets/icons/pavlovInCard.svg'
+import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import s from './BotCard.module.scss'
 
 export const BotCard = ({
@@ -65,10 +65,8 @@ export const BotCard = ({
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <button className={s.clone_btn}>Clone</button>
-            <div className={s.kebab}>
-              <KebabButton />
-            </div>
+            <CreateAssistantModal>Clone</CreateAssistantModal>
+            <KebabButton dataFor='bot_public' />
           </div>
         </div>
       </div>

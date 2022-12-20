@@ -1,10 +1,12 @@
 import s from './RadioButton.module.scss'
 
-export const RadioButton = () => {
+export const RadioButton = ({ children, name, id, htmlFor }: any) => {
   return (
     <div className={s.radio}>
-      <input id='radio-1' name='radio' type='radio' />
-      <label htmlFor='radio-1' className={s.radio_label} />
+      <input id={id} name={name} type='radio' />
+      <label htmlFor={htmlFor} className={s.radio_label}>
+        {children}
+      </label>
     </div>
   )
 }

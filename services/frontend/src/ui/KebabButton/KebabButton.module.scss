@@ -1,16 +1,20 @@
+@import '../../styles/index.scss';
+
 .kebab {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-}
-.dots {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background-color: #000;
+  background-color: #e6e8f0;
+  padding: 6px;
+  border-radius: 8px;
+  @include btn_secondary_small_behavior;
+  svg {
+    fill: #000;
+    @include icon_size_24;
+  }
+  &:hover {
+    svg {
+      fill: #fff;
+    }
+  }
 }

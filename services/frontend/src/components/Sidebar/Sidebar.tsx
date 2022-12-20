@@ -1,4 +1,5 @@
-import {SettingsTab } from './components/SettingsTab'
+import ReactTooltip from 'react-tooltip'
+import { SettingsTab } from './components/SettingsTab'
 import s from './Sidebar.module.scss'
 
 export const Sidebar = ({ children, sidebar, type, buttons }: any) => {
@@ -7,7 +8,16 @@ export const Sidebar = ({ children, sidebar, type, buttons }: any) => {
       return (
         <>
           <div className={s.sidebar}>
-            <div className={s.btns_area}>{children}</div>
+            <div className={s.btns_area}>
+              {children}
+              <ReactTooltip
+                id='sidebar_tooltip'
+                place='right'
+                effect='solid'
+                className={s.tooltips}
+                delayShow={500}
+              />
+            </div>
             <SettingsTab />
           </div>
         </>

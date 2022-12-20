@@ -1,5 +1,5 @@
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
-import { ReactComponent as RightIcon } from '@assets/icons/arrow_right_button.svg'
+import { ReactComponent as RightIcon } from '@assets/icons/arrow_left_button.svg'
 import s from './Button.module.scss'
 
 interface Props extends React.PropsWithChildren {

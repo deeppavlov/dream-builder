@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
+import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import IntentListItem, {
@@ -10,106 +11,99 @@ import IntentModal from '../IntentModal/IntentModal'
 import BaseLink from '../BaseLink/BaseLink'
 import s from './IntentCatcherSidePanel.module.scss'
 
-interface props {
-  isOpen: boolean
-  setIsOpen: (state: boolean) => void
-  positions?: Partial<{
-    top: number
-    left: number
-    right: number
-    bottom: number
-  }>
-}
-
 const intentsMock: IntentListItemProps[] = [
   {
     name: 'Want_pizza',
-    similar: 'want pizza, wanna pizza, love pizza, like pizza...',
+    about: 'want pizza, wanna pizza, love pizza, like pizza...',
     status: 'error',
   },
   {
     name: 'Hello',
-    similar: 'Hey, Hello, Hi',
+    about: 'Hey, Hello, Hi',
     status: 'error',
   },
   {
     name: 'Yes',
-    similar: 'yes, yeah, alright, ok',
+    about: 'yes, yeah, alright, ok',
     status: 'error',
   },
   {
     name: 'No',
-    similar: 'No, Nope, Do not do it',
+    about: 'No, Nope, Do not do it',
     status: 'error',
   },
   {
     name: 'Help',
-    similar: 'sos, help, help me',
+    about: 'sos, help, help me',
     status: 'error',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
-    status: 'good',
+    about: 'Fallback',
+    status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    about: 'Bye, See you, Goodbye, See ya',
+    status: 'success',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
-    status: 'good',
+    about: 'Fallback',
+    status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    about: 'Bye, See you, Goodbye, See ya',
+    status: 'success',
   },
   {
     name: 'Stop',
-    similar: 'stop, stop it, let it stop',
+    about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
     name: 'Cancel',
-    similar: 'Cancel, cancel it',
+    about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
     name: 'Fallback',
-    similar: 'Fallback',
-    status: 'good',
+    about: 'Fallback',
+    status: 'success',
   },
   {
     name: 'Bye',
-    similar: 'Bye, See you, Goodbye, See ya',
-    status: 'good',
+    about: 'Bye, See you, Goodbye, See ya',
+    status: 'success',
   },
 ]
 
-const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
+const IntentCatcherSidePanel = ({
+  isOpen,
+  setIsOpen,
+  position,
+}: SidePanelProps) => {
   /* `isTrainingLoading - training loading status` */
   /* `isTraining` - status from start training to Replace IntentCatcher*/
   const [isTrainingLoading, setIsTrainingLoading] = useState(false)
@@ -141,7 +135,7 @@ const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
     <BaseSidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      position={positions}
+      position={position}
       name='Intent Catcher'>
       <div className={s.intentCatcherSidePanel}>
         <div
@@ -161,12 +155,13 @@ const IntentCatcherSidePanel = ({ isOpen, setIsOpen, positions }: props) => {
             Add Intent
           </Button>
           <IntentList>
-            {intentsMock.map(({ name, similar, status }, i) => (
+            {intentsMock.map(({ name, about, status }, i) => (
               <IntentListItem
                 key={name + i}
                 name={name}
-                similar={similar}
-                status={!isTrainingLoading ? status : undefined}
+                about={about}
+                status={status}
+                disabled={isTraining}
               />
             ))}
           </IntentList>

@@ -3,7 +3,6 @@ import s from './AddButton.module.scss'
 
 export const AddButton = ({ addBot, listView, ...props }: any) => {
   const handleClick = () => {
-    console.log('clicked')
     addBot()
   }
   return (

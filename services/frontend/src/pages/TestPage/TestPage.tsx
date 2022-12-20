@@ -1,16 +1,89 @@
 import React, { useState } from 'react'
 import BaseLink from '../../components/BaseLink/BaseLink'
 import BaseSidePanel from '../../components/BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
+import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
+import IntentList from '../../components/IntentList/IntentList'
+import IntentListItem, {
+  IntentListItemProps,
+} from '../../components/IntentListItem/IntentListItem'
 import IntentModal from '../../components/IntentModal/IntentModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import { AddSkillModal } from '../../components/ModalWindows/AddSkillModal'
 import { CreateAssistantModal } from '../../components/ModalWindows/CreateAssistantModal'
 import { EditModal } from '../../components/ModalWindows/EditModal'
+import NotificationCard, {
+  NotificationCardProps,
+} from '../../components/NotificationCard/NotificationCard'
+import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
+import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
+import SmallTag from '../../components/SmallTag/SmallTag'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import s from './TestPage.module.scss'
+
+const notificMock: NotificationCardProps[] = [
+  {
+    topic: 'Skills',
+    type: 'skill',
+    about: 'DFF Intent Responder Skill',
+    status: 'success',
+  },
+  {
+    topic: 'Annotators',
+    type: 'annotator',
+    about: 'Intent Catcher',
+    status: 'success',
+    statusCount: 5,
+  },
+  {
+    topic: 'Annotators',
+    type: 'annotator',
+    about: 'Intent Catcher',
+    status: 'training',
+  },
+  {
+    topic: 'Annotators',
+    type: 'annotator',
+    about: 'Intent Catcher',
+    status: 'error',
+  },
+]
+
+const intentItemsMock: IntentListItemProps[] = [
+  {
+    name: 'Yes',
+    about: 'yes, yeah, alright, ok',
+    status: 'default',
+  },
+  {
+    name: 'Want_pizza',
+    about: 'want pizza, wanna pizza, love pizza, like pizza...',
+    status: 'error',
+  },
+  {
+    name: "what_time | don't_understand Sorry, I might sound confusing, I am still ...",
+    about: 'Sorry, I might sound confusing, I am still ...',
+    status: 'warning',
+  },
+  {
+    name: 'Fallback',
+    about: 'Fallback',
+    status: 'success',
+  },
+  {
+    name: 'What is the preparatory course?',
+    about: 'The preparatory course is a special educational ',
+  },
+  {
+    name: 'Fallback',
+    about: 'Fallback',
+    disabled: true,
+  },
+]
 
 export const TestPage = () => {
   const getBtnWithModal = (
@@ -65,6 +138,22 @@ export const TestPage = () => {
           <span>IntentResponderSidePanel</span>
           {getBtnWithModal(IntentResponderSidePanel, 'Intent Responder')}
         </div>
+        <div className={s.testPage__component}>
+          <span>NotificationsSidePanel</span>
+          {getBtnWithModal(NotificationsSidePanel, 'Notifications')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>ResourcesSidePanel</span>
+          {getBtnWithModal(ResourcesSidePanel, 'Resources')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>FAQSidePanel</span>
+          {getBtnWithModal(FAQSidePanel, 'FAQ')}
+        </div>
+        <div className={s.testPage__component}>
+          <span>BotInfoSidePanel</span>
+          {getBtnWithModal(BotInfoSidePanel, 'Bot Info')}
+        </div>
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Buttons</span>
@@ -94,6 +183,9 @@ export const TestPage = () => {
             Secondary Small (disabled)
           </Button>
         </div>
+        <Button theme='secondary' long>
+          Secondary Large Long
+        </Button>
         <div className={s.testPage__component}>
           <span>Tertiary</span>
           <Button theme='tertiary'>Tertiary Large</Button>
@@ -135,6 +227,79 @@ export const TestPage = () => {
             Link
           </BaseLink>
         </div>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>IntentListItem</span>
+        {intentItemsMock.map(({ name, about, status, disabled }, i) => (
+          <div key={name + i} className={s.testPage__component}>
+            <span>{disabled ? 'disabled' : status ?? 'no status'}</span>
+            <IntentListItem
+              name={name}
+              about={about}
+              status={status}
+              disabled={disabled}
+            />
+          </div>
+        ))}
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>IntentList</span>
+        <IntentList>
+          {intentItemsMock.map(({ name, about, disabled, status }, i) => (
+            <IntentListItem
+              key={name + i}
+              name={name}
+              about={about}
+              disabled={disabled}
+              status={status}
+            />
+          ))}
+        </IntentList>
+      </div>
+      <div className={s.testPage__component}>
+        <span className={s['testPage__block-name']}>SmallTag</span>
+        <SmallTag>default</SmallTag>
+        <SmallTag theme='version'>v0.2.3</SmallTag>
+        <SmallTag theme='success'>success</SmallTag>
+        <SmallTag isLoading>training</SmallTag>
+        <SmallTag theme='error'>error</SmallTag>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>NotificationCard</span>
+        {notificMock.map(({ topic, type, about, status, statusCount }, i) => (
+          <div key={topic + i} className={s.testPage__component}>
+            <span>{statusCount ? 'with count' : status}</span>
+            <NotificationCard
+              topic={topic}
+              type={type}
+              about={about}
+              status={status}
+              statusCount={statusCount}
+            />
+          </div>
+        ))}
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>Accordeon</span>
+        <div className={s.testPage__component}>
+          <span>default</span>
+          <Accordion title='Lorem ipsum is placeholder text commonly'>
+            <p>
+              Lorem ipsum is placeholder text commonly used in the graphic,
+              print, and publishing industries for previewing layouts and visual
+              mockups
+            </p>
+          </Accordion>
+        </div>
+      </div>
+      <div className={s.testPage__component}>
+        <span>small</span>
+        <Accordion title='Lorem ipsum is placeholder text commonly' small>
+          <p>
+            Lorem ipsum is placeholder text commonly used in the graphic, print,
+            and publishing industries for previewing layouts and visual mockups
+          </p>
+        </Accordion>
       </div>
     </div>
   )

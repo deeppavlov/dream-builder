@@ -1,14 +1,16 @@
 @import '../../styles/index.scss';
 
 .skill {
+  width: 100%;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding-left: 12px;
   height: 40px;
   gap: 10px;
+  background-color: $bcgrnd1;
   @include stack_element_behavior;
   .left {
     cursor: pointer;

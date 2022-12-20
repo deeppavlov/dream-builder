@@ -38,6 +38,7 @@ export const SkillCard = ({
     <div className={s.card}>
       <div className={s.header}>
         <p className={s.botName}>{skillName || 'Name of The Skill'} </p>
+
       </div>
       <div className={s.body}>
         <div className={s.top}>

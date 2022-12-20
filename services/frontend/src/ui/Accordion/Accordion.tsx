@@ -13,7 +13,6 @@ export const Accordion = ({ children, title, small }: AccordionProps) => {
   const handleToggle = () => {
     setClose(!close)
   }
-
   return (
     <div>
       <button

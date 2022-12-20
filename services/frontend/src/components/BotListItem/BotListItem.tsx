@@ -24,6 +24,7 @@ export const BotListItem = ({
   gpu,
   space,
 }: BotListItemProps) => {
+
   return (
     <tr className={s.tr}>
       {checkbox && (

@@ -10,18 +10,22 @@ def check_user_exists(db: Session, email):
     return False
 
 
-def add_google_user(db: Session, user: models.UserCreate):
-    db_user = GoogleUser(
-        email=user.email,
-        sub=user.sub,
-        picture=user.picture,
-        fullname=user.name,
-        given_name=user.given_name,
-        family_name=user.family_name,
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+def get_or_create_user(db: Session, user: models.UserCreate):
+    db_user = get_user_by_email(db, user.email)
+
+    if not db_user:
+        db_user = GoogleUser(
+            email=user.email,
+            sub=user.sub,
+            picture=user.picture,
+            fullname=user.name,
+            given_name=user.given_name,
+            family_name=user.family_name,
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+
     return db_user
 
 

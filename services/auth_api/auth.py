@@ -58,23 +58,18 @@ def validate_date(nbf: int, exp: int) -> None:
 @router.get("/login", status_code=status.HTTP_200_OK, dependencies=[Depends(validate_jwt)])
 async def login(token: str = Header(), db: Session = Depends(get_db)):
     data = jwt.decode(token, verify=False)
+    user = crud.get_or_create_user(db, UserCreate(**data))
 
     user_valid = UserValidScheme(email=data["email"], token=token, is_valid=True)
     crud.add_user_to_uservalid(db, user_valid, data["email"])
 
-    if not crud.check_user_exists(db, data["email"]):
-        user = UserCreate(**data)
-        crud.add_google_user(db, user)
-        return User(**data)
-
-    user_from_db = crud.get_user_by_email(db, data["email"])
     return User(
-        email=user_from_db.email,
-        sub=user_from_db.sub,
-        picture=user_from_db.picture,
-        name=user_from_db.fullname,
-        given_name=user_from_db.given_name,
-        family_name=user_from_db.family_name,
+        email=user.email,
+        sub=user.sub,
+        picture=user.picture,
+        name=user.fullname,
+        given_name=user.given_name,
+        family_name=user.family_name,
     )
 
 

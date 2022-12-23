@@ -73,7 +73,7 @@ export const SkillsAllPage = () => {
           </Wrapper>
         ) : (
           <Wrapper title='Public Skills' amount={skillsData.length}>
-            <Table>
+            <Table second='Type'>
               {skillsData?.map((skill: skill_list) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)

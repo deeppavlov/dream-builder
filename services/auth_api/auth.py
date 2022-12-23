@@ -23,7 +23,7 @@ def get_db():
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(jwt_data: str = Header()):
+async def validate_jwt(jwt_data: str = Header()) -> None:
     """
     Decode input jwt-token, validate date, check user in db or otherwise sign them up
     """
@@ -67,7 +67,15 @@ async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
         crud.add_google_user(db, user)
         return User(**data)
 
-    return User(**crud.get_user_by_email(db, data["email"]))
+    user_from_db = crud.get_user_by_email(db, data["email"])
+    return User(
+        email=user_from_db.email,
+        sub=user_from_db.sub,
+        picture=user_from_db.picture,
+        name=user_from_db.fullname,
+        given_name=user_from_db.given_name,
+        family_name=user_from_db.family_name,
+    )
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])

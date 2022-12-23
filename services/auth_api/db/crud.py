@@ -26,13 +26,11 @@ def add_google_user(db: Session, user: models.UserCreate):
 
 
 def get_user_by_email(db: Session, email: str):
-    return db.query(GoogleUser).filter(GoogleUser.c.email == email).first()
+    return db.query(GoogleUser).filter(GoogleUser.email == email).first()
 
 
 def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str):
-    db_user = UserValid(**user.dict(),
-                        id=db.query(GoogleUser).filter(GoogleUser.c.email == email).first())
-
+    db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

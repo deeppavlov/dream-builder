@@ -1,5 +1,8 @@
-from sqlalchemy.orm import Session
+import logging
 
+from sqlalchemy.orm import Session
+import sqlalchemy.exc as exc
+import psycopg2.errors as errors
 from services.auth_api import models
 from services.auth_api.db.db_models import GoogleUser, UserValid
 
@@ -34,10 +37,15 @@ def get_user_by_email(db: Session, email: str):
 
 
 def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str):
-    db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    db_user = None
+    try:
+        db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    except exc.IntegrityError as e:
+        logging.warning(f"The user was already logged in with this token. Traceback:\n{e}")
+
     return db_user
 
 

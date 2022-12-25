@@ -37,7 +37,7 @@ export const EditorPage = () => {
     <>
       <Topbar type='editor' />
       <Tabs>
-        <Sidebar type='editor'>
+        <Sidebar>
           <TabList>
             <Container
               width='100%'
@@ -58,7 +58,7 @@ export const EditorPage = () => {
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Main flexDirection='row'>
+          <Main sidebar editor draggable>
             <Annotators />
             <SkillSelector />
             <Skills />
@@ -68,7 +68,7 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Main>
+          <Main sidebar editor>
             <Wrapper>
               <Container
                 display='grid'
@@ -90,7 +90,7 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Main justifyContent='center'>
+          <Main sidebar editor>
             <TestTabWindow />
           </Main>
         </TabPanel>

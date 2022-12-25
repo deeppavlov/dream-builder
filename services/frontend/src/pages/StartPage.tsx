@@ -5,6 +5,7 @@ import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
 import { useAuth } from '../services/AuthProvider'
+import { RoutesList } from '../Router/RoutesList'
 
 export const StartPage = () => {
   const auth = useAuth()
@@ -13,14 +14,14 @@ export const StartPage = () => {
   return (
     <>
       <Topbar />
-      <Main sidebar='none'>
+      <Main>
         {user && <Banner name={user.name} />}
         <Wrapper>
           <Container>
             <Card
               title='Virtual Assistants'
-              img={'GoToVA'}
-              link={'/main'}
+              img={'VA'}
+              link={RoutesList.bots}
               btnTitle={'Go to Virtual Assistants'}
               text={
                 'Start your journey with constructing your virtual assistant or chatbot from scratch or clone one of the virtual assistants and chatbots published in Dream Builder.'
@@ -31,10 +32,10 @@ export const StartPage = () => {
               text={
                 'If you are interested in designing scenario-driven or generative skills you can go to start by checking our skills’ public library or design your own skill from scratch.'
               }
-              img={'GoToS'}
-              link={'/skills'}
+              img={'Skills'}
+              link={RoutesList.skills}
               btnTitle={'Go to Skills'}
-              button={'#7000ff'}
+              buttonColor={'purple'}
             />
           </Container>
         </Wrapper>

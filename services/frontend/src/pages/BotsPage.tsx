@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
+import ReactTooltip from 'react-tooltip'
+import { RoutesList } from '../Router/RoutesList'
+import { useAuth } from '../services/AuthProvider'
+import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { getAssistantDists } from '../services/getAssistantDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -12,8 +15,7 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { YourBotCard } from '../components/YourBotCard/YourBotCard'
-import ReactTooltip from 'react-tooltip'
-import { useAuth } from '../services/AuthProvider'
+import { Slider } from '../ui/Slider/Slider'
 
 interface dist_list {
   name: string
@@ -47,42 +49,41 @@ export const BotsPage = () => {
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-  if (isAssistantsLoading) return 'Loading...'
-  if (assistantsError) return 'An error has occurred: ' + assistantsError
+  if (isAssistantsLoading) return <>Loading...</>
+  if (assistantsError) return <>An error has occurred: + {assistantsError}</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
               showAll
               amount={assistantsData.length}
-              linkTo='/bots'
-              paddingBottom='12px'>
-              <Container overflowY='hidden' paddingBottom='22px'>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
-                  return (
-                    <BotCard
-                      key={dist.name}
-                      botName={dist.metadata.display_name}
-                      companyName={dist.metadata.author}
-                      date={date}
-                      description={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
-                    />
-                  )
-                })}
+              linkTo={RoutesList.botsAll}>
+              <Container overflowY='hidden' paddingBottom='0px'>
+                <Slider>
+                  {assistantsData?.map((dist: dist_list) => {
+                    const date = dateToUTC(dist.metadata.date)
+                    return (
+                      <BotCard
+                        key={dist.name}
+                        botName={dist.metadata.display_name}
+                        companyName={dist.metadata.author}
+                        date={date}
+                        description={dist.metadata.description}
+                        version={dist.metadata.version}
+                        ram={dist.metadata.ram_usage}
+                        gpu={dist.metadata.gpu_usage}
+                        space={dist.metadata.disk_usage}
+                      />
+                    )
+                  })}
+                </Slider>
               </Container>
             </Wrapper>
-            <Wrapper
-              paddingBottom='12px'
-              title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Container overflow='hidden'>
                 <Container
                   position='sticky'
@@ -111,7 +112,7 @@ export const BotsPage = () => {
               title='Public Virtual Assistants & Chatbots'
               showAll={true}
               amount={assistantsData.length}
-              linkTo='/bots'>
+              linkTo={RoutesList.botsAll}>
               <Table>
                 {assistantsData?.map((dist: dist_list) => {
                   const date = dateToUTC(dist.metadata.date)
@@ -135,8 +136,13 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
-                // checkbox={true}
-                addButton={<AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />}>
+                addButton={
+                  <AddButton
+                    addBot={addBot}
+                    listView={listView}
+                    disabled={auth?.user === null}
+                  />
+                }>
                 {bots}
               </Table>
             </Wrapper>

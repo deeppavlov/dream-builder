@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { SkillCard, skillType } from '../components/SkillCard/SkilllCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { Topbar } from '../components/Topbar/Topbar'
@@ -17,7 +17,7 @@ interface skill_list {
     execution_time: any
     date_created: string | number | Date
     author: string
-    type: string
+    type: skillType
     description: string
     version: string
     ram_usage: string
@@ -40,13 +40,12 @@ export const SkillsAllPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return 'Loading...'
-
-  if (skillsError) return 'An error has occurred: '
+  if (isSkillsLoading) return <>'Loading...'</>
+  if (skillsError) return <> 'An error has occurred: '</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
           <Wrapper title='Public Skills' amount={skillsData.length}>
             <Container

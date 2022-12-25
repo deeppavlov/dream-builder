@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import { RoutesList } from './RoutesList'
 import { BotsAllPage } from '../pages/BotsAllPage'
 import { EditorPage } from '../pages/EditorPage'
 import { BotsPage } from '../pages/BotsPage'
@@ -11,14 +12,14 @@ import { DraftPage } from '../pages/DraftPage'
 export const Router = () => {
   return (
     <Routes>
-      <Route path='draft' element={<DraftPage />} />
-      <Route path='/' element={<StartPage />} />
-      <Route path='main' element={<BotsPage />} />
-      <Route path='bots' element={<BotsAllPage />} />
-      <Route path='skills' element={<SkillsPage />} />
-      <Route path='allskills' element={<SkillsAllPage />} />
-      <Route path='editor' element={<EditorPage />} />
-      <Route path='test' element={<TestPage />} />
+      <Route path={RoutesList.draft} element={<DraftPage />} />
+      <Route path={RoutesList.start} element={<StartPage />} />
+      <Route path={RoutesList.bots} element={<BotsPage />} />
+      <Route path={RoutesList.botsAll} element={<BotsAllPage />} />
+      <Route path={RoutesList.skills} element={<SkillsPage />} />
+      <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
+      <Route path={RoutesList.editor} element={<EditorPage />} />
+      <Route path={RoutesList.test} element={<TestPage />} />
     </Routes>
   )
 }

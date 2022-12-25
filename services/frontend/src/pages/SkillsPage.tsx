@@ -14,7 +14,8 @@ import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
-
+import { RoutesList } from '../Router/RoutesList'
+import { Slider } from '../ui/Slider/Slider'
 interface skill_list {
   name: string
   metadata: {
@@ -53,42 +54,43 @@ export const SkillsPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return 'Loading...'
+  if (isSkillsLoading) return <>Loading...</>
 
-  if (skillsError) return 'An error has occurred: '
+  if (skillsError) return <>An error has occurred: + {skillsError}</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
           <>
             <Wrapper
               title='Public Skills'
-              showAll={true}
               amount={skillsData.length}
-              linkTo='/allskills'
-              paddingBottom='12px'>
-              <Container paddingBottom='22px'>
-                {skillsData?.map((skill: skill_list) => {
-                  const date = dateToUTC(skill.metadata.date_created)
-                  return (
-                    <SkillCard
-                      skillName={skill.metadata.display_name}
-                      companyName={skill.metadata.author}
-                      skillType={skill.metadata.type}
-                      date={date}
-                      description={skill.metadata.description}
-                      version={skill.metadata.version}
-                      ram={skill.metadata.ram_usage}
-                      gpu={skill.metadata.gpu_usage}
-                      time={skill.metadata.execution_time}
-                      executionTime={skill.metadata.execution_time}
-                    />
-                  )
-                })}
+              linkTo={RoutesList.skillsAll}
+              showAll>
+              <Container>
+                <Slider>
+                  {skillsData?.map((skill: skill_list) => {
+                    const date = dateToUTC(skill.metadata.date_created)
+                    return (
+                      <SkillCard
+                        skillName={skill.metadata.display_name}
+                        companyName={skill.metadata.author}
+                        skillType={skill.metadata.type}
+                        date={date}
+                        description={skill.metadata.description}
+                        version={skill.metadata.version}
+                        ram={skill.metadata.ram_usage}
+                        gpu={skill.metadata.gpu_usage}
+                        time={skill.metadata.execution_time}
+                        executionTime={skill.metadata.execution_time}
+                      />
+                    )
+                  })}
+                </Slider>
               </Container>
             </Wrapper>
-            <Wrapper showAll={true} paddingBottom='12px' title='Your Skills'>
+            <Wrapper showAll title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'
@@ -116,7 +118,7 @@ export const SkillsPage = () => {
               title='Public Skills'
               showAll
               amount={skillsData.length}
-              linkTo='/allskills'>
+              linkTo={RoutesList.skillsAll}>
               <Table second='Type'>
                 {skillsData?.map((skill: skill_list) => {
                   const date = dateToUTC(skill.metadata.date_created)

@@ -111,6 +111,11 @@
     opacity: 0.3;
   }
 }
+@mixin ghost_btn {
+  color: rgba(0, 0, 0, 0.9);
+  text-decoration: underline;
+  @include b3;
+}
 @mixin btn_ghost_behavior {
   &:hover {
     color: #3300ff;

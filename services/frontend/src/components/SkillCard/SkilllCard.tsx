@@ -8,15 +8,16 @@ import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
 import { useAuth } from '../../services/AuthProvider'
 import s from './SkillCard.module.scss'
 
+export type skillType =
+  | 'fallbacks'
+  | 'retrieval'
+  | 'generative'
+  | 'q_a'
+  | 'script'
+  | 'script_with_nns'
 export interface SkillCardProps extends BotCardProps {
   skillName: string
-  skillType:
-    | 'fallbacks'
-    | 'retrieval'
-    | 'generative'
-    | 'q_a'
-    | 'script'
-    | 'script_with_nns'
+  skillType: skillType
   time: string
   checkbox?: boolean
   executionTime: string

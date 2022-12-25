@@ -2,22 +2,21 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   justify-content: start;
   width: 100%;
-  background-color: $bcgrnd3;
   border-radius: 20px;
   padding: 24px;
   gap: 16px;
+  background-color: $bcgrnd3;
   .close {
+    position: absolute;
     right: 12px;
     top: 12px;
-    position: absolute;
     svg {
       cursor: pointer;
       stroke: #8d96b5;
-      width: 24px;
-      height: 24px;
+      @include icon_size_24;
       @include btn_close_behavior;
     }
   }
@@ -27,30 +26,22 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    .title {
+      @include t1;
+    }
     .btns_area {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
       .ghost_btn {
-        padding: 0px 12px;
-        width: 80px;
-        height: 36px;
-        text-decoration: underline;
-        font-family: 'Inter';
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 140%;
-        color: rgba(0, 0, 0, 0.9);
+        padding: 7px 12px;
+        @include ghost_btn;
         @include btn_ghost_behavior;
       }
-      span {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 600;
-        font-size: 18px;
-        line-height: 160%;
+      .amount {
         color: rgba(0, 0, 0, 0.9);
+        @include t2;
       }
     }
   }

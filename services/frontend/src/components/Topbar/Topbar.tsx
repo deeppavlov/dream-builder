@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
@@ -11,15 +12,16 @@ import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
 
-interface TopbarProps extends React.PropsWithChildren {
+interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: void
+  children?: React.ReactNode
 }
 
-export const Topbar = ({ type, viewHandler }: any) => {
+export const Topbar = ({ type, viewHandler }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
-
+  let cx = classNames.bind(s)
   useEffect(() => {
     //Render Google SignIn button
     google.accounts.id.initialize({
@@ -63,9 +65,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
     case 'editor':
       return (
         <>
-          <div
-            style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
-            className={s.topbar}>
+          <div className={cx('topbar', 'editor')}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />

@@ -30,12 +30,12 @@ interface dist_list {
 
 export const BotsAllPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
   const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
-    setListView(!listView)
+    setListView(listView => !listView)
   }
   const {
     isLoading: isAssistantsLoading,
@@ -48,7 +48,6 @@ export const BotsAllPage = () => {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
-
 
   if (isAssistantsLoading) return <> {'Loading...'}</>
   if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>
@@ -63,19 +62,29 @@ export const BotsAllPage = () => {
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-              {assistantsData?.map((dist: dist_list) => {
-                const date = dateToUTC(dist.metadata.date)
+              {assistantsData?.map((dist: dist_list, i: number) => {
+                const {
+                  display_name,
+                  author,
+                  description,
+                  version,
+                  ram_usage,
+                  gpu_usage,
+                  disk_usage,
+                  date,
+                } = dist.metadata
+                const dateCreated = dateToUTC(date)
                 return (
                   <BotCard
-                    key={dist.name}
-                    name={dist.metadata.display_name}
-                    author={dist.metadata.author}
-                    dateCreated={date}
-                    desc={dist.metadata.description}
-                    version={dist.metadata.version}
-                    ram={dist.metadata.ram_usage}
-                    gpu={dist.metadata.gpu_usage}
-                    space={dist.metadata.disk_usage}
+                    key={i}
+                    name={display_name}
+                    author={author}
+                    dateCreated={dateCreated}
+                    desc={description}
+                    version={version}
+                    ram={ram_usage}
+                    gpu={gpu_usage}
+                    space={disk_usage}
                     disabledMsg={
                       auth?.user
                         ? undefined
@@ -92,21 +101,31 @@ export const BotsAllPage = () => {
             amount={assistantsData.length}
             showAll>
             <Table>
-              {assistantsData?.map((dist: dist_list) => {
-                const date = dateToUTC(dist.metadata.date)
+              {assistantsData?.map((dist: dist_list, i: number) => {
+                const {
+                  display_name,
+                  author,
+                  description,
+                  version,
+                  ram_usage,
+                  gpu_usage,
+                  disk_usage,
+                  date,
+                } = dist.metadata
+                const dateCreated = dateToUTC(date)
                 const time = timeToUTC(dist.metadata.date)
                 return (
                   <BotListItem
-                    key={dist.name}
-                    name={dist.metadata.display_name}
-                    author={dist.metadata.author}
-                    dateCreated={date}
+                    key={i}
+                    name={display_name}
+                    author={author}
+                    dateCreated={dateCreated}
                     time={time}
-                    desc={dist.metadata.description}
-                    version={dist.metadata.version}
-                    ram={dist.metadata.ram_usage}
-                    gpu={dist.metadata.gpu_usage}
-                    space={dist.metadata.disk_usage}
+                    desc={description}
+                    version={version}
+                    ram={ram_usage}
+                    gpu={gpu_usage}
+                    space={disk_usage}
                     disabledMsg={
                       auth?.user
                         ? undefined

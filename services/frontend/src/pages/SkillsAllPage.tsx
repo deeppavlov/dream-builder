@@ -34,11 +34,9 @@ interface skill_list {
 
 export const SkillsAllPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
-    console.log('view has changed')
-    setListView(!listView)
-    console.log(listView)
+    setListView(listView => !listView)
   }
   const {
     isLoading: isSkillsLoading,

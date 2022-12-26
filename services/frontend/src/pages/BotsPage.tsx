@@ -38,12 +38,12 @@ interface dist_list {
 export const BotsPage = () => {
   const auth = useAuth()
   const [bots, setBots] = useState<JSX.Element[]>([])
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
   const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
-    setListView(!listView)
+    setListView(listView => !listView)
     setBots([])
   }
   const addBot = () => {
@@ -65,7 +65,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -99,14 +98,12 @@ export const BotsPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-
   if (isAssistantsLoading) return <>Loading...</>
   if (assistantsError) return <>An error has occurred: + {assistantsError}</>
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
       <Main>
-
         {!listView ? (
           <>
             <Wrapper
@@ -116,19 +113,29 @@ export const BotsPage = () => {
               showAll>
               <Container>
                 <Slider>
-                  {assistantsData?.map((dist: dist_list) => {
-                    const date = dateToUTC(dist.metadata.date)
+                  {assistantsData?.map((dist: dist_list, i: number) => {
+                    const {
+                      display_name,
+                      author,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      disk_usage,
+                      date,
+                    } = dist.metadata
+                    const dateCreated = dateToUTC(date)
                     return (
                       <BotCard
-                        key={dist.name}
-                        name={dist.metadata.display_name}
-                        author={dist.metadata.author}
-                        dateCreated={date}
-                        desc={dist.metadata.description}
-                        version={dist.metadata.version}
-                        ram={dist.metadata.ram_usage}
-                        gpu={dist.metadata.gpu_usage}
-                        space={dist.metadata.disk_usage}
+                        key={i}
+                        name={display_name}
+                        author={author}
+                        dateCreated={dateCreated}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        space={disk_usage}
                         disabledMsg={
                           auth?.user
                             ? undefined
@@ -172,21 +179,31 @@ export const BotsPage = () => {
               linkTo={RoutesList.botsAll}
               fitScreen>
               <Table>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
+                {assistantsData?.map((dist: dist_list, i: number) => {
+                  const {
+                    display_name,
+                    author,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    disk_usage,
+                    date,
+                  } = dist.metadata
+                  const dateCreated = dateToUTC(date)
                   const time = timeToUTC(dist.metadata.date)
                   return (
                     <BotListItem
-                      key={dist.name}
-                      name={dist.metadata.display_name}
-                      author={dist.metadata.author}
-                      dateCreated={date}
+                      key={i}
+                      name={display_name}
+                      author={author}
+                      dateCreated={dateCreated}
                       time={time}
-                      desc={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      space={disk_usage}
                       disabledMsg={
                         auth?.user
                           ? undefined
@@ -197,7 +214,7 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots' fitContent>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
                 addButton={
                   <AddButton

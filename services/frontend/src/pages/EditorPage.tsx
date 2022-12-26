@@ -21,12 +21,10 @@ import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
 
 export const EditorPage = () => {
   const [skills, setSkills] = useState([])
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
-    console.log('view has changed')
     setListView(!listView)
     setSkills([])
-    console.log(listView)
   }
   const addSkill = () => {
     !listView

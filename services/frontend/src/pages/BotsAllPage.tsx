@@ -54,12 +54,12 @@ export const BotsAllPage = () => {
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
             amount={assistantsData.length}
-            showAll={false}>
+            showAll>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
@@ -90,7 +90,7 @@ export const BotsAllPage = () => {
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
             amount={assistantsData.length}
-            showAll={false}>
+            showAll>
             <Table>
               {assistantsData?.map((dist: dist_list) => {
                 const date = dateToUTC(dist.metadata.date)

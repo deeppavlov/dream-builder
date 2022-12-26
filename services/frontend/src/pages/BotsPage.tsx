@@ -92,11 +92,10 @@ export const BotsPage = () => {
               showAll
               amount={assistantsData.length}
               linkTo={RoutesList.botsAll}>
-              <Container overflowY='hidden' paddingBottom='0px'>
+              <Container>
                 <Slider>
                   {assistantsData?.map((dist: dist_list) => {
                     const date = dateToUTC(dist.metadata.date)
-                    console.log(dist.metadata.description)
                     return (
                       <BotCard
                         key={dist.name}

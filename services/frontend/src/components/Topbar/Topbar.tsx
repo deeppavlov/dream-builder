@@ -14,7 +14,7 @@ import s from './Topbar.module.scss'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
-  viewHandler?: void
+  viewHandler?: () => void
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
 }
@@ -66,8 +66,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
     case 'editor':
       return (
         <>
-      <div className={cx('topbar', 'editor')}
-        ref={innerRef}>
+          <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />

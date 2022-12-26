@@ -1,0 +1,22 @@
+.baseModal {
+  min-width: 624px;
+  background-color: $bcgrnd1;
+  border-radius: 24px;
+  padding: 48px 64px;
+  position: relative;
+  @include h4;
+  color: $text1;
+  display: flex;
+
+  &__close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 24px;
+    cursor: pointer;
+
+    path {
+      stroke: $text3;
+    }
+  }
+}

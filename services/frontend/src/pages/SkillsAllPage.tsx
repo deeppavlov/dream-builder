@@ -10,6 +10,10 @@ import { useQuery } from 'react-query'
 import { getSkillList } from '../services/getSkillsList'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { useAuth } from '../services/AuthProvider'
+import { SkillType } from '../types/types'
 
 interface skill_list {
   name: string
@@ -17,7 +21,7 @@ interface skill_list {
     execution_time: any
     date_created: string | number | Date
     author: string
-    type: string
+    type: SkillType
     description: string
     version: string
     ram_usage: string
@@ -28,6 +32,7 @@ interface skill_list {
 }
 
 export const SkillsAllPage = () => {
+  const auth = useAuth()
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
     console.log('view has changed')
@@ -56,16 +61,21 @@ export const SkillsAllPage = () => {
                 const date = dateToUTC(skill.metadata.date_created)
                 return (
                   <SkillCard
-                    skillName={skill.metadata.display_name}
-                    companyName={skill.metadata.author}
+                    name={skill.metadata.display_name}
+                    author={skill.metadata.author}
                     skillType={skill.metadata.type}
-                    date={date}
-                    description={skill.metadata.description}
+                    dateCreated={date}
+                    desc={skill.metadata.description}
                     version={skill.metadata.version}
                     ram={skill.metadata.ram_usage}
                     gpu={skill.metadata.gpu_usage}
                     time={skill.metadata.execution_time}
                     executionTime={skill.metadata.execution_time}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to add the skill'
+                    }
                   />
                 )
               })}
@@ -79,11 +89,11 @@ export const SkillsAllPage = () => {
                 const time = timeToUTC(skill.metadata.date_created)
                 return (
                   <SkillListItem
-                    skillName={skill.metadata.display_name}
-                    companyName={skill.metadata.author}
-                    date={date}
+                    name={skill.metadata.display_name}
+                    author={skill.metadata.author}
+                    dateCreated={date}
                     time={time}
-                    description={skill.metadata.description}
+                    desc={skill.metadata.description}
                     version={skill.metadata.version}
                     ram={skill.metadata.ram_usage}
                     gpu={skill.metadata.gpu_usage}
@@ -96,6 +106,13 @@ export const SkillsAllPage = () => {
             </Table>
           </Wrapper>
         )}
+        <SkillSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to add the skill'
+          }
+          position={{ top: 64 }}
+        />
+        <CreateSkillModal />
       </Main>
     </>
   )

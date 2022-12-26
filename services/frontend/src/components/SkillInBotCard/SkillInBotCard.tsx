@@ -2,24 +2,36 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { ReactComponent as Calendar } from '../../assets/icons/calendar.svg'
-import { ReactComponent as SkillTypeLogo } from '../../assets/icons/fallbacks.svg'
+import { ReactComponent as SkillFallbackIcon } from '../../assets/icons/fallbacks.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillInBotCard.module.scss'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { SkillInfoInterface } from '../../types/types'
+import { trigger } from '../../utils/events'
+import Button from '../../ui/Button/Button'
+import { useAuth } from '../../services/AuthProvider'
+
+interface SkillInBotCardProps extends SkillInfoInterface {
+  checkbox?: boolean
+  disabledMsg?: string
+}
 
 export const SkillInBotCard = ({
-  botName,
-  companyName,
-  date,
+  name,
+  author,
+  desc,
+  dateCreated,
   version,
   ram,
   gpu,
   space,
-  type,
+  executionTime,
   skillType,
-  ...props
-}: any) => {
+  checkbox,
+  disabledMsg,
+}: SkillInBotCardProps) => {
+  const auth = useAuth()
   const [disabled, setDisabled] = useState(true)
 
   const sliderHandler = () => {
@@ -27,29 +39,58 @@ export const SkillInBotCard = ({
     console.log('skill state was changed')
     console.log(disabled)
   }
+
+  const handleSkillCardClick = () => {
+    trigger('SkillSidePanel', {
+      name,
+      author,
+      desc,
+      dateCreated,
+      version,
+      ram,
+      gpu,
+      space,
+      executionTime,
+      skillType,
+    })
+  }
+
+  const handleEditSkillBtnClick = (e: any) => {
+    e.stopPropagation()
+    trigger('CreateSkillModal', {
+      name,
+      author,
+      desc,
+      dateCreated,
+      version,
+      ram,
+      gpu,
+      space,
+      executionTime,
+      skillType,
+    })
+  }
+
   return (
-    <div style={{ ...props, opacity: !disabled && '0.3' }} className={s.card}>
+    <div className={s.card} onClick={handleSkillCardClick}>
       <div className={s.header}>
-        <h6>{botName ? botName : 'Name of The Skill'} </h6>
+        <h6>{name} </h6>
         <ToggleButton sliderHandler={sliderHandler} />
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
             <div className={s.type}>
-              <SkillTypeLogo />
-              <h6>{skillType ? skillType : 'Retrieval Skill'}</h6>
+              <SkillFallbackIcon />
+              <h6>{skillType}</h6>
             </div>
             <div className={s.company}>
-              <img src={CompanyLogo} />
-              <h6>{companyName ? companyName : 'Name of The Company'}</h6>
+              <img src={auth?.user?.picture} />
+              <h6>{author}</h6>
             </div>
           </div>
           <div className={s.info}>
-            <p>
-              Helps users locate the nearest store. And we can write 3 lines
-              here and this is maximum about
-            </p>
+            <p>{desc}</p>
           </div>
           <div
             style={{
@@ -60,10 +101,10 @@ export const SkillInBotCard = ({
             }}>
             <div className={s.date}>
               <Calendar />
-              <p style={{ fontSize: '14px' }}>{date ? date : '27.10.2022'}</p>
+              <p style={{ fontSize: '14px' }}>{dateCreated ?? '27.10.2022'}</p>
             </div>
             <div className={s.version}>
-              <p style={{ fontSize: '12px' }}>{version ? version : 'v.0.01'}</p>
+              <p style={{ fontSize: '12px' }}>v{version ?? '0.01'}</p>
             </div>
           </div>
         </div>
@@ -72,17 +113,25 @@ export const SkillInBotCard = ({
           <ul className={s.params}>
             <li>
               <p className={s.params_item}>RAM</p>
-              <p className={s.params_item__units}>0.0 GB</p>
+              <p className={s.params_item__units}>{ram ?? '0.0 GB'}</p>
             </li>
             <li>
               <p className={s.params_item}>Execution Time</p>
-              <p className={s.params_item__units}>0.0 ms</p>
+              <p className={s.params_item__units}>
+                {executionTime ?? '0.0 ms'}
+              </p>
             </li>
           </ul>
         </div>
         <div className={s.bottom}>
           <div className={s.btns_area}>
-            <button className={s.clone_btn}>Edit Skill</button>
+            <Button
+              theme='secondary'
+              small
+              long
+              props={{ onClick: handleEditSkillBtnClick }}>
+              Edit Skill
+            </Button>
             <KebabButton dataFor='customizable_skill' />
           </div>
         </div>

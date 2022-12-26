@@ -31,6 +31,7 @@ const SidePanel = ({
       left: position?.left ?? 'auto',
       right: position?.right ?? 0,
       bottom: position?.bottom ?? 0,
+      overflow: 'visible',
       background: 'none',
       border: 'none',
       borderRadius: 'none',

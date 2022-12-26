@@ -26,6 +26,7 @@
     gap: 24px;
     padding: 0 20px 0 24px;
     margin-right: 4px;
+    width: 100%;
 
     &::-webkit-scrollbar-thumb {
       background: $bcgrnd5;
@@ -40,13 +41,28 @@
 
   &__table {
     width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   &__author {
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 4px;
     margin-bottom: 4px;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
   }
 
   &__author,

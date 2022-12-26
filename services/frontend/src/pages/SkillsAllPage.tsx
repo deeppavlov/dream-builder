@@ -29,6 +29,7 @@ interface skill_list {
     time: string
     display_name: string
   }
+  assistant_dist: string
 }
 
 export const SkillsAllPage = () => {
@@ -45,15 +46,14 @@ export const SkillsAllPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return 'Loading...'
-
-  if (skillsError) return 'An error has occurred: '
+  if (isSkillsLoading) return <>'Loading...'</>
+  if (skillsError) return <> 'An error has occurred: '</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
@@ -62,7 +62,7 @@ export const SkillsAllPage = () => {
                 return (
                   <SkillCard
                     name={skill.metadata.display_name}
-                    author={skill.metadata.author}
+                    author={skill.assistant_dist}
                     skillType={skill.metadata.type}
                     dateCreated={date}
                     desc={skill.metadata.description}
@@ -82,8 +82,8 @@ export const SkillsAllPage = () => {
             </Container>
           </Wrapper>
         ) : (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
-            <Table>
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+            <Table second='Type'>
               {skillsData?.map((skill: skill_list) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)

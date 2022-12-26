@@ -22,6 +22,7 @@
     background-color: $bcgrnd5;
     .botName {
       color: rgba(0, 0, 0, 0.9);
+      @include hide_text;
       @include t4;
     }
   }

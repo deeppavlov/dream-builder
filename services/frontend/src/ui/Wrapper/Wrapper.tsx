@@ -1,15 +1,16 @@
-import { CSSProperties, ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
+import classNames from 'classnames/bind'
 
 interface WrapperProps {
   amount?: number | string
   linkTo?: string
   title?: string
-  closable?: true
-  showAll?: true
-  styles?: CSSProperties
+  closable?: boolean
+  showAll?: boolean
+  fullHeight?: boolean
   children?: ReactNode
 }
 
@@ -20,16 +21,17 @@ export const Wrapper = ({
   title,
   closable,
   showAll,
-  styles,
+  fullHeight,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   const onClose = () => {
     setVisible(!visible)
   }
+  let cx = classNames.bind(s)
   return (
     <>
       {visible && (
-        <div style={styles} className={s.wrapper}>
+        <div className={cx('wrapper', fullHeight && 'fullHeight')}>
           {closable && (
             <button onClick={onClose} className={s.close}>
               <Close />

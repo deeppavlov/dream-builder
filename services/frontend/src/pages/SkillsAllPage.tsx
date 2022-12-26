@@ -52,7 +52,7 @@ export const SkillsAllPage = () => {
       <Topbar viewHandler={viewHandler} type='main' />
       <Main>
         {!listView ? (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>

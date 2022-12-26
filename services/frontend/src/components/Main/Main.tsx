@@ -5,9 +5,9 @@ import { useRef } from 'react'
 
 interface MainProps {
   children: React.ReactNode
-  sidebar?: true
-  editor?: true
-  draggable?: true
+  sidebar?: boolean
+  editor?: boolean
+  draggable?: boolean
 }
 
 export const Main = ({ children, sidebar, editor, draggable }: MainProps) => {

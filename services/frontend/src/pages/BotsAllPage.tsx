@@ -58,8 +58,7 @@ export const BotsAllPage = () => {
         {!listView ? (
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
-            amount={assistantsData.length}
-            showAll>
+            amount={assistantsData.length}>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>

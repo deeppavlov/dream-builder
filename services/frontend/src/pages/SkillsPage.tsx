@@ -109,21 +109,21 @@ export const SkillsPage = () => {
                     const date = dateToUTC(skill.metadata.date_created)
                     return (
                       <SkillCard
-                        skillName={skill.metadata.display_name}
-                        companyName={skill.metadata.author}
+                        name={skill.metadata.display_name}
+                        author={skill.metadata.author}
                         skillType={skill.metadata.type}
-                        date={date}
-                        description={skill.metadata.description}
+                        dateCreated={date}
+                        desc={skill.metadata.description}
                         version={skill.metadata.version}
                         ram={skill.metadata.ram_usage}
                         gpu={skill.metadata.gpu_usage}
                         time={skill.metadata.execution_time}
                         executionTime={skill.metadata.execution_time}
                         disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to add the skill'
-                      }
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to add the skill'
+                        }
                       />
                     )
                   })}

@@ -49,6 +49,7 @@ export const BotsAllPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
+
   if (isAssistantsLoading) return <> {'Loading...'}</>
   if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>
   return (
@@ -106,6 +107,11 @@ export const BotsAllPage = () => {
                     ram={dist.metadata.ram_usage}
                     gpu={dist.metadata.gpu_usage}
                     space={dist.metadata.disk_usage}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to clone the bot'
+                    }
                   />
                 )
               })}

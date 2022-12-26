@@ -19,6 +19,7 @@ interface TopbarProps {
   innerRef?: React.LegacyRef<any>
 }
 
+
 export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user

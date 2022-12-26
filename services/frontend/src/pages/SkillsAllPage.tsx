@@ -100,6 +100,11 @@ export const SkillsAllPage = () => {
                     executionTime={skill.metadata.execution_time}
                     skillType={skill.metadata.type}
                     botName={''}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to add the skill'
+                    }
                   />
                 )
               })}

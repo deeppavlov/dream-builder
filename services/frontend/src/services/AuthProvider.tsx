@@ -1,6 +1,6 @@
+import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { UserContext, UserInterface } from '../types/types'
 
 export const getCookie = (name: string): string | null => {
@@ -10,6 +10,13 @@ export const getCookie = (name: string): string | null => {
     ?.split('=')[1]
 
   return cookieValue ?? null
+}
+
+export const getUser = (): UserInterface | null => {
+  const jwt = getCookie('jwt_token')
+  if (!jwt) return null
+  const userObject: UserInterface = jwtDecode(jwt)
+  return userObject ?? null
 }
 
 export const deleteCookie = (name: string): void => {
@@ -22,19 +29,14 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const storedUser = getUser()
-    if (storedUser) setUser(storedUser)
+    if (storedUser) {
+      setUser(storedUser)
+      return
+    }
   }, [])
-
-  const getUser = (): UserInterface | null => {
-    const jwt = getCookie('jwt_token')
-    if (!jwt) return null
-    const userObject: UserInterface = jwtDecode(jwt)
-    return userObject ?? null
-  }
 
   const login = (response: any) => {
     const jwt = response.credential
@@ -47,13 +49,31 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     now.setTime(expireTime)
 
     document.cookie = `jwt_token=${jwt};expires=${now.toUTCString()}`
-    setUser(getUser())
+
+    // Token Expire time
+    // axios
+    //   .get('https://oauth2.googleapis.com/tokeninfo?id_token=' + jwt)
+    //   .then(r => console.log)
+
+    let config = {
+      mode: 'no-cors',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        token: `${getCookie('jwt_token')}`,
+      },
+    }
+
+    axios
+      .get('http://10.11.1.8:6999/auth/login', config)
+      .then(({ data }) =>
+        setUser({ name: data.name, picture: data.picture, email: data.email })
+      )
+      .catch(e => console.log(e))
   }
 
   const logout = () => {
     deleteCookie('jwt_token')
-    // window.location.reload()
-    location.pathname = '/'
+    window.location.reload()
   }
 
   const userContextValue = useMemo(

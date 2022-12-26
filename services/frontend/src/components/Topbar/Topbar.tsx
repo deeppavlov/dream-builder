@@ -15,10 +15,11 @@ import s from './Topbar.module.scss'
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: void
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  innerRef: any
 }
 
-export const Topbar = ({ type, viewHandler }: TopbarProps) => {
+export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
@@ -40,7 +41,7 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
   switch (type) {
     case 'main':
       return (
-        <div className={s.topbar}>
+        <div className={s.topbar} ref={innerRef}>
           <Menu type='main' />
           <div className={s.logo_area}>
             <Breadcrumbs />
@@ -65,7 +66,8 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
     case 'editor':
       return (
         <>
-          <div className={cx('topbar', 'editor')}>
+      <div className={cx('topbar', 'editor')}
+        ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />
@@ -96,7 +98,7 @@ export const Topbar = ({ type, viewHandler }: TopbarProps) => {
   }
 
   return (
-    <div className={s.topbar}>
+    <div className={s.topbar} ref={innerRef}>
       <Menu type='main' />
       <div className={s.logo_area}>
         <span className={s.logo} />

@@ -1,51 +1,72 @@
 import ReactTooltip from 'react-tooltip'
-import Calendar from '../../assets/icons/calendar.svg'
-import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { useAuth } from '../../services/AuthProvider'
+import Calendar from '@assets/icons/calendar.svg'
+import CompanyLogo from '@assets/icons/pavlovInCard.svg'
 import { SmallTag } from '../SmallTag/SmallTag'
-import { CreateAssistantModal } from '../ModalWindows/CreateAssistantModal'
+import { CreateAssistantModal } from '../CreateAssistantModal/CreateAssistantModal'
 import s from './BotCard.module.scss'
+import Button from '../../ui/Button/Button'
+import { useEffect, useState } from 'react'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { trigger } from '../../utils/events'
+import { BotInfoInterface } from '../../types/types'
 
-export interface BotCardProps {
-  botName: string
-  companyName: string
-  description: string
-  date: string
-  version: string
-  ram: string
-  gpu: string
-  space?: string
+interface BotCardProps extends BotInfoInterface {
+  disabledMsg?: string
 }
 
 export const BotCard = ({
-  botName,
-  companyName,
-  description,
-  date,
+  name,
+  author,
+  desc,
+  dateCreated,
   version,
   ram,
   gpu,
   space,
+  disabledMsg,
 }: BotCardProps) => {
-  const auth = useAuth()
+  const handleBotCardClick = () => {
+    trigger('BotInfoSidePanel', {
+      name,
+      author,
+      desc,
+      dateCreated,
+      version,
+      ram,
+      gpu,
+      space,
+    })
+  }
+
+  const handleCloneBtnClick = (e: any) => {
+    e.stopPropagation()
+    trigger('CreateAssistantModal', {
+      name,
+      author,
+      desc,
+      dateCreated,
+      version,
+      ram,
+      gpu,
+      space,
+    })
+  }
 
   return (
-    <div className={s.card}>
+    <div className={s.card} onClick={handleBotCardClick}>
       <div className={s.header}>
-        <p className={s.botName}>{botName || 'Name of The Bot'} </p>
+        <p className={s.botName}>{name || 'Name of The Bot'} </p>
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.name}>
             <img className={s.companyLogo} src={CompanyLogo} />
-            <p className={s.companyName}>
-              {companyName || 'Name of The Company'}
-            </p>
+            <p className={s.companyName}>{author || 'Name of The Company'}</p>
           </div>
           <div
             className={s.description}
             data-for='descriptionTooltip'
-            data-tip={description}>
+            data-tip={desc}>
             <ReactTooltip
               id='descriptionTooltip'
               effect='solid'
@@ -53,13 +74,13 @@ export const BotCard = ({
               delayShow={500}
             />
             <div className={s.descriptionText}>
-              {description + '...' || 'Lorem ipsum dolores est'}
+              {desc + '...' || 'Lorem ipsum dolores est'}
             </div>
           </div>
           <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
-              <p className={s.dateText}>{date || '27.10.2022'}</p>
+              <p className={s.dateText}>{dateCreated || '27.10.2022'}</p>
             </div>
             <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
@@ -82,10 +103,22 @@ export const BotCard = ({
           </ul>
         </div>
         <div className={s.bottom}>
-          <CreateAssistantModal data-tip data-for='bot-clone-interact'>Clone</CreateAssistantModal>
+          <div data-tip data-for='bot-clone-interact' style={{ width: '100%' }}>
+            <Button
+              theme='primary'
+              small
+              long
+              props={{
+                disabled: disabledMsg !== undefined,
+                onClick: handleCloneBtnClick,
+              }}>
+              Clone
+            </Button>
+          </div>
         </div>
       </div>
-      {auth?.user === null && (
+
+      {disabledMsg && (
         <ReactTooltip
           place='bottom'
           effect='solid'
@@ -93,7 +126,7 @@ export const BotCard = ({
           arrowColor='#8d96b5'
           delayShow={1000}
           id='bot-clone-interact'>
-          You must be signed in to clone the bot
+          {disabledMsg}
         </ReactTooltip>
       )}
     </div>

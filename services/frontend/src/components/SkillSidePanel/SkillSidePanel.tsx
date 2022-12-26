@@ -1,5 +1,5 @@
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
-import { ReactComponent as FallbackIcon } from '@assets/icons/fallbacks.svg'
+import { ReactComponent as SkillFallbackIcon } from '../../assets/icons/fallbacks.svg'
 import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.svg'
 import { ReactComponent as SkillRetrievalIcon } from '@assets/icons/skill_retrieval.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
@@ -7,29 +7,50 @@ import Button from '../../ui/Button/Button'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './SkillSidePanel.module.scss'
+import { useEffect, useState } from 'react'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { SkillInfoInterface } from '../../types/types'
+import ReactTooltip from 'react-tooltip'
 
-const SkillSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
+interface SkillSidePanelProps extends Partial<SidePanelProps> {
+  disabledMsg?: string
+}
+
+const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
+  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
+    setSkill(data.detail)
+    setIsOpen(!isOpen)
+  }
+
+  const handleAddSkillBtnClick = () => {
+    trigger('CreateSkillModal', skill)
+  }
+
+  useEffect(() => {
+    subscribe('SkillSidePanel', handleEventUpdate)
+
+    return () => unsubscribe('SkillSidePanel', handleEventUpdate)
+  }, [])
+
   return (
     <BaseSidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       position={position}
       name='Properties'>
-      <div className={s.skillSidePanel}>
+      <div className={`${s.skillSidePanel} ${s[`skillSidePanel_type_${skill?.skillType}`]}`}>
         <div className={s.skillSidePanel__header}>
-          <span className={s['annotatorSidePanel__header-title']}>Skills:</span>
-          <span>DFF Intent Responder Skill</span>
+          <span>{skill?.name}</span>
         </div>
         <div className={s.skillSidePanel__name}>
-          <SkillRetrievalIcon />
-          <span>Retrieval skill</span>
+          {skill?.skillType === 'retrieval' && <SkillRetrievalIcon />}
+          {skill?.skillType === 'fallbacks' && <SkillFallbackIcon />}
+          <span>{skill?.skillType}</span>
         </div>
-        <p className={s.skillSidePanel__desc}>
-          Some inormation about this annotator. So me inormation about this
-          annotator. Some inormation about this annotator. Some inormation about
-          this annotator. Some inormation about this annotator. Some inormation
-          about this annotator. Some inormation about this annotator.
-        </p>
+        <p className={s.skillSidePanel__desc}>{skill?.desc}</p>
         <Tabs className={s.tabs}>
           <TabList className={s.tabs__list}>
             <Tab className={s.tabs__tab}>Uses</Tab>
@@ -40,7 +61,7 @@ const SkillSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
           <TabPanel className={s.tabs__panel}>
             <div className={s.skillSidePanel__accordions}>
               <Accordion title='Annotators' rounded>
-                <div className={s['skillSidePanel__accordion-item']}>
+                {/* <div className={s['skillSidePanel__accordion-item']}>
                   <SkillScriptIcon />
                   DFF Program-Y Skill
                 </div>
@@ -50,15 +71,37 @@ const SkillSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
                 </div>
                 <div className={s['skillSidePanel__accordion-item']}>
                   <FallbackIcon /> Dummy Skill
-                </div>
+                </div> */}
               </Accordion>
             </div>
           </TabPanel>
+          <TabPanel className={s.tabs__panel}></TabPanel>
         </Tabs>
 
         <div className={s.skillSidePanel__btns}>
-          <Button theme='primary'>Add Skill</Button>
+          <div data-tip data-for='skill-add-interact' style={{ width: '100%' }}>
+            <Button
+              theme='primary'
+              props={{
+                disabled: disabledMsg !== undefined,
+                onClick: handleAddSkillBtnClick,
+              }}>
+              Add Skill
+            </Button>
+          </div>
         </div>
+
+        {disabledMsg && (
+          <ReactTooltip
+            place='bottom'
+            effect='solid'
+            className='tooltips'
+            arrowColor='#8d96b5'
+            delayShow={1000}
+            id='skill-add-interact'>
+            {disabledMsg}
+          </ReactTooltip>
+        )}
       </div>
     </BaseSidePanel>
   )

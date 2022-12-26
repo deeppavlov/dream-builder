@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { dateToUTC } from '../utils/dateToUTC'
 import { getAssistantDists } from '../services/getAssistantDists'
@@ -10,6 +10,9 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
+import { useAuth } from '../services/AuthProvider'
+import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 
 interface dist_list {
   name: string
@@ -26,7 +29,11 @@ interface dist_list {
 }
 
 export const BotsAllPage = () => {
+  const auth = useAuth()
   const [listView, setListView] = useState(false)
+  const topbarRef = useRef<HTMLDivElement | undefined>()
+  const [topbarHeight, setTopbarHeight] = useState(0)
+
   const viewHandler = () => {
     setListView(!listView)
   }
@@ -35,11 +42,18 @@ export const BotsAllPage = () => {
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
+
+  useEffect(() => {
+    if (!isAssistantsLoading) {
+      setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
+    }
+  }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
+
   if (isAssistantsLoading) return 'Loading...'
   if (assistantsError) return 'An error has occurred: ' + assistantsError
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
       <Main sidebar='none'>
         {!listView ? (
           <Wrapper
@@ -54,14 +68,19 @@ export const BotsAllPage = () => {
                 return (
                   <BotCard
                     key={dist.name}
-                    botName={dist.metadata.display_name}
-                    companyName={dist.metadata.author}
-                    date={date}
-                    description={dist.metadata.description}
+                    name={dist.metadata.display_name}
+                    author={dist.metadata.author}
+                    dateCreated={date}
+                    desc={dist.metadata.description}
                     version={dist.metadata.version}
                     ram={dist.metadata.ram_usage}
                     gpu={dist.metadata.gpu_usage}
                     space={dist.metadata.disk_usage}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to clone the bot'
+                    }
                   />
                 )
               })}
@@ -78,12 +97,12 @@ export const BotsAllPage = () => {
                 const time = timeToUTC(dist.metadata.date)
                 return (
                   <BotListItem
-                    date={date}
-                    time={time}
                     key={dist.name}
-                    botName={dist.metadata.display_name}
-                    companyName={dist.metadata.author}
-                    description={dist.metadata.description}
+                    name={dist.metadata.display_name}
+                    author={dist.metadata.author}
+                    dateCreated={date}
+                    time={time}
+                    desc={dist.metadata.description}
                     version={dist.metadata.version}
                     ram={dist.metadata.ram_usage}
                     gpu={dist.metadata.gpu_usage}
@@ -94,6 +113,13 @@ export const BotsAllPage = () => {
             </Table>
           </Wrapper>
         )}
+        <BotInfoSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to clone the bot'
+          }
+          position={{ top: topbarHeight }}
+        />
+        <CreateAssistantModal />
       </Main>
     </>
   )

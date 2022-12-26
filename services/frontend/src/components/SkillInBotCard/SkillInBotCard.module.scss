@@ -35,6 +35,10 @@
   align-items: center;
   font-size: 14px;
   gap: 4px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 .info {
   p {
@@ -67,6 +71,7 @@
     gap: 4px;
     img {
       @include icon_size_24;
+      border-radius: 50%;
     }
   }
   .type {
@@ -76,6 +81,7 @@
     gap: 8px;
     h6 {
       color: $magenta;
+      text-transform: capitalize;
     }
     svg {
       @include icon_size_24;
@@ -139,7 +145,7 @@
   min-height: 36px;
   background-color: #f0f0f3;
   border-radius: 8px;
-  @include btn_secondary_small_behavior
+  @include btn_secondary_small_behavior;
 }
 li {
   display: flex;

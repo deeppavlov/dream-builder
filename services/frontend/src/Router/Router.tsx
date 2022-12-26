@@ -8,6 +8,7 @@ import { SkillsPage } from '../pages/SkillsPage'
 import { StartPage } from '../pages/StartPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { DraftPage } from '../pages/DraftPage'
+import { PrivateRoute } from './PrivateRoute'
 
 export const Router = () => {
   return (

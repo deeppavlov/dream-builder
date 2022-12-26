@@ -8,12 +8,12 @@ import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
 import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentList from '../../components/IntentList/IntentList'
-import IntentListItem, { IntentListItemInterface } from '../../components/IntentListItem/IntentListItem'
+import IntentListItem, {
+  IntentListItemInterface,
+} from '../../components/IntentListItem/IntentListItem'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import { AddSkillModal } from '../../components/ModalWindows/AddSkillModal'
-import { CreateAssistantModal } from '../../components/ModalWindows/CreateAssistantModal'
-import { EditModal } from '../../components/ModalWindows/EditModal'
+import { CreateAssistantModal } from '../../components/CreateAssistantModal/CreateAssistantModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import NotificationCard, {
   NotificationCardProps,
@@ -21,13 +21,15 @@ import NotificationCard, {
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
-import {SmallTag} from '../../components/SmallTag/SmallTag'
+import { SmallTag } from '../../components/SmallTag/SmallTag'
 import SelectorSettingsSidePanel from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
+import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
 
 const notificMock: NotificationCardProps[] = [
@@ -120,9 +122,18 @@ export const TestPage = () => {
     <div className={s.testPage}>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Modals</span>
-        <CreateAssistantModal>Create Assistant</CreateAssistantModal>
-        <AddSkillModal>Add Skill</AddSkillModal>
-        <EditModal>Edit Bot Description</EditModal>
+        <Button
+          theme='primary'
+          props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
+          CreateAssistantModal
+        </Button>
+        <CreateAssistantModal />
+        <Button
+          theme='primary'
+          props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
+          CreateSkillModal
+        </Button>
+        <CreateSkillModal />
         <div className={s.testPage__component}>
           <span>IntentCatcherModal</span>
           {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (add)')}
@@ -182,7 +193,9 @@ export const TestPage = () => {
         </div>
         <div className={s.testPage__component}>
           <span>IntentCatcherSidePanel</span>
-          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', { disabled: true })}
+          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', {
+            disabled: true,
+          })}
         </div>
         <div className={s.testPage__component}>
           <span>IntentResponderSidePanel</span>

@@ -15,8 +15,8 @@ import s from './Topbar.module.scss'
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: void
-  children?: React.ReactNode,
-  innerRef: any
+  children?: React.ReactNode
+  innerRef?: React.LegacyRef<any>
 }
 
 export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {

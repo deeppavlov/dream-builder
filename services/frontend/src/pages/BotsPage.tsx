@@ -96,22 +96,23 @@ export const BotsPage = () => {
                 <Slider>
                   {assistantsData?.map((dist: dist_list) => {
                     const date = dateToUTC(dist.metadata.date)
+                    console.log(dist.metadata.description)
                     return (
                       <BotCard
                         key={dist.name}
-                        botName={dist.metadata.display_name}
-                        companyName={dist.metadata.author}
-                        date={date}
-                        description={dist.metadata.description}
+                        name={dist.metadata.display_name}
+                        author={dist.metadata.author}
+                        dateCreated={date}
+                        desc={dist.metadata.description}
                         version={dist.metadata.version}
                         ram={dist.metadata.ram_usage}
                         gpu={dist.metadata.gpu_usage}
                         space={dist.metadata.disk_usage}
-                                disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
+                        disabledMsg={
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to clone the bot'
+                        }
                       />
                     )
                   })}

@@ -63,7 +63,26 @@ export const BotsPage = () => {
             />,
           ])
         )
-      : setBots(bots.concat([<BotListItem />]))
+      : setBots(
+          bots.concat([
+            <BotListItem
+              key={nanoid(8)}
+              dateCreated={dateToUTC(new Date())}
+              author={auth?.user?.name ?? 'Name of Company'}
+              version='0.01'
+              name='Name of The Bot'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              space='0.0 GB'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to clone the bot'
+              }
+            />,
+          ])
+        )
   }
   const {
     isLoading: isAssistantsLoading,
@@ -163,6 +182,11 @@ export const BotsPage = () => {
                       ram={dist.metadata.ram_usage}
                       gpu={dist.metadata.gpu_usage}
                       space={dist.metadata.disk_usage}
+                      disabledMsg={
+                        auth?.user
+                          ? undefined
+                          : 'You must be signed in to clone the bot'
+                      }
                     />
                   )
                 })}

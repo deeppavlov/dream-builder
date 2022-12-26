@@ -49,8 +49,8 @@ export const BotsAllPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return 'Loading...'
-  if (assistantsError) return 'An error has occurred: ' + assistantsError
+  if (isAssistantsLoading) return <> {'Loading...'}</>
+  if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />

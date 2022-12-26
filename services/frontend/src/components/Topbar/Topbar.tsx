@@ -16,7 +16,7 @@ interface TopbarProps extends React.PropsWithChildren {
   viewHandler?: void
 }
 
-export const Topbar = ({ type, viewHandler }: any) => {
+export const Topbar = ({ type, viewHandler, innerRef }: any) => {
   const auth = useAuth()
   const user = auth?.user
 
@@ -38,7 +38,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
   switch (type) {
     case 'main':
       return (
-        <div className={s.topbar}>
+        <div className={s.topbar} ref={innerRef}>
           <Menu type='main' />
           <div className={s.logo_area}>
             <Breadcrumbs />
@@ -65,7 +65,8 @@ export const Topbar = ({ type, viewHandler }: any) => {
         <>
           <div
             style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
-            className={s.topbar}>
+            className={s.topbar}
+            ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />
@@ -96,7 +97,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
   }
 
   return (
-    <div className={s.topbar}>
+    <div className={s.topbar} ref={innerRef}>
       <Menu type='main' />
       <div className={s.logo_area}>
         <span className={s.logo} />

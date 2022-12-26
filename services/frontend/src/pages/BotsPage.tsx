@@ -89,9 +89,9 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll
               amount={assistantsData.length}
-              linkTo={RoutesList.botsAll}>
+              linkTo={RoutesList.botsAll}
+              showAll>
               <Container>
                 <Slider>
                   {assistantsData?.map((dist: dist_list) => {
@@ -147,7 +147,8 @@ export const BotsPage = () => {
               title='Public Virtual Assistants & Chatbots'
               showAll
               amount={assistantsData.length}
-              linkTo={RoutesList.botsAll}>
+              linkTo={RoutesList.botsAll}
+              fitScreen>
               <Table>
                 {assistantsData?.map((dist: dist_list) => {
                   const date = dateToUTC(dist.metadata.date)
@@ -169,7 +170,7 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots' fitContent>
               <Table
                 addButton={
                   <AddButton

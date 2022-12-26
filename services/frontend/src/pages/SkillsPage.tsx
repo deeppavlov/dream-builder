@@ -35,6 +35,7 @@ interface skill_list {
     time: string
     display_name: string
   }
+  assistant_dist: string
 }
 
 export const SkillsPage = () => {
@@ -57,6 +58,8 @@ export const SkillsPage = () => {
               skillType='fallbacks'
               author={auth?.user?.name ?? 'Name of The Company'}
               desc='Helps users locate the nearest store. And we can write 3 lines
+              here and this is maximum aboutHelps users locate the nearest store. And we can write 3 lines
+              here and this is maximum aboutHelps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
               dateCreated={dateToUTC(new Date())}
               version='0.01'
@@ -70,7 +73,8 @@ export const SkillsPage = () => {
             <SkillListItem
               key={nanoid(8)}
               name='Name of The Skill'
-              desc='Lorem'
+              desc='Helps users locate the nearest store. And we can write 3 lines
+              here and this is maximum about'
               author={auth?.user?.name ?? ''}
               skillType='retrieval'
               version='0.01'
@@ -90,8 +94,8 @@ export const SkillsPage = () => {
   } = useQuery('skills_list', getSkillList)
 
   if (isSkillsLoading) return <>Loading...</>
-
   if (skillsError) return <>An error has occurred: + {skillsError}</>
+
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -110,7 +114,7 @@ export const SkillsPage = () => {
                     return (
                       <SkillCard
                         name={skill.metadata.display_name}
-                        author={skill.metadata.author}
+                        author={skill.assistant_dist}
                         skillType={skill.metadata.type}
                         dateCreated={date}
                         desc={skill.metadata.description}
@@ -156,9 +160,10 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
-              showAll
               amount={skillsData.length}
-              linkTo={RoutesList.skillsAll}>
+              linkTo={RoutesList.skillsAll}
+              showAll
+              fitScreen>
               <Table second='Type'>
                 {skillsData?.map((skill: skill_list, i: number) => {
                   const date = dateToUTC(skill.metadata.date_created)
@@ -182,7 +187,7 @@ export const SkillsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots' limiter>
               <Table>
                 <AddButton
                   addBot={addBot}

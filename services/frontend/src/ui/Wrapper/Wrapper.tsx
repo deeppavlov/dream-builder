@@ -11,6 +11,8 @@ interface WrapperProps {
   closable?: boolean
   showAll?: boolean
   fullHeight?: boolean
+  fitScreen?: boolean
+  limiter?: boolean
   children?: ReactNode
 }
 
@@ -22,6 +24,8 @@ export const Wrapper = ({
   closable,
   showAll,
   fullHeight,
+  fitScreen,
+  limiter,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   const onClose = () => {
@@ -31,7 +35,13 @@ export const Wrapper = ({
   return (
     <>
       {visible && (
-        <div className={cx('wrapper', fullHeight && 'fullHeight')}>
+        <div
+          className={cx(
+            'wrapper',
+            fullHeight && 'fullHeight',
+            fitScreen && 'fitScreen',
+            limiter && 'limiter'
+          )}>
           {closable && (
             <button onClick={onClose} className={s.close}>
               <Close />

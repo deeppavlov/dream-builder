@@ -12,6 +12,16 @@
   &.fullHeight {
     height: 100%;
   }
+  &.fitScreen {
+    min-height: 380px;
+    height: 500px;
+    flex: 1 1 auto;
+  }
+  &.limiter {
+    max-height: 550px; //нужно найти другой способ
+    flex: 0 0 auto;
+  }
+
   .close {
     position: absolute;
     right: 12px;

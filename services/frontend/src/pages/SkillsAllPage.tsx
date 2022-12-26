@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
-import { SkillCard, skillType } from '../components/SkillCard/SkilllCard'
+import { SkillCard } from '../components/SkillCard/SkilllCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { Topbar } from '../components/Topbar/Topbar'
@@ -29,6 +29,7 @@ interface skill_list {
     time: string
     display_name: string
   }
+  assistant_dist: string
 }
 
 export const SkillsAllPage = () => {
@@ -61,7 +62,7 @@ export const SkillsAllPage = () => {
                 return (
                   <SkillCard
                     name={skill.metadata.display_name}
-                    author={skill.metadata.author}
+                    author={skill.assistant_dist}
                     skillType={skill.metadata.type}
                     dateCreated={date}
                     desc={skill.metadata.description}
@@ -81,7 +82,7 @@ export const SkillsAllPage = () => {
             </Container>
           </Wrapper>
         ) : (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Table second='Type'>
               {skillsData?.map((skill: skill_list) => {
                 const date = dateToUTC(skill.metadata.date_created)

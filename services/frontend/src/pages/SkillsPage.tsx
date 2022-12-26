@@ -76,6 +76,12 @@ export const SkillsPage = () => {
               time={timeToUTC(new Date().getTime())}
               ram='0.0 GB'
               gpu='0.0 GB'
+              executionTime='0.0'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to add the skill'
+              }
             />,
           ])
         )
@@ -174,6 +180,11 @@ export const SkillsPage = () => {
                       executionTime={skill.metadata.execution_time}
                       skillType={skill.metadata.type}
                       botName={''}
+                      disabledMsg={
+                        auth?.user
+                          ? undefined
+                          : 'You must be signed in to add the skill'
+                      }
                     />
                   )
                 })}

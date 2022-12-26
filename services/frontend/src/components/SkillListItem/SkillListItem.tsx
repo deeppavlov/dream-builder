@@ -6,9 +6,11 @@ import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import s from './SkillListItem.module.scss'
 import { SkillInfoInterface } from '../../types/types'
+import { trigger } from '../../utils/events'
 
 interface SkillListItemProps extends SkillInfoInterface {
   checkbox?: boolean
+  disabledMsg?: string
 }
 
 export const SkillListItem = ({
@@ -24,10 +26,34 @@ export const SkillListItem = ({
   checkbox,
   executionTime,
   botName,
+  disabledMsg,
 }: SkillListItemProps) => {
   let cx = classNames.bind(s)
+  const skill = {
+    name,
+    author,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    time,
+    skillType,
+    executionTime,
+    botName,
+  }
+
+  const handleSkillListItemClick = () => {
+    trigger('SkillSidePanel', skill)
+  }
+
+  const handleAddBtnClick = (e: any) => {
+    e.stopPropagation()
+    trigger('CreateSkillModal', skill)
+  }
+
   return (
-    <tr className={s.tr}>
+    <tr className={s.tr} onClick={handleSkillListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
           <CheckBox />
@@ -37,8 +63,7 @@ export const SkillListItem = ({
         <div className={s.name}>
           <p className={s.skillName}>{name || 'Name of The Skill'}</p>
           <span className={s.params}>
-            {'RAM ' + ram || '60.0GB'} | {'GPU ' + gpu || '65.0 GB'} |{' '}
-            {'DS ' + executionTime + 's' || '0.0s'}
+            {`RAM ${ram} | GPU ${gpu} | DS ${executionTime}s`}
           </span>
         </div>
       </td>
@@ -80,11 +105,27 @@ export const SkillListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <button className={s.area}>
-            <PlusLogo />
-          </button>
+          <div data-tip data-for='skill-add-interact'>
+            <button
+              className={s.area}
+              onClick={handleAddBtnClick}
+              disabled={disabledMsg !== undefined}>
+              <PlusLogo />
+            </button>
+          </div>
         </div>
       </td>
+      {disabledMsg && (
+        <ReactTooltip
+          place='bottom'
+          effect='solid'
+          className='tooltips'
+          arrowColor='#8d96b5'
+          delayShow={1000}
+          id='skill-add-interact'>
+          {disabledMsg}
+        </ReactTooltip>
+      )}
     </tr>
   )
 }

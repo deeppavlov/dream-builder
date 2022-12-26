@@ -107,6 +107,11 @@ export const BotsAllPage = () => {
                     ram={dist.metadata.ram_usage}
                     gpu={dist.metadata.gpu_usage}
                     space={dist.metadata.disk_usage}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to clone the bot'
+                    }
                   />
                 )
               })}

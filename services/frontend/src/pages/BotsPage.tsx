@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
@@ -14,6 +14,10 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { YourBotCard } from '../components/YourBotCard/YourBotCard'
 import ReactTooltip from 'react-tooltip'
 import { useAuth } from '../services/AuthProvider'
+import { trigger } from '../utils/events'
+import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { nanoid } from 'nanoid'
 
 interface dist_list {
   name: string
@@ -31,27 +35,53 @@ interface dist_list {
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const [bots, setBots] = useState([])
+  const [bots, setBots] = useState<JSX.Element[]>([])
   const [listView, setListView] = useState(false)
+  const topbarRef = useRef<HTMLDivElement | undefined>()
+  const [topbarHeight, setTopbarHeight] = useState(0)
+
   const viewHandler = () => {
     setListView(!listView)
     setBots([])
   }
   const addBot = () => {
     !listView
-      ? setBots(bots.concat(<YourBotCard />))
-      : setBots(bots.concat(<BotListItem />))
+      ? setBots(
+          bots.concat([
+            <YourBotCard
+              key={nanoid(8)}
+              dateCreated={dateToUTC(new Date())}
+              author={auth?.user?.name}
+              version='0.01'
+              name='Name of The Bot'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to clone the bot'
+              }
+            />,
+          ])
+        )
+      : setBots(bots.concat([<BotListItem />]))
   }
   const {
     isLoading: isAssistantsLoading,
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
+
+  useEffect(() => {
+    if (!isAssistantsLoading) {
+      setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
+    }
+  }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
+
   if (isAssistantsLoading) return 'Loading...'
   if (assistantsError) return 'An error has occurred: ' + assistantsError
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
       <Main sidebar='none'>
         {!listView ? (
           <>
@@ -67,14 +97,19 @@ export const BotsPage = () => {
                   return (
                     <BotCard
                       key={dist.name}
-                      botName={dist.metadata.display_name}
-                      companyName={dist.metadata.author}
-                      date={date}
-                      description={dist.metadata.description}
+                      name={dist.metadata.display_name}
+                      author={dist.metadata.author}
+                      dateCreated={date}
+                      desc={dist.metadata.description}
                       version={dist.metadata.version}
                       ram={dist.metadata.ram_usage}
                       gpu={dist.metadata.gpu_usage}
                       space={dist.metadata.disk_usage}
+                      disabledMsg={
+                        auth?.user
+                          ? undefined
+                          : 'You must be signed in to clone the bot'
+                      }
                     />
                   )
                 })}
@@ -119,11 +154,11 @@ export const BotsPage = () => {
                   return (
                     <BotListItem
                       key={dist.name}
-                      botName={dist.metadata.display_name}
-                      companyName={dist.metadata.author}
-                      date={date}
+                      name={dist.metadata.display_name}
+                      author={dist.metadata.author}
+                      dateCreated={date}
                       time={time}
-                      description={dist.metadata.description}
+                      desc={dist.metadata.description}
                       version={dist.metadata.version}
                       ram={dist.metadata.ram_usage}
                       gpu={dist.metadata.gpu_usage}
@@ -156,9 +191,16 @@ export const BotsPage = () => {
             arrowColor='#8d96b5'
             delayShow={1000}
             id='add-btn-new-bot'>
-            You must be signed in to create the own bot
+            You must be signed in to create your own bot
           </ReactTooltip>
         )}
+        <BotInfoSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to clone the bot'
+          }
+          position={{ top: topbarHeight }}
+        />
+        <CreateAssistantModal />
       </Main>
     </>
   )

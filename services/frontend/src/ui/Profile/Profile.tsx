@@ -30,7 +30,11 @@ export const Profile = ({ auth }: ProfileProps) => {
   return (
     <>
       <div className={s.avatar} data-tip data-for='menu'>
-        <img src={auth?.user?.picture} className={s.avatar__picture} />
+        <img
+          src={auth?.user?.picture}
+          referrerPolicy='no-referrer'
+          className={s.avatar__picture}
+        />
         <ArrowDown className={s.arrow} />
       </div>
       <ReactTooltip

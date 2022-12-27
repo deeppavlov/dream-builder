@@ -2,7 +2,6 @@ import logging
 
 from sqlalchemy.orm import Session
 import sqlalchemy.exc as exc
-import psycopg2.errors as errors
 from services.auth_api import models
 from services.auth_api.db.db_models import GoogleUser, UserValid
 

@@ -45,7 +45,7 @@ def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str)
         db.refresh(db_user)
     except exc.IntegrityError as e:
         logging.warning(f"The user was already logged in with this token. Traceback:\n{e}")
-
+        db.rollback()
     return db_user
 
 

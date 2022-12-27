@@ -3,9 +3,10 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './Annotators.module.scss'
 
-export const Annotators: React.FC = () => {
+export const Annotators: React.FC = ({ annotatorsList }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -22,13 +23,14 @@ export const Annotators: React.FC = () => {
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        <Accordion title='Customizable'>
+        {/* <Accordion title='Customizable'>
           <Element />
           <Element />
-        </Accordion>
+        </Accordion> */}
         <Accordion title='Non-customizable'>
-          <Element />
-          <Element />
+          {annotatorsList?.map((item: string, i: number) => {
+            return <Element key={i} title={capitalizeTitle(item)} />
+          })}
         </Accordion>
       </div>
     </div>

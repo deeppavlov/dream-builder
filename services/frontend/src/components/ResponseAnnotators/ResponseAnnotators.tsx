@@ -5,7 +5,7 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
 
-export const ResponseAnnotators = () => {
+export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -24,7 +24,9 @@ export const ResponseAnnotators = () => {
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
         <Accordion title='Non-customizable'>
-          <Element />
+          {responseAnnotatorsList?.map((i: string) => {
+            return <Element title={i} />
+          })}
         </Accordion>
       </div>
     </div>

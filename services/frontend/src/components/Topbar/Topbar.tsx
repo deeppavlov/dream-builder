@@ -17,10 +17,10 @@ interface TopbarProps {
   viewHandler?: () => void
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
+  title?: string
 }
 
-
-export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
+export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
@@ -72,10 +72,11 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
+            {title}
             <div className={s.btns_area}>
-              <History />
+              {/* <History /> */}
               <Resources />
-              <Notifications />
+              {/* <Notifications /> */}
               <Test />
               {user ? (
                 <Profile auth={auth} />

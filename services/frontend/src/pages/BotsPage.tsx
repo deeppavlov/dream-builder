@@ -127,6 +127,7 @@ export const BotsPage = () => {
                     const dateCreated = dateToUTC(date)
                     return (
                       <BotCard
+                        routingName={dist.name}
                         key={i}
                         name={display_name}
                         author={author}
@@ -195,6 +196,7 @@ export const BotsPage = () => {
                   return (
                     <BotListItem
                       key={i}
+                      routingName={dist.name}
                       name={display_name}
                       author={author}
                       dateCreated={dateCreated}

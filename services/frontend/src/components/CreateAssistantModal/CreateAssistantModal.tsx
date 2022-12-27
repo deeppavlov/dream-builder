@@ -9,6 +9,7 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './CreateAssistantModal.module.scss'
+import { RoutesList } from '../../Router/RoutesList'
 
 export const CreateAssistantModal = () => {
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
@@ -44,7 +45,7 @@ export const CreateAssistantModal = () => {
 
   const handleContinueBtnClick = () => {
     if (!isHaveNameAndDesc) return
-    location.pathname = '/editor'
+    location.pathname = RoutesList.editor + bot?.routingName!
   }
 
   useEffect(() => {

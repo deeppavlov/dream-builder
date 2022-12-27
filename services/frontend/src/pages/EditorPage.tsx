@@ -18,22 +18,56 @@ import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
+import { useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getDistByName } from '../services/getDistByName'
 
 export const EditorPage = () => {
-  const [skills, setSkills] = useState([])
+  const [skillsList, setSkillsList] = useState([])
   const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
     setListView(!listView)
-    setSkills([])
+    setSkillsList([])
   }
   const addSkill = () => {
     !listView
-      ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
-      : setSkills(skills.concat(<SkillListItem />))
+      ? setSkillsList(skillsList.concat(<SkillInBotCard maxWidth='345px' />))
+      : setSkillsList(skillsList.concat(<SkillListItem />))
   }
+  const data = useParams()
+  const {
+    isLoading: isDistLoading,
+    error: distError,
+    data: distData,
+  } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
+    enabled: data.name?.length! > 0,
+  })
+
+  if (distError) return <>An error has occurred: + {distError}</>
+
+  const annotators =
+    distData?.pipeline_conf?.services?.annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.annotators).map(i => i)
+  const skills =
+    distData?.pipeline_conf?.services?.skills &&
+    Object.keys(distData?.pipeline_conf?.services?.skills).map(i => i)
+  const skillSelectors =
+    distData?.pipeline_conf?.services?.skill_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.skill_selectors).map(i => i)
+  const responseSelectors =
+    distData?.pipeline_conf?.services?.response_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.response_selectors).map(
+      i => i
+    )
+  const responseAnnotators =
+    distData?.pipeline_conf?.services?.response_annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
+      i => i
+    )
+
   return (
     <>
-      <Topbar type='editor' />
+      <Topbar type='editor' title={data.name} />
       <Tabs>
         <Sidebar>
           <TabList>
@@ -49,41 +83,41 @@ export const EditorPage = () => {
               <Tab>
                 <SkillsTab />
               </Tab>
-              <Tab>
-                <TestTab />
-              </Tab>
+              <Tab>{/* <TestTab /> */}</Tab>
             </Container>
           </TabList>
         </Sidebar>
         <TabPanel>
           <Main sidebar editor draggable>
-            <Annotators />
-            <SkillSelector />
-            <Skills />
-            <CandidateAnnotators />
-            <ResponseSelector />
-            <ResponseAnnotators />
+            <Annotators annotatorsList={annotators} />
+            <SkillSelector skillSelectorsList={skillSelectors} />
+            <Skills skillsList={skills} />
+            {/* <CandidateAnnotators /> */}
+            <ResponseSelector responseSelectorsList={responseSelectors} />
+            <ResponseAnnotators responseAnnotatorsList={responseAnnotators} />
           </Main>
         </TabPanel>
         <TabPanel>
           <Main sidebar editor>
             <Wrapper>
-              <Container
+              {/* <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-                <AddButton
+                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'> */}
+              {/* <AddButton
                   listView={listView}
                   addBot={addSkill}
                   maxWidth='345px'
                   height='330px'
-                />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                {skills}
-              </Container>
+                /> */}
+              {distData?.pipeline_conf?.services?.skills
+                ? Object.keys(distData?.pipeline_conf?.services?.skills).map(
+                    i => {
+                      return <p>{i}</p>
+                    }
+                  )
+                : 'null'}
+              {/* {skillsList} */}
+              {/* </Container> */}
             </Wrapper>
           </Main>
         </TabPanel>

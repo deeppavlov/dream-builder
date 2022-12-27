@@ -5,7 +5,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { Element } from './Element'
 import s from './Skills.module.scss'
 
-export const Skills = () => {
+export const Skills = ({ skillsList }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -22,13 +22,14 @@ export const Skills = () => {
       </div>
       <AddButtonStack text='Add Skills' />
       <div className={s.elements}>
-        <Accordion title='Customizable'>
+        {/* <Accordion title='Customizable'>
           <Element />
           <Element />
-        </Accordion>
+        </Accordion> */}
         <Accordion title='Non-customizable'>
-          <Element />
-          <Element />
+          {skillsList?.map((item: string, i: number) => {
+            return <Element key={i} title={item} />
+          })}
         </Accordion>
       </div>
     </div>

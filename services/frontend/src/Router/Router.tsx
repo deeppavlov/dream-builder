@@ -19,7 +19,8 @@ export const Router = () => {
       <Route path={RoutesList.botsAll} element={<BotsAllPage />} />
       <Route path={RoutesList.skills} element={<SkillsPage />} />
       <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
-       <Route path={RoutesList.editor}
+      <Route
+        path={RoutesList.editor + ':name'}
         element={
           <PrivateRoute>
             <EditorPage />
@@ -27,7 +28,6 @@ export const Router = () => {
         }
       />
       <Route path={RoutesList.test} element={<TestPage />} />
-
     </Routes>
   )
 }

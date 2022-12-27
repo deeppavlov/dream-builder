@@ -17,6 +17,7 @@ export type CustomEventListener = (data: any) => void
 
 export interface BotInfoInterface {
   name: string
+  routingName:string
   author: string
   desc: string
   dateCreated: string

@@ -12,10 +12,12 @@ import { BotInfoInterface } from '../../types/types'
 
 interface BotCardProps extends BotInfoInterface {
   disabledMsg?: string
+  routingName: string
 }
 
 export const BotCard = ({
   name,
+  routingName,
   author,
   desc,
   dateCreated,
@@ -28,6 +30,7 @@ export const BotCard = ({
   const handleBotCardClick = () => {
     trigger('BotInfoSidePanel', {
       name,
+      
       author,
       desc,
       dateCreated,
@@ -42,6 +45,7 @@ export const BotCard = ({
     e.stopPropagation()
     trigger('CreateAssistantModal', {
       name,
+      routingName,
       author,
       desc,
       dateCreated,

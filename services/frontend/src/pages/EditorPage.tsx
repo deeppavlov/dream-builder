@@ -42,7 +42,7 @@ export const EditorPage = () => {
   } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
     enabled: data.name?.length! > 0,
   })
-
+  
   if (distError) return <>An error has occurred: + {distError}</>
 
   const annotators =
@@ -64,7 +64,7 @@ export const EditorPage = () => {
     Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
       i => i
     )
-
+  
   return (
     <>
       <Topbar type='editor' title={data.name} />
@@ -83,7 +83,6 @@ export const EditorPage = () => {
               <Tab>
                 <SkillsTab />
               </Tab>
-              <Tab>{/* <TestTab /> */}</Tab>
             </Container>
           </TabList>
         </Sidebar>
@@ -100,30 +99,32 @@ export const EditorPage = () => {
         <TabPanel>
           <Main sidebar editor>
             <Wrapper>
-              {/* <Container
+              <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'> */}
-              {/* <AddButton
+                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                <AddButton
                   listView={listView}
                   addBot={addSkill}
                   maxWidth='345px'
                   height='330px'
-                /> */}
-              {distData?.pipeline_conf?.services?.skills
-                ? Object.keys(distData?.pipeline_conf?.services?.skills).map(
-                    i => {
-                      return <p>{i}</p>
-                    }
-                  )
-                : 'null'}
-              {/* {skillsList} */}
-              {/* </Container> */}
+                />
+                {skills &&
+                  skills.map((skill: string) => {
+                    return (
+                      <SkillInBotCard
+                        name={skill}
+                        author={''}
+                        dateCreated={''}
+                        desc={''}
+                        version={''}
+                        ram={''}
+                        gpu={''}
+                        skillType={'script'}
+                      />
+                    )
+                  })}
+              </Container>
             </Wrapper>
-          </Main>
-        </TabPanel>
-        <TabPanel>
-          <Main sidebar editor>
-            <TestTabWindow />
           </Main>
         </TabPanel>
       </Tabs>

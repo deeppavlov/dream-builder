@@ -177,17 +177,17 @@ export const SkillsPage = () => {
               showAll
               fitScreen>
               <Table second='Type'>
-                  {skillsData?.map((skill: skill_list, i: number) => {
-                       const {
-                         display_name,
-                         type,
-                         description,
-                         version,
-                         ram_usage,
-                         gpu_usage,
-                         execution_time,
-                         date_created,
-                       } = skill.metadata
+                {skillsData?.map((skill: skill_list, i: number) => {
+                  const {
+                    display_name,
+                    type,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    execution_time,
+                    date_created,
+                  } = skill.metadata
                   const date = dateToUTC(date_created)
                   const time = timeToUTC(date_created)
                   return (

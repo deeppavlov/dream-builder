@@ -1,6 +1,6 @@
 import { Router } from './Router/Router'
 import Modal from 'react-modal'
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 Modal.setAppElement('#root')
 const queryClient = new QueryClient()

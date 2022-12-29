@@ -1,0 +1,16 @@
+FROM python:3.10.5-slim-buster
+
+ARG PORT
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONBUFFERED 1
+ENV PORT=$PORT
+ENV PYTHONPATH=${PYTHONPATH}:/src/
+
+COPY services/auth_api/requirements.txt .env /src/
+RUN pip install --no-cache-dir -r /src/requirements.txt
+
+COPY services/auth_api /src/services/auth_api
+
+WORKDIR src/
+CMD ["pytest", "services/auth_api/tests/"]

@@ -9,6 +9,9 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     ComposeDev,
     ComposeProxy,
     ComposeLocal,
+    Component,
+    ComponentMetadata,
+    PipelineConfMetadata
 )
 
 
@@ -27,7 +30,7 @@ class DreamDistModelShort(BaseModel):
     dist_path: str
     name: str
     dream_root: str
-    metadata: DreamDistModelMetadata
+    metadata: PipelineConfMetadata
 
 
 class DreamDistModel(BaseModel):

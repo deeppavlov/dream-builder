@@ -25,7 +25,7 @@ interface dist_list {
   name: string
   metadata: {
     display_name: string
-    date: string | number | Date
+    date_created: string | number | Date
     author: string
     description: string
     version: string
@@ -98,8 +98,8 @@ export const BotsPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return <>Loading...</>
-  if (assistantsError) return <>An error has occurred: + {assistantsError}</>
+  assistantsError && <>An error has occurred: + {assistantsError}</>
+  console.log(assistantsData)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -108,11 +108,12 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              amount={assistantsData.length}
+              amount={assistantsData?.length}
               linkTo={RoutesList.botsAll}
               showAll>
               <Container>
                 <Slider>
+                  {isAssistantsLoading && <>Loading...</>}
                   {assistantsData?.map((dist: dist_list, i: number) => {
                     const {
                       display_name,
@@ -122,9 +123,9 @@ export const BotsPage = () => {
                       ram_usage,
                       gpu_usage,
                       disk_usage,
-                      date,
-                    } = dist.metadata
-                    const dateCreated = dateToUTC(date)
+                      date_created,
+                    } = dist?.metadata
+                    const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
                         routingName={dist.name}
@@ -192,7 +193,7 @@ export const BotsPage = () => {
                     date,
                   } = dist.metadata
                   const dateCreated = dateToUTC(date)
-                  const time = timeToUTC(dist.metadata.date)
+                  const time = timeToUTC(dist?.metadata?.date)
                   return (
                     <BotListItem
                       key={i}

@@ -95,9 +95,8 @@ export const SkillsPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return <>Loading...</>
-  if (skillsError) return <>An error has occurred: + {skillsError}</>
-
+  skillsError && <>{'An error has occurred:' + { skillsError }}</>
+ console.log(skillsData)
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -106,7 +105,7 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
-              amount={skillsData.length}
+              amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
               showAll>
               <Container>
@@ -121,8 +120,9 @@ export const SkillsPage = () => {
                       gpu_usage,
                       execution_time,
                       date_created,
-                    } = skill.metadata
+                    } = skill?.metadata
                     const date = dateToUTC(date_created)
+                    isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
                         key={i}
@@ -172,7 +172,7 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
-              amount={skillsData.length}
+              amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
               showAll
               fitScreen>
@@ -194,7 +194,7 @@ export const SkillsPage = () => {
                     <SkillListItem
                       key={i}
                       name={display_name}
-                      author={skill.assistant_dist}
+                      author={skill?.assistant_dist}
                       dateCreated={date}
                       time={time}
                       desc={description}

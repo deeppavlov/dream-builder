@@ -8,7 +8,7 @@ import Button from '../../ui/Button/Button'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 
-interface SkillCardProps extends SkillInfoInterface {
+export interface SkillCardProps extends SkillInfoInterface {
   checkbox?: boolean
   disabledMsg?: string
 }

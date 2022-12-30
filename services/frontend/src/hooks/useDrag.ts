@@ -8,6 +8,7 @@ export const useDrag = ref => {
     let scrollLeft: number
 
     ref.current.addEventListener('mousedown', e => {
+      e.stopPropagation()
       isDown = true
       startX = e.pageX - ref.current.offsetLeft
       scrollLeft = ref.current.scrollLeft
@@ -16,10 +17,12 @@ export const useDrag = ref => {
       isDown = false
     })
     ref.current.addEventListener('mouseup', () => {
+      e.stopPropagation()
       isDown = false
     })
     ref.current.addEventListener('mousemove', e => {
       if (!isDown) return
+      e.stopPropagation()
       e.preventDefault()
       const x = e.pageX - ref.current.offsetLeft
       const walk = x - startX

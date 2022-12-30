@@ -10,21 +10,25 @@ import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
 
-interface TopbarProps extends React.PropsWithChildren {
+interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
-  viewHandler?: void
+  viewHandler?: () => void
+  innerRef?: React.LegacyRef<any>
 }
 
-export const Topbar = ({ type, viewHandler, innerRef }: any) => {
+export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
 
   useEffect(() => {
     //Render Google SignIn button
     google.accounts.id.initialize({
-      // Getting `GOOGLE_CLIENT_ID` from .env file
-      // Maybe need to get `GOOGLE_CLIENT_ID` from backend
+      /**
+       * Getting `VITE_GOOGLE_CLIENT_ID` from .env file.
+       * Maybe need to get `GOOGLE_CLIENT_ID` from backend
+       */
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: auth?.login,
     })
@@ -58,6 +62,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: any) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </div>
       )
     case 'editor':
@@ -72,9 +77,9 @@ export const Topbar = ({ type, viewHandler, innerRef }: any) => {
               <Breadcrumbs />
             </div>
             <div className={s.btns_area}>
-              <History />
+              {/* <History /> */}
               <Resources />
-              <Notifications />
+              {/* <Notifications /> */}
               <Test />
               {user ? (
                 <Profile auth={auth} />
@@ -90,6 +95,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: any) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </>
       )
     case 'dff':
@@ -110,6 +116,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: any) => {
           <div id='signin' className={s.signin}></div>
         )}
       </div>
+      <ResourcesSidePanel position={{ top: 64 }} />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import SkillsLogo from '../../assets/icons/skills.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Kebab } from '../../ui/Kebab/Kebab'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Element } from './Element'
 import s from './Skills.module.scss'
 
@@ -17,18 +18,17 @@ export const Skills = ({ skillsList }: any) => {
           <Kebab disabled dataFor='all_skills' />
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>7.356 Gb RAM | 0.0 Gb GPU</p>
+          <p className={s.data}>
+            {skillsList?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+          </p>
         </div>
       </div>
       <AddButtonStack text='Add Skills' />
       <div className={s.elements}>
-        {/* <Accordion title='Customizable'>
-          <Element />
-          <Element />
-        </Accordion> */}
+        <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {skillsList?.map((item: string, i: number) => {
-            return <Element key={i} title={item} />
+            return <Element key={i} title={capitalizeTitle(item)} />
           })}
         </Accordion>
       </div>

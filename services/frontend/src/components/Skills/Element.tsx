@@ -22,7 +22,7 @@ export const Element = ({ title, ...props }: any) => {
       <div className={s.left}>
         <div className={s.top}>
           <img src={SkillLogo} className={s.icon} />
-          <p className={s.name}>{title|| 'some_skill'}</p>
+          <p className={s.name}>{title || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>RAM:1.0 GB 0.0 GB | Ex.t:00ms </p>

@@ -1,4 +1,4 @@
-import SkillSelectorLogo from '../../assets/icons/skill_selector.svg'
+import SkillSelectorLogo from '../../assets/icons/skill_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'

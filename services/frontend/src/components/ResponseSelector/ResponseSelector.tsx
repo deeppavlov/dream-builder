@@ -1,4 +1,4 @@
-import ResponseSelectorLogo from '../../assets/icons/response_selector.svg'
+import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Skill } from './Skill'

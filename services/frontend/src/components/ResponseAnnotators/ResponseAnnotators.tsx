@@ -4,6 +4,7 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
 export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
   return (
@@ -20,7 +21,7 @@ export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
             </div>
             <div className={s.bottom}>
               <p className={s.data}>
-                {responseAnnotatorsList.recources &&
+                {responseAnnotatorsList?.recources ||
                   '0.00 GB RAM | 0.00 GB GPU'}
               </p>
             </div>
@@ -30,7 +31,7 @@ export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
           <div className={s.elements}>
             <Accordion title='Non-customizable'>
               {responseAnnotatorsList?.map((i: string) => {
-                return <Element title={i} />
+                return <Element title={capitalizeTitle(i)} />
               })}
             </Accordion>
           </div>

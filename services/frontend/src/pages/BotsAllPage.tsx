@@ -13,20 +13,8 @@ import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../services/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
-
-interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
-}
+import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsAllPage = () => {
   const auth = useAuth()
@@ -64,18 +52,21 @@ export const BotsAllPage = () => {
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {assistantsData?.map((dist: dist_list) => {
-                const date = dateToUTC(dist.metadata.date)
+                const date = dateToUTC(dist.metadata.date_created)
                 return (
                   <BotCard
                     key={dist.name}
+                    type='public'
                     name={dist.metadata.display_name}
                     author={dist.metadata.author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={date}
                     desc={dist.metadata.description}
                     version={dist.metadata.version}
                     ram={dist.metadata.ram_usage}
                     gpu={dist.metadata.gpu_usage}
                     space={dist.metadata.disk_usage}
+                    size='big'
                     disabledMsg={
                       auth?.user
                         ? undefined
@@ -93,13 +84,14 @@ export const BotsAllPage = () => {
             showAll={false}>
             <Table>
               {assistantsData?.map((dist: dist_list) => {
-                const date = dateToUTC(dist.metadata.date)
-                const time = timeToUTC(dist.metadata.date)
+                const date = dateToUTC(dist.metadata.date_created)
+                const time = timeToUTC(dist.metadata.date_created)
                 return (
                   <BotListItem
                     key={dist.name}
                     name={dist.metadata.display_name}
                     author={dist.metadata.author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={date}
                     time={time}
                     desc={dist.metadata.description}

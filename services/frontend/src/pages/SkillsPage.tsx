@@ -9,17 +9,17 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Table } from '../ui/Table/Table'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
 
 interface skill_list {
+  assistant_dist: string
   name: string
   metadata: {
     execution_time: any
@@ -49,17 +49,18 @@ export const SkillsPage = () => {
     !listView
       ? setSkills(
           skills.concat([
-            <SkillInBotCard
+            <SkillCard
               key={nanoid(8)}
+              type='your'
               name='Name of The Skill'
               skillType='fallbacks'
-              author={auth?.user?.name ?? 'Name of The Company'}
-              desc='Helps users locate the nearest store. And we can write 3 lines
-              here and this is maximum about'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
               dateCreated={dateToUTC(new Date())}
               version='0.01'
               ram='0.0 GB'
               gpu='0.0 GB'
+              executionTime='0.0 ms'
             />,
           ])
         )
@@ -68,15 +69,15 @@ export const SkillsPage = () => {
             <SkillListItem
               key={nanoid(8)}
               name='Name of The Skill'
-              desc='Lorem'
-              author={auth?.user?.name ?? ''}
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+              botName='Name of The Bot'
               skillType='retrieval'
               version='0.01'
               dateCreated={dateToUTC(new Date())}
               time={timeToUTC(new Date().getTime())}
               ram='0.0 GB'
               gpu='0.0 GB'
-              executionTime='0.0'
+              executionTime='0.0 ms'
               disabledMsg={
                 auth?.user
                   ? undefined
@@ -114,15 +115,16 @@ export const SkillsPage = () => {
                   return (
                     <SkillCard
                       key={i}
+                      type='public'
                       name={skill.metadata.display_name}
-                      author={skill.metadata.author}
+                      botName={skill.assistant_dist}
                       skillType={skill.metadata.type}
                       dateCreated={date}
                       desc={skill.metadata.description}
                       version={skill.metadata.version}
                       ram={skill.metadata.ram_usage}
                       gpu={skill.metadata.gpu_usage}
-                      executionTime={skill.metadata.execution_time}
+                      executionTime={skill.metadata.execution_time + ' sec'}
                       disabledMsg={
                         auth?.user
                           ? undefined
@@ -139,12 +141,11 @@ export const SkillsPage = () => {
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
-                      height='330px'
                       listView={listView}
                       addBot={addBot}
                       disabled={auth?.user === null}
@@ -170,16 +171,15 @@ export const SkillsPage = () => {
                     <SkillListItem
                       key={i}
                       name={skill.metadata.display_name}
-                      author={skill.metadata.author}
                       dateCreated={date}
                       time={time}
                       desc={skill.metadata.description}
                       version={skill.metadata.version}
                       ram={skill.metadata.ram_usage}
                       gpu={skill.metadata.gpu_usage}
-                      executionTime={skill.metadata.execution_time}
+                      executionTime={skill.metadata.execution_time + ' sec'}
                       skillType={skill.metadata.type}
-                      botName={''}
+                      botName={skill.assistant_dist}
                       disabledMsg={
                         auth?.user
                           ? undefined

@@ -18,20 +18,8 @@ import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import { nanoid } from 'nanoid'
-
-interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
-}
+import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -45,16 +33,24 @@ export const BotsPage = () => {
     setBots([])
   }
   const addBot = () => {
+    trigger('CreateAssistantModal', null)
+    if (!auth?.user) return
     !listView
       ? setBots(
           bots.concat([
-            <YourBotCard
+            <BotCard
               key={nanoid(8)}
+              type='your'
               dateCreated={dateToUTC(new Date())}
-              author={auth?.user?.name}
-              version='0.01'
+              author={auth.user.name}
+              authorImg={auth.user.picture}
+              version='0.0.1'
               name='Name of The Bot'
-              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. '
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              space='0.0 GB'
+              size='small'
               disabledMsg={
                 auth?.user
                   ? undefined
@@ -68,7 +64,8 @@ export const BotsPage = () => {
             <BotListItem
               key={nanoid(8)}
               dateCreated={dateToUTC(new Date())}
-              author={auth?.user?.name ?? 'Name of Company'}
+              author={auth.user.name ?? 'Name of Company'}
+              authorImg={auth.user.picture}
               version='0.01'
               name='Name of The Bot'
               desc='Small description about the project maximum 4 lines. Small description about the project maximum'
@@ -94,6 +91,7 @@ export const BotsPage = () => {
     if (!isAssistantsLoading) {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
+    console.log(assistantsData)
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
   if (isAssistantsLoading) return 'Loading...'
@@ -112,12 +110,14 @@ export const BotsPage = () => {
               paddingBottom='12px'>
               <Container overflowY='hidden' paddingBottom='22px'>
                 {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
+                  const date = dateToUTC(dist.metadata.date_created)
                   return (
                     <BotCard
                       key={dist.name}
+                      type='public'
                       name={dist.metadata.display_name}
                       author={dist.metadata.author}
+                      authorImg={DeepPavlovLogo}
                       dateCreated={date}
                       desc={dist.metadata.description}
                       version={dist.metadata.version}
@@ -142,8 +142,8 @@ export const BotsPage = () => {
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   overflow='hidden'
                   padding='0'
                   paddingBottom='22px'>
@@ -168,13 +168,14 @@ export const BotsPage = () => {
               linkTo='/bots'>
               <Table>
                 {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
-                  const time = timeToUTC(dist.metadata.date)
+                  const date = dateToUTC(dist.metadata.date_created)
+                  const time = timeToUTC(dist.metadata.date_created)
                   return (
                     <BotListItem
                       key={dist.name}
                       name={dist.metadata.display_name}
                       author={dist.metadata.author}
+                      authorImg={DeepPavlovLogo}
                       dateCreated={date}
                       time={time}
                       desc={dist.metadata.description}

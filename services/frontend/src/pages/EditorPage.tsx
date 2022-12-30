@@ -13,14 +13,17 @@ import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
 import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
+import { SkillCard } from '../components/SkillCard/SkillCard'
+import { dateToUTC } from '../utils/dateToUTC'
+import { nanoid } from 'nanoid'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 
 export const EditorPage = () => {
-  const [skills, setSkills] = useState([])
+  const [skills, setSkills] = useState<JSX.Element[]>([])
   const [listView, setListView] = useState(false)
   const viewHandler = () => {
     console.log('view has changed')
@@ -30,7 +33,24 @@ export const EditorPage = () => {
   }
   const addSkill = () => {
     !listView
-      ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
+      ? setSkills(
+          skills.concat([
+            <SkillCard
+              key={nanoid(8)}
+              type='your'
+              name='Name of The Skill'
+              skillType='fallbacks'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+              dateCreated={dateToUTC(new Date())}
+              version='0.01'
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              executionTime='0.0 ms'
+              big
+            />,
+          ])
+        )
       : setSkills(skills.concat(<SkillListItem />))
   }
   return (
@@ -72,18 +92,26 @@ export const EditorPage = () => {
             <Wrapper>
               <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
                 <AddButton
                   listView={listView}
                   addBot={addSkill}
                   maxWidth='345px'
                   height='330px'
                 />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
+                <SkillCard
+                  type='your'
+                  name='Name of The Skill'
+                  skillType='fallbacks'
+                  botName='Name of The Bot'
+                  desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+                  dateCreated={dateToUTC(new Date())}
+                  version='0.01'
+                  ram='0.0 GB'
+                  gpu='0.0 GB'
+                  executionTime='0.0 ms'
+                  big
+                />
                 {skills}
               </Container>
             </Wrapper>
@@ -95,6 +123,7 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
+      <SkillSidePanel position={{ top: 64 }} />
     </>
   )
 }

@@ -17,5 +17,4 @@ RUN pip install --no-cache-dir -r /src/requirements.txt
 COPY services/distributions_api /src/services/distributions_api
 
 WORKDIR src/
-CMD uvicorn services.distributions_api.app:app --host 0.0.0.0 --port $PORT \
-    --ssl-keyfile=services/distributions_api/key.pem --ssl-certfile=services/distributions_api/cert.pem --reload
+CMD uvicorn services.distributions_api.app:app --host 0.0.0.0 --port $PORT --reload

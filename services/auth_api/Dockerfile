@@ -12,5 +12,4 @@ RUN pip install --no-cache-dir -r /src/requirements.txt
 COPY services/auth_api /src/services/auth_api
 
 WORKDIR src/
-CMD uvicorn services.auth_api.app:app --host 0.0.0.0 --port $PORT \
-    --ssl-keyfile=services/auth_api/key.pem --ssl-certfile=services/auth_api/cert.pem --reload
+CMD uvicorn services.auth_api.app:app --host 0.0.0.0 --port $PORT --reload

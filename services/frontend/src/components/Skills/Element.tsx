@@ -4,7 +4,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({...props}) => {
+export const Element = ({ title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
     setDisabled(!disabled)
@@ -14,13 +14,15 @@ export const Element = ({...props}) => {
   return (
     <div
       style={
-        !disabled ? { ...props, opacity: '0.3', background: '#f0f0f3' } : undefined
+        !disabled
+          ? { ...props, opacity: '0.3', background: '#f0f0f3' }
+          : undefined
       }
       className={s.element}>
       <div className={s.left}>
         <div className={s.top}>
           <img src={SkillLogo} className={s.icon} />
-          <p className={s.name}>DFF Program Y</p>
+          <p className={s.name}>{title || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>RAM:1.0 GB 0.0 GB | Ex.t:00ms </p>

@@ -10,7 +10,7 @@ import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 
-interface SkillCardProps extends SkillInfoInterface {
+export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
   big?: boolean
   checkbox?: boolean
@@ -33,7 +33,6 @@ export const SkillCard = ({
   big,
   disabledMsg,
 }: SkillCardProps) => {
-  let cx = classNames.bind(s)
   const skill = {
     name,
     botName,
@@ -67,11 +66,10 @@ export const SkillCard = ({
     trigger('CreateSkillModal', skill)
   }
 
+  let cx = classNames.bind(s)
   return (
     <div
-      className={`${s.card} ${type === 'your' ? s.yourCard : s.card} ${
-        big ? s.bigCard : ''
-      }`}
+      className={cx(`${type}Card`, big && 'bigCard')}
       onClick={handleSkillCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>

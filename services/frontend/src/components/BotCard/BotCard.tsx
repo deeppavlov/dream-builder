@@ -13,11 +13,13 @@ interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
   size?: 'small' | 'big'
   disabledMsg?: string
+  routingName: string
 }
 
 export const BotCard = ({
   type,
   name,
+  routingName,
   author,
   authorImg,
   desc,

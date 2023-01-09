@@ -1,8 +1,11 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
+import ReactTooltip from 'react-tooltip'
+import { RoutesList } from '../Router/RoutesList'
+import { useAuth } from '../services/AuthProvider'
+import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { getAssistantDists } from '../services/getAssistantDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -12,8 +15,7 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { YourBotCard } from '../components/YourBotCard/YourBotCard'
-import ReactTooltip from 'react-tooltip'
-import { useAuth } from '../services/AuthProvider'
+import { Slider } from '../ui/Slider/Slider'
 import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
@@ -24,12 +26,12 @@ import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 export const BotsPage = () => {
   const auth = useAuth()
   const [bots, setBots] = useState<JSX.Element[]>([])
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
   const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
-    setListView(!listView)
+    setListView(listView => !listView)
     setBots([])
   }
   const addBot = () => {
@@ -94,49 +96,58 @@ export const BotsPage = () => {
     console.log(assistantsData)
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return 'Loading...'
-  if (assistantsError) return 'An error has occurred: ' + assistantsError
+  assistantsError && <>An error has occurred: + {assistantsError}</>
+  console.log(assistantsData)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll
-              amount={assistantsData.length}
-              linkTo='/bots'
-              paddingBottom='12px'>
-              <Container overflowY='hidden' paddingBottom='22px'>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date_created)
-                  return (
-                    <BotCard
-                      key={dist.name}
-                      type='public'
-                      name={dist.metadata.display_name}
-                      author={dist.metadata.author}
-                      authorImg={DeepPavlovLogo}
-                      dateCreated={date}
-                      desc={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
-                      disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
-                    />
-                  )
-                })}
+              amount={assistantsData?.length}
+              linkTo={RoutesList.botsAll}
+              showAll>
+              <Container>
+                <Slider>
+                  {isAssistantsLoading && <>Loading...</>}
+                  {assistantsData?.map((dist: dist_list, i: number) => {
+                    const {
+                      display_name,
+                      author,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      disk_usage,
+                      date_created,
+                    } = dist?.metadata
+                    const dateCreated = dateToUTC(date_created)
+                    return (
+                      <BotCard
+                        routingName={dist.name}
+                        key={i}
+                        name={display_name}
+                        author={author}
+                        dateCreated={dateCreated}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        space={disk_usage}
+                        disabledMsg={
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to clone the bot'
+                        }
+                      />
+                    )
+                  })}
+                </Slider>
               </Container>
             </Wrapper>
-            <Wrapper
-              paddingBottom='12px'
-              title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Container overflow='hidden'>
                 <Container
                   position='sticky'
@@ -163,26 +174,37 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll={true}
+              showAll
               amount={assistantsData.length}
-              linkTo='/bots'>
+              linkTo={RoutesList.botsAll}
+              fitScreen>
               <Table>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date_created)
-                  const time = timeToUTC(dist.metadata.date_created)
+                {assistantsData?.map((dist: dist_list, i: number) => {
+                  const {
+                    display_name,
+                    author,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    disk_usage,
+                    date,
+                  } = dist.metadata
+                  const dateCreated = dateToUTC(date)
+                  const time = timeToUTC(dist?.metadata?.date)
                   return (
                     <BotListItem
-                      key={dist.name}
-                      name={dist.metadata.display_name}
-                      author={dist.metadata.author}
-                      authorImg={DeepPavlovLogo}
-                      dateCreated={date}
+                      key={i}
+                      routingName={dist.name}
+                      name={display_name}
+                      author={author}
+                      dateCreated={dateCreated}
                       time={time}
-                      desc={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      space={disk_usage}
                       disabledMsg={
                         auth?.user
                           ? undefined
@@ -195,7 +217,6 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Table
-                // checkbox={true}
                 addButton={
                   <AddButton
                     addBot={addBot}

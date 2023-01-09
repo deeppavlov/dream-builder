@@ -8,6 +8,7 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './CreateAssistantModal.module.scss'
+import { RoutesList } from '../../Router/RoutesList'
 
 export const CreateAssistantModal = () => {
   const [bot, setBot] = useState<BotInfoInterface | null>(null)

@@ -2,7 +2,6 @@ import { MenuList } from '../../components/MenuList/MenuList'
 import s from './Kebab.module.scss'
 
 export const Kebab = ({ disabled, type, color, dataFor }: any) => {
-  console.log(disabled)
   return (
     <button
       disabled={disabled === undefined ? false : disabled}

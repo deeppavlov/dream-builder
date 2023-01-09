@@ -1,12 +1,15 @@
 .accent_text {
   @include accent_text;
 }
+.title {
+  @include t1;
+}
 .li {
-  @include b1;
   color: $text1;
   display: list-item;
   list-style-type: disc;
   margin-left: 30px;
+  @include b1;
 }
 .annotations {
   @include b1;

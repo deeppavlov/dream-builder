@@ -34,11 +34,9 @@ interface skill_list {
 
 export const SkillsAllPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
-    console.log('view has changed')
-    setListView(!listView)
-    console.log(listView)
+    setListView(listView => !listView)
   }
   const {
     isLoading: isSkillsLoading,
@@ -46,15 +44,14 @@ export const SkillsAllPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return 'Loading...'
-
-  if (skillsError) return 'An error has occurred: '
+  if (isSkillsLoading) return <>'Loading...'</>
+  if (skillsError) return <> 'An error has occurred: '</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Main>
         {!listView ? (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
@@ -65,7 +62,7 @@ export const SkillsAllPage = () => {
                     key={i}
                     type='public'
                     name={skill.metadata.display_name}
-                    botName={skill.assistant_dist}
+                    author={skill.assistant_dist}
                     skillType={skill.metadata.type}
                     dateCreated={date}
                     desc={skill.metadata.description}
@@ -86,9 +83,9 @@ export const SkillsAllPage = () => {
             </Container>
           </Wrapper>
         ) : (
-          <Wrapper title='Public Skills' amount={skillsData.length}>
-            <Table>
-              {skillsData?.map((skill: skill_list, i: number) => {
+          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+            <Table second='Type'>
+              {skillsData?.map((skill: skill_list) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)
                 return (

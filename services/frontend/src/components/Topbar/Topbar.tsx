@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
@@ -15,13 +16,15 @@ import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: () => void
+  children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
+  title?: string
 }
 
-export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
+export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
-
+  let cx = classNames.bind(s)
   useEffect(() => {
     //Render Google SignIn button
     google.accounts.id.initialize({
@@ -68,14 +71,12 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
     case 'editor':
       return (
         <>
-          <div
-            style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
-            className={s.topbar}
-            ref={innerRef}>
+          <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
+            {title}
             <div className={s.btns_area}>
               {/* <History /> */}
               <Resources />

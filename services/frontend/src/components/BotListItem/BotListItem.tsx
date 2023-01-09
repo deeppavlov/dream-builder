@@ -13,11 +13,13 @@ interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
   time?: string
   disabledMsg?: string
+  routingName: string
 }
 
 export const BotListItem = ({
   checkbox,
   name,
+  routingName,
   author,
   desc,
   dateCreated,
@@ -30,6 +32,7 @@ export const BotListItem = ({
 }: BotListItemProps) => {
   const bot = {
     name,
+    routingName,
     author,
     desc,
     dateCreated,

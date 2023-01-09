@@ -11,32 +11,28 @@ import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
 import { SkillCard } from '../components/SkillCard/SkillCard'
 import { dateToUTC } from '../utils/dateToUTC'
-import { nanoid } from 'nanoid'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import { useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getDistByName } from '../services/getDistByName'
 
 export const EditorPage = () => {
-  const [skills, setSkills] = useState<JSX.Element[]>([])
-  const [listView, setListView] = useState(false)
+  const [skillsList, setSkillsList] = useState<JSX.Element[]>([])
+  const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
-    console.log('view has changed')
     setListView(!listView)
-    setSkills([])
-    console.log(listView)
+    setSkillsList([])
   }
   const addSkill = () => {
     !listView
-      ? setSkills(
+      ? setSkillsList(
           skills.concat([
             <SkillCard
-              key={nanoid(8)}
               type='your'
               name='Name of The Skill'
               skillType='fallbacks'
@@ -51,13 +47,44 @@ export const EditorPage = () => {
             />,
           ])
         )
-      : setSkills(skills.concat(<SkillListItem />))
+      : setSkillsList(skills.concat(<SkillListItem />))
   }
+  const data = useParams()
+  const {
+    isLoading: isDistLoading,
+    error: distError,
+    data: distData,
+  } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
+    enabled: data.name?.length! > 0,
+  })
+
+  if (distError) return <>An error has occurred: + {distError}</>
+
+  const annotators =
+    distData?.pipeline_conf?.services?.annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.annotators).map(i => i)
+  const skills =
+    distData?.pipeline_conf?.services?.skills &&
+    Object.keys(distData?.pipeline_conf?.services?.skills).map(i => i)
+  const skillSelectors =
+    distData?.pipeline_conf?.services?.skill_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.skill_selectors).map(i => i)
+  const responseSelectors =
+    distData?.pipeline_conf?.services?.response_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.response_selectors).map(
+      i => i
+    )
+  const responseAnnotators =
+    distData?.pipeline_conf?.services?.response_annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
+      i => i
+    )
+
   return (
     <>
-      <Topbar type='editor' />
+      <Topbar type='editor' title={data.name} />
       <Tabs>
-        <Sidebar type='editor'>
+        <Sidebar>
           <TabList>
             <Container
               width='100%'
@@ -71,24 +98,21 @@ export const EditorPage = () => {
               <Tab>
                 <SkillsTab />
               </Tab>
-              <Tab>
-                <TestTab />
-              </Tab>
             </Container>
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Main flexDirection='row'>
-            <Annotators />
-            <SkillSelector />
-            <Skills />
-            <CandidateAnnotators />
-            <ResponseSelector />
-            <ResponseAnnotators />
+          <Main sidebar editor draggable>
+            <Annotators annotatorsList={annotators} />
+            <SkillSelector skillSelectorsList={skillSelectors} />
+            <Skills skillsList={skills} />
+            {/* <CandidateAnnotators /> */}
+            <ResponseSelector responseSelectorsList={responseSelectors} />
+            <ResponseAnnotators responseAnnotatorsList={responseAnnotators} />
           </Main>
         </TabPanel>
         <TabPanel>
-          <Main>
+          <Main sidebar editor>
             <Wrapper>
               <Container
                 display='grid'
@@ -115,11 +139,6 @@ export const EditorPage = () => {
                 {skills}
               </Container>
             </Wrapper>
-          </Main>
-        </TabPanel>
-        <TabPanel>
-          <Main justifyContent='center'>
-            <TestTabWindow />
           </Main>
         </TabPanel>
       </Tabs>

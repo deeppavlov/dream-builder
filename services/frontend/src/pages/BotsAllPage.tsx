@@ -13,20 +13,7 @@ import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../services/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
-
-interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
-}
+import { dist_list } from '../types/types'
 
 export const BotsAllPage = () => {
   const auth = useAuth()

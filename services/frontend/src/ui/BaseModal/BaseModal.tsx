@@ -32,6 +32,8 @@ const BaseModal = ({
             zIndex: 10,
           },
           content: {
+            width: 'fit-content',
+            height: 'fit-content',
             top: '50%',
             left: '50%',
             right: 0,

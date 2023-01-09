@@ -11,6 +11,7 @@ import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -27,8 +28,10 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
   useEffect(() => {
     //Render Google SignIn button
     google.accounts.id.initialize({
-      // Getting `GOOGLE_CLIENT_ID` from .env file
-      // Maybe need to get `GOOGLE_CLIENT_ID` from backend
+      /**
+       * Getting `VITE_GOOGLE_CLIENT_ID` from .env file.
+       * Maybe need to get `GOOGLE_CLIENT_ID` from backend
+       */
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: auth?.login,
     })
@@ -62,6 +65,7 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </div>
       )
     case 'editor':
@@ -92,6 +96,7 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </>
       )
     case 'dff':
@@ -112,6 +117,7 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
           <div id='signin' className={s.signin}></div>
         )}
       </div>
+      <ResourcesSidePanel position={{ top: 64 }} />
     </div>
   )
 }

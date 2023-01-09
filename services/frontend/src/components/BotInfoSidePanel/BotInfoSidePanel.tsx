@@ -65,7 +65,9 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
                   ) : (
                     <img src={auth?.user?.picture} />
                   )}
-                  <span>Made by {author}</span>
+                  <span>
+                    {author === 'DeepPavlov' ? 'Made by ' + author : author}
+                  </span>
                 </div>
                 <ul className={s.resourcesBlock__table}>
                   <li>

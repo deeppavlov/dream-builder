@@ -11,6 +11,7 @@ import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { RoutesList } from '../Router/RoutesList'
 import { Link } from 'react-router-dom'
+import { SkillCard } from '../components/SkillCard/SkillCard'
 
 export const DraftPage = () => {
   const [distName, setDistName] = useState('')
@@ -33,34 +34,37 @@ export const DraftPage = () => {
   return (
     <>
       <Topbar />
+
       <Main>
-        <Wrapper>
-          <Container>
-            <div
-              style={{
-                display: 'flex',
-                gap: '20px',
-              }}>
-              {assistantsData?.map(dist => {
-                return (
-                  <button
-                    key={dist?.name}
-                    style={{
-                      backgroundColor: 'lightgrey',
-                      padding: '12px',
-                      borderRadius: '8px',
-                    }}
-                    onClick={e => {
-                      e.preventDefault()
-                      setDistName(dist?.name)
-                    }}>
-                    {dist?.name}
-                  </button>
-                )
-              })}
-            </div>
-          </Container>
-        </Wrapper>
+        {assistantsData && (
+          <Wrapper>
+            <Container>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '20px',
+                }}>
+                {assistantsData?.map(dist => {
+                  return (
+                    <button
+                      key={dist?.name}
+                      style={{
+                        backgroundColor: 'lightgrey',
+                        padding: '12px',
+                        borderRadius: '8px',
+                      }}
+                      onClick={e => {
+                        e.preventDefault()
+                        setDistName(dist?.name)
+                      }}>
+                      {dist?.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </Container>
+          </Wrapper>
+        )}
         {distData && (
           <Container flexDirection='column'>
             <Wrapper>

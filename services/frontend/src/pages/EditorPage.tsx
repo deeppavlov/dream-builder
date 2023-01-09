@@ -11,19 +11,18 @@ import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
+import { SkillCard } from '../components/SkillCard/SkillCard'
+import { dateToUTC } from '../utils/dateToUTC'
 import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getDistByName } from '../services/getDistByName'
 
 export const EditorPage = () => {
-  const [skillsList, setSkillsList] = useState([])
+  const [skillsList, setSkillsList] = useState<JSX.Element[]>([])
   const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
     setListView(!listView)
@@ -31,8 +30,24 @@ export const EditorPage = () => {
   }
   const addSkill = () => {
     !listView
-      ? setSkillsList(skillsList.concat(<SkillInBotCard maxWidth='345px' />))
-      : setSkillsList(skillsList.concat(<SkillListItem />))
+      ? setSkillsList(
+          skills.concat([
+            <SkillCard
+              type='your'
+              name='Name of The Skill'
+              skillType='fallbacks'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+              dateCreated={dateToUTC(new Date())}
+              version='0.01'
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              executionTime='0.0 ms'
+              big
+            />,
+          ])
+        )
+      : setSkillsList(skills.concat(<SkillListItem />))
   }
   const data = useParams()
   const {
@@ -42,7 +57,7 @@ export const EditorPage = () => {
   } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
     enabled: data.name?.length! > 0,
   })
-  
+
   if (distError) return <>An error has occurred: + {distError}</>
 
   const annotators =
@@ -64,7 +79,7 @@ export const EditorPage = () => {
     Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
       i => i
     )
-  
+
   return (
     <>
       <Topbar type='editor' title={data.name} />
@@ -101,33 +116,33 @@ export const EditorPage = () => {
             <Wrapper>
               <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
                 <AddButton
                   listView={listView}
                   addBot={addSkill}
                   maxWidth='345px'
                   height='330px'
                 />
-                {skills &&
-                  skills.map((skill: string) => {
-                    return (
-                      <SkillInBotCard
-                        name={skill}
-                        author={''}
-                        dateCreated={''}
-                        desc={''}
-                        version={''}
-                        ram={''}
-                        gpu={''}
-                        skillType={'script'}
-                      />
-                    )
-                  })}
+                <SkillCard
+                  type='your'
+                  name='Name of The Skill'
+                  skillType='fallbacks'
+                  botName='Name of The Bot'
+                  desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+                  dateCreated={dateToUTC(new Date())}
+                  version='0.01'
+                  ram='0.0 GB'
+                  gpu='0.0 GB'
+                  executionTime='0.0 ms'
+                  big
+                />
+                {skills}
               </Container>
             </Wrapper>
           </Main>
         </TabPanel>
       </Tabs>
+      <SkillSidePanel position={{ top: 64 }} />
     </>
   )
 }

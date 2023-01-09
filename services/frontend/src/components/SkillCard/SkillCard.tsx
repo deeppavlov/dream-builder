@@ -5,18 +5,23 @@ import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './SkillCard.module.scss'
 import Button from '../../ui/Button/Button'
-import { SkillInfoInterface } from '../../types/types'
+import { BotAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import ResourcesTable from '../ResourcesTable/ResourcesTable'
+import { KebabButton } from '../../ui/KebabButton/KebabButton'
 
 export interface SkillCardProps extends SkillInfoInterface {
+  type: BotAvailabilityType
+  big?: boolean
   checkbox?: boolean
   disabledMsg?: string
 }
 
 export const SkillCard = ({
+  type,
   name,
-  author,
   desc,
+  botName,
   dateCreated,
   version,
   ram,
@@ -25,42 +30,47 @@ export const SkillCard = ({
   executionTime,
   skillType,
   checkbox,
+  big,
   disabledMsg,
 }: SkillCardProps) => {
-  let cx = classNames.bind(s)
+  const skill = {
+    name,
+    botName,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    space,
+    executionTime,
+    skillType,
+  }
+  const ResValues = (): { name: string; value: string }[] =>
+    type === 'public'
+      ? [
+          { name: 'RAM', value: ram },
+          { name: 'GPU', value: gpu },
+          { name: 'Execution time', value: executionTime },
+        ]
+      : [
+          { name: 'RAM', value: ram },
+          { name: 'Execution time', value: executionTime },
+        ]
+
   const handleSkillCardClick = () => {
-    trigger('SkillSidePanel', {
-      name,
-      author,
-      desc,
-      dateCreated,
-      version,
-      ram,
-      gpu,
-      space,
-      executionTime,
-      skillType,
-    })
+    trigger('SkillSidePanel', skill)
   }
 
   const handleAddSkillBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', {
-      name,
-      author,
-      desc,
-      dateCreated,
-      version,
-      ram,
-      gpu,
-      space,
-      executionTime,
-      skillType,
-    })
+    trigger('CreateSkillModal', skill)
   }
 
+  let cx = classNames.bind(s)
   return (
-    <div className={s.card} onClick={handleSkillCardClick}>
+    <div
+      className={cx(`${type}Card`, big && 'bigCard')}
+      onClick={handleSkillCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>
       </div>
@@ -77,7 +87,7 @@ export const SkillCard = ({
           </div>
           <div className={s.name}>
             <img className={s.companyLogo} src={CompanyLogo} />
-            <p className={s.companyName}>{author ?? 'Name of The Company'}</p>
+            <p className={s.companyName}>{botName ?? 'Name of The Bot'}</p>
           </div>
           <div
             className={s.description}
@@ -103,37 +113,38 @@ export const SkillCard = ({
         </div>
         <span className={s.separator} />
         <div className={s.middle}>
-          <ul className={s.params}>
-            <li>
-              <p className={s.item}>RAM</p>
-              <p className={s.units}>{ram ?? '0.0GB'}</p>
-            </li>
-            <li>
-              <p className={s.item}>GPU</p>
-              <p className={s.units}>{gpu ?? '0.0GB'}</p>
-            </li>
-            <li>
-              <p className={s.item}>Execution Time</p>
-              <p className={s.units}>{executionTime + 's' || '0.0s'}</p>
-            </li>
-          </ul>
+          <ResourcesTable values={ResValues()} />
         </div>
         <div className={s.bottom}>
-          {/* <CreateAssistantModal data-tip data-for='skill-add-interact'>
-            Add Skill
-          </CreateAssistantModal> */}
-          <div data-tip data-for='skill-add-interact' style={{ width: '100%' }}>
-            <Button
-              theme='primary'
-              small
-              long
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: handleAddSkillBtnClick,
-              }}>
-              Add Skill
-            </Button>
-          </div>
+          {type === 'public' ? (
+            <div
+              data-tip
+              data-for='skill-add-interact'
+              style={{ width: '100%' }}>
+              <Button
+                theme='primary'
+                small
+                long
+                props={{
+                  disabled: disabledMsg !== undefined,
+                  onClick: handleAddSkillBtnClick,
+                }}>
+                Add
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div
+                data-tip
+                data-for='skill-edit-interact'
+                style={{ width: '100%' }}>
+                <Button theme='secondary' long small>
+                  Edit
+                </Button>
+              </div>
+              <KebabButton dataFor='customizable_skill' />
+            </>
+          )}
         </div>
       </div>
 

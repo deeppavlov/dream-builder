@@ -31,6 +31,11 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
 import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
+import { dateToUTC } from '../../utils/dateToUTC'
+import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
+import { BotCard } from '../../components/BotCard/BotCard'
+import CompanyLogo from '@assets/icons/pavlovInCard.svg'
+import { SkillCard } from '../../components/SkillCard/SkillCard'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -131,7 +136,25 @@ export const TestPage = () => {
         <Button
           theme='primary'
           props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
-          CreateSkillModal
+          CreateSkillModal (add)
+        </Button>
+        <Button
+          theme='primary'
+          props={{
+            onClick: () =>
+              trigger('CreateSkillModal', {
+                isEditing: true,
+                name: 'Name of The Skill',
+                skillType: 'fallbacks',
+                author: 'Name of The Company',
+                desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
+                dateCreated: dateToUTC(new Date()),
+                version: '0.01',
+                ram: '0.0 GB',
+                gpu: '0.0 GB',
+              }),
+          }}>
+          CreateSkillModal (edit)
         </Button>
         <CreateSkillModal />
         <div className={s.testPage__component}>
@@ -495,6 +518,83 @@ export const TestPage = () => {
             }}
             label='Label'
             about='Instructions'
+          />
+        </div>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>ResourcesTable</span>
+        <ResourcesTable
+          values={[
+            { name: 'RAM', value: '85.3 GB' },
+            { name: 'GPU', value: '0.9 GB' },
+            { name: 'Disk space', value: '110.0 GB' },
+            { name: 'Execution time', value: '0.1 sec' },
+          ]}
+        />
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>BotCard</span>
+        <div className={s.testPage__component}>
+          <span>public</span>
+          <BotCard
+            type='public'
+            name='Name of the bot'
+            author='Name of the company'
+            authorImg={CompanyLogo}
+            dateCreated={dateToUTC(new Date())}
+            desc='Some information about this bot writing in 2 lines'
+            version='0.0.1'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            space='0.0 GB'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>your</span>
+          <BotCard
+            type='your'
+            name='Name of the bot'
+            author='Name of the company'
+            authorImg={CompanyLogo}
+            dateCreated={dateToUTC(new Date())}
+            desc='Some information about this bot writing in 2 lines'
+            version='0.0.1'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            space='0.0 GB'
+          />
+        </div>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>SkillCard</span>
+        <div className={s.testPage__component}>
+          <span>public</span>
+          <SkillCard
+            type='public'
+            name='Name of The Skill'
+            skillType='fallbacks'
+            botName='Name of The Bot'
+            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+            dateCreated={dateToUTC(new Date())}
+            version='0.01'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            executionTime='0.0 ms'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>your</span>
+          <SkillCard
+            type='your'
+            name='Name of The Skill'
+            skillType='fallbacks'
+            botName='Name of The Bot'
+            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+            dateCreated={dateToUTC(new Date())}
+            version='0.01'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            executionTime='0.0 ms'
           />
         </div>
       </div>

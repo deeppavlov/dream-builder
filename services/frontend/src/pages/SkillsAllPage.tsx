@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { SkillCard } from '../components/SkillCard/SkillCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { Topbar } from '../components/Topbar/Topbar'
@@ -16,6 +16,7 @@ import { useAuth } from '../services/AuthProvider'
 import { SkillType } from '../types/types'
 
 interface skill_list {
+  assistant_dist: string
   name: string
   metadata: {
     execution_time: any
@@ -29,7 +30,6 @@ interface skill_list {
     time: string
     display_name: string
   }
-  assistant_dist: string
 }
 
 export const SkillsAllPage = () => {
@@ -54,11 +54,13 @@ export const SkillsAllPage = () => {
           <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-              {skillsData?.map((skill: skill_list) => {
+              gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
+              {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 return (
                   <SkillCard
+                    key={i}
+                    type='public'
                     name={skill.metadata.display_name}
                     author={skill.assistant_dist}
                     skillType={skill.metadata.type}
@@ -69,6 +71,7 @@ export const SkillsAllPage = () => {
                     gpu={skill.metadata.gpu_usage}
                     time={skill.metadata.execution_time}
                     executionTime={skill.metadata.execution_time}
+                    big
                     disabledMsg={
                       auth?.user
                         ? undefined
@@ -87,8 +90,9 @@ export const SkillsAllPage = () => {
                 const time = timeToUTC(skill.metadata.date_created)
                 return (
                   <SkillListItem
+                    key={i}
                     name={skill.metadata.display_name}
-                    author={skill.metadata.author}
+                    botName={skill.assistant_dist}
                     dateCreated={date}
                     time={time}
                     desc={skill.metadata.description}
@@ -97,7 +101,6 @@ export const SkillsAllPage = () => {
                     gpu={skill.metadata.gpu_usage}
                     executionTime={skill.metadata.execution_time}
                     skillType={skill.metadata.type}
-                    botName={''}
                     disabledMsg={
                       auth?.user
                         ? undefined

@@ -5,6 +5,12 @@
   flex-direction: column;
   gap: 24px;
 
+  &__distribution {
+    @include t2;
+    color: $text3;
+    margin-top: 8px;
+  }
+
   &__mark {
     color: $primary1;
   }
@@ -15,5 +21,9 @@
     justify-content: flex-end;
     align-items: center;
     gap: 24px;
+  }
+
+  &__muted-text {
+    color: $text3;
   }
 }

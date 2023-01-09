@@ -1,0 +1,22 @@
+.skillPromptModal {
+  max-width: 957px;
+  max-height: 594px;
+  width: 1085px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  textArea {
+    max-height: 373px;
+    height: 351px;
+  }
+}
+
+.btns {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 24px;
+  margin-top: 8px;
+}

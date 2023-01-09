@@ -26,7 +26,7 @@ export const CreateSkillModal = () => {
     setDescByUser(null)
   }
   /**
-   * Set modal is open and getting bot info
+   * Set modal is open and getting skill info
    */
   const handleEventUpdate = (data: {
     detail: SkillInfoInterface & CreateSkillModalProps

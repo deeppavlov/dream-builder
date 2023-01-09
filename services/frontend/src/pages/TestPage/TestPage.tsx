@@ -36,6 +36,7 @@ import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
 import { BotCard } from '../../components/BotCard/BotCard'
 import CompanyLogo from '@assets/icons/pavlovInCard.svg'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
+import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -103,6 +104,18 @@ const intentItemsMock: IntentListItemInterface[] = [
   },
 ]
 
+const mockSkill = {
+  isEditing: true,
+  name: 'Name of The Skill 1',
+  skillType: 'fallbacks',
+  author: 'Name of The Company',
+  desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
+  dateCreated: dateToUTC(new Date()),
+  version: '0.01',
+  ram: '0.0 GB',
+  gpu: '0.0 GB',
+}
+
 export const TestPage = () => {
   const getBtnWithModal = (
     ComponentEl: React.FC<{
@@ -127,36 +140,41 @@ export const TestPage = () => {
     <div className={s.testPage}>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Modals</span>
-        <Button
-          theme='primary'
-          props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
-          CreateAssistantModal
-        </Button>
-        <CreateAssistantModal />
-        <Button
-          theme='primary'
-          props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
-          CreateSkillModal (add)
-        </Button>
-        <Button
-          theme='primary'
-          props={{
-            onClick: () =>
-              trigger('CreateSkillModal', {
-                isEditing: true,
-                name: 'Name of The Skill',
-                skillType: 'fallbacks',
-                author: 'Name of The Company',
-                desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
-                dateCreated: dateToUTC(new Date()),
-                version: '0.01',
-                ram: '0.0 GB',
-                gpu: '0.0 GB',
-              }),
-          }}>
-          CreateSkillModal (edit)
-        </Button>
-        <CreateSkillModal />
+        <div className={s.testPage__component}>
+          <span>CreateAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
+            CreateAssistantModal
+          </Button>
+          <CreateAssistantModal />
+        </div>
+        <div className={s.testPage__component}>
+          <span>CreateSkillModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
+            CreateSkillModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('CreateSkillModal', mockSkill),
+            }}>
+            CreateSkillModal (edit)
+          </Button>
+          <CreateSkillModal />
+        </div>
+        <div className={s.testPage__component}>
+          <span>SkillPromptModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('SkillPromptModal', mockSkill) }}>
+            SkillPromptModal
+          </Button>
+          <SkillPromptModal />
+        </div>
+
         <div className={s.testPage__component}>
           <span>IntentCatcherModal</span>
           {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (add)')}

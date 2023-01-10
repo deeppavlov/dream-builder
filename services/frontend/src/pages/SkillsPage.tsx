@@ -72,7 +72,7 @@ export const SkillsPage = () => {
               name='Name of The Skill'
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
-              author={auth?.user?.name ?? ''}
+              botName={auth?.user?.name ?? ''}
               skillType='retrieval'
               version='0.01'
               dateCreated={dateToUTC(new Date())}
@@ -97,7 +97,7 @@ export const SkillsPage = () => {
   } = useQuery('skills_list', getSkillList)
 
   skillsError && <>{'An error has occurred:' + { skillsError }}</>
- console.log(skillsData)
+  console.log(skillsData)
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -126,16 +126,17 @@ export const SkillsPage = () => {
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
+                        type='public'
                         key={i}
                         name={display_name}
-                        author={skill.assistant_dist}
+                        botName={skill.assistant_dist}
                         skillType={type}
                         dateCreated={date}
                         desc={description}
                         version={version}
                         ram={ram_usage}
                         gpu={gpu_usage}
-                        executionTime={execution_time}
+                        executionTime={`${execution_time} sec`}
                         disabledMsg={
                           auth?.user
                             ? undefined
@@ -194,14 +195,14 @@ export const SkillsPage = () => {
                     <SkillListItem
                       key={i}
                       name={display_name}
-                      author={skill?.assistant_dist}
+                      botName={skill?.assistant_dist}
                       dateCreated={date}
                       time={time}
                       desc={description}
                       version={version}
                       ram={ram_usage}
                       gpu={gpu_usage}
-                      executionTime={execution_time}
+                      executionTime={`${execution_time} sec`}
                       skillType={type}
                       disabledMsg={
                         auth?.user
@@ -214,7 +215,7 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots' limiter>
-              <Table>
+              <Table second='Type'>
                 <AddButton
                   addBot={addBot}
                   listView={listView}

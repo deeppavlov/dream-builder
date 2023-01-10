@@ -62,7 +62,7 @@ export const SkillsAllPage = () => {
                     key={i}
                     type='public'
                     name={skill.metadata.display_name}
-                    author={skill.assistant_dist}
+                    botName={skill.assistant_dist}
                     skillType={skill.metadata.type}
                     dateCreated={date}
                     desc={skill.metadata.description}
@@ -70,7 +70,7 @@ export const SkillsAllPage = () => {
                     ram={skill.metadata.ram_usage}
                     gpu={skill.metadata.gpu_usage}
                     time={skill.metadata.execution_time}
-                    executionTime={skill.metadata.execution_time}
+                    executionTime={`${skill.metadata.execution_time} sec`}
                     big
                     disabledMsg={
                       auth?.user
@@ -85,7 +85,7 @@ export const SkillsAllPage = () => {
         ) : (
           <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             <Table second='Type'>
-              {skillsData?.map((skill: skill_list) => {
+              {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)
                 return (
@@ -99,7 +99,7 @@ export const SkillsAllPage = () => {
                     version={skill.metadata.version}
                     ram={skill.metadata.ram_usage}
                     gpu={skill.metadata.gpu_usage}
-                    executionTime={skill.metadata.execution_time}
+                    executionTime={`${skill.metadata.execution_time} sec`}
                     skillType={skill.metadata.type}
                     disabledMsg={
                       auth?.user

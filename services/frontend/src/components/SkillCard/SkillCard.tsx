@@ -69,7 +69,7 @@ export const SkillCard = ({
   let cx = classNames.bind(s)
   return (
     <div
-      className={cx(`${type}Card`, big && 'bigCard')}
+      className={cx('card', `${type}Card`, big && 'bigCard')}
       onClick={handleSkillCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>

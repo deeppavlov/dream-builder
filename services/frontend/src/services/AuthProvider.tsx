@@ -59,15 +59,15 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
       mode: 'no-cors',
       headers: {
         'Access-Control-Allow-Origin': '*',
-        token: `${getCookie('jwt_token')}`,
+        token: `${jwt}`,
       },
     }
-
+    console.log(jwt)
     axios
-      .get('http://10.11.1.8:6999/auth/login', config)
-      .then(({ data }) =>
+      .get('https://alpha.deepdream.builders:6999/auth/login', config)
+      .then(({ data }) => {
         setUser({ name: data.name, picture: data.picture, email: data.email })
-      )
+      })
       .catch(e => console.log(e))
   }
 

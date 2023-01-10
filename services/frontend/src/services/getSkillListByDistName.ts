@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export async function getSkillListByDistName(distName: string) {
   const { data } = await axios.get(
-    `http://10.11.1.8:7000/api/skills/${distName}`,
+    `https://alpha.deepdream.builders:6998/api/skills/${distName}`,
     {
       headers: {
         token:

@@ -14,6 +14,7 @@ import { useAuth } from '../services/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsAllPage = () => {
   const auth = useAuth()
@@ -58,14 +59,18 @@ export const BotsAllPage = () => {
                   ram_usage,
                   gpu_usage,
                   disk_usage,
-                  date,
+                  date_created,
                 } = dist.metadata
-                const dateCreated = dateToUTC(date)
+                const dateCreated = dateToUTC(date_created)
                 return (
                   <BotCard
                     key={i}
+                    type='public'
+                    size='big'
+                    routingName={dist.name}
                     name={display_name}
                     author={author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={dateCreated}
                     desc={description}
                     version={version}
@@ -97,15 +102,17 @@ export const BotsAllPage = () => {
                   ram_usage,
                   gpu_usage,
                   disk_usage,
-                  date,
+                  date_created,
                 } = dist.metadata
-                const dateCreated = dateToUTC(date)
-                const time = timeToUTC(dist.metadata.date)
+                const dateCreated = dateToUTC(date_created)
+                const time = timeToUTC(date_created)
                 return (
                   <BotListItem
                     key={i}
+                    routingName={dist.name}
                     name={display_name}
                     author={author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={dateCreated}
                     time={time}
                     desc={description}

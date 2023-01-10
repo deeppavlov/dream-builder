@@ -3,13 +3,42 @@
     "browser": true,
     "es2021": true
   },
-  "extends": "plugin:react/jsx-runtime",
-  "overrides": [],
+  "extends": [
+    "plugin:react/recommended",
+    "standard",
+    "plugin:prettier/recommended",
+    "plugin:react/jsx-runtime"
+  ],
+  "plugins": ["react", "prettier", "@typescript-eslint", "react-hooks"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint"],
-  "rules": {}
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["**/*.js", "**/*.ts", "**/*.tsx"],
+      "rules": {
+        "linebreak-style": [1, "unix"],
+        "import/newline-after-import": "error",
+        "import/no-internal-modules": ["off"],
+        "import/order": [
+          "error",
+          {
+            "newlines-between": "always",
+            "groups": [["builtin", "external", "internal"]],
+            "pathGroupsExcludedImportTypes": [
+              ["builtin", "external", "internal"]
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

@@ -31,7 +31,7 @@ export const BotCard = ({
   size,
   disabledMsg,
 }: BotCardProps) => {
-  const bot = { name, author, desc, dateCreated, version, ram, gpu, space }
+  const bot = { routingName, name, author, desc, dateCreated, version, ram, gpu, space }
 
   const handleBotCardClick = () => {
     trigger('BotInfoSidePanel', bot)

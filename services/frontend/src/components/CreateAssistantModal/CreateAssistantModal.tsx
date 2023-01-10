@@ -75,7 +75,7 @@ export const CreateAssistantModal = () => {
     //   .post(`http://10.11.1.8:7000/api/assistant_dists/${va.name}`, va, config)
     //   .then(({ data }) => console.log(data))
     //   .catch(e => console.log(e.response.data))
-    location.pathname = '/editor'
+    location.pathname = '/editor/' + bot?.routingName
   }
 
   useEffect(() => {

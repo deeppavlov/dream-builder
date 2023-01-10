@@ -72,7 +72,7 @@ export const SkillsPage = () => {
               name='Name of The Skill'
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
-              botName={auth?.user?.name ?? ''}
+              botName={'Name of The Bot'}
               skillType='retrieval'
               version='0.01'
               dateCreated={dateToUTC(new Date())}

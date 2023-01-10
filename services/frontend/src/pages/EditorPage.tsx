@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
@@ -20,14 +20,20 @@ import { dateToUTC } from '../utils/dateToUTC'
 import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getDistByName } from '../services/getDistByName'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import { timeToUTC } from '../utils/timeToUTC'
+import { useAuth } from '../services/AuthProvider'
 
 export const EditorPage = () => {
+  const auth = useAuth()
   const [skillsList, setSkillsList] = useState<JSX.Element[]>([])
   const [listView, setListView] = useState<boolean>(false)
+
   const viewHandler = () => {
     setListView(!listView)
     setSkillsList([])
   }
+
   const addSkill = () => {
     !listView
       ? setSkillsList(
@@ -47,8 +53,31 @@ export const EditorPage = () => {
             />,
           ])
         )
-      : setSkillsList(skills.concat(<SkillListItem />))
+      : setSkillsList(
+          skills.concat([
+            <SkillListItem
+              key={useId()}
+              name='Name of The Skill'
+              desc='Helps users locate the nearest store. And we can write 3 lines
+        here and this is maximum about'
+              botName={'Name of The Bot'}
+              skillType='retrieval'
+              version='0.01'
+              dateCreated={dateToUTC(new Date())}
+              time={timeToUTC(new Date().getTime())}
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              executionTime='0.0 ms'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to add the skill'
+              }
+            />,
+          ])
+        )
   }
+
   const data = useParams()
   const {
     isLoading: isDistLoading,

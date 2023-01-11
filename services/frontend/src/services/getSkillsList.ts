@@ -1,6 +1,10 @@
-import axios from 'axios'
+import { api } from './axiosConfig'
 
 export async function getSkillList() {
-  const { data } = await axios.get('http://10.11.1.8:7000/api/skills/')
-  return data
+  try {
+    const { data } = await api.get('skills/')
+    return data
+  } catch (e) {
+    console.log(e)
+  }
 }

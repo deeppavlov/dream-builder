@@ -57,11 +57,11 @@ services:
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
-        PORT: 7000
+        PORT: 6998
     depends_on:
       - auth-api
     ports:
-      - "7000:7000"
+      - "6998:6998"
     volumes:
       - ./services/distributions_api:/src/services/distributions_api
     deploy:

@@ -4,7 +4,7 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import s from './CreateSkillModal.module.scss'
 
 interface CreateSkillModalProps {
@@ -52,7 +52,11 @@ export const CreateSkillModal = () => {
 
   const handleEnterBtnClick = () => {
     if (!isHaveNameAndDesc) return
-    location.pathname = '/editor'
+    trigger('SkillPromptModal', {
+      ...skill,
+      ...{ name: nameByUser, desc: descByUser },
+    })
+    closeModal()
   }
 
   useEffect(() => {

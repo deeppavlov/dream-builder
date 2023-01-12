@@ -17,7 +17,7 @@ export type CustomEventListener = (data: any) => void
 
 export interface BotInfoInterface {
   name: string
-  routingName:string
+  routingName: string
   author: string
   authorImg: string
   desc: string
@@ -50,6 +50,8 @@ export interface SkillInfoInterface {
   gpu: string
   space?: string
   time?: string
+  model?: string
+  prompt?: string
 }
 
 export interface ResourcesInterface {
@@ -67,15 +69,13 @@ export type BotAvailabilityType = 'public' | 'your'
 export type SkillAvailabilityType = 'public' | 'your'
 
 export interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date_created: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
+  name: string // Routing distribution name
+  display_name: string
+  date_created: string | number | Date
+  author: string
+  description: string
+  version: string
+  ram_usage: string
+  gpu_usage: string
+  disk_usage: string
 }

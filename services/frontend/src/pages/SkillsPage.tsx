@@ -20,6 +20,11 @@ import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { trigger } from '../utils/events'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 
 interface skill_list {
   assistant_dist: string
@@ -47,6 +52,7 @@ export const SkillsPage = () => {
   }
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
+    trigger('CreateSkillModal', null)
     !listView
       ? setSkills(
           skills.concat([
@@ -246,6 +252,10 @@ export const SkillsPage = () => {
         />
 
         <CreateSkillModal />
+        <SkillPromptModal />
+        <CreateSkillDistModal />
+        <CreateAssistantModal />
+        <ChooseBotModal />
       </Main>
     </>
   )

@@ -18,7 +18,7 @@ const BaseModal = ({
 }: BaseModalInterface) => {
   const closeModal = () => setIsOpen(false)
 
-  return (
+  return isOpen ? (
     <Modal
       style={{
         ...{
@@ -57,7 +57,7 @@ const BaseModal = ({
         {children}
       </div>
     </Modal>
-  )
+  ) : null
 }
 
 export default BaseModal

@@ -27,13 +27,9 @@
     color: $text1;
   }
 
-  &__about,
-  &__table {
+  &__about {
+    width: 100%;
     @include b3;
     color: $text2;
-  }
-
-  &__table-count {
-    color: $text1;
   }
 }

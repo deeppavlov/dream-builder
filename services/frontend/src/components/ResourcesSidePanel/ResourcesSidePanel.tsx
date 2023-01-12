@@ -6,6 +6,7 @@ import { SmallTag } from '../SmallTag/SmallTag'
 import { subscribe, unsubscribe } from '../../utils/events'
 import { TotalResourcesInterface } from '../../types/types'
 import s from './ResourcesSidePanel.module.scss'
+import ResourcesTable from '../ResourcesTable/ResourcesTable'
 
 const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
   const [res, setRes] = useState<TotalResourcesInterface | null>(null)
@@ -38,26 +39,23 @@ const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
           <p className={s.resourcesBlock__about}>
             Some information about proxy
           </p>
-          <ul className={s.resourcesBlock__table}>
-            <li>
-              <span>RAM:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.proxy.ram ?? '0.0 GB'}
-              </span>
-            </li>
-            <li>
-              <span>GPU:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.proxy.gpu ?? '0.0 GB'}
-              </span>
-            </li>
-            <li>
-              <span>Disk space:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.proxy.space ?? '0.0 GB'}
-              </span>
-            </li>
-          </ul>
+
+          <ResourcesTable
+            values={[
+              {
+                name: 'RAM',
+                value: res?.proxy.ram || '0.0 GB',
+              },
+              {
+                name: 'GPU',
+                value: res?.proxy.gpu || '0.0 GB',
+              },
+              {
+                name: 'Disk Space',
+                value: res?.proxy.space || '0.0 GB',
+              },
+            ]}
+          />
         </div>
         <div className={s.resourcesBlock}>
           <div className={s.resourcesBlock__header}>
@@ -67,26 +65,22 @@ const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
           <p className={s.resourcesBlock__about}>
             You’ve changed Intent Catcher, this container will use memory:
           </p>
-          <ul className={s.resourcesBlock__table}>
-            <li>
-              <span>RAM:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.custom.ram ?? '0.0 GB'}
-              </span>
-            </li>
-            <li>
-              <span>GPU:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.custom.gpu ?? '0.0 GB'}
-              </span>
-            </li>
-            <li>
-              <span>Disk space:</span>
-              <span className={s['resourcesBlock__table-count']}>
-                {res?.custom.space ?? '0.0 GB'}
-              </span>
-            </li>
-          </ul>
+          <ResourcesTable
+            values={[
+              {
+                name: 'RAM',
+                value: res?.custom.ram || '0.0 GB',
+              },
+              {
+                name: 'GPU',
+                value: res?.custom.gpu || '0.0 GB',
+              },
+              {
+                name: 'Disk Space',
+                value: res?.custom.space || '0.0 GB',
+              },
+            ]}
+          />
         </div>
         <div className={s.resourcesSidePanel__btns}>
           <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>

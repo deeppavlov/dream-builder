@@ -4,7 +4,7 @@ import { SkillInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
@@ -18,12 +18,13 @@ const SkillPromptModal = () => {
   const [skillPrompt, setSkillPrompt] = useState<string | null>(null)
   const isHaveModelAndPrompt = skillModel !== null && skillPrompt !== null
 
-  const handleBackBtnClick = () => {
+  const closeModal = () => {
     setIsOpen(false)
     setSkillModel(null)
     setSkillPrompt(null)
-    // open previos modal here
   }
+
+  const handleBackBtnClick = () => closeModal()
 
   /**
    * Set modal is open and getting skill info
@@ -31,6 +32,8 @@ const SkillPromptModal = () => {
   const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
+    setSkillModel(null)
+    setSkillPrompt(null)
     setIsOpen(!isOpen)
   }
 
@@ -44,7 +47,11 @@ const SkillPromptModal = () => {
 
   const handleSaveBtnClick = () => {
     if (!isHaveModelAndPrompt) return
-    // open next modal here
+    trigger('CreateSkillDistModal', {
+      ...skill,
+      ...{ model: skillModel, prompt: skillPrompt },
+    })
+    closeModal()
   }
 
   useEffect(() => {

@@ -37,6 +37,8 @@ import { BotCard } from '../../components/BotCard/BotCard'
 import CompanyLogo from '@assets/icons/pavlovInCard.svg'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
+import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
+import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -173,6 +175,24 @@ export const TestPage = () => {
             SkillPromptModal
           </Button>
           <SkillPromptModal />
+        </div>
+        <div className={s.testPage__component}>
+          <span>CreateSkillDistModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('CreateSkillDistModal', mockSkill) }}>
+            CreateSkillDistModal
+          </Button>
+          <CreateSkillDistModal />
+        </div>
+        <div className={s.testPage__component}>
+          <span>ChooseBotModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('ChooseBotModal', mockSkill) }}>
+            ChooseBotModal
+          </Button>
+          <ChooseBotModal />
         </div>
 
         <div className={s.testPage__component}>

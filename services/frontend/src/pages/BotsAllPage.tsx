@@ -52,6 +52,7 @@ export const BotsAllPage = () => {
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
+                  name,
                   display_name,
                   author,
                   description,
@@ -60,14 +61,14 @@ export const BotsAllPage = () => {
                   gpu_usage,
                   disk_usage,
                   date_created,
-                } = dist.metadata
+                } = dist
                 const dateCreated = dateToUTC(date_created)
                 return (
                   <BotCard
                     key={i}
                     type='public'
                     size='big'
-                    routingName={dist.name}
+                    routingName={name}
                     name={display_name}
                     author={author}
                     authorImg={DeepPavlovLogo}
@@ -95,6 +96,7 @@ export const BotsAllPage = () => {
             <Table>
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
+                  name,
                   display_name,
                   author,
                   description,
@@ -103,13 +105,13 @@ export const BotsAllPage = () => {
                   gpu_usage,
                   disk_usage,
                   date_created,
-                } = dist.metadata
+                } = dist
                 const dateCreated = dateToUTC(date_created)
                 const time = timeToUTC(date_created)
                 return (
                   <BotListItem
                     key={i}
-                    routingName={dist.name}
+                    routingName={name}
                     name={display_name}
                     author={author}
                     authorImg={DeepPavlovLogo}

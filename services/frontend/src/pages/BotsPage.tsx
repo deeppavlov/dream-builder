@@ -116,6 +116,7 @@ export const BotsPage = () => {
                   {isAssistantsLoading && <>Loading...</>}
                   {assistantsData?.map((dist: dist_list, i: number) => {
                     const {
+                      name,
                       display_name,
                       author,
                       description,
@@ -124,11 +125,11 @@ export const BotsPage = () => {
                       gpu_usage,
                       disk_usage,
                       date_created,
-                    } = dist?.metadata
+                    } = dist
                     const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
-                        routingName={dist.name}
+                        routingName={name}
                         key={i}
                         type='public'
                         name={display_name}
@@ -185,6 +186,7 @@ export const BotsPage = () => {
               <Table>
                 {assistantsData?.map((dist: dist_list, i: number) => {
                   const {
+                    name,
                     display_name,
                     author,
                     description,
@@ -193,13 +195,13 @@ export const BotsPage = () => {
                     gpu_usage,
                     disk_usage,
                     date_created,
-                  } = dist.metadata
+                  } = dist
                   const dateCreated = dateToUTC(date_created)
                   const time = timeToUTC(date_created)
                   return (
                     <BotListItem
                       key={i}
-                      routingName={dist.name}
+                      routingName={name}
                       name={display_name}
                       author={author}
                       authorImg={DeepPavlovLogo}

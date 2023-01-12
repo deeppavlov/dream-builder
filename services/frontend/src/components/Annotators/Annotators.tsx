@@ -6,7 +6,11 @@ import { Element } from './Element'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './Annotators.module.scss'
 
-export const Annotators: React.FC = ({ annotatorsList }: any) => {
+interface Props {
+  annotatorsList: any
+}
+
+export const Annotators: React.FC<Props> = ({ annotatorsList }) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>

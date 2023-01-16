@@ -51,7 +51,7 @@ const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
           <span>{skill?.skillType}</span>
         </div>
         <p className={s.skillSidePanel__desc}>{skill?.desc}</p>
-        <Tabs className={s.tabs}>
+        {/* <Tabs className={s.tabs}>
           <TabList className={s.tabs__list}>
             <Tab className={s.tabs__tab}>Uses</Tab>
             <Tab className={s.tabs__tab} disabled>
@@ -60,7 +60,7 @@ const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
           </TabList>
           <TabPanel className={s.tabs__panel}>
             <div className={s.skillSidePanel__accordions}>
-              <Accordion title='Annotators' rounded>
+              <Accordion title='Annotators' rounded> */}
                 {/* <div className={s['skillSidePanel__accordion-item']}>
                   <SkillScriptIcon />
                   DFF Program-Y Skill
@@ -72,11 +72,11 @@ const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
                 <div className={s['skillSidePanel__accordion-item']}>
                   <FallbackIcon /> Dummy Skill
                 </div> */}
-              </Accordion>
+              {/* </Accordion>
             </div>
           </TabPanel>
           <TabPanel className={s.tabs__panel}></TabPanel>
-        </Tabs>
+        </Tabs> */}
 
         <div className={s.skillSidePanel__btns}>
           <div data-tip data-for='skill-add-interact' style={{ width: '100%' }}>

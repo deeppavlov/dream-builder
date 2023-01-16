@@ -1,9 +1,6 @@
-import axios from 'axios'
+import { api } from './axiosConfig'
 
 export async function getAssistantDists() {
-  const { data } = await axios.get(
-    'https://alpha.deepdream.builders:6998/api/assistant_dists/'
-  )
-
+  const { data } = await api.get('assistant_dists/')
   return data
 }

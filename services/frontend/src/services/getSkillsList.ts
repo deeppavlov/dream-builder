@@ -1,6 +1,6 @@
-import axios from 'axios'
+import { api } from './axiosConfig'
 
 export async function getSkillList() {
-  const { data } = await axios.get('https://alpha.deepdream.builders:6998/api/skills/')
+  const { data } = await api.get('skills/')
   return data
 }

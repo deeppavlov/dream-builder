@@ -1,78 +1,87 @@
 import axios from 'axios'
-import jwtDecode from 'jwt-decode'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { UserContext, UserInterface } from '../types/types'
 
-export const getCookie = (name: string): string | null => {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find(row => row.startsWith(`${name}=`))
-    ?.split('=')[1]
-
-  return cookieValue ?? null
+export const deleteLocalStorageUser = () => {
+  localStorage.removeItem('user')
 }
 
-export const getUser = (): UserInterface | null => {
-  const jwt = getCookie('jwt_token')
-  if (!jwt) return null
-  const userObject: UserInterface = jwtDecode(jwt)
-  return userObject ?? null
+const setLocalStorageUser = (user: UserInterface) => {
+  localStorage.removeItem('user')
+  localStorage.setItem('user', JSON.stringify(user))
 }
 
-export const deleteCookie = (name: string): void => {
-  document.cookie = `${name}=;expires=${new Date().getTime()}`
+const getLocalStorageUser = (): UserInterface | null => {
+  const user = localStorage.getItem('user')
+  return user ? JSON.parse(user) : null
 }
 
 export const AuthContext = createContext<UserContext | null>(null)
-
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
 
-  useEffect(() => {
-    const storedUser = getUser()
-    if (storedUser) {
-      setUser(storedUser)
-      return
-    }
-  }, [])
-
-  const login = (response: any) => {
-    const jwt = response.credential
-
-    // Set cookie expire time for jwt token
-    const dayInMilliseconds = 86400000
-    var now = new Date()
-    var time = now.getTime()
-    var expireTime = time + dayInMilliseconds * 30
-    now.setTime(expireTime)
-
-    document.cookie = `jwt_token=${jwt};expires=${now.toUTCString()}`
-
-    // Token Expire time
-    // axios
-    //   .get('https://oauth2.googleapis.com/tokeninfo?id_token=' + jwt)
-    //   .then(r => console.log)
-
-    let config = {
+  const fetchUserLogin = async () => {
+    let axiosConfig = {
       mode: 'no-cors',
       headers: {
         'Access-Control-Allow-Origin': '*',
-        token: `${jwt}`,
+        token: `${localStorage.getItem('token')}`,
       },
     }
-    console.log(jwt)
-    axios
-      .get('https://alpha.deepdream.builders:6999/auth/login', config)
+
+    await axios
+      .get('https://alpha.deepdream.builders:6999/auth/login', axiosConfig)
       .then(({ data }) => {
-        setUser({ name: data.name, picture: data.picture, email: data.email })
+        const user = {
+          name: data.name,
+          picture: data.picture,
+          email: data.email,
+        }
+
+        setLocalStorageUser(user)
+        // setUser(user)
+        location.reload()
       })
-      .catch(e => console.log(e))
+      .catch(e => {
+        setUser(null)
+        deleteLocalStorageUser()
+        localStorage.removeItem('token')
+        console.log(`Authorization failed: ${e}`)
+      })
+  }
+
+  const fetchUserLogout = async () => {
+    let axiosConfig = {
+      mode: 'no-cors',
+      headers: {
+        token: `${localStorage.getItem('token')}`,
+      },
+    }
+
+    await axios
+      .put('https://alpha.deepdream.builders:6999/auth/logout', axiosConfig)
+      .catch(e => console.log(`Logout failed: ${e}`))
+  }
+
+  useEffect(() => {
+    const user = getLocalStorageUser()
+
+    if (!user) return
+    setUser(user)
+  }, [])
+
+  const login = (response: any) => {
+    localStorage.removeItem('token')
+    localStorage.setItem('token', `${response.credential}`)
+    fetchUserLogin()
   }
 
   const logout = () => {
-    deleteCookie('jwt_token')
+    fetchUserLogout()
+    localStorage.removeItem('token')
+    deleteLocalStorageUser()
     window.location.reload()
   }
 

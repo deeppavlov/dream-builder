@@ -92,9 +92,17 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
             <p className={s.botInfoSidePanel__desc}>{desc}</p>
           </div>
           <div className={s.botInfoSidePanel__accordions}>
-            <Accordion title='Annotators' rounded></Accordion>
-            <Accordion title='Skills' rounded>
-              {/* <div className={s['botInfoSidePanel__accordion-item']}>
+            <Accordion title='Annotators' type='annotators' rounded />
+            <Accordion title='Skill Selectors' type='skill_selectors' rounded />
+            <Accordion title='Skills' type='skills' rounded />
+            <Accordion title='Candidate Annotators' type='annotators' rounded />
+            <Accordion
+              title='Response Selectors'
+              type='response_selectors'
+              rounded
+            />
+            <Accordion title='Response Annotators' type='annotators' rounded />
+            {/* <div className={s['botInfoSidePanel__accordion-item']}>
                 <SkillScriptIcon />
                 DFF Program-Y Skill
               </div>
@@ -105,7 +113,6 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
               <div className={s['botInfoSidePanel__accordion-item']}>
                 <FallbackIcon /> Dummy Skill
               </div> */}
-            </Accordion>
           </div>
           <div className={s.botInfoSidePanel__btns}>
             <div data-tip data-for='bot-clone-interact'>

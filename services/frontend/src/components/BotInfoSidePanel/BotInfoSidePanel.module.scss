@@ -4,7 +4,7 @@
   flex-direction: column;
   padding: 16px 0;
   gap: 12px;
-
+  overflow-y: scroll;
   &__header {
     display: flex;
     align-items: center;
@@ -18,7 +18,6 @@
   }
 
   &__container {
-    max-height: 290px;
     overflow: auto;
     margin-bottom: 12px;
     display: flex;
@@ -68,6 +67,10 @@
   &__author,
   &__desc {
     @include b3;
+  }
+  &__desc {
+    overflow: hidden;
+    overflow-y: scroll;
   }
 
   &__accordions {

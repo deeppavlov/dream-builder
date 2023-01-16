@@ -72,7 +72,7 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
-            {title}
+            <div className={s.assistantName}>{title}</div>
             <div className={s.btns_area}>
               {/* <History /> */}
               <Resources />

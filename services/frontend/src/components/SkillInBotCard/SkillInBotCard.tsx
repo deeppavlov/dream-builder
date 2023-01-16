@@ -72,7 +72,7 @@ export const SkillInBotCard = ({
   }
 
   return (
-    <div className={s.card} onClick={handleSkillCardClick}>
+    <div className={s.card} style={{maxWidth:'330px'}} onClick={handleSkillCardClick}>
       <div className={s.header}>
         <h6>{name} </h6>
         <ToggleButton sliderHandler={sliderHandler} />

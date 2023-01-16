@@ -30,7 +30,7 @@ export const Element = ({ title, ...props }: any) => {
       </div>
       <div className={s.right}>
         <Kebab disabled={!disabled} dataFor='customizable_annotator' />
-        <ToggleButton sliderHandler={sliderHandler} />
+        {/* <ToggleButton sliderHandler={sliderHandler} /> */}
       </div>
     </div>
   )

@@ -4,8 +4,9 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './CandidateAnnotators.module.scss'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const CandidateAnnotators = () => {
+export const CandidateAnnotators = ({ candidateAnnotators }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -24,7 +25,9 @@ export const CandidateAnnotators = () => {
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
         <Accordion title='Non-customizable'>
-          <Element />
+          {candidateAnnotators?.map((item: string, i: number) => {
+            return <Element key={i} title={capitalizeTitle(item)} />
+          })}
         </Accordion>
       </div>
     </div>

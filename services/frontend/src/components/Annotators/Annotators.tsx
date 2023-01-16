@@ -25,7 +25,7 @@ export const Annotators: React.FC = ({ annotatorsList }: any) => {
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        <Accordion title='Customizable'></Accordion>
+        {/* <Accordion title='Customizable'></Accordion> */}
         <Accordion title='Non-customizable'>
           {annotatorsList?.map((item: string, i: number) => {
             return <Element key={i} title={capitalizeTitle(item)} />

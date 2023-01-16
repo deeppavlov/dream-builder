@@ -8,8 +8,6 @@ export const Element = ({ title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
     setDisabled(!disabled)
-    console.log('skill state was changed')
-    console.log(disabled)
   }
   return (
     <div
@@ -27,8 +25,8 @@ export const Element = ({ title, ...props }: any) => {
         </div>
       </div>
       <div className={s.right}>
-        <Kebab disabled={!disabled} dataFor='non_customizable_skill' />
-        <ToggleButton sliderHandler={sliderHandler} />
+        <Kebab disabled={!disabled} dataFor='customizable_annotator' />
+        {/* <ToggleButton sliderHandler={sliderHandler} /> */}
       </div>
     </div>
   )

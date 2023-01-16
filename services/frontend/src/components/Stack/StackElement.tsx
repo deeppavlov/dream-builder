@@ -20,11 +20,13 @@ export const StackElement = ({ item, params, type }: any) => {
     <div className={cx('element', !disabled && 'disabled')}>
       <div className={s.left}>
         <div className={s.top}>
-          <img src={`./src/assets/icons/${type}`} className={s.icon} />
-          <p className={s.name}>{item || '_____'}</p>
+          <img src={`./src/assets/icons/${item.type}.svg`} className={s.icon} />
+          <p className={s.name}>{item.display_name || '_____'}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>{params || 'RAM:_._GB _._GB | Ex.t:__ms '}</p>
+          <p className={s.data}>
+            {params || `RAM:${item.ram_usage}GB | Ex.t:${item.execution_time} `}
+          </p>
         </div>
       </div>
       <div className={s.right}>

@@ -2,10 +2,12 @@ import SkillSelectorLogo from '../../assets/icons/skill_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
 
 export const SkillSelector = ({ skillSelectorsList }: any) => {
+  console.log(skillSelectorsList)
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -28,17 +30,27 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
               width: '100%',
               padding: '0px 12px',
             }}>
-            {skillSelectorsList?.map((item: string, i: number) => {
-              return (
-                <RadioButton
-                  key={i}
-                  id={item}
-                  name='skill_selector'
-                  htmlFor={item}>
-                  <Skill title={item} />
-                </RadioButton>
-              )
-            })}
+            {!skillSelectorsList ? (
+              <RadioButton
+                id={'All Skills'}
+                name='skill_selector'
+                htmlFor={'All Skills'}
+                checked={true}>
+                <Skill title={'All Skills'} />
+              </RadioButton>
+            ) : (
+              skillSelectorsList?.map((item: string, i: number) => {
+                return (
+                  <RadioButton
+                    key={i}
+                    id={item}
+                    name='skill_selector'
+                    htmlFor={item}>
+                    <Skill title={capitalizeTitle(item)} />
+                  </RadioButton>
+                )
+              })
+            )}
             {/* <RadioButton
               id='rule_based'
               name='skill_selector'

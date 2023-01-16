@@ -1,14 +1,11 @@
 import ReactTooltip from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import CompanyLogo from '@assets/icons/pavlovInCard.svg'
-import { SmallTag } from '../SmallTag/SmallTag'
-import { CreateAssistantModal } from '../CreateAssistantModal/CreateAssistantModal'
-import s from './BotCard.module.scss'
-import Button from '../../ui/Button/Button'
-import { useEffect, useState } from 'react'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import { trigger } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
+import { trigger } from '../../utils/events'
+import Button from '../../ui/Button/Button'
+import { SmallTag } from '../SmallTag/SmallTag'
+import s from './BotCard.module.scss'
 
 interface BotCardProps extends BotInfoInterface {
   disabledMsg?: string
@@ -30,7 +27,6 @@ export const BotCard = ({
   const handleBotCardClick = () => {
     trigger('BotInfoSidePanel', {
       name,
-      
       author,
       desc,
       dateCreated,

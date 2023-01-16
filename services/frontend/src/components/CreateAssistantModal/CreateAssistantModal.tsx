@@ -45,7 +45,7 @@ export const CreateAssistantModal = () => {
 
   const handleContinueBtnClick = () => {
     if (!isHaveNameAndDesc) return
-    location.pathname = RoutesList.editor + bot?.routingName!
+    location.pathname = bot?.routingName!
   }
 
   useEffect(() => {

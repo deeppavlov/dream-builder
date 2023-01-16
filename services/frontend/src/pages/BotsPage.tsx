@@ -23,16 +23,14 @@ import { nanoid } from 'nanoid'
 
 interface dist_list {
   name: string
-  metadata: {
-    display_name: string
-    date_created: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
+  display_name: string
+  date_created: string | number | Date
+  author: string
+  description: string
+  version: string
+  ram_usage: string
+  gpu_usage: string
+  disk_usage: string
 }
 
 export const BotsPage = () => {
@@ -68,7 +66,6 @@ export const BotsPage = () => {
       : setBots(
           bots.concat([
             <BotListItem
-              key={nanoid(8)}
               dateCreated={dateToUTC(new Date())}
               author={auth?.user?.name ?? 'Name of Company'}
               version='0.01'
@@ -82,6 +79,7 @@ export const BotsPage = () => {
                   ? undefined
                   : 'You must be signed in to clone the bot'
               }
+              routingName={''}
             />,
           ])
         )
@@ -91,15 +89,16 @@ export const BotsPage = () => {
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-
+  console.log(assistantsData)
   useEffect(() => {
     if (!isAssistantsLoading) {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  assistantsError && <>An error has occurred: + {assistantsError}</>
+  assistantsError && <>{'An error has occurred:' + { assistantsError }}</>
   console.log(assistantsData)
+
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -113,10 +112,11 @@ export const BotsPage = () => {
               showAll>
               <Container>
                 <Slider>
-                  {isAssistantsLoading && <>Loading...</>}
+                  {isAssistantsLoading && <>{'Loading...'}</>}
                   {assistantsData?.map((dist: dist_list, i: number) => {
                     const {
                       display_name,
+                      name,
                       author,
                       description,
                       version,
@@ -124,11 +124,11 @@ export const BotsPage = () => {
                       gpu_usage,
                       disk_usage,
                       date_created,
-                    } = dist?.metadata
+                    } = dist
                     const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
-                        routingName={dist.name}
+                        routingName={name}
                         key={i}
                         name={display_name}
                         author={author}
@@ -183,6 +183,7 @@ export const BotsPage = () => {
               <Table>
                 {assistantsData?.map((dist: dist_list, i: number) => {
                   const {
+                    name,
                     display_name,
                     author,
                     description,
@@ -190,14 +191,14 @@ export const BotsPage = () => {
                     ram_usage,
                     gpu_usage,
                     disk_usage,
-                    date,
-                  } = dist.metadata
-                  const dateCreated = dateToUTC(date)
-                  const time = timeToUTC(dist?.metadata?.date)
+                    date_created,
+                  } = dist
+                  const dateCreated = dateToUTC(date_created)
+                  const time = timeToUTC(date_created)
                   return (
                     <BotListItem
                       key={i}
-                      routingName={dist.name}
+                      routingName={name}
                       name={display_name}
                       author={author}
                       dateCreated={dateCreated}

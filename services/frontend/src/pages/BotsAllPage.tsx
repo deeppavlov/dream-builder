@@ -16,16 +16,14 @@ import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateA
 
 interface dist_list {
   name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
+  display_name: string
+  date_created: string | number | Date
+  author: string
+  description: string
+  version: string
+  ram_usage: string
+  gpu_usage: string
+  disk_usage: string
 }
 
 export const BotsAllPage = () => {
@@ -71,9 +69,9 @@ export const BotsAllPage = () => {
                   ram_usage,
                   gpu_usage,
                   disk_usage,
-                  date,
-                } = dist.metadata
-                const dateCreated = dateToUTC(date)
+                  date_created,
+                } = dist
+                const dateCreated = dateToUTC(date_created)
                 return (
                   <BotCard
                     key={i}
@@ -90,6 +88,7 @@ export const BotsAllPage = () => {
                         ? undefined
                         : 'You must be signed in to clone the bot'
                     }
+                    routingName={dist.name}
                   />
                 )
               })}
@@ -110,10 +109,10 @@ export const BotsAllPage = () => {
                   ram_usage,
                   gpu_usage,
                   disk_usage,
-                  date,
-                } = dist.metadata
-                const dateCreated = dateToUTC(date)
-                const time = timeToUTC(dist.metadata.date)
+                  date_created,
+                } = dist
+                const dateCreated = dateToUTC(date_created)
+                const time = timeToUTC(date_created)
                 return (
                   <BotListItem
                     key={i}

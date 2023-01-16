@@ -63,7 +63,7 @@ export const SkillCard = ({
 
   const handleAddSkillBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', skill)
+    trigger('CreateSkillDistModal', skill)
   }
 
   let cx = classNames.bind(s)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as TrashIcon } from '@assets/icons/trash_icon.svg'
@@ -9,6 +9,7 @@ import ExpandableDropdownn from '../ExpandableDropdown/ExpandableDropdown'
 import s from './IntentResponderModal.module.scss'
 import DropboxSearch from '../DropboxSearch/DropboxSearch'
 import { intentsMock } from '../IntentResponderSidePanel/IntentResponderSidePanel'
+import { subscribe, unsubscribe } from '../../utils/events'
 
 export interface IntentInterface {
   id: string
@@ -18,24 +19,18 @@ export interface IntentInterface {
 }
 
 interface Props {
-  intents: IntentInterface[]
+  intents?: IntentInterface[]
   activeIntentId?: string
-  isOpen: boolean
-  setIsOpen: Function
 }
 
-const IntentResponderModal = ({
-  intents,
-  activeIntentId,
-  isOpen,
-  setIsOpen,
-}: Props) => {
+const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
+  const [isOpen, setIsOpen] = useState(false)
   // If not found intent by id, then take first intent in intents
   const [intent, setIntent] = useState(
-    intents.find(({ id }) => activeIntentId === id) ?? intents[0]
+    intents?.find(({ id }) => activeIntentId === id) ?? intents?.[0]
   )
   const [responses, setResponses] = useState<Array<string>>(
-    intent.responses ?? []
+    intent?.responses ?? []
   )
 
   const closeModal = () => setIsOpen(false)
@@ -65,13 +60,33 @@ const IntentResponderModal = ({
     setResponses(responses.filter((v, i) => index !== i))
   }
 
+  const handleEventUpdate = (data: { detail: Props }) => {
+    const { intents, activeIntentId } = data.detail
+
+    if (intents) {
+      const newIntent =
+        intents?.find(({ id }) => activeIntentId === id) ?? intents?.[0]
+
+      setIntent(newIntent)
+      if (newIntent?.responses) setResponses(newIntent.responses)
+    }
+
+    setIsOpen(!isOpen)
+  }
+
+  useEffect(() => {
+    subscribe('IntentResponderModal', handleEventUpdate)
+    return () => unsubscribe('IntentResponderModal', handleEventUpdate)
+  }, [])
+
   return (
     <>
       <Modal
         isOpen={isOpen}
         onRequestClose={closeModal}
         contentLabel='Intet Modal'
-        className={s.intentModal}>
+        className={s.intentModal}
+        style={{ overlay: { zIndex: 5 } }}>
         <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
           <div className={s.intentModal__header}>
             <span className={s.intentModal__name}>

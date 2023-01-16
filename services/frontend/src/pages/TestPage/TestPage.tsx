@@ -11,7 +11,6 @@ import IntentList from '../../components/IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from '../../components/IntentListItem/IntentListItem'
-import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import { CreateAssistantModal } from '../../components/CreateAssistantModal/CreateAssistantModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
@@ -39,6 +38,7 @@ import { SkillCard } from '../../components/SkillCard/SkillCard'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
+import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -149,7 +149,6 @@ export const TestPage = () => {
             props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
             CreateAssistantModal
           </Button>
-          <CreateAssistantModal />
         </div>
         <div className={s.testPage__component}>
           <span>CreateSkillModal</span>
@@ -165,25 +164,37 @@ export const TestPage = () => {
             }}>
             CreateSkillModal (edit)
           </Button>
-          <CreateSkillModal />
         </div>
         <div className={s.testPage__component}>
           <span>SkillPromptModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('SkillPromptModal', mockSkill) }}>
-            SkillPromptModal
+            props={{
+              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
+            }}>
+            SkillPromptModal (add)
           </Button>
-          <SkillPromptModal />
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillPromptModal', {
+                  skill: mockSkill,
+                  isEditingModal: true,
+                }),
+            }}>
+            SkillPromptModal (edit)
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>CreateSkillDistModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('CreateSkillDistModal', mockSkill) }}>
+            props={{
+              onClick: () => trigger('CreateSkillDistModal', mockSkill),
+            }}>
             CreateSkillDistModal
           </Button>
-          <CreateSkillDistModal />
         </div>
         <div className={s.testPage__component}>
           <span>ChooseBotModal</span>
@@ -192,52 +203,76 @@ export const TestPage = () => {
             props={{ onClick: () => trigger('ChooseBotModal', mockSkill) }}>
             ChooseBotModal
           </Button>
-          <ChooseBotModal />
         </div>
 
         <div className={s.testPage__component}>
           <span>IntentCatcherModal</span>
-          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (add)')}
-          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (edit)', {
-            intent: {
-              id: nanoid(8),
-              name: 'want_pizza',
-              examples: [
-                'want pizza',
-                'love pizza',
-                'pizza is my favorite',
-                'wanna pizza',
-              ],
-              regexes: ['(i|we) (want|like|wanna) to (order|buy) pizza'],
-            },
-          })}
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('IntentCatcherModal', {}) }}>
+            IntentCatcherModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentCatcherModal', {
+                  intent: {
+                    id: nanoid(8),
+                    name: 'want_pizza',
+                    examples: [
+                      'want pizza',
+                      'love pizza',
+                      'pizza is my favorite',
+                      'wanna pizza',
+                    ],
+                    regexes: ['(i|we) (want|like|wanna) to (order|buy) pizza'],
+                  },
+                }),
+            }}>
+            IntentCatcherModal (edit)
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>IntentResponderModal</span>
-          {getBtnWithModal(IntentResponderModal, 'Intent Responder (add)', {
-            intents: [
-              {
-                id: nanoid(8),
-                name: 'yes',
-                type: 'custom',
-              },
-            ],
-          })}
-          {getBtnWithModal(IntentResponderModal, 'Intent Responder (edit)', {
-            intents: [
-              {
-                id: nanoid(8),
-                name: 'yes',
-                type: 'custom',
-                responses: [
-                  'Bye-bye!',
-                  'Goodbye!',
-                  "You're a great listener. Goodbye!",
-                  'Being around you makes everything better! Bye!',
-                ],
-              },
-            ],
-          })}
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentResponderModal', {
+                  intents: [
+                    {
+                      id: nanoid(8),
+                      name: 'yes',
+                      type: 'custom',
+                    },
+                  ],
+                }),
+            }}>
+            IntentResponderModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentResponderModal', {
+                  intents: [
+                    {
+                      id: nanoid(8),
+                      name: 'yes',
+                      type: 'custom',
+                      responses: [
+                        'Bye-bye!',
+                        'Goodbye!',
+                        "You're a great listener. Goodbye!",
+                        'Being around you makes everything better! Bye!',
+                      ],
+                    },
+                  ],
+                }),
+            }}>
+            IntentResponderModal (edit)
+          </Button>
         </div>
       </div>
       <div className={s.testPage__block}>
@@ -636,6 +671,15 @@ export const TestPage = () => {
           />
         </div>
       </div>
+
+      {/* Modals */}
+      <CreateAssistantModal />
+      <CreateSkillModal />
+      <SkillPromptModal />
+      <CreateSkillDistModal />
+      <ChooseBotModal />
+      <IntentCatcherModal />
+      <IntentResponderModal />
     </div>
   )
 }

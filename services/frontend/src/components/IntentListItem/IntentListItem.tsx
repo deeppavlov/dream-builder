@@ -1,6 +1,6 @@
 import { ReactComponent as EditIcon } from '@assets/icons/edit_pencil.svg'
 import { useState } from 'react'
-import IntentCatcherModal from '../IntentCatcherModal/IntentCatcherModal'
+import { trigger } from '../../utils/events'
 import s from './IntentListItem.module.scss'
 
 export interface IntentListItemInterface {
@@ -17,8 +17,7 @@ const IntentListItem = ({
   status,
   disabled,
 }: IntentListItemInterface) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-  const handleEditButtonClick = () => setModalIsOpen(true)
+  const handleEditButtonClick = () => trigger('IntentCatcherModal', [])
 
   return (
     <div
@@ -36,8 +35,6 @@ const IntentListItem = ({
         disabled={disabled}>
         <EditIcon />
       </button>
-      {/* Need to send info about intent to modal */}
-      <IntentCatcherModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
     </div>
   )
 }

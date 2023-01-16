@@ -23,6 +23,10 @@ import { getDistByName } from '../services/getDistByName'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../services/AuthProvider'
+import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
+import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
+import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
+import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 
 export const EditorPage = () => {
   const auth = useAuth()
@@ -172,6 +176,10 @@ export const EditorPage = () => {
         </TabPanel>
       </Tabs>
       <SkillSidePanel position={{ top: 64 }} />
+      <IntentCatcherSidePanel position={{ top: 64 }} />
+      <IntentResponderSidePanel position={{ top: 64 }} />
+      <IntentCatcherModal />
+      <IntentResponderModal />
     </>
   )
 }

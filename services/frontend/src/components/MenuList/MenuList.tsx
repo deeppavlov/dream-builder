@@ -12,7 +12,28 @@ import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Link } from 'react-router-dom'
 import s from './MenuList.module.scss'
 
-export const MenuList = ({ type, author, day, time }: any) => {
+interface MenuListProps {
+  type:
+    | 'main'
+    | 'bots'
+    | 'skills_page'
+    | 'editor'
+    | 'bot_public'
+    | 'your_bot'
+    | 'skills'
+    | 'all_annotators'
+    | 'response_annotators'
+    | 'all_skills'
+    | 'customizable_annotator'
+    | 'customizable_skill'
+    | 'non_customizable_annotator'
+    | 'non_customizable_skill'
+    | 'skill_selector'
+    | 'response_selector'
+    | null
+}
+
+export const MenuList = ({ type }: MenuListProps) => {
   switch (type) {
     case 'main':
       return (
@@ -117,9 +138,9 @@ export const MenuList = ({ type, author, day, time }: any) => {
             <li className={s.item}>
               <button>Publish</button>
             </li>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>Download</button>
-            </li>
+            </li> */}
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <button>History</button>
@@ -177,24 +198,24 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 <p>Rename</p>
               </button>
             </li>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>
                 <PropertiesIcon />
                 <p>Properties</p>
               </button>
-            </li>
+            </li> */}
             <li className={s.item}>
               <button>
                 <PublishIcon />
                 <p>Publish</p>
               </button>
             </li>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>
                 <DownloadIcon />
                 <p>Download</p>
               </button>
-            </li>
+            </li> */}
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <button>
@@ -203,7 +224,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
               </button>
             </li>
           </ul>
-          <hr style={{ border: '0.8px solid #F0F0F3' }} />
+          {/* <hr style={{ border: '0.8px solid #F0F0F3' }} />
           <div style={{ padding: '10px' }}>
             <Wrapper padding='5px 12px' borderRadius='8px'>
               <p className={s.edited}>
@@ -212,7 +233,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 {day ? day : 'Today'} at {time ? time : '04:20'}
               </p>
             </Wrapper>
-          </div>
+          </div> */}
         </ReactTooltip>
       )
     case 'skills':
@@ -356,7 +377,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
           place='right'
           effect='solid'>
           <ul className={s.menu}>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>
                 <RenameIcon />
                 <p>Edit Annotator</p>
@@ -367,20 +388,20 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 <DisableIcon />
                 <p>Disable Annotator</p>
               </button>
-            </li>
+            </li> */}
             <li className={s.item}>
               <button>
                 <PropertiesIcon />
                 <p>Properties</p>
               </button>
             </li>
-            <hr style={{ border: '0.8px solid #8D96B5' }} />
+            {/* <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <button>
                 <DeleteIcon />
                 <p>Delete</p>
               </button>
-            </li>
+            </li> */}
           </ul>
         </ReactTooltip>
       )
@@ -414,12 +435,12 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 <p>Disable Skill</p>
               </button>
             </li>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>
                 <DownloadIcon />
                 <p>Download</p>
               </button>
-            </li>
+            </li> */}
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <button>
@@ -428,8 +449,8 @@ export const MenuList = ({ type, author, day, time }: any) => {
               </button>
             </li>
           </ul>
-          <hr style={{ border: '0.8px solid #F0F0F3' }} />
-          <div style={{ padding: '10px' }}>
+          {/* <hr style={{ border: '0.8px solid #F0F0F3' }} /> */}
+          {/* <div style={{ padding: '10px' }}>
             <Wrapper padding='5px 12px' borderRadius='8px'>
               <p className={s.edited}>
                 Last Edited by {author ? author : 'Irina Nikitenko'}
@@ -437,7 +458,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 {day ? day : 'Today'} at {time ? time : '04:20'}
               </p>
             </Wrapper>
-          </div>
+          </div> */}
         </ReactTooltip>
       )
     case 'non_customizable_annotator':
@@ -452,25 +473,25 @@ export const MenuList = ({ type, author, day, time }: any) => {
           place='right'
           effect='solid'>
           <ul className={s.menu}>
-            <li className={s.item}>
+            {/* <li className={s.item}>
               <button>
                 <DisableIcon />
                 <p>Disable Annotator</p>
               </button>
-            </li>
+            </li> */}
             <li className={s.item}>
               <button>
                 <PropertiesIcon />
                 <p>Properties</p>
               </button>
             </li>
-            <hr style={{ border: '0.8px solid #8D96B5' }} />
+            {/* <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <button>
                 <DeleteIcon />
                 <p>Delete</p>
               </button>
-            </li>
+            </li> */}
           </ul>
         </ReactTooltip>
       )
@@ -522,6 +543,13 @@ export const MenuList = ({ type, author, day, time }: any) => {
           <ul className={s.menu}>
             <li className={s.item}>
               <button>
+                <PropertiesIcon />
+                <p>Properties</p>
+              </button>
+            </li>
+            {/* 
+            <li className={s.item}>
+              <button>
                 <RenameIcon />
                 <p>Edit</p>
               </button>
@@ -531,7 +559,7 @@ export const MenuList = ({ type, author, day, time }: any) => {
                 <RollbackIcon />
                 <p>Rollback</p>
               </button>
-            </li>
+            </li> */}
           </ul>
         </ReactTooltip>
       )

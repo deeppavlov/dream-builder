@@ -11,6 +11,7 @@ import { ReactComponent as RollbackIcon } from '../../assets/icons/rollback.svg'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Link } from 'react-router-dom'
 import s from './MenuList.module.scss'
+import { trigger } from '../../utils/events'
 
 interface MenuListProps {
   type:
@@ -31,9 +32,11 @@ interface MenuListProps {
     | 'skill_selector'
     | 'response_selector'
     | null
+  item: any
+  privateDataFor: any
 }
 
-export const MenuList = ({ type }: MenuListProps) => {
+export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
   switch (type) {
     case 'main':
       return (
@@ -366,6 +369,44 @@ export const MenuList = ({ type }: MenuListProps) => {
         </ReactTooltip>
       )
     case 'customizable_annotator':
+      const MenuTT = () => (
+        <ul className={s.menu}>
+          <li className={s.item}>
+            <button
+              onClick={() => {
+                switch (item.typeItem) {
+                  case 'Intent Catcher':
+                    trigger('IntentCatcherSidePanel', item.data)
+                    break
+                  default:
+                    break
+                }
+              }}>
+              <RenameIcon />
+              <p>Edit Annotator</p>
+            </button>
+          </li>
+          <li className={s.item}>
+            <button>
+              <DisableIcon />
+              <p>Disable Annotator</p>
+            </button>
+          </li>
+          <li className={s.item}>
+            <button>
+              <PropertiesIcon />
+              <p>Properties</p>
+            </button>
+          </li>
+          <hr style={{ border: '0.8px solid #8D96B5' }} />
+          <li className={s.item}>
+            <button>
+              <DeleteIcon />
+              <p>Delete</p>
+            </button>
+          </li>
+        </ul>
+      )
       return (
         <ReactTooltip
           event='click'
@@ -373,39 +414,58 @@ export const MenuList = ({ type }: MenuListProps) => {
           possibleCustomEventsOff='click'
           clickable={true}
           className={s.menulist}
-          id='customizable_annotator'
+          id={privateDataFor}
           place='right'
           effect='solid'>
-          <ul className={s.menu}>
-            {/* <li className={s.item}>
-              <button>
-                <RenameIcon />
-                <p>Edit Annotator</p>
-              </button>
-            </li>
-            <li className={s.item}>
-              <button>
-                <DisableIcon />
-                <p>Disable Annotator</p>
-              </button>
-            </li> */}
-            <li className={s.item}>
-              <button>
-                <PropertiesIcon />
-                <p>Properties</p>
-              </button>
-            </li>
-            {/* <hr style={{ border: '0.8px solid #8D96B5' }} />
-            <li className={s.item}>
-              <button>
-                <DeleteIcon />
-                <p>Delete</p>
-              </button>
-            </li> */}
-          </ul>
+          <MenuTT />
         </ReactTooltip>
       )
     case 'customizable_skill':
+      const CusSkillMenu = () => (
+        <ul className={s.menu}>
+          <li className={s.item}>
+            <button
+              onClick={() => {
+                switch (item?.typeItem) {
+                  case 'Dff Intent Responder Skill':
+                    console.log(item, type)
+                    trigger('IntentResponderSidePanel', item.data)
+                    break
+                  default:
+                    break
+                }
+              }}>
+              <RenameIcon />
+              <p>Edit Skill</p>
+            </button>
+          </li>
+          <li className={s.item}>
+            <button>
+              <PropertiesIcon />
+              <p>Properties</p>
+            </button>
+          </li>
+          <li className={s.item}>
+            <button>
+              <DisableIcon />
+              <p>Disable Skill</p>
+            </button>
+          </li>
+          <li className={s.item}>
+            <button>
+              <DownloadIcon />
+              <p>Download</p>
+            </button>
+          </li>
+          <hr style={{ border: '0.8px solid #8D96B5' }} />
+          <li className={s.item}>
+            <button>
+              <DeleteIcon />
+              <p>Delete</p>
+            </button>
+          </li>
+        </ul>
+      )
       return (
         <ReactTooltip
           event='click'
@@ -413,7 +473,7 @@ export const MenuList = ({ type }: MenuListProps) => {
           arrowColor='#fff'
           clickable={true}
           className={s.menulist}
-          id='customizable_skill'
+          id={privateDataFor}
           place='right'
           effect='solid'>
           <ul className={s.menu}>

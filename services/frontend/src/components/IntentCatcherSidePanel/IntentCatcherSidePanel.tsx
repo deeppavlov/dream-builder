@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
@@ -7,12 +7,12 @@ import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
 import IntentList from '../IntentList/IntentList'
-import IntentCatcherModal from '../IntentCatcherModal/IntentCatcherModal'
 import BaseLink from '../BaseLink/BaseLink'
 import s from './IntentCatcherSidePanel.module.scss'
 import SidePanelStatus from '../SidePanelStatus/SidePanelStatus'
 import { nanoid } from 'nanoid'
 import ReactTooltip from 'react-tooltip'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 
 const intentsMock: IntentListItemInterface[] = [
   {
@@ -120,23 +120,21 @@ const intentsMock: IntentListItemInterface[] = [
 ]
 
 const IntentCatcherSidePanel = ({
-  isOpen,
-  setIsOpen,
   position,
   disabled,
-}: SidePanelProps) => {
+}: Partial<SidePanelProps>) => {
+  const [isOpen, setIsOpen] = useState(false)
   /* `isTrainingLoading - training loading status` */
   /* `isTraining` - status from start training to Replace IntentCatcher*/
   const [isTrainingLoading, setIsTrainingLoading] = useState(false)
   const [isTraining, setIsTraining] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(disabled ?? false)
   const [trainingResponse, setTrainingResponse] = useState<{
     status: 'success' | 'error'
   } | null>(null)
-  const [addModalIsOpen, setAddModalIsOpen] = useState(false)
-  const [isNotified, setIsNotified] = useState(false)
 
-  const handleAddIntentBtnClick = () => setAddModalIsOpen(true)
+  const handleCloseBtnClick = () => setIsOpen(false)
+
+  const handleAddIntentBtnClick = () => trigger('IntentCatcherModal', {})
 
   const handleTrainBtnClick = () => {
     setIsTraining(true)
@@ -157,10 +155,15 @@ const IntentCatcherSidePanel = ({
     setIsTrainingLoading(false)
   }
 
-  const handleNotifyMeBtnClick = () => {
-    // Sending mail to user google Email logic here...
-    setIsNotified(true)
+  const handleEventUpdate = (data: { detail: any }) => {
+    // Set here Intent Catcher details when opening
+    setIsOpen(!isOpen)
   }
+
+  useEffect(() => {
+    subscribe('IntentCatcherSidePanel', handleEventUpdate)
+    return () => unsubscribe('IntentCatcherSidePanel', handleEventUpdate)
+  }, [])
 
   return (
     <BaseSidePanel
@@ -205,30 +208,9 @@ const IntentCatcherSidePanel = ({
             status='default'
             title='Sorry, training is not yet available.'
             desc='Stay tuned for the upcoming updates!'>
-            <Button
-              theme='secondary'
-              props={{ onClick: () => setIsOpen(false) }}>
+            <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>
               Close
             </Button>
-            <div data-tip data-for='notify-me'>
-              <Button
-                theme='primary'
-                props={{
-                  disabled: isNotified,
-                  onClick: handleNotifyMeBtnClick,
-                }}>
-                {isNotified ? '✓' : 'Notify me'}
-              </Button>
-            </div>
-            <ReactTooltip
-              place='bottom'
-              effect='solid'
-              className='tooltips'
-              arrowColor='#8d96b5'
-              delayShow={1000}
-              id='notify-me'>
-              via Email
-            </ReactTooltip>
           </SidePanelStatus>
         )}
 
@@ -276,13 +258,6 @@ const IntentCatcherSidePanel = ({
             </Button>
           </SidePanelStatus>
         )}
-
-        {/* Maybe need to organize here Edit/Add intent modals */}
-        {/* Add new intent Modal */}
-        <IntentCatcherModal
-          isOpen={addModalIsOpen}
-          setIsOpen={setAddModalIsOpen}
-        />
       </div>
     </BaseSidePanel>
   )

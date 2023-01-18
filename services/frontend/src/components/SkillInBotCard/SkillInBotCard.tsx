@@ -35,9 +35,7 @@ export const SkillInBotCard = ({
   const [disabled, setDisabled] = useState(true)
 
   const sliderHandler = () => {
-    setDisabled(!disabled)
-    console.log('skill state was changed')
-    console.log(disabled)
+    setDisabled(disabled => !disabled)
   }
 
   const handleSkillCardClick = () => {
@@ -72,7 +70,10 @@ export const SkillInBotCard = ({
   }
 
   return (
-    <div className={s.card} style={{maxWidth:'330px'}} onClick={handleSkillCardClick}>
+    <div
+      className={s.card}
+      style={{ maxWidth: '330px' }}
+      onClick={handleSkillCardClick}>
       <div className={s.header}>
         <h6>{name} </h6>
         <ToggleButton sliderHandler={sliderHandler} />

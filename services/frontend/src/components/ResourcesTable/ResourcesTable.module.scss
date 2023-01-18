@@ -1,0 +1,17 @@
+.resourcesTable {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  @include b3;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: $text2;
+  }
+
+  &__value {
+    color: $text1;
+  }
+}

@@ -30,8 +30,8 @@ export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
           <AddButtonStack disabled={true} text='Add Candidate Annotators' />
           <div className={s.elements}>
             <Accordion title='Non-customizable'>
-              {responseAnnotatorsList?.map((i: string) => {
-                return <Element title={capitalizeTitle(i)} />
+              {responseAnnotatorsList?.map((item: string, i: number) => {
+                return <Element key={i} title={capitalizeTitle(item)} />
               })}
             </Accordion>
           </div>

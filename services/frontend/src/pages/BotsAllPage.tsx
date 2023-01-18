@@ -13,18 +13,8 @@ import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../services/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
-
-interface dist_list {
-  name: string
-  display_name: string
-  date_created: string | number | Date
-  author: string
-  description: string
-  version: string
-  ram_usage: string
-  gpu_usage: string
-  disk_usage: string
-}
+import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsAllPage = () => {
   const auth = useAuth()
@@ -62,6 +52,7 @@ export const BotsAllPage = () => {
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
+                  name,
                   display_name,
                   author,
                   description,
@@ -75,8 +66,12 @@ export const BotsAllPage = () => {
                 return (
                   <BotCard
                     key={i}
+                    type='public'
+                    size='big'
+                    routingName={name}
                     name={display_name}
                     author={author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={dateCreated}
                     desc={description}
                     version={version}
@@ -102,6 +97,7 @@ export const BotsAllPage = () => {
             <Table>
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
+                  name,
                   display_name,
                   author,
                   description,
@@ -116,8 +112,10 @@ export const BotsAllPage = () => {
                 return (
                   <BotListItem
                     key={i}
+                    routingName={name}
                     name={display_name}
                     author={author}
+                    authorImg={DeepPavlovLogo}
                     dateCreated={dateCreated}
                     time={time}
                     desc={description}

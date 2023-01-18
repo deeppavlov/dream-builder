@@ -29,7 +29,14 @@ export const Element = ({ title, ...props }: any) => {
         </div>
       </div>
       <div className={s.right}>
-        <Kebab disabled={!disabled} dataFor='customizable_skill' />
+        <Kebab
+          disabled={!disabled}
+          item={{
+            typeItem: title, // Type of Element, like Intent Catcher, Intent Responder, FAQ etc.
+            data: null, // Data of Element
+          }}
+          dataFor='customizable_skill'
+        />
         <ToggleButton sliderHandler={sliderHandler} />
       </div>
     </div>

@@ -9,7 +9,7 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Table } from '../ui/Table/Table'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
@@ -20,8 +20,14 @@ import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { trigger } from '../utils/events'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 
 interface skill_list {
+  assistant_dist: string
   name: string
   metadata: {
     execution_time: any
@@ -47,20 +53,22 @@ export const SkillsPage = () => {
   }
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
+    trigger('CreateSkillModal', null)
     !listView
       ? setSkills(
           skills.concat([
-            <SkillInBotCard
+            <SkillCard
               key={nanoid(8)}
+              type='your'
               name='Name of The Skill'
               skillType='fallbacks'
-              author={auth?.user?.name ?? 'Name of The Company'}
-              desc='Helps users locate the nearest store. And we can write 3 lines
-              here and this is maximum about'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
               dateCreated={dateToUTC(new Date())}
               version='0.01'
               ram='0.0 GB'
               gpu='0.0 GB'
+              executionTime='0.0 ms'
             />,
           ])
         )
@@ -71,14 +79,14 @@ export const SkillsPage = () => {
               name='Name of The Skill'
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
-              author={auth?.user?.name ?? ''}
+              botName={'Name of The Bot'}
               skillType='retrieval'
               version='0.01'
               dateCreated={dateToUTC(new Date())}
               time={timeToUTC(new Date().getTime())}
               ram='0.0 GB'
               gpu='0.0 GB'
-              executionTime='0.0'
+              executionTime='0.0 ms'
               disabledMsg={
                 auth?.user
                   ? undefined
@@ -96,7 +104,6 @@ export const SkillsPage = () => {
   } = useQuery('skills_list', getSkillList)
 
   skillsError && <>{'An error has occurred:' + { skillsError }}</>
- console.log(skillsData)
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -125,16 +132,17 @@ export const SkillsPage = () => {
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
+                        type='public'
                         key={i}
                         name={display_name}
-                        author={skill.assistant_dist}
+                        botName={skill.assistant_dist}
                         skillType={type}
                         dateCreated={date}
                         desc={description}
                         version={version}
                         ram={ram_usage}
                         gpu={gpu_usage}
-                        executionTime={execution_time}
+                        executionTime={`${execution_time} sec`}
                         disabledMsg={
                           auth?.user
                             ? undefined
@@ -152,12 +160,11 @@ export const SkillsPage = () => {
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
-                      height='330px'
                       listView={listView}
                       addBot={addBot}
                       disabled={auth?.user === null}
@@ -194,14 +201,14 @@ export const SkillsPage = () => {
                     <SkillListItem
                       key={i}
                       name={display_name}
-                      author={skill?.assistant_dist}
+                      botName={skill?.assistant_dist}
                       dateCreated={date}
                       time={time}
                       desc={description}
                       version={version}
                       ram={ram_usage}
                       gpu={gpu_usage}
-                      executionTime={execution_time}
+                      executionTime={`${execution_time} sec`}
                       skillType={type}
                       disabledMsg={
                         auth?.user
@@ -214,7 +221,7 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots' limiter>
-              <Table>
+              <Table second='Type'>
                 <AddButton
                   addBot={addBot}
                   listView={listView}
@@ -245,6 +252,10 @@ export const SkillsPage = () => {
         />
 
         <CreateSkillModal />
+        <SkillPromptModal />
+        <CreateSkillDistModal />
+        <CreateAssistantModal />
+        <ChooseBotModal />
       </Main>
     </>
   )

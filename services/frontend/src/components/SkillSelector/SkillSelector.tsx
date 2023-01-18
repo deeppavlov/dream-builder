@@ -7,7 +7,6 @@ import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
 
 export const SkillSelector = ({ skillSelectorsList }: any) => {
-  console.log(skillSelectorsList)
   return (
     <div className={s.stack}>
       <div className={s.header}>

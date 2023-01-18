@@ -26,7 +26,6 @@ export const StackElement: React.FC<StackElementProps> = ({ item, type }) => {
     setDisabled(disabled => !disabled)
   }
   let cx = classNames.bind(s)
-
   return (
     <div className={cx('element', !disabled && 'disabled')}>
       <div className={s.left}>

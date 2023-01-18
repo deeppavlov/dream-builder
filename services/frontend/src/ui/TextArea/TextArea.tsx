@@ -5,9 +5,9 @@ import s from './TextArea.module.scss'
 import Button from '../Button/Button'
 
 interface TextAreaProps {
-  label?: string
-  about?: string
-  errorMessage?: string
+  label?: string | JSX.Element
+  about?: string | JSX.Element
+  errorMessage?: string | JSX.Element | null
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   onSubmit?: (value: string) => void
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void

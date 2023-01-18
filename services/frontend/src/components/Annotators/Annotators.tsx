@@ -6,7 +6,11 @@ import { Element } from './Element'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './Annotators.module.scss'
 
-export const Annotators: React.FC = ({ annotatorsList }: any) => {
+interface Props {
+  annotatorsList: any
+}
+
+export const Annotators: React.FC<Props> = ({ annotatorsList }) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -25,7 +29,7 @@ export const Annotators: React.FC = ({ annotatorsList }: any) => {
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        {/* <Accordion title='Customizable'></Accordion> */}
+        <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {annotatorsList?.map((item: string, i: number) => {
             return <Element key={i} title={capitalizeTitle(item)} />

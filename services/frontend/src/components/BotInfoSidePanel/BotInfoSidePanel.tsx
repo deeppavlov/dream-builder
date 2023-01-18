@@ -110,7 +110,11 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
                     rounded>
                     {group == 'skill_selectors' &&
                       distsComponentsData.skill_selectors?.length == 0 && (
-                        <div className={s.accordionItem}>{'All Skills'}</div>
+                        <div className={s.accordionItem}>All Skills</div>
+                      )}
+                    {group !== 'skill_selectors' &&
+                      distsComponentsData[group].length == 0 && (
+                        <div className={s.accordionItem}>None</div>
                       )}
                     {distsComponentsData[group].map(
                       (item: object, id: number) => (

@@ -11,7 +11,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     ComposeLocal,
     Component,
     ComponentMetadata,
-    PipelineConfMetadata
+    PipelineConfMetadata,
 )
 
 
@@ -26,11 +26,8 @@ class DreamDistModelMetadata(BaseModel):
     disk_usage: str
 
 
-class DreamDistModelShort(BaseModel):
-    dist_path: str
+class DreamDistModelShort(PipelineConfMetadata):
     name: str
-    dream_root: str
-    metadata: PipelineConfMetadata
 
 
 class DreamDistModel(BaseModel):
@@ -58,3 +55,7 @@ class DreamDistConfigsImport(BaseModel):
 
     name: str
     data: dict[str, AnyConfig]
+
+
+class ComponentShort(ComponentMetadata):
+    name: str

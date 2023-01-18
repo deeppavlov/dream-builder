@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+from deeppavlov_dreamtools.distconfigs.generics import Component
 from fastapi import APIRouter, status, Depends
 
 from deeppavlov_dreamtools.distconfigs.manager import AnyConfigClass, DreamDist, list_dists
@@ -17,6 +18,7 @@ from services.distributions_api.models import (
     DreamDistModel,
     DreamDistModelShort,
     DreamDistModelMetadata,
+    ComponentShort,
 )
 from services.distributions_api.security.auth import verify_token
 
@@ -28,10 +30,8 @@ def _dist_to_distmodel_short(dream_dist: DreamDist) -> DreamDistModelShort:
     DreamDist -> DreamDistModelShort
     """
     return DreamDistModelShort(
-        dist_path=str(dream_dist.dist_path),
         name=dream_dist.name,
-        dream_root=str(dream_dist.dream_root),
-        metadata=dream_dist.pipeline_conf.config.metadata,
+        **dream_dist.pipeline_conf.config.metadata.dict(),
     )
 
 
@@ -64,6 +64,10 @@ def _distmodel_to_dist(dream_dist_model: DreamDistModel) -> DreamDist:
         compose_dev=DreamComposeDev(dream_dist_model.compose_dev),
         compose_proxy=DreamComposeProxy(dream_dist_model.compose_proxy),
     )
+
+
+def _component_to_component_short(component: Component) -> ComponentShort:
+    return ComponentShort(name=component.name, **component.metadata.dict())
 
 
 @assistant_dists_router.get("/", status_code=status.HTTP_200_OK)
@@ -152,7 +156,7 @@ async def replace_config_of_dist(
     config_name: DreamConfigLiteral,
     new_config: DreamDistConfigsImport,
     token: str = Depends(verify_token),
-) -> None:
+):
     """
     Edits distribution with name=dist_name by adding new_config
     """
@@ -164,6 +168,37 @@ async def replace_config_of_dist(
 
     dream_dist.save(overwrite=True)
     return _dist_to_distmodel(dream_dist)
+
+
+@assistant_dists_router.get("/{dist_name}/components/")
+async def get_config_services_by_group(dist_name: str, token: str = Depends(verify_token)):
+    dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+
+    all_components = {}
+
+    groups = [
+        "annotators",
+        "skill_selectors",
+        "skills",
+        "candidate_annotators",
+        "response_selectors",
+        "response_annotators",
+    ]
+    for component_group in groups:
+        components = []
+
+        for component in dist.iter_components(component_group):
+            components.append(_component_to_component_short(component))
+
+        all_components[component_group] = components
+
+    return all_components
+
+
+@assistant_dists_router.get("/{dist_name}/components/{component_group}")
+async def get_config_services_by_group(dist_name: str, component_group: str, token: str = Depends(verify_token)):
+    dist = DreamDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+    return list(_component_to_component_short(c) for c in dist.iter_components(component_group))
 
 
 @assistant_dists_router.post("/{dist_name}/add_service/", status_code=status.HTTP_201_CREATED)

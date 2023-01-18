@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
@@ -8,6 +9,9 @@ import services.auth_api.db.crud as crud
 from services.auth_api.config import settings
 from services.auth_api.db.db import init_db
 from services.auth_api.models import UserCreate, User, UserValidScheme
+
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth")
 
@@ -27,6 +31,8 @@ async def validate_jwt(token: str = Header()) -> None:
     """
     Decode input jwt-token, validate date, check user in db or otherwise sign them up
     """
+    logger.info(token)
+
     if token == settings.auth.test_token:
         return
     try:
@@ -57,6 +63,8 @@ def validate_date(nbf: int, exp: int) -> None:
 
 @router.get("/login", status_code=status.HTTP_200_OK, dependencies=[Depends(validate_jwt)])
 async def login(token: str = Header(), db: Session = Depends(get_db)):
+    logger.info(token)
+
     data = jwt.decode(token, verify=False)
     user = crud.get_or_create_user(db, UserCreate(**data))
 
@@ -75,5 +83,7 @@ async def login(token: str = Header(), db: Session = Depends(get_db)):
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
 async def logout(token: str = Header(), db: Session = Depends(get_db)):
+    logger.info(token)
+
     data = jwt.decode(token, verify=False)
     crud.set_users_token_invalid(db, data["email"])

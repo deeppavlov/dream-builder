@@ -61,6 +61,7 @@ export const BotsPage = () => {
             />,
           ])
         )
+
       : setBots(
           bots.concat([
             <BotListItem
@@ -222,7 +223,7 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots' fitContent>
               <Table
                 addButton={
                   <AddButton

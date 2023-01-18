@@ -1,13 +1,15 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
 import s from './Accordion.module.scss'
+import { StackType } from '../../types/types'
 
 interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
   rounded?: boolean
-  type?: 'skills' | 'skill_selectors' | 'response_selectors' | 'annotators'
+  group?: StackType
+  closed?: boolean
 }
 
 export const Accordion = ({
@@ -15,10 +17,14 @@ export const Accordion = ({
   title,
   small,
   rounded,
-  type,
+  group,
+  closed,
 }: AccordionProps) => {
   const [close, setClose] = useState<boolean>(false)
   const contentEl = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    closed && setClose(true)
+  }, [])
   const handleToggle = () => {
     setClose(close => !close)
   }
@@ -28,7 +34,7 @@ export const Accordion = ({
       <button
         className={cx(
           'arrowDropdown',
-          type,
+          group,
           close && 'close',
           small && 'small',
           rounded && 'rounded'

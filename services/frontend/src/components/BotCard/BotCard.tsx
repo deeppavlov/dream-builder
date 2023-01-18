@@ -34,6 +34,7 @@ export const BotCard = ({
       ram,
       gpu,
       space,
+      routingName,
     })
   }
 

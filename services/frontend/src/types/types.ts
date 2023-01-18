@@ -17,7 +17,7 @@ export type CustomEventListener = (data: any) => void
 
 export interface BotInfoInterface {
   name: string
-  routingName:string
+  routingName: string
   author: string
   desc: string
   dateCreated: string
@@ -28,14 +28,6 @@ export interface BotInfoInterface {
   annotators?: string[]
   skills?: string[]
 }
-
-export type SkillType =
-  | 'fallbacks'
-  | 'retrieval'
-  | 'generative'
-  | 'q_a'
-  | 'script'
-  | 'script_with_nns'
 
 export interface SkillInfoInterface {
   name: string
@@ -51,3 +43,20 @@ export interface SkillInfoInterface {
   botName?: string
   executionTime?: string
 }
+export type SkillType =
+  | 'fallbacks'
+  | 'retrieval'
+  | 'generative'
+  | 'q_a'
+  | 'script'
+  | 'script_with_nns'
+
+export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+
+export type StackType =
+  | 'annotators'
+  | 'candidate_annotators'
+  | 'response_annotators'
+  | 'response_selectors'
+  | 'skill_selectors'
+  | 'skills'

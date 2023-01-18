@@ -20,7 +20,7 @@ export const Sidebar: React.FC<Props> = ({ children }) => {
             delayShow={500}
           />
         </div>
-        <SettingsTab />
+        {/* <SettingsTab /> */}
       </div>
     </>
   )

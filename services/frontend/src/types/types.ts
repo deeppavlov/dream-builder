@@ -17,7 +17,9 @@ export type CustomEventListener = (data: any) => void
 
 export interface BotInfoInterface {
   name: string
+  routingName: string
   author: string
+  authorImg: string
   desc: string
   dateCreated: string
   version: string
@@ -37,16 +39,43 @@ export type SkillType =
   | 'script_with_nns'
 
 export interface SkillInfoInterface {
+  skillType: SkillType
   name: string
-  author: string
+  botName: string
   dateCreated: string
   desc: string
   version: string
   ram: string
+  executionTime: string
   gpu: string
-  skillType: SkillType
   space?: string
   time?: string
-  botName?: string
-  executionTime?: string
+  model?: string
+  prompt?: string
+}
+
+export interface ResourcesInterface {
+  ram: string
+  gpu: string
+  space: string
+}
+
+export interface TotalResourcesInterface {
+  proxy: { containers: string } & ResourcesInterface
+  custom: { containers: string } & ResourcesInterface
+}
+
+export type BotAvailabilityType = 'public' | 'your'
+export type SkillAvailabilityType = 'public' | 'your'
+
+export interface dist_list {
+  name: string // Routing distribution name
+  display_name: string
+  date_created: string | number | Date
+  author: string
+  description: string
+  version: string
+  ram_usage: string
+  gpu_usage: string
+  disk_usage: string
 }

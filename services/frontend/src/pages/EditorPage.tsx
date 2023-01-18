@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
@@ -11,31 +11,111 @@ import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
+import { SkillCard } from '../components/SkillCard/SkillCard'
+import { dateToUTC } from '../utils/dateToUTC'
+import { useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getDistByName } from '../services/getDistByName'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import { timeToUTC } from '../utils/timeToUTC'
+import { useAuth } from '../services/AuthProvider'
+import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
+import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
+import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
+import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 
 export const EditorPage = () => {
-  const [skills, setSkills] = useState([])
-  const [listView, setListView] = useState(false)
+  const auth = useAuth()
+  const [skillsList, setSkillsList] = useState<JSX.Element[]>([])
+  const [listView, setListView] = useState<boolean>(false)
+
   const viewHandler = () => {
-    console.log('view has changed')
     setListView(!listView)
-    setSkills([])
-    console.log(listView)
+    setSkillsList([])
   }
+
   const addSkill = () => {
     !listView
-      ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
-      : setSkills(skills.concat(<SkillListItem />))
+      ? setSkillsList(
+          skills.concat([
+            <SkillCard
+              type='your'
+              name='Name of The Skill'
+              skillType='fallbacks'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+              dateCreated={dateToUTC(new Date())}
+              version='0.01'
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              executionTime='0.0 ms'
+              big
+            />,
+          ])
+        )
+      : setSkillsList(
+          skills.concat([
+            <SkillListItem
+              key={useId()}
+              name='Name of The Skill'
+              desc='Helps users locate the nearest store. And we can write 3 lines
+        here and this is maximum about'
+              botName={'Name of The Bot'}
+              skillType='retrieval'
+              version='0.01'
+              dateCreated={dateToUTC(new Date())}
+              time={timeToUTC(new Date().getTime())}
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              executionTime='0.0 ms'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to add the skill'
+              }
+            />,
+          ])
+        )
   }
+
+  const data = useParams()
+  const {
+    isLoading: isDistLoading,
+    error: distError,
+    data: distData,
+  } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
+    enabled: data.name?.length! > 0,
+  })
+
+  if (distError) return <>An error has occurred: + {distError}</>
+
+  const annotators =
+    distData?.pipeline_conf?.services?.annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.annotators).map(i => i)
+  const skills =
+    distData?.pipeline_conf?.services?.skills &&
+    Object.keys(distData?.pipeline_conf?.services?.skills).map(i => i)
+  const skillSelectors =
+    distData?.pipeline_conf?.services?.skill_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.skill_selectors).map(i => i)
+  const responseSelectors =
+    distData?.pipeline_conf?.services?.response_selectors &&
+    Object.keys(distData?.pipeline_conf?.services?.response_selectors).map(
+      i => i
+    )
+  const responseAnnotators =
+    distData?.pipeline_conf?.services?.response_annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
+      i => i
+    )
+
   return (
     <>
-      <Topbar type='editor' />
+      <Topbar type='editor' title={data.name} />
       <Tabs>
         <Sidebar>
           <TabList>
@@ -51,20 +131,17 @@ export const EditorPage = () => {
               <Tab>
                 <SkillsTab />
               </Tab>
-              <Tab>
-                <TestTab />
-              </Tab>
             </Container>
           </TabList>
         </Sidebar>
         <TabPanel>
           <Main sidebar editor draggable>
-            <Annotators />
-            <SkillSelector />
-            <Skills />
-            <CandidateAnnotators />
-            <ResponseSelector />
-            <ResponseAnnotators />
+            <Annotators annotatorsList={annotators} />
+            <SkillSelector skillSelectorsList={skillSelectors} />
+            <Skills skillsList={skills} />
+            {/* <CandidateAnnotators /> */}
+            <ResponseSelector responseSelectorsList={responseSelectors} />
+            <ResponseAnnotators responseAnnotatorsList={responseAnnotators} />
           </Main>
         </TabPanel>
         <TabPanel>
@@ -72,29 +149,37 @@ export const EditorPage = () => {
             <Wrapper>
               <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
                 <AddButton
                   listView={listView}
                   addBot={addSkill}
                   maxWidth='345px'
                   height='330px'
                 />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
+                <SkillCard
+                  type='your'
+                  name='Name of The Skill'
+                  skillType='fallbacks'
+                  botName='Name of The Bot'
+                  desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+                  dateCreated={dateToUTC(new Date())}
+                  version='0.01'
+                  ram='0.0 GB'
+                  gpu='0.0 GB'
+                  executionTime='0.0 ms'
+                  big
+                />
                 {skills}
               </Container>
             </Wrapper>
           </Main>
         </TabPanel>
-        <TabPanel>
-          <Main sidebar editor>
-            <TestTabWindow />
-          </Main>
-        </TabPanel>
       </Tabs>
+      <SkillSidePanel position={{ top: 64 }} />
+      <IntentCatcherSidePanel position={{ top: 64 }} />
+      <IntentResponderSidePanel position={{ top: 64 }} />
+      <IntentCatcherModal />
+      <IntentResponderModal />
     </>
   )
 }

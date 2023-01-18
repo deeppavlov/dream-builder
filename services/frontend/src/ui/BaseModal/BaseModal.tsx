@@ -18,7 +18,7 @@ const BaseModal = ({
 }: BaseModalInterface) => {
   const closeModal = () => setIsOpen(false)
 
-  return (
+  return isOpen ? (
     <Modal
       style={{
         ...{
@@ -32,6 +32,8 @@ const BaseModal = ({
             zIndex: 10,
           },
           content: {
+            width: 'fit-content',
+            height: 'fit-content',
             top: '50%',
             left: '50%',
             right: 0,
@@ -55,7 +57,7 @@ const BaseModal = ({
         {children}
       </div>
     </Modal>
-  )
+  ) : null
 }
 
 export default BaseModal

@@ -20,22 +20,18 @@ export const StartPage = () => {
           <Container>
             <Card
               title='Virtual Assistants'
-              img={'VA'}
+              img='VA'
               link={RoutesList.bots}
-              btnTitle={'Go to Virtual Assistants'}
-              text={
-                'Start your journey with constructing your virtual assistant or chatbot from scratch or clone one of the virtual assistants and chatbots published in Dream Builder.'
-              }
+              btnTitle='Go to Virtual Assistants'
+              text='Start your journey with constructing your virtual assistant or chatbot from scratch or clone one of the virtual assistants and chatbots published in Dream Builder.'
             />
             <Card
-              title={'Skills'}
-              text={
-                'If you are interested in designing scenario-driven or generative skills you can go to start by checking our skills’ public library or design your own skill from scratch.'
-              }
-              img={'Skills'}
+              title='Skills'
+              text='If you are interested in designing scenario-driven or generative skills you can go to start by checking our skills’ public library or design your own skill from scratch.'
+              img='Skills'
               link={RoutesList.skills}
-              btnTitle={'Go to Skills'}
-              buttonColor={'purple'}
+              btnTitle='Go to Skills'
+              buttonColor='purple'
             />
           </Container>
         </Wrapper>

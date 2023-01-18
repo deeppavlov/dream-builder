@@ -1,38 +1,59 @@
 import { useState } from 'react'
 import classNames from 'classnames/bind'
+import { AnnotatorType, SkillType, StackType } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './StackElement.module.scss'
+import { isSelector } from '../../utils/isSelector'
 
-interface StackElement {
-  item: string
-  params: string
-  type: string
+interface StackElementProps {
+  item: {
+    name: string
+    display_name: string
+    type: SkillType | AnnotatorType | 'skill_selector' | 'response_selector'
+    is_active?: boolean
+    is_editable?: boolean
+    ram_usage?: string | number
+    gpu_usage?: string | number
+    execution_time?: string | number
+  }
+  type: StackType
 }
 
-export const StackElement = ({ item, params, type }: any) => {
+export const StackElement: React.FC<StackElementProps> = ({ item, type }) => {
   const [disabled, setDisabled] = useState<boolean>(true)
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
   let cx = classNames.bind(s)
+
   return (
     <div className={cx('element', !disabled && 'disabled')}>
       <div className={s.left}>
         <div className={s.top}>
-          <img src={`./src/assets/icons/${item.type}.svg`} className={s.icon} />
+          {!isSelector(type) && (
+            <img
+              src={`./src/assets/icons/${item.type}.svg`}
+              className={s.icon}
+            />
+          )}
           <p className={s.name}>{item.display_name || '_____'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {params || `RAM:${item.ram_usage}GB | Ex.t:${item.execution_time} `}
+            {type == 'skills' && item.ram_usage && `RAM:${item.ram_usage}`}
           </p>
         </div>
       </div>
       <div className={s.right}>
-        <Kebab disabled={!disabled} dataFor='customizable_skill' />
+        {type == 'skills' && (
+          <Kebab disabled={!disabled} dataFor='non_customizable_skill' />
+        )}
+        {type == 'annotators' && (
+          <Kebab disabled={!disabled} dataFor='non_customizable_annotator' />
+        )}
         {/* need to fix dd menu */}
-        <ToggleButton sliderHandler={sliderHandler} />
+        {type == 'skills' && <ToggleButton sliderHandler={sliderHandler} />}
       </div>
     </div>
   )

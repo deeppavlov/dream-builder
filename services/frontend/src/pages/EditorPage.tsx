@@ -1,31 +1,21 @@
-import { useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
+import { StackType } from '../types/types'
+import { getSkillListByDistName } from '../services/getSkillListByDistName'
+import { useAuth } from '../services/AuthProvider'
+import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
+import { dateToUTC } from '../utils/dateToUTC'
+import { capitalizeTitle } from '../utils/capitalizeTitle'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
-import { AddButton } from '../ui/AddButton/AddButton'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { Sidebar } from '../components/Sidebar/Sidebar'
-import { Annotators } from '../components/Annotators/Annotators'
-import { Skills } from '../components/Skills/Skills'
-import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
-import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
-import { useParams } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import { getDistByName } from '../services/getDistByName'
-import { getSkillListByDistName } from '../services/getSkillListByDistName'
-import { useAuth } from '../services/AuthProvider'
-import { dateToUTC } from '../utils/dateToUTC'
-import { capitalizeTitle } from '../utils/capitalizeTitle'
-import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { Stack } from '../components/Stack/Stack'
 
 export const EditorPage = () => {
@@ -55,7 +45,7 @@ export const EditorPage = () => {
     }
   )
 
-  console.log(distsComponentsData)
+  // console.log(distsComponentsData)
   // distsComponentsData && console.log(Object.values(distsComponentsData))
   // distsComponentsData && console.log(Object.keys(distsComponentsData))
   // distsComponentsData && console.log(distsComponentsData.annotators)
@@ -81,24 +71,6 @@ export const EditorPage = () => {
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Main sidebar editor draggable>
-            {isDistsComponentsLoading ? (
-              <>{'Loading...'}</>
-            ) : (
-              <>
-                {distsComponentsData &&
-                  Object.keys(distsComponentsData).map(type => (
-                    <Stack
-                      type={type}
-                      data={distsComponentsData[type]}
-                      resources={''}
-                    />
-                  ))}
-              </>
-            )}
-          </Main>
-        </TabPanel>
-        <TabPanel>
           <Main sidebar editor>
             <Wrapper
               title={`Skills in ${capitalizeTitle(data.name!)} distributive`}>
@@ -123,6 +95,20 @@ export const EditorPage = () => {
                 })}
               </Container>
             </Wrapper>
+          </Main>
+        </TabPanel>
+        <TabPanel>
+          <Main sidebar editor draggable>
+            {isDistsComponentsLoading ? (
+              <>{'Loading...'}</>
+            ) : (
+              <>
+                {distsComponentsData &&
+                  Object.keys(distsComponentsData).map((type: string) => (
+                    <Stack type={type} data={distsComponentsData[type]} />
+                  ))}
+              </>
+            )}
           </Main>
         </TabPanel>
       </Tabs>

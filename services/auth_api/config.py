@@ -18,6 +18,7 @@ class DatabaseSettings(BaseModel):
 class AuthSettings(BaseModel):
     google_client_id: str
     test_token: str
+    google_client_secret: str
 
 
 class Settings(BaseSettings):

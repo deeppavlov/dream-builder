@@ -55,10 +55,11 @@ export const SkillsAllPage = () => {
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {isSkillsLoading && <>{'Loading...'}</>}
-              {skillsData?.map((skill: skill_list) => {
+              {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 return (
                   <SkillCard
+                    key={i}
                     name={skill.metadata.display_name}
                     author={skill.assistant_dist}
                     skillType={skill.metadata.type}
@@ -83,11 +84,12 @@ export const SkillsAllPage = () => {
           <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
             {isSkillsLoading && <>{'Loading...'}</>}
             <Table second='Type'>
-              {skillsData?.map((skill: skill_list) => {
+              {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)
                 return (
                   <SkillListItem
+                    key={i}
                     name={skill.metadata.display_name}
                     author={skill.metadata.author}
                     dateCreated={date}

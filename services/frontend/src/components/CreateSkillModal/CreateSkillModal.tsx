@@ -53,8 +53,10 @@ export const CreateSkillModal = () => {
   const handleEnterBtnClick = () => {
     if (!isHaveNameAndDesc) return
     trigger('SkillPromptModal', {
-      ...skill,
-      ...{ name: nameByUser, desc: descByUser },
+      skill: {
+        ...skill,
+        ...{ name: nameByUser, desc: descByUser },
+      },
     })
     closeModal()
   }

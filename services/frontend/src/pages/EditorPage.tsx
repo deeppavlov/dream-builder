@@ -31,18 +31,18 @@ export const EditorPage = () => {
   const auth = useAuth()
   const data = useParams()
 
-    const {
-      isLoading: isDistsComponentsLoading,
-      error: distsComponentsError,
-      data: distsComponentsData,
-    } = useQuery(
-      ['distsComponents', data.name],
-      () => getComponentsFromAssistantDists(data.name!),
-      {
-        enabled: data.name?.length! > 0,
-      }
-    )
-  
+  const {
+    isLoading: isDistsComponentsLoading,
+    error: distsComponentsError,
+    data: distsComponentsData,
+  } = useQuery(
+    ['distsComponents', data.name],
+    () => getComponentsFromAssistantDists(data.name!),
+    {
+      enabled: data.name?.length! > 0,
+    }
+  )
+
   const {
     isLoading: isSkillListLoading,
     error: skillListError,
@@ -68,6 +68,11 @@ export const EditorPage = () => {
   const annotators =
     distData?.pipeline_conf?.services?.annotators &&
     Object.keys(distData?.pipeline_conf?.services?.annotators).map(i => i)
+  const candidateAnnotators =
+    distData?.pipeline_conf?.services?.candidate_annotators &&
+    Object.keys(distData?.pipeline_conf?.services?.candidate_annotators).map(
+      i => i
+    )
   const skills =
     distData?.pipeline_conf?.services?.skills &&
     Object.keys(distData?.pipeline_conf?.services?.skills).map(i => i)
@@ -115,7 +120,9 @@ export const EditorPage = () => {
                 <Annotators annotatorsList={annotators} />
                 <SkillSelector skillSelectorsList={skillSelectors} />
                 <Skills skillsList={skills} />
-                {/* <CandidateAnnotators /> */}
+                <CandidateAnnotators
+                  candidateAnnotators={candidateAnnotators}
+                />
                 <ResponseSelector responseSelectorsList={responseSelectors} />
                 <ResponseAnnotators
                   responseAnnotatorsList={responseAnnotators}

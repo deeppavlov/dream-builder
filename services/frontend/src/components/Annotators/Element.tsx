@@ -39,7 +39,7 @@ export const Element = ({ title, ...props }: any) => {
             data: null, // Data of Element
           }}
         />
-        <ToggleButton sliderHandler={sliderHandler} />
+        {/* <ToggleButton sliderHandler={sliderHandler} /> */}
       </div>
     </div>
   )

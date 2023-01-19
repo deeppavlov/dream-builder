@@ -15,8 +15,7 @@ export const Skills = ({ skillsList }: any) => {
             <img src={SkillsLogo} className={s.icon} />
             <p className={s.type}>Skills</p>
           </div>
-          
-          {/* <Kebab disabled dataFor='all_skills' /> */}
+          <Kebab dataFor='all_skills' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>

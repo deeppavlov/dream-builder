@@ -59,14 +59,16 @@ export const SkillCard = ({
           { name: 'RAM', value: ram },
           { name: 'Execution time', value: executionTime },
         ]
-  const sliderHandler = () => {
+  const sliderHandler = (e: MouseEvent) => {
+    e.stopPropagation()
     setDisabled(disabled => !disabled)
   }
-  const handleSkillCardClick = () => {
+  const handleSkillCardClick = (e: MouseEvent) => {
+    e.stopPropagation()
     trigger('SkillSidePanel', skill)
   }
 
-  const handleAddSkillBtnClick = (e: any) => {
+  const handleAddSkillBtnClick = (e: MouseEvent) => {
     e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
   }

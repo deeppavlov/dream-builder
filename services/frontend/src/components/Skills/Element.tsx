@@ -7,9 +7,7 @@ import s from './Element.module.scss'
 export const Element = ({ title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
-    setDisabled(!disabled)
-    console.log('skill state was changed')
-    console.log(disabled)
+    setDisabled(disabled => !disabled)
   }
   return (
     <div
@@ -25,7 +23,7 @@ export const Element = ({ title, ...props }: any) => {
           <p className={s.name}>{title || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>RAM:1.0 GB 0.0 GB | Ex.t:00ms </p>
+          <p className={s.data}>RAM:1.0 GB | Ex.t:00ms </p>
         </div>
       </div>
       <div className={s.right}>

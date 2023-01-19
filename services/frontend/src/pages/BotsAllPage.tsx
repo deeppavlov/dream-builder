@@ -83,7 +83,6 @@ export const BotsAllPage = () => {
                         ? undefined
                         : 'You must be signed in to clone the bot'
                     }
-                    routingName={dist.name}
                   />
                 )
               })}

@@ -386,25 +386,25 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
               <p>Edit Annotator</p>
             </button>
           </li>
-          <li className={s.item}>
+          {/* <li className={s.item}>
             <button>
               <DisableIcon />
               <p>Disable Annotator</p>
             </button>
-          </li>
+          </li> */}
           <li className={s.item}>
             <button>
               <PropertiesIcon />
               <p>Properties</p>
             </button>
           </li>
-          <hr style={{ border: '0.8px solid #8D96B5' }} />
+          {/* <hr style={{ border: '0.8px solid #8D96B5' }} />
           <li className={s.item}>
             <button>
               <DeleteIcon />
               <p>Delete</p>
             </button>
-          </li>
+          </li> */}
         </ul>
       )
       return (

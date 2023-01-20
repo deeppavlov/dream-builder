@@ -26,6 +26,8 @@ import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
+import AnnotatorsSidePanel from '../components/AnnotatorsSidePanel/AnnotatorsSidePanel'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 
 export const EditorPage = () => {
   const auth = useAuth()
@@ -104,10 +106,11 @@ export const EditorPage = () => {
               <Container
                 display='grid'
                 gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
-                {skillListData?.map((skill: any) => {
+                {skillListData?.map((skill: any, i: number) => {
                   const dateCreated = dateToUTC(skill.metadata.date_created)
                   return (
                     <SkillCard
+                      key={i}
                       type='your'
                       name={skill.metadata.display_name}
                       dateCreated={dateCreated}
@@ -149,8 +152,10 @@ export const EditorPage = () => {
       <SkillSidePanel position={{ top: 64 }} />
       <IntentCatcherSidePanel position={{ top: 64 }} />
       <IntentResponderSidePanel position={{ top: 64 }} />
+      <AnnotatorsSidePanel position={{ top: 64 }} />
       <IntentCatcherModal />
       <IntentResponderModal />
+      <SkillPromptModal />
     </>
   )
 }

@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import { ReactComponent as FallbackIcon } from '@assets/icons/fallbacks.svg'
 import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.svg'
 import { ReactComponent as BookIcon } from '@assets/icons/book.svg'
@@ -5,15 +7,22 @@ import { ReactComponent as AnnotatorNNBasedIcon } from '@assets/icons/annotator_
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import s from './AnnotatorsSidePanel.module.scss'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import { subscribe, unsubscribe } from '../../utils/events'
+import s from './AnnotatorsSidePanel.module.scss'
 
-const AnnotatorsSidePanel = ({
-  isOpen,
-  setIsOpen,
-  position,
-}: SidePanelProps) => {
+const AnnotatorsSidePanel = ({ position }: Partial<SidePanelProps>) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleEventUpdate = (data: { detail: any }) => {
+    setIsOpen(!isOpen)
+  }
+
+  useEffect(() => {
+    subscribe('AnnotatorsSidePanel', handleEventUpdate)
+    return () => unsubscribe('AnnotatorsSidePanel', handleEventUpdate)
+  }, [])
+
   return (
     <BaseSidePanel
       isOpen={isOpen}

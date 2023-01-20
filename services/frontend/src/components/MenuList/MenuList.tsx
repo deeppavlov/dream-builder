@@ -393,7 +393,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
             </button>
           </li> */}
           <li className={s.item}>
-            <button>
+            <button onClick={() => trigger('AnnotatorsSidePanel', {})}>
               <PropertiesIcon />
               <p>Properties</p>
             </button>
@@ -431,6 +431,18 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
                     console.log(item, type)
                     trigger('IntentResponderSidePanel', item.data)
                     break
+                  case 'Dialogpt':
+                    trigger('SkillPromptModal', {
+                      isEditingModal: true,
+                      skill: item.data,
+                    })
+                    break
+                  case 'Dialogpt Persona Based':
+                    trigger('SkillPromptModal', {
+                      isEditingModal: true,
+                      skill: item.data,
+                    })
+                    break
                   default:
                     break
                 }
@@ -440,7 +452,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
             </button>
           </li>
           <li className={s.item}>
-            <button>
+            <button onClick={() => trigger('SkillSidePanel', {})}>
               <PropertiesIcon />
               <p>Properties</p>
             </button>
@@ -451,12 +463,12 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
               <p>Disable Skill</p>
             </button>
           </li>
-          <li className={s.item}>
+          {/* <li className={s.item}>
             <button>
               <DownloadIcon />
               <p>Download</p>
             </button>
-          </li>
+          </li> */}
           <hr style={{ border: '0.8px solid #8D96B5' }} />
           <li className={s.item}>
             <button>
@@ -476,39 +488,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
           id={privateDataFor}
           place='right'
           effect='solid'>
-          <ul className={s.menu}>
-            <li className={s.item}>
-              <button>
-                <RenameIcon />
-                <p>Edit Skill</p>
-              </button>
-            </li>
-            <li className={s.item}>
-              <button>
-                <PropertiesIcon />
-                <p>Properties</p>
-              </button>
-            </li>
-            <li className={s.item}>
-              <button>
-                <DisableIcon />
-                <p>Disable Skill</p>
-              </button>
-            </li>
-            {/* <li className={s.item}>
-              <button>
-                <DownloadIcon />
-                <p>Download</p>
-              </button>
-            </li> */}
-            <hr style={{ border: '0.8px solid #8D96B5' }} />
-            <li className={s.item}>
-              <button>
-                <DeleteIcon />
-                <p>Delete</p>
-              </button>
-            </li>
-          </ul>
+          <CusSkillMenu />
           {/* <hr style={{ border: '0.8px solid #F0F0F3' }} /> */}
           {/* <div style={{ padding: '10px' }}>
             <Wrapper padding='5px 12px' borderRadius='8px'>

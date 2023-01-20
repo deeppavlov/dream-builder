@@ -8,9 +8,10 @@ from sqlalchemy.orm import Session
 from requests import Request
 
 import services.auth_api.db.crud as crud
+from services.auth_api.db.db import init_db
+from services.auth_api.db.db_models import UserValid
 from services.auth_api.const import GOOGLE_SCOPE, CLIENT_INFO
 from services.auth_api.config import settings
-from services.auth_api.db.db import init_db
 from services.auth_api.models import UserCreate, User, UserValidScheme
 
 router = APIRouter(prefix="/auth")
@@ -119,12 +120,24 @@ async def update_access_token(token: str = Header(), db: Session = Depends(get_d
     """
     email = jwt.decode(token, verify=False)["email"]
 
-    refresh_token = crud.get_users_token_by_email(db, email)
+    user = crud.get_uservalid_by_email(db, email)
+    refresh_token = user.token
+
+    if not _check_refresh_token_validity(user.expire_date):
+        # redirect?
+        raise HTTPException(status_code=401, detail="Refresh token has expired!")
+
     info = CLIENT_INFO.copy()
     info.update({"refresh_token": refresh_token})
-
     creds = Credentials.from_authorized_user_info(info=info, scopes=GOOGLE_SCOPE)
-    creds.refresh(Request())
 
+    creds.refresh(Request())
     access_token = creds.token
     return {"token": access_token}
+
+
+def _check_refresh_token_validity(expire_date: datetime) -> bool:
+    if datetime.now() > expire_date:
+        return False
+
+    return True

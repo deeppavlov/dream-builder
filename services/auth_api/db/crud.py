@@ -44,6 +44,9 @@ def set_users_token_invalid(db: Session, token: str):
     db.commit()
 
 
-def get_users_token_by_email(db: Session, email: str):
+def get_uservalid_by_email(db: Session, email: str) -> UserValid:
+    """
+    Fetch user from UserValid table
+    """
     user_id = get_user_by_email(db, email).id
-    return db.query(UserValid).filter(UserValid.id == user_id).first().token
+    return db.query(UserValid).filter(UserValid.id == user_id).first()

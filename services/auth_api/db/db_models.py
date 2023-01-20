@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime
 
 from services.auth_api.db.db import Base
 
@@ -22,3 +22,4 @@ class UserValid(Base):
     user_id = Column(Integer, ForeignKey("google.id"))
     token = Column(String, nullable=False)
     is_valid = Column(Boolean, nullable=False)
+    expire_date = Column(DateTime, nullable=False)

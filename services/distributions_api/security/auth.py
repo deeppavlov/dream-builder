@@ -1,5 +1,4 @@
 import aiohttp
-import json
 from fastapi import Header, HTTPException
 
 from services.distributions_api.config import settings

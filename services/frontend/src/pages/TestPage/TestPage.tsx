@@ -39,6 +39,7 @@ import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
+import { SignInModal } from '../../components/SignInModal/SignInModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -272,6 +273,16 @@ export const TestPage = () => {
                 }),
             }}>
             IntentResponderModal (edit)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>SignInModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('SignInModal', {}),
+            }}>
+            SignInModal
           </Button>
         </div>
       </div>
@@ -680,6 +691,7 @@ export const TestPage = () => {
       <ChooseBotModal />
       <IntentCatcherModal />
       <IntentResponderModal />
+      <SignInModal />
     </div>
   )
 }

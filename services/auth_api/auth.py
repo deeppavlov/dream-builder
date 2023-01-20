@@ -23,14 +23,14 @@ def get_db():
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(jwt_data: str = Header()):
+async def validate_jwt(token: str = Header()):
     """
     Decode input jwt-token, validate date, check user in db or otherwise sign them up
     """
-    if jwt_data == settings.auth.test_token:
+    if token == settings.auth.test_token:
         return
     try:
-        data = jwt.decode(jwt_data, verify=False)
+        data = jwt.decode(token, verify=False)
 
         # noinspection PyTypeChecker
         validate_date(data["nbf"], data["exp"])  # nbf and exp fields are int
@@ -56,10 +56,10 @@ def validate_date(nbf: int, exp: int) -> None:
 
 
 @router.get("/login", status_code=status.HTTP_200_OK, dependencies=[Depends(validate_jwt)])
-async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
-    data = jwt.decode(jwt_data, verify=False)
+async def login(token: str = Header(), db: Session = Depends(get_db)):
+    data = jwt.decode(token, verify=False)
 
-    user_valid = UserValidScheme(email=data["email"], token=jwt_data, is_valid=True)
+    user_valid = UserValidScheme(email=data["email"], token=token, is_valid=True)
     crud.add_user_to_uservalid(db, user_valid, data["email"])
 
     if not crud.check_user_exists(db, data["email"]):
@@ -71,6 +71,6 @@ async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
-async def logout(jwt_data: str = Header(), db: Session = Depends(get_db)):
-    data = jwt.decode(jwt_data, verify=False)
+async def logout(token: str = Header(), db: Session = Depends(get_db)):
+    data = jwt.decode(token, verify=False)
     crud.set_users_token_invalid(db, data["email"])

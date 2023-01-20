@@ -4,10 +4,11 @@ import Button from '../Button/Button'
 import s from './Input.module.scss'
 
 interface InputProps {
-  label?: string
+  label?: string | JSX.Element
   errorMessage?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
   onSubmit?: (value: string) => void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const Input: FC<InputProps> = ({
@@ -15,6 +16,7 @@ export const Input: FC<InputProps> = ({
   errorMessage,
   props,
   onSubmit,
+  onChange,
 }) => {
   const [value, setValue] = useState(props?.value ?? '')
   const [isActive, setIsActive] = useState(false)
@@ -22,8 +24,10 @@ export const Input: FC<InputProps> = ({
   const inputId = nanoid(8)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) onChange(e)
+
     const targetValue = e.target.value
-    const valueIsEmpty = targetValue === ''
+    const valueIsEmpty = targetValue.length === 0
 
     setValue(targetValue)
 
@@ -60,14 +64,16 @@ export const Input: FC<InputProps> = ({
             isActive ? s.input__field_active : ''
           } ${errorMsg ? s.input__field_error : ''}`}
         />
-        <div className={s.input__submit}>
-          <Button
-            theme='tertiary'
-            small
-            props={{ onClick: handleEnterBtnClick }}>
-            Enter
-          </Button>
-        </div>
+        {onSubmit && (
+          <div className={s.input__submit}>
+            <Button
+              theme='tertiary'
+              small
+              props={{ onClick: handleEnterBtnClick }}>
+              Enter
+            </Button>
+          </div>
+        )}
       </div>
 
       {errorMsg && (

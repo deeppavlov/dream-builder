@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
+import ReactTooltip from 'react-tooltip'
+import { RoutesList } from '../Router/RoutesList'
+import { useAuth } from '../services/AuthProvider'
+import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { getAssistantDists } from '../services/getAssistantDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -11,85 +14,153 @@ import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { YourBotCard } from '../components/YourBotCard/YourBotCard'
-import ReactTooltip from 'react-tooltip'
-import { useAuth } from '../services/AuthProvider'
-
-interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
-}
+import { Slider } from '../ui/Slider/Slider'
+import { trigger } from '../utils/events'
+import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { nanoid } from 'nanoid'
+import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const [bots, setBots] = useState([])
-  const [listView, setListView] = useState(false)
+  const [bots, setBots] = useState<JSX.Element[]>([])
+  const [listView, setListView] = useState<boolean>(false)
+  const topbarRef = useRef<HTMLDivElement | undefined>()
+  const [topbarHeight, setTopbarHeight] = useState(0)
+
   const viewHandler = () => {
-    setListView(!listView)
+    setListView(listView => !listView)
     setBots([])
   }
   const addBot = () => {
+    trigger('CreateAssistantModal', null)
+    if (!auth?.user) return
     !listView
-      ? setBots(bots.concat(<YourBotCard />))
-      : setBots(bots.concat(<BotListItem />))
+      ? setBots(
+          bots.concat([
+            <BotCard
+              key={nanoid(8)}
+              type='your'
+              routingName=''
+              dateCreated={dateToUTC(new Date())}
+              author={auth.user.name}
+              authorImg={auth.user.picture}
+              version='0.0.1'
+              name='Name of The Bot'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. '
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              space='0.0 GB'
+              size='small'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to clone the bot'
+              }
+            />,
+          ])
+        )
+
+      : setBots(
+          bots.concat([
+            <BotListItem
+              key={nanoid(8)}
+              routingName=''
+              dateCreated={dateToUTC(new Date())}
+              author={auth.user.name ?? 'Name of Company'}
+              authorImg={auth.user.picture}
+              version='0.01'
+              name='Name of The Bot'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              space='0.0 GB'
+              disabledMsg={
+                auth?.user
+                  ? undefined
+                  : 'You must be signed in to clone the bot'
+              }
+            />,
+          ])
+        )
   }
+
   const {
     isLoading: isAssistantsLoading,
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-  if (isAssistantsLoading) return 'Loading...'
-  if (assistantsError) return 'An error has occurred: ' + assistantsError
+
+  useEffect(() => {
+    if (!isAssistantsLoading) {
+      setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
+    }
+    console.log(assistantsData)
+  }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
+
+  assistantsError && <>An error has occurred: + {assistantsError}</>
+  console.log(assistantsData)
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
-      <Main sidebar='none'>
+      <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
+      <Main>
         {!listView ? (
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll
-              amount={assistantsData.length}
-              linkTo='/bots'
-              paddingBottom='12px'>
-              <Container overflowY='hidden' paddingBottom='22px'>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
-                  return (
-                    <BotCard
-                      key={dist.name}
-                      botName={dist.metadata.display_name}
-                      companyName={dist.metadata.author}
-                      date={date}
-                      description={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
-                    />
-                  )
-                })}
+              amount={assistantsData?.length}
+              linkTo={RoutesList.botsAll}
+              showAll>
+              <Container>
+                <Slider>
+                  {isAssistantsLoading && <>Loading...</>}
+                  {assistantsData?.map((dist: dist_list, i: number) => {
+                    const {
+                      name,
+                      display_name,
+                      author,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      disk_usage,
+                      date_created,
+                    } = dist
+                    const dateCreated = dateToUTC(date_created)
+                    return (
+                      <BotCard
+                        routingName={name}
+                        key={i}
+                        type='public'
+                        name={display_name}
+                        author={author}
+                        authorImg={DeepPavlovLogo}
+                        dateCreated={dateCreated}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        space={disk_usage}
+                        disabledMsg={
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to clone the bot'
+                        }
+                      />
+                    )
+                  })}
+                </Slider>
               </Container>
             </Wrapper>
-            <Wrapper
-              paddingBottom='12px'
-              title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots'>
               <Container overflow='hidden'>
                 <Container
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   overflow='hidden'
                   padding='0'
                   paddingBottom='22px'>
@@ -109,34 +180,58 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              showAll={true}
+              showAll
               amount={assistantsData.length}
-              linkTo='/bots'>
+              linkTo={RoutesList.botsAll}
+              fitScreen>
               <Table>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
-                  const time = timeToUTC(dist.metadata.date)
+                {assistantsData?.map((dist: dist_list, i: number) => {
+                  const {
+                    name,
+                    display_name,
+                    author,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    disk_usage,
+                    date_created,
+                  } = dist
+                  const dateCreated = dateToUTC(date_created)
+                  const time = timeToUTC(date_created)
                   return (
                     <BotListItem
-                      key={dist.name}
-                      botName={dist.metadata.display_name}
-                      companyName={dist.metadata.author}
-                      date={date}
+                      key={i}
+                      routingName={name}
+                      name={display_name}
+                      author={author}
+                      authorImg={DeepPavlovLogo}
+                      dateCreated={dateCreated}
                       time={time}
-                      description={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      space={disk_usage}
+                      disabledMsg={
+                        auth?.user
+                          ? undefined
+                          : 'You must be signed in to clone the bot'
+                      }
                     />
                   )
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots' fitContent>
               <Table
-                // checkbox={true}
-                addButton={<AddButton addBot={addBot} listView={listView} disabled={auth?.user === null} />}>
+                addButton={
+                  <AddButton
+                    addBot={addBot}
+                    listView={listView}
+                    disabled={auth?.user === null}
+                  />
+                }>
                 {bots}
               </Table>
             </Wrapper>
@@ -150,9 +245,16 @@ export const BotsPage = () => {
             arrowColor='#8d96b5'
             delayShow={1000}
             id='add-btn-new-bot'>
-            You must be signed in to create the own bot
+            You must be signed in to create your own bot
           </ReactTooltip>
         )}
+        <BotInfoSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to clone the bot'
+          }
+          position={{ top: topbarHeight }}
+        />
+        <CreateAssistantModal />
       </Main>
     </>
   )

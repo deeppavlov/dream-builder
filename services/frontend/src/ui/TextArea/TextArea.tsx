@@ -5,11 +5,12 @@ import s from './TextArea.module.scss'
 import Button from '../Button/Button'
 
 interface TextAreaProps {
-  label?: string
-  about?: string
-  errorMessage?: string
+  label?: string | JSX.Element
+  about?: string | JSX.Element
+  errorMessage?: string | JSX.Element | null
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   onSubmit?: (value: string) => void
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -18,6 +19,7 @@ export const TextArea: FC<TextAreaProps> = ({
   errorMessage,
   props,
   onSubmit,
+  onChange,
 }) => {
   const [value, setValue] = useState(props?.value)
   const [isActive, setIsActive] = useState(false)
@@ -25,8 +27,10 @@ export const TextArea: FC<TextAreaProps> = ({
   const textAreaId = nanoid(8)
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onChange) onChange(e)
+
     const targetValue = e.target.value
-    const valueIsEmpty = targetValue === ''
+    const valueIsEmpty = targetValue.length === 0
 
     setValue(targetValue)
 
@@ -71,14 +75,16 @@ export const TextArea: FC<TextAreaProps> = ({
           } ${errorMsg ? s.textArea__field_error : ''}`}
         />
 
-        <div className={s.textArea__submit}>
-          <Button
-            theme='tertiary'
-            small
-            props={{ onClick: handleEnterBtnClick }}>
-            Enter
-          </Button>
-        </div>
+        {onSubmit && (
+          <div className={s.textArea__submit}>
+            <Button
+              theme='tertiary'
+              small
+              props={{ onClick: handleEnterBtnClick }}>
+              Enter
+            </Button>
+          </div>
+        )}
       </div>
 
       {(about || errorMsg) && (

@@ -1,0 +1,22 @@
+.chooseBotModal {
+  display: flex;
+  position: relative;
+  max-width: 1198px;
+  width: 100%;
+  max-height: 608px;
+  margin: 0 auto;
+
+  .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    cursor: pointer;
+    z-index: 10;
+  
+    path {
+      stroke: $text3;
+    }
+  }
+}
+

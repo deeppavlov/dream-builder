@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
@@ -10,21 +11,26 @@ import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
 
-interface TopbarProps extends React.PropsWithChildren {
+interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
-  viewHandler?: void
+  viewHandler?: () => void
+  children?: React.ReactNode
+  innerRef?: React.LegacyRef<any>
+  title?: string
 }
 
-export const Topbar = ({ type, viewHandler }: any) => {
+export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
   const auth = useAuth()
-  const user = auth?.user
-
+  let cx = classNames.bind(s)
   useEffect(() => {
     //Render Google SignIn button
     google.accounts.id.initialize({
-      // Getting `GOOGLE_CLIENT_ID` from .env file
-      // Maybe need to get `GOOGLE_CLIENT_ID` from backend
+      /**
+       * Getting `VITE_GOOGLE_CLIENT_ID` from .env file.
+       * Maybe need to get `GOOGLE_CLIENT_ID` from backend
+       */
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: auth?.login,
     })
@@ -38,14 +44,14 @@ export const Topbar = ({ type, viewHandler }: any) => {
   switch (type) {
     case 'main':
       return (
-        <div className={s.topbar}>
+        <div className={s.topbar} ref={innerRef}>
           <Menu type='main' />
           <div className={s.logo_area}>
             <Breadcrumbs />
           </div>
           <div className={s.btns_area}>
             <Display viewHandler={viewHandler} />
-            {user ? (
+            {auth?.user ? (
               <Profile auth={auth} />
             ) : (
               <div id='signin' className={s.signin}></div>
@@ -58,24 +64,24 @@ export const Topbar = ({ type, viewHandler }: any) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </div>
       )
     case 'editor':
       return (
         <>
-          <div
-            style={{ boxShadow: '78px 0px 20px rgba(100, 99, 99, 0.15)' }}
-            className={s.topbar}>
+          <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
+            {title}
             <div className={s.btns_area}>
-              <History />
+              {/* <History /> */}
               <Resources />
-              <Notifications />
+              {/* <Notifications /> */}
               <Test />
-              {user ? (
+              {auth?.user ? (
                 <Profile auth={auth} />
               ) : (
                 <div id='signin' className={s.signin}></div>
@@ -89,6 +95,7 @@ export const Topbar = ({ type, viewHandler }: any) => {
             className={s.tooltips}
             delayShow={500}
           />
+          <ResourcesSidePanel position={{ top: 64 }} />
         </>
       )
     case 'dff':
@@ -96,19 +103,20 @@ export const Topbar = ({ type, viewHandler }: any) => {
   }
 
   return (
-    <div className={s.topbar}>
+    <div className={s.topbar} ref={innerRef}>
       <Menu type='main' />
       <div className={s.logo_area}>
         <span className={s.logo} />
         <h3>Dream&nbsp;Builder</h3>
       </div>
       <div className={s.btns_area}>
-        {user ? (
+        {auth?.user ? (
           <Profile auth={auth} />
         ) : (
           <div id='signin' className={s.signin}></div>
         )}
       </div>
+      <ResourcesSidePanel position={{ top: 64 }} />
     </div>
   )
 }

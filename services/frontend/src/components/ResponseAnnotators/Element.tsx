@@ -4,7 +4,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({ ...props }) => {
+export const Element = ({ title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
     setDisabled(!disabled)
@@ -20,7 +20,7 @@ export const Element = ({ ...props }) => {
       <div className={s.left}>
         <div className={s.top}>
           <img src={BadWordsLogo} className={s.icon} />
-          <p className={s.name}>Badlisted Words Detector</p>
+          <p className={s.name}>{title}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>2.0 Gb RAM | 0.0 Gb GPU</p>
@@ -33,4 +33,3 @@ export const Element = ({ ...props }) => {
     </div>
   )
 }
-

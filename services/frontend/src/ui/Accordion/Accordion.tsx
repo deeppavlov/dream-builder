@@ -14,10 +14,10 @@ export const Accordion = ({
   small,
   rounded,
 }: AccordionProps) => {
-  const [close, setClose] = useState(false)
+  const [close, setClose] = useState<boolean>(false)
   const contentEl = useRef<HTMLDivElement>(null)
   const handleToggle = () => {
-    setClose(!close)
+    setClose(close => !close)
   }
   return (
     <div>

@@ -8,6 +8,7 @@
 
   &__container {
     position: relative;
+    display: flex;
   }
 
   &__label {
@@ -27,6 +28,7 @@
 
     &::placeholder {
       color: $text3;
+      opacity: 0.4;
     }
 
     &:hover {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
@@ -10,6 +10,7 @@ import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
 import s from './IntentResponderSidePanel.module.scss'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 
 export const intentsMock: IntentListItemInterface[] = [
   {
@@ -56,12 +57,23 @@ export const intentsMock: IntentListItemInterface[] = [
   },
 ]
 
-const IntentResponderSidePanel = ({
-  isOpen,
-  setIsOpen,
-  position,
-}: SidePanelProps) => {
-  const [addModalIsOpen, setAddModalIsOpen] = useState(false)
+const IntentResponderSidePanel = ({ position }: Partial<SidePanelProps>) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleAddIntentBtnClick = () => {
+    trigger('IntentResponderModal', {})
+  }
+  const handleSaveBtnClick = () => {}
+
+  const handleEventUpdate = (data: { detail: any }) => {
+    // Set here Intent Responder details when opening
+    setIsOpen(!isOpen)
+  }
+
+  useEffect(() => {
+    subscribe('IntentResponderSidePanel', handleEventUpdate)
+    return () => unsubscribe('IntentResponderSidePanel', handleEventUpdate)
+  }, [])
 
   return (
     <BaseSidePanel
@@ -70,7 +82,10 @@ const IntentResponderSidePanel = ({
       position={position}
       name='Intent Responder'>
       <div className={s.intentResponder}>
-        <Button theme='secondary' long>
+        <Button
+          theme='secondary'
+          long
+          props={{ onClick: handleAddIntentBtnClick }}>
           <PlusIcon />
           Add Intent Responder
         </Button>
@@ -108,7 +123,9 @@ const IntentResponderSidePanel = ({
           </p>
         </div>
         <div className={s.intentResponder__btns}>
-          <Button theme='primary'>Save</Button>
+          <Button theme='primary' props={{ onClick: handleSaveBtnClick }}>
+            Save
+          </Button>
         </div>
       </div>
     </BaseSidePanel>

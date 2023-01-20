@@ -1,13 +1,19 @@
+import { ReactNode } from 'react'
 import s from './Container.module.scss'
 
-export const Container = props => {
+interface ContainerProps {
+  children?: ReactNode
+  [x: string]: any
+}
+
+export const Container = ({ children, ...props }: ContainerProps) => {
   return (
     <div
       style={{
         ...props,
       }}
       className={s.container}>
-      {props.children}
+      {children}
     </div>
   )
 }

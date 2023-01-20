@@ -1,4 +1,3 @@
-import { UserInterface } from '../../types/types'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import s from './Banner.module.scss'
 
@@ -9,8 +8,8 @@ interface BannerProps {
 export const Banner = ({ name }: BannerProps) => {
   return (
     <>
-      <Wrapper alignItems='start' closable={true}>
-        <h5>
+      <Wrapper closable>
+        <h5 className={s.title}>
           {name.split(' ')[0]}, welcome to
           <span className={s.accent_text}> Dream Builder</span> Console!
         </h5>

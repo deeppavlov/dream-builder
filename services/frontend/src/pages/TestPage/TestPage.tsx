@@ -8,12 +8,11 @@ import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
 import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentList from '../../components/IntentList/IntentList'
-import IntentListItem, { IntentListItemInterface } from '../../components/IntentListItem/IntentListItem'
-import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
+import IntentListItem, {
+  IntentListItemInterface,
+} from '../../components/IntentListItem/IntentListItem'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import { AddSkillModal } from '../../components/ModalWindows/AddSkillModal'
-import { CreateAssistantModal } from '../../components/ModalWindows/CreateAssistantModal'
-import { EditModal } from '../../components/ModalWindows/EditModal'
+import { CreateAssistantModal } from '../../components/CreateAssistantModal/CreateAssistantModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import NotificationCard, {
   NotificationCardProps,
@@ -21,14 +20,25 @@ import NotificationCard, {
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
-import {SmallTag} from '../../components/SmallTag/SmallTag'
+import { SmallTag } from '../../components/SmallTag/SmallTag'
 import SelectorSettingsSidePanel from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
+import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
+import { dateToUTC } from '../../utils/dateToUTC'
+import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
+import { BotCard } from '../../components/BotCard/BotCard'
+import CompanyLogo from '@assets/icons/pavlovInCard.svg'
+import { SkillCard } from '../../components/SkillCard/SkillCard'
+import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
+import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
+import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
+import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -96,6 +106,18 @@ const intentItemsMock: IntentListItemInterface[] = [
   },
 ]
 
+const mockSkill = {
+  isEditing: true,
+  name: 'Name of The Skill 1',
+  skillType: 'fallbacks',
+  author: 'Name of The Company',
+  desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
+  dateCreated: dateToUTC(new Date()),
+  version: '0.01',
+  ram: '0.0 GB',
+  gpu: '0.0 GB',
+}
+
 export const TestPage = () => {
   const getBtnWithModal = (
     ComponentEl: React.FC<{
@@ -120,52 +142,137 @@ export const TestPage = () => {
     <div className={s.testPage}>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Modals</span>
-        <CreateAssistantModal>Create Assistant</CreateAssistantModal>
-        <AddSkillModal>Add Skill</AddSkillModal>
-        <EditModal>Edit Bot Description</EditModal>
+        <div className={s.testPage__component}>
+          <span>CreateAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
+            CreateAssistantModal
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>CreateSkillModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
+            CreateSkillModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('CreateSkillModal', mockSkill),
+            }}>
+            CreateSkillModal (edit)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>SkillPromptModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
+            }}>
+            SkillPromptModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillPromptModal', {
+                  skill: mockSkill,
+                  isEditingModal: true,
+                }),
+            }}>
+            SkillPromptModal (edit)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>CreateSkillDistModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('CreateSkillDistModal', mockSkill),
+            }}>
+            CreateSkillDistModal
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>ChooseBotModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('ChooseBotModal', mockSkill) }}>
+            ChooseBotModal
+          </Button>
+        </div>
+
         <div className={s.testPage__component}>
           <span>IntentCatcherModal</span>
-          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (add)')}
-          {getBtnWithModal(IntentCatcherModal, 'Intent Catcher (edit)', {
-            intent: {
-              id: nanoid(8),
-              name: 'want_pizza',
-              examples: [
-                'want pizza',
-                'love pizza',
-                'pizza is my favorite',
-                'wanna pizza',
-              ],
-              regexes: ['(i|we) (want|like|wanna) to (order|buy) pizza'],
-            },
-          })}
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('IntentCatcherModal', {}) }}>
+            IntentCatcherModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentCatcherModal', {
+                  intent: {
+                    id: nanoid(8),
+                    name: 'want_pizza',
+                    examples: [
+                      'want pizza',
+                      'love pizza',
+                      'pizza is my favorite',
+                      'wanna pizza',
+                    ],
+                    regexes: ['(i|we) (want|like|wanna) to (order|buy) pizza'],
+                  },
+                }),
+            }}>
+            IntentCatcherModal (edit)
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>IntentResponderModal</span>
-          {getBtnWithModal(IntentResponderModal, 'Intent Responder (add)', {
-            intents: [
-              {
-                id: nanoid(8),
-                name: 'yes',
-                type: 'custom',
-              },
-            ],
-          })}
-          {getBtnWithModal(IntentResponderModal, 'Intent Responder (edit)', {
-            intents: [
-              {
-                id: nanoid(8),
-                name: 'yes',
-                type: 'custom',
-                responses: [
-                  'Bye-bye!',
-                  'Goodbye!',
-                  "You're a great listener. Goodbye!",
-                  'Being around you makes everything better! Bye!',
-                ],
-              },
-            ],
-          })}
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentResponderModal', {
+                  intents: [
+                    {
+                      id: nanoid(8),
+                      name: 'yes',
+                      type: 'custom',
+                    },
+                  ],
+                }),
+            }}>
+            IntentResponderModal (add)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('IntentResponderModal', {
+                  intents: [
+                    {
+                      id: nanoid(8),
+                      name: 'yes',
+                      type: 'custom',
+                      responses: [
+                        'Bye-bye!',
+                        'Goodbye!',
+                        "You're a great listener. Goodbye!",
+                        'Being around you makes everything better! Bye!',
+                      ],
+                    },
+                  ],
+                }),
+            }}>
+            IntentResponderModal (edit)
+          </Button>
         </div>
       </div>
       <div className={s.testPage__block}>
@@ -182,7 +289,9 @@ export const TestPage = () => {
         </div>
         <div className={s.testPage__component}>
           <span>IntentCatcherSidePanel</span>
-          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', { disabled: true })}
+          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', {
+            disabled: true,
+          })}
         </div>
         <div className={s.testPage__component}>
           <span>IntentResponderSidePanel</span>
@@ -485,6 +594,92 @@ export const TestPage = () => {
           />
         </div>
       </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>ResourcesTable</span>
+        <ResourcesTable
+          values={[
+            { name: 'RAM', value: '85.3 GB' },
+            { name: 'GPU', value: '0.9 GB' },
+            { name: 'Disk space', value: '110.0 GB' },
+            { name: 'Execution time', value: '0.1 sec' },
+          ]}
+        />
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>BotCard</span>
+        <div className={s.testPage__component}>
+          <span>public</span>
+          <BotCard
+            type='public'
+            name='Name of the bot'
+            author='Name of the company'
+            authorImg={CompanyLogo}
+            dateCreated={dateToUTC(new Date())}
+            desc='Some information about this bot writing in 2 lines'
+            version='0.0.1'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            space='0.0 GB'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>your</span>
+          <BotCard
+            type='your'
+            name='Name of the bot'
+            author='Name of the company'
+            authorImg={CompanyLogo}
+            dateCreated={dateToUTC(new Date())}
+            desc='Some information about this bot writing in 2 lines'
+            version='0.0.1'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            space='0.0 GB'
+          />
+        </div>
+      </div>
+      <div className={s.testPage__block}>
+        <span className={s['testPage__block-name']}>SkillCard</span>
+        <div className={s.testPage__component}>
+          <span>public</span>
+          <SkillCard
+            type='public'
+            name='Name of The Skill'
+            skillType='fallbacks'
+            botName='Name of The Bot'
+            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+            dateCreated={dateToUTC(new Date())}
+            version='0.01'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            executionTime='0.0 ms'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>your</span>
+          <SkillCard
+            type='your'
+            name='Name of The Skill'
+            skillType='fallbacks'
+            botName='Name of The Bot'
+            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
+            dateCreated={dateToUTC(new Date())}
+            version='0.01'
+            ram='0.0 GB'
+            gpu='0.0 GB'
+            executionTime='0.0 ms'
+          />
+        </div>
+      </div>
+
+      {/* Modals */}
+      <CreateAssistantModal />
+      <CreateSkillModal />
+      <SkillPromptModal />
+      <CreateSkillDistModal />
+      <ChooseBotModal />
+      <IntentCatcherModal />
+      <IntentResponderModal />
     </div>
   )
 }

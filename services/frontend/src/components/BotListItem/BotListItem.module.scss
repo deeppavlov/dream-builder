@@ -33,12 +33,23 @@
     @include tooltip;
     @include tooltip_for_description;
   }
+  max-height: 44px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .author {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 4px;
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
   svg {
     @include icon_size_24;
   }

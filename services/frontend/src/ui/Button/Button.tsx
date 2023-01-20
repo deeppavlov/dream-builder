@@ -6,15 +6,18 @@ interface Props extends React.PropsWithChildren {
   theme: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
   small?: boolean
   long?: boolean
+  withIcon?: boolean
   props?: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
-const Button = ({ theme, small, long, children, props }: Props) => {
+const Button = ({ theme, small, long, withIcon, children, props }: Props) => {
   return (
     <button
       className={`${s.button} ${s[`button_theme_${theme}`]} ${
-        small && s[`button_theme_${theme}_small`]
-      } ${small && s.button_small} ${long && s.button_long}`}
+        small ? s[`button_theme_${theme}_small`] : ''
+      } ${small ? s.button_small : ''} ${long ? s.button_long : ''} ${
+        withIcon ? s['button_with-icon'] : ''
+      }`}
       {...props}>
       {theme === 'tertiary' && <PlusIcon className={s.button__icon} />}
       {theme === 'ghost' && <RightIcon className={s.button__icon} />}

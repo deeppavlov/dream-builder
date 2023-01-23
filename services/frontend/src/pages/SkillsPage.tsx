@@ -13,7 +13,7 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-// import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
+import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { RoutesList } from '../Router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
@@ -41,6 +41,7 @@ interface skill_list {
     time: string
     display_name: string
   }
+  assistant_dist: string
 }
 
 export const SkillsPage = () => {
@@ -103,7 +104,6 @@ export const SkillsPage = () => {
   } = useQuery('skills_list', getSkillList)
 
   skillsError && <>{'An error has occurred:' + { skillsError }}</>
-  console.log(skillsData)
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />

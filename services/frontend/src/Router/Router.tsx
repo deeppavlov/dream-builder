@@ -20,7 +20,7 @@ export const Router = () => {
       <Route path={RoutesList.skills} element={<SkillsPage />} />
       <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
       <Route
-        path={RoutesList.editor + ':name'}
+        path={':name'}
         element={
           <PrivateRoute>
             <EditorPage />

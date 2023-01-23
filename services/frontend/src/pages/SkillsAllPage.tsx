@@ -44,17 +44,17 @@ export const SkillsAllPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return <>'Loading...'</>
-  if (skillsError) return <> 'An error has occurred: '</>
+  skillsError && <> {'An error has occurred: '} + skillsError</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
       <Main>
         {!listView ? (
-          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+          <Wrapper title='Public Skills' amount={skillsData?.length}>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+              {isSkillsLoading && <>{'Loading...'}</>}
               {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)
                 return (
@@ -84,6 +84,7 @@ export const SkillsAllPage = () => {
           </Wrapper>
         ) : (
           <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+            {isSkillsLoading && <>{'Loading...'}</>}
             <Table second='Type'>
               {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)

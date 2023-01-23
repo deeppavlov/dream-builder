@@ -10,7 +10,6 @@
     }
     border: none;
     text-align: start;
-    max-height: 64px;
     background: #fff;
     color: #313030;
     padding: 0px 24px;
@@ -26,8 +25,10 @@
 }
 .description {
   display: flex;
-  align-items: center;
+  align-items: start;
+  max-height: 64px;
   color: rgba(0, 0, 0, 0.7);
+  @include hide_text;
   @include b3;
   .tooltips {
     @include tooltip;

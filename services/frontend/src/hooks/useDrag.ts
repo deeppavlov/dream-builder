@@ -7,18 +7,15 @@ export const useDrag = (ref: React.RefObject<HTMLElement>) => {
     let isScrolling = false
     let startX: number
     let scrollLeft: number
-
     const handleClick = (e: MouseEvent) => {
       e.stopPropagation()
       ref.current!.removeEventListener('click', handleClick)
     }
-
     const handleMouseDown = (e: MouseEvent) => {
       isDown = true
       startX = e.pageX - ref.current!.offsetLeft
       scrollLeft = ref.current!.scrollLeft
     }
-
     const handleMouseLeave = () => (isDown = false)
 
     const handleMouseUp = (e: MouseEvent) => {
@@ -28,7 +25,6 @@ export const useDrag = (ref: React.RefObject<HTMLElement>) => {
         ref.current!.addEventListener('click', handleClick)
       }
     }
-
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDown) return
       isScrolling = true
@@ -36,7 +32,6 @@ export const useDrag = (ref: React.RefObject<HTMLElement>) => {
       const walk = x - startX
       ref.current!.scrollLeft = scrollLeft - walk
     }
-
     ref.current.addEventListener('mousedown', handleMouseDown)
     ref.current.addEventListener('mouseleave', handleMouseLeave)
     ref.current.addEventListener('mouseup', handleMouseUp)

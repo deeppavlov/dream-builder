@@ -19,7 +19,7 @@ export const Banner = ({ name }: BannerProps) => {
           </p>
           <li className={s.li}> Construct it as a lego.</li>
           <li className={s.li}>
-            No more coding, compose it visually on your board
+            No more coding, compose it visually on your board.
           </li>
           <li className={s.li}>
             Control, manage, chat with your virtual assistant in a single place.

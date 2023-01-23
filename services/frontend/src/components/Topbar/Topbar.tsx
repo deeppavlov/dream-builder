@@ -23,6 +23,7 @@ interface TopbarProps {
 
 export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
   const auth = useAuth()
+  const user = auth?.user
   let cx = classNames.bind(s)
   useEffect(() => {
     //Render Google SignIn button
@@ -75,7 +76,7 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
-            {title}
+            <div className={s.assistantName}>{title}</div>
             <div className={s.btns_area}>
               {/* <History /> */}
               <Resources />

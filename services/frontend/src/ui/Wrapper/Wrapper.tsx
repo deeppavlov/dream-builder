@@ -53,7 +53,7 @@ export const Wrapper = ({
               {amount && (
                 <div className={s.btns_area}>
                   {showAll && (
-                    <Link to={linkTo}>
+                    <Link to={linkTo!}>
                       <button className={s.ghost_btn}>Show&nbsp;All</button>
                     </Link>
                   )}

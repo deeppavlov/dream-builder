@@ -9,6 +9,8 @@ import { BotAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
+import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
+import { useState } from 'react'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
@@ -45,6 +47,7 @@ export const SkillCard = ({
     executionTime,
     skillType,
   }
+  const [disabled, setDisabled] = useState(true)
   const ResValues = (): { name: string; value: string }[] =>
     type === 'public'
       ? [
@@ -56,12 +59,16 @@ export const SkillCard = ({
           { name: 'RAM', value: ram },
           { name: 'Execution time', value: executionTime },
         ]
-
-  const handleSkillCardClick = () => {
+  const sliderHandler = (e: MouseEvent) => {
+    e.stopPropagation()
+    setDisabled(disabled => !disabled)
+  }
+  const handleSkillCardClick = (e: MouseEvent) => {
+    e.stopPropagation()
     trigger('SkillSidePanel', skill)
   }
 
-  const handleAddSkillBtnClick = (e: any) => {
+  const handleAddSkillBtnClick = (e: MouseEvent) => {
     e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
   }
@@ -73,6 +80,7 @@ export const SkillCard = ({
       onClick={handleSkillCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>
+        {type == 'your' && <ToggleButton sliderHandler={sliderHandler} />}
       </div>
       <div className={s.body}>
         <div className={s.top}>

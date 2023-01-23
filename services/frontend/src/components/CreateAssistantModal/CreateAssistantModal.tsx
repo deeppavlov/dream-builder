@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { getCookie, useAuth } from '../../services/AuthProvider'
+import {  useAuth } from '../../services/AuthProvider'
 import { BotInfoInterface, dist_list } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -45,37 +45,7 @@ export const CreateAssistantModal = () => {
 
   const handleContinueBtnClick = () => {
     if (!isHaveNameAndDesc) return
-
-    // metadata: {
-    //   display_name: nameByUser,
-    //   date: new Date(),
-    //   author: `${auth?.user?.name}`,
-    //   description: descByUser,
-    //   version: '0.0.1',
-    //   ram_usage: '0.0 GB',
-    //   gpu_usage: '0.0 GB',
-    //   disk_usage: '0.0 GB',
-    // },
-
-    // const va = {
-    //   name: nameByUser.replace(/\s+/g, '_').toLowerCase(),
-    //   data: JSON.parse(JSON.stringify(vaPostBody.data)),
-    // }
-
-    // let config = {
-    //   mode: 'no-cors',
-    //   headers: {
-    //     'Access-Control-Allow-Origin': '*',
-    //     token: `${getCookie('jwt_token')}`,
-    //     dist_name: va.name,
-    //   },
-    // }
-
-    // axios
-    //   .post(`http://10.11.1.8:7000/api/assistant_dists/${va.name}`, va, config)
-    //   .then(({ data }) => console.log(data))
-    //   .catch(e => console.log(e.response.data))
-    location.pathname = '/editor/' + bot?.routingName
+    location.pathname = bot?.routingName!
   }
 
   useEffect(() => {

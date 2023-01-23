@@ -30,14 +30,6 @@ export interface BotInfoInterface {
   skills?: string[]
 }
 
-export type SkillType =
-  | 'fallbacks'
-  | 'retrieval'
-  | 'generative'
-  | 'q_a'
-  | 'script'
-  | 'script_with_nns'
-
 export interface SkillInfoInterface {
   skillType: SkillType
   name: string
@@ -79,3 +71,20 @@ export interface dist_list {
   gpu_usage: string
   disk_usage: string
 }
+export type SkillType =
+  | 'fallbacks'
+  | 'retrieval'
+  | 'generative'
+  | 'q_a'
+  | 'script'
+  | 'script_with_nns'
+
+export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+
+export type StackType =
+  | 'annotators'
+  | 'candidate_annotators'
+  | 'response_annotators'
+  | 'response_selectors'
+  | 'skill_selectors'
+  | 'skills'

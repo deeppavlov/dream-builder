@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -24,3 +26,4 @@ class UserValidScheme(UserBase):
 
     token: str
     is_valid: bool
+    expire_time: datetime

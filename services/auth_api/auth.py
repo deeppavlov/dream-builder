@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from google.auth import jwt
@@ -28,14 +28,15 @@ def get_db():
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(jwt_data: str = Header()):
+async def validate_jwt(token: str = Header()):
     """
     Decode input jwt-token, validate date, check user in db or otherwise sign them up
+    TODO: add check if user in db otherwise http exception
     """
-    if jwt_data == settings.auth.test_token:
+    if token == settings.auth.test_token:
         return
     try:
-        data = jwt.decode(jwt_data, verify=False)
+        data = jwt.decode(token, verify=False)
 
         # noinspection PyTypeChecker
         validate_date(data["nbf"], data["exp"])  # nbf and exp fields are int
@@ -60,12 +61,13 @@ def validate_date(nbf: int, exp: int) -> None:
         raise ValueError("Date of token is not valid!")
 
 
-@router.get("/login", status_code=status.HTTP_200_OK, dependencies=[Depends(validate_jwt)])
-async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
-    data = jwt.decode(jwt_data, verify=False)
+@router.get("/login")
+def save_user(token: str = Header(), db: Session = Depends(get_db)):
+    """
+    TODO: endpoint -> method due to no usage from frontend
+    """
 
-    user_valid = UserValidScheme(email=data["email"], token=jwt_data, is_valid=True)
-    crud.add_user_to_uservalid(db, user_valid, data["email"])
+    data = jwt.decode(token, verify=False)
 
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
@@ -76,13 +78,17 @@ async def login(jwt_data: str = Header(), db: Session = Depends(get_db)):
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
-async def logout(jwt_data: str = Header(), db: Session = Depends(get_db)):
-    data = jwt.decode(jwt_data, verify=False)
-    crud.set_users_token_invalid(db, data["email"])
+async def logout(token: str = Header(), db: Session = Depends(get_db)) -> None:
+    """
+    TODO: logout will remove record out of a db
+    """
+    data = jwt.decode(token, verify=False)
+
+    crud.set_users_refresh_token_invalid(db, data["email"])
 
 
 @router.get("/exchange_authcode")
-async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)):
+async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> dict[str, str]:
     """
     Exchanges authorization code for access token
 
@@ -96,29 +102,31 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)):
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    flow = Flow.from_client_secrets_file(client_secrets_file='client_secret.json',
-                                         scopes=GOOGLE_SCOPE)
+    flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=GOOGLE_SCOPE)
     flow.fetch_token(authorization_code=auth_code)
+
     credentials = flow.credentials
     access_token = credentials.token
     refresh_token = credentials.refresh_token
 
     user_info = jwt.decode(access_token, verify=False)
-    user_valid = UserValidScheme(token=refresh_token, is_valid=True)
+
+    expire_time = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
+    user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)
     crud.add_user_to_uservalid(db, user_valid, user_info["email"])
 
     return {"token": access_token}
 
 
-@router.get("/update_token")
-async def update_access_token(token: str = Header(), db: Session = Depends(get_db)):
+@router.post("/update_token")
+async def update_access_token(token: str = Header(), db: Session = Depends(get_db)) -> dict[str, str]:
     """
-    TODO: add updating refresh_token
-        1. `expire_date` attribute required
-        2. `expire_date` field in database required
-        3.
+    TODO: 1. add checking if refresh token in db and it's valid
     """
     email = jwt.decode(token, verify=False)["email"]
+
+    if not crud.check_user_exists(db, email):
+        raise HTTPException(status_code=401, detail="User is not authenticated!")
 
     user = crud.get_uservalid_by_email(db, email)
     refresh_token = user.token

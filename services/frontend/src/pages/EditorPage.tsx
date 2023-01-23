@@ -42,7 +42,12 @@ export const EditorPage = () => {
       enabled: data.name?.length! > 0,
     }
   )
-
+  // {
+  //   distsComponentsData &&
+  //     Object.keys(distsComponentsData).map((type: string) => (
+  //       <Stack type={type} data={distsComponentsData[type]} />
+  //     ))
+  // }
   const {
     isLoading: isSkillListLoading,
     error: skillListError,
@@ -65,30 +70,12 @@ export const EditorPage = () => {
 
   if (distError) return <>An error has occurred: + {distError}</>
 
-  const annotators =
-    distData?.pipeline_conf?.services?.annotators &&
-    Object.keys(distData?.pipeline_conf?.services?.annotators).map(i => i)
-  const candidateAnnotators =
-    distData?.pipeline_conf?.services?.candidate_annotators &&
-    Object.keys(distData?.pipeline_conf?.services?.candidate_annotators).map(
-      i => i
-    )
-  const skills =
-    distData?.pipeline_conf?.services?.skills &&
-    Object.keys(distData?.pipeline_conf?.services?.skills).map(i => i)
-  const skillSelectors =
-    distData?.pipeline_conf?.services?.skill_selectors &&
-    Object.keys(distData?.pipeline_conf?.services?.skill_selectors).map(i => i)
-  const responseSelectors =
-    distData?.pipeline_conf?.services?.response_selectors &&
-    Object.keys(distData?.pipeline_conf?.services?.response_selectors).map(
-      i => i
-    )
-  const responseAnnotators =
-    distData?.pipeline_conf?.services?.response_annotators &&
-    Object.keys(distData?.pipeline_conf?.services?.response_annotators).map(
-      i => i
-    )
+  const annotators = distsComponentsData?.annotators
+  const candidateAnnotators = distsComponentsData?.candidate_annotators
+  const skills = distsComponentsData?.skills
+  const skillSelectors = distsComponentsData?.skill_selectors
+  const responseSelectors = distsComponentsData?.response_selectors
+  const responseAnnotators = distsComponentsData?.response_annotators
 
   return (
     <>
@@ -103,34 +90,14 @@ export const EditorPage = () => {
               gap='12px'
               overflow='hidden'>
               <Tab>
-                <BotTab />
+                <SkillsTab />
               </Tab>
               <Tab>
-                <SkillsTab />
+                <BotTab />
               </Tab>
             </Container>
           </TabList>
         </Sidebar>
-        <TabPanel>
-          <Main sidebar editor draggable>
-            {isDistLoading ? (
-              <>{'Loading...'}</>
-            ) : (
-              <>
-                <Annotators annotatorsList={annotators} />
-                <SkillSelector skillSelectorsList={skillSelectors} />
-                <Skills skillsList={skills} />
-                <CandidateAnnotators
-                  candidateAnnotators={candidateAnnotators}
-                />
-                <ResponseSelector responseSelectorsList={responseSelectors} />
-                <ResponseAnnotators
-                  responseAnnotatorsList={responseAnnotators}
-                />
-              </>
-            )}
-          </Main>
-        </TabPanel>
         <TabPanel>
           <Main sidebar editor>
             <Wrapper>
@@ -143,7 +110,6 @@ export const EditorPage = () => {
                     <SkillCard
                       type='your'
                       name={skill.metadata.display_name}
-                      author={auth?.user?.name!}
                       dateCreated={dateCreated}
                       desc={skill.metadata.description}
                       version={skill.metadata.version}
@@ -151,11 +117,32 @@ export const EditorPage = () => {
                       gpu={skill.metadata.gpu_usage}
                       executionTime={skill.metadata.execution_time}
                       skillType={skill.metadata.type}
+                      botName={skill.metadata.author}
                     />
                   )
                 })}
               </Container>
             </Wrapper>
+          </Main>
+        </TabPanel>
+        <TabPanel>
+          <Main sidebar editor draggable>
+            {isDistLoading ? (
+              <>{'Loading...'}</>
+            ) : (
+              <>
+                <Annotators annotators={annotators} />
+                <SkillSelector skillSelectors={skillSelectors} />
+                <Skills skills={skills} />
+                <CandidateAnnotators
+                  candidateAnnotators={candidateAnnotators}
+                />
+                <ResponseSelector responseSelectors={responseSelectors} />
+                <ResponseAnnotators
+                  responseAnnotators={responseAnnotators}
+                />
+              </>
+            )}
           </Main>
         </TabPanel>
       </Tabs>

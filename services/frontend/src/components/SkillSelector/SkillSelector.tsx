@@ -6,7 +6,7 @@ import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
 
-export const SkillSelector = ({ skillSelectorsList }: any) => {
+export const SkillSelector = ({ skillSelectors }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -22,6 +22,7 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
         onSubmit={e => {
           e.preventDefault()
         }}>
+        <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           <div
             style={{
@@ -29,7 +30,7 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
               width: '100%',
               padding: '0px 12px',
             }}>
-            {!skillSelectorsList ? (
+            {!skillSelectors?.length ? (
               <RadioButton
                 id={'All Skills'}
                 name='skill_selector'
@@ -38,7 +39,7 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
                 <Skill title={'All Skills'} />
               </RadioButton>
             ) : (
-              skillSelectorsList?.map((item: string, i: number) => {
+              skillSelectors?.map((item: string, i: number) => {
                 return (
                   <RadioButton
                     key={i}
@@ -70,7 +71,7 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
             </RadioButton> */}
           </div>
         </Accordion>
-        {/* <Accordion title='Customizable'>
+        {/* 
           <div style={{ padding: '0px 12px' }}>
             <RadioButton
               id='all_skill'
@@ -79,7 +80,7 @@ export const SkillSelector = ({ skillSelectorsList }: any) => {
               <Skill title='All Skill' />
             </RadioButton>
           </div>
-        </Accordion> */}
+        */}
       </form>
     </div>
   )

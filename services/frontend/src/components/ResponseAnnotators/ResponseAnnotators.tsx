@@ -6,10 +6,10 @@ import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
+export const ResponseAnnotators = ({ responseAnnotators }: any) => {
   return (
     <>
-      {responseAnnotatorsList && (
+      {responseAnnotators && (
         <div className={s.stack}>
           <div className={s.header}>
             <div className={s.top}>
@@ -21,7 +21,7 @@ export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
             </div>
             <div className={s.bottom}>
               <p className={s.data}>
-                {responseAnnotatorsList?.recources ||
+                {responseAnnotators?.recources ||
                   '0.00 GB RAM | 0.00 GB GPU'}
               </p>
             </div>
@@ -29,9 +29,10 @@ export const ResponseAnnotators = ({ responseAnnotatorsList }: any) => {
           <div className={s.body}></div>
           <AddButtonStack disabled={true} text='Add Candidate Annotators' />
           <div className={s.elements}>
+            <Accordion title='Customizable'></Accordion>
             <Accordion title='Non-customizable'>
-              {responseAnnotatorsList?.map((item: string, i: number) => {
-                return <Element key={i} title={capitalizeTitle(item)} />
+              {responseAnnotators?.map((item: string, i: number) => {
+                return <Element key={i} title={capitalizeTitle(item.display_name)} item={item} />
               })}
             </Accordion>
           </div>

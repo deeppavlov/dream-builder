@@ -143,7 +143,7 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
                   disabled: disabledMsg !== undefined,
                   onClick: handleCloneBtnClick,
                 }}>
-                Clone
+                Fork
               </Button>
             </div>
           </div>

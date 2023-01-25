@@ -26,11 +26,19 @@ import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
+import { useState } from 'react'
+import { SkillListItem } from '../components/SkillListItem/SkillListItem'
+import { Table } from '../ui/Table/Table'
+import { AddButton } from '../ui/AddButton/AddButton'
 
 export const EditorPage = () => {
+  const [listView, setListView] = useState<boolean>(false)
+  const viewHandler = () => {
+    setListView(listView => !listView)
+  }
   const auth = useAuth()
   const data = useParams()
-
+  console.log(data)
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,
@@ -42,12 +50,7 @@ export const EditorPage = () => {
       enabled: data.name?.length! > 0,
     }
   )
-  // {
-  //   distsComponentsData &&
-  //     Object.keys(distsComponentsData).map((type: string) => (
-  //       <Stack type={type} data={distsComponentsData[type]} />
-  //     ))
-  // }
+
   const {
     isLoading: isSkillListLoading,
     error: skillListError,
@@ -79,7 +82,6 @@ export const EditorPage = () => {
 
   return (
     <>
-      <Topbar type='editor' title={capitalizeTitle(data?.name!)} />
       <Tabs>
         <Sidebar>
           <TabList>
@@ -99,33 +101,82 @@ export const EditorPage = () => {
           </TabList>
         </Sidebar>
         <TabPanel>
+          <Topbar
+            viewChanger
+            type='editor'
+            viewHandler={viewHandler}
+            preview
+            title={capitalizeTitle(data?.name!)}
+          />
           <Main sidebar editor>
-            <Wrapper>
-              <Container
-                display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
-                {skillListData?.map((skill: any) => {
-                  const dateCreated = dateToUTC(skill.metadata.date_created)
-                  return (
-                    <SkillCard
-                      type='your'
-                      name={skill.metadata.display_name}
-                      dateCreated={dateCreated}
-                      desc={skill.metadata.description}
-                      version={skill.metadata.version}
-                      ram={skill.metadata.ram_usage}
-                      gpu={skill.metadata.gpu_usage}
-                      executionTime={skill.metadata.execution_time}
-                      skillType={skill.metadata.type}
-                      botName={skill.metadata.author}
-                    />
-                  )
-                })}
-              </Container>
-            </Wrapper>
+            {!listView ? (
+              <Wrapper>
+                <Container
+                  display='grid'
+                  gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                  <AddButton />
+                  {skillListData?.map((skill: any, i: number) => {
+                    const dateCreated = dateToUTC(skill.metadata.date_created)
+                    return (
+                      <SkillCard
+                        key={i}
+                        type='your'
+                        big
+                        name={skill.metadata.display_name}
+                        dateCreated={dateCreated}
+                        desc={skill.metadata.description}
+                        version={skill.metadata.version}
+                        ram={skill.metadata.ram_usage}
+                        gpu={skill.metadata.gpu_usage}
+                        executionTime={skill.metadata.execution_time}
+                        skillType={skill.metadata.type}
+                        botName={skill.metadata.author}
+                      />
+                    )
+                  })}
+                </Container>
+              </Wrapper>
+            ) : (
+              <Wrapper fullHeight>
+                <Container
+                  display='grid'
+                  gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                  <Table
+                    addButton={
+                      <AddButton
+                        listView={listView}
+                        disabled={auth?.user === null}
+                      />
+                    }>
+                    {skillListData?.map((skill: any) => {
+                      const dateCreated = dateToUTC(skill.metadata.date_created)
+                      return (
+                        <SkillListItem
+                          name={skill.metadata.display_name}
+                          dateCreated={dateCreated}
+                          desc={skill.metadata.description}
+                          version={skill.metadata.version}
+                          ram={skill.metadata.ram_usage}
+                          gpu={skill.metadata.gpu_usage}
+                          executionTime={skill.metadata.execution_time}
+                          skillType={skill.metadata.type}
+                          botName={skill.metadata.author}
+                        />
+                      )
+                    })}
+                  </Table>
+                </Container>
+              </Wrapper>
+            )}
           </Main>
         </TabPanel>
         <TabPanel>
+          <Topbar
+            type='editor'
+            viewHandler={viewHandler}
+            preview
+            title={capitalizeTitle(data?.name!)}
+          />
           <Main sidebar editor draggable>
             {isDistLoading ? (
               <>{'Loading...'}</>
@@ -138,9 +189,7 @@ export const EditorPage = () => {
                   candidateAnnotators={candidateAnnotators}
                 />
                 <ResponseSelector responseSelectors={responseSelectors} />
-                <ResponseAnnotators
-                  responseAnnotators={responseAnnotators}
-                />
+                <ResponseAnnotators responseAnnotators={responseAnnotators} />
               </>
             )}
           </Main>

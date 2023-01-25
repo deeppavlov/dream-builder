@@ -23,7 +23,7 @@ export const Element = ({ item,title, ...props }: any) => {
           <p className={s.name}>{title || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>RAM:1.0 GB | Ex.t:00ms </p>
+          <p className={s.data}>1.0 GB RAM | Ex.t:00ms </p>
         </div>
       </div>
       <div className={s.right}>

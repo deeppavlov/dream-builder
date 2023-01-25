@@ -1,10 +1,11 @@
 import ReactTooltip from 'react-tooltip'
-import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import CompanyLogo from '@assets/icons/pavlovInCard.svg'
-import { ReactComponent as SaveIcon } from '@assets/icons/save.svg'
-import Button from '../../ui/Button/Button'
+import classNames from 'classnames/bind'
 import { trigger } from '../../utils/events'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
+import { ReactComponent as SaveIcon } from '@assets/icons/save.svg'
+import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
+import Button from '../../ui/Button/Button'
 import { SmallTag } from '../SmallTag/SmallTag'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import s from './BotCard.module.scss'
@@ -31,10 +32,25 @@ export const BotCard = ({
   size,
   disabledMsg,
 }: BotCardProps) => {
-  const bot = { routingName, name, author, desc, dateCreated, version, ram, gpu, space }
+  
+  const bot = {
+    routingName,
+    name,
+    author,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    space,
+  }
 
   const handleBotCardClick = () => {
     trigger('BotInfoSidePanel', bot)
+  }
+  const handlePreviewBtnClick = (e: any) => {
+    e.stopPropagation()
+    location.pathname = bot?.routingName!
   }
 
   const handleCloneBtnClick = (e: any) => {
@@ -42,30 +58,22 @@ export const BotCard = ({
     trigger('CreateAssistantModal', bot)
   }
 
+  let cx = classNames.bind(s)
+
   return (
     <div
-      className={`${s.botCard} ${s[`botCard_type_${type}`]} ${
-        size === 'small' ? s.botCard_small : ''
-      } ${size === 'big' ? s.botCard_big : ''}`}
+      className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}>
-      <div className={s.botCard__name}>{name}</div>
-      <div className={s.botCard__block}>
+      <div className={s.name}>{name}</div>
+      <div className={s.block}>
         {type === 'public' && (
-          <div className={s.botCard__author}>
-            <img
-              className={s['botCard__author-img']}
-              referrerPolicy='no-referrer'
-              src={authorImg}
-            />
+          <div className={s.author}>
+            <img referrerPolicy='no-referrer' src={authorImg} />
             <span>{author}</span>
           </div>
         )}
-        <div
-          className={s.botCard__desc}
-          data-for='descriptionTooltip'
-          data-tip={desc}>
+        <div className={s.desc} data-for='descriptionTooltip' data-tip={desc}>
           {desc}
-
           <ReactTooltip
             id='descriptionTooltip'
             effect='solid'
@@ -73,8 +81,8 @@ export const BotCard = ({
             delayShow={500}
           />
         </div>
-        <div className={s.botCard__dateAndVersion}>
-          <div className={s.botCard__date}>
+        <div className={s.dateAndVersion}>
+          <div className={s.date}>
             <CalendarIcon />
             {dateCreated}
           </div>
@@ -82,7 +90,7 @@ export const BotCard = ({
         </div>
         <span className={s.separator} />
       </div>
-      <div className={s.botCard__resources}>
+      <div className={s.resources}>
         <ResourcesTable
           values={[
             {
@@ -100,9 +108,9 @@ export const BotCard = ({
           ]}
         />
       </div>
-      <div className={s.botCard__btns}>
+      <div className={s.btns}>
         {type === 'public' ? (
-          <div data-tip data-for='bot-clone-interact' style={{ width: '100%' }}>
+          <div data-tip data-for='bot-clone-interact' className={s.container}>
             <Button
               theme='primary'
               small
@@ -111,7 +119,14 @@ export const BotCard = ({
                 disabled: disabledMsg !== undefined,
                 onClick: handleCloneBtnClick,
               }}>
-              Clone
+              Fork
+            </Button>
+            <Button
+              theme='secondary'
+              small
+              withIcon
+              props={{ onClick: handlePreviewBtnClick }}>
+              <PreviewIcon />
             </Button>
           </div>
         ) : (

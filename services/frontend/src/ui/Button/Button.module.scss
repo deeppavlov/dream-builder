@@ -10,7 +10,9 @@
   justify-content: center;
   text-align: center;
   @include lnks_n_btns3;
-
+  svg {
+    @include icon_size_24;
+  }
   &:disabled {
     opacity: 0.3;
   }

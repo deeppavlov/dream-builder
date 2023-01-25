@@ -9,9 +9,11 @@ import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
+import { ReactComponent as ForkIcon } from '@assets/icons/fork.svg'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
 import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
+import Button from '../../ui/Button/Button'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -19,9 +21,20 @@ interface TopbarProps {
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
   title?: string
+  amount?: number | string
+  preview?: boolean
+  viewChanger?: boolean
 }
 
-export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
+export const Topbar = ({
+  type,
+  viewHandler,
+  innerRef,
+  title,
+  amount,
+  preview,
+  viewChanger,
+}: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
@@ -77,7 +90,22 @@ export const Topbar = ({ type, viewHandler, innerRef, title }: TopbarProps) => {
               <Breadcrumbs />
             </div>
             <div className={s.assistantName}>{title}</div>
+            {preview && (
+              <div className={s.fork}>
+                <Button theme={'secondary'} small withIcon props={{}}>
+                  <div className={s.container}>
+                    <ForkIcon />
+                    <span>Fork</span>
+                    {amount ?? (
+                      <span className={s.circle}>{amount || '42'}</span>
+                    )}
+                  </div>
+                </Button>
+              </div>
+            )}
+
             <div className={s.btns_area}>
+              {viewChanger && <Display viewHandler={viewHandler} />}
               {/* <History /> */}
               <Resources />
               {/* <Notifications /> */}

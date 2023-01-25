@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
+import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
@@ -51,6 +52,10 @@ export const BotListItem = ({
     e.stopPropagation()
     trigger('CreateAssistantModal', bot)
   }
+  const handlePreviewBtnClick = (e: any) => {
+    e.stopPropagation()
+    location.pathname = bot?.routingName!
+  }
 
   return (
     <tr className={s.tr} onClick={handleBotListItemClick}>
@@ -69,14 +74,12 @@ export const BotListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.author}>
-
           {author === 'DeepPavlov' ? (
             <Logo />
           ) : (
             <img src={auth?.user?.picture} referrerPolicy='no-referrer' />
           )}
           <p>{author}</p>
-
         </div>
       </td>
       <td className={s.td}>
@@ -104,13 +107,16 @@ export const BotListItem = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.btns_area}>
-          <div data-tip data-for='bot-clone-interact'>
+        <div data-tip data-for='bot-clone-interact'>
+          <div className={s.btns_area}>
             <button
               className={s.area}
               disabled={disabledMsg !== undefined}
               onClick={handleCloneBtnClick}>
               <Clone />
+            </button>
+            <button className={s.area} onClick={handlePreviewBtnClick}>
+              <PreviewIcon />
             </button>
           </div>
         </div>

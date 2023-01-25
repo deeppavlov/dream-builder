@@ -83,7 +83,7 @@ export const UsersSkills = () => {
             </Container>
           </Wrapper>
         ) : (
-          <Wrapper title='Your Skills' amount={42} fullHeight>
+          <Wrapper title='Your Skills' amount={42}>
             {/* {isSkillsLoading && <>{'Loading...'}</>} */}
             <Table second='Type'>
               {/* {skillsData?.map((skill: skill_list, i: number) => {

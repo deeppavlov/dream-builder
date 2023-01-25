@@ -83,15 +83,15 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
                 </div>
                 <ul className={s.table}>
                   <li>
-                    <span>RAM:</span>
+                    <span className={s.type}>RAM:</span>
                     <span className={s.tableCount}>{ram ?? '0.0 GB'}</span>
                   </li>
                   <li>
-                    <span>GPU:</span>
+                    <span className={s.type}>GPU:</span>
                     <span className={s.tableCount}>{gpu ?? '0.0 GB'}</span>
                   </li>
                   <li>
-                    <span>Disk space:</span>
+                    <span className={s.type}>Disk space:</span>
                     <span className={s.tableCount}>{space ?? '0.0 GB'}</span>
                   </li>
                 </ul>

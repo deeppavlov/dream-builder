@@ -61,7 +61,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -153,7 +152,11 @@ export const BotsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper
+              title='Your Virtual Assistants & Chatbots'
+              amount={42}
+              showAll
+              linkTo={RoutesList.yourBots}>
               <Container overflow='hidden'>
                 <Container
                   position='sticky'

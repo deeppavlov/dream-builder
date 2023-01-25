@@ -41,7 +41,6 @@ interface skill_list {
     time: string
     display_name: string
   }
-  assistant_dist: string
 }
 
 export const SkillsPage = () => {
@@ -154,7 +153,7 @@ export const SkillsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper showAll title='Your Skills'>
+            <Wrapper showAll amount={42} linkTo={RoutesList.yourSkills} title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'

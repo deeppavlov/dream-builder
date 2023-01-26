@@ -2,15 +2,14 @@
   display: flex;
   flex-direction: column;
   padding: 12px 24px 24px 24px;
-  gap: 4px;
+  gap: 8px;
 }
 
-.header {
+.annotator-header {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
 }
 
 .name {
@@ -59,7 +58,6 @@
 
 .table-name {
   @include t4;
-  color: $text2;
 }
 
 .table-value {
@@ -67,7 +65,6 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  text-transform: capitalize;
 
   svg {
     width: 24px;
@@ -77,35 +74,44 @@
 
 .desc {
   @include b3;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .btns {
-  width: 100%;
-  margin-top: auto;
+  height: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fork button {
-  padding: 12px;
-  border-radius: 50%;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .dictionary {
   color: $orange;
+
+  svg path {
+    fill: $orange;
+  }
 }
 
-.retrieval {
+.external {
   color: $salad;
+
+  svg path {
+    fill: $salad;
+  }
 }
 
-.fallbacks {
-  color: $red;
+.ml {
+  color: $pink;
+
+  svg path {
+    fill: $pink;
+  }
+}
+
+.neural {
+  color: $primary1;
+
+  svg path {
+    fill: $primary1;
+  }
 }

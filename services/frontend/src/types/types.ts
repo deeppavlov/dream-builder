@@ -34,6 +34,8 @@ export interface SkillInfoInterface {
   skillType: SkillType
   name: string
   botName: string
+  author: string
+  authorImg: string
   dateCreated: string
   desc: string
   version: string
@@ -54,7 +56,7 @@ export interface ResourcesInterface {
 
 export interface TotalResourcesInterface {
   proxy: { containers: string } & ResourcesInterface
-  custom: { containers: string } & ResourcesInterface
+  custom?: { containers: string } & ResourcesInterface
 }
 
 export type BotAvailabilityType = 'public' | 'your'
@@ -88,3 +90,11 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
+
+export interface IAnnotator {
+  name: string
+  author: string
+  authorImg: string
+  type: string
+  desc: string
+}

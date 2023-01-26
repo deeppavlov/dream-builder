@@ -11,6 +11,8 @@ import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import Button from '../../ui/Button/Button'
 import { useAuth } from '../../services/AuthProvider'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 
 interface SkillInBotCardProps extends SkillInfoInterface {
   checkbox?: boolean
@@ -20,6 +22,8 @@ interface SkillInBotCardProps extends SkillInfoInterface {
 export const SkillInBotCard = ({
   name,
   author,
+  authorImg,
+  botName,
   desc,
   dateCreated,
   version,
@@ -33,40 +37,32 @@ export const SkillInBotCard = ({
 }: SkillInBotCardProps) => {
   const auth = useAuth()
   const [disabled, setDisabled] = useState(true)
+  const skill = {
+    name,
+    author,
+    authorImg,
+    botName,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    space,
+    executionTime,
+    skillType,
+  }
 
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
 
   const handleSkillCardClick = () => {
-    trigger('SkillSidePanel', {
-      name,
-      author,
-      desc,
-      dateCreated,
-      version,
-      ram,
-      gpu,
-      space,
-      executionTime,
-      skillType,
-    })
+    trigger(BASE_SP_EVENT, { children: <SkillSidePanel skill={skill} /> })
   }
 
   const handleEditSkillBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', {
-      name,
-      author,
-      desc,
-      dateCreated,
-      version,
-      ram,
-      gpu,
-      space,
-      executionTime,
-      skillType,
-    })
+    trigger('CreateSkillModal', skill)
   }
 
   return (

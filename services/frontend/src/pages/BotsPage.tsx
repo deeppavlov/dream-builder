@@ -21,6 +21,7 @@ import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateA
 import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -61,7 +62,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -248,12 +248,11 @@ export const BotsPage = () => {
             You must be signed in to create your own bot
           </ReactTooltip>
         )}
-        <BotInfoSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to clone the bot'
-          }
-          position={{ top: topbarHeight }}
-        />
+
+        {/* SidePanel */}
+        <BaseSidePanel position={{ top: topbarHeight }} />
+
+        {/* Modals */}
         <CreateAssistantModal />
       </Main>
     </>

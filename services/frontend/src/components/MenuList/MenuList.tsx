@@ -12,6 +12,8 @@ import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Link } from 'react-router-dom'
 import s from './MenuList.module.scss'
 import { trigger } from '../../utils/events'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import IntentCatcherSidePanel from '../IntentCatcherSidePanel/IntentCatcherSidePanel'
 
 interface MenuListProps {
   type:
@@ -376,7 +378,8 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
               onClick={() => {
                 switch (item.typeItem) {
                   case 'Intent Catcher':
-                    trigger('IntentCatcherSidePanel', item.data)
+                    const data = item.data
+                    trigger(BASE_SP_EVENT, { children: <IntentCatcherSidePanel /> })
                     break
                   default:
                     break
@@ -393,7 +396,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
             </button>
           </li> */}
           <li className={s.item}>
-            <button onClick={() => trigger('AnnotatorsSidePanel', {})}>
+            <button onClick={() => trigger('AnnotatorSidePanel', {})}>
               <PropertiesIcon />
               <p>Properties</p>
             </button>

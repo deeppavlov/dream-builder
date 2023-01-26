@@ -8,6 +8,8 @@ import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { SmallTag } from '../SmallTag/SmallTag'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import s from './BotCard.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -31,10 +33,23 @@ export const BotCard = ({
   size,
   disabledMsg,
 }: BotCardProps) => {
-  const bot = { routingName, name, author, desc, dateCreated, version, ram, gpu, space }
+  const bot = {
+    routingName,
+    name,
+    author,
+    authorImg,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    space,
+  }
 
   const handleBotCardClick = () => {
-    trigger('BotInfoSidePanel', bot)
+    trigger(BASE_SP_EVENT, {
+      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+    })
   }
 
   const handleCloneBtnClick = (e: any) => {

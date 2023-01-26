@@ -26,8 +26,9 @@ import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import AnnotatorsSidePanel from '../components/AnnotatorsSidePanel/AnnotatorsSidePanel'
+import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const EditorPage = () => {
   const auth = useAuth()
@@ -113,6 +114,8 @@ export const EditorPage = () => {
                       key={i}
                       type='your'
                       name={skill.metadata.display_name}
+                      author={auth?.user?.name!}
+                      authorImg={`${auth?.user?.picture}`}
                       dateCreated={dateCreated}
                       desc={skill.metadata.description}
                       version={skill.metadata.version}
@@ -149,10 +152,15 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
-      <SkillSidePanel position={{ top: 64 }} />
+
+      {/* Sidepanels */}
+      <BaseSidePanel position={{ top: 64 }} />
+      {/* <SkillSidePanel position={{ top: 64 }} />
       <IntentCatcherSidePanel position={{ top: 64 }} />
       <IntentResponderSidePanel position={{ top: 64 }} />
-      <AnnotatorsSidePanel position={{ top: 64 }} />
+      <AnnotatorSidePanel position={{ top: 64 }} /> */}
+
+      {/* Modals */}
       <IntentCatcherModal />
       <IntentResponderModal />
       <SkillPromptModal />

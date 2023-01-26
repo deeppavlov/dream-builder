@@ -7,6 +7,8 @@ import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import s from './SkillListItem.module.scss'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 
 interface SkillListItemProps extends SkillInfoInterface {
   checkbox?: boolean
@@ -16,6 +18,7 @@ interface SkillListItemProps extends SkillInfoInterface {
 export const SkillListItem = ({
   name,
   author,
+  authorImg,
   desc,
   dateCreated,
   version,
@@ -32,6 +35,7 @@ export const SkillListItem = ({
   const skill = {
     name,
     author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -44,7 +48,9 @@ export const SkillListItem = ({
   }
 
   const handleSkillListItemClick = () => {
-    trigger('SkillSidePanel', skill)
+    trigger(BASE_SP_EVENT, {
+      children: <SkillSidePanel key={skill.name} skill={skill} />,
+    })
   }
 
   const handleAddBtnClick = (e: any) => {

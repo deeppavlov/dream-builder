@@ -30,6 +30,7 @@ import { useState } from 'react'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
+import Hint from '../components/Hint/Hint'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -38,7 +39,6 @@ export const EditorPage = () => {
   }
   const auth = useAuth()
   const data = useParams()
-  console.log(data)
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,
@@ -99,6 +99,7 @@ export const EditorPage = () => {
               </Tab>
             </Container>
           </TabList>
+          <Hint />
         </Sidebar>
         <TabPanel>
           <Topbar

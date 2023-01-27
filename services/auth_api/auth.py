@@ -18,6 +18,8 @@ router = APIRouter(prefix="/auth")
 
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
+flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=GOOGLE_SCOPE)
+
 
 def get_db():
     db = SessionLocal()
@@ -30,7 +32,10 @@ def get_db():
 @router.get("/token", status_code=status.HTTP_200_OK)
 async def validate_jwt(token: str = Header()):
     """
-    Decode input jwt-token, validate date, check user in db or otherwise sign them up
+    This endpoint is used to decode and validate a JWT token passed in the Authorization header of the request.
+    The token is decoded and checked for its 'nbf' and 'exp' fields to ensure it is within its valid date range.
+    The 'aud' field is also checked to ensure it matches the expected audience.
+    If the token is invalid or expired, a HTTP 400 Bad Request error is returned.
     TODO: add check if user in db otherwise http exception
     """
     if token == settings.auth.test_token:
@@ -102,14 +107,15 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=GOOGLE_SCOPE)
     flow.fetch_token(authorization_code=auth_code)
 
     credentials = flow.credentials
     access_token = credentials.token
     refresh_token = credentials.refresh_token
+    jwt_data = credentials._id_token
 
-    user_info = jwt.decode(access_token, verify=False)
+    user_info = jwt.decode(jwt_data, verify=False)
+    save_user(jwt_data, db)
 
     expire_time = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
     user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)
@@ -120,9 +126,6 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
 
 @router.post("/update_token")
 async def update_access_token(token: str = Header(), db: Session = Depends(get_db)) -> dict[str, str]:
-    """
-    TODO: 1. add checking if refresh token in db and it's valid
-    """
     email = jwt.decode(token, verify=False)["email"]
 
     if not crud.check_user_exists(db, email):

@@ -5,11 +5,11 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './Annotators.module.scss'
+import { countResources } from '../../utils/countRAM'
 
 interface Props {
-  annotatorsList: object
+  annotators: object
 }
-
 export const Annotators: React.FC<Props> = ({ annotators }) => {
   return (
     <div className={s.stack}>
@@ -23,7 +23,11 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {annotators?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+            {(annotators &&
+              countResources(annotators, 'ram_usage') +
+                ' ' +
+                countResources(annotators, 'gpu_usage')) ||
+              '0.00 GB RAM | 0.00 GB GPU'}
           </p>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import SkillLogo from '../../assets/icons/book.svg'
 import s from './Element.module.scss'
 
 export const Element = ({ item, title, ...props }: any) => {
@@ -27,7 +26,9 @@ export const Element = ({ item, title, ...props }: any) => {
           <p className={s.name}>{title || 'some_annotator'}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>1.5 Gb RAM | 0.0 Gb GPU</p>
+          <p className={s.data}>
+            {item?.ram_usage + ' RAM ' + item?.gpu_usage + ' GPU'}
+          </p>
         </div>
       </div>
       <div className={s.right}>

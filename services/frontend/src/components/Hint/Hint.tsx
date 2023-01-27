@@ -10,7 +10,6 @@ const Hint = ({ visit }: any) => {
     setHidden((hidden: any) => !hidden)
     setVisited()
   }
-  console.log(hidden)
   const cx = classNames.bind(s)
   return (
     <button onClick={clickHandler} className={cx('hint', hidden && 'hidden')}>

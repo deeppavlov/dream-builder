@@ -20,6 +20,7 @@ router = APIRouter(prefix="/auth")
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
 flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=GOOGLE_SCOPE)
+flow.redirect_uri = "http://localhost:5173"
 
 
 def get_db():
@@ -124,7 +125,7 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    save_user(jwt_data, db)
+    await save_user(jwt_data, db)
 
     expire_time = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
     user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)

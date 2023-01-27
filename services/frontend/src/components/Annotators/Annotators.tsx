@@ -25,7 +25,7 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
           <p className={s.data}>
             {(annotators &&
               countResources(annotators, 'ram_usage') +
-                ' ' +
+                ' | ' +
                 countResources(annotators, 'gpu_usage')) ||
               '0.00 GB RAM | 0.00 GB GPU'}
           </p>

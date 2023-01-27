@@ -1,78 +1,120 @@
 import axios from 'axios'
-import jwtDecode from 'jwt-decode'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { UserContext, UserInterface } from '../types/types'
 
-export const getCookie = (name: string): string | null => {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find(row => row.startsWith(`${name}=`))
-    ?.split('=')[1]
+const getGoogleOAuthURL = () => {
+  const rootUrl = 'https://accounts.google.com/o/oauth2/auth'
 
-  return cookieValue ?? null
+  const options = {
+    redirect_uri: import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL as string,
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
+    access_type: 'offline',
+    response_type: 'code',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      // 'https://www.googleapis.com/auth/userinfo.email',
+    ].join(' '),
+  }
+
+  const qs = new URLSearchParams(options)
+
+  return `${rootUrl}?${qs.toString()}`
 }
 
-export const getUser = (): UserInterface | null => {
-  const jwt = getCookie('jwt_token')
-  if (!jwt) return null
-  const userObject: UserInterface = jwtDecode(jwt)
-  return userObject ?? null
+export const deleteLocalStorageUser = () => {
+  localStorage.removeItem('user')
 }
 
-export const deleteCookie = (name: string): void => {
-  document.cookie = `${name}=;expires=${new Date().getTime()}`
+const setLocalStorageUser = (user: UserInterface) => {
+  localStorage.removeItem('user')
+  localStorage.setItem('user', JSON.stringify(user))
+}
+
+const getLocalStorageUser = (): UserInterface | null => {
+  const user = localStorage.getItem('user')
+  return user ? JSON.parse(user) : null
 }
 
 export const AuthContext = createContext<UserContext | null>(null)
-
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
+  const location = useLocation()
 
-  useEffect(() => {
-    const storedUser = getUser()
-    if (storedUser) {
-      setUser(storedUser)
-      return
-    }
-  }, [])
-
-  const login = (response: any) => {
-    const jwt = response.credential
-
-    // Set cookie expire time for jwt token
-    const dayInMilliseconds = 86400000
-    var now = new Date()
-    var time = now.getTime()
-    var expireTime = time + dayInMilliseconds * 30
-    now.setTime(expireTime)
-
-    document.cookie = `jwt_token=${jwt};expires=${now.toUTCString()}`
-
-    // Token Expire time
-    // axios
-    //   .get('https://oauth2.googleapis.com/tokeninfo?id_token=' + jwt)
-    //   .then(r => console.log)
-
-    let config = {
+  const fetchUserLogin = async () => {
+    let axiosConfig = {
       mode: 'no-cors',
       headers: {
         'Access-Control-Allow-Origin': '*',
-        token: `${getCookie('jwt_token')}`,
+        token: `${localStorage.getItem('token')}`,
       },
     }
 
-    axios
-      .get('http://10.11.1.8:6999/auth/login', config)
-      .then(({ data }) =>
-        setUser({ name: data.name, picture: data.picture, email: data.email })
-      )
-      .catch(e => console.log(e))
+    await axios
+      .get('https://alpha.deepdream.builders:6999/auth/login', axiosConfig)
+      .then(({ data }) => {
+        const user = {
+          name: data.name,
+          picture: data.picture,
+          email: data.email,
+        }
+
+        setLocalStorageUser(user)
+        // setUser(user)
+        // location.reload()
+      })
+      .catch(e => {
+        setUser(null)
+        deleteLocalStorageUser()
+        localStorage.removeItem('token')
+        console.log(`Authorization failed: ${e}`)
+      })
+  }
+
+  const fetchUserLogout = async () => {
+  //   let axiosConfig = {
+  //     mode: 'no-cors',
+  //     headers: {
+  //       token: `${localStorage.getItem('token')}`,
+  //     },
+  //   }
+
+  //   await axios
+  //     .put('https://alpha.deepdream.builders:6999/auth/logout', axiosConfig)
+  //     .catch(e => console.log(`Logout failed: ${e}`))
+  // }
+
+  useEffect(() => {
+    const user = getLocalStorageUser()
+    const code = new URLSearchParams(location.search).get('code')
+    console.log(code)
+
+    // axios.get(
+    //   'http://localhost:6999/auth/exchange_authcode?auth_code=' + code,
+    //   {
+    //     mode: 'no-cors',
+    //   }
+    // ).then(res => console.log(res)).catch(e => console.log(e.response.data))
+
+    if (!user) return
+    setUser(user)
+  }, [])
+
+  const login = () => {
+    localStorage.removeItem('token')
+    // localStorage.setItem('token', `${response.credential}`)
+    // fetchUserLogin()
+
+    window.location.href = getGoogleOAuthURL()
   }
 
   const logout = () => {
-    deleteCookie('jwt_token')
+    fetchUserLogout()
+    localStorage.removeItem('token')
+    deleteLocalStorageUser()
     window.location.reload()
   }
 

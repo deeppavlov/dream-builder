@@ -107,7 +107,10 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    flow.fetch_token(authorization_code=auth_code)
+    try:
+        flow.fetch_token(authorization_code=auth_code)
+    except ValueError as e:
+        raise HTTPException(status_code=402, detail=str(e))
 
     credentials = flow.credentials
     access_token = credentials.token
@@ -131,8 +134,8 @@ async def update_access_token(token: str = Header(), db: Session = Depends(get_d
     if not crud.check_user_exists(db, email):
         raise HTTPException(status_code=401, detail="User is not authenticated!")
 
-    user = crud.get_uservalid_by_email(db, email)
-    refresh_token = user.token
+    user: UserValid = crud.get_uservalid_by_email(db, email)
+    refresh_token = user.refresh_token
 
     if not _check_refresh_token_validity(user.expire_date):
         # redirect?

@@ -4,6 +4,7 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Element } from './Element'
+import { countResources } from '../../utils/countResources'
 import s from './Skills.module.scss'
 
 export const Skills = ({ skills }: any) => {
@@ -19,7 +20,11 @@ export const Skills = ({ skills }: any) => {
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {skills?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+            {(skills &&
+              countResources(skills, 'ram_usage') +
+                ' | ' +
+                countResources(skills, 'gpu_usage')) ||
+              '0.00 GB RAM | 0.00 GB GPU'}
           </p>
         </div>
       </div>

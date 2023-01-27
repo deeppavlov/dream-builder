@@ -4,11 +4,26 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import { countResources } from '../../utils/countResources'
+import { AnnotatorType } from '../../types/types'
 import s from './Annotators.module.scss'
-import { countResources } from '../../utils/countRAM'
 
 interface Props {
-  annotators: object
+  annotators: [Annotator]
+}
+
+export interface Annotator {
+  name: string
+  display_name: string
+  author: string
+  type: AnnotatorType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
 }
 export const Annotators: React.FC<Props> = ({ annotators }) => {
   return (
@@ -35,7 +50,7 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
-          {annotators?.map((item: string, i: number) => {
+          {annotators?.map((item: Annotator, i: number) => {
             return (
               <Element
                 key={i}

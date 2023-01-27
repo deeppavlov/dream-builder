@@ -1,23 +1,18 @@
 import { useState } from 'react'
+import classNames from 'classnames/bind'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({ item, title, ...props }: any) => {
+export const Element = ({ item, title }: any) => {
   const [disabled, setDisabled] = useState(true)
 
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
-
+  const cx = classNames.bind(s)
   return (
-    <div
-      style={
-        !disabled
-          ? { ...props, opacity: '0.3', background: '#f0f0f3' }
-          : undefined
-      }
-      className={s.element}>
+    <div className={cx('element', !disabled && disabled)}>
       <div className={s.left}>
         <div className={s.top}>
           <img

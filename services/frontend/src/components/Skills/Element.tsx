@@ -1,14 +1,29 @@
 import { useState } from 'react'
-import SkillLogo from '../../assets/icons/skill_script.svg'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
+import { SkillType } from '../../types/types'
 import s from './Element.module.scss'
 
-export const Element = ({ item,title, ...props }: any) => {
+interface skill {
+  name: string
+  display_name: string
+  author: string
+  type: SkillType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
+}
+
+export const Element = ({ item, title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
+  console.log(item)
   return (
     <div
       style={
@@ -23,7 +38,13 @@ export const Element = ({ item,title, ...props }: any) => {
           <p className={s.name}>{title || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>1.0 GB RAM | Ex.t:00ms </p>
+          <p className={s.data}>
+            {item.ram_usage +
+              ' RAM ' +
+              '| ' +
+              item.execution_time +
+              ' sec Ex.time' || '0.0 GB RAM | 0.00 sec Ex.time '}{' '}
+          </p>
         </div>
       </div>
       <div className={s.right}>

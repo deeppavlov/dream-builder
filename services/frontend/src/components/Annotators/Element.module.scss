@@ -26,6 +26,10 @@
       }
     }
   }
+  .disabled {
+    opacity: 0.3;
+    background: #f0f0f3;
+  }
   .right {
     cursor: pointer;
     display: flex;

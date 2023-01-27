@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import aiohttp
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from google.auth import jwt
 from google.oauth2.credentials import Credentials
@@ -37,6 +38,7 @@ async def validate_jwt(token: str = Header()):
     The 'aud' field is also checked to ensure it matches the expected audience.
     If the token is invalid or expired, a HTTP 400 Bad Request error is returned.
     TODO: add check if user in db otherwise http exception
+    TODO: replace jwt-token by access_token
     """
     if token == settings.auth.test_token:
         return
@@ -67,12 +69,16 @@ def validate_date(nbf: int, exp: int) -> None:
 
 
 @router.get("/login")
-def save_user(token: str = Header(), db: Session = Depends(get_db)):
+async def save_user(token: str = Header(), db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
     """
 
-    data = jwt.decode(token, verify=False)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}") as response:
+            data = await response.json()
+
+    data = jwt.decode(data, verify=False)
 
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
@@ -108,7 +114,7 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     8) post request to exchange the refresh token for access token
     """
     try:
-        flow.fetch_token(authorization_code=auth_code)
+        flow.fetch_token(code=auth_code)
     except ValueError as e:
         raise HTTPException(status_code=402, detail=str(e))
 
@@ -124,12 +130,11 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)
     crud.add_user_to_uservalid(db, user_valid, user_info["email"])
 
-    return {"token": access_token}
+    return {"token": access_token, **user_info}
 
 
 @router.post("/update_token")
-async def update_access_token(token: str = Header(), db: Session = Depends(get_db)) -> dict[str, str]:
-    email = jwt.decode(token, verify=False)["email"]
+async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
 
     if not crud.check_user_exists(db, email):
         raise HTTPException(status_code=401, detail="User is not authenticated!")

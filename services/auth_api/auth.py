@@ -19,7 +19,7 @@ router = APIRouter(prefix="/auth")
 
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
-flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=GOOGLE_SCOPE)
+flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=None)
 flow.redirect_uri = "http://localhost:5173"
 
 
@@ -70,22 +70,20 @@ def validate_date(nbf: int, exp: int) -> None:
 
 
 @router.get("/login")
-async def save_user(token: str, db: Session = Depends(get_db)):
+async def save_user(id_token: str, db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
     """
     # async with aiohttp.ClientSession() as session:
     #     async with session.get(f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}") as response:
     #         data = await response.json()
-    data = token
-    data = jwt.decode(data, verify=False)
-    print(data)
+    data = jwt.decode(id_token, verify=False)
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
         return User(**data)
-
-    return User(**crud.get_user_by_email(db, data["email"]))
+    user = crud.get_user_by_email(db, data["email"]).__dict__
+    return User(**user, name=user["fullname"])
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
@@ -124,11 +122,11 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
 
     user_info = jwt.decode(jwt_data, verify=False)
     print(user_info)
-    # await save_user(jwt_data, db)
+    await save_user(jwt_data, db)
 
-    expire_time = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
-    user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)
-    # crud.add_user_to_uservalid(db, user_valid, user_info["email"])
+    expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
+    user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
+    crud.add_user_to_uservalid(db, user_valid, user_info["email"])
 
     return {"token": access_token}
 

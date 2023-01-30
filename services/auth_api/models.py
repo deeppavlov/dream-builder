@@ -24,6 +24,6 @@ class User(UserCreate):
 
 class UserValidScheme(UserBase):
 
-    token: str
+    refresh_token: str
     is_valid: bool
-    expire_time: datetime
+    expire_date: datetime

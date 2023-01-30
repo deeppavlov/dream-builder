@@ -19,7 +19,7 @@ export const Element = ({ item, title, ...props }: any) => {
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {item?.ram_usage + ' RAM ' + item?.gpu_usage + ' GPU'}
+            {item?.ram_usage + ' RAM | ' + item?.gpu_usage + ' GPU'}
           </p>
         </div>
       </div>

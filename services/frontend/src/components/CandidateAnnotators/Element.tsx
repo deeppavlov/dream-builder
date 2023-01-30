@@ -4,7 +4,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({ item, title, ...props }: any) => {
+export const Element = ({ item, title }: any) => {
   const [disabled, setDisabled] = useState<boolean>(true)
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)

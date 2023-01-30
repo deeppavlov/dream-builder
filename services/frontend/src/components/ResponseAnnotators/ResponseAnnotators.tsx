@@ -13,6 +13,7 @@ interface Props {
 }
 
 export const ResponseAnnotators: React.FC<Props> = ({ responseAnnotators }) => {
+  console.log(responseAnnotators)
   return (
     <>
       {responseAnnotators && (

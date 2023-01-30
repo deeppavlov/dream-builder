@@ -31,10 +31,10 @@ def get_user_by_email(db: Session, email: str) -> GoogleUser:
 
 def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str) -> UserValid:
     db_user = UserValid(**user.dict(), id=db.query(GoogleUser).filter(GoogleUser.email == email).first().id)
-
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    print(db_user)
     return db_user
 
 
@@ -46,3 +46,18 @@ def set_users_refresh_token_invalid(db: Session, token: str) -> None:
 def get_uservalid_by_email(db: Session, email: str) -> UserValid:
     user_id = get_user_by_email(db, email).id
     return db.query(UserValid).filter(UserValid.id == user_id).first()
+
+
+def check_uservalid_exists(db: Session, email) -> bool:
+    user_id = get_user_by_email(db, email).id
+    if db.query(UserValid).filter(UserValid.id == user_id).first():
+        return True
+    return False
+
+
+def update_users_refresh_token(db: Session, user: models.UserValidScheme, email: str):
+    user_id = get_user_by_email(db, email).id
+    db.query(UserValid).filter(UserValid.id == user_id).update(
+        {"refresh_token": user.refresh_token, "expire_date": user.expire_date}
+    )
+    db.commit()

@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 
-import aiohttp
+import requests
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from google.auth import jwt
-from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
-import google.auth.transport.requests as Request
+
 
 import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
@@ -44,6 +43,7 @@ async def validate_jwt(token: str = Header()):
     if token == settings.auth.test_token:
         return
     try:
+
         data = jwt.decode(token, verify=False)
 
         # noinspection PyTypeChecker
@@ -74,14 +74,13 @@ async def save_user(id_token: str, db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
     """
-    # async with aiohttp.ClientSession() as session:
-    #     async with session.get(f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}") as response:
-    #         data = await response.json()
     data = jwt.decode(id_token, verify=False)
+
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
         return User(**data)
+
     user = crud.get_user_by_email(db, data["email"]).__dict__
     return User(**user, name=user["fullname"])
 
@@ -115,40 +114,47 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
         flow.fetch_token(code=auth_code)
     except ValueError as e:
         raise HTTPException(status_code=402, detail=str(e))
+
     credentials = flow.credentials
     access_token = credentials.token
     refresh_token = credentials.refresh_token
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    print(user_info)
     await save_user(jwt_data, db)
 
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
-    user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
-    crud.add_user_to_uservalid(db, user_valid, user_info["email"])
 
+    user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
+    if not crud.check_uservalid_exists(db, user_info["email"]):
+        crud.add_user_to_uservalid(db, user_valid, user_info["email"])
+    else:
+        crud.update_users_refresh_token(db, user_valid, user_info["email"])
     return {"token": access_token}
 
 
 @router.post("/update_token")
-async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
+async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
+    # TODO: check expiration refresh token date (google api)
+    if not crud.check_user_exists(db, email):
+        raise HTTPException(status_code=401, detail="User is not authenticated!")
 
-    # if not crud.check_user_exists(db, email):
-    #     raise HTTPException(status_code=401, detail="User is not authenticated!")
+    user: UserValid = crud.get_uservalid_by_email(db, email)
+    refresh_token = user.refresh_token
 
-    # user: UserValid = crud.get_uservalid_by_email(db, email)
-    # refresh_token = user.refresh_token
-
-    # if not _check_refresh_token_validity(user.expire_date):
-    #     redirect?
-        # raise HTTPException(status_code=401, detail="Refresh token has expired!")
+    if not _check_refresh_token_validity(user.expire_date):
+        # redirect?
+        raise HTTPException(status_code=401, detail="Refresh token has expired!")
 
     info = CLIENT_INFO.copy()
-    info.update({"refresh_token": refresh_token})
-    creds = Credentials.from_authorized_user_info(info=info, scopes=GOOGLE_SCOPE)
-    creds.refresh(Request.Request())
-    access_token = creds.token
+    info.update(
+        {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
+    )
+    response = requests.post("https://oauth2.googleapis.com/token", data=info).json()
+    access_token = response["access_token"]
     return {"token": access_token}
 
 

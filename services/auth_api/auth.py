@@ -6,7 +6,7 @@ from google.auth import jwt
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
-from requests import Request
+import google.auth.transport.requests as Request
 
 import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
@@ -70,17 +70,16 @@ def validate_date(nbf: int, exp: int) -> None:
 
 
 @router.get("/login")
-async def save_user(token: str = Header(), db: Session = Depends(get_db)):
+async def save_user(token: str, db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
     """
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}") as response:
-            data = await response.json()
-
+    # async with aiohttp.ClientSession() as session:
+    #     async with session.get(f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}") as response:
+    #         data = await response.json()
+    data = token
     data = jwt.decode(data, verify=False)
-
+    print(data)
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
@@ -118,40 +117,39 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
         flow.fetch_token(code=auth_code)
     except ValueError as e:
         raise HTTPException(status_code=402, detail=str(e))
-
     credentials = flow.credentials
     access_token = credentials.token
     refresh_token = credentials.refresh_token
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    await save_user(jwt_data, db)
+    print(user_info)
+    # await save_user(jwt_data, db)
 
     expire_time = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
     user_valid = UserValidScheme(token=refresh_token, is_valid=True, expire_time=expire_time)
-    crud.add_user_to_uservalid(db, user_valid, user_info["email"])
+    # crud.add_user_to_uservalid(db, user_valid, user_info["email"])
 
-    return {"token": access_token, **user_info}
+    return {"token": access_token}
 
 
 @router.post("/update_token")
-async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
+async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
 
-    if not crud.check_user_exists(db, email):
-        raise HTTPException(status_code=401, detail="User is not authenticated!")
+    # if not crud.check_user_exists(db, email):
+    #     raise HTTPException(status_code=401, detail="User is not authenticated!")
 
-    user: UserValid = crud.get_uservalid_by_email(db, email)
-    refresh_token = user.refresh_token
+    # user: UserValid = crud.get_uservalid_by_email(db, email)
+    # refresh_token = user.refresh_token
 
-    if not _check_refresh_token_validity(user.expire_date):
-        # redirect?
-        raise HTTPException(status_code=401, detail="Refresh token has expired!")
+    # if not _check_refresh_token_validity(user.expire_date):
+    #     redirect?
+        # raise HTTPException(status_code=401, detail="Refresh token has expired!")
 
     info = CLIENT_INFO.copy()
     info.update({"refresh_token": refresh_token})
     creds = Credentials.from_authorized_user_info(info=info, scopes=GOOGLE_SCOPE)
-
-    creds.refresh(Request())
+    creds.refresh(Request.Request())
     access_token = creds.token
     return {"token": access_token}
 

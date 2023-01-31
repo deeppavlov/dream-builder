@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from typing import Mapping
 
+import aiohttp
 import requests
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from google.auth import jwt
@@ -10,7 +12,7 @@ from sqlalchemy.orm import Session
 import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
 from services.auth_api.db.db_models import UserValid
-from services.auth_api.const import GOOGLE_SCOPE, CLIENT_INFO
+from services.auth_api.const import CLIENT_INFO, URL_TOKENINFO
 from services.auth_api.config import settings
 from services.auth_api.models import UserCreate, User, UserValidScheme
 
@@ -30,52 +32,58 @@ def get_db():
         db.close()
 
 
-@router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(token: str = Header()):
+async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
     """
-    This endpoint is used to decode and validate a JWT token passed in the Authorization header of the request.
-    The token is decoded and checked for its 'nbf' and 'exp' fields to ensure it is within its valid date range.
-    The 'aud' field is also checked to ensure it matches the expected audience.
-    If the token is invalid or expired, a HTTP 400 Bad Request error is returned.
-    TODO: add check if user in db otherwise http exception
-    TODO: replace jwt-token by access_token
+    Fetches user_info using access token by request to Google API
+    Checks if access token is valid by date.
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.post(URL_TOKENINFO + access_token) as resp:
+            response = await resp.json()
+            resp_status = resp.status
+
+    if resp_status != 200:
+        raise ValueError(f"Access token has expired or token is bad.\nResponse body:\n{response}")
+
+    return response
+
+
+@router.get("/token", status_code=status.HTTP_200_OK)
+async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
+    """
+    Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
+    raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
         return
+
     try:
+        data = await _fetch_user_info_by_access_token(access_token=token)
 
-        data = jwt.decode(token, verify=False)
-
-        # noinspection PyTypeChecker
-        validate_date(data["nbf"], data["exp"])  # nbf and exp fields are int
         validate_aud(data["aud"])
+        validate_email(data["email"], db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 def validate_aud(input_aud: str) -> None:
-    base = settings.google_client_id
+    base = settings.auth.google_client_id
 
     if input_aud != base:
-        raise ValueError("Audience is not valid! ")
+        raise ValueError("Audience is not valid!")
 
 
-def validate_date(nbf: int, exp: int) -> None:
-    nbf = datetime.fromtimestamp(nbf)
-    exp = datetime.fromtimestamp(exp)
-    now = datetime.now()
+def validate_email(email: str, db: Session) -> None:
 
-    if now < nbf or now > exp:
-        raise ValueError("Date of token is not valid!")
+    if not crud.check_user_exists(db, email):
+        raise ValueError("User is not listed in the database")
 
 
 @router.get("/login")
-async def save_user(id_token: str, db: Session = Depends(get_db)):
+def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
     """
-    data = jwt.decode(id_token, verify=False)
-
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
@@ -121,7 +129,9 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    await save_user(jwt_data, db)
+    save_user(user_info, db)
+    user = User(**user_info)
+    del user.sub
 
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
 
@@ -130,12 +140,13 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
         crud.add_user_to_uservalid(db, user_valid, user_info["email"])
     else:
         crud.update_users_refresh_token(db, user_valid, user_info["email"])
-    return {"token": access_token}
+    return {"token": access_token, **user.dict()}
 
 
 @router.post("/update_token")
 async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
     # TODO: check expiration refresh token date (google api)
+    # TODO: think about redirect
     if not crud.check_user_exists(db, email):
         raise HTTPException(status_code=401, detail="User is not authenticated!")
 

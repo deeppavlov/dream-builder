@@ -1,39 +1,110 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { dateToUTC } from '../utils/dateToUTC'
-import { getDistByName } from '../services/getDistByName'
-import { getAssistantDists } from '../services/getAssistantDists'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { BotCard } from '../components/BotCard/BotCard'
 import { Slider } from '../ui/Slider/Slider'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { RoutesList } from '../Router/RoutesList'
-import { Link } from 'react-router-dom'
+import { getUsersAssistantDists } from '../services/geUsersAssistantDists'
+import { dist_list } from '../types/types'
+import { useAuth } from '../services/AuthProvider'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
+import { postAssistantDist } from '../services/postAssistanDist'
+import { useForm } from 'react-hook-form'
+import { Input } from '../ui/Input/Input'
+import Button from '../ui/Button/Button'
+import axios from 'axios'
 
 export const DraftPage = () => {
-  const [distName, setDistName] = useState('')
+  const queryClient = useQueryClient()
+  const auth = useAuth()
+  const { data: distData } = useQuery(
+    'usersAssistantDists',
+    getUsersAssistantDists
+  )
+  console.log(distData)
   const {
-    isLoading: isDistLoading,
-    error: distError,
-    data: distData,
-  } = useQuery(['dist', distName], () => getDistByName(distName), {
-    enabled: distName?.length > 0,
-  })
-  const {
-    isLoading: isAssistantsLoading,
-    error: assistantsError,
-    data: assistantsData,
-  } = useQuery('assistant_dists', getAssistantDists)
-
-  distError && <>An error has occurred: + {distError}</>
-  isAssistantsLoading && <>Loading...</>
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+  const onSubmit = data => {
+    postAssistantDist(data).then(() => {
+      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
+    })
+  }
 
   return (
     <>
       <Topbar />
-      <Main></Main>
+      <Main>
+        <Wrapper>
+          {/*  "handleSubmit" will validate your inputs before invoking "onSubmit"
+           */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Container flexDirection='column' gap='10px' padding='10px'>
+              {/* register your input into the hook by invoking the "register" function */}
+
+              <Input label='Dist Name' props={{ ...register('dist_name') }} />
+
+              {/* include validation with required or other standard HTML validation rules */}
+              <Input
+                label='Description'
+                props={{ ...register('dist_description', { required: true }) }}
+              />
+              {/* errors will return when field validation fails  */}
+              {errors.exampleRequired && <span>This field is required</span>}
+
+              <Button props={{ type: 'submit' }} theme={'primary'} small long>
+                Submit
+              </Button>
+            </Container>
+          </form>
+        </Wrapper>
+        <Wrapper>
+          <Container>
+            <Slider>
+              {distData?.map((dist: dist_list, i: number) => {
+                const {
+                  display_name,
+                  name,
+                  author,
+                  description,
+                  version,
+                  ram_usage,
+                  gpu_usage,
+                  disk_usage,
+                  date_created,
+                } = dist
+                const dateCreated = dateToUTC(date_created)
+                return (
+                  <BotCard
+                    routingName={name}
+                    key={i}
+                    type='your'
+                    name={display_name}
+                    author={author}
+                    authorImg={DeepPavlovLogo}
+                    dateCreated={dateCreated}
+                    desc={description}
+                    version={version}
+                    ram={ram_usage}
+                    gpu={gpu_usage}
+                    space={disk_usage}
+                    disabledMsg={
+                      auth?.user
+                        ? undefined
+                        : 'You must be signed in to clone the bot'
+                    }
+                  />
+                )
+              })}
+            </Slider>
+          </Container>
+        </Wrapper>
+      </Main>
     </>
   )
 }

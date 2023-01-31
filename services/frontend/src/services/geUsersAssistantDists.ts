@@ -5,7 +5,11 @@ import { api } from './axiosConfig'
 
 export async function getUsersAssistantDists() {
   try {
-    const { data } = await axios.get('/assistant_dists/private')
+    const { data } = await axios.get('/assistant_dists/private', {
+      headers: {
+        token: localStorage.getItem('token'),
+      },
+    })
     return data
   } catch (e) {
     console.log(e)

@@ -31,6 +31,7 @@ import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
 import Hint from '../components/Hint/Hint'
+import { BotCard } from '../components/BotCard/BotCard'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -114,8 +115,9 @@ export const EditorPage = () => {
               <Wrapper>
                 <Container
                   display='grid'
-                  gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-                  <AddButton />
+                  gridTemplateColumns='repeat(auto-fill, minmax(280px, 1fr))'
+                  height='auto'>
+                  {/* <AddButton /> */}
                   {skillListData?.map((skill: any, i: number) => {
                     const dateCreated = dateToUTC(skill.metadata.date_created)
                     return (
@@ -139,9 +141,7 @@ export const EditorPage = () => {
               </Wrapper>
             ) : (
               <Wrapper fullHeight>
-                <Container
-                  display='grid'
-                  gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+                <Container>
                   <Table
                     addButton={
                       <AddButton

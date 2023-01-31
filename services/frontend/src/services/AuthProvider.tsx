@@ -6,18 +6,31 @@ export const deleteLocalStorageUser = () => {
   localStorage.removeItem('user')
 }
 
-const setLocalStorageUser = (user: UserInterface) => {
-  localStorage.removeItem('user')
-  localStorage.setItem('user', JSON.stringify(user))
+export const fetchUserLogout = async () => {
+  let axiosConfig = {
+    mode: 'no-cors',
+    headers: {
+      token: `${localStorage.getItem('token')}`,
+    },
+  }
+
+  await axios
+    .put('https://alpha.deepdream.builders:6999/auth/logout', axiosConfig)
+    .catch(e => console.log(`Logout failed: ${e}`))
 }
 
-const getLocalStorageUser = (): UserInterface | null => {
+export const getLocalStorageUser = (): UserInterface | null => {
   const user = localStorage.getItem('user')
   return user ? JSON.parse(user) : null
 }
 
 export const AuthContext = createContext<UserContext | null>(null)
 export const useAuth = () => useContext(AuthContext)
+
+const setLocalStorageUser = (user: UserInterface) => {
+  localStorage.removeItem('user')
+  localStorage.setItem('user', JSON.stringify(user))
+}
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
@@ -50,19 +63,6 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
         localStorage.removeItem('token')
         console.log(`Authorization failed: ${e}`)
       })
-  }
-
-  const fetchUserLogout = async () => {
-    let axiosConfig = {
-      mode: 'no-cors',
-      headers: {
-        token: `${localStorage.getItem('token')}`,
-      },
-    }
-
-    await axios
-      .put('https://alpha.deepdream.builders:6999/auth/logout', axiosConfig)
-      .catch(e => console.log(`Logout failed: ${e}`))
   }
 
   useEffect(() => {

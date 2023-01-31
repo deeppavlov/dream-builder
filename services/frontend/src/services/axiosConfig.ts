@@ -1,15 +1,19 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { trigger } from '../utils/events'
-import { deleteLocalStorageUser } from './AuthProvider'
+import { deleteLocalStorageUser, fetchUserLogout } from './AuthProvider'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
 })
 
-const handleBadTokenResponse = () => {
-  localStorage.removeItem('token')
+const handleBadTokenResponse = (error: AxiosError) => {
+  fetchUserLogout()
   deleteLocalStorageUser()
-  trigger('ErrorMessageModal', 'bad token')
+  localStorage.removeItem('token')
+  trigger(
+    'ErrorMessageModal',
+    `${JSON.stringify(error?.response?.data, undefined, 2)}`
+  )
 }
 
 // Add a request interceptor
@@ -32,15 +36,14 @@ api.interceptors.response.use(
 
     return response
   },
-  function (error) {
+  function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    if (
-      error.response.status === 400 &&
-      error.response.data?.detail === 'bad token'
-    ) {
-      handleBadTokenResponse()
+
+    if (error?.response?.status === 400) {
+      handleBadTokenResponse(error)
     }
+
     return Promise.reject(error)
   }
 )

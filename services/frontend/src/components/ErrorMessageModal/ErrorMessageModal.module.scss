@@ -3,6 +3,15 @@
   display: flex;
   flex-direction: column;
   gap: 36px;
+
+  pre {
+    @include t4;
+    margin: 0;
+    overflow: auto;
+    max-height: 360px;
+    font-weight: 400;
+    color: $text2;
+  }
 }
 
 .btns {

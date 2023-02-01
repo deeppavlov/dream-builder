@@ -78,7 +78,6 @@ export const Topbar = ({
             className={s.tooltips}
             delayShow={500}
           />
-          <ResourcesSidePanel position={{ top: 64 }} />
         </div>
       )
     case 'editor':
@@ -124,7 +123,6 @@ export const Topbar = ({
             className={s.tooltips}
             delayShow={500}
           />
-          <ResourcesSidePanel position={{ top: 64 }} />
         </>
       )
     case 'dff':
@@ -145,7 +143,6 @@ export const Topbar = ({
           <div id='signin' className={s.signin}></div>
         )}
       </div>
-      <ResourcesSidePanel position={{ top: 64 }} />
     </div>
   )
 }

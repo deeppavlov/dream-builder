@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
 import { SkillCard } from '../components/SkillCard/SkillCard'
@@ -10,10 +11,10 @@ import { useQuery } from 'react-query'
 import { getSkillList } from '../services/getSkillsList'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
 import { useAuth } from '../services/AuthProvider'
 import { SkillType } from '../types/types'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string
@@ -63,6 +64,8 @@ export const SkillsAllPage = () => {
                     type='public'
                     name={skill.metadata.display_name}
                     botName={skill.assistant_dist}
+                    author='Deep Pavlov'
+                    authorImg={DeepPavlovLogo}
                     skillType={skill.metadata.type}
                     dateCreated={date}
                     desc={skill.metadata.description}
@@ -94,6 +97,8 @@ export const SkillsAllPage = () => {
                     key={i}
                     name={skill.metadata.display_name}
                     botName={skill.assistant_dist}
+                    author='Deep Pavlov'
+                    authorImg={DeepPavlovLogo}
                     dateCreated={date}
                     time={time}
                     desc={skill.metadata.description}
@@ -113,12 +118,7 @@ export const SkillsAllPage = () => {
             </Table>
           </Wrapper>
         )}
-        <SkillSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to add the skill'
-          }
-          position={{ top: 64 }}
-        />
+        <BaseSidePanel position={{ top: 64 }} />
         <CreateSkillModal />
       </Main>
     </>

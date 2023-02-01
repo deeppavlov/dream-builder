@@ -52,7 +52,7 @@ export const Element = ({ item, title, ...props }: any) => {
           disabled={!disabled}
           item={{
             typeItem: title, // Type of Element, like Intent Catcher, Intent Responder, FAQ etc.
-            data: null, // Data of Element
+            data: item, // Data of Element
           }}
           dataFor='customizable_skill'
         />

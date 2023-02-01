@@ -10,7 +10,10 @@ import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { useState } from 'react'
+import React, { useId, useState } from 'react'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import { nanoid } from 'nanoid'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
@@ -24,6 +27,8 @@ export const SkillCard = ({
   name,
   desc,
   botName,
+  author,
+  authorImg,
   dateCreated,
   version,
   ram,
@@ -38,6 +43,8 @@ export const SkillCard = ({
   const skill = {
     name,
     botName,
+    author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -59,16 +66,18 @@ export const SkillCard = ({
           { name: 'RAM', value: ram },
           { name: 'Execution time', value: executionTime },
         ]
-  const sliderHandler = (e: MouseEvent) => {
+  const sliderHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
     setDisabled(disabled => !disabled)
   }
-  const handleSkillCardClick = (e: MouseEvent) => {
+  const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    trigger('SkillSidePanel', skill)
+    trigger(BASE_SP_EVENT, {
+      children: <SkillSidePanel key={skill.name} skill={skill} />
+    })
   }
 
-  const handleAddSkillBtnClick = (e: MouseEvent) => {
+  const handleAddSkillBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
   }

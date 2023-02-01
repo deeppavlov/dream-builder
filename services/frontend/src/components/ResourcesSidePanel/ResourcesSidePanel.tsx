@@ -1,35 +1,26 @@
 import { useEffect, useState } from 'react'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
+import BaseSidePanel, { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { TotalResourcesInterface } from '../../types/types'
 import s from './ResourcesSidePanel.module.scss'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 
-const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
-  const [res, setRes] = useState<TotalResourcesInterface | null>(null)
-  const [isOpen, setIsOpen] = useState(false)
+interface Props {
+  resources: TotalResourcesInterface
+}
 
-  useEffect(() => {
-    subscribe('ResourcesSidePanel', handleEventUpdate)
-    return () => unsubscribe('ResourcesSidePanel', handleEventUpdate)
-  }, [])
+const ResourcesSidePanel = ({ resources }: Props) => {
+  const [res, setRes] = useState<TotalResourcesInterface>(resources)
 
-  const handleEventUpdate = (data: { detail: TotalResourcesInterface }) => {
-    setRes(data.detail)
-    setIsOpen(!isOpen)
-  }
-
-  const handleCloseBtnClick = () => setIsOpen(false)
+  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='Total Resources'>
+    <>
+      <SidePanelHeader>Total Resources</SidePanelHeader>
       <div className={s.resourcesSidePanel}>
         <div className={s.resourcesBlock}>
           <div className={s.resourcesBlock__header}>
@@ -57,7 +48,7 @@ const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
             ]}
           />
         </div>
-        <div className={s.resourcesBlock}>
+        {/* <div className={s.resourcesBlock}>
           <div className={s.resourcesBlock__header}>
             <span className={s.resourcesBlock__name}>Custom</span>
             <SmallTag>{res?.custom.containers ?? 0} container</SmallTag>
@@ -81,14 +72,14 @@ const ResourcesSidePanel = ({ position }: Partial<SidePanelProps>) => {
               },
             ]}
           />
-        </div>
+        </div> */}
         <div className={s.resourcesSidePanel__btns}>
           <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>
             Close
           </Button>
         </div>
       </div>
-    </BaseSidePanel>
+    </>
   )
 }
 

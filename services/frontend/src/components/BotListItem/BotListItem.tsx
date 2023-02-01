@@ -9,6 +9,8 @@ import s from './BotListItem.module.scss'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { useAuth } from '../../services/AuthProvider'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -21,6 +23,7 @@ export const BotListItem = ({
   checkbox,
   name,
   routingName,
+  authorImg,
   author,
   desc,
   dateCreated,
@@ -35,6 +38,7 @@ export const BotListItem = ({
     name,
     routingName,
     author,
+    authorImg,
     desc,
     dateCreated,
     time,
@@ -45,7 +49,7 @@ export const BotListItem = ({
   }
   const auth = useAuth()
   const handleBotListItemClick = () => {
-    trigger('BotInfoSidePanel', bot)
+    trigger(BASE_SP_EVENT, { children: <BotInfoSidePanel key={bot.name} bot={bot} /> })
   }
 
   const handleCloneBtnClick = (e: any) => {

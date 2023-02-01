@@ -32,6 +32,9 @@ import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
 import Hint from '../components/Hint/Hint'
 import { BotCard } from '../components/BotCard/BotCard'
+import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -125,6 +128,8 @@ export const EditorPage = () => {
                         key={i}
                         type='your'
                         big
+                        author={auth?.user?.name!}
+                        authorImg={auth?.user?.picture!}
                         name={skill.metadata.display_name}
                         dateCreated={dateCreated}
                         desc={skill.metadata.description}
@@ -149,10 +154,13 @@ export const EditorPage = () => {
                         disabled={auth?.user === null}
                       />
                     }>
-                    {skillListData?.map((skill: any) => {
+                    {skillListData?.map((skill: any, i: number) => {
                       const dateCreated = dateToUTC(skill.metadata.date_created)
                       return (
                         <SkillListItem
+                        key={i}
+                        author={auth?.user?.name!}
+                        authorImg={auth?.user?.picture!}
                           name={skill.metadata.display_name}
                           dateCreated={dateCreated}
                           desc={skill.metadata.description}
@@ -196,11 +204,18 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
-      <SkillSidePanel position={{ top: 64 }} />
+
+      {/* Sidepanels */}
+      <BaseSidePanel position={{ top: 64 }} />
+      {/* <SkillSidePanel position={{ top: 64 }} />
       <IntentCatcherSidePanel position={{ top: 64 }} />
       <IntentResponderSidePanel position={{ top: 64 }} />
+      <AnnotatorSidePanel position={{ top: 64 }} /> */}
+
+      {/* Modals */}
       <IntentCatcherModal />
       <IntentResponderModal />
+      <SkillPromptModal />
     </>
   )
 }

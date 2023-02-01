@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
+import { trigger } from '../../utils/events'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
 import IntentList from '../IntentList/IntentList'
 import BaseLink from '../BaseLink/BaseLink'
-import s from './IntentCatcherSidePanel.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SidePanelStatus from '../SidePanelStatus/SidePanelStatus'
-import { nanoid } from 'nanoid'
-import ReactTooltip from 'react-tooltip'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import s from './IntentCatcherSidePanel.module.scss'
+import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
+import { IAnnotator } from '../../types/types'
 
 const intentsMock: IntentListItemInterface[] = [
   {
@@ -119,11 +120,13 @@ const intentsMock: IntentListItemInterface[] = [
   },
 ]
 
-const IntentCatcherSidePanel = ({
-  position,
-  disabled,
-}: Partial<SidePanelProps>) => {
-  const [isOpen, setIsOpen] = useState(false)
+interface Props {
+  annotator: IAnnotator
+  disabled?: boolean
+  activeTab?: 'Properties' | 'Editor'
+}
+
+const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
   /* `isTrainingLoading - training loading status` */
   /* `isTraining` - status from start training to Replace IntentCatcher*/
   const [isTrainingLoading, setIsTrainingLoading] = useState(false)
@@ -132,7 +135,7 @@ const IntentCatcherSidePanel = ({
     status: 'success' | 'error'
   } | null>(null)
 
-  const handleCloseBtnClick = () => setIsOpen(false)
+  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   const handleAddIntentBtnClick = () => trigger('IntentCatcherModal', {})
 
@@ -155,24 +158,11 @@ const IntentCatcherSidePanel = ({
     setIsTrainingLoading(false)
   }
 
-  const handleEventUpdate = (data: { detail: any }) => {
-    // Set here Intent Catcher details when opening
-    setIsOpen(!isOpen)
-  }
-
-  useEffect(() => {
-    subscribe('IntentCatcherSidePanel', handleEventUpdate)
-    return () => unsubscribe('IntentCatcherSidePanel', handleEventUpdate)
-  }, [])
-
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='Intent Catcher'>
+    <AnnotatorSidePanel annotator={annotator} activeTab={activeTab}>
       <div className={s.intentCatcherSidePanel}>
         <div className={s.intentCatcherSidePanel__container}>
+          <div className={s.name}>Intent Catcher</div>
           <Button
             theme='secondary'
             long
@@ -259,7 +249,7 @@ const IntentCatcherSidePanel = ({
           </SidePanelStatus>
         )}
       </div>
-    </BaseSidePanel>
+    </AnnotatorSidePanel>
   )
 }
 

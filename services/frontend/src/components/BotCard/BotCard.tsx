@@ -10,6 +10,8 @@ import { SmallTag } from '../SmallTag/SmallTag'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import s from './BotCard.module.scss'
 import { Kebab } from '../../ui/Kebab/Kebab'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -37,6 +39,7 @@ export const BotCard = ({
     routingName,
     name,
     author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -46,7 +49,9 @@ export const BotCard = ({
   }
 
   const handleBotCardClick = () => {
-    trigger('BotInfoSidePanel', bot)
+    trigger(BASE_SP_EVENT, {
+      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+    })
   }
   const handlePreviewBtnClick = (e: any) => {
     e.stopPropagation()

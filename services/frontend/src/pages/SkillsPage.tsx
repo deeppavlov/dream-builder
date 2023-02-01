@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
 import { useAuth } from '../services/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
@@ -25,6 +26,7 @@ import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string
@@ -60,6 +62,8 @@ export const SkillsPage = () => {
               key={nanoid(8)}
               type='your'
               name='Name of The Skill'
+              author={`${auth?.user?.name}`}
+              authorImg={`${auth?.user?.picture}`}
               skillType='fallbacks'
               botName='Name of The Bot'
               desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
@@ -76,6 +80,8 @@ export const SkillsPage = () => {
             <SkillListItem
               key={nanoid(8)}
               name='Name of The Skill'
+              author={`${auth?.user?.name}`}
+              authorImg={`${auth?.user?.picture}`}
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
               botName={'Name of The Bot'}
@@ -134,6 +140,8 @@ export const SkillsPage = () => {
                         type='public'
                         key={i}
                         name={display_name}
+                        author='Deep Pavlov'
+                        authorImg={DeepPavlovLogo}
                         botName={skill.assistant_dist}
                         skillType={type}
                         dateCreated={date}
@@ -202,6 +210,8 @@ export const SkillsPage = () => {
                       name={display_name}
                       botName={skill?.assistant_dist}
                       dateCreated={date}
+                      author='Deep Pavlov'
+                      authorImg={DeepPavlovLogo}
                       time={time}
                       desc={description}
                       version={version}
@@ -243,12 +253,7 @@ export const SkillsPage = () => {
           </ReactTooltip>
         )}
 
-        <SkillSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to add the skill'
-          }
-          position={{ top: 64 }}
-        />
+        <BaseSidePanel position={{ top: 64 }} />
 
         <CreateSkillModal />
         <SkillPromptModal />

@@ -32,7 +32,7 @@ export const Element = ({ item, title }: any) => {
           dataFor='customizable_annotator'
           item={{
             typeItem: title, // Type of Element, like Intent Catcher, Intent Responder, FAQ etc.
-            data: null, // Data of Element
+            data: item, // Data of Element
           }}
         />
         {/* <ToggleButton sliderHandler={sliderHandler} /> */}

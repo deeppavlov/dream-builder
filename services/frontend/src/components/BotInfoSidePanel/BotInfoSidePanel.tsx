@@ -15,15 +15,22 @@ import { SmallTag } from '../SmallTag/SmallTag'
 import DateCard from '../DateCard/DateCard'
 import s from './BotInfoSidePanel.module.scss'
 import { isSelector } from '../../utils/isSelector'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import useTabsManager from '../../hooks/useTabsManager'
 
-interface BotInfoSidePanelProps extends Partial<SidePanelProps> {
+interface Props {
+  bot: BotInfoInterface
   disabledMsg?: string
 }
 
-const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
+const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   const auth = useAuth()
-  const [bot, setBot] = useState<BotInfoInterface | null>(null)
-  const [isOpen, setIsOpen] = useState(false)
+  const [bot, setBot] = useState<BotInfoInterface>(propBot)
+  const [properties] = ['Properties']
+  const [tabsInfo, setTabsInfo] = useTabsManager({
+    activeTabId: properties,
+    tabList: new Map([[properties, properties]]),
+  })
 
   const {
     isLoading: isDistsComponentsLoading,
@@ -33,137 +40,122 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
     ['distsComponents', bot?.routingName],
     () => getComponentsFromAssistantDists(bot?.routingName!),
     {
-      enabled: isOpen,
+      // enabled: isOpen,
     }
   )
-  /**
-   * Set panel is open and getting bot info
-   */
-  const handleEventUpdate = (data: { detail: BotInfoInterface }) => {
-    setBot(data.detail)
-    setIsOpen(!isOpen)
-  }
 
   const handleCloneBtnClick = () => {
     trigger('CreateAssistantModal', bot)
   }
 
-  useEffect(() => {
-    subscribe('BotInfoSidePanel', handleEventUpdate)
-    return () => unsubscribe('BotInfoSidePanel', handleEventUpdate)
-  }, [])
-
-  if (bot) {
-    const { name, version, dateCreated, author, desc, ram, gpu, space } = bot
-
-    return (
-      <BaseSidePanel
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        position={position}
-        name='Properties'>
-        <div className={s.botInfoSidePanel}>
-          <div className={s.header}>
-            <span className={s.name}>{name}</span>
-            <SmallTag theme='version'>v{version}</SmallTag>
-          </div>
-          <div className={s.container}>
-            <div className={s.main}>
-              <DateCard date={dateCreated} />
-              <div className={s.table}>
-                <div className={s.author}>
-                  {author === 'DeepPavlov' ? (
-                    <DeepPavlovLogo />
-                  ) : (
-                    <img src={auth?.user?.picture} />
-                  )}
-                  <span>
-                    {author === 'DeepPavlov' ? 'Made by ' + author : author}
-                  </span>
-                </div>
-                <ul className={s.table}>
-                  <li>
-                    <span className={s.type}>RAM:</span>
-                    <span className={s.tableCount}>{ram ?? '0.0 GB'}</span>
-                  </li>
-                  <li>
-                    <span className={s.type}>GPU:</span>
-                    <span className={s.tableCount}>{gpu ?? '0.0 GB'}</span>
-                  </li>
-                  <li>
-                    <span className={s.type}>Disk space:</span>
-                    <span className={s.tableCount}>{space ?? '0.0 GB'}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <p className={s.desc}>{desc}</p>
-          </div>
-          <div className={s.accordions}>
-            {isDistsComponentsLoading && <>{'Loading...'}</>}
-            {distsComponentsData &&
-              Object.keys(distsComponentsData).map(
-                (group: string, id: number) => (
-                  <Accordion
-                    key={id}
-                    title={capitalizeTitle(group)}
-                    group={group}
-                    closed
-                    rounded>
-                    {group == 'skill_selectors' &&
-                      distsComponentsData.skill_selectors?.length == 0 && (
-                        <div className={s.accordionItem}>All Skills</div>
-                      )}
-                    {group !== 'skill_selectors' &&
-                      distsComponentsData[group].length == 0 && (
-                        <div className={s.accordionItem}>None</div>
-                      )}
-                    {distsComponentsData[group].map(
-                      (item: object, id: number) => (
-                        <div key={id} className={s.accordionItem}>
-                          {!isSelector(group) && (
-                            <img
-                              className={s.icon}
-                              src={`./src/assets/icons/${item.type}.svg`}
-                            />
-                          )}
-                          {item.display_name}
-                        </div>
-                      )
-                    )}
-                  </Accordion>
-                )
-              )}
-          </div>
-          <div className={s.btns}>
-            <div data-tip data-for='bot-clone-interact'>
-              <Button
-                theme='primary'
-                props={{
-                  disabled: disabledMsg !== undefined,
-                  onClick: handleCloneBtnClick,
-                }}>
-                Fork
-              </Button>
-            </div>
-          </div>
-          {disabledMsg && (
-            <ReactTooltip
-              place='bottom'
-              effect='solid'
-              className='tooltips'
-              arrowColor='#8d96b5'
-              delayShow={1000}
-              id='bot-clone-interact'>
-              {disabledMsg}
-            </ReactTooltip>
-          )}
+  return (
+    <>
+      <SidePanelHeader>
+        <ul role='tablist'>
+          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+            <li
+              role='tab'
+              key={id}
+              aria-selected={tabsInfo.activeTabId === id}
+              onClick={() => tabsInfo.handleTabSelect(id)}>
+              {name}
+            </li>
+          ))}
+        </ul>
+      </SidePanelHeader>
+      <div className={s.botInfoSidePanel}>
+        <div className={s.header}>
+          <span className={s.name}>{bot.name}</span>
+          <SmallTag theme='version'>v{bot.version}</SmallTag>
         </div>
-      </BaseSidePanel>
-    )
-  }
-
-  return null
+        <div className={s.container}>
+          <div className={s.main}>
+            <DateCard date={bot.dateCreated} />
+            <div className={s.table}>
+              <div className={s.author}>
+                <img src={bot.authorImg} alt='Author' />
+                <span>{bot.author}</span>
+              </div>
+              <ul className={s.table}>
+                <li>
+                  <span>RAM:</span>
+                  <span className={s.tableCount}>{bot.ram ?? '0.0 GB'}</span>
+                </li>
+                <li>
+                  <span>GPU:</span>
+                  <span className={s.tableCount}>{bot.gpu ?? '0.0 GB'}</span>
+                </li>
+                <li>
+                  <span>Disk space:</span>
+                  <span className={s.tableCount}>{bot.space ?? '0.0 GB'}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p className={s.desc}>{bot.desc}</p>
+        </div>
+        <div className={s.accordions}>
+          {isDistsComponentsLoading && <>{'Loading...'}</>}
+          {distsComponentsData &&
+            Object.keys(distsComponentsData).map(
+              (group: string, id: number) => (
+                <Accordion
+                  key={id}
+                  title={capitalizeTitle(group)}
+                  group={group}
+                  closed
+                  rounded>
+                  {group == 'skill_selectors' &&
+                    distsComponentsData.skill_selectors?.length == 0 && (
+                      <div className={s.accordionItem}>All Skills</div>
+                    )}
+                  {group !== 'skill_selectors' &&
+                    distsComponentsData[group].length == 0 && (
+                      <div className={s.accordionItem}>None</div>
+                    )}
+                  {distsComponentsData[group].map(
+                    (item: object, id: number) => (
+                      <div key={id} className={s.accordionItem}>
+                        {!isSelector(group) && (
+                          <img
+                            className={s.icon}
+                            src={`./src/assets/icons/${item.type}.svg`}
+                          />
+                        )}
+                        {item.display_name}
+                      </div>
+                    )
+                  )}
+                </Accordion>
+              )
+            )}
+        </div>
+        <div className={s.btns}>
+          <div data-tip data-for='bot-clone-interact'>
+            <Button
+              theme='primary'
+              props={{
+                disabled: disabledMsg !== undefined,
+                onClick: handleCloneBtnClick,
+              }}>
+              Clone
+            </Button>
+          </div>
+        </div>
+        {disabledMsg && (
+          <ReactTooltip
+            place='bottom'
+            effect='solid'
+            className='tooltips'
+            arrowColor='#8d96b5'
+            delayShow={1000}
+            id='bot-clone-interact'>
+            {disabledMsg}
+          </ReactTooltip>
+        )}
+      </div>
+    </>
+  )
 }
 
 export default BotInfoSidePanel

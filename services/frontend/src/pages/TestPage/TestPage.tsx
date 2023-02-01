@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { nanoid } from 'nanoid'
-import AnnotatorsSidePanel from '../../components/AnnotatorsSidePanel/AnnotatorsSidePanel'
+import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import BaseLink from '../../components/BaseLink/BaseLink'
-import BaseSidePanel from '../../components/BaseSidePanel/BaseSidePanel'
+import BaseSidePanel, {
+  BASE_SP_EVENT,
+} from '../../components/BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
 import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
@@ -21,7 +23,9 @@ import NotificationsSidePanel from '../../components/NotificationsSidePanel/Noti
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
-import SelectorSettingsSidePanel from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
+import SelectorSettingsSidePanel, {
+  SelectorSettings,
+} from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanel from '../../ui/SidePanel/SidePanel'
@@ -34,11 +38,15 @@ import { dateToUTC } from '../../utils/dateToUTC'
 import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
 import { BotCard } from '../../components/BotCard/BotCard'
 import CompanyLogo from '@assets/icons/pavlovInCard.svg'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
+import { TabPanel } from 'react-tabs'
+import useSidePanel from '../../hooks/useTabsManager'
+import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -118,26 +126,81 @@ const mockSkill = {
   gpu: '0.0 GB',
 }
 
-export const TestPage = () => {
-  const getBtnWithModal = (
-    ComponentEl: React.FC<{
-      isOpen: boolean
-      setIsOpen: (state: boolean) => void
-    }>,
-    btnLabel: string,
-    props?: React.PropsWithoutRef<any>
-  ) => {
-    const [isOpen, setIsOpen] = useState(false)
-    return (
-      <>
-        <Button theme='primary' props={{ onClick: () => setIsOpen(true) }}>
-          {btnLabel}
-        </Button>
-        <ComponentEl isOpen={isOpen} setIsOpen={setIsOpen} {...props} />
-      </>
-    )
-  }
+const mockAnnotator = {
+  name: 'Intent Catcher',
+  author: 'Deep Pavlov',
+  authorImg: DeepPavlovLogo,
+  type: 'Dictionary — &Pattern-based',
+  desc: 'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.',
+}
 
+const mockBot: BotInfoInterface = {
+  name: 'Name of the bot',
+  routingName: 'dream_russian',
+  author: 'Name of the company',
+  authorImg: DeepPavlovLogo,
+  dateCreated: dateToUTC(new Date()),
+  desc: 'Some information about this bot writing in 2 lines',
+  version: '0.0.1',
+  ram: '0.0 GB',
+  gpu: '0.0 GB',
+  space: '0.0 GB',
+}
+
+const mockTotalRes: TotalResourcesInterface = {
+  proxy: {
+    containers: '30',
+    ram: '0.0 GB',
+    gpu: '0.0 GB',
+    space: '0.0 GB',
+  },
+}
+
+const mockSettings: SelectorSettings = {
+  name: 'Tag-& Evaluation-based Selector',
+  type: 'skill',
+  settingKeys: [
+    {
+      name: 'HIGH_PRIORITY_INTENTS',
+      type: 'switch',
+      value: ['1', '0'],
+    },
+    {
+      name: 'RESTRICTION_FOR_SENSITIVE_CASE',
+      type: 'switch',
+      value: ['1', '0'],
+    },
+    {
+      name: 'ALWAYS_TURN_ON_ALL_SKILLS',
+      type: 'switch',
+      value: ['1', '0'],
+    },
+    {
+      name: 'ALWAYS_TURN_ON_GIVEN_SKILL',
+      type: 'switch',
+      value: ['1', '0'],
+    },
+    {
+      name: 'LANGUAGE',
+      type: 'switch',
+      value: ['ENG', 'RU'],
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'checkbox',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'radio',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+  ],
+}
+
+export const TestPage = () => {
   return (
     <div className={s.testPage}>
       <div className={s.testPage__block}>
@@ -277,97 +340,250 @@ export const TestPage = () => {
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>SidePanels</span>
-        {getBtnWithModal(SidePanel, 'default empty (ui-kit)', {
-          children: <>default empty sidepanel (ui-kit)</>,
-        })}
-        {getBtnWithModal(BaseSidePanel, 'default (dream builder)')}
         <div className={s.testPage__component}>
-          <span>DialogSidePanel</span>
-          {getBtnWithModal(DialogSidePanel, 'Dialog (start)', { start: true })}
-          {getBtnWithModal(DialogSidePanel, 'Dialog (chatting)')}
-          {getBtnWithModal(DialogSidePanel, 'Dialog (error)', { error: true })}
+          <span>BaseSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, { children: <>Test</> })
+              },
+            }}>
+            BaseSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>AnnotatorSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <AnnotatorSidePanel key={0} annotator={mockAnnotator} />
+                  ),
+                })
+              },
+            }}>
+            AnnotatorSidePanel (Properties)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <AnnotatorSidePanel
+                      key={1}
+                      annotator={mockAnnotator}
+                      activeTab='Editor'>
+                      Editor tab content
+                    </AnnotatorSidePanel>
+                  ),
+                })
+              },
+            }}>
+            AnnotatorSidePanel (Editor)
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>IntentCatcherSidePanel</span>
-          {getBtnWithModal(IntentCatcherSidePanel, 'Intent Catcher', {
-            disabled: true,
-          })}
-        </div>
-        <div className={s.testPage__component}>
-          <span>IntentResponderSidePanel</span>
-          {getBtnWithModal(IntentResponderSidePanel, 'Intent Responder')}
-        </div>
-        <div className={s.testPage__component}>
-          <span>NotificationsSidePanel</span>
-          {getBtnWithModal(NotificationsSidePanel, 'Notifications')}
-        </div>
-        <div className={s.testPage__component}>
-          <span>ResourcesSidePanel</span>
-          {getBtnWithModal(ResourcesSidePanel, 'Resources')}
-        </div>
-        <div className={s.testPage__component}>
-          <span>FAQSidePanel</span>
-          {getBtnWithModal(FAQSidePanel, 'FAQ')}
-        </div>
-        <div className={s.testPage__component}>
-          <span>BotInfoSidePanel</span>
-          {getBtnWithModal(BotInfoSidePanel, 'Bot Info')}
-        </div>
-        <div className={s.testPage__component}>
-          <span>AnnotatorsSidePanel</span>
-          {getBtnWithModal(AnnotatorsSidePanel, 'Annotators')}
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <IntentCatcherSidePanel key={0} annotator={mockAnnotator} />
+                  ),
+                })
+              },
+            }}>
+            IntentCatcherSidePanel
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>SkillSidePanel</span>
-          {getBtnWithModal(SkillSidePanel, 'Skill')}
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SkillSidePanel
+                      skill={{
+                        name: 'Name of The Skill',
+                        author: 'Deep Pavlov',
+                        authorImg: DeepPavlovLogo,
+                        skillType: 'fallbacks',
+                        botName: 'Name of The Bot',
+                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
+                        dateCreated: dateToUTC(new Date()),
+                        version: '0.01',
+                        ram: '0.0 GB',
+                        gpu: '0.0 GB',
+                        executionTime: '0.0 ms',
+                      }}
+                    />
+                  ),
+                })
+              },
+            }}>
+            SkillSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>IntentResponderSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <IntentResponderSidePanel
+                      skill={{
+                        name: 'Name of The Skill',
+                        author: 'Deep Pavlov',
+                        authorImg: DeepPavlovLogo,
+                        skillType: 'fallbacks',
+                        botName: 'Name of The Bot',
+                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
+                        dateCreated: dateToUTC(new Date()),
+                        version: '0.01',
+                        ram: '0.0 GB',
+                        gpu: '0.0 GB',
+                        executionTime: '0.0 ms',
+                      }}
+                    />
+                  ),
+                })
+              },
+            }}>
+            IntentResponderSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>FAQSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <FAQSidePanel
+                      skill={{
+                        name: 'Name of The Skill',
+                        author: 'Deep Pavlov',
+                        authorImg: DeepPavlovLogo,
+                        skillType: 'q_a',
+                        botName: 'Name of The Bot',
+                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
+                        dateCreated: dateToUTC(new Date()),
+                        version: '0.01',
+                        ram: '0.0 GB',
+                        gpu: '0.0 GB',
+                        executionTime: '0.0 ms',
+                      }}
+                    />
+                  ),
+                })
+              },
+            }}>
+            FAQSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>DialogSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <DialogSidePanel key={0} start />,
+                })
+              },
+            }}>
+            DialogSidePanel (start)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <DialogSidePanel key={1} />,
+                })
+              },
+            }}>
+            DialogSidePanel (chatting)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <DialogSidePanel key={2} error />,
+                })
+              },
+            }}>
+            DialogSidePanel (error)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>BotInfoSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <BotInfoSidePanel bot={mockBot} />,
+                })
+              },
+            }}>
+            BotInfoSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>NotificationsSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, { children: <NotificationsSidePanel /> })
+              },
+            }}>
+            NotificationsSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>ResourcesSidePanel</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <ResourcesSidePanel resources={mockTotalRes} />,
+                })
+              },
+            }}>
+            ResourcesSidePanel
+          </Button>
         </div>
         <div className={s.testPage__component}>
           <span>SelectorSettingsSidePanel</span>
-          {getBtnWithModal(SelectorSettingsSidePanel, 'Selector Settings', {
-            name: 'Tag-& Evaluation-based Selector',
-            type: 'skill',
-            settingKeys: [
-              {
-                name: 'HIGH_PRIORITY_INTENTS',
-                type: 'switch',
-                value: ['1', '0'],
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: <SelectorSettingsSidePanel {...mockSettings} />,
+                })
               },
-              {
-                name: 'RESTRICTION_FOR_SENSITIVE_CASE',
-                type: 'switch',
-                value: ['1', '0'],
-              },
-              {
-                name: 'ALWAYS_TURN_ON_ALL_SKILLS',
-                type: 'switch',
-                value: ['1', '0'],
-              },
-              {
-                name: 'ALWAYS_TURN_ON_GIVEN_SKILL',
-                type: 'switch',
-                value: ['1', '0'],
-              },
-              {
-                name: 'LANGUAGE',
-                type: 'switch',
-                value: ['ENG', 'RU'],
-              },
-              {
-                name: 'GPT-J Chit-Chat',
-                type: 'checkbox',
-              },
-              {
-                name: 'GPT-J Chit-Chat',
-                type: 'radio',
-              },
-              {
-                name: 'GPT-J Chit-Chat',
-                type: 'input',
-              },
-            ],
-          })}
+            }}>
+            SelectorSettingsSidePanel
+          </Button>
         </div>
       </div>
+
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Buttons</span>
         <div className={s.testPage__component}>
@@ -612,6 +828,7 @@ export const TestPage = () => {
           <BotCard
             type='public'
             name='Name of the bot'
+            routingName='#'
             author='Name of the company'
             authorImg={CompanyLogo}
             dateCreated={dateToUTC(new Date())}
@@ -626,6 +843,7 @@ export const TestPage = () => {
           <span>your</span>
           <BotCard
             type='your'
+            routingName='#'
             name='Name of the bot'
             author='Name of the company'
             authorImg={CompanyLogo}
@@ -644,7 +862,7 @@ export const TestPage = () => {
           <span>public</span>
           <SkillCard
             type='public'
-            name='Name of The Skill'
+            name='Name of The Skill1'
             skillType='fallbacks'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
@@ -659,7 +877,7 @@ export const TestPage = () => {
           <span>your</span>
           <SkillCard
             type='your'
-            name='Name of The Skill'
+            name='Name of The Skill2'
             skillType='fallbacks'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
@@ -671,6 +889,12 @@ export const TestPage = () => {
           />
         </div>
       </div>
+
+      {/* Sidepanels */}
+      <BaseSidePanel />
+
+      {/* <SkillSidePanel /> */}
+      {/* <BotInfoSidePanel /> */}
 
       {/* Modals */}
       <CreateAssistantModal />

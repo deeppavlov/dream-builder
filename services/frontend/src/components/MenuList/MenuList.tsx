@@ -524,7 +524,6 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
                   case 'Dff Rhodes Coaching Prompted Skill':
                   case 'Dff Dream Persona Prompted Skill':
                     trigger('SkillPromptModal', {
-                      isEditingModal: true,
                       skill: item.data,
                     })
                     break

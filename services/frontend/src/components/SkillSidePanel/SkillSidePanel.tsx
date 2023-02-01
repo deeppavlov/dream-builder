@@ -100,7 +100,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
                   // disabled: disabledMsg !== undefined,
                   onClick: handleAddSkillBtnClick,
                 }}>
-                Dublicate
+                Duplicate
               </Button>
             </div>
           </div>

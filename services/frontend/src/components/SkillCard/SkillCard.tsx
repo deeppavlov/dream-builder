@@ -73,13 +73,18 @@ export const SkillCard = ({
   const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     trigger(BASE_SP_EVENT, {
-      children: <SkillSidePanel key={skill.name} skill={skill} />
+      children: <SkillSidePanel key={skill.name} skill={skill} />,
     })
   }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
+  }
+
+  const handleEditBtnClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    trigger('SkillPromptModal', { skill: skill})
   }
 
   let cx = classNames.bind(s)
@@ -155,7 +160,11 @@ export const SkillCard = ({
                 data-tip
                 data-for='skill-edit-interact'
                 style={{ width: '100%' }}>
-                <Button theme='secondary' long small>
+                <Button
+                  theme='secondary'
+                  long
+                  small
+                  props={{ onClick: handleEditBtnClick }}>
                   Edit
                 </Button>
               </div>

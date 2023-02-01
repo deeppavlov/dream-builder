@@ -4,7 +4,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({ item,title, ...props }: any) => {
+export const Element = ({ item, title, ...props }: any) => {
   const [disabled, setDisabled] = useState(true)
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
@@ -31,7 +31,7 @@ export const Element = ({ item,title, ...props }: any) => {
           disabled={!disabled}
           item={{
             typeItem: title, // Type of Element, like Intent Catcher, Intent Responder, FAQ etc.
-            data: null, // Data of Element
+            data: item, // Data of Element
           }}
           dataFor='customizable_skill'
         />

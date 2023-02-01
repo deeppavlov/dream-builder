@@ -102,7 +102,7 @@ const SkillPromptModal = () => {
             label={'You can change name here'}
             props={{
               placeholder: 'You can change name here',
-              value: skill?.name || '',
+              value: skill?.display_name || skill?.name || '',
             }}
             onChange={handleNameChange}
           />

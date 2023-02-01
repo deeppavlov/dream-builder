@@ -45,7 +45,7 @@ import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSk
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import { TabPanel } from 'react-tabs'
-import useSidePanel, { useSidePanelResult } from '../../hooks/useTabsManager'
+import useSidePanel from '../../hooks/useTabsManager'
 import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
 
 const notificMock: NotificationCardProps[] = [

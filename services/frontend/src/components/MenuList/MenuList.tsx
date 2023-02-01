@@ -468,7 +468,8 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
       return (
         <ReactTooltip
           event='click'
-          globalEventOff='wheel'
+          globalEventOff='click'
+          data-event-off='click'
           possibleCustomEventsOff='click'
           clickable={true}
           className={s.menulist}
@@ -513,7 +514,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
                     break
                   case 'Dialogpt':
                   case 'Dialogpt Persona Based':
-                  case 'Dff Intent Responder Skill':
+                  // case 'Dff Intent Responder Skil≠l':
                   case 'Dummy Skill':
                   case 'Dff Empathetic Marketing Prompted Skill':
                   case 'Dff Scheduling Prompted Skill':

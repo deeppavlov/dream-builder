@@ -79,7 +79,7 @@ def validate_email(email: str, db: Session) -> None:
         raise ValueError("User is not listed in the database")
 
 
-@router.get("/login")
+# @router.get("/login")
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     """
     TODO: endpoint -> method due to no usage from frontend
@@ -96,14 +96,14 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
 async def logout(token: str = Header(), db: Session = Depends(get_db)) -> None:
     """
-    TODO: logout will remove record out of a db
+
     """
-    data = jwt.decode(token, verify=False)
+    data = await _fetch_user_info_by_access_token(token)
 
     crud.set_users_refresh_token_invalid(db, data["email"])
 
 
-@router.get("/exchange_authcode")
+@router.post("/exchange_authcode")
 async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> dict[str, str]:
     """
     Exchanges authorization code for access token
@@ -136,10 +136,8 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
 
     user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
-    if not crud.check_uservalid_exists(db, user_info["email"]):
-        crud.add_user_to_uservalid(db, user_valid, user_info["email"])
-    else:
-        crud.update_users_refresh_token(db, user_valid, user_info["email"])
+    email = user_info["email"]
+    crud.add_user_to_uservalid(db, user_valid, email)
     return {"token": access_token, **user.dict()}
 
 
@@ -147,10 +145,11 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
 async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
     # TODO: check expiration refresh token date (google api)
     # TODO: think about redirect
-    if not crud.check_user_exists(db, email):
+    user: UserValid = crud.get_uservalid_by_email(db, email)
+
+    if not user:
         raise HTTPException(status_code=401, detail="User is not authenticated!")
 
-    user: UserValid = crud.get_uservalid_by_email(db, email)
     refresh_token = user.refresh_token
 
     if not _check_refresh_token_validity(user.expire_date):

@@ -18,8 +18,8 @@ class GoogleUser(Base):
 class UserValid(Base):
     __tablename__ = "user_valid"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, index=True, primary_key=True)
     user_id = Column(Integer, ForeignKey("google.id"))
-    refresh_token = Column(String, nullable=False)
+    refresh_token = Column(String, unique=True)
     is_valid = Column(Boolean, nullable=False)
     expire_date = Column(DateTime, nullable=False)

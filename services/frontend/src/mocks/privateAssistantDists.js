@@ -9,7 +9,7 @@ export default [
     ram_usage: '50 GB',
     gpu_usage: '50 GB',
     disk_usage: '50 GB',
-    name: 'dream_russian',
+    name: 'first_assistant',
   },
   {
     display_name: 'Second Assistant',
@@ -21,7 +21,7 @@ export default [
     ram_usage: '50 GB',
     gpu_usage: '50 GB',
     disk_usage: '50 GB',
-    name: 'deepy_adv',
+    name: 'second_assistant',
   },
   {
     display_name: 'Third Assistant',
@@ -33,6 +33,6 @@ export default [
     ram_usage: '50 GB',
     gpu_usage: '50 GB',
     disk_usage: '50 GB',
-    name: 'dream_sfc',
+    name: 'third_assistant',
   },
 ]

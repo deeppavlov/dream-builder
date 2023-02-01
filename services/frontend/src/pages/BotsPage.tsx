@@ -56,7 +56,7 @@ export const BotsPage = () => {
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
   } = useQuery('usersAssistantDists', getUsersAssistantDists)
-
+  console.log(usersDistData)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -152,6 +152,7 @@ export const BotsPage = () => {
                     const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
+                        
                         routingName={name}
                         key={i}
                         type='your'

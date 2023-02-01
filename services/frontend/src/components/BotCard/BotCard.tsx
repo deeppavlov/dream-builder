@@ -62,7 +62,15 @@ export const BotCard = ({
     e.stopPropagation()
     trigger('CreateAssistantModal', bot)
   }
-
+  const handlEditClick = (e: any) => {
+    e.stopPropagation()
+    console.log(bot?.routingName)
+    location.pathname = bot?.routingName!
+  }
+  const handleKebabClick = (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
   let cx = classNames.bind(s)
 
   return (
@@ -136,11 +144,19 @@ export const BotCard = ({
           </div>
         ) : (
           <>
-            <Button theme='secondary' small long>
+            <Button
+              theme='secondary'
+              small
+              long
+              props={{ onClick: handlEditClick }}>
               Edit
             </Button>
-            <Button theme='secondary' small withIcon>
-              <Kebab />
+            <Button
+              theme='secondary'
+              small
+              withIcon
+              props={{ onClick: handleKebabClick }}>
+              <Kebab dataFor={type === 'your' && 'your_bot'} />
             </Button>
           </>
         )}

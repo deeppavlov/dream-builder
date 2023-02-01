@@ -25,7 +25,7 @@ export const handlers = [
       : res(ctx.status(400), ctx.json('your token is not valid'))
   }),
 
-  rest.post('/assistant_dists', (req, res, ctx) => {
+  rest.put('/assistant_dists', (req, res, ctx) => {
     const dist = req.body.params
     privateAssistantDists.push(createDistFromTemplate(dist))
     return res(

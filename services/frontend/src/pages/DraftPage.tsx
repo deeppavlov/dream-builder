@@ -11,7 +11,7 @@ import { getUsersAssistantDists } from '../services/geUsersAssistantDists'
 import { dist_list } from '../types/types'
 import { useAuth } from '../services/AuthProvider'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
-import { postAssistantDist } from '../services/postAssistanDist'
+import { putAssistantDist } from '../services/putAssistanDist'
 import { useForm } from 'react-hook-form'
 import { Input } from '../ui/Input/Input'
 import Button from '../ui/Button/Button'
@@ -31,7 +31,7 @@ export const DraftPage = () => {
     formState: { errors },
   } = useForm()
   const onSubmit = data => {
-    postAssistantDist(data).then(() => {
+    putAssistantDist(data).then(() => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
     })
   }

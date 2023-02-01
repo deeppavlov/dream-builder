@@ -1,4 +1,3 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../services/AuthProvider'
 import { BotInfoInterface, dist_list } from '../../types/types'
@@ -10,7 +9,7 @@ import { subscribe, unsubscribe } from '../../utils/events'
 import s from './CreateAssistantModal.module.scss'
 import { RoutesList } from '../../Router/RoutesList'
 import { useForm } from 'react-hook-form'
-import { postAssistantDist } from '../../services/postAssistanDist'
+import { putAssistantDist } from '../../services/putAssistanDist'
 import { useQueryClient } from 'react-query'
 
 export const CreateAssistantModal = () => {
@@ -66,12 +65,12 @@ export const CreateAssistantModal = () => {
   const onFormSubmit = (data: any) => {
     console.log(data)
     if (!isHaveNameAndDesc) return
-    postAssistantDist(data).then(() => {
+    putAssistantDist(data).then(() => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
     })
     setTimeout(() => {
       location.pathname = nameByUser
-    }, 10000)
+    }, 500)
   }
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

@@ -6,7 +6,8 @@ export const Kebab = ({ disabled, type, item, color, dataFor }: any) => {
     item?.typeItem ? dataFor + item.typeItem : dataFor
   return (
     <>
-      <button
+      <div
+        onClick={(e) => { e.stopPropagation()}}
         disabled={disabled === undefined ? false : disabled}
         data-tip
         data-for={privateDataFor()}
@@ -15,7 +16,7 @@ export const Kebab = ({ disabled, type, item, color, dataFor }: any) => {
         <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
         <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
         <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
-      </button>
+      </div>
       <MenuList type={dataFor} item={item} privateDataFor={privateDataFor()} />
     </>
   )

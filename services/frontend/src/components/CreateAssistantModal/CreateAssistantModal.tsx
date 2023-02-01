@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {  useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../services/AuthProvider'
 import { BotInfoInterface, dist_list } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -9,6 +9,9 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './CreateAssistantModal.module.scss'
 import { RoutesList } from '../../Router/RoutesList'
+import { useForm } from 'react-hook-form'
+import { postAssistantDist } from '../../services/postAssistanDist'
+import { useQueryClient } from 'react-query'
 
 export const CreateAssistantModal = () => {
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
@@ -45,7 +48,7 @@ export const CreateAssistantModal = () => {
 
   const handleContinueBtnClick = () => {
     if (!isHaveNameAndDesc) return
-    location.pathname = bot?.routingName!
+    location.pathname = nameByUser
   }
 
   useEffect(() => {
@@ -53,6 +56,23 @@ export const CreateAssistantModal = () => {
     return () => unsubscribe('CreateAssistantModal', handleEventUpdate)
   }, [])
 
+  const queryClient = useQueryClient()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
+  const onFormSubmit = (data: any) => {
+    console.log(data)
+    if (!isHaveNameAndDesc) return
+    postAssistantDist(data).then(() => {
+      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
+    })
+    setTimeout(() => {
+      location.pathname = nameByUser
+    }, 10000)
+  }
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.createAssistantModal}>
@@ -75,33 +95,32 @@ export const CreateAssistantModal = () => {
             )}
           </div>
         </div>
-        <Input
-          label='Name'
-          props={{
-            placeholder: 'Enter name for your VA',
-          }}
-          onChange={handleNameChange}
-        />
+        <form onSubmit={handleSubmit(onFormSubmit)}>
+          <Input
+            label='Name'
+            props={{
+              placeholder: 'Enter name for your VA',
+              ...register('dist_name', { required: true }),
+            }}
+            onChange={handleNameChange}
+          />
 
-        <TextArea
-          label='Description'
-          about={
-            <div className={s['createAssistantModal__muted-text']}>
-              Enter no more than 500 signs.
-              <br />
-              You will be able to edit this information later.
-            </div>
-          }
-          // errorMessage={
-          //   <div>
-          //     Enter no more than 500 signs.
-          //     <br />
-          //     Please add description for your VA
-          //   </div>
-          // }
-          props={{ placeholder: 'Enter description for your VA' }}
-          onChange={handleDescChange}
-        />
+          <TextArea
+            label='Description'
+            about={
+              <div className={s['createAssistantModal__muted-text']}>
+                Enter no more than 500 signs.
+                <br />
+                You will be able to edit this information later.
+              </div>
+            }
+            props={{
+              placeholder: 'Enter description for your VA',
+              ...register('dist_description', { required: true }),
+            }}
+            onChange={handleDescChange}
+          />
+        </form>
         <div className={s.createAssistantModal__btns}>
           <Button theme='secondary' props={{ onClick: closeModal }}>
             Cancel
@@ -110,7 +129,7 @@ export const CreateAssistantModal = () => {
             theme='primary'
             props={{
               disabled: !isHaveNameAndDesc,
-              onClick: handleContinueBtnClick,
+              onClick: handleSubmit(onFormSubmit),
             }}>
             Continue
           </Button>

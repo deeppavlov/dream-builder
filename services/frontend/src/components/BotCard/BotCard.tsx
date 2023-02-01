@@ -9,6 +9,7 @@ import Button from '../../ui/Button/Button'
 import { SmallTag } from '../SmallTag/SmallTag'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import s from './BotCard.module.scss'
+import { Kebab } from '../../ui/Kebab/Kebab'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -32,7 +33,6 @@ export const BotCard = ({
   size,
   disabledMsg,
 }: BotCardProps) => {
-  
   const bot = {
     routingName,
     name,
@@ -135,7 +135,7 @@ export const BotCard = ({
               Edit
             </Button>
             <Button theme='secondary' small withIcon>
-              <SaveIcon />
+              <Kebab />
             </Button>
           </>
         )}

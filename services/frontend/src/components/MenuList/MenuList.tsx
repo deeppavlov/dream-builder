@@ -656,10 +656,10 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
       effect='solid'>
       <ul className={s.menu}>
         <li className={s.item}>
-          <button>
+          <div>
             <CloneIcon />
             <p>Clone Bot</p>
-          </button>
+          </div>
         </li>
       </ul>
     </ReactTooltip>

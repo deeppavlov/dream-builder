@@ -9,8 +9,8 @@ import { StartPage } from '../pages/StartPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { DraftPage } from '../pages/DraftPage'
 import { PrivateRoute } from './PrivateRoute'
-import { UsersBots } from '../pages/UsersBots'
-import { UsersSkills } from '../pages/UsersSkills'
+import { UsersBotsPage } from '../pages/UsersBotsPage'
+import { UsersSkillsPage } from '../pages/UsersSkillsPage'
 
 export const Router = () => {
   return (
@@ -19,8 +19,8 @@ export const Router = () => {
       <Route path={RoutesList.start} element={<StartPage />} />
       <Route path={RoutesList.bots} element={<BotsPage />} />
       <Route path={RoutesList.botsAll} element={<BotsAllPage />} />
-      <Route path={RoutesList.yourBots} element={<UsersBots />} />
-      <Route path={RoutesList.yourSkills} element={<UsersSkills />} />
+      <Route path={RoutesList.yourBots} element={<UsersBotsPage />} />
+      <Route path={RoutesList.yourSkills} element={<UsersSkillsPage />} />
       <Route path={RoutesList.skills} element={<SkillsPage />} />
       <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
       <Route

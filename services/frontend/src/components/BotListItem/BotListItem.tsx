@@ -113,10 +113,10 @@ export const BotListItem = ({
               className={s.area}
               disabled={disabledMsg !== undefined}
               onClick={handleCloneBtnClick}>
-              <Clone />
+              <Clone className={s.fillIcon} />
             </button>
             <button className={s.area} onClick={handlePreviewBtnClick}>
-              <PreviewIcon />
+              <PreviewIcon className={s.strokeIcon} />
             </button>
           </div>
         </div>

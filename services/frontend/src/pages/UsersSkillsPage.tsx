@@ -32,19 +32,13 @@ interface skill_list {
   }
 }
 
-export const UsersSkills = () => {
+export const UsersSkillsPage = () => {
   const auth = useAuth()
   const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
     setListView(listView => !listView)
   }
-//   const {
-//     isLoading: isSkillsLoading,
-//     error: skillsError,
-//     data: skillsData,
-//   } = useQuery('skills_list', getSkillList)
 
-//   skillsError && <> {'An error has occurred: '} + skillsError</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -54,37 +48,12 @@ export const UsersSkills = () => {
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-              {/* {isSkillsLoading && <>{'Loading...'}</>}
-              {skillsData?.map((skill: skill_list, i: number) => {
-                const date = dateToUTC(skill.metadata.date_created)
-                return (
-                  <SkillCard
-                    key={i}
-                    type='public'
-                    name={skill.metadata.display_name}
-                    botName={skill.assistant_dist}
-                    skillType={skill.metadata.type}
-                    dateCreated={date}
-                    desc={skill.metadata.description}
-                    version={skill.metadata.version}
-                    ram={skill.metadata.ram_usage}
-                    gpu={skill.metadata.gpu_usage}
-                    time={skill.metadata.execution_time}
-                    executionTime={`${skill.metadata.execution_time} sec`}
-                    big
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to add the skill'
-                    }
-                  />
-                )
-              })} */}
+
             </Container>
           </Wrapper>
         ) : (
           <Wrapper title='Your Skills' amount={42}>
-            {/* {isSkillsLoading && <>{'Loading...'}</>} */}
+            
             <Table second='Type'>
               {/* {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)

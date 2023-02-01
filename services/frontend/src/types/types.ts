@@ -42,6 +42,7 @@ export interface SkillInfoInterface {
   ram: string
   executionTime: string
   gpu: string
+  display_name?: string
   space?: string
   time?: string
   model?: string

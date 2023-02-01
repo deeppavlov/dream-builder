@@ -47,6 +47,7 @@ import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatche
 import { TabPanel } from 'react-tabs'
 import useSidePanel from '../../hooks/useTabsManager'
 import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
+import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -430,6 +431,38 @@ export const TestPage = () => {
               },
             }}>
             SkillSidePanel
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>GenerativeSkillEditor</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <GenerativeSkillEditor
+                      activeTab='Editor'
+                      skill={{
+                        name: 'Name of The Skill',
+                        author: 'Deep Pavlov',
+                        authorImg: DeepPavlovLogo,
+                        skillType: 'fallbacks',
+                        botName: 'Name of The Bot',
+                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
+                        dateCreated: dateToUTC(new Date()),
+                        version: '0.01',
+                        ram: '0.0 GB',
+                        gpu: '0.0 GB',
+                        executionTime: '0.0 ms',
+                        model: 'GPT-3',
+                      }}
+                    />
+                  ),
+                })
+              },
+            }}>
+            GenerativeSkillEditor
           </Button>
         </div>
         <div className={s.testPage__component}>

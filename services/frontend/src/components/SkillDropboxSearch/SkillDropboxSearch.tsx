@@ -8,13 +8,21 @@ import s from './SkillDropboxSearch.module.scss'
 interface Props {
   placeholder: string
   list: string[]
+  activeItem?: string
   onSelect?: (value: string) => void
 }
 
-const SkillDropboxSearch = ({ placeholder, list, onSelect }: Props) => {
+const SkillDropboxSearch = ({
+  placeholder,
+  list,
+  activeItem: propActiveItem,
+  onSelect,
+}: Props) => {
   let cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState(true)
-  const [activeItem, setActiveItem] = useState<string | null>(null)
+  const [activeItem, setActiveItem] = useState<string | null>(
+    propActiveItem ?? null
+  )
   const dropboxRef = useRef<HTMLDivElement | null>(null)
 
   const handleClickOutside = (e: MouseEvent) => {

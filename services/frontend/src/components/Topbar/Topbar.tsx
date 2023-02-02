@@ -4,13 +4,16 @@ import classNames from 'classnames/bind'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Router/AuthProvider'
 import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
 import { History } from './components/History'
 import { Test } from './components/Test'
 import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
+import { getGoogleOAuthURL } from '../../services/getGoogleOAuthUrl'
+import Button from '../../ui/Button/Button'
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -23,26 +26,6 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
-  useEffect(() => {
-    //Render Google SignIn button
-    // google.accounts.id.initialize({
-    //   // Getting `GOOGLE_CLIENT_ID` from .env file
-    //   // Maybe need to get `GOOGLE_CLIENT_ID` from backend
-    //   client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    //   callback: auth?.login,
-    // })
-    // google.accounts.id.renderButton(document.getElementById('signin')!, {
-    //   type: 'standard',
-    //   size: 'medium',
-    //   text: 'signin',
-    // })
-  }, [])
-
-  const SignInBtn = () => (
-    <div className={s.signin} onClick={auth?.login}>
-      Sign in
-    </div>
-  )
 
   switch (type) {
     case 'main':
@@ -54,7 +37,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
           </div>
           <div className={s.btns_area}>
             <Display viewHandler={viewHandler} />
-            {user ? <Profile auth={auth} /> : <SignInBtn />}
+            {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
           </div>
           <ReactTooltip
             id='topbar_tooltip'
@@ -78,7 +61,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
               <Resources />
               <Notifications />
               <Test />
-              {user ? <Profile auth={auth} /> : <SignInBtn />}
+              {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
           </div>
           <ReactTooltip
@@ -102,7 +85,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
         <h3>Dream&nbsp;Builder</h3>
       </div>
       <div className={s.btns_area}>
-        {user ? <Profile auth={auth} /> : <SignInBtn />}
+        {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
       </div>
     </div>
   )

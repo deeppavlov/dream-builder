@@ -7,7 +7,7 @@ import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Router/AuthProvider'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -66,14 +66,12 @@ export const BotListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.author}>
-
           {author === 'DeepPavlov' ? (
             <Logo />
           ) : (
             <img src={auth?.user?.picture} referrerPolicy='no-referrer' />
           )}
           <p>{author}</p>
-
         </div>
       </td>
       <td className={s.td}>

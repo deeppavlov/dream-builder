@@ -12,7 +12,7 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import s from './BotInfoSidePanel.module.scss'
 import ReactTooltip from 'react-tooltip'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Router/AuthProvider'
 
 interface BotInfoSidePanelProps extends Partial<SidePanelProps> {
   disabledMsg?: string

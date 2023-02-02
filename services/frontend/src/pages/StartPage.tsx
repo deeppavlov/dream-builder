@@ -4,7 +4,7 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { RoutesList } from '../Router/RoutesList'
 
 export const StartPage = () => {

@@ -21,7 +21,7 @@ router = APIRouter(prefix="/auth")
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
 flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=None)
-flow.redirect_uri = "http://localhost:5173"
+flow.redirect_uri = "http://localhost:5173/code"
 
 
 def get_db():

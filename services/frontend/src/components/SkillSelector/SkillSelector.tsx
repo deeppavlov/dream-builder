@@ -1,11 +1,12 @@
-import SkillSelectorLogo from '../../assets/icons/skill_selector.svg'
+import SkillSelectorLogo from '../../assets/icons/skill_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
 import s from './SkillSelector.module.scss'
 
-export const SkillSelector = () => {
+export const SkillSelector = ({ skillSelectors }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -21,14 +22,36 @@ export const SkillSelector = () => {
         onSubmit={e => {
           e.preventDefault()
         }}>
-        <Accordion title='Customizable'>
+        <Accordion title='Customizable'></Accordion>
+        <Accordion title='Non-customizable'>
           <div
             style={{
               backgroundColor: '#fff',
               width: '100%',
               padding: '0px 12px',
             }}>
-            <RadioButton
+            {!skillSelectors?.length ? (
+              <RadioButton
+                id={'All Skills'}
+                name='skill_selector'
+                htmlFor={'All Skills'}
+                checked={true}>
+                <Skill title={'All Skills'} />
+              </RadioButton>
+            ) : (
+              skillSelectors?.map((item: string, i: number) => {
+                return (
+                  <RadioButton
+                    key={i}
+                    id={item}
+                    name='skill_selector'
+                    htmlFor={item}>
+                    <Skill title={capitalizeTitle(item)} />
+                  </RadioButton>
+                )
+              })
+            )}
+            {/* <RadioButton
               id='rule_based'
               name='skill_selector'
               htmlFor='rule_based'>
@@ -45,10 +68,10 @@ export const SkillSelector = () => {
               name='skill_selector'
               htmlFor='multiple_skill'>
               <Skill title='Multiple Skill' />
-            </RadioButton>
+            </RadioButton> */}
           </div>
         </Accordion>
-        <Accordion title='Non-customizable'>
+        {/* 
           <div style={{ padding: '0px 12px' }}>
             <RadioButton
               id='all_skill'
@@ -57,7 +80,7 @@ export const SkillSelector = () => {
               <Skill title='All Skill' />
             </RadioButton>
           </div>
-        </Accordion>
+        */}
       </form>
     </div>
   )

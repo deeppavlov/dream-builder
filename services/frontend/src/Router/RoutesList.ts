@@ -3,7 +3,7 @@ export const RoutesList = {
   botsAll: '/botsAll',
   skills: '/skills',
   skillsAll: '/allskills',
-  editor: '/editor',
+  editor: '/',
   draft: '/draft',
   test: '/test',
   code: '/code',

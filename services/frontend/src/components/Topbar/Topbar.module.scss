@@ -6,7 +6,7 @@
   justify-content: start;
   align-items: center;
   width: 100vw;
-  @include min-w;
+  // @include min-w;
   height: $topbar_height;
   background-color: $bcgrnd1;
   border-bottom: 1px solid $bcgrnd3;
@@ -15,6 +15,11 @@
   z-index: 2;
   &.editor {
     box-shadow: 78px 0px 20px rgba(100, 99, 99, 0.15);
+  }
+  .assistantName {
+    white-space: nowrap;
+    @include b3;
+    @include accent_text;
   }
   .btns_area {
     display: flex;

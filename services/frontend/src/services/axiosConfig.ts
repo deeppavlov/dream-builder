@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { trigger } from '../utils/events'
-// import { deleteLocalStorageUser } from './AuthProvider'
+import { deleteLocalStorageUser } from './AuthProvider'
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_DIST_API_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
 })
 
 const handleBadTokenResponse = () => {
   localStorage.removeItem('token')
-  // deleteLocalStorageUser()
+  deleteLocalStorageUser()
   trigger('ErrorMessageModal', 'bad token')
 }
 

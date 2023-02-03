@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { RoutesList } from '../Router/RoutesList'
-import { useAuth } from '../Router/AuthProvider'
+import { useAuth } from '../services/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
@@ -14,49 +14,45 @@ import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { YourBotCard } from '../components/YourBotCard/YourBotCard'
 import { Slider } from '../ui/Slider/Slider'
 import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import { nanoid } from 'nanoid'
-
-interface dist_list {
-  name: string
-  metadata: {
-    display_name: string
-    date: string | number | Date
-    author: string
-    description: string
-    version: string
-    ram_usage: string
-    gpu_usage: string
-    disk_usage: string
-  }
-}
+import { dist_list } from '../types/types'
+import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
 export const BotsPage = () => {
   const auth = useAuth()
   const [bots, setBots] = useState<JSX.Element[]>([])
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
   const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
-    setListView(!listView)
+    setListView(listView => !listView)
     setBots([])
   }
   const addBot = () => {
+    trigger('CreateAssistantModal', null)
+    if (!auth?.user) return
     !listView
       ? setBots(
           bots.concat([
-            <YourBotCard
+            <BotCard
               key={nanoid(8)}
+              type='your'
+              routingName=''
               dateCreated={dateToUTC(new Date())}
-              author={auth?.user?.name}
-              version='0.01'
+              author={auth.user.name}
+              authorImg={auth.user.picture}
+              version='0.0.1'
               name='Name of The Bot'
-              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
+              desc='Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. '
+              ram='0.0 GB'
+              gpu='0.0 GB'
+              space='0.0 GB'
+              size='small'
               disabledMsg={
                 auth?.user
                   ? undefined
@@ -65,12 +61,13 @@ export const BotsPage = () => {
             />,
           ])
         )
+
       : setBots(
           bots.concat([
             <BotListItem
-              key={nanoid(8)}
               dateCreated={dateToUTC(new Date())}
-              author={auth?.user?.name ?? 'Name of Company'}
+              author={auth.user.name ?? 'Name of Company'}
+              authorImg={auth.user.picture}
               version='0.01'
               name='Name of The Bot'
               desc='Small description about the project maximum 4 lines. Small description about the project maximum'
@@ -82,24 +79,28 @@ export const BotsPage = () => {
                   ? undefined
                   : 'You must be signed in to clone the bot'
               }
+              routingName={''}
             />,
           ])
         )
   }
+
   const {
     isLoading: isAssistantsLoading,
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-
+  console.log(assistantsData)
   useEffect(() => {
     if (!isAssistantsLoading) {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
+    console.log(assistantsData)
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return <>Loading...</>
-  if (assistantsError) return <>An error has occurred: + {assistantsError}</>
+  assistantsError && <>{'An error has occurred:' + { assistantsError }}</>
+  console.log(assistantsData)
+
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -108,24 +109,39 @@ export const BotsPage = () => {
           <>
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
-              amount={assistantsData.length}
+              amount={assistantsData?.length}
               linkTo={RoutesList.botsAll}
               showAll>
               <Container>
                 <Slider>
-                  {assistantsData?.map((dist: dist_list) => {
-                    const date = dateToUTC(dist.metadata.date)
+                  {isAssistantsLoading && <>{'Loading...'}</>}
+                  {assistantsData?.map((dist: dist_list, i: number) => {
+                    const {
+                      display_name,
+                      name,
+                      author,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      disk_usage,
+                      date_created,
+                    } = dist
+                    const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
-                        key={dist.name}
-                        name={dist.metadata.display_name}
-                        author={dist.metadata.author}
-                        dateCreated={date}
-                        desc={dist.metadata.description}
-                        version={dist.metadata.version}
-                        ram={dist.metadata.ram_usage}
-                        gpu={dist.metadata.gpu_usage}
-                        space={dist.metadata.disk_usage}
+                        routingName={name}
+                        key={i}
+                        type='public'
+                        name={display_name}
+                        author={author}
+                        authorImg={DeepPavlovLogo}
+                        dateCreated={dateCreated}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        space={disk_usage}
                         disabledMsg={
                           auth?.user
                             ? undefined
@@ -143,8 +159,8 @@ export const BotsPage = () => {
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   overflow='hidden'
                   padding='0'
                   paddingBottom='22px'>
@@ -169,21 +185,34 @@ export const BotsPage = () => {
               linkTo={RoutesList.botsAll}
               fitScreen>
               <Table>
-                {assistantsData?.map((dist: dist_list) => {
-                  const date = dateToUTC(dist.metadata.date)
-                  const time = timeToUTC(dist.metadata.date)
+                {assistantsData?.map((dist: dist_list, i: number) => {
+                  const {
+                    name,
+                    display_name,
+                    author,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    disk_usage,
+                    date_created,
+                  } = dist
+                  const dateCreated = dateToUTC(date_created)
+                  const time = timeToUTC(date_created)
                   return (
                     <BotListItem
-                      key={dist.name}
-                      name={dist.metadata.display_name}
-                      author={dist.metadata.author}
-                      dateCreated={date}
+                      key={i}
+                      routingName={name}
+                      name={display_name}
+                      author={author}
+                      authorImg={DeepPavlovLogo}
+                      dateCreated={dateCreated}
                       time={time}
-                      desc={dist.metadata.description}
-                      version={dist.metadata.version}
-                      ram={dist.metadata.ram_usage}
-                      gpu={dist.metadata.gpu_usage}
-                      space={dist.metadata.disk_usage}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      space={disk_usage}
                       disabledMsg={
                         auth?.user
                           ? undefined

@@ -1,41 +1,85 @@
-import { useState } from 'react'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
+import { getSkillListByDistName } from '../services/getSkillListByDistName'
+import { useAuth } from '../services/AuthProvider'
+import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
+import { capitalizeTitle } from '../utils/capitalizeTitle'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
-import { AddButton } from '../ui/AddButton/AddButton'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { Sidebar } from '../components/Sidebar/Sidebar'
-import { Annotators } from '../components/Annotators/Annotators'
-import { Skills } from '../components/Skills/Skills'
-import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { BotTab } from '../components/Sidebar/components/BotTab'
-import { TestTab } from '../components/Sidebar/components/TestTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
-import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { TestTabWindow } from '../components/TestTabWindow/TestTabWindow'
+import { SkillCard } from '../components/SkillCard/SkillCard'
+import { useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getDistByName } from '../services/getDistByName'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
+import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
+import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
+import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
+import { dateToUTC } from '../utils/dateToUTC'
+import { Annotators } from '../components/Annotators/Annotators'
+import { SkillSelector } from '../components/SkillSelector/SkillSelector'
+import { Skills } from '../components/Skills/Skills'
+import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 
 export const EditorPage = () => {
-  const [skills, setSkills] = useState([])
-  const [listView, setListView] = useState(false)
-  const viewHandler = () => {
-    console.log('view has changed')
-    setListView(!listView)
-    setSkills([])
-    console.log(listView)
-  }
-  const addSkill = () => {
-    !listView
-      ? setSkills(skills.concat(<SkillInBotCard maxWidth='345px' />))
-      : setSkills(skills.concat(<SkillListItem />))
-  }
+  const auth = useAuth()
+  const data = useParams()
+
+  const {
+    isLoading: isDistsComponentsLoading,
+    error: distsComponentsError,
+    data: distsComponentsData,
+  } = useQuery(
+    ['distsComponents', data.name],
+    () => getComponentsFromAssistantDists(data.name!),
+    {
+      enabled: data.name?.length! > 0,
+    }
+  )
+  // {
+  //   distsComponentsData &&
+  //     Object.keys(distsComponentsData).map((type: string) => (
+  //       <Stack type={type} data={distsComponentsData[type]} />
+  //     ))
+  // }
+  const {
+    isLoading: isSkillListLoading,
+    error: skillListError,
+    data: skillListData,
+  } = useQuery(
+    ['skillList', data.name],
+    () => getSkillListByDistName(data.name!),
+    {
+      enabled: data.name?.length! > 0,
+    }
+  )
+
+  const {
+    isLoading: isDistLoading,
+    error: distError,
+    data: distData,
+  } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
+    enabled: data.name?.length! > 0,
+  })
+
+  if (distError) return <>An error has occurred: + {distError}</>
+
+  const annotators = distsComponentsData?.annotators
+  const candidateAnnotators = distsComponentsData?.candidate_annotators
+  const skills = distsComponentsData?.skills
+  const skillSelectors = distsComponentsData?.skill_selectors
+  const responseSelectors = distsComponentsData?.response_selectors
+  const responseAnnotators = distsComponentsData?.response_annotators
+
   return (
     <>
-      <Topbar type='editor' />
+      <Topbar type='editor' title={capitalizeTitle(data?.name!)} />
       <Tabs>
         <Sidebar>
           <TabList>
@@ -46,55 +90,67 @@ export const EditorPage = () => {
               gap='12px'
               overflow='hidden'>
               <Tab>
-                <BotTab />
-              </Tab>
-              <Tab>
                 <SkillsTab />
               </Tab>
               <Tab>
-                <TestTab />
+                <BotTab />
               </Tab>
             </Container>
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Main sidebar editor draggable>
-            <Annotators />
-            <SkillSelector />
-            <Skills />
-            <CandidateAnnotators />
-            <ResponseSelector />
-            <ResponseAnnotators />
-          </Main>
-        </TabPanel>
-        <TabPanel>
           <Main sidebar editor>
             <Wrapper>
               <Container
                 display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-                <AddButton
-                  listView={listView}
-                  addBot={addSkill}
-                  maxWidth='345px'
-                  height='330px'
-                />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                <SkillInBotCard maxWidth='345px' />
-                {skills}
+                gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
+                {skillListData?.map((skill: any) => {
+                  const dateCreated = dateToUTC(skill.metadata.date_created)
+                  return (
+                    <SkillCard
+                      type='your'
+                      name={skill.metadata.display_name}
+                      dateCreated={dateCreated}
+                      desc={skill.metadata.description}
+                      version={skill.metadata.version}
+                      ram={skill.metadata.ram_usage}
+                      gpu={skill.metadata.gpu_usage}
+                      executionTime={skill.metadata.execution_time}
+                      skillType={skill.metadata.type}
+                      botName={skill.metadata.author}
+                    />
+                  )
+                })}
               </Container>
             </Wrapper>
           </Main>
         </TabPanel>
         <TabPanel>
-          <Main sidebar editor>
-            <TestTabWindow />
+          <Main sidebar editor draggable>
+            {isDistLoading ? (
+              <>{'Loading...'}</>
+            ) : (
+              <>
+                <Annotators annotators={annotators} />
+                <SkillSelector skillSelectors={skillSelectors} />
+                <Skills skills={skills} />
+                <CandidateAnnotators
+                  candidateAnnotators={candidateAnnotators}
+                />
+                <ResponseSelector responseSelectors={responseSelectors} />
+                <ResponseAnnotators
+                  responseAnnotators={responseAnnotators}
+                />
+              </>
+            )}
           </Main>
         </TabPanel>
       </Tabs>
+      <SkillSidePanel position={{ top: 64 }} />
+      <IntentCatcherSidePanel position={{ top: 64 }} />
+      <IntentResponderSidePanel position={{ top: 64 }} />
+      <IntentCatcherModal />
+      <IntentResponderModal />
     </>
   )
 }

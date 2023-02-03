@@ -1,6 +1,10 @@
-import axios from 'axios'
+import { api } from './axiosConfig'
 
 export async function getAssistantDists() {
-  const { data } = await axios.get('http://10.11.1.8:7000/api/assistant_dists')
-  return data
+  try {
+    const { data } = await api.get('assistant_dists/')
+    return data
+  } catch (e) {
+    console.log(e)
+  }
 }

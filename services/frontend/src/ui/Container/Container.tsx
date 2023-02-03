@@ -3,6 +3,7 @@ import s from './Container.module.scss'
 
 interface ContainerProps {
   children?: ReactNode
+  [x: string]: any
 }
 
 export const Container = ({ children, ...props }: ContainerProps) => {

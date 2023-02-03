@@ -19,9 +19,9 @@ const TooltipMenu = ({ auth }: ProfileProps) => (
       <You />
       <p>{auth?.user?.email}</p>
     </li>
-    <li className={s.item}>
+    <li onClick={auth?.logout} className={s.item}>
       <LogOut />
-      <p onClick={auth?.logout}>Log Out</p>
+      <p>Log Out</p>
     </li>
   </ul>
 )

@@ -1,0 +1,29 @@
+.skill {
+  .container {
+    background-color: '#fff';
+    width: 100%;
+    padding: 0px 12px;
+  }
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 12px;
+  height: 40px;
+  gap: 10px;
+  background-color: $bcgrnd1;
+  @include stack_element_behavior;
+  .left {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    .name {
+      cursor: pointer;
+      @include t3;
+    }
+  }
+}

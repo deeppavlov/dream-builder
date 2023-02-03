@@ -1,0 +1,74 @@
+.skillDropboxSearch {
+  position: relative;
+  max-width: 310px;
+  max-height: 286px;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  box-sizing: border-box;
+
+  &.isOpen {
+    border-radius: 12px 12px 0px 0px;
+    border-bottom-color: transparent;
+
+    .list {
+      display: block;
+    }
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  padding: 11px 16px;
+  gap: 8px;
+
+  input {
+    box-shadow: none !important;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    height: fit-content;
+  }
+}
+
+.icon {
+  max-width: 24px;
+  max-height: 24px;
+  height: 100%;
+  width: 100%;
+}
+
+.arrowDown {
+  fill: $text3;
+}
+
+.list {
+  position: absolute;
+  width: calc(100% + 2px);
+  max-height: 238px;
+  top: 100%;
+  left: -1px;
+  z-index: 3;
+  background-color: $bcgrnd2;
+  border: 1px solid $text3;
+  border-radius: 0 0 12px 12px;
+  overflow: auto;
+  display: none;
+}
+
+.item {
+  @include b2;
+  padding: 4px 16px;
+  width: 100%;
+  color: $text1;
+  cursor: pointer;
+}
+
+.activeItem,
+.item:active,
+.item:focus {
+  color: $primary1;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}

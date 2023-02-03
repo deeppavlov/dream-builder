@@ -9,7 +9,7 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Table } from '../ui/Table/Table'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
-import { SkillCard } from '../components/SkillCard/SkilllCard'
+import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
@@ -20,8 +20,14 @@ import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { trigger } from '../utils/events'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 
 interface skill_list {
+  assistant_dist: string
   name: string
   metadata: {
     execution_time: any
@@ -40,29 +46,29 @@ interface skill_list {
 
 export const SkillsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState<boolean>(false)
   const viewHandler = () => {
-    console.log('view has changed')
-    setListView(!listView)
+    setListView(listView => !listView)
     setSkills([])
-    console.log(listView)
   }
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
+    trigger('CreateSkillModal', null)
     !listView
       ? setSkills(
           skills.concat([
-            <SkillInBotCard
+            <SkillCard
               key={nanoid(8)}
+              type='your'
               name='Name of The Skill'
               skillType='fallbacks'
-              author={auth?.user?.name ?? 'Name of The Company'}
-              desc='Helps users locate the nearest store. And we can write 3 lines
-              here and this is maximum about'
+              botName='Name of The Bot'
+              desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
               dateCreated={dateToUTC(new Date())}
               version='0.01'
               ram='0.0 GB'
               gpu='0.0 GB'
+              executionTime='0.0 ms'
             />,
           ])
         )
@@ -73,14 +79,14 @@ export const SkillsPage = () => {
               name='Name of The Skill'
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
-              author={auth?.user?.name ?? ''}
+              botName={'Name of The Bot'}
               skillType='retrieval'
               version='0.01'
               dateCreated={dateToUTC(new Date())}
               time={timeToUTC(new Date().getTime())}
               ram='0.0 GB'
               gpu='0.0 GB'
-              executionTime='0.0'
+              executionTime='0.0 ms'
               disabledMsg={
                 auth?.user
                   ? undefined
@@ -97,9 +103,7 @@ export const SkillsPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return <>Loading...</>
-  if (skillsError) return <>An error has occurred: + {skillsError}</>
-
+  skillsError && <>{'An error has occurred:' + { skillsError }}</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -108,25 +112,37 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
-              amount={skillsData.length}
+              amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
               showAll>
               <Container>
                 <Slider>
-                  {skillsData?.map((skill: skill_list) => {
-                    const date = dateToUTC(skill.metadata.date_created)
+                  {skillsData?.map((skill: skill_list, i: number) => {
+                    const {
+                      display_name,
+                      type,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      execution_time,
+                      date_created,
+                    } = skill?.metadata
+                    const date = dateToUTC(date_created)
+                    isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
-                        name={skill.metadata.display_name}
-                        author={skill.assistant_dist}
-                        skillType={skill.metadata.type}
+                        type='public'
+                        key={i}
+                        name={display_name}
+                        botName={skill.assistant_dist}
+                        skillType={type}
                         dateCreated={date}
-                        desc={skill.metadata.description}
-                        version={skill.metadata.version}
-                        ram={skill.metadata.ram_usage}
-                        gpu={skill.metadata.gpu_usage}
-                        time={skill.metadata.execution_time}
-                        executionTime={skill.metadata.execution_time}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        executionTime={`${execution_time} sec`}
                         disabledMsg={
                           auth?.user
                             ? undefined
@@ -144,12 +160,11 @@ export const SkillsPage = () => {
                   position='sticky'
                   left='0'
                   top='0'
-                  width='275px'
-                  minWidth='275px'
+                  width='280px'
+                  minWidth='280px'
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
-                      height='330px'
                       listView={listView}
                       addBot={addBot}
                       disabled={auth?.user === null}
@@ -164,28 +179,37 @@ export const SkillsPage = () => {
           <>
             <Wrapper
               title='Public Skills'
-              amount={skillsData.length}
+              amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
               showAll
               fitScreen>
               <Table second='Type'>
                 {skillsData?.map((skill: skill_list, i: number) => {
-                  const date = dateToUTC(skill.metadata.date_created)
-                  const time = timeToUTC(skill.metadata.date_created)
+                  const {
+                    display_name,
+                    type,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    execution_time,
+                    date_created,
+                  } = skill.metadata
+                  const date = dateToUTC(date_created)
+                  const time = timeToUTC(date_created)
                   return (
                     <SkillListItem
                       key={i}
-                      name={skill.metadata.display_name}
-                      author={skill.metadata.author}
+                      name={display_name}
+                      botName={skill?.assistant_dist}
                       dateCreated={date}
                       time={time}
-                      desc={skill.metadata.description}
-                      version={skill.metadata.version}
-                      ram={skill.metadata.ram_usage}
-                      gpu={skill.metadata.gpu_usage}
-                      executionTime={skill.metadata.execution_time}
-                      skillType={skill.metadata.type}
-                      botName={''}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      executionTime={`${execution_time} sec`}
+                      skillType={type}
                       disabledMsg={
                         auth?.user
                           ? undefined
@@ -197,7 +221,7 @@ export const SkillsPage = () => {
               </Table>
             </Wrapper>
             <Wrapper title='Your Virtual Assistants & Chatbots' limiter>
-              <Table>
+              <Table second='Type'>
                 <AddButton
                   addBot={addBot}
                   listView={listView}
@@ -228,6 +252,10 @@ export const SkillsPage = () => {
         />
 
         <CreateSkillModal />
+        <SkillPromptModal />
+        <CreateSkillDistModal />
+        <CreateAssistantModal />
+        <ChooseBotModal />
       </Main>
     </>
   )

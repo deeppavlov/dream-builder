@@ -4,21 +4,19 @@
   flex-direction: column;
   padding: 16px 0;
   gap: 12px;
-
-  &__header {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  .header {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 0 24px;
   }
-
-  &__name {
+  .name {
     @include t3;
     color: $text1;
   }
-
-  &__container {
-    max-height: 290px;
+  .container {
     overflow: auto;
     margin-bottom: 12px;
     display: flex;
@@ -33,64 +31,62 @@
     }
   }
 
-  &__main {
+  .main {
     width: 100%;
     display: flex;
     gap: 16px;
   }
-
-  &__table {
+  .table {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    @include b3;
+    color: $text2;
   }
-
-  &__author {
+  .author {
     width: 100%;
     display: flex;
     align-items: center;
     gap: 4px;
     margin-bottom: 4px;
-
+    @include b3;
     span {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     img {
       width: 24px;
       height: 24px;
       border-radius: 50%;
     }
   }
-
-  &__author,
-  &__desc {
+  .desc {
+    overflow: hidden;
+    overflow-y: scroll;
     @include b3;
   }
-
-  &__accordions {
+  .accordions {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 0 24px;
-  }
-
-  &__accordion-item {
-    @include t3;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 0;
-
-    svg {
-      width: 24px;
-      height: 24px;
+    .accordionItem {
+      @include t3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      .icon {
+        @include icon_size_24;
+      }
+      svg {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
-
-  &__btns {
+  .btns {
     padding: 0 24px;
     align-self: flex-end;
     margin-top: auto;
@@ -101,25 +97,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  &__header {
+  .header {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
-  &__name {
+  .name {
     @include t3;
     color: $text1;
   }
-
-  &__about,
-  &__table {
-    @include b3;
-    color: $text2;
-  }
-
-  &__table-count {
+  .tableCount {
     color: $text1;
   }
 }

@@ -1,0 +1,18 @@
+.createSkillDistModal {
+  max-width: 496px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.marked-text {
+  color: $primary1;
+}
+
+.btns {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+}

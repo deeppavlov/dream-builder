@@ -4,11 +4,17 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import s from './CreateSkillModal.module.scss'
 
+interface CreateSkillModalProps {
+  isEditing?: boolean
+}
+
 export const CreateSkillModal = () => {
-  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
+  const [skill, setSkill] = useState<
+    (SkillInfoInterface & CreateSkillModalProps) | null
+  >(null)
   const [isOpen, setIsOpen] = useState(false)
   const [nameByUser, setNameByUser] = useState<string | null>(null)
   const [descByUser, setDescByUser] = useState<string | null>(null)
@@ -20,10 +26,15 @@ export const CreateSkillModal = () => {
     setDescByUser(null)
   }
   /**
-   * Set modal is open and getting bot info
+   * Set modal is open and getting skill info
    */
-  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
-    setSkill(data.detail)
+  const handleEventUpdate = (data: {
+    detail: SkillInfoInterface & CreateSkillModalProps
+  }) => {
+    const { detail } = data
+    setSkill(detail?.name ? detail : null)
+    setNameByUser(detail?.isEditing ? detail?.name : null)
+    setDescByUser(detail?.isEditing ? detail?.desc : null)
     setIsOpen(!isOpen)
   }
 
@@ -41,38 +52,56 @@ export const CreateSkillModal = () => {
 
   const handleEnterBtnClick = () => {
     if (!isHaveNameAndDesc) return
-    location.pathname = '/editor'
+    trigger('SkillPromptModal', {
+      skill: {
+        ...skill,
+        ...{ name: nameByUser, desc: descByUser },
+      },
+    })
+    closeModal()
   }
 
   useEffect(() => {
     subscribe('CreateSkillModal', handleEventUpdate)
-
     return () => unsubscribe('CreateSkillModal', handleEventUpdate)
   }, [])
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.createSkillModal}>
-        <h4>Create Skill</h4>
-
+        <div>
+          <h4>{skill?.isEditing ? 'Edit' : 'Create'} Skill</h4>
+          <div className={s.createSkillModal__distribution}>
+            {skill?.isEditing
+              ? 'You are editing'
+              : 'You are creating a skill from'}{' '}
+            <span className={s.createSkillModal__mark}>
+              {skill?.name || 'template'}
+            </span>{' '}
+          </div>
+        </div>
         <Input
-          label={
-            <div>
-              You are using{' '}
-              <span className={s.createSkillModal__mark}>{skill?.name}</span>{' '}
-              distribution
-            </div>
-          }
+          label='Name'
           props={{
             placeholder: 'Enter name of your skill',
+            value: nameByUser || '',
           }}
           onChange={handleNameChange}
         />
 
         <TextArea
           label='Description'
-          about='Enter no more than 500 signs'
-          props={{ placeholder: 'Enter description for your skill' }}
+          about={
+            <div className={s['createSkillModal__muted-text']}>
+              Enter no more than 500 signs.
+              <br />
+              You will be able to edit this information later.
+            </div>
+          }
+          props={{
+            placeholder: 'Enter description for your skill',
+            value: descByUser || '',
+          }}
           onChange={handleDescChange}
         />
         <div className={s.createSkillModal__btns}>

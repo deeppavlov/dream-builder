@@ -50,3 +50,8 @@ export interface SkillInfoInterface {
   botName?: string
   executionTime?: string
 }
+
+export interface ITokens {
+  refresh_token: string
+  token: string
+}

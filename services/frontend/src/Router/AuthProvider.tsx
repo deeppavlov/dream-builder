@@ -1,20 +1,29 @@
-import axios from 'axios'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UserContext, UserInterface } from '../types/types'
+import { authApi } from '../services/axiosConfig'
+import { ITokens, UserContext, UserInterface } from '../types/types'
 
 export const deleteLocalStorageUser = () => localStorage.removeItem('user')
+export const getRefreshToken = (): string | null => {
+  return getLocalStorageUser()?.refresh_token ?? null
+}
+export const getAccessToken = (): string | null => {
+  return getLocalStorageUser()?.token ?? null
+}
 
-const getLocalStorageUser = (): (UserInterface & { token: string }) | null => {
+export const setAccessToken = (token: string) => {
+  const user = getLocalStorageUser()
+  if (!user) return
+
+  setLocalStorageUser({ ...user, ...{ token } })
+}
+
+const getLocalStorageUser = (): (UserInterface & ITokens) | null => {
   const user = localStorage.getItem('user')
   return user ? JSON.parse(user) : null
 }
 
-const getToken = (): string | null => {
-  return getLocalStorageUser()?.token ?? null
-}
-
-const setLocalStorageUser = (user: UserInterface & { token: string }) => {
+const setLocalStorageUser = (user: UserInterface & ITokens) => {
   localStorage.setItem('user', JSON.stringify(user))
 }
 
@@ -36,17 +45,13 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
       },
     }
 
-    await axios
-      .post(
-        `${
-          import.meta.env.VITE_AUTH_API_URL
-        }/auth/exchange_authcode?auth_code=${code}`,
-        axiosConfig
-      )
+    await authApi
+      .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
       .then(({ data }) => {
         setLocalStorageUser(data)
         const clearUser = data
         delete clearUser.token
+        delete clearUser.refresh_token
 
         setUser(clearUser)
       })
@@ -56,28 +61,20 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
         console.log(`ExchangeAuthCode failed:`, e)
       })
 
-    // Remove extra query params and redirect
-    // const urlObj = new URL(location.origin)
-    // urlObj.search = ''
-    // location.href = urlObj.origin
     nav('/')
   }
 
   const logout = async () => {
-    const token = getToken()
-    if (!token) console.log('Token not exist for Logout!')
+    const refreshToken = getRefreshToken()
+    if (!refreshToken) console.log('Refresh token not exist for Logout!')
 
     let axiosConfig = {
       mode: 'no-cors',
-      headers: { token: token },
+      headers: { ['refresh-token']: refreshToken },
     }
 
     try {
-      await axios.put(
-        `${import.meta.env.VITE_AUTH_API_URL}/auth/logout`,
-        {},
-        axiosConfig
-      )
+      await authApi.put(`logout`, {}, axiosConfig)
     } catch (error) {
       console.log('Logout failed!', error)
     }

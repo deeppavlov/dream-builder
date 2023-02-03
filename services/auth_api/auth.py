@@ -94,7 +94,7 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     return User(**user, name=user["fullname"])
 
 
-@router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
+@router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(refresh_token: str = Header(), db: Session = Depends(get_db)) -> None:
     crud.set_users_refresh_token_invalid(db, refresh_token)
 

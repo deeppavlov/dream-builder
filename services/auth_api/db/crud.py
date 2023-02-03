@@ -39,9 +39,8 @@ def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str)
     return db_user
 
 
-def set_users_refresh_token_invalid(db: Session, email: str) -> None:
-    user_id = get_user_by_email(db, email).id
-    db.query(UserValid).filter(UserValid.user_id == user_id).update({"is_valid": False})
+def set_users_refresh_token_invalid(db: Session, refresh_token: str) -> None:
+    db.query(UserValid).filter(UserValid.refresh_token == refresh_token).update({"is_valid": False})
     db.commit()
 
 

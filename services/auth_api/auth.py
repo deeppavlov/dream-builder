@@ -95,10 +95,8 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
-async def logout(token: str = Header(), db: Session = Depends(get_db)) -> None:
-    data = await _fetch_user_info_by_access_token(token)
-
-    crud.set_users_refresh_token_invalid(db, data["email"])
+async def logout(refresh_token: str = Header(), db: Session = Depends(get_db)) -> None:
+    crud.set_users_refresh_token_invalid(db, refresh_token)
 
 
 @router.post("/exchange_authcode")

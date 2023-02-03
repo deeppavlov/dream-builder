@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../services/AuthProvider'
 
 export const PrivateRoute = ({ children }: any) => {
   // If not authorized redirect to main page

@@ -6,7 +6,6 @@ export interface UserInterface {
 
 export interface UserContext {
   user: UserInterface | null
-  // setUser: (user: UserInterface) => void
   login: (code: string) => void
   logout: () => void
 }

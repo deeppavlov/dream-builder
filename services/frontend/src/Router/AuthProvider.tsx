@@ -93,7 +93,6 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const userContextValue = useMemo(
     () => ({
       user,
-      // setUser,
       login,
       logout,
     }),

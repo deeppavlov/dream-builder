@@ -3,7 +3,7 @@ import { trigger } from '../utils/events'
 // import { deleteLocalStorageUser } from './AuthProvider'
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: import.meta.env.VITE_DIST_API_URL,
 })
 
 const handleBadTokenResponse = () => {

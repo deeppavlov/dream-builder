@@ -10,7 +10,7 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 
@@ -48,7 +48,6 @@ export const BotsAllPage = () => {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
-
 
   if (isAssistantsLoading) return <> {'Loading...'}</>
   if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>

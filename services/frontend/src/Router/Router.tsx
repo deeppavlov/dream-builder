@@ -8,6 +8,7 @@ import { SkillsPage } from '../pages/SkillsPage'
 import { StartPage } from '../pages/StartPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { DraftPage } from '../pages/DraftPage'
+import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { PrivateRoute } from './PrivateRoute'
 
 export const Router = () => {
@@ -19,7 +20,8 @@ export const Router = () => {
       <Route path={RoutesList.botsAll} element={<BotsAllPage />} />
       <Route path={RoutesList.skills} element={<SkillsPage />} />
       <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
-       <Route path={RoutesList.editor}
+      <Route
+        path={RoutesList.editor}
         element={
           <PrivateRoute>
             <EditorPage />
@@ -27,7 +29,7 @@ export const Router = () => {
         }
       />
       <Route path={RoutesList.test} element={<TestPage />} />
-
+      <Route path={RoutesList.code} element={<GoogleAuthPage />} />
     </Routes>
   )
 }

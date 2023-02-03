@@ -53,6 +53,10 @@ def get_uservalid_by_email(db: Session, email: str) -> Optional[UserValid]:
     return db.query(UserValid).filter(UserValid.user_id == user_id, UserValid.is_valid == True).first()
 
 
+def get_uservalid_by_refresh_token(db: Session, refresh_token: str) -> UserValid:
+    return db.query(UserValid).filter(UserValid.refresh_token == refresh_token, UserValid.is_valid == True).first()
+
+
 def check_uservalid_exists(db: Session, email) -> bool:
     user = get_user_by_email(db, email)
     if user and db.query(UserValid).filter(UserValid.id == user.id).first():

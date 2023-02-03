@@ -52,6 +52,7 @@ async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
 async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     """
     Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
+    Check is carried out via `_fetch_user_info_by_access_token` function
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
@@ -95,9 +96,6 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(validate_jwt)])
 async def logout(token: str = Header(), db: Session = Depends(get_db)) -> None:
-    """
-
-    """
     data = await _fetch_user_info_by_access_token(token)
 
     crud.set_users_refresh_token_invalid(db, data["email"])
@@ -138,19 +136,15 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
     email = user_info["email"]
     crud.add_user_to_uservalid(db, user_valid, email)
-    return {"token": access_token, **user.dict()}
+    return {"token": access_token, "refresh_token": refresh_token, **user.dict()}
 
 
 @router.post("/update_token")
-async def update_access_token(email: str, db: Session = Depends(get_db)) -> dict[str, str]:
-    # TODO: check expiration refresh token date (google api)
-    # TODO: think about redirect
-    user: UserValid = crud.get_uservalid_by_email(db, email)
+async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
+    user: UserValid = crud.get_uservalid_by_refresh_token(db, refresh_token)
 
     if not user:
         raise HTTPException(status_code=401, detail="User is not authenticated!")
-
-    refresh_token = user.refresh_token
 
     if not _check_refresh_token_validity(user.expire_date):
         # redirect?

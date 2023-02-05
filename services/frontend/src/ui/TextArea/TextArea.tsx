@@ -1,15 +1,15 @@
-import React, { FC, useState } from 'react'
-import { nanoid } from 'nanoid'
+import React, { FC, useId, useState } from 'react'
+import classNames from 'classnames/bind'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
-import s from './TextArea.module.scss'
 import Button from '../Button/Button'
+import s from './TextArea.module.scss'
 
 interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   errorMessage?: string | JSX.Element | null
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
-  onSubmit?: (value: string) => void
+  onSubmit?: (value: string | null) => void
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
@@ -21,62 +21,75 @@ export const TextArea: FC<TextAreaProps> = ({
   onSubmit,
   onChange,
 }) => {
-  const [value, setValue] = useState(props?.value)
+  const [value, setValue] = useState<string | null>(
+    props?.value?.toString() ?? null
+  )
   const [isActive, setIsActive] = useState(false)
-  const [errorMsg, setErrorMsg] = useState(errorMessage)
-  const textAreaId = nanoid(8)
+  const [isError, setIsError] = useState(false)
+  const [isChanged, setIsChanged] = useState(false)
+  const textAreaId = useId()
+  let cx = classNames.bind(s)
 
-  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleFocus = () => {
+    if (isError) setIsError(false)
+  }
+
+  const handleBlur = () => {
+    const valueIsValid = value !== undefined && value?.toString().length !== 0
+    const isRequiredAndInvalid = !isError && props?.required && !valueIsValid
+
+    if (isRequiredAndInvalid) setIsError(true)
+    setIsActive(false)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) onChange(e)
-
-    const targetValue = e.target.value
-    const valueIsEmpty = targetValue.length === 0
-
-    setValue(targetValue)
-
-    if (valueIsEmpty) {
-      setIsActive(false)
-      return
-    }
-
+    setValue(e.target.value)
     setIsActive(true)
+    setIsChanged(true)
   }
 
   const handleEnterBtnClick = () => {
     setIsActive(false)
-    setValue('')
+    setIsChanged(false)
+    setValue(null)
 
-    if (onSubmit && value !== undefined && value !== '') {
-      onSubmit(value.toString())
+    if (onSubmit) {
+      onSubmit(value?.toString() ?? null)
+    }
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (onSubmit && event.key === 'Enter') {
+      event.preventDefault()
+      handleEnterBtnClick()
     }
   }
 
   return (
-    <div className={s.textArea}>
+    <div className={s.textArea} data-active={isActive} data-error={isError}>
       {label && (
-        <label htmlFor={textAreaId} className={s.textArea__label}>
+        <label htmlFor={textAreaId} className={s.label}>
           {label}
         </label>
       )}
-      <div className={`${s.textArea__container} ${s.resizer}`}>
-        <TextAreaLogo
-          className={`${s['textArea-resizer']} ${s.textArea__resizer}`}
-        />
-
+      <div className={cx('container', 'resizer-container')}>
+        <TextAreaLogo className={s.resizer} />
         <textarea
           {...props}
           id={textAreaId}
-          value={value}
+          value={value ?? ''}
           rows={2}
           cols={20}
-          onChange={handleTextAreaChange}
-          className={`${s.textArea__field} ${
-            isActive ? s.textArea__field_active : ''
-          } ${errorMsg ? s.textArea__field_error : ''}`}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          className={s.field}
         />
 
         {onSubmit && (
-          <div className={s.textArea__submit}>
+          <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
               small
@@ -87,13 +100,9 @@ export const TextArea: FC<TextAreaProps> = ({
         )}
       </div>
 
-      {(about || errorMsg) && (
-        <label
-          htmlFor={textAreaId}
-          className={`${s.textArea__label} ${
-            errorMsg ? s['textArea__error-msg'] : ''
-          }`}>
-          {errorMsg ?? about}
+      {(about || (isError && errorMessage)) && (
+        <label htmlFor={textAreaId} className={s.label}>
+          {isError ? errorMessage : about}
         </label>
       )}
     </div>

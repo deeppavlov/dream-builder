@@ -1,50 +1,37 @@
+import classNames from 'classnames/bind'
+import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down_link.svg'
 import { useState } from 'react'
 import s from './ExpandableDropdown.module.scss'
 
 interface ExpandableDropdownProps extends React.PropsWithChildren {
+  placeholder: string
   title: string
   big?: boolean
 }
 
 const ExpandableDropdownn = ({
-  title,
+  placeholder,
   big,
+  title,
   children,
 }: ExpandableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  let cx = classNames.bind(s)
 
   return (
-    <div
-      className={`${s.expandableDropdown} ${
-        isOpen && s.expandableDropdown_active
-      } ${big ? s.expandableDropdown_big : ''}`}>
+    <div className={cx('expandableDropdown', isOpen && 'active', big && 'big')}>
       {!isOpen && (
-        <button
-          className={s.expandableDropdown__btn}
-          onClick={() => setIsOpen(true)}>
-          {title}
+        <button className={s.placeholder} onClick={() => setIsOpen(true)}>
+          {placeholder}
         </button>
       )}
+      <ArrowDownIcon className={s.arrow} />
       {isOpen && (
-        <div className={s.expandableDropdown__content}>
-          <span onClick={() => setIsOpen(false)}>Instruction</span>
-          <p>raw texts regular</p>
-          <p>
-            expressions (which will be preprocessed to separate examples before
-            training) using the following features: () to determine the
-            considered sequence, (bla|blabla) - vertical line to determine or
-            symbol {'(){(0, 1)}'} to determine either precesence or absence of
-            the given in the brackets.
-          </p>
-          <p>
-            For example, from the regular expression{' '}
-            {'(hi! |hello! ){0,1}how are you?'} two examples will be generated:
-            hi! how are you? and hello! how are you?
-          </p>
-          <p>
-            You also may insert several examples (both texts or regular
-            expressions) at once splitting them by a new line.
-          </p>
+        <div className={s.content}>
+          <span className={s.title} onClick={() => setIsOpen(false)}>
+            {title}
+          </span>
+          <div className={s.content}>{children}</div>
         </div>
       )}
     </div>

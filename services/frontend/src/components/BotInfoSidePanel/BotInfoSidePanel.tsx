@@ -45,7 +45,7 @@ const BotInfoSidePanel = ({ position, disabledMsg }: BotInfoSidePanelProps) => {
   }
 
   const handleCloneBtnClick = () => {
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', distribution: bot })
   }
 
   useEffect(() => {

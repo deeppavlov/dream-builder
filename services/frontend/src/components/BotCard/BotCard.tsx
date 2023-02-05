@@ -31,7 +31,17 @@ export const BotCard = ({
   size,
   disabledMsg,
 }: BotCardProps) => {
-  const bot = { routingName, name, author, desc, dateCreated, version, ram, gpu, space }
+  const bot = {
+    routingName,
+    name,
+    author,
+    desc,
+    dateCreated,
+    version,
+    ram,
+    gpu,
+    space,
+  }
 
   const handleBotCardClick = () => {
     trigger('BotInfoSidePanel', bot)
@@ -39,7 +49,7 @@ export const BotCard = ({
 
   const handleCloneBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', distribution: bot })
   }
 
   return (

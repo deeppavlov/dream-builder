@@ -49,7 +49,7 @@ export const BotListItem = ({
 
   const handleCloneBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', distribution: bot })
   }
 
   return (
@@ -69,14 +69,12 @@ export const BotListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.author}>
-
           {author === 'DeepPavlov' ? (
             <Logo />
           ) : (
             <img src={auth?.user?.picture} referrerPolicy='no-referrer' />
           )}
           <p>{author}</p>
-
         </div>
       </td>
       <td className={s.td}>

@@ -12,7 +12,7 @@ import IntentListItem, {
   IntentListItemInterface,
 } from '../../components/IntentListItem/IntentListItem'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import { CreateAssistantModal } from '../../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import NotificationCard, {
   NotificationCardProps,
@@ -39,6 +39,8 @@ import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
+import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
+import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -143,11 +145,66 @@ export const TestPage = () => {
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Modals</span>
         <div className={s.testPage__component}>
-          <span>CreateAssistantModal</span>
+          <span>AssistantModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
-            CreateAssistantModal
+            props={{
+              onClick: () => trigger('AssistantModal', { action: 'create' }),
+            }}>
+            AssistantModal (create)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('AssistantModal', {
+                  action: 'clone',
+                  distribution: {
+                    routingName: 'test',
+                    name: 'Test dist name',
+                  },
+                }),
+            }}>
+            AssistantModal (clone)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('AssistantModal', {
+                  action: 'edit',
+                  bot: {
+                    routingName: 'test',
+                    name: 'Bert from Sesame Street bot (Bort)',
+                    desc: 'This bot is helping astronauts in space',
+                  },
+                }),
+            }}>
+            AssistantModal (edit)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>PublishAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{ onClick: () => trigger('PublishAssistantModal', {}) }}>
+            PublishAssistantModal
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>DeleteAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('DeleteAssistantModal', {
+                  bot: {
+                    routingName: 'en_dream_to_de_bug',
+                    name: 'EnDreamToDebug',
+                  },
+                }),
+            }}>
+            DeleteAssistantModal
           </Button>
         </div>
         <div className={s.testPage__component}>
@@ -400,6 +457,19 @@ export const TestPage = () => {
           Secondary Large Long
         </Button>
         <div className={s.testPage__component}>
+          <span>Error</span>
+          <Button theme='error'>Error Large</Button>
+          <Button theme='error' props={{ disabled: true }}>
+            Error Large (disabled)
+          </Button>
+          <Button theme='error' small>
+            Error Small
+          </Button>
+          <Button theme='error' small props={{ disabled: true }}>
+            Error Small (disabled)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
           <span>Tertiary</span>
           <Button theme='tertiary'>Tertiary Large</Button>
           <Button theme='tertiary' props={{ disabled: true }}>
@@ -524,8 +594,9 @@ export const TestPage = () => {
           <Input props={{ placeholder: 'Assistive text' }} label='Label' />
         </div>
         <div className={s.testPage__component}>
-          <span>with value</span>
+          <span>with Enter button</span>
           <Input
+            onSubmit={() => {}}
             props={{
               placeholder: 'Assistive text',
               value: 'Text input Text input Text input Text input',
@@ -534,9 +605,9 @@ export const TestPage = () => {
           />
         </div>
         <div className={s.testPage__component}>
-          <span>error</span>
+          <span>required (with error)</span>
           <Input
-            props={{ placeholder: 'Assistive text' }}
+            props={{ placeholder: 'Assistive text', required: true }}
             label='Label'
             errorMessage='Error message'
           />
@@ -560,8 +631,9 @@ export const TestPage = () => {
           />
         </div>
         <div className={s.testPage__component}>
-          <span>with value</span>
+          <span>with Enter button</span>
           <TextArea
+            onSubmit={() => {}}
             props={{
               placeholder: 'Assistive text',
               value:
@@ -572,10 +644,11 @@ export const TestPage = () => {
           />
         </div>
         <div className={s.testPage__component}>
-          <span>error</span>
+          <span>required (with error)</span>
           <TextArea
             props={{
               placeholder: 'Assistive text',
+              required: true,
             }}
             label='Label'
             about='Instructions'
@@ -673,7 +746,9 @@ export const TestPage = () => {
       </div>
 
       {/* Modals */}
-      <CreateAssistantModal />
+      <AssistantModal />
+      <PublishAssistantModal />
+      <DeleteAssistantModal />
       <CreateSkillModal />
       <SkillPromptModal />
       <CreateSkillDistModal />

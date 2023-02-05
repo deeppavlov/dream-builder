@@ -12,7 +12,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../services/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 
@@ -139,7 +139,7 @@ export const BotsAllPage = () => {
           }
           position={{ top: topbarHeight }}
         />
-        <CreateAssistantModal />
+        <AssistantModal />
       </Main>
     </>
   )

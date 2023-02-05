@@ -17,7 +17,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { Slider } from '../ui/Slider/Slider'
 import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
@@ -34,7 +34,7 @@ export const BotsPage = () => {
     setBots([])
   }
   const addBot = () => {
-    trigger('CreateAssistantModal', null)
+    trigger('AssistantModal', { action: 'create' })
     if (!auth?.user) return
     !listView
       ? setBots(
@@ -61,7 +61,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -254,7 +253,7 @@ export const BotsPage = () => {
           }
           position={{ top: topbarHeight }}
         />
-        <CreateAssistantModal />
+        <AssistantModal />
       </Main>
     </>
   )

@@ -23,7 +23,7 @@ import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModa
 import { trigger } from '../utils/events'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 
 interface skill_list {
@@ -41,7 +41,6 @@ interface skill_list {
     time: string
     display_name: string
   }
-  assistant_dist: string
 }
 
 export const SkillsPage = () => {
@@ -254,7 +253,7 @@ export const SkillsPage = () => {
         <CreateSkillModal />
         <SkillPromptModal />
         <CreateSkillDistModal />
-        <CreateAssistantModal />
+        <AssistantModal />
         <ChooseBotModal />
       </Main>
     </>

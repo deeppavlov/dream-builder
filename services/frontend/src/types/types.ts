@@ -6,8 +6,6 @@ export interface UserInterface {
 
 export interface UserContext {
   user: UserInterface | null
-  login: (code: string) => void
-  logout: () => void
 }
 
 export type CustomEventName = string

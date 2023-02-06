@@ -1,7 +1,6 @@
-import usePrivateApi from '../hooks/usePrivateApi'
+import { privateApi } from "./axiosConfig"
 
 export async function getSkillListByDistName(distName: string) {
-  const privateApi = usePrivateApi()
   try {
     const { data } = await privateApi.get(`skills/${distName}`)
     return data

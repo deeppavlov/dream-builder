@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../Router/AuthProvider'
+import { login, useAuth } from '../Router/AuthProvider'
 
 /**
  * Parsing `auth_code` that comes from Google
@@ -17,7 +17,7 @@ export const GoogleAuthPage = () => {
       return
     }
 
-    auth?.login(code)
+    login(code)
   }, [])
 
   return <>Redirecting...</>

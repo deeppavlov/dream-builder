@@ -27,61 +27,64 @@ const setLocalStorageUser = (user: UserInterface & ITokens) => {
   localStorage.setItem('user', JSON.stringify(user))
 }
 
+const getClearUrl = (url: string) => {
+  var urlOject = new URL(location.origin)
+  urlOject.hash = ''
+  urlOject.search = ''
+  return urlOject.toString()
+}
+
 export const AuthContext = createContext<UserContext | null>(null)
 export const useAuth = () => useContext(AuthContext)
 
+/**
+ * Exchange Google `auth_code` for tokens
+ */
+export const login = async (code: string) => {
+  let axiosConfig = {
+    mode: 'no-cors',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  }
+
+  await authApi
+    .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
+    .then(({ data }) => {
+      setLocalStorageUser(data)
+      const clearUser = data
+      delete clearUser.token
+      delete clearUser.refresh_token
+    })
+    .catch(e => {
+      deleteLocalStorageUser()
+      console.log(`ExchangeAuthCode failed:`, e)
+    })
+
+  location.href = getClearUrl(location.origin)
+}
+
+export const logout = async () => {
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) console.log('Refresh token not exist for Logout!')
+
+  let axiosConfig = {
+    mode: 'no-cors',
+    headers: { ['refresh-token']: refreshToken },
+  }
+
+  try {
+    await authApi.put(`logout`, {}, axiosConfig)
+  } catch (error) {
+    console.log('Logout failed!', error)
+  }
+
+  deleteLocalStorageUser()
+  location.href = getClearUrl(location.origin)
+}
+
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
-  const nav = useNavigate()
-
-  /**
-   * Exchange Google `auth_code` for tokens
-   */
-  const login = async (code: string) => {
-    let axiosConfig = {
-      mode: 'no-cors',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    }
-
-    await authApi
-      .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
-      .then(({ data }) => {
-        setLocalStorageUser(data)
-        const clearUser = data
-        delete clearUser.token
-        delete clearUser.refresh_token
-
-        setUser(clearUser)
-      })
-      .catch(e => {
-        setUser(null)
-        deleteLocalStorageUser()
-        console.log(`ExchangeAuthCode failed:`, e)
-      })
-
-    nav('/')
-  }
-
-  const logout = async () => {
-    const refreshToken = getRefreshToken()
-    if (!refreshToken) console.log('Refresh token not exist for Logout!')
-
-    let axiosConfig = {
-      mode: 'no-cors',
-      headers: { ['refresh-token']: refreshToken },
-    }
-
-    try {
-      await authApi.put(`logout`, {}, axiosConfig)
-    } catch (error) {
-      console.log('Logout failed!', error)
-    }
-
-    deleteLocalStorageUser()
-    location.reload()
-  }
 
   useEffect(() => {
     const user = getLocalStorageUser()
@@ -93,8 +96,6 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const userContextValue = useMemo(
     () => ({
       user,
-      login,
-      logout,
     }),
     [user]
   )

@@ -1,8 +1,6 @@
-import usePrivateApi from '../hooks/usePrivateApi'
+import { privateApi } from "./axiosConfig"
 
 export async function getComponentsFromAssistantDists(distName: string) {
-  const privateApi = usePrivateApi()
-
   try {
     const { data } = await privateApi.get(
       `assistant_dists/${distName}/components/`

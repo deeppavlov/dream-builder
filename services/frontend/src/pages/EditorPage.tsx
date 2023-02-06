@@ -105,7 +105,9 @@ export const EditorPage = () => {
                 display='grid'
                 gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
                 {skillListData?.map((skill: any) => {
-                  const dateCreated = dateToUTC(skill.metadata.date_created)
+                  // const dateCreated = dateToUTC(skill.metadata.date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  
                   return (
                     <SkillCard
                       type='your'

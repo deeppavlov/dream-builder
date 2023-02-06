@@ -61,7 +61,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -127,7 +126,8 @@ export const BotsPage = () => {
                       disk_usage,
                       date_created,
                     } = dist
-                    const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date())
+
                     return (
                       <BotCard
                         routingName={name}
@@ -197,8 +197,9 @@ export const BotsPage = () => {
                     disk_usage,
                     date_created,
                   } = dist
-                  const dateCreated = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  const time = timeToUTC(new Date())
+
                   return (
                     <BotListItem
                       key={i}

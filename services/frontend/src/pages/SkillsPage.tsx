@@ -41,7 +41,6 @@ interface skill_list {
     time: string
     display_name: string
   }
-  assistant_dist: string
 }
 
 export const SkillsPage = () => {
@@ -128,7 +127,9 @@ export const SkillsPage = () => {
                       execution_time,
                       date_created,
                     } = skill?.metadata
-                    const date = dateToUTC(date_created)
+                    // const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date())
+                    const time = timeToUTC(new Date())    
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
@@ -137,7 +138,7 @@ export const SkillsPage = () => {
                         name={display_name}
                         botName={skill.assistant_dist}
                         skillType={type}
-                        dateCreated={date}
+                        dateCreated={dateCreated}
                         desc={description}
                         version={version}
                         ram={ram_usage}
@@ -195,14 +196,17 @@ export const SkillsPage = () => {
                     execution_time,
                     date_created,
                   } = skill.metadata
-                  const date = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
+                  // const date = dateToUTC(date_created)
+                  // const time = timeToUTC(date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  const time = timeToUTC(new Date())
+  
                   return (
                     <SkillListItem
                       key={i}
                       name={display_name}
                       botName={skill?.assistant_dist}
-                      dateCreated={date}
+                      dateCreated={dateCreated}
                       time={time}
                       desc={description}
                       version={version}

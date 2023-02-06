@@ -2,42 +2,64 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 12px 24px 24px 24px;
-  gap: 16px;
+  overflow: hidden;
+  position: relative;
 
-  &__name {
-    @include t3;
-    color: $text2;
-  }
-
-  &__btns {
-    width: 100%;
-    margin-top: auto;
+  .container {
+    height: 100%;
     display: flex;
-    justify-content: flex-end;
-    gap: 16px;
+    flex-direction: column;
+    // align-items: flex-end;
+    overflow: hidden;
+    padding: 12px 12px 24px 12px;
   }
+}
 
-  &__help {
-    margin-right: auto;
-    button {
-      border-radius: 50%;
-      padding: 12px;
-    }
+.name {
+  @include t3;
+  color: $text2;
+  margin-bottom: 8px;
+  padding: 0 12px;
+}
+
+.desc {
+  @include b3;
+  padding: 0 12px;
+}
+
+.btns {
+  position: sticky;
+  width: 100%;
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 0 12px;
+}
+
+.help {
+  margin-right: auto;
+  button {
+    border-radius: 50%;
+    padding: 12px;
   }
 }
 
 .settings {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  padding: 0 12px;
+}
 
-  &__field {
-    @include b4;
-    color: $text2;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
+.field {
+  @include b5;
+  color: $text2;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

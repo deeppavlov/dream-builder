@@ -198,6 +198,34 @@ const mockSettings: SelectorSettings = {
       name: 'GPT-J Chit-Chat',
       type: 'input',
     },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+    },
   ],
 }
 

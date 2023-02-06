@@ -9,7 +9,7 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
-const mockSkillModels = ['Chit-Chat GPT', 'GPT-3', 'GPT-J', 'Bloom']
+const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
 
 interface Props {
   skill?: SkillInfoInterface

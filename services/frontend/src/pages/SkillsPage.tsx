@@ -255,7 +255,7 @@ export const SkillsPage = () => {
         <SkillPromptModal />
         <CreateSkillDistModal />
         <CreateAssistantModal />
-        <ChooseBotModal />
+        {/* <ChooseBotModal /> */}
       </Main>
     </>
   )

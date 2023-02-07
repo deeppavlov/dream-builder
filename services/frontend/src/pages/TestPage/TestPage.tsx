@@ -187,7 +187,15 @@ export const TestPage = () => {
           <span>PublishAssistantModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('PublishAssistantModal', {}) }}>
+            props={{
+              onClick: () =>
+                trigger('PublishAssistantModal', {
+                  bot: {
+                    routingName: 'test',
+                    name: 'Bert from Sesame Street bot (Bort)',
+                  },
+                }),
+            }}>
             PublishAssistantModal
           </Button>
         </div>

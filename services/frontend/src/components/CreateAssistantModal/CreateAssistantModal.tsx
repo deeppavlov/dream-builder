@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { BotInfoInterface, dist_list } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -63,14 +63,13 @@ export const CreateAssistantModal = () => {
   } = useForm()
 
   const onFormSubmit = (data: any) => {
-    console.log(data)
     if (!isHaveNameAndDesc) return
     putAssistantDist(data).then(() => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
     })
     setTimeout(() => {
       location.pathname = nameByUser
-    }, 500)
+    }, 1000)
   }
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

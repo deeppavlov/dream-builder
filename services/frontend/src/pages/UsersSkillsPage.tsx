@@ -12,7 +12,7 @@ import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { SkillType } from '../types/types'
 
 interface skill_list {
@@ -47,13 +47,10 @@ export const UsersSkillsPage = () => {
           <Wrapper title='Your Skills' amount={42}>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
-
-            </Container>
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'></Container>
           </Wrapper>
         ) : (
           <Wrapper title='Your Skills' amount={42}>
-            
             <Table second='Type'>
               {/* {skillsData?.map((skill: skill_list, i: number) => {
                 const date = dateToUTC(skill.metadata.date_created)

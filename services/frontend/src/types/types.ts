@@ -10,7 +10,10 @@ export interface UserContext {
   login: (res: any) => void
   logout: () => void
 }
-
+export interface IPreviewContext {
+  isPreview: boolean
+  setIsPreview: (isPreview: boolean) => void
+}
 export type CustomEventName = string
 
 export type CustomEventListener = (data: any) => void
@@ -48,6 +51,19 @@ export interface SkillInfoInterface {
   prompt?: string
 }
 
+export interface Annotator {
+  name: string
+  display_name: string
+  author: string
+  type: AnnotatorType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
+}
 export interface ResourcesInterface {
   ram: string
   gpu: string
@@ -72,6 +88,19 @@ export interface dist_list {
   ram_usage: string
   gpu_usage: string
   disk_usage: string
+}
+export interface Skill {
+  name: string
+  display_name: string
+  author: string
+  type: SkillType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
 }
 export type SkillType =
   | 'fallbacks'
@@ -98,3 +127,22 @@ export interface IAnnotator {
   type: string
   desc: string
 }
+export type MenuTypes =
+  | 'main'
+  | 'bots'
+  | 'skills_page'
+  | 'editor'
+  | 'bot_public'
+  | 'your_bot'
+  | 'skills'
+  | 'all_annotators'
+  | 'response_annotators'
+  | 'all_skills'
+  | 'customizable_annotator'
+  | 'customizable_skill'
+  | 'non_customizable_annotator'
+  | 'non_customizable_skill'
+  | 'skill_selector'
+  | 'response_selector'
+  | null
+  | false

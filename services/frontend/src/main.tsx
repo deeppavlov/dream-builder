@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './services/AuthProvider'
 import { App } from './App'
+import { PreviewProvider } from './PreviewProvider'
 
 function prepare() {
   if (process.env.NODE_ENV === 'development') {
@@ -17,7 +18,9 @@ prepare().then(() => {
     ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <AuthProvider>
-          <App />
+          <PreviewProvider>
+            <App />
+          </PreviewProvider>
         </AuthProvider>
       </BrowserRouter>
     )

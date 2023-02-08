@@ -45,8 +45,13 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
     updateIntent()
   }
 
-  const addListItem = (value: string) => setResponses([value].concat(responses))
-  const updateListItem = (index: number, value: string) => {
+  const addListItem = (value: string | null) => {
+    if (!value) return
+    setResponses([value].concat(responses))
+  }
+  const updateListItem = (index: number, value: string | null) => {
+    if (!value) return
+
     setResponses(
       responses.map((v, i) => {
         if (index === i) {
@@ -86,7 +91,12 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
         onRequestClose={closeModal}
         contentLabel='Intet Modal'
         className={s.intentModal}
-        style={{ overlay: { zIndex: 5 } }}>
+        style={{
+          overlay: {
+            zIndex: 5,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        }}>
         <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
           <div className={s.intentModal__header}>
             <span className={s.intentModal__name}>
@@ -112,7 +122,16 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
               />
             </div>
             <div className={s.intentModal__dropdown}>
-              <ExpandableDropdownn title='Instruction (click to expand)' />
+              <ExpandableDropdownn
+                placeholder='Instruction (click to expand)'
+                title='Instruction'>
+                DFF Intent Responder Skill is a template-based skill for
+                answering to the user's special requests (intents). DFF Intent
+                Responder Skill contains responses to some intents from Intent
+                Catcher (some intents are more general and do not require
+                special responses but are used in other skills as a custom
+                classification).
+              </ExpandableDropdownn>
             </div>
 
             <span className={s['intentModal__block-name']}>Responses</span>

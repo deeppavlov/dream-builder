@@ -39,7 +39,6 @@ export const BotCard = ({
     routingName,
     name,
     author,
-    authorImg,
     desc,
     dateCreated,
     version,
@@ -49,10 +48,14 @@ export const BotCard = ({
   }
 
   const handleBotCardClick = () => {
-    trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
-    })
+    trigger('BotInfoSidePanel', bot)
   }
+
+  // const handleBotCardClick = () => {
+  //   trigger(BASE_SP_EVENT, {
+  //     children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+  //   })
+  // }
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     location.pathname = bot?.routingName! + '?preview'
@@ -60,7 +63,7 @@ export const BotCard = ({
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', distribution: bot })
   }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()

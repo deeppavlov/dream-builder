@@ -1,26 +1,73 @@
 .expandableDropdown {
+  position: relative;
   border-radius: 12px;
   padding: 7px 12px;
   width: 100%;
   background-color: $bcgrnd2;
+}
 
-  &_big {
-    padding: 4px 16px;
-    background-color: $bcgrnd1;
+.big {
+  padding: 4px 16px;
+  background-color: $bcgrnd1;
+}
+
+.active {
+  border: 1px solid #3300ff;
+
+  .arrow {
+    transform: rotate(0deg);
+  }
+}
+
+.placeholder {
+  @include b3;
+  color: #8d96b5;
+  cursor: pointer;
+}
+
+.arrow {
+  position: absolute;
+  display: block;
+  width: 24px;
+  height: 24px;
+  top: 6px;
+  right: 12px;
+  transform: rotate(-180deg);
+  transition: all 0.3s linear;
+
+  path {
+    fill: $text3;
+  }
+}
+
+.title {
+  @include b4;
+  color: $text1;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  @include b5;
+
+  p,
+  ul {
+    @include b5;
   }
 
-  &_active {
-    border: 1px solid #3300ff;
-  }
+  ul li {
+    padding-left: 13px;
+    list-style-position: outside;
+    position: relative;
 
-  &__btn {
-    @include b3;
-    color: #8d96b5;
-  }
-
-  &__content {
-    p {
-      @include b4;
+    &::before {
+      content: '•';
+      left: 0;
+      top: 0;
+      position: absolute;
+      color: $text2;
     }
   }
 }

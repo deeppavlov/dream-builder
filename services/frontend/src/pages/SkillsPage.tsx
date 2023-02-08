@@ -24,7 +24,7 @@ import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModa
 import { trigger } from '../utils/events'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
@@ -262,7 +262,7 @@ export const SkillsPage = () => {
         <CreateSkillModal />
         <SkillPromptModal />
         <CreateSkillDistModal />
-        <CreateAssistantModal />
+        <AssistantModal />
         <ChooseBotModal />
       </Main>
     </>

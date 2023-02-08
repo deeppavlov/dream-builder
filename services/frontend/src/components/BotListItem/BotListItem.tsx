@@ -57,7 +57,7 @@ export const BotListItem: FC<BotListItemProps> = ({
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', distribution: bot })
   }
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()

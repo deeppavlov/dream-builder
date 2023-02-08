@@ -6,6 +6,7 @@ import s from './BaseModal.module.scss'
 export interface BaseModalInterface {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
+  handleClose?: () => void
   customStyles?: Modal.Styles
   children?: React.ReactNode
 }
@@ -13,10 +14,14 @@ export interface BaseModalInterface {
 const BaseModal = ({
   isOpen,
   setIsOpen,
+  handleClose,
   customStyles,
   children,
 }: BaseModalInterface) => {
-  const closeModal = () => setIsOpen(false)
+  const closeModal = () => {
+    setIsOpen(false)
+    handleClose && handleClose()
+  }
 
   return isOpen ? (
     <Modal

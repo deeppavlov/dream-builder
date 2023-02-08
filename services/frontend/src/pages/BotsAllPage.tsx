@@ -12,7 +12,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../Context/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
@@ -134,8 +134,13 @@ export const BotsAllPage = () => {
             </Table>
           </Wrapper>
         )}
-        <BaseSidePanel position={{ top: topbarHeight }} />
-        <CreateAssistantModal />
+        <BotInfoSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to clone the bot'
+          }
+          position={{ top: topbarHeight }}
+        />
+        <AssistantModal />
       </Main>
     </>
   )

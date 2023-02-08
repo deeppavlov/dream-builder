@@ -17,7 +17,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { Slider } from '../ui/Slider/Slider'
 import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
@@ -34,7 +34,7 @@ export const BotsPage = () => {
     setListView(listView => !listView)
   }
   const addBot = () => {
-    trigger('CreateAssistantModal', null)
+    trigger('AssistantModal', { action: 'create' })
   }
 
   const {
@@ -283,12 +283,13 @@ export const BotsPage = () => {
             You must be signed in to create your own bot
           </ReactTooltip>
         )}
-
-        {/* SidePanel */}
-        <BaseSidePanel position={{ top: topbarHeight }} />
-
-        {/* Modals */}
-        <CreateAssistantModal />
+        <BotInfoSidePanel
+          disabledMsg={
+            auth?.user ? undefined : 'You must be signed in to clone the bot'
+          }
+          position={{ top: topbarHeight }}
+        />
+        <AssistantModal />
       </Main>
     </>
   )

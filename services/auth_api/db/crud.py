@@ -35,7 +35,6 @@ def add_user_to_uservalid(db: Session, user: models.UserValidScheme, email: str)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    print(db_user)
     return db_user
 
 

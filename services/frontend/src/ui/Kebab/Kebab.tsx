@@ -1,22 +1,35 @@
+import { FC } from 'react'
+import classNames from 'classnames/bind'
+import { MenuTypes } from '../../types/types'
 import { MenuList } from '../../components/MenuList/MenuList'
 import s from './Kebab.module.scss'
 
-export const Kebab = ({ disabled, type, item, color, dataFor }: any) => {
+interface KebabProps {
+  disabled?: boolean
+  type?: 'row' | 'column'
+  item?: any
+  dataFor: MenuTypes
+}
+
+export const Kebab: FC<KebabProps> = ({ disabled, type, item, dataFor }) => {
   const privateDataFor = () =>
     item?.typeItem ? dataFor + item.typeItem : dataFor
+  const clickHandler = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+  const cx = classNames.bind(s)
   return (
     <>
-      <div
-        onClick={(e) => { e.stopPropagation()}}
-        disabled={disabled === undefined ? false : disabled}
+      <button
         data-tip
+        disabled={disabled}
+        onClick={clickHandler}
         data-for={privateDataFor()}
-        style={{ opacity: disabled && '0.3', flexDirection: `${type}` }}
-        className={s.kebab}>
-        <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
-        <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
-        <figure style={{ backgroundColor: `${color}` }} className={s.dots} />
-      </div>
+        className={cx('kebab', type, disabled && 'disabled')}>
+        <figure className={s.dots} />
+        <figure className={s.dots} />
+        <figure className={s.dots} />
+      </button>
       <MenuList type={dataFor} item={item} privateDataFor={privateDataFor()} />
     </>
   )

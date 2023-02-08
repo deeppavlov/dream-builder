@@ -1,5 +1,8 @@
 from pydantic import BaseModel, BaseSettings
 
+URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
+CLIENT_SECRET_FILENAME = "client_secret.json"
+
 
 class UrlSettings(BaseModel):
     frontend: str
@@ -33,5 +36,14 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
         env_nested_delimiter = "__"
 
+    @property
+    def auth_client_info(self):
+
+        return {
+            "client_id": self.auth.google_client_id,
+            "client_secret": self.auth.google_client_secret,
+        }
+
 
 settings = Settings()
+

@@ -12,8 +12,7 @@ from sqlalchemy.orm import Session
 import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
 from services.auth_api.db.db_models import UserValid
-from services.auth_api.const import CLIENT_INFO, URL_TOKENINFO, CLIENT_SECRET_FILENAME
-from services.auth_api.config import settings
+from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api.models import UserCreate, User, UserValidScheme
 
 router = APIRouter(prefix="/auth")
@@ -148,7 +147,7 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
         # redirect?
         raise HTTPException(status_code=401, detail="Refresh token has expired!")
 
-    info = CLIENT_INFO.copy()
+    info = settings.auth_client_info.copy()
     info.update(
         {
             "grant_type": "refresh_token",

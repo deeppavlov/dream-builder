@@ -1,13 +1,22 @@
+import classNames from 'classnames/bind'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus.svg'
 import s from './AddButtonStack.module.scss'
 
-export const AddButtonStack = ({ onClick, text, disabled }: any) => {
+interface AddButtonStackProps {
+  onClick?: () => void
+  text: string
+  disabled: boolean
+}
+
+export const AddButtonStack = ({
+  onClick,
+  text,
+  disabled,
+}: AddButtonStackProps) => {
+  const cx = classNames.bind(s)
   return (
     <button
-      className={s.add_btn}
-      style={{
-        opacity: disabled && '0.3',
-      }}
+      className={cx('add', disabled && 'disabled')}
       disabled={disabled}
       onClick={onClick}>
       <PlusLogo />

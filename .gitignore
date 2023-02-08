@@ -315,3 +315,4 @@ src/.DS_Store
 *.njsproj
 *.sln
 *.sw?
+client_secret.json

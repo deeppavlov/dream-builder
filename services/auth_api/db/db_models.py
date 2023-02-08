@@ -4,7 +4,7 @@ from services.auth_api.db.db import Base
 
 
 class GoogleUser(Base):
-    __tablename__ = "google"
+    __tablename__ = "google_user"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True)

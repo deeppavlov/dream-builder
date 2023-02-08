@@ -20,6 +20,7 @@ class AuthSettings(BaseModel):
     test_token: str
     google_client_secret: str
     refresh_token_lifetime_days: int
+    redirect_uri: str
 
 
 class Settings(BaseSettings):

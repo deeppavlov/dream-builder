@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
 from services.auth_api.db.db_models import UserValid
-from services.auth_api.const import CLIENT_INFO, URL_TOKENINFO
+from services.auth_api.const import CLIENT_INFO, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api.config import settings
 from services.auth_api.models import UserCreate, User, UserValidScheme
 
@@ -20,8 +20,8 @@ router = APIRouter(prefix="/auth")
 
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
-flow = Flow.from_client_secrets_file(client_secrets_file="client_secret.json", scopes=None)
-flow.redirect_uri = "http://localhost:5173/code"
+flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
+flow.redirect_uri = settings.auth.redirect_uri
 
 
 def get_db():

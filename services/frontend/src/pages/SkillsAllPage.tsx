@@ -12,7 +12,7 @@ import { getSkillList } from '../services/getSkillsList'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { SkillType } from '../types/types'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 

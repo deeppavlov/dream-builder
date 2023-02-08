@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -161,7 +161,11 @@ export const SkillsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper showAll amount={42} linkTo={RoutesList.yourSkills} title='Your Skills'>
+            <Wrapper
+              showAll
+              amount={42}
+              linkTo={RoutesList.yourSkills}
+              title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'

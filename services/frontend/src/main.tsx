@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { AuthProvider } from './services/AuthProvider'
+import { AuthProvider } from './Context/AuthProvider'
 import { App } from './App'
-import { PreviewProvider } from './PreviewProvider'
+import { PreviewProvider } from './Context/PreviewProvider'
 
 function prepare() {
   if (process.env.NODE_ENV === 'development') {

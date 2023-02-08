@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { RoutesList } from '../Router/RoutesList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
@@ -21,7 +21,7 @@ import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateA
 import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
-import { getUsersAssistantDists } from '../services/geUsersAssistantDists'
+import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const BotsPage = () => {
@@ -56,7 +56,6 @@ export const BotsPage = () => {
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
   } = useQuery('usersAssistantDists', getUsersAssistantDists)
-  console.log(usersDistData)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -152,7 +151,6 @@ export const BotsPage = () => {
                     const dateCreated = dateToUTC(date_created)
                     return (
                       <BotCard
-                        
                         routingName={name}
                         key={i}
                         type='your'

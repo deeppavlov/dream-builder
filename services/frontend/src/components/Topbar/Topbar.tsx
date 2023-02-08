@@ -4,7 +4,7 @@ import classNames from 'classnames/bind'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
 import { History } from './components/History'
@@ -14,6 +14,9 @@ import { Resources } from './components/Resources'
 import s from './Topbar.module.scss'
 import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
 import Button from '../../ui/Button/Button'
+import { trigger } from '../../utils/events'
+import { usePreview } from '../../Context/PreviewProvider'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -22,7 +25,6 @@ interface TopbarProps {
   innerRef?: React.LegacyRef<any>
   title?: string
   amount?: number | string
-  preview?: boolean
   viewChanger?: boolean
 }
 
@@ -32,7 +34,6 @@ export const Topbar = ({
   innerRef,
   title,
   amount,
-  preview,
   viewChanger,
 }: TopbarProps) => {
   const auth = useAuth()
@@ -55,6 +56,13 @@ export const Topbar = ({
     })
   }, [])
 
+  const handleCloneBtnClick = (e: any) => {
+    console.log('clone wasclicked!')
+    e.stopPropagation()
+    trigger('CreateAssistantModal', { name: title })
+  }
+  const preview = usePreview().isPreview
+  const cleanTitle = title && capitalizeTitle(title)
   switch (type) {
     case 'main':
       return (
@@ -88,13 +96,17 @@ export const Topbar = ({
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
-            <div className={s.assistantName}>{title}</div>
+            <div className={s.assistantName}>{cleanTitle}</div>
             {preview && (
               <div className={s.fork}>
-                <Button theme={'secondary'} small withIcon props={{}}>
+                <Button
+                  theme={'secondary'}
+                  small
+                  withIcon
+                  props={{ onClick: handleCloneBtnClick }}>
                   <div className={s.container}>
                     <ForkIcon />
-                    <span>Fork</span>
+                    <span>Clone</span>
                     {amount ?? (
                       <span className={s.circle}>{amount || '42'}</span>
                     )}

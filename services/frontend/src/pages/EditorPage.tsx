@@ -1,8 +1,7 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { getSkillListByDistName } from '../services/getSkillListByDistName'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
-import { capitalizeTitle } from '../utils/capitalizeTitle'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
@@ -16,42 +15,51 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getDistByName } from '../services/getDistByName'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
+import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
+import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import { dateToUTC } from '../utils/dateToUTC'
 import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
 import Hint from '../components/Hint/Hint'
-import { BotCard } from '../components/BotCard/BotCard'
-import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { usePreview } from '../Context/PreviewProvider'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
+
   const viewHandler = () => {
     setListView(listView => !listView)
   }
   const auth = useAuth()
   const data = useParams()
+  const distName = data?.name?.split('?')[0]
+  const previewParam = data?.name?.split('?')[1] === 'preview'
+  const { setIsPreview } = usePreview()
+  useEffect(() => {
+    previewParam && setIsPreview(previewParam)
+  }, [])
+
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,
     data: distsComponentsData,
   } = useQuery(
-    ['distsComponents', data.name],
-    () => getComponentsFromAssistantDists(data.name!),
+    ['distsComponents', distName],
+    () => getComponentsFromAssistantDists(distName!),
     {
-      enabled: data.name?.length! > 0,
+      enabled: distName?.length! > 0,
     }
   )
 
@@ -60,10 +68,10 @@ export const EditorPage = () => {
     error: skillListError,
     data: skillListData,
   } = useQuery(
-    ['skillList', data.name],
-    () => getSkillListByDistName(data.name!),
+    ['skillList', distName],
+    () => getSkillListByDistName(distName!),
     {
-      enabled: data.name?.length! > 0,
+      enabled: distName?.length! > 0,
     }
   )
 
@@ -71,8 +79,8 @@ export const EditorPage = () => {
     isLoading: isDistLoading,
     error: distError,
     data: distData,
-  } = useQuery(['dist', data.name], () => getDistByName(data.name!), {
-    enabled: data.name?.length! > 0,
+  } = useQuery(['dist', distName], () => getDistByName(distName!), {
+    enabled: distName?.length! > 0,
   })
 
   if (distError) return <>An error has occurred: + {distError}</>
@@ -110,8 +118,7 @@ export const EditorPage = () => {
             viewChanger
             type='editor'
             viewHandler={viewHandler}
-            preview
-            title={capitalizeTitle(data?.name!)}
+            title={distName}
           />
           <Main sidebar editor>
             {!listView ? (
@@ -158,9 +165,9 @@ export const EditorPage = () => {
                       const dateCreated = dateToUTC(skill.metadata.date_created)
                       return (
                         <SkillListItem
-                        key={i}
-                        author={auth?.user?.name!}
-                        authorImg={auth?.user?.picture!}
+                          key={i}
+                          author={auth?.user?.name!}
+                          authorImg={auth?.user?.picture!}
                           name={skill.metadata.display_name}
                           dateCreated={dateCreated}
                           desc={skill.metadata.description}
@@ -180,12 +187,7 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Topbar
-            type='editor'
-            viewHandler={viewHandler}
-            preview
-            title={capitalizeTitle(data?.name!)}
-          />
+          <Topbar type='editor' viewHandler={viewHandler} title={distName} />
           <Main sidebar editor draggable>
             {isDistLoading ? (
               <>{'Loading...'}</>
@@ -206,13 +208,13 @@ export const EditorPage = () => {
       </Tabs>
 
       {/* Sidepanels */}
-      <BaseSidePanel position={{ top: 64 }} />
       {/* <SkillSidePanel position={{ top: 64 }} />
       <IntentCatcherSidePanel position={{ top: 64 }} />
       <IntentResponderSidePanel position={{ top: 64 }} />
-      <AnnotatorSidePanel position={{ top: 64 }} /> */}
-
+    <AnnotatorSidePanel position={{ top: 64 }} /> */}
       {/* Modals */}
+      <BaseSidePanel position={{ top: 64 }} />
+      <CreateAssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />
       <SkillPromptModal />

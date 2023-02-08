@@ -3,28 +3,14 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { countResources } from '../../utils/countResources'
-import { AnnotatorType } from '../../types/types'
+import { Annotator } from '../../types/types'
 import s from './Annotators.module.scss'
 
 interface Props {
   annotators: [Annotator]
 }
 
-export interface Annotator {
-  name: string
-  display_name: string
-  author: string
-  type: AnnotatorType
-  description: string
-  date_created: string
-  execution_time: string | number
-  gpu_usage: string | number
-  ram_usage: string | number
-  disk_usage: string | number
-  version: string | number
-}
 export const Annotators: React.FC<Props> = ({ annotators }) => {
   return (
     <div className={s.stack}>
@@ -51,13 +37,7 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {annotators?.map((item: Annotator, i: number) => {
-            return (
-              <Element
-                key={i}
-                title={capitalizeTitle(item.display_name)}
-                item={item}
-              />
-            )
+            return <Element key={i} item={item} />
           })}
         </Accordion>
       </div>

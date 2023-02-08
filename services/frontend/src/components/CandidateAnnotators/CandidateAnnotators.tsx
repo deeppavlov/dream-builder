@@ -1,20 +1,18 @@
+import { FC } from 'react'
 import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { countResources } from '../../utils/countResources'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
+import { Annotator } from '../../types/types'
 import s from './CandidateAnnotators.module.scss'
-import { Annotator } from '../Annotators/Annotators'
 
 interface Props {
   candidateAnnotators: [Annotator]
 }
 
-export const CandidateAnnotators: React.FC<Props> = ({
-  candidateAnnotators,
-}) => {
+export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -35,19 +33,13 @@ export const CandidateAnnotators: React.FC<Props> = ({
           </p>
         </div>
       </div>
-      <div className={s.body}></div>
+      <div className={s.body} />
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {candidateAnnotators?.map((item: Annotator, i: number) => {
-            return (
-              <Element
-                key={i}
-                title={capitalizeTitle(item.display_name)}
-                item={item}
-              />
-            )
+            return <Element key={i} item={item} />
           })}
         </Accordion>
       </div>

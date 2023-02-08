@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { Link } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
@@ -5,12 +6,12 @@ import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { CheckBox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
-import s from './BotListItem.module.scss'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import s from './BotListItem.module.scss'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -19,7 +20,7 @@ interface BotListItemProps extends BotInfoInterface {
   routingName: string
 }
 
-export const BotListItem = ({
+export const BotListItem: FC<BotListItemProps> = ({
   checkbox,
   name,
   routingName,
@@ -33,7 +34,7 @@ export const BotListItem = ({
   gpu,
   space,
   disabledMsg,
-}: BotListItemProps) => {
+}) => {
   const bot = {
     name,
     routingName,
@@ -49,16 +50,18 @@ export const BotListItem = ({
   }
   const auth = useAuth()
   const handleBotListItemClick = () => {
-    trigger(BASE_SP_EVENT, { children: <BotInfoSidePanel key={bot.name} bot={bot} /> })
+    trigger(BASE_SP_EVENT, {
+      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+    })
   }
 
-  const handleCloneBtnClick = (e: any) => {
+  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('CreateAssistantModal', bot)
   }
-  const handlePreviewBtnClick = (e: any) => {
+  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    location.pathname = bot?.routingName!
+    location.pathname = bot?.routingName! + '?preview'
   }
 
   return (

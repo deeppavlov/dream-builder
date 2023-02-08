@@ -53,21 +53,20 @@ export const BotCard = ({
       children: <BotInfoSidePanel key={bot.name} bot={bot} />,
     })
   }
-  const handlePreviewBtnClick = (e: any) => {
+  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    location.pathname = bot?.routingName!
+    location.pathname = bot?.routingName! + '?preview'
   }
 
-  const handleCloneBtnClick = (e: any) => {
+  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('CreateAssistantModal', bot)
   }
-  const handlEditClick = (e: any) => {
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    console.log(bot?.routingName)
     location.pathname = bot?.routingName!
   }
-  const handleKebabClick = (e: any) => {
+  const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
   }
@@ -132,7 +131,7 @@ export const BotCard = ({
                 disabled: disabledMsg !== undefined,
                 onClick: handleCloneBtnClick,
               }}>
-              Fork
+              Clone
             </Button>
             <Button
               theme='secondary'
@@ -156,7 +155,7 @@ export const BotCard = ({
               small
               withIcon
               props={{ onClick: handleKebabClick }}>
-              <Kebab dataFor={type === 'your' && 'your_bot'} />
+              <Kebab dataFor={type === 'your' ? 'your_bot' : null} />
             </Button>
           </>
         )}

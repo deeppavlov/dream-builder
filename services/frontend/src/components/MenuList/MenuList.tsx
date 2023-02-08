@@ -1,4 +1,6 @@
+import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
+import classNames from 'classnames/bind'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { ReactComponent as CloneIcon } from '../../assets/icons/clone.svg'
 import { ReactComponent as DisableIcon } from '../../assets/icons/disable.svg'
@@ -16,39 +18,27 @@ import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentCatcherSidePanel from '../IntentCatcherSidePanel/IntentCatcherSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { dateToUTC } from '../../utils/dateToUTC'
-import s from './MenuList.module.scss'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import IntentResponderSidePanel from '../IntentResponderSidePanel/IntentResponderSidePanel'
+import { MenuTypes } from '../../types/types'
+import { usePreview } from '../../Context/PreviewProvider'
+import s from './MenuList.module.scss'
 
-interface MenuListProps {
-  type:
-    | 'main'
-    | 'bots'
-    | 'skills_page'
-    | 'editor'
-    | 'bot_public'
-    | 'your_bot'
-    | 'skills'
-    | 'all_annotators'
-    | 'response_annotators'
-    | 'all_skills'
-    | 'customizable_annotator'
-    | 'customizable_skill'
-    | 'non_customizable_annotator'
-    | 'non_customizable_skill'
-    | 'skill_selector'
-    | 'response_selector'
-    | null
-  item: any
-  privateDataFor: any
+export interface MenuListProps {
+  type: MenuTypes
+  item?: any
+  privateDataFor?: any
 }
 
-export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
-  const handleClick = (e: MouseEvent) => {
+export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
     console.log(e?.currentTarget?.innerText)
   }
+  const isPreview = usePreview().isPreview
+  const cx = classNames.bind(s)
+
   switch (type) {
     case 'main':
       return (
@@ -383,7 +373,7 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
     case 'customizable_annotator':
       const MenuTT = () => (
         <ul className={s.menu}>
-          <li className={s.item}>
+          <li className={cx('item', isPreview && 'disabled')}>
             <div
               onClick={() => {
                 switch (item.typeItem) {
@@ -487,35 +477,35 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
     case 'customizable_skill':
       const CusSkillMenu = () => (
         <ul className={s.menu}>
-          <li className={s.item}>
+          <li className={cx('item', isPreview && 'disabled')}>
             <div
               onClick={() => {
-                console.log(item)
                 switch (item?.typeItem) {
                   case 'Dff Intent Responder Skill':
-                    trigger(BASE_SP_EVENT, {
-                      children: (
-                        <IntentResponderSidePanel
-                          key='Editor'
-                          skill={{
-                            name: item.data.display_name,
-                            author: item.data.author,
-                            authorImg: DeepPavlovLogo,
-                            skillType: item.data.type,
-                            botName: 'Name of The Bot',
-                            desc: item.data.description,
-                            dateCreated: dateToUTC(
-                              new Date(item.data.date_created)
-                            ),
-                            version: item.data.version,
-                            ram: item.data.ram_usage,
-                            gpu: item.data.gpu_usage,
-                            executionTime: item.data.execution_time,
-                          }}
-                          activeTab='Editor'
-                        />
-                      ),
-                    })
+                    !isPreview &&
+                      trigger(BASE_SP_EVENT, {
+                        children: (
+                          <IntentResponderSidePanel
+                            key='Editor'
+                            skill={{
+                              name: item.data.display_name,
+                              author: item.data.author,
+                              authorImg: DeepPavlovLogo,
+                              skillType: item.data.type,
+                              botName: 'Name of The Bot',
+                              desc: item.data.description,
+                              dateCreated: dateToUTC(
+                                new Date(item.data.date_created)
+                              ),
+                              version: item.data.version,
+                              ram: item.data.ram_usage,
+                              gpu: item.data.gpu_usage,
+                              executionTime: item.data.execution_time,
+                            }}
+                            activeTab='Editor'
+                          />
+                        ),
+                      })
                     break
                   case 'Dialogpt':
                   case 'Dialogpt Persona Based':
@@ -599,20 +589,14 @@ export const MenuList = ({ type, privateDataFor, item }: MenuListProps) => {
               <p>Properties</p>
             </div>
           </li>
-          <li className={s.item}>
+          <li className={cx('item', isPreview && 'disabled')}>
             <div>
               <DisableIcon />
               <p>Disable Skill</p>
             </div>
           </li>
-          {/* <li className={s.item}>
-            <div>
-              <DownloadIcon />
-              <p>Download</p>
-            </div>
-          </li> */}
           <hr style={{ border: '0.8px solid #8D96B5' }} />
-          <li className={s.item}>
+          <li className={cx('item', isPreview && 'disabled')}>
             <div>
               <DeleteIcon />
               <p>Delete</p>

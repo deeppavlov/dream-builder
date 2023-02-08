@@ -7,9 +7,9 @@ import { BotCard } from '../components/BotCard/BotCard'
 import { Slider } from '../ui/Slider/Slider'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { getUsersAssistantDists } from '../services/geUsersAssistantDists'
+import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import { dist_list } from '../types/types'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { putAssistantDist } from '../services/putAssistanDist'
 import { useForm } from 'react-hook-form'
@@ -24,7 +24,7 @@ export const DraftPage = () => {
     'usersAssistantDists',
     getUsersAssistantDists
   )
-  console.log(distData)
+
   const {
     register,
     handleSubmit,

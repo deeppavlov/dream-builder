@@ -21,6 +21,9 @@
     color: #8d96b5;
     @include b4;
   }
+  .disabled {
+    @include disabled;
+  }
   .item {
     border-radius: 12px !important;
     width: 100%;

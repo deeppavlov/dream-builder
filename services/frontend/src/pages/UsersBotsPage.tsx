@@ -10,18 +10,17 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../services/AuthProvider'
-import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
+import { useAuth } from '../Context/AuthProvider'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
-import { getUsersAssistantDists } from '../services/geUsersAssistantDists'
+import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
+import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
   const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
-  const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
     setListView(listView => !listView)
@@ -32,6 +31,7 @@ export const UsersBotsPage = () => {
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
   } = useQuery('usersAssistantDists', getUsersAssistantDists)
+
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -40,10 +40,7 @@ export const UsersBotsPage = () => {
           <Wrapper
             title='Your Virtual Assistants & Chatbots'
             amount={usersDistData?.length}>
-            <Container
-            // display='grid'
-            // gridTemplateColumns='repeat(auto-fill, minmax(280px, 1fr))'
-            >
+            <Container>
               {isUsersDistDataLoading && 'Loading...'}
               {usersDistDataError &&
                 'luck is not on your side! try to refresh the page' +
@@ -130,12 +127,7 @@ export const UsersBotsPage = () => {
             </Table>
           </Wrapper>
         )}
-        <BotInfoSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to clone the bot'
-          }
-          position={{ top: topbarHeight }}
-        />
+        <BaseSidePanel position={{ top: 64 }} />
         <CreateAssistantModal />
       </Main>
     </>

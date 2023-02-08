@@ -80,8 +80,6 @@ const IntentCatcherModal = ({ intent }: Props) => {
         })
       )
     }
-
-    console.log(examples, regexes)
   }
 
   const removeListItem = (index: number) => {

@@ -109,3 +109,6 @@
 .fallbacks {
   color: $red;
 }
+.disabled {
+  @include disabled;
+}

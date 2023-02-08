@@ -1,16 +1,23 @@
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import classNames from 'classnames/bind'
+import { Annotator } from '../../types/types'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
 
-export const Element = ({ item, title }: any) => {
-  const [disabled, setDisabled] = useState(true)
+interface AnnotatorProps {
+  item: Annotator
+}
 
+export const Element: FC<AnnotatorProps> = ({ item }) => {
+  const [disabled, setDisabled] = useState<boolean>(true)
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
   const cx = classNames.bind(s)
+  const title = capitalizeTitle(item.display_name)
+
   return (
     <div className={cx('element', !disabled && disabled)}>
       <div className={s.left}>

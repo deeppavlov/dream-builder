@@ -40,3 +40,7 @@
     @include b4;
   }
 }
+.disabled {
+  @include disabled;
+  background: #f0f0f3;
+}

@@ -1,19 +1,17 @@
 import ResponseAnnotatorsLogo from '../../assets/icons/response_annotators.svg'
+import { Annotator } from '../../types/types'
+import { countResources } from '../../utils/countResources'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import { Annotator } from '../Annotators/Annotators'
-import { countResources } from '../../utils/countResources'
 
 interface Props {
   responseAnnotators: [Annotator]
 }
 
 export const ResponseAnnotators: React.FC<Props> = ({ responseAnnotators }) => {
-  console.log(responseAnnotators)
   return (
     <>
       {responseAnnotators && (
@@ -42,13 +40,7 @@ export const ResponseAnnotators: React.FC<Props> = ({ responseAnnotators }) => {
             <Accordion title='Customizable'></Accordion>
             <Accordion title='Non-customizable'>
               {responseAnnotators?.map((item: Annotator, i: number) => {
-                return (
-                  <Element
-                    key={i}
-                    title={capitalizeTitle(item.display_name)}
-                    item={item}
-                  />
-                )
+                return <Element key={i} item={item} />
               })}
             </Accordion>
           </div>

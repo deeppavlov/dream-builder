@@ -13,9 +13,10 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { SkillInfoInterface } from '../../types/types'
 import ReactTooltip from 'react-tooltip'
 import useTabsManager from '../../hooks/useTabsManager'
-import s from './SkillSidePanel.module.scss'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { getStyleType } from '../../utils/getStyleType'
+import { usePreview } from '../../Context/PreviewProvider'
+import s from './SkillSidePanel.module.scss'
 
 interface Props {
   skill: SkillInfoInterface
@@ -39,8 +40,8 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
         : [[properties, properties]]
     ),
   })
-
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+  const isPreview = usePreview().isPreview
 
   return (
     <>
@@ -51,7 +52,8 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
               role='tab'
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              className={cx(isPreview && 'disabled')}
+              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}>
               {name}
             </li>
           ))}
@@ -98,6 +100,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
                 theme='secondary'
                 props={{
                   // disabled: disabledMsg !== undefined,
+                  disabled: isPreview,
                   onClick: handleAddSkillBtnClick,
                 }}>
                 Duplicate

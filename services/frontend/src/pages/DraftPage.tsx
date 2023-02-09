@@ -29,8 +29,10 @@ export const DraftPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm()
+  } = useForm({ mode: 'all' })
+
   const onSubmit = data => {
+    console.log(data)
     putAssistantDist(data).then(() => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
     })
@@ -52,8 +54,14 @@ export const DraftPage = () => {
               {/* include validation with required or other standard HTML validation rules */}
               <Input
                 label='Description'
-                props={{ ...register('dist_description', { required: true }) }}
+                props={{
+                  ...register('dist_description', {
+                    required: 'This field is required',
+                  }),
+                }}
+                error={errors['dist_description']}
               />
+
               {/* errors will return when field validation fails  */}
               {errors.exampleRequired && <span>This field is required</span>}
 

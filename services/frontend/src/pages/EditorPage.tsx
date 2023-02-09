@@ -33,7 +33,7 @@ import { AddButton } from '../ui/AddButton/AddButton'
 import Hint from '../components/Hint/Hint'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { usePreview } from '../Context/PreviewProvider'
 
 export const EditorPage = () => {
@@ -214,7 +214,7 @@ export const EditorPage = () => {
     <AnnotatorSidePanel position={{ top: 64 }} /> */}
       {/* Modals */}
       <BaseSidePanel position={{ top: 64 }} />
-      <CreateAssistantModal />
+      <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />
       <SkillPromptModal />

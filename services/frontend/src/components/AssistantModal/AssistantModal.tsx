@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -29,6 +30,11 @@ export const AssistantModal = () => {
   const [name, setName] = useState<string | null>(null)
   const [desc, setDesc] = useState<string | null>(null)
   const isHaveNameAndDesc = name !== null && desc !== null
+  const {
+    register,
+    getValues,
+    formState: { errors, isValid },
+  } = useForm({ mode: 'all' })
 
   const closeModal = () => {
     setIsOpen(false)
@@ -65,10 +71,12 @@ export const AssistantModal = () => {
   }
 
   const handleCreateBtnClick = () => {
-    if (!isHaveNameAndDesc) return
+    // if (!isHaveNameAndDesc) return
     const routingName = getRoutingName()
     setBot({ ...bot, ...{ routingName } })
-    location.pathname = routingName!
+    // location.pathname = routingName!
+
+    console.log(getValues())
   }
 
   const handleCloneBtnClick = () => {
@@ -123,9 +131,12 @@ export const AssistantModal = () => {
             required: true,
             placeholder: 'Enter name for your VA',
             value: name ?? undefined,
+            // onChange: handleNameChange,
+            ...register('assistant_name', {
+              required: 'Please add name for your Virtual Assistant',
+            }),
           }}
-          onChange={handleNameChange}
-          errorMessage='Please add name for your Virtual Assistant'
+          error={errors['assistant_name']}
         />
         <TextArea
           label='Description'
@@ -133,20 +144,20 @@ export const AssistantModal = () => {
             required: true,
             placeholder: 'Enter description for your VA',
             value: desc ?? undefined,
+            // onChange: handleDescChange,
+            ...register('assistant_desc', {
+              required: `
+                  Enter no more than 500 signs.
+                  Please add description for your VA
+                `,
+            }),
           }}
-          onChange={handleDescChange}
+          error={errors['assistant_desc']}
           about={
             <div className={s['text-muted']}>
               Enter no more than 500 signs.
               <br />
               You will be able to edit this information later.
-            </div>
-          }
-          errorMessage={
-            <div>
-              Enter no more than 500 signs.
-              <br />
-              Please add description for your VA
             </div>
           }
         />
@@ -157,7 +168,7 @@ export const AssistantModal = () => {
           <Button
             theme='primary'
             props={{
-              disabled: !isHaveNameAndDesc,
+              disabled: !isValid,
               onClick: () => {
                 if (action == 'create') handleCreateBtnClick()
                 if (action == 'clone') handleCloneBtnClick()

@@ -7,67 +7,53 @@ import s from './TextArea.module.scss'
 interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
-  errorMessage?: string | JSX.Element | null
-  props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
-  onSubmit?: (value: string | null) => void
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  error?: Partial<{ type: any; message: any }>
+  props?: React.InputHTMLAttributes<HTMLTextAreaElement>
+  onEnterPress?: (value: string | null) => void
 }
 
 export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
-  errorMessage,
+  error,
   props,
-  onSubmit,
-  onChange,
+  onEnterPress,
 }) => {
   const [value, setValue] = useState<string | null>(
     props?.value?.toString() ?? null
   )
   const [isActive, setIsActive] = useState(false)
-  const [isError, setIsError] = useState(false)
   const [isChanged, setIsChanged] = useState(false)
-  const textAreaId = useId()
+  const textAreaId = props?.id ?? useId()
   let cx = classNames.bind(s)
 
-  const handleFocus = () => {
-    if (isError) setIsError(false)
-  }
-
-  const handleBlur = () => {
-    const valueIsValid = value !== undefined && value?.toString().length !== 0
-    const isRequiredAndInvalid = !isError && props?.required && !valueIsValid
-
-    if (isRequiredAndInvalid) setIsError(true)
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (props?.onBlur) props.onBlur(e)
     setIsActive(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (onChange) onChange(e)
+    if (props?.onChange) props.onChange(e)
     setValue(e.target.value)
     setIsActive(true)
     setIsChanged(true)
   }
 
   const handleEnterBtnClick = () => {
+    onEnterPress && onEnterPress(value)
     setIsActive(false)
     setIsChanged(false)
-    setValue(null)
-
-    if (onSubmit) {
-      onSubmit(value?.toString() ?? null)
-    }
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (onSubmit && event.key === 'Enter') {
+    if (onEnterPress && event.key === 'Enter') {
       event.preventDefault()
       handleEnterBtnClick()
     }
   }
 
   return (
-    <div className={s.textArea} data-active={isActive} data-error={isError}>
+    <div className={s.textArea} data-active={isActive} data-error={error !== undefined}>
       {label && (
         <label htmlFor={textAreaId} className={s.label}>
           {label}
@@ -81,14 +67,13 @@ export const TextArea: FC<TextAreaProps> = ({
           value={value ?? ''}
           rows={2}
           cols={20}
-          onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           className={s.field}
         />
 
-        {onSubmit && (
+        {onEnterPress && (
           <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
@@ -100,9 +85,9 @@ export const TextArea: FC<TextAreaProps> = ({
         )}
       </div>
 
-      {(about || (isError && errorMessage)) && (
+      {(about || error) && (
         <label htmlFor={textAreaId} className={s.label}>
-          {isError ? errorMessage : about}
+          {error ? error.message : about}
         </label>
       )}
     </div>

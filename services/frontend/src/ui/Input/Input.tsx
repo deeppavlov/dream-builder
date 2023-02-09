@@ -5,65 +5,55 @@ import s from './Input.module.scss'
 
 interface InputProps {
   label?: string | JSX.Element
-  errorMessage?: string | JSX.Element
+  error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onSubmit?: (value: string | null) => void
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onEnterPress?: (value: string | null) => void
 }
 
 export const Input: FC<InputProps> = ({
   label,
-  errorMessage,
+  error,
   props,
-  onSubmit,
-  onChange,
+  onEnterPress,
 }) => {
   const [value, setValue] = useState<string | null>(
     props?.value?.toString() ?? null
   )
   const [isActive, setIsActive] = useState(false)
-  const [isError, setIsError] = useState(false)
   const [isChanged, setIsChanged] = useState(false)
-  const inputId = useId()
+  const inputId = props?.id ?? useId()
   let cx = classNames.bind(s)
 
-  const handleFocus = () => {
-    if (isError) setIsError(false)
-  }
-
-  const handleBlur = () => {
-    const valueIsValid = value !== undefined && value?.toString().length !== 0
-    const isRequiredAndInvalid = !isError && props?.required && !valueIsValid
-
-    if (isRequiredAndInvalid) setIsError(true)
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (props?.onBlur) props.onBlur(e)
     setIsActive(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(e)
+    if (props?.onChange) props.onChange(e)
     setValue(e.target.value)
     setIsActive(true)
     setIsChanged(true)
   }
 
   const handleEnterBtnClick = () => {
-    if (onSubmit) {
-      onSubmit(value?.toString() ?? null)
-    }
+    onEnterPress && onEnterPress(value)
     setIsActive(false)
     setIsChanged(false)
-    setValue(null)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (onSubmit && event.key === 'Enter') {
+    if (onEnterPress && event.key === 'Enter') {
       event.preventDefault()
       handleEnterBtnClick()
     }
   }
 
   return (
-    <div className={s.input} data-active={isActive} data-error={isError}>
+    <div
+      className={s.input}
+      data-active={isActive}
+      data-error={error !== undefined}>
       {label && (
         <label htmlFor={inputId} className={s.label}>
           {label}
@@ -74,14 +64,12 @@ export const Input: FC<InputProps> = ({
           {...props}
           id={inputId}
           value={value ?? ''}
-          type='text'
-          onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           className={s.field}
         />
-        {onSubmit && (
+        {onEnterPress && !error && (
           <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
@@ -92,9 +80,9 @@ export const Input: FC<InputProps> = ({
           </div>
         )}
       </div>
-      {errorMessage && isError && (
+      {error && (
         <label htmlFor={inputId} className={s.label}>
-          {errorMessage}
+          {error.message}
         </label>
       )}
     </div>

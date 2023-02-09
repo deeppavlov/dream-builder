@@ -11,7 +11,7 @@ import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
 import { useAuth } from '../Context/AuthProvider'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
@@ -128,7 +128,7 @@ export const UsersBotsPage = () => {
           </Wrapper>
         )}
         <BaseSidePanel position={{ top: 64 }} />
-        <CreateAssistantModal />
+        <AssistantModal />
       </Main>
     </>
   )

@@ -46,6 +46,7 @@ import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
+import { useForm } from 'react-hook-form'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -200,6 +201,11 @@ const mockSettings: SelectorSettings = {
 }
 
 export const TestPage = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({ mode: 'all' })
+
   return (
     <div className={s.testPage}>
       <div className={s.testPage__block}>
@@ -809,10 +815,11 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <Input
-            onSubmit={() => {}}
+            onEnterPress={() => {}}
             props={{
               placeholder: 'Assistive text',
               value: 'Text input Text input Text input Text input',
+              onChange: () => {},
             }}
             label='Label'
           />
@@ -820,9 +827,12 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>required (with error)</span>
           <Input
-            props={{ placeholder: 'Assistive text', required: true }}
+            props={{
+              placeholder: 'Assistive text',
+              ...register('test_input_required', { required: 'Error message' }),
+            }}
             label='Label'
-            errorMessage='Error message'
+            error={errors['test_input_required']}
           />
         </div>
         <div className={s.testPage__component}>
@@ -846,7 +856,7 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <TextArea
-            onSubmit={() => {}}
+            onEnterPress={() => {}}
             props={{
               placeholder: 'Assistive text',
               value:
@@ -861,11 +871,13 @@ export const TestPage = () => {
           <TextArea
             props={{
               placeholder: 'Assistive text',
-              required: true,
+              ...register('test_textarea_required', {
+                required: 'Error message',
+              }),
             }}
             label='Label'
             about='Instructions'
-            errorMessage='Error message'
+            error={errors['test_textarea_required']}
           />
         </div>
         <div className={s.testPage__component}>

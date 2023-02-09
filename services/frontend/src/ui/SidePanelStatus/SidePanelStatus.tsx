@@ -1,4 +1,4 @@
-import BaseLink from '../BaseLink/BaseLink'
+import BaseLink from '../../components/BaseLink/BaseLink'
 import s from './SidePanelStatus.module.scss'
 
 interface SidePanelStatusProps extends React.PropsWithChildren {

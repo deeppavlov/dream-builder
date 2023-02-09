@@ -164,22 +164,22 @@ const mockSettings: SelectorSettings = {
     {
       name: 'HIGH_PRIORITY_INTENTS',
       type: 'switch',
-      value: ['1', '0'],
+      value: '0',
     },
     {
       name: 'RESTRICTION_FOR_SENSITIVE_CASE',
       type: 'switch',
-      value: ['1', '0'],
+      value: '0',
     },
     {
       name: 'ALWAYS_TURN_ON_ALL_SKILLS',
       type: 'switch',
-      value: ['1', '0'],
+      value: '1',
     },
     {
       name: 'ALWAYS_TURN_ON_GIVEN_SKILL',
       type: 'switch',
-      value: ['1', '0'],
+      value: '0',
     },
     {
       name: 'LANGUAGE',
@@ -191,40 +191,59 @@ const mockSettings: SelectorSettings = {
       type: 'checkbox',
     },
     {
-      name: 'GPT-J Chit-Chat',
+      name: 'DFF Intent Responder Skill',
       type: 'radio',
+      value: '1',
+    },
+    {
+      name: 'FAQ',
+      type: 'radio',
+      value: '0',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.7',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.2',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.2',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.5',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '1',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.7',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '0.9',
     },
     {
       name: 'GPT-J Chit-Chat',
       type: 'input',
+      value: '7',
+    },
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'input',
+      value: '1-1',
     },
   ],
 }

@@ -10,7 +10,7 @@ import IntentListItem, {
 import IntentList from '../IntentList/IntentList'
 import BaseLink from '../BaseLink/BaseLink'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import SidePanelStatus from '../SidePanelStatus/SidePanelStatus'
+import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 import s from './IntentCatcherSidePanel.module.scss'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import { IAnnotator } from '../../types/types'

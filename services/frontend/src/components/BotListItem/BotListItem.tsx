@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 import { BotInfoInterface } from '../../types/types'
@@ -60,7 +60,7 @@ export const BotListItem = ({
     <tr className={s.tr} onClick={handleBotListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
-          <CheckBox />
+          <Checkbox />
         </td>
       )}
       <td className={s.td}>

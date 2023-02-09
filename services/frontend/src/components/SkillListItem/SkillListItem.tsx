@@ -1,6 +1,6 @@
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
@@ -62,7 +62,7 @@ export const SkillListItem = ({
     <tr className={s.tr} onClick={handleSkillListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
-          <CheckBox />
+          <Checkbox />
         </td>
       )}
       <td className={s.td}>

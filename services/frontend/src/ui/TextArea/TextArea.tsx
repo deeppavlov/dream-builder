@@ -9,6 +9,7 @@ interface TextAreaProps {
   about?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLTextAreaElement>
+  withCounter?: boolean
   onEnterPress?: (value: string | null) => void
 }
 
@@ -17,6 +18,7 @@ export const TextArea: FC<TextAreaProps> = ({
   about,
   error,
   props,
+  withCounter,
   onEnterPress,
 }) => {
   const [value, setValue] = useState<string | null>(
@@ -25,6 +27,7 @@ export const TextArea: FC<TextAreaProps> = ({
   const [isActive, setIsActive] = useState(false)
   const [isChanged, setIsChanged] = useState(false)
   const textAreaId = props?.id ?? useId()
+  const maxLenght = 500
   let cx = classNames.bind(s)
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -53,10 +56,18 @@ export const TextArea: FC<TextAreaProps> = ({
   }
 
   return (
-    <div className={s.textArea} data-active={isActive} data-error={error !== undefined}>
-      {label && (
+    <div
+      className={s.textArea}
+      data-active={isActive}
+      data-error={error !== undefined}>
+      {(label || withCounter) && (
         <label htmlFor={textAreaId} className={s.label}>
-          {label}
+          {label && <span className={s.title}>{label}</span>}
+          {withCounter && (
+            <span className={s.counter}>
+              {value?.length ?? 0}/{maxLenght}
+            </span>
+          )}
         </label>
       )}
       <div className={cx('container', 'resizer-container')}>

@@ -59,6 +59,16 @@
 .label {
   @include b3;
   color: $text2;
+  display: flex;
+  width: 100%;
+}
+
+.title {
+  color: $text2;
+}
+
+.counter {
+  margin-left: auto;
 }
 
 .field {

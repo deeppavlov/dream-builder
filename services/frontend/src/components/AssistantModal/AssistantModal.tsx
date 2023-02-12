@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
@@ -27,70 +27,59 @@ export const AssistantModal = () => {
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
   const [botDist, setBotDist] = useState<IAssistantDistInfo | null>(null)
-  const [name, setName] = useState<string | null>(null)
-  const [desc, setDesc] = useState<string | null>(null)
-  const isHaveNameAndDesc = name !== null && desc !== null
   const {
     register,
+    reset,
     getValues,
     formState: { errors, isValid },
   } = useForm({ mode: 'all' })
+  const [NAME_ID, DESC_ID] = ['assistant_name', 'assistant_desc']
 
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
     setBotDist(null)
-    setName(null)
-    setDesc(null)
   }
 
-  const getRoutingName = () => name?.replace(/\s+/g, '_').toLowerCase()
+  const generateRoutingName = (name: string) =>
+    name?.replace(/\s+/g, '_').toLowerCase()
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
     setBotDist(data.detail?.distribution ?? null)
-    if (data.detail?.action === 'edit') {
-      setName(data.detail?.bot?.name ?? null)
-      setDesc(data.detail?.bot?.desc ?? null)
-    }
+    // Reset clear values and errors states
+    reset({
+      [NAME_ID]: data?.detail?.bot?.name,
+      [DESC_ID]: data?.detail?.bot?.desc,
+    })
     setIsOpen(!isOpen)
   }
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    const isValue = value !== ''
-    setName(isValue ? value : null)
-  }
-
-  const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target
-    const isValue = value !== ''
-    setDesc(isValue ? value : null)
-  }
-
   const handleCreateBtnClick = () => {
-    // if (!isHaveNameAndDesc) return
-    const routingName = getRoutingName()
-    setBot({ ...bot, ...{ routingName } })
-    // location.pathname = routingName!
-
-    console.log(getValues())
+    if (!isValid) return
+    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]]
+    const routingName = generateRoutingName(name)
+    const newBot = { ...bot, ...{ routingName, name, desc } }
+    // Create bot logic here...
+    location.pathname = routingName!
   }
 
   const handleCloneBtnClick = () => {
-    if (!isHaveNameAndDesc) return
-    const routingName = getRoutingName()
-    setBot({ ...bot, ...{ routingName } })
+    if (!isValid) return
+    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]]
+    const routingName = generateRoutingName(name)
+    const newBot = { ...bot, ...{ routingName, name, desc } }
+    // Clone bot logic here...
     location.pathname = routingName!
   }
 
   const handleSaveBtnClick = () => {
-    const isHaveChanges = name !== bot?.name || desc !== bot?.desc
-
-    if (isHaveChanges) {
-    }
+    if (!isValid) return
+    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]]
+    const newBot = { ...bot, ...{ name, desc } }
+    // Save bot logic here...
     closeModal()
   }
 
@@ -127,39 +116,35 @@ export const AssistantModal = () => {
         </div>
         <Input
           label='Name'
+          error={errors[NAME_ID]}
           props={{
-            required: true,
             placeholder: 'Enter name for your VA',
-            value: name ?? undefined,
-            // onChange: handleNameChange,
-            ...register('assistant_name', {
+            value: getValues()[NAME_ID],
+            ...register(NAME_ID, {
               required: 'Please add name for your Virtual Assistant',
             }),
           }}
-          error={errors['assistant_name']}
         />
         <TextArea
           label='Description'
-          props={{
-            required: true,
-            placeholder: 'Enter description for your VA',
-            value: desc ?? undefined,
-            // onChange: handleDescChange,
-            ...register('assistant_desc', {
-              required: `
-                  Enter no more than 500 signs.
-                  Please add description for your VA
-                `,
-            }),
-          }}
-          error={errors['assistant_desc']}
+          withCounter
+          error={errors[DESC_ID]}
           about={
             <div className={s['text-muted']}>
-              Enter no more than 500 signs.
-              <br />
               You will be able to edit this information later.
             </div>
           }
+          props={{
+            placeholder: 'Enter description for your VA',
+            value: getValues()[DESC_ID],
+            ...register(DESC_ID, {
+              required: 'Please add description for your Virtual Assistant.',
+              maxLength: {
+                value: 500,
+                message: 'You’ve reached limit of the signs.',
+              },
+            }),
+          }}
         />
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: closeModal }}>

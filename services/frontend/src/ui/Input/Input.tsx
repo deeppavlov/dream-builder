@@ -55,7 +55,7 @@ export const Input: FC<InputProps> = ({
       data-active={isActive}
       data-error={error !== undefined}>
       {label && (
-        <label htmlFor={inputId} className={s.label}>
+        <label htmlFor={inputId} className={cx('label', 'title')}>
           {label}
         </label>
       )}

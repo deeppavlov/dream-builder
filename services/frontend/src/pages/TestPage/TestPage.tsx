@@ -157,9 +157,8 @@ const mockTotalRes: TotalResourcesInterface = {
   },
 }
 
-const mockSettings: SelectorSettings = {
+const mockResponseSelector: SelectorSettings = {
   name: 'Tag-& Evaluation-based Selector',
-  type: 'skill',
   settingKeys: [
     {
       name: 'HIGH_PRIORITY_INTENTS',
@@ -184,66 +183,173 @@ const mockSettings: SelectorSettings = {
     {
       name: 'LANGUAGE',
       type: 'switch',
-      value: ['ENG', 'RU'],
+      labels: ['ENG', 'RU'],
+      value: '0',
     },
+  ],
+}
+
+const mockRuleBasesSkillSelector: SelectorSettings = {
+  name: 'Rule-based Skill Selector',
+  settingKeys: [
+    {
+      name: 'MAX_TURNS_WITHOUT_SCRIPTS',
+      type: 'input',
+      value: '7',
+    },
+    {
+      name: 'CALL_BY_NAME_PROBABILITY',
+      type: 'input',
+      value: '0.5',
+    },
+    {
+      name: 'PROMPT_PROBA',
+      type: 'input',
+      value: '0.3',
+    },
+    {
+      name: 'ACKNOWLEDGEMENT_PROBA',
+      type: 'input',
+      value: '0.3',
+    },
+    {
+      name: 'CONFIDENCE_STRENGTH',
+      type: 'input',
+      value: '0.8',
+    },
+    {
+      name: 'CONV_EVAL_STRENGTH',
+      type: 'input',
+      value: '0.4',
+    },
+    {
+      name: 'QUESTION_TO_QUESTION_DOWNSCORE_COEF',
+      type: 'input',
+      value: '0.8',
+    },
+    {
+      name: 'PRIORITIZE_WITH_REQUIRED_ACT',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'PRIORITIZE_NO_DIALOG_BREAKDOWN',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'PRIORITIZE_WITH_SAME_TOPIC_ENTITY',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'IGNORE_DISLIKED_SKILLS',
+      type: 'switch',
+      value: '1',
+    },
+    {
+      name: 'GREETING_FIRST',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'RESTRICTION_FOR_SENSITIVE_CASE',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'PRIORITIZE_PROMTS_WHEN_NO_SCRIPTS',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'MAX_TURNS_WITHOUT_SCRIPTS',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'PRIORITIZE_SCRIPTED_SKILLS',
+      type: 'switch',
+      value: '0',
+    },
+    {
+      name: 'PRIORITIZE_HUMAN_INITIATIVE',
+      type: 'switch',
+      value: '0',
+    },
+  ],
+}
+
+const mockSingleSkillSelector: SelectorSettings = {
+  name: 'Single Skill Selector',
+  settingKeys: [
+    {
+      name: 'GPT-J Chit-Chat',
+      type: 'radio',
+    },
+    {
+      name: 'DFF Intent Responder Skill',
+      type: 'radio',
+    },
+    {
+      name: 'FAQ',
+      type: 'radio',
+    },
+    {
+      name: 'DialoGPT + Persona',
+      type: 'radio',
+    },
+    {
+      name: 'DFF Program-Y Skill',
+      type: 'radio',
+    },
+    {
+      name: 'Dummy Skill',
+      type: 'radio',
+    },
+    {
+      name: 'DialoGPT',
+      type: 'radio',
+    },
+  ],
+}
+
+const mockMultipleSkillSelector: SelectorSettings = {
+  name: 'Multiple Skill Selector',
+  settingKeys: [
     {
       name: 'GPT-J Chit-Chat',
       type: 'checkbox',
     },
     {
       name: 'DFF Intent Responder Skill',
-      type: 'radio',
-      value: '1',
+      type: 'checkbox',
     },
     {
       name: 'FAQ',
-      type: 'radio',
-      value: '0',
+      type: 'checkbox',
     },
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.7',
+      name: 'Select all',
+      type: 'checkbox',
+      selectAll: true,
     },
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.2',
-    },
-    {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.2',
-    },
-    {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.5',
-    },
-    {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
+      name: 'DialoGPT + Persona',
+      type: 'checkbox',
       value: '1',
     },
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.7',
+      name: 'DFF Program-Y Skill',
+      type: 'checkbox',
     },
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '0.9',
+      name: 'Dummy Skill',
+      type: 'checkbox',
     },
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '7',
-    },
-    {
-      name: 'GPT-J Chit-Chat',
-      type: 'input',
-      value: '1-1',
+      name: 'DialoGPT',
+      type: 'checkbox',
     },
   ],
 }
@@ -655,11 +761,54 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: <SelectorSettingsSidePanel {...mockSettings} />,
+                  children: (
+                    <SelectorSettingsSidePanel {...mockResponseSelector} />
+                  ),
                 })
               },
             }}>
-            SelectorSettingsSidePanel
+            Response Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel
+                      {...mockRuleBasesSkillSelector}
+                    />
+                  ),
+                })
+              },
+            }}>
+            Rule-based Skill Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel {...mockSingleSkillSelector} />
+                  ),
+                })
+              },
+            }}>
+            Single Skill Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel {...mockMultipleSkillSelector} />
+                  ),
+                })
+              },
+            }}>
+            Multiple Skill Selector
           </Button>
         </div>
       </div>

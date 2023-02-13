@@ -16,11 +16,12 @@ import { useId, useState } from 'react'
 export interface SettingKey {
   name: string
   type: 'switch' | 'checkbox' | 'radio' | 'input'
+  labels?: string[]
   value?: any
+  selectAll?: boolean
 }
 
 export interface SelectorSettings {
-  type: 'skill' | 'response'
   name: string
   settingKeys: SettingKey[]
   desc?: string
@@ -33,7 +34,6 @@ interface SelectorSettingsProps extends SelectorSettings {}
 const SelectorSettingsSidePanel = ({
   name,
   desc,
-  type,
   settingKeys,
   activeTab,
   children,
@@ -51,6 +51,7 @@ const SelectorSettingsSidePanel = ({
     settingKeys.find(({ type, value }) => type === 'radio' && value === '1')
       ?.name ?? null
   )
+  const selectAllField = settingKeys.find(({ selectAll }) => selectAll === true)
 
   let cx = classNames.bind(s)
   const handleCancelBtnClick = () => {}
@@ -81,26 +82,38 @@ const SelectorSettingsSidePanel = ({
           )}
           {tabsInfo.activeTabId === editor && (
             <>
-              <ul className={s.settings} onChange={(e) => setCheckedRadio(e.target.value)}>
-                {settingKeys.map(({ name, type, value }, i) => (
-                  <li className={s.field} key={name + i}>
-                    {type === 'checkbox' && <Checkbox label={name} checked />}
-                    {type === 'radio' && (
-                      <RadioButton
-                        name={settingsId}
-                        id={name}
-                        checked={name === checkedRadio}>
-                        {name}
-                      </RadioButton>
-                    )}
-                    {type === 'switch' && (
-                      <Switcher checked={value === '1'} label={name} />
-                    )}
-                    {type === 'input' && (
-                      <SmallInput label={name} value={value} />
-                    )}
-                  </li>
-                ))}
+              <ul
+                className={s.settings}
+                onChange={e => setCheckedRadio(e.target.value)}>
+                {settingKeys
+                  .sort(({ selectAll }) => (selectAll ? -1 : 0)) // Move 'Select All' option to start
+                  .map(({ name, type, value, labels, selectAll }, i) => (
+                    <li
+                      className={cx('field', selectAll && 'selectAll')}
+                      key={name + i}>
+                      {type === 'checkbox' && (
+                        <Checkbox label={name} checked={value === '1'} />
+                      )}
+                      {type === 'radio' && (
+                        <RadioButton
+                          name={settingsId}
+                          id={name}
+                          checked={name === checkedRadio}>
+                          {name}
+                        </RadioButton>
+                      )}
+                      {type === 'switch' && (
+                        <Switcher
+                          checked={value === '1'}
+                          label={name}
+                          switcherLabels={labels}
+                        />
+                      )}
+                      {type === 'input' && (
+                        <SmallInput label={name} value={value} />
+                      )}
+                    </li>
+                  ))}
               </ul>
               <SidePanelButtons>
                 <span className={s.help}>

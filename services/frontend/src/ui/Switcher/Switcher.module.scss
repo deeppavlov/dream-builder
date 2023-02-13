@@ -40,21 +40,24 @@
       cursor: pointer;
       z-index: 0;
 
-      &::before {
-        content: '';
-        position: absolute;
-        width: 50%;
-        height: 24px;
-        background-color: $primary1;
-        border-radius: 12px;
-        z-index: 1;
-        transform: translate(2px, 2px);
-        transition: transform 150ms linear;
-      }
+      // &::before {
+      //   content: '';
+      //   position: absolute;
+      //   width: 50%;
+      //   height: 24px;
+      //   background-color: $primary1;
+      //   border-radius: 12px;
+      //   z-index: 1;
+      //   transform: translate(2px, 2px);
+      //   transition: transform 150ms linear;
+      // }
 
       &:checked {
         & ~ .switch:last-of-type {
           color: $text4;
+          &::before {
+            display: block;
+          }
         }
 
         &::before {
@@ -64,6 +67,9 @@
 
       &:not(:checked) ~ .switch:first-of-type {
         color: $text4;
+        &::before {
+          display: block;
+        }
       }
     }
   }
@@ -80,5 +86,21 @@
     position: relative;
     z-index: 2;
     transition: color 150ms linear;
+    position: relative;
+    z-index: 2;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 24px;
+      background-color: $primary1;
+      border-radius: 12px;
+      z-index: -1;
+      top: 0px;
+      left: 0px;
+      transition: all 150ms linear;
+      display: none;
+    }
   }
 }

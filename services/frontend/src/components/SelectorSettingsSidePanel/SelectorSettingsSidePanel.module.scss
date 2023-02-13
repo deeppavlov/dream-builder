@@ -28,6 +28,15 @@
   overflow-x: hidden;
   padding: 0 12px;
   margin: 0 12px;
+
+  &:has(.selectAll) {
+    .field {
+      padding: 0px 22px;
+    }
+    .selectAll {
+      padding: 0px 14px;
+    }
+  }
 }
 
 .field {

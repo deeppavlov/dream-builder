@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -13,6 +14,21 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     ComponentMetadata,
     PipelineConfMetadata,
 )
+
+
+class CreateAssistantDistModel(BaseModel):
+    display_name: str
+    description: str
+
+
+class CloneAssistantDistModel(CreateAssistantDistModel):
+    annotators: Optional[List[str]]
+    response_annotators: Optional[List[str]]
+    # response_annotator_selectors: Optional[bool]
+    candidate_annotators: Optional[List[str]]
+    skill_selectors: Optional[List[str]]
+    skills: Optional[List[str]]
+    response_selectors: Optional[List[str]]
 
 
 class DreamDistModelMetadata(BaseModel):

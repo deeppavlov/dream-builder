@@ -67,8 +67,9 @@ export const BotCard = ({
   }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    location.pathname = bot?.routingName!
-    // navigate(`/${routingName}`)
+    navigate(`/${routingName}`, {
+      state: { preview: false, distName: routingName },
+    })
   }
   const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()

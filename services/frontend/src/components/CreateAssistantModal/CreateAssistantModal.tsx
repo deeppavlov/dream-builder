@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {  useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Router/AuthProvider'
 import { BotInfoInterface, dist_list } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'

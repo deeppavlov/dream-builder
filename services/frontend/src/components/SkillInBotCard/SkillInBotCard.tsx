@@ -10,7 +10,7 @@ import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import Button from '../../ui/Button/Button'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../Router/AuthProvider'
 
 interface SkillInBotCardProps extends SkillInfoInterface {
   checkbox?: boolean

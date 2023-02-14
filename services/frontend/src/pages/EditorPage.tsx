@@ -1,6 +1,6 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { getSkillListByDistName } from '../services/getSkillListByDistName'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { capitalizeTitle } from '../utils/capitalizeTitle'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -105,7 +105,9 @@ export const EditorPage = () => {
                 display='grid'
                 gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
                 {skillListData?.map((skill: any) => {
-                  const dateCreated = dateToUTC(skill.metadata.date_created)
+                  // const dateCreated = dateToUTC(skill.metadata.date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  
                   return (
                     <SkillCard
                       type='your'

@@ -10,7 +10,7 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
 import { dist_list } from '../types/types'
@@ -62,7 +62,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
+                const dateCreated = dateToUTC(new Date())
+
                 return (
                   <BotCard
                     key={i}
@@ -106,8 +107,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
-                const time = timeToUTC(date_created)
+                const dateCreated = dateToUTC(new Date())
+                const time = timeToUTC(new Date())
                 return (
                   <BotListItem
                     key={i}

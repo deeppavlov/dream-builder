@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { RoutesList } from '../Router/RoutesList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
@@ -61,7 +61,6 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
@@ -127,7 +126,8 @@ export const BotsPage = () => {
                       disk_usage,
                       date_created,
                     } = dist
-                    const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date())
+
                     return (
                       <BotCard
                         routingName={name}
@@ -197,8 +197,9 @@ export const BotsPage = () => {
                     disk_usage,
                     date_created,
                   } = dist
-                  const dateCreated = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  const time = timeToUTC(new Date())
+
                   return (
                     <BotListItem
                       key={i}

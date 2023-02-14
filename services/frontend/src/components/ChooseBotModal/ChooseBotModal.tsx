@@ -93,8 +93,8 @@ const ChooseBotModal = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
-                const time = timeToUTC(date_created)
+                const dateCreated = dateToUTC(new Date())
+                const time = timeToUTC(new Date())
                 return (
                   <BotListItem
                     key={i}

@@ -1,12 +1,10 @@
-import { api } from './axiosConfig'
+import { privateApi } from "./axiosConfig"
 
 export async function getComponentsFromAssistantDists(distName: string) {
   try {
-    const { data } = await api.get(`assistant_dists/${distName}/components/`, {
-      headers: {
-        token: localStorage.getItem('token'),
-      },
-    })
+    const { data } = await privateApi.get(
+      `assistant_dists/${distName}/components/`
+    )
     return data
   } catch (e) {
     console.log(e)

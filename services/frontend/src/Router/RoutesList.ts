@@ -6,5 +6,6 @@ export const RoutesList = {
   editor: '/',
   draft: '/draft',
   test: '/test',
+  code: '/code',
   start: '/',
 } as const

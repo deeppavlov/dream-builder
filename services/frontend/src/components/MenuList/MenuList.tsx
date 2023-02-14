@@ -34,8 +34,24 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log(e?.currentTarget?.innerText)
+    switch (e?.currentTarget?.innerText!) {
+      case 'Rename':
+        trigger('AssistantModal', { action: 'edit', distribution: '' })
+        break
+      case 'Delete':
+        trigger('DeleteAssistantModal', {
+          // bot: {
+          //   routingName: '', // TODO: get variables
+          //   name: 'EnDreamToDebug', // TODO: get variables
+          // },
+        })
+        break
+      case 'Publish':
+        trigger('PublishAssistantModal', {})
+        break
+    }
   }
+
   const isPreview = usePreview().isPreview
   const cx = classNames.bind(s)
 
@@ -203,24 +219,12 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                 <p>Rename</p>
               </div>
             </li>
-            {/* <li className={s.item}>
-              <div>
-                <PropertiesIcon />
-                <p>Properties</p>
-              </div>
-            </li> */}
             <li className={s.item}>
               <div onClick={handleClick}>
                 <PublishIcon />
                 <p>Publish</p>
               </div>
             </li>
-            {/* <li className={s.item}>
-              <div>
-                <DownloadIcon />
-                <p>Download</p>
-              </div>
-            </li> */}
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <div onClick={handleClick}>

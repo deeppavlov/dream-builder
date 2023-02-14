@@ -12,6 +12,7 @@ import s from './BotCard.module.scss'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { useNavigate } from 'react-router-dom'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -36,7 +37,6 @@ export const BotCard = ({
   disabledMsg,
 }: BotCardProps) => {
   const bot = {
-    
     routingName,
     name,
     author,
@@ -48,10 +48,7 @@ export const BotCard = ({
     space,
   }
 
-  // const handleBotCardClick = () => {bo
-  //   trigger('BotInfoSidePanel', bot)
-  // }
-
+  const navigate = useNavigate()
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
       children: <BotInfoSidePanel key={bot.name} bot={bot} />,
@@ -59,7 +56,9 @@ export const BotCard = ({
   }
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    location.pathname = bot?.routingName! + '?preview'
+    navigate(`/${routingName}`, {
+      state: { preview: true, distName: routingName },
+    })
   }
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,6 +68,7 @@ export const BotCard = ({
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     location.pathname = bot?.routingName!
+    // navigate(`/${routingName}`)
   }
   const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -159,7 +159,7 @@ export const BotCard = ({
               small
               withIcon
               props={{ onClick: handleKebabClick }}>
-              <Kebab dataFor={type === 'your' ? 'your_bot' : null} />
+              <Kebab dataFor={type === 'your' && 'your_bot'} />
             </Button>
           </>
         )}

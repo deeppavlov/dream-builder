@@ -134,12 +134,7 @@ export const BotsAllPage = () => {
             </Table>
           </Wrapper>
         )}
-        <BotInfoSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to clone the bot'
-          }
-          position={{ top: topbarHeight }}
-        />
+        <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />
       </Main>
     </>

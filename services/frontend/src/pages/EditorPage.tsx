@@ -12,7 +12,7 @@ import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { SkillCard } from '../components/SkillCard/SkillCard'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getDistByName } from '../services/getDistByName'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
@@ -38,17 +38,12 @@ import { usePreview } from '../Context/PreviewProvider'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
-
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
   const auth = useAuth()
-  const data = useParams()
-  const distName = data?.name?.split('?')[0]
-  const previewParam = data?.name?.split('?')[1] === 'preview'
+  const { state } = useLocation()
+  const { distName } = state
   const { setIsPreview } = usePreview()
   useEffect(() => {
-    previewParam && setIsPreview(previewParam)
+    state?.preview && setIsPreview(state.preview)
   }, [])
 
   const {
@@ -74,17 +69,6 @@ export const EditorPage = () => {
       enabled: distName?.length! > 0,
     }
   )
-
-  const {
-    isLoading: isDistLoading,
-    error: distError,
-    data: distData,
-  } = useQuery(['dist', distName], () => getDistByName(distName!), {
-    enabled: distName?.length! > 0,
-  })
-
-  if (distError) return <>An error has occurred: + {distError}</>
-
   const annotators = distsComponentsData?.annotators
   const candidateAnnotators = distsComponentsData?.candidate_annotators
   const skills = distsComponentsData?.skills
@@ -92,6 +76,9 @@ export const EditorPage = () => {
   const responseSelectors = distsComponentsData?.response_selectors
   const responseAnnotators = distsComponentsData?.response_annotators
 
+  const viewHandler = () => {
+    setListView(listView => !listView)
+  }
   return (
     <>
       <Tabs>
@@ -189,20 +176,12 @@ export const EditorPage = () => {
         <TabPanel>
           <Topbar type='editor' viewHandler={viewHandler} title={distName} />
           <Main sidebar editor draggable>
-            {isDistLoading ? (
-              <>{'Loading...'}</>
-            ) : (
-              <>
-                <Annotators annotators={annotators} />
-                <SkillSelector skillSelectors={skillSelectors} />
-                <Skills skills={skills} />
-                <CandidateAnnotators
-                  candidateAnnotators={candidateAnnotators}
-                />
-                <ResponseSelector responseSelectors={responseSelectors} />
-                <ResponseAnnotators responseAnnotators={responseAnnotators} />
-              </>
-            )}
+            <Annotators annotators={annotators} />
+            <SkillSelector skillSelectors={skillSelectors} />
+            <Skills skills={skills} />
+            <CandidateAnnotators candidateAnnotators={candidateAnnotators} />
+            <ResponseSelector responseSelectors={responseSelectors} />
+            <ResponseAnnotators responseAnnotators={responseAnnotators} />
           </Main>
         </TabPanel>
       </Tabs>

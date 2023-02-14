@@ -28,7 +28,7 @@ export const SkillSelector: FC<SkillSelctorProps> = ({ skillSelectors }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
       <form onSubmit={formSubmitHandler}>
-        <Accordion title='Customizable'></Accordion>
+        <Accordion title='Customizable'/>
         <Accordion title='Non-customizable'>
           <div className={s.element}>
             {!skillSelectors?.length ? (

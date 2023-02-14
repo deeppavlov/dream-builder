@@ -10,7 +10,7 @@ interface PutDistParams {
 
 export async function putAssistantDist(params: PutDistParams) {
   try {
-    const { data } = await axios.put('/assistant_dists', { params })
+    const { data } = await axios.put('/assistant_dists/private', { params })
     return data
   } catch (e) {
     console.log(e)

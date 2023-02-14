@@ -18,6 +18,8 @@ import { Slider } from '../ui/Slider/Slider'
 import { trigger } from '../utils/events'
 import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
@@ -283,13 +285,10 @@ export const BotsPage = () => {
             You must be signed in to create your own bot
           </ReactTooltip>
         )}
-        <BotInfoSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to clone the bot'
-          }
-          position={{ top: topbarHeight }}
-        />
+        <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />
+        <PublishAssistantModal />
+        <DeleteAssistantModal />
       </Main>
     </>
   )

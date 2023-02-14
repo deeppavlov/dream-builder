@@ -1,14 +1,21 @@
 import { rest } from 'msw'
 import privateAssistantDists from './privateAssistantDists'
+import { generateRoutingName } from '../utils/generateRoutingName'
 
+const makeDistFromTemplate = params => {
+  return {
+    display_name: params.display_name,
+    ...templateDist,
+    name: generateRoutingName(params.display_name),
+    description: params.description,
+  }
+}
 const templateDist = {
-  author: 'DeepPavlov',
   version: '0.1.0',
   date_created: Date.now(),
-  ram_usage: '50 GB',
-  gpu_usage: '50 GB',
-  disk_usage: '50 GB',
-  name: 'dream_sfc',
+  ram_usage: '0 GB',
+  gpu_usage: '0 GB',
+  disk_usage: '0 GB',
 }
 
 export const handlers = [
@@ -19,12 +26,13 @@ export const handlers = [
       : res(ctx.status(400), ctx.json('your token is not valid'))
   }),
 
-  rest.put('/assistant_dists', (req, res, ctx) => {
-    privateAssistantDists.push({ ...templateDist, ...req.body.params })
+  rest.put('/assistant_dists/private', (req, res, ctx) => {
+    const params = req.body.params
+    const response = makeDistFromTemplate(params)
+    privateAssistantDists.push(response)
     return res(
       ctx.json({
-        ...templateDist,
-        ...req.json(),
+        ...response,
       })
     )
   }),

@@ -6,7 +6,11 @@
   flex-direction: column;
   gap: 24px;
 }
-
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 .distribution {
   @include t2;
   color: $text3;

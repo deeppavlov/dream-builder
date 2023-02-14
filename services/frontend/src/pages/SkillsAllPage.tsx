@@ -12,7 +12,7 @@ import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { SkillType } from '../types/types'
 
 interface skill_list {
@@ -44,19 +44,21 @@ export const SkillsAllPage = () => {
     data: skillsData,
   } = useQuery('skills_list', getSkillList)
 
-  if (isSkillsLoading) return <>'Loading...'</>
-  if (skillsError) return <> 'An error has occurred: '</>
+  skillsError && <> {'An error has occurred: '} + skillsError</>
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
       <Main>
         {!listView ? (
-          <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+          <Wrapper title='Public Skills' amount={skillsData?.length}>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(280px, 1fr))'>
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+              {isSkillsLoading && <>{'Loading...'}</>}
               {skillsData?.map((skill: skill_list, i: number) => {
-                const date = dateToUTC(skill.metadata.date_created)
+                // const dateCreated = dateToUTC(skill.metadata.date_created)
+                const dateCreated = dateToUTC(new Date())
+
                 return (
                   <SkillCard
                     key={i}
@@ -64,7 +66,7 @@ export const SkillsAllPage = () => {
                     name={skill.metadata.display_name}
                     botName={skill.assistant_dist}
                     skillType={skill.metadata.type}
-                    dateCreated={date}
+                    dateCreated={dateCreated}
                     desc={skill.metadata.description}
                     version={skill.metadata.version}
                     ram={skill.metadata.ram_usage}
@@ -84,16 +86,20 @@ export const SkillsAllPage = () => {
           </Wrapper>
         ) : (
           <Wrapper title='Public Skills' amount={skillsData.length} fullHeight>
+            {isSkillsLoading && <>{'Loading...'}</>}
             <Table second='Type'>
               {skillsData?.map((skill: skill_list, i: number) => {
-                const date = dateToUTC(skill.metadata.date_created)
-                const time = timeToUTC(skill.metadata.date_created)
+                // const dateCreated = dateToUTC(skill.metadata.date_created)
+                // const time = timeToUTC(skill.metadata.date_created)
+                const dateCreated = dateToUTC(new Date())
+                const time = timeToUTC(new Date())
+
                 return (
                   <SkillListItem
                     key={i}
                     name={skill.metadata.display_name}
                     botName={skill.assistant_dist}
-                    dateCreated={date}
+                    dateCreated={dateCreated}
                     time={time}
                     desc={skill.metadata.description}
                     version={skill.metadata.version}

@@ -1,14 +1,6 @@
-import { api } from './axiosConfig'
+import { privateApi } from "./axiosConfig"
 
 export async function getDistByName(distName: string) {
-  try {
-    const { data } = await api.get(`assistant_dists/${distName}`, {
-      headers: {
-        token: localStorage.getItem('token'),
-      },
-    })
-    return data
-  } catch (e) {
-    console.log(e)
-  }
+  const { data } = await privateApi.get(`assistant_dists/${distName}`)
+  return data
 }

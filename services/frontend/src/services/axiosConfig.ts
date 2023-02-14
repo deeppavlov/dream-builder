@@ -1,46 +1,61 @@
 import axios from 'axios'
-import { trigger } from '../utils/events'
-import { deleteLocalStorageUser } from './AuthProvider'
+import { getAccessToken, logout } from '../Router/AuthProvider'
+import { updateAccessToken } from './updateAccessToken'
 
+/**
+ * Axios instance of public distribution API
+ */
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: import.meta.env.VITE_DIST_API_URL,
 })
 
-const handleBadTokenResponse = () => {
-  localStorage.removeItem('token')
-  deleteLocalStorageUser()
-  trigger('ErrorMessageModal', 'bad token')
-}
+/**
+ * Axios instance of authorization API
+ */
+export const authApi = axios.create({
+  baseURL: import.meta.env.VITE_AUTH_API_URL,
+})
 
-// Add a request interceptor
-api.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
+/**
+ * Axios instance of private distribution API
+ */
+export const privateApi = axios.create({
+  baseURL: import.meta.env.VITE_DIST_API_URL,
+})
+
+privateApi.interceptors.request.use(
+  config => {
+    if (!config.headers?.token) {
+      config.headers!.token = getAccessToken()
+    }
     return config
   },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error)
-  }
+  error => Promise.reject(error)
 )
 
-// Add a response interceptor
-api.interceptors.response.use(
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+privateApi.interceptors.response.use(
+  response => response,
+  async error => {
+    const prevRequest = error?.config
+    const accessTokenIsExpired =
+      error?.response?.status === 400 &&
+      error.response.data?.detail === 'Date of token is not valid!'
 
-    return response
-  },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    if (
-      error.response.status === 400 &&
-      error.response.data?.detail === 'bad token'
-    ) {
-      handleBadTokenResponse()
+    console.log(`Access token is expired: ${accessTokenIsExpired}`)
+
+    if (accessTokenIsExpired && !prevRequest?.sent) {
+      prevRequest.sent = true // Avoid unnecessary repeat on one request
+      const newAccessToken = await updateAccessToken()
+
+      // Logout if update access token is failed
+      if (!newAccessToken) {
+        console.log('Update access token is failed')
+        logout()
+        return
+      }
+
+      prevRequest.headers.token = newAccessToken
+      return privateApi(prevRequest)
     }
-    return Promise.reject(error)
   }
 )

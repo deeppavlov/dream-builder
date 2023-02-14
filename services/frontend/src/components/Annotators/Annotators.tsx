@@ -7,10 +7,10 @@ import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './Annotators.module.scss'
 
 interface Props {
-  annotatorsList: any
+  annotatorsList: object
 }
 
-export const Annotators: React.FC<Props> = ({ annotatorsList }) => {
+export const Annotators: React.FC<Props> = ({ annotators }) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -23,7 +23,7 @@ export const Annotators: React.FC<Props> = ({ annotatorsList }) => {
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {annotatorsList?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+            {annotators?.recources || '0.00 GB RAM | 0.00 GB GPU'}
           </p>
         </div>
       </div>
@@ -31,8 +31,14 @@ export const Annotators: React.FC<Props> = ({ annotatorsList }) => {
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
-          {annotatorsList?.map((item: string, i: number) => {
-            return <Element key={i} title={capitalizeTitle(item)} />
+          {annotators?.map((item: string, i: number) => {
+            return (
+              <Element
+                key={i}
+                title={capitalizeTitle(item.display_name)}
+                item={item}
+              />
+            )
           })}
         </Accordion>
       </div>

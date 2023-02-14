@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { getSkillList } from '../services/getSkillsList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -13,7 +13,7 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-// import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
+import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { RoutesList } from '../Router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
@@ -103,7 +103,6 @@ export const SkillsPage = () => {
   } = useQuery('skills_list', getSkillList)
 
   skillsError && <>{'An error has occurred:' + { skillsError }}</>
-  console.log(skillsData)
   return (
     <>
       <Topbar viewHandler={viewHandler} type='main' />
@@ -128,7 +127,9 @@ export const SkillsPage = () => {
                       execution_time,
                       date_created,
                     } = skill?.metadata
-                    const date = dateToUTC(date_created)
+                    // const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date())
+                    const time = timeToUTC(new Date())    
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
@@ -137,7 +138,7 @@ export const SkillsPage = () => {
                         name={display_name}
                         botName={skill.assistant_dist}
                         skillType={type}
-                        dateCreated={date}
+                        dateCreated={dateCreated}
                         desc={description}
                         version={version}
                         ram={ram_usage}
@@ -195,14 +196,17 @@ export const SkillsPage = () => {
                     execution_time,
                     date_created,
                   } = skill.metadata
-                  const date = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
+                  // const date = dateToUTC(date_created)
+                  // const time = timeToUTC(date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  const time = timeToUTC(new Date())
+  
                   return (
                     <SkillListItem
                       key={i}
                       name={display_name}
                       botName={skill?.assistant_dist}
-                      dateCreated={date}
+                      dateCreated={dateCreated}
                       time={time}
                       desc={description}
                       version={version}
@@ -255,7 +259,7 @@ export const SkillsPage = () => {
         <SkillPromptModal />
         <CreateSkillDistModal />
         <CreateAssistantModal />
-        <ChooseBotModal />
+        {/* <ChooseBotModal /> */}
       </Main>
     </>
   )

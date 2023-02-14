@@ -3,8 +3,9 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Skill } from './Skill'
 import s from './ResponseSelector.module.scss'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const ResponseSelector = ({ responseSelectorsList }: any) => {
+export const ResponseSelector = ({ responseSelectors }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -15,9 +16,9 @@ export const ResponseSelector = ({ responseSelectorsList }: any) => {
           </div>
         </div>
       </div>
-      {/* <AddButtonStack disabled={true} text='Add Response Selector' /> */}
-      {responseSelectorsList?.map((item: string, i: number) => {
-        return <Skill key={i} title={item} />
+      <AddButtonStack disabled={true} text='Add Response Selector' />
+      {responseSelectors?.map((item: string, i: number) => {
+        return <Skill key={i} title={capitalizeTitle(item.display_name)} />
       })}
       {/* <Skill title='Conversational Evaluational Selector' /> */}
       <form

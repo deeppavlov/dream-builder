@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { RoutesList } from '../Router/RoutesList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../Router/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
@@ -61,12 +61,9 @@ export const BotsPage = () => {
             />,
           ])
         )
-
       : setBots(
           bots.concat([
             <BotListItem
-              key={nanoid(8)}
-              routingName=''
               dateCreated={dateToUTC(new Date())}
               author={auth.user.name ?? 'Name of Company'}
               authorImg={auth.user.picture}
@@ -81,6 +78,7 @@ export const BotsPage = () => {
                   ? undefined
                   : 'You must be signed in to clone the bot'
               }
+              routingName={''}
             />,
           ])
         )
@@ -91,7 +89,7 @@ export const BotsPage = () => {
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-
+  console.log(assistantsData)
   useEffect(() => {
     if (!isAssistantsLoading) {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
@@ -99,8 +97,9 @@ export const BotsPage = () => {
     console.log(assistantsData)
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  assistantsError && <>An error has occurred: + {assistantsError}</>
+  assistantsError && <>{'An error has occurred:' + { assistantsError }}</>
   console.log(assistantsData)
+
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -114,11 +113,11 @@ export const BotsPage = () => {
               showAll>
               <Container>
                 <Slider>
-                  {isAssistantsLoading && <>Loading...</>}
+                  {isAssistantsLoading && <>{'Loading...'}</>}
                   {assistantsData?.map((dist: dist_list, i: number) => {
                     const {
-                      name,
                       display_name,
+                      name,
                       author,
                       description,
                       version,
@@ -127,7 +126,8 @@ export const BotsPage = () => {
                       disk_usage,
                       date_created,
                     } = dist
-                    const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date())
+
                     return (
                       <BotCard
                         routingName={name}
@@ -197,8 +197,9 @@ export const BotsPage = () => {
                     disk_usage,
                     date_created,
                   } = dist
-                  const dateCreated = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
+                  const dateCreated = dateToUTC(new Date())
+                  const time = timeToUTC(new Date())
+
                   return (
                     <BotListItem
                       key={i}

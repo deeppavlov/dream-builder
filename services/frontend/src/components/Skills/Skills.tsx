@@ -6,7 +6,7 @@ import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Element } from './Element'
 import s from './Skills.module.scss'
 
-export const Skills = ({ skillsList }: any) => {
+export const Skills = ({ skills }: any) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -15,12 +15,11 @@ export const Skills = ({ skillsList }: any) => {
             <img src={SkillsLogo} className={s.icon} />
             <p className={s.type}>Skills</p>
           </div>
-          
-          {/* <Kebab disabled dataFor='all_skills' /> */}
+          <Kebab dataFor='all_skills' />
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {skillsList?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+            {skills?.recources || '0.00 GB RAM | 0.00 GB GPU'}
           </p>
         </div>
       </div>
@@ -28,8 +27,14 @@ export const Skills = ({ skillsList }: any) => {
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
-          {skillsList?.map((item: string, i: number) => {
-            return <Element key={i} title={capitalizeTitle(item)} />
+          {skills?.map((item: string, i: number) => {
+            return (
+              <Element
+                key={i}
+                title={capitalizeTitle(item.display_name)}
+                item={item}
+              />
+            )
           })}
         </Accordion>
       </div>

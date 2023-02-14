@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { api } from './axiosConfig'
+import { secureApi } from './axiosConfig'
 
-//replace axios.get with api.get to interract with real endpoint
+// replace axios.get with SecureApi.get and delete config with headers to interract with real endpoint
 
 export async function getUsersAssistantDists() {
   try {

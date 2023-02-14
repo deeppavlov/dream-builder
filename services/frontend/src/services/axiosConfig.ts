@@ -8,6 +8,12 @@ import {
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
 })
+export const secureApi = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  headers: {
+    token: localStorage.getItem('token'),
+  },
+})
 
 const handleBadTokenResponse = (error: AxiosError) => {
   fetchUserLogout()

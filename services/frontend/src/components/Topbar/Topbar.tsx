@@ -96,11 +96,14 @@ export const Topbar = ({
             <div className={s.logo_area}>
               <Breadcrumbs />
             </div>
-            <div className={s.assistantName}>{cleanTitle}</div>
+            <div style={{ color: 'black' }} className={s.assistantName}>
+              {cleanTitle}
+              {/* добавить разные цвета для различных режимов   */}
+            </div>
             {preview && (
               <div className={s.fork}>
                 <Button
-                  theme={'secondary'}
+                  theme={'primary'}
                   small
                   withIcon
                   props={{ onClick: handleCloneBtnClick }}>

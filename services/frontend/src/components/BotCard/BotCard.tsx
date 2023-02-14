@@ -36,6 +36,7 @@ export const BotCard = ({
   disabledMsg,
 }: BotCardProps) => {
   const bot = {
+    
     routingName,
     name,
     author,
@@ -47,15 +48,15 @@ export const BotCard = ({
     space,
   }
 
-  const handleBotCardClick = () => {
-    trigger('BotInfoSidePanel', bot)
-  }
-
-  // const handleBotCardClick = () => {
-  //   trigger(BASE_SP_EVENT, {
-  //     children: <BotInfoSidePanel key={bot.name} bot={bot} />,
-  //   })
+  // const handleBotCardClick = () => {bo
+  //   trigger('BotInfoSidePanel', bot)
   // }
+
+  const handleBotCardClick = () => {
+    trigger(BASE_SP_EVENT, {
+      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+    })
+  }
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     location.pathname = bot?.routingName! + '?preview'
@@ -147,7 +148,7 @@ export const BotCard = ({
         ) : (
           <>
             <Button
-              theme='secondary'
+              theme='primary'
               small
               long
               props={{ onClick: handlEditClick }}>

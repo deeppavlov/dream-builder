@@ -1,13 +1,17 @@
-import axios from 'axios'
-import { api } from './axiosConfig'
+import axios, { AxiosError } from 'axios'
+import { secureApi } from './axiosConfig'
 
-//replace axios.get with api.get to interract with real endpoint
+//replace axios.put with secureApi.put to interract with real endpoint
 
-export async function putAssistantDist(params: string) {
+interface PutDistParams {
+  display_name: string
+  description: string
+}
+
+export async function putAssistantDist(params: PutDistParams) {
   try {
-    await axios.put('/assistant_dists', { params }).then(response => {
-      console.log(response)
-    })
+    const { data } = await axios.put('/assistant_dists', { params })
+    return data
   } catch (e) {
     console.log(e)
   }

@@ -93,7 +93,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     e.preventDefault()
     e.stopPropagation()
   }
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
   let cx = classNames.bind(s)
   return (
     <div

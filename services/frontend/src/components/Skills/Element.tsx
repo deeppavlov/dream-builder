@@ -16,7 +16,7 @@ export const Element: FC<SkillProps> = ({ item }) => {
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
   const cx = classNames.bind(s)
   const title = capitalizeTitle(item.display_name)
 

@@ -52,7 +52,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
     }
   }
 
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
   const cx = classNames.bind(s)
 
   switch (type) {

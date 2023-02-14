@@ -57,7 +57,7 @@ export const BotsPage = () => {
     data: usersDistData,
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
-  } = useQuery('usersAssistantDists', getUsersAssistantDists)
+  } = useQuery('usersAssistant Dists', getUsersAssistantDists)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -112,7 +112,7 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper
               title='Your Virtual Assistants & Chatbots'
-              amount={usersDistData?.length}
+              amount={auth?.user && usersDistData?.length}
               showAll
               linkTo={RoutesList.yourBots}>
               <Container overflow='hidden'>
@@ -138,42 +138,43 @@ export const BotsPage = () => {
                   {usersDistDataError &&
                     'luck is not on your side! try to refresh the page' +
                       usersDistDataError}
-                  {usersDistData?.map((dist: dist_list, i: number) => {
-                    const {
-                      display_name,
-                      name,
-                      author,
-                      description,
-                      version,
-                      ram_usage,
-                      gpu_usage,
-                      disk_usage,
-                      date_created,
-                    } = dist
-                    const dateCreated = dateToUTC(date_created)
-                    return (
-                      <BotCard
-                        routingName={name}
-                        key={i}
-                        type='your'
-                        size='small'
-                        name={display_name}
-                        author={author}
-                        authorImg={DeepPavlovLogo}
-                        dateCreated={dateCreated}
-                        desc={description}
-                        version={version}
-                        ram={ram_usage}
-                        gpu={gpu_usage}
-                        space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  })}
+                  {auth?.user &&
+                    usersDistData?.map((dist: dist_list, i: number) => {
+                      const {
+                        display_name,
+                        name,
+                        author,
+                        description,
+                        version,
+                        ram_usage,
+                        gpu_usage,
+                        disk_usage,
+                        date_created,
+                      } = dist
+                      const dateCreated = dateToUTC(date_created)
+                      return (
+                        <BotCard
+                          routingName={name}
+                          key={i}
+                          type='your'
+                          size='small'
+                          name={display_name}
+                          author={author}
+                          authorImg={DeepPavlovLogo}
+                          dateCreated={dateCreated}
+                          desc={description}
+                          version={version}
+                          ram={ram_usage}
+                          gpu={gpu_usage}
+                          space={disk_usage}
+                          disabledMsg={
+                            auth?.user
+                              ? undefined
+                              : 'You must be signed in to clone the bot'
+                          }
+                        />
+                      )
+                    })}
                 </Container>
               </Container>
             </Wrapper>

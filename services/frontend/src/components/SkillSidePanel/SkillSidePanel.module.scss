@@ -109,6 +109,6 @@
 .fallbacks {
   color: $red;
 }
-.disabled {
+.disabled[aria-selected='false'] {
   @include disabled;
 }

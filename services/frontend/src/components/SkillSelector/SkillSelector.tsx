@@ -15,7 +15,7 @@ const formSubmitHandler = (e: React.FormEvent) => {
   e.preventDefault()
 }
 export const SkillSelector: FC<SkillSelctorProps> = ({ skillSelectors }) => {
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -28,7 +28,7 @@ export const SkillSelector: FC<SkillSelctorProps> = ({ skillSelectors }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
       <form onSubmit={formSubmitHandler}>
-        <Accordion title='Customizable'/>
+        <Accordion title='Customizable' />
         <Accordion title='Non-customizable'>
           <div className={s.element}>
             {!skillSelectors?.length ? (

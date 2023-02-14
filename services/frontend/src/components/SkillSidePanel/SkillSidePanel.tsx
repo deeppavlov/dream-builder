@@ -41,7 +41,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
     ),
   })
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
 
   return (
     <>

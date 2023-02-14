@@ -14,7 +14,7 @@ interface SkillsStackProps {
 }
 
 export const Skills: FC<SkillsStackProps> = ({ skills }) => {
-  const isPreview = usePreview().isPreview
+  const { isPreview } = usePreview()
   return (
     <div className={s.stack}>
       <div className={s.header}>

@@ -23,6 +23,7 @@ import IntentResponderSidePanel from '../IntentResponderSidePanel/IntentResponde
 import { MenuTypes } from '../../types/types'
 import { usePreview } from '../../Context/PreviewProvider'
 import s from './MenuList.module.scss'
+import GenerativeSkillEditor from '../GenerativeSkillEditor/GenerativeSkillEditor'
 
 export interface MenuListProps {
   type: MenuTypes
@@ -36,7 +37,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
     e.stopPropagation()
     switch (e?.currentTarget?.innerText!) {
       case 'Rename':
-        trigger('AssistantModal', { action: 'edit', distribution: '' })
+        trigger('AssistantModal', { action: 'edit', bot: item.data })
         break
       case 'Delete':
         trigger('DeleteAssistantModal', {
@@ -209,7 +210,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
           arrowColor='#fff'
           clickable={true}
           className={s.menulist}
-          id='your_bot'
+          id={privateDataFor}
           place='right'
           effect='solid'>
           <ul className={s.menu}>
@@ -513,7 +514,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                     break
                   case 'Dialogpt':
                   case 'Dialogpt Persona Based':
-                  // case 'Dff Intent Responder Skil≠l':
                   case 'Dummy Skill':
                   case 'Dff Empathetic Marketing Prompted Skill':
                   case 'Dff Scheduling Prompted Skill':
@@ -522,8 +522,28 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                   case 'Dff Nutrition Prompted Skill':
                   case 'Dff Rhodes Coaching Prompted Skill':
                   case 'Dff Dream Persona Prompted Skill':
-                    trigger('SkillPromptModal', {
-                      skill: item.data,
+                    trigger(BASE_SP_EVENT, {
+                      children: (
+                        <GenerativeSkillEditor
+                          key={item.typeItem}
+                          activeTab='Editor'
+                          skill={{
+                            name: item.data.display_name,
+                            author: item.data.author,
+                            authorImg: DeepPavlovLogo,
+                            skillType: item.data.type,
+                            botName: 'Name of The Bot',
+                            desc: item.data.description,
+                            dateCreated: dateToUTC(
+                              new Date(item.data.date_created)
+                            ),
+                            version: item.data.version,
+                            ram: item.data.ram_usage,
+                            gpu: item.data.gpu_usage,
+                            executionTime: item.data.execution_time,
+                          }}
+                        />
+                      ),
                     })
                     break
                   default:
@@ -543,6 +563,40 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                       children: (
                         <IntentResponderSidePanel
                           key='Properties'
+                          skill={{
+                            name: item.data.display_name,
+                            author: item.data.author,
+                            authorImg: DeepPavlovLogo,
+                            skillType: item.data.type,
+                            botName: 'Name of The Bot',
+                            desc: item.data.description,
+                            dateCreated: dateToUTC(
+                              new Date(item.data.date_created)
+                            ),
+                            version: item.data.version,
+                            ram: item.data.ram_usage,
+                            gpu: item.data.gpu_usage,
+                            executionTime: item.data.execution_time,
+                          }}
+                        />
+                      ),
+                    })
+                    break
+                  case 'Dialogpt':
+                  case 'Dialogpt Persona Based':
+                  case 'Dummy Skill':
+                  case 'Dff Empathetic Marketing Prompted Skill':
+                  case 'Dff Scheduling Prompted Skill':
+                  case 'Dff Da Costa Clothes Prompted Skill':
+                  case 'Dff Home Automation Prompted Skill':
+                  case 'Dff Nutrition Prompted Skill':
+                  case 'Dff Rhodes Coaching Prompted Skill':
+                  case 'Dff Dream Persona Prompted Skill':
+                    trigger(BASE_SP_EVENT, {
+                      children: (
+                        <GenerativeSkillEditor
+                          key={item.typeItem + 'Properties'}
+                          activeTab='Properties'
                           skill={{
                             name: item.data.display_name,
                             author: item.data.author,

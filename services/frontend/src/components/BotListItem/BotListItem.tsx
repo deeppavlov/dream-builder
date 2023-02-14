@@ -1,10 +1,9 @@
 import { FC } from 'react'
-import { Link } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
@@ -68,7 +67,7 @@ export const BotListItem: FC<BotListItemProps> = ({
     <tr className={s.tr} onClick={handleBotListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
-          <CheckBox />
+          <Checkbox />
         </td>
       )}
       <td className={s.td}>

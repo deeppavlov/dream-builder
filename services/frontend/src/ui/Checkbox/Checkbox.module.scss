@@ -1,50 +1,67 @@
 .container {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  @include b3;
+  color: $text2;
+
+  //&:focus-within,
+  &:hover {
+    color: $primary1;
+
+    .checkbox {
+      border-color: $primary1;
+    }
+
+    .checkmark {
+      display: block;
+      stroke: $primary1;
+    }
+  }
+
+  &:has(input:checked) {
+    color: $primary1;
+
+    .checkbox {
+      border-color: $primary1;
+      background-color: $primary1;
+    }
+    .checkmark {
+      display: block;
+      stroke: $text4;
+    }
+  }
+
+  &:has(input:disabled) {
+    opacity: 0.3;
+  }
+
+  .checkmark {
+    display: none;
+  }
+}
+
+.checkbox {
+  position: relative;
   width: 20px;
   height: 20px;
-  position: relative;
-  cursor: pointer;
-  z-index: 0;
-  input {
-    position: absolute;
-    cursor: pointer;
-    opacity: 0;
-    &:checked ~ .checkmark {
-      background-color: $primary1;
-      border-color: $primary1;
-      &:after {
-        display: block;
-      }
-    }
-  }
-  &:hover {
-    .checkmark {
-      border-color: $primary1;
-    }
-  }
-  .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    border: 1.5px solid rgba(0, 0, 0, 0.7);
-    border-radius: 6px;
+  border: calc(1.5 / 16) + rem solid $text2;
+  border-radius: 6px;
+  background-color: $bcgrnd1;
 
-    &:after {
-      content: '';
-      position: absolute;
-      display: none;
-      left: 6.5px;
-      top: 2.5px;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      border-radius: 1px;
-      -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform: rotate(45deg);
-    }
+  input {
+    appearance: none;
+    -webkit-appearance: none;
+
+    cursor: pointer;
   }
+}
+
+.checkmark {
+  stroke: $primary1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

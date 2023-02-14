@@ -45,6 +45,7 @@ export interface SkillInfoInterface {
   ram: string
   executionTime: string
   gpu: string
+  display_name?: string
   space?: string
   time?: string
   model?: string
@@ -127,6 +128,7 @@ export interface IAnnotator {
   type: string
   desc: string
 }
+
 export type MenuTypes =
   | 'main'
   | 'bots'
@@ -146,3 +148,10 @@ export type MenuTypes =
   | 'response_selector'
   | null
   | false
+
+export interface SettingKey {
+  name: string
+  type: 'switch' | 'checkbox' | 'radio' | 'input'
+  value?: any
+  checked?: boolean
+}

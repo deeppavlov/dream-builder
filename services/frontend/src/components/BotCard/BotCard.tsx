@@ -40,6 +40,7 @@ export const BotCard = ({
     routingName,
     name,
     author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -160,7 +161,13 @@ export const BotCard = ({
               small
               withIcon
               props={{ onClick: handleKebabClick }}>
-              <Kebab dataFor={type === 'your' && 'your_bot'} />
+              <Kebab
+                dataFor={type === 'your' && 'your_bot'}
+                item={{
+                  typeItem: bot.routingName, // Id for ReactToolTip
+                  data: bot, // Data of Element
+                }}
+              />
             </Button>
           </>
         )}

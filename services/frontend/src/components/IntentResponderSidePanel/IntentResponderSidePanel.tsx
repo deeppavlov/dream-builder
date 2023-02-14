@@ -13,7 +13,7 @@ import s from './IntentResponderSidePanel.module.scss'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { SkillInfoInterface } from '../../types/types'
-import SidePanelStatus from '../SidePanelStatus/SidePanelStatus'
+import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 
 export const intentsMock: IntentListItemInterface[] = [
   {

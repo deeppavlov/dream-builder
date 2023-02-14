@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { nanoid } from 'nanoid'
 import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import BaseLink from '../../components/BaseLink/BaseLink'
@@ -28,7 +27,6 @@ import SelectorSettingsSidePanel, {
 } from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
-import SidePanel from '../../ui/SidePanel/SidePanel'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
@@ -47,6 +45,8 @@ import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatche
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 import { useForm } from 'react-hook-form'
+import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
+import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -156,46 +156,181 @@ const mockTotalRes: TotalResourcesInterface = {
   },
 }
 
-const mockSettings: SelectorSettings = {
+const mockResponseSelector: SelectorSettings = {
   name: 'Tag-& Evaluation-based Selector',
-  type: 'skill',
-  settingKeys: [
+  settings: [
     {
       name: 'HIGH_PRIORITY_INTENTS',
       type: 'switch',
-      value: ['1', '0'],
     },
     {
       name: 'RESTRICTION_FOR_SENSITIVE_CASE',
       type: 'switch',
-      value: ['1', '0'],
     },
     {
       name: 'ALWAYS_TURN_ON_ALL_SKILLS',
       type: 'switch',
-      value: ['1', '0'],
+      checked: true,
     },
     {
       name: 'ALWAYS_TURN_ON_GIVEN_SKILL',
       type: 'switch',
-      value: ['1', '0'],
     },
     {
       name: 'LANGUAGE',
       type: 'switch',
       value: ['ENG', 'RU'],
     },
+  ],
+}
+
+const mockRuleBasesSkillSelector: SelectorSettings = {
+  name: 'Rule-based Skill Selector',
+  settings: [
     {
-      name: 'GPT-J Chit-Chat',
-      type: 'checkbox',
+      name: 'MAX_TURNS_WITHOUT_SCRIPTS',
+      type: 'input',
+      value: '7',
     },
+    {
+      name: 'CALL_BY_NAME_PROBABILITY',
+      type: 'input',
+      value: '0.5',
+    },
+    {
+      name: 'PROMPT_PROBA',
+      type: 'input',
+      value: '0.3',
+    },
+    {
+      name: 'ACKNOWLEDGEMENT_PROBA',
+      type: 'input',
+      value: '0.3',
+    },
+    {
+      name: 'CONFIDENCE_STRENGTH',
+      type: 'input',
+      value: '0.8',
+    },
+    {
+      name: 'CONV_EVAL_STRENGTH',
+      type: 'input',
+      value: '0.4',
+    },
+    {
+      name: 'QUESTION_TO_QUESTION_DOWNSCORE_COEF',
+      type: 'input',
+      value: '0.8',
+    },
+    {
+      name: 'PRIORITIZE_WITH_REQUIRED_ACT',
+      type: 'switch',
+    },
+    {
+      name: 'PRIORITIZE_NO_DIALOG_BREAKDOWN',
+      type: 'switch',
+    },
+    {
+      name: 'PRIORITIZE_WITH_SAME_TOPIC_ENTITY',
+      type: 'switch',
+    },
+    {
+      name: 'IGNORE_DISLIKED_SKILLS',
+      type: 'switch',
+      checked: true,
+    },
+    {
+      name: 'GREETING_FIRST',
+      type: 'switch',
+    },
+    {
+      name: 'RESTRICTION_FOR_SENSITIVE_CASE',
+      type: 'switch',
+    },
+    {
+      name: 'PRIORITIZE_PROMTS_WHEN_NO_SCRIPTS',
+      type: 'switch',
+    },
+    {
+      name: 'MAX_TURNS_WITHOUT_SCRIPTS',
+      type: 'switch',
+    },
+    {
+      name: 'PRIORITIZE_SCRIPTED_SKILLS',
+      type: 'switch',
+    },
+    {
+      name: 'PRIORITIZE_HUMAN_INITIATIVE',
+      type: 'switch',
+    },
+  ],
+}
+
+const mockSingleSkillSelector: SelectorSettings = {
+  name: 'Single Skill Selector',
+  settings: [
     {
       name: 'GPT-J Chit-Chat',
       type: 'radio',
     },
     {
+      name: 'DFF Intent Responder Skill',
+      type: 'radio',
+    },
+    {
+      name: 'FAQ',
+      type: 'radio',
+    },
+    {
+      name: 'DialoGPT + Persona',
+      type: 'radio',
+    },
+    {
+      name: 'DFF Program-Y Skill',
+      type: 'radio',
+    },
+    {
+      name: 'Dummy Skill',
+      type: 'radio',
+    },
+    {
+      name: 'DialoGPT',
+      type: 'radio',
+    },
+  ],
+}
+
+const mockMultipleSkillSelector: SelectorSettings = {
+  name: 'Multiple Skill Selector',
+  settings: [
+    {
       name: 'GPT-J Chit-Chat',
-      type: 'input',
+      type: 'checkbox',
+    },
+    {
+      name: 'DFF Intent Responder Skill',
+      type: 'checkbox',
+    },
+    {
+      name: 'FAQ',
+      type: 'checkbox',
+    },
+    {
+      name: 'DialoGPT + Persona',
+      type: 'checkbox',
+      checked: true,
+    },
+    {
+      name: 'DFF Program-Y Skill',
+      type: 'checkbox',
+    },
+    {
+      name: 'Dummy Skill',
+      type: 'checkbox',
+    },
+    {
+      name: 'DialoGPT',
+      type: 'checkbox',
     },
   ],
 }
@@ -493,6 +628,38 @@ export const TestPage = () => {
           </Button>
         </div>
         <div className={s.testPage__component}>
+          <span>GenerativeSkillEditor</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <GenerativeSkillEditor
+                      activeTab='Editor'
+                      skill={{
+                        name: 'Name of The Skill',
+                        author: 'Deep Pavlov',
+                        authorImg: DeepPavlovLogo,
+                        skillType: 'fallbacks',
+                        botName: 'Name of The Bot',
+                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
+                        dateCreated: dateToUTC(new Date()),
+                        version: '0.01',
+                        ram: '0.0 GB',
+                        gpu: '0.0 GB',
+                        executionTime: '0.0 ms',
+                        model: 'GPT-3',
+                      }}
+                    />
+                  ),
+                })
+              },
+            }}>
+            GenerativeSkillEditor
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
           <span>IntentResponderSidePanel</span>
           <Button
             theme='primary'
@@ -635,11 +802,57 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: <SelectorSettingsSidePanel {...mockSettings} />,
+                  children: (
+                    <SelectorSettingsSidePanel {...mockResponseSelector} />
+                  ),
                 })
               },
             }}>
-            SelectorSettingsSidePanel
+            Response Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel
+                      {...mockRuleBasesSkillSelector}
+                    />
+                  ),
+                })
+              },
+            }}>
+            Rule-based Skill Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel {...mockSingleSkillSelector} />
+                  ),
+                })
+              },
+            }}>
+            Single Skill Selector
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => {
+                trigger(BASE_SP_EVENT, {
+                  children: (
+                    <SelectorSettingsSidePanel
+                      {...mockMultipleSkillSelector}
+                      withSelectAll
+                    />
+                  ),
+                })
+              },
+            }}>
+            Multiple Skill Selector
           </Button>
         </div>
       </div>
@@ -974,9 +1187,6 @@ export const TestPage = () => {
 
       {/* Sidepanels */}
       <BaseSidePanel />
-
-      {/* <SkillSidePanel /> */}
-      {/* <BotInfoSidePanel /> */}
 
       {/* Modals */}
       <AssistantModal />

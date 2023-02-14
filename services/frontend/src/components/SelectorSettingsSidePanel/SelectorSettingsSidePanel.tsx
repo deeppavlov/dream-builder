@@ -1,58 +1,99 @@
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
+import useTabsManager from '../../hooks/useTabsManager'
 import Button from '../../ui/Button/Button'
-import Switcher from '../../ui/Switcher/Switcher'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
-import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import { Input } from '../../ui/Input/Input'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import { SettingsList } from '../SettingsList/SettingsList'
+import { SettingKey } from '../../types/types'
 import s from './SelectorSettingsSidePanel.module.scss'
-
-export interface SettingKey {
-  name: string
-  type: 'switch' | 'checkbox' | 'radio' | 'input'
-  value?: any
-}
+import { useId } from 'react'
 
 export interface SelectorSettings {
   name: string
-  type: 'skill' | 'response'
-  settingKeys: SettingKey[]
+  settings: SettingKey[]
+  desc?: string
+  activeTab?: 'Properties' | 'Editor'
+  withSelectAll?: boolean
 }
-
-interface SelectorSettingsProps extends SelectorSettings {}
 
 const SelectorSettingsSidePanel = ({
   name,
-  type,
-  settingKeys,
-}: SelectorSettingsProps) => {
+  desc,
+  settings,
+  activeTab,
+  withSelectAll,
+}: SelectorSettings) => {
+  const [properties, editor] = ['Properties', 'Editor']
+  const [tabsInfo, setTabsInfo] = useTabsManager({
+    activeTabId: activeTab ?? properties,
+    tabList: new Map([
+      [properties, properties],
+      [editor, editor],
+    ]),
+  })
+  const settingsId = useId()
+
   const handleCancelBtnClick = () => {}
 
   return (
-    <div className={s.selectorSettingsSidePanel}>
-      <div className={s.selectorSettingsSidePanel__name}>{name}</div>
-      <ul className={s.settings}>
-        {settingKeys.map(({ name, type, value }, i) => (
-          <li className={s.settings__field} key={name + i}>
-            {type === 'checkbox' && <CheckBox />}
-            {type === 'radio' && <RadioButton />}
-            {name}
-            {type === 'switch' && <Switcher values={value} />}
-            {type === 'input' && <Input />}
-          </li>
-        ))}
-      </ul>
-      <div className={s.selectorSettingsSidePanel__btns}>
-        <span className={s.selectorSettingsSidePanel__help}>
-          <Button theme='secondary'>
-            <QuestionIcon />
-          </Button>
-        </span>
-        <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
-          Cancel
-        </Button>
-        <Button theme='primary'>Save</Button>
+    <>
+      <SidePanelHeader>
+        <ul role='tablist'>
+          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+            <li
+              role='tab'
+              key={id}
+              aria-selected={tabsInfo.activeTabId === id}
+              onClick={() => tabsInfo.handleTabSelect(id)}>
+              {name}
+            </li>
+          ))}
+        </ul>
+      </SidePanelHeader>
+      <div className={s.selectorSettingsSidePanel}>
+        <div role='tabpanel'>
+          <SidePanelName>{name}</SidePanelName>
+          {tabsInfo.activeTabId === properties && (
+            <p className={s.desc}>
+              {desc ||
+                'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.'}
+            </p>
+          )}
+          {tabsInfo.activeTabId === editor && (
+            <form
+              onSubmit={e => {
+                e.preventDefault()
+                console.log(e.currentTarget.elements)
+              }}>
+              <SettingsList
+                key={name}
+                id={settingsId}
+                settings={settings}
+                withSelectAll={withSelectAll}
+              />
+              <SidePanelButtons>
+                <span className={s.help}>
+                  <Button theme='secondary'>
+                    <QuestionIcon />
+                  </Button>
+                </span>
+                <Button
+                  theme='secondary'
+                  props={{ onClick: handleCancelBtnClick }}>
+                  Cancel
+                </Button>
+                <Button
+                  theme='primary'
+                  props={{ type: 'submit', value: 'Submit' }}>
+                  Save
+                </Button>
+              </SidePanelButtons>
+            </form>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

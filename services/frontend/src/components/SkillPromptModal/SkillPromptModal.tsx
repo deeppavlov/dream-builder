@@ -9,7 +9,7 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
-const mockSkillModels = ['Chit-Chat GPT', 'GPT-3', 'GPT-J', 'Bloom']
+const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
 
 interface Props {
   skill?: SkillInfoInterface
@@ -90,11 +90,14 @@ const SkillPromptModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={cx('skillPromptModal')}>
-        {!isEditingModal && <h4>{skill?.display_name || skill?.name || 'Skill name'}</h4>}
+        {!isEditingModal && (
+          <h4>{skill?.display_name || skill?.name || 'Skill name'}</h4>
+        )}
         {!isEditingModal ? (
           <SkillDropboxSearch
             placeholder='Choose model'
             list={mockSkillModels}
+            activeItem={skill?.model}
             onSelect={handleModelSelect}
           />
         ) : (

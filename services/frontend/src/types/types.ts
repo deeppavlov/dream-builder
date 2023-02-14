@@ -99,3 +99,10 @@ export interface IAnnotator {
   type: string
   desc: string
 }
+
+export interface SettingKey {
+  name: string
+  type: 'switch' | 'checkbox' | 'radio' | 'input'
+  value?: any
+  checked?: boolean
+}

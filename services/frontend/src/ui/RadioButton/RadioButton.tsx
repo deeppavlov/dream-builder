@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import s from './RadioButton.module.scss'
 
 interface RadioButtonProps {
   children: React.ReactNode
   name: string
   id: string
+  value: string
   htmlFor: string
   checked: boolean
 }
@@ -13,23 +13,18 @@ export const RadioButton: React.FC<Partial<RadioButtonProps>> = ({
   name,
   id,
   htmlFor,
-  checked: propChecked,
+  value,
+  checked,
 }) => {
-  // const [checked, setChecked] = useState<boolean>(Boolean(propChecked))
-
-  // const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-  //   setChecked(e.target.checked)
-
   return (
     <label htmlFor={htmlFor} className={s.label}>
       <input
         className={s.radio}
-        value={id}
-        checked={propChecked}
+        value={value}
+        checked={checked}
         id={id}
         name={name}
         type='radio'
-        // onChange={handleRadioChange}
       />
       {children}
     </label>

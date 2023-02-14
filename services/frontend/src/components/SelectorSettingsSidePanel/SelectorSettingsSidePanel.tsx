@@ -1,43 +1,29 @@
-import classNames from 'classnames/bind'
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
 import useTabsManager from '../../hooks/useTabsManager'
 import Button from '../../ui/Button/Button'
-import Switcher from '../../ui/Switcher/Switcher'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
-import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import { Input } from '../../ui/Input/Input'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import s from './SelectorSettingsSidePanel.module.scss'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
-import SmallInput from '../../ui/SmallInput/SmallInput'
-import { useId, useState } from 'react'
-
-export interface SettingKey {
-  name: string
-  type: 'switch' | 'checkbox' | 'radio' | 'input'
-  labels?: string[]
-  value?: any
-  selectAll?: boolean
-}
+import { SettingsList } from '../SettingsList/SettingsList'
+import { SettingKey } from '../../types/types'
+import s from './SelectorSettingsSidePanel.module.scss'
+import { useId } from 'react'
 
 export interface SelectorSettings {
   name: string
-  settingKeys: SettingKey[]
+  settings: SettingKey[]
   desc?: string
   activeTab?: 'Properties' | 'Editor'
-  children?: React.ReactNode
+  withSelectAll?: boolean
 }
-
-interface SelectorSettingsProps extends SelectorSettings {}
 
 const SelectorSettingsSidePanel = ({
   name,
   desc,
-  settingKeys,
+  settings,
   activeTab,
-  children,
-}: SelectorSettingsProps) => {
+  withSelectAll,
+}: SelectorSettings) => {
   const [properties, editor] = ['Properties', 'Editor']
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: activeTab ?? properties,
@@ -47,13 +33,7 @@ const SelectorSettingsSidePanel = ({
     ]),
   })
   const settingsId = useId()
-  const [checkedRadio, setCheckedRadio] = useState<string | null>(
-    settingKeys.find(({ type, value }) => type === 'radio' && value === '1')
-      ?.name ?? null
-  )
-  const selectAllField = settingKeys.find(({ selectAll }) => selectAll === true)
 
-  let cx = classNames.bind(s)
   const handleCancelBtnClick = () => {}
 
   return (
@@ -81,40 +61,17 @@ const SelectorSettingsSidePanel = ({
             </p>
           )}
           {tabsInfo.activeTabId === editor && (
-            <>
-              <ul
-                className={s.settings}
-                onChange={e => setCheckedRadio(e.target.value)}>
-                {settingKeys
-                  .sort(({ selectAll }) => (selectAll ? -1 : 0)) // Move 'Select All' option to start
-                  .map(({ name, type, value, labels, selectAll }, i) => (
-                    <li
-                      className={cx('field', selectAll && 'selectAll')}
-                      key={name + i}>
-                      {type === 'checkbox' && (
-                        <Checkbox label={name} checked={value === '1'} />
-                      )}
-                      {type === 'radio' && (
-                        <RadioButton
-                          name={settingsId}
-                          id={name}
-                          checked={name === checkedRadio}>
-                          {name}
-                        </RadioButton>
-                      )}
-                      {type === 'switch' && (
-                        <Switcher
-                          checked={value === '1'}
-                          label={name}
-                          switcherLabels={labels}
-                        />
-                      )}
-                      {type === 'input' && (
-                        <SmallInput label={name} value={value} />
-                      )}
-                    </li>
-                  ))}
-              </ul>
+            <form
+              onSubmit={e => {
+                e.preventDefault()
+                console.log(e.currentTarget.elements)
+              }}>
+              <SettingsList
+                key={name}
+                id={settingsId}
+                settings={settings}
+                withSelectAll={withSelectAll}
+              />
               <SidePanelButtons>
                 <span className={s.help}>
                   <Button theme='secondary'>
@@ -126,9 +83,13 @@ const SelectorSettingsSidePanel = ({
                   props={{ onClick: handleCancelBtnClick }}>
                   Cancel
                 </Button>
-                <Button theme='primary'>Save</Button>
+                <Button
+                  theme='primary'
+                  props={{ type: 'submit', value: 'Submit' }}>
+                  Save
+                </Button>
               </SidePanelButtons>
-            </>
+            </form>
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
@@ -20,7 +20,7 @@ import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { dateToUTC } from '../../utils/dateToUTC'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import IntentResponderSidePanel from '../IntentResponderSidePanel/IntentResponderSidePanel'
-import { MenuTypes } from '../../types/types'
+import { BotInfoInterface, MenuTypes } from '../../types/types'
 import { usePreview } from '../../Context/PreviewProvider'
 import s from './MenuList.module.scss'
 import GenerativeSkillEditor from '../GenerativeSkillEditor/GenerativeSkillEditor'
@@ -32,6 +32,11 @@ export interface MenuListProps {
 }
 
 export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
+  const [bot, setBot] = useState()
+  useEffect(() => {
+    item && setBot(item)
+  })
+
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -41,14 +46,11 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
         break
       case 'Delete':
         trigger('DeleteAssistantModal', {
-          // bot: {
-          //   routingName: '', // TODO: get variables
-          //   name: 'EnDreamToDebug', // TODO: get variables
-          // },
+          bot: item.data,
         })
         break
       case 'Publish':
-        trigger('PublishAssistantModal', {})
+        trigger('PublishAssistantModal', { bot: item.data })
         break
     }
   }
@@ -226,7 +228,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                 <p>Publish</p>
               </div>
             </li>
-            <hr style={{ border: '0.8px solid #8D96B5' }} />
+            <hr className={s.border} />
             <li className={s.item}>
               <div onClick={handleClick}>
                 <DeleteIcon />
@@ -234,16 +236,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
               </div>
             </li>
           </ul>
-          {/* <hr style={{ border: '0.8px solid #F0F0F3' }} />
-          <div style={{ padding: '10px' }}>
-            <Wrapper padding='5px 12px' borderRadius='8px'>
-              <p className={s.edited}>
-                Last Edited by {author ? author : 'Irina Nikitenko'}
-                <br />
-                {day ? day : 'Today'} at {time ? time : '04:20'}
-              </p>
-            </Wrapper>
-          </div> */}
         </ReactTooltip>
       )
     case 'skills':

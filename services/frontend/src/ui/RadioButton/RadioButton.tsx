@@ -8,6 +8,7 @@ interface RadioButtonProps {
   htmlFor: string
   checked?: boolean
   disabled?: boolean
+  props?: React.InputHTMLAttributes<HTMLInputElement>
 }
 export const RadioButton: FC<RadioButtonProps> = ({
   children,
@@ -16,16 +17,20 @@ export const RadioButton: FC<RadioButtonProps> = ({
   htmlFor,
   checked,
   disabled,
+  props,
 }) => {
   return (
     <label htmlFor={htmlFor} className={s.label}>
       <input
-        className={s.radio}
-        disabled={disabled}
-        defaultChecked={checked}
         id={id}
         name={name}
         type='radio'
+        disabled={disabled}
+        defaultChecked={checked}
+        checked={checked}
+        value={children?.toString()}
+        className={s.radio}
+        {...props}
       />
       {children}
     </label>

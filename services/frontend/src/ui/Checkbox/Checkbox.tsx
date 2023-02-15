@@ -7,10 +7,18 @@ interface Props {
   checked?: boolean
   name?: string
   label?: React.ReactNode
+  props?: React.InputHTMLAttributes<HTMLInputElement>
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export const Checkbox = ({ label, name, checked, disabled, onChange }: Props) => {
+export const Checkbox = ({
+  label,
+  name,
+  checked,
+  disabled,
+  onChange,
+  props,
+}: Props) => {
   return (
     <label className={s.container}>
       <div className={s.checkbox}>
@@ -19,7 +27,7 @@ export const Checkbox = ({ label, name, checked, disabled, onChange }: Props) =>
           name={name}
           checked={checked}
           disabled={disabled}
-          onChange={onChange}
+          {...props}
         />
         <CheckBoxMarkIcon className={s.checkmark} />
       </div>

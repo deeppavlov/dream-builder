@@ -7,7 +7,8 @@ import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { SettingsList } from '../SettingsList/SettingsList'
 import { SettingKey } from '../../types/types'
 import s from './SelectorSettingsSidePanel.module.scss'
-import { useId } from 'react'
+import { useEffect, useId } from 'react'
+import { useForm } from 'react-hook-form'
 
 export interface SelectorSettings {
   name: string
@@ -33,8 +34,22 @@ const SelectorSettingsSidePanel = ({
     ]),
   })
   const settingsId = useId()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm()
 
   const handleCancelBtnClick = () => {}
+
+  const onSubmit = (data: any) => {
+    console.log(data)
+  }
+
+  useEffect(() => {
+    reset() // Remove old settings state
+  }, [settings])
 
   return (
     <>
@@ -52,7 +67,7 @@ const SelectorSettingsSidePanel = ({
         </ul>
       </SidePanelHeader>
       <div className={s.selectorSettingsSidePanel}>
-        <div role='tabpanel'>
+        <form onSubmit={handleSubmit(onSubmit)} role='tabpanel'>
           <SidePanelName>{name}</SidePanelName>
           {tabsInfo.activeTabId === properties && (
             <p className={s.desc}>
@@ -61,16 +76,13 @@ const SelectorSettingsSidePanel = ({
             </p>
           )}
           {tabsInfo.activeTabId === editor && (
-            <form
-              onSubmit={e => {
-                e.preventDefault()
-                console.log(e.currentTarget.elements)
-              }}>
+            <>
               <SettingsList
                 key={name}
                 id={settingsId}
                 settings={settings}
                 withSelectAll={withSelectAll}
+                register={register}
               />
               <SidePanelButtons>
                 <span className={s.help}>
@@ -89,9 +101,9 @@ const SelectorSettingsSidePanel = ({
                   Save
                 </Button>
               </SidePanelButtons>
-            </form>
+            </>
           )}
-        </div>
+        </form>
       </div>
     </>
   )

@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { FieldValues, UseFormRegister } from 'react-hook-form'
 import { SettingKey } from '../../types/types'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
@@ -11,71 +12,63 @@ interface Props {
   id: string
   settings: SettingKey[]
   withSelectAll?: boolean
+  register?: UseFormRegister<FieldValues>
 }
 
-export const SettingsList = ({ id, settings, withSelectAll }: Props) => {
-  const [isCheckAll, setIsCheckAll] = useState(false)
-  const [isCheck, setIsCheck] = useState<string[] | null>(
-    settings.filter(({ checked }) => checked).map(({ name }) => name)
-  )
-  const [list, setList] = useState<SettingKey[] | null>(null)
+export const SettingsList = ({
+  id,
+  settings,
+  withSelectAll,
+  register,
+}: Props) => {
   let cx = classNames.bind(s)
-
-  useEffect(() => {
-    setList(settings)
-  }, [list])
-
-  const handleSelectAll = e => {
-    setIsCheckAll(!isCheckAll)
-    if (list) setIsCheck(list.map(({ name }) => name))
-    if (isCheckAll) {
-      setIsCheck([])
-    }
-  }
-
-  const handleCheckboxChange = (e, name) => {
-    const { checked } = e.target
-    if (!isCheck) return
-    setIsCheck([...isCheck, name])
-    if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== name))
-    }
-  }
 
   return (
     <ul className={s.settings}>
       {withSelectAll && (
         <li className={cx('field', 'selectAll')}>
-          <Checkbox
-            label='Select all'
-            onChange={handleSelectAll}
-            checked={isCheckAll}
-          />
+          <Checkbox label='Select all' props={{ ...register?.('selectAll') }} />
         </li>
       )}
-      {list?.map(({ name, type, value, checked }, i) => (
+      {settings?.map(({ name, type, value, checked }, i) => (
         <li className={s.field} key={name + i}>
           {type === 'checkbox' && (
             <Checkbox
               label={name}
               name={name}
-              checked={isCheck?.includes(name)}
-              onChange={e => handleCheckboxChange(e, name)}
+              /**
+               * Dot symbol "." in register name can make the object of elements, like:
+               * checkbox: {
+               *   [name]: value
+               * }
+               */
+              props={{ ...register?.(`checkbox.${name}`) }}
             />
           )}
           {type === 'radio' && (
             <RadioButton
               id={id + name}
               name={id}
-              value={name}
-              checked={checked}>
+              htmlFor={id + name}
+              checked={checked}
+              props={{ ...register?.('radio', { required: true }) }}>
               {name}
             </RadioButton>
           )}
           {type === 'switch' && (
-            <Switcher checked={checked} label={name} switcherLabels={value} />
+            <Switcher
+              label={name}
+              switcherLabels={value}
+              props={{ ...register?.(`switch.${name}`) }}
+            />
           )}
-          {type === 'input' && <SmallInput label={name} value={value} />}
+          {type === 'input' && (
+            <SmallInput
+              label={name}
+              value={value}
+              props={{ ...register?.(`input.${name}`) }}
+            />
+          )}
         </li>
       ))}
     </ul>

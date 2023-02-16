@@ -63,7 +63,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
+                const dateCreated = dateToUTC(new Date(date_created))
+
                 return (
                   <BotCard
                     key={i}
@@ -107,8 +108,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
-                const time = timeToUTC(date_created)
+                const dateCreated = dateToUTC(new Date(date_created))
+                const time = timeToUTC(new Date(date_created))
                 return (
                   <BotListItem
                     key={i}

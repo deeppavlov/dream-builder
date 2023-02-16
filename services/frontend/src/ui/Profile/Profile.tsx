@@ -2,6 +2,7 @@ import ReactTooltip from 'react-tooltip'
 import { ReactComponent as You } from '@assets/icons/team.svg'
 import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
+import { logout } from '../../Context/AuthProvider'
 import { UserContext } from '../../types/types'
 import s from './Profile.module.scss'
 
@@ -19,7 +20,7 @@ const TooltipMenu = ({ auth }: ProfileProps) => (
       <You />
       <p>{auth?.user?.email}</p>
     </li>
-    <li onClick={auth?.logout} className={s.item}>
+    <li onClick={logout} className={s.item}>
       <LogOut />
       <p>Log Out</p>
     </li>

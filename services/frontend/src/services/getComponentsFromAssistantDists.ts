@@ -1,8 +1,8 @@
-import { secureApi } from './axiosConfig'
+import { privateApi } from './axiosConfig'
 
 export async function getComponentsFromAssistantDists(distName: string) {
   try {
-    const { data } = await secureApi.get(
+    const { data } = await privateApi.get(
       `assistant_dists/${distName}/components/`
     )
     return data

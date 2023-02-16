@@ -6,10 +6,13 @@ export interface UserInterface {
 
 export interface UserContext {
   user: UserInterface | null
-  setUser: (user: UserInterface) => void
-  login: (res: any) => void
-  logout: () => void
 }
+
+export interface ITokens {
+  refresh_token: string
+  token: string
+}
+
 export interface IPreviewContext {
   isPreview: boolean
   setIsPreview: (isPreview: boolean) => void

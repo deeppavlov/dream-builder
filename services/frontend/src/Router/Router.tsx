@@ -8,6 +8,7 @@ import { SkillsPage } from '../pages/SkillsPage'
 import { StartPage } from '../pages/StartPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { DraftPage } from '../pages/DraftPage'
+import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { PrivateRoute } from './PrivateRoute'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { UsersSkillsPage } from '../pages/UsersSkillsPage'
@@ -26,12 +27,13 @@ export const Router = () => {
       <Route
         path={':name'}
         element={
-          <PrivateRoute>
+          // <PrivateRoute>
             <EditorPage />
-          </PrivateRoute>
+          // {/* </PrivateRoute> */}
         }
       />
       <Route path={RoutesList.test} element={<TestPage />} />
+      <Route path={RoutesList.code} element={<GoogleAuthPage />} />
     </Routes>
   )
 }

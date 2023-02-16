@@ -8,6 +8,7 @@ ENV PORT=$PORT
 
 COPY services/auth_api/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt
+COPY ./client_secret.json /src/
 
 COPY services/auth_api /src/services/auth_api
 

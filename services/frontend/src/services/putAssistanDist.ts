@@ -1,6 +1,4 @@
-import axios, { AxiosError } from 'axios'
-import { secureApi } from './axiosConfig'
-
+import { privateApi } from './axiosConfig'
 //replace axios.put with secureApi.put to interract with real endpoint
 
 interface PutDistParams {
@@ -10,7 +8,9 @@ interface PutDistParams {
 
 export async function putAssistantDist(params: PutDistParams) {
   try {
-    const { data } = await axios.put('/assistant_dists/private', { params })
+    const { data } = await privateApi.put('/assistant_dists/private', {
+      params,
+    })
     return data
   } catch (e) {
     console.log(e)

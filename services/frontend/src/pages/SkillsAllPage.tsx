@@ -57,7 +57,8 @@ export const SkillsAllPage = () => {
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {isSkillsLoading && <>{'Loading...'}</>}
               {skillsData?.map((skill: skill_list, i: number) => {
-                const date = dateToUTC(skill.metadata.date_created)
+                const dateCreated = dateToUTC(skill.metadata.date_created)
+
                 return (
                   <SkillCard
                     key={i}
@@ -67,7 +68,7 @@ export const SkillsAllPage = () => {
                     author='Deep Pavlov'
                     authorImg={DeepPavlovLogo}
                     skillType={skill.metadata.type}
-                    dateCreated={date}
+                    dateCreated={dateCreated}
                     desc={skill.metadata.description}
                     version={skill.metadata.version}
                     ram={skill.metadata.ram_usage}
@@ -90,8 +91,9 @@ export const SkillsAllPage = () => {
             {isSkillsLoading && <>{'Loading...'}</>}
             <Table second='Type'>
               {skillsData?.map((skill: skill_list, i: number) => {
-                const date = dateToUTC(skill.metadata.date_created)
+                const dateCreated = dateToUTC(skill.metadata.date_created)
                 const time = timeToUTC(skill.metadata.date_created)
+
                 return (
                   <SkillListItem
                     key={i}
@@ -99,7 +101,7 @@ export const SkillsAllPage = () => {
                     botName={skill.assistant_dist}
                     author='Deep Pavlov'
                     authorImg={DeepPavlovLogo}
-                    dateCreated={date}
+                    dateCreated={dateCreated}
                     time={time}
                     desc={skill.metadata.description}
                     version={skill.metadata.version}

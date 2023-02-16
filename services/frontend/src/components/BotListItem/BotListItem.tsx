@@ -7,10 +7,10 @@ import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
-import { useAuth } from '../../Context/AuthProvider'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
+import { useAuth } from '../../Context/AuthProvider'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean

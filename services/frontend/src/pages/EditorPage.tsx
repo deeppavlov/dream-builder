@@ -42,7 +42,7 @@ export const EditorPage = () => {
   const { state } = useLocation()
   const { distName } = state
   const { setIsPreview } = usePreview()
-  
+
   useEffect(() => {
     state?.preview && setIsPreview(state.preview)
   }, [])

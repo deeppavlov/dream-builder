@@ -1,8 +1,8 @@
-import { api, secureApi } from './axiosConfig'
+import { privateApi } from './axiosConfig'
 
 export async function getSkillListByDistName(distName: string) {
   try {
-    const { data } = await secureApi.get(`skills/${distName}`)
+    const { data } = await privateApi.get(`skills/${distName}`)
     return data
   } catch (e) {
     console.log(e)

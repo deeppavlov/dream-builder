@@ -1,69 +1,89 @@
-import axios from 'axios'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { UserContext, UserInterface } from '../types/types'
+import { authApi } from '../services/axiosConfig'
+import { ITokens, UserContext, UserInterface } from '../types/types'
 
-export const deleteLocalStorageUser = () => {
-  localStorage.removeItem('user')
+export const deleteLocalStorageUser = () => localStorage.removeItem('user')
+export const getRefreshToken = (): string | null => {
+  return getLocalStorageUser()?.refresh_token ?? null
+}
+export const getAccessToken = (): string | null => {
+  return getLocalStorageUser()?.token ?? null
 }
 
-export const fetchUserLogout = async () => {
-  let axiosConfig = {
-    mode: 'no-cors',
-    headers: {
-      token: `${localStorage.getItem('token')}`,
-    },
-  }
+export const setAccessToken = (token: string) => {
+  const user = getLocalStorageUser()
+  if (!user) return
 
-  await axios
-    .put('https://alpha.deepdream.builders:6999/auth/logout', axiosConfig)
-    .catch(e => console.log(`Logout failed: ${e}`))
+  setLocalStorageUser({ ...user, ...{ token } })
 }
 
-export const getLocalStorageUser = (): UserInterface | null => {
+const getLocalStorageUser = (): (UserInterface & ITokens) | null => {
   const user = localStorage.getItem('user')
   return user ? JSON.parse(user) : null
+}
+
+const setLocalStorageUser = (user: UserInterface & ITokens) => {
+  localStorage.setItem('user', JSON.stringify(user))
+}
+
+const getClearUrl = (url: string) => {
+  var urlOject = new URL(location.origin)
+  urlOject.hash = ''
+  urlOject.search = ''
+  return urlOject.toString()
 }
 
 export const AuthContext = createContext<UserContext | null>(null)
 export const useAuth = () => useContext(AuthContext)
 
-const setLocalStorageUser = (user: UserInterface) => {
-  localStorage.removeItem('user')
-  localStorage.setItem('user', JSON.stringify(user))
+/**
+ * Exchange Google `auth_code` for tokens
+ */
+export const login = async (code: string) => {
+  let axiosConfig = {
+    mode: 'no-cors',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  }
+
+  await authApi
+    .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
+    .then(({ data }) => {
+      setLocalStorageUser(data)
+      const clearUser = data
+      delete clearUser.token
+      delete clearUser.refresh_token
+    })
+    .catch(e => {
+      deleteLocalStorageUser()
+      console.log(`ExchangeAuthCode failed:`, e)
+    })
+
+  location.href = getClearUrl(location.origin)
+}
+
+export const logout = async () => {
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) console.log('Refresh token not exist for Logout!')
+
+  let axiosConfig = {
+    mode: 'no-cors',
+    headers: { ['refresh-token']: refreshToken },
+  }
+
+  try {
+    await authApi.put(`logout`, {}, axiosConfig)
+  } catch (error) {
+    console.log('Logout failed!', error)
+  }
+
+  deleteLocalStorageUser()
+  location.href = getClearUrl(location.origin)
 }
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
-
-  const fetchUserLogin = async () => {
-    let axiosConfig = {
-      mode: 'no-cors',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        token: `${localStorage.getItem('token')}`,
-      },
-    }
-
-    await axios
-      .get('https://alpha.deepdream.builders:6999/auth/login', axiosConfig)
-      .then(({ data }) => {
-        const user = {
-          name: data.name,
-          picture: data.picture,
-          email: data.email,
-        }
-
-        setLocalStorageUser(user)
-        // setUser(user)
-        location.reload()
-      })
-      .catch(e => {
-        setUser(null)
-        deleteLocalStorageUser()
-        localStorage.removeItem('token')
-        console.log(`Authorization failed: ${e}`)
-      })
-  }
 
   useEffect(() => {
     const user = getLocalStorageUser()
@@ -72,25 +92,9 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     setUser(user)
   }, [])
 
-  const login = (response: any) => {
-    localStorage.removeItem('token')
-    localStorage.setItem('token', `${response.credential}`)
-    fetchUserLogin()
-  }
-
-  const logout = () => {
-    fetchUserLogout()
-    localStorage.removeItem('token')
-    deleteLocalStorageUser()
-    window.location.reload()
-  }
-
   const userContextValue = useMemo(
     () => ({
       user,
-      setUser,
-      login,
-      logout,
     }),
     [user]
   )

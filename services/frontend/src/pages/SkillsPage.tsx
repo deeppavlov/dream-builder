@@ -14,7 +14,6 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
 import { RoutesList } from '../Router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
@@ -133,7 +132,7 @@ export const SkillsPage = () => {
                       execution_time,
                       date_created,
                     } = skill?.metadata
-                    const date = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(date_created)
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
@@ -144,7 +143,7 @@ export const SkillsPage = () => {
                         authorImg={DeepPavlovLogo}
                         botName={skill.assistant_dist}
                         skillType={type}
-                        dateCreated={date}
+                        dateCreated={dateCreated}
                         desc={description}
                         version={version}
                         ram={ram_usage}
@@ -208,6 +207,7 @@ export const SkillsPage = () => {
                   } = skill.metadata
                   const date = dateToUTC(date_created)
                   const time = timeToUTC(date_created)
+
                   return (
                     <SkillListItem
                       key={i}

@@ -77,7 +77,6 @@ export const BotCard = ({
     e.stopPropagation()
   }
   let cx = classNames.bind(s)
-
   return (
     <div
       className={cx('botCard', `${type}`, size)}

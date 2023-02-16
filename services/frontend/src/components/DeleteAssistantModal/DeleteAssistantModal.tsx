@@ -17,7 +17,6 @@ export const DeleteAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<IDeleteAssistantInfo | null>()
   let cx = classNames.bind(s)
-
   const handleClose = () => {
     setBot(null)
     setIsOpen(false)
@@ -40,7 +39,10 @@ export const DeleteAssistantModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
       <div className={cx('deleteAssistantModal')}>
-        <h4>Do you want to delete <mark>{bot?.name}</mark> Bot?</h4>
+        <h4>
+          Do you really want to delete <mark>{bot?.name}</mark> Virtual
+          Assistant?
+        </h4>
         <div className={cx('btns')}>
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
             Cancel

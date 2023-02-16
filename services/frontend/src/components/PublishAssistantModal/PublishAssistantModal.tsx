@@ -12,9 +12,11 @@ interface IPublishAssistantModal {
 
 export const PublishAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [bot, setBot] = useState<IDeleteAssistantInfo | null>()
   let cx = classNames.bind(s)
 
   const handleEventUpdate = (data: { detail: IPublishAssistantModal }) => {
+    setBot(data.detail.bot ?? null)
     setIsOpen(!isOpen)
   }
 
@@ -31,12 +33,7 @@ export const PublishAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={cx('publishAssistantModal')}>
         <h4>
-          Do you want to{' '}
-          <mark>
-            publish to Dream Builder
-          </mark>{' '}
-          your distribution
-          <br /> in <a href='#'>Dream Builder VA Store?</a>
+          Do you want to publish <mark>{bot?.name}</mark> in to Virtual Assistants Store?
         </h4>
         <div className={cx('btns')}>
           <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>

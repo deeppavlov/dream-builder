@@ -26,17 +26,6 @@ interface IAssistantModal {
   distribution?: IAssistantDistInfo // The assistant that we clone
 }
 
-// думаю стоит убрать из модалки стэйты, связанные с дистрибутивом (поправь, если считаешь иначе)
-// по мне, задача этого модального окна - выступить посредником между клиентом и компонентами, выполняющими работу с данными (форма, наша либа для запросов)
-// исходя из этого модалке не нужен стэйт для хранения информации о дистрибутиве, модалка лишь посредник
-// я бы убрал все шаги, в которых ты сохраняешь состояние форм, прежде чем передать их дальше
-// и не передавать внутрь данные, которые не нужны для работы модалки
-// (можно представить курьера, который перевозит посылки - ему не нужно знать, что внутри). он доставляет коробку из пункта А в пункт В
-// это все мысли про Single Responsibility, снизу ссылки про этот принцип, и то как он интегрируется в архитектуру react
-// https://blog.devgenius.io/single-responsibility-principle-within-the-react-ecosystem-155650ab7a00
-// https://blog.bitsrc.io/single-responsibility-principle-for-react-js-applications-5cde2fd49f11
-// PS я бы хотел, чтобы ты в подобном ключе писал свои мысли о моих компонентах, это поможет нам быстрее расти и делать код проекта лучше
-
 export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
@@ -60,7 +49,6 @@ export const AssistantModal = () => {
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
-    // классно, что ты пишешь пояснительные комментарии, тоже возьму на заметку
     setBot(data.detail?.bot ?? null)
     setBotDist(data.detail?.distribution ?? null)
     // Reset clear values and errors states
@@ -71,31 +59,17 @@ export const AssistantModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleCreateBtnClick = async () => {
+  const handleCreateBtnClick = () => {
     if (!isValid) return
-    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]] // TODO: remove?
-    const routingName = generateRoutingName(name) // TODO: remove?
-    const newBot = { ...bot, ...{ routingName, name, desc } } // TODO: remove?
-    // Create bot logic here...
     handleSubmit(onFormSubmit)
   }
 
   const handleCloneBtnClick = () => {
     if (!isValid) return
-    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]]
-    const routingName = generateRoutingName(name) // TODO: remove?
-    // нам не придется генерировать routingName, мы получим его в респонсе запроса PUT на сервер (генерировать routingName - задача только бэкенда, так у нас точно не будет расхождений)
-    // учитывая, что операция асинхронная, нам это только на руку - пользователь не сможет открыть дистрибутив, пока на бэке не произойдет его клонирование
-    const newBot = { ...bot, ...{ routingName, name, desc } } // TODO: remove?
-    // Clone bot logic here...
-    // navigate(`/${name}`)
   }
 
   const handleSaveBtnClick = () => {
     if (!isValid) return
-    const [name, desc] = [getValues()[NAME_ID], getValues()[DESC_ID]]
-    const newBot = { ...bot, ...{ name, desc } } // TODO: remove?
-    // Save bot logic here...
     closeModal()
   }
 
@@ -126,7 +100,6 @@ export const AssistantModal = () => {
     subscribe('AssistantModal', handleEventUpdate)
     return () => unsubscribe('AssistantModal', handleEventUpdate)
   }, [])
-
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.assistantModal}>
@@ -193,6 +166,7 @@ export const AssistantModal = () => {
             <Button
               theme='primary'
               props={{
+                type: 'submit',
                 disabled: !isValid,
                 onClick: () => {
                   if (action == 'create') handleCreateBtnClick()

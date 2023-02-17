@@ -5,7 +5,7 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { Element } from './Element'
 import { countResources } from '../../utils/countResources'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { Skill } from '../../types/types'
 import s from './Skills.module.scss'
 

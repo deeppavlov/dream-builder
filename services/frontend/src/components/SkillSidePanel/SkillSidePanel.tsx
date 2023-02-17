@@ -15,7 +15,7 @@ import ReactTooltip from 'react-tooltip'
 import useTabsManager from '../../hooks/useTabsManager'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { getStyleType } from '../../utils/getStyleType'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {

@@ -21,7 +21,7 @@ import { dateToUTC } from '../../utils/dateToUTC'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import IntentResponderSidePanel from '../IntentResponderSidePanel/IntentResponderSidePanel'
 import { BotInfoInterface, MenuTypes } from '../../types/types'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import s from './MenuList.module.scss'
 import GenerativeSkillEditor from '../GenerativeSkillEditor/GenerativeSkillEditor'
 

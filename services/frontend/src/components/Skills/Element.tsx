@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import classNames from 'classnames/bind'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'

@@ -5,7 +5,7 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSelector.module.scss'
 
 interface SkillSelctorProps {

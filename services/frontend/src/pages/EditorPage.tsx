@@ -1,6 +1,6 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { getSkillListByDistName } from '../services/getSkillListByDistName'
-import { useAuth } from '../Context/AuthProvider'
+import { useAuth } from '../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
@@ -34,7 +34,7 @@ import Hint from '../components/Hint/Hint'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { usePreview } from '../Context/PreviewProvider'
+import { usePreview } from '../context/PreviewProvider'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)

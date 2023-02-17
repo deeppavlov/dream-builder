@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getAccessToken, logout } from '../Context/AuthProvider'
+import { getAccessToken, logout } from '../context/AuthProvider'
 import { updateAccessToken } from './updateAccessToken'
 
 /**

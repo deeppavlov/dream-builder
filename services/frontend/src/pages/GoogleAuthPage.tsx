@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login, useAuth } from '../Context/AuthProvider'
+import { login, useAuth } from '../context/AuthProvider'
 
 /**
  * Parsing `auth_code` that comes from Google

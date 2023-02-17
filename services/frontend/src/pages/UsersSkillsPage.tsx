@@ -12,7 +12,7 @@ import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
-import { useAuth } from '../Context/AuthProvider'
+import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
 
 interface skill_list {

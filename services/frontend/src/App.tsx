@@ -1,4 +1,4 @@
-import { Router } from './Router/Router'
+import { Router } from './router/Router'
 import Modal from 'react-modal'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ErrorMessageModal } from './components/ErrorMessageModal/ErrorMessageModal'

@@ -10,7 +10,7 @@ import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
-import { useAuth } from '../../Context/AuthProvider'
+import { useAuth } from '../../context/AuthProvider'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean

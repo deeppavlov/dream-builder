@@ -11,7 +11,7 @@ import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import React, { FC, useId, useState } from 'react'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillCard.module.scss'
 

@@ -113,7 +113,10 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper
               title='Your Virtual Assistants & Chatbots'
-              amount={auth?.user && usersDistData?.length}
+              amount={
+                // auth?.user &&
+                usersDistData?.length
+              }
               showAll
               linkTo={RoutesList.yourBots}>
               <Container overflow='hidden'>

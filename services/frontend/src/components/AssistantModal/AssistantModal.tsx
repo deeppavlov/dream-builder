@@ -36,7 +36,7 @@ export const AssistantModal = () => {
     register,
     reset,
     getValues,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm({ mode: 'all' })
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
   const navigate = useNavigate()
@@ -51,7 +51,7 @@ export const AssistantModal = () => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
     setBotDist(data.detail?.distribution ?? null)
-    // Reset clear values and errors states
+    // Reset values and errors states
     reset({
       [NAME_ID]: data?.detail?.bot?.name,
       [DESC_ID]: data?.detail?.bot?.desc,
@@ -60,18 +60,12 @@ export const AssistantModal = () => {
   }
 
   const handleCreateBtnClick = () => {
-    if (!isValid) return
     handleSubmit(onFormSubmit)
   }
 
-  const handleCloneBtnClick = () => {
-    if (!isValid) return
-  }
+  const handleCloneBtnClick = () => {}
 
-  const handleSaveBtnClick = () => {
-    if (!isValid) return
-    closeModal()
-  }
+  const handleSaveBtnClick = () => {}
 
   const queryClient = useQueryClient()
 
@@ -167,7 +161,6 @@ export const AssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
-                disabled: !isValid,
                 onClick: () => {
                   if (action == 'create') handleCreateBtnClick()
                   if (action == 'clone') handleCloneBtnClick()

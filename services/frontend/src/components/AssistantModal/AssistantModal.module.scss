@@ -9,11 +9,11 @@
   form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 12px;
   }
 }
 .distribution {
-  @include t2;
+  @include t3;
   color: $text3;
   margin-top: 8px;
 }

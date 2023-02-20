@@ -1,10 +1,13 @@
-.assistantModal {
+.skillModal {
   height: 100%;
   min-width: 582px;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  h4 {
+    @include t1;
+  }
 
   form {
     display: flex;
@@ -12,6 +15,7 @@
     gap: 12px;
   }
 }
+
 .distribution {
   @include t3;
   color: $text3;
@@ -27,6 +31,6 @@
   margin-top: 20px;
 }
 
-.text-muted {
+.muted-text {
   color: $text3;
 }

@@ -29,7 +29,7 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
+import { SkillModal } from '../../components/SkillModal/SkillModal'
 import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
 import { dateToUTC } from '../../utils/dateToUTC'
@@ -45,7 +45,11 @@ import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatche
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 import { useForm } from 'react-hook-form'
-import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
+import {
+  BotInfoInterface,
+  SkillInfoInterface,
+  TotalResourcesInterface,
+} from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 
 const notificMock: NotificationCardProps[] = [
@@ -114,9 +118,9 @@ const intentItemsMock: IntentListItemInterface[] = [
   },
 ]
 
-const mockSkill = {
-  isEditing: true,
-  name: 'Name of The Skill 1',
+const mockSkill: SkillInfoInterface = {
+  name: 'name_of_the_skill_1',
+  display_name: 'Name of The Skill 1',
   skillType: 'fallbacks',
   author: 'Name of The Company',
   desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
@@ -409,18 +413,38 @@ export const TestPage = () => {
           </Button>
         </div>
         <div className={s.testPage__component}>
-          <span>CreateSkillModal</span>
+          <span>SkillModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
-            CreateSkillModal (add)
+            props={{
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'create',
+                }),
+            }}>
+            SkillModal (create)
           </Button>
           <Button
             theme='primary'
             props={{
-              onClick: () => trigger('CreateSkillModal', mockSkill),
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'copy',
+                  parent: mockSkill,
+                }),
             }}>
-            CreateSkillModal (edit)
+            SkillModal (copy)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'edit',
+                  skill: mockSkill,
+                }),
+            }}>
+            SkillModal (edit)
           </Button>
         </div>
         <div className={s.testPage__component}>
@@ -1192,7 +1216,7 @@ export const TestPage = () => {
       <AssistantModal />
       <PublishAssistantModal />
       <DeleteAssistantModal />
-      <CreateSkillModal />
+      <SkillModal />
       <SkillPromptModal />
       <CreateSkillDistModal />
       <ChooseBotModal />

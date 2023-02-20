@@ -11,7 +11,7 @@ import { getSkillList } from '../services/getSkillsList'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { SkillModal } from '../components/SkillModal/SkillModal'
 import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
 
@@ -85,7 +85,7 @@ export const UsersSkillsPage = () => {
           }
           position={{ top: 64 }}
         />
-        <CreateSkillModal />
+        <SkillModal />
       </Main>
     </>
   )

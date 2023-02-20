@@ -55,7 +55,10 @@ export const SkillListItem = ({
 
   const handleAddBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', skill)
+    trigger('SkillModal', {
+      action: 'create',
+      parent: skill,
+    })
   }
 
   return (

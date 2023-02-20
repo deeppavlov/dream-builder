@@ -23,7 +23,10 @@ export const handlers = [
     const token = req.cookies.jwt_token
     return token
       ? res(ctx.status(200), ctx.json(privateAssistantDists))
-      : res(ctx.status(400), ctx.json('your token is not valid'))
+      : res(
+          ctx.status(400),
+          ctx.json({ detail: 'Access token has expired or token is bad' })
+        )
   }),
 
   rest.put('/assistant_dists/private', (req, res, ctx) => {

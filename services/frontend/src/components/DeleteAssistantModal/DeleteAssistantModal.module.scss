@@ -5,6 +5,12 @@
   flex-direction: column;
 }
 
+.desc {
+  @include t3;
+  color: $text3;
+  margin-top: 8px;
+}
+
 .btns {
   margin-top: 32px;
   width: 100%;

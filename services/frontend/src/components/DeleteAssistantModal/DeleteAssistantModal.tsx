@@ -43,6 +43,7 @@ export const DeleteAssistantModal = () => {
           Do you really want to delete <mark>{bot?.name}</mark> Virtual
           Assistant?
         </h4>
+        <span className={cx('desc')}>This action can’t be undone</span>
         <div className={cx('btns')}>
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
             Cancel

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
-from deeppavlov_dreamtools.distconfigs.manager import (
+from deeppavlov_dreamtools.distconfigs.assistant_dists import (
     DreamComposeDev,
     DreamComposeOverride,
     DreamComposeProxy,

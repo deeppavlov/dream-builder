@@ -11,9 +11,13 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     ComposeProxy,
     ComposeLocal,
     Component,
-    ComponentMetadata,
     PipelineConfMetadata,
 )
+
+
+class EditAssistantDistModel(BaseModel):
+    display_name: Optional[str]
+    description: Optional[str]
 
 
 class CreateAssistantDistModel(BaseModel):
@@ -31,7 +35,7 @@ class CloneAssistantDistModel(CreateAssistantDistModel):
     response_selectors: Optional[List[str]]
 
 
-class DreamDistModelMetadata(BaseModel):
+class AssistantDistModelMetadata(BaseModel):
     display_name: str
     author: str
     description: str
@@ -42,11 +46,11 @@ class DreamDistModelMetadata(BaseModel):
     disk_usage: str
 
 
-class DreamDistModelShort(PipelineConfMetadata):
+class AssistantDistModelShort(PipelineConfMetadata):
     name: str
 
 
-class DreamDistModel(BaseModel):
+class AssistantDistModel(BaseModel):
     dist_path: str
     name: str
     dream_root: str
@@ -57,7 +61,7 @@ class DreamDistModel(BaseModel):
     compose_local: ComposeLocal = None
 
 
-class DreamDistConfigsImport(BaseModel):
+class AssistantDistConfigsImport(BaseModel):
     """
     {
     "name": "my_dream",
@@ -73,5 +77,5 @@ class DreamDistConfigsImport(BaseModel):
     data: dict[str, AnyConfig]
 
 
-class ComponentShort(ComponentMetadata):
-    name: str
+# class ComponentShort(ComponentMetadata):
+#     name: str

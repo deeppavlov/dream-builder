@@ -21,7 +21,7 @@ from services.distributions_api.models import (
 )
 from services.distributions_api.security.auth import verify_token
 
-assistant_dists_router = APIRouter(prefix="/api/assistant_dists")
+assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
 
 
 def _generate_name_from_display_name(display_name: str):

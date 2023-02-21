@@ -1,12 +1,16 @@
+import { Link } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { SkillInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import s from './GenerativeSkillEditor.module.scss'
 import IntentList from '../IntentList/IntentList'
+import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { trigger } from '../../utils/events'
-import { useState } from 'react'
+
+import s from './GenerativeSkillEditor.module.scss'
 
 const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
 your own goals, but you also need to help user achieve their
@@ -24,14 +28,17 @@ unless that violates the first law.
 3. You shall have own goals based on your interests and strive to
 chieve them unless they violate the first or the seconf laws`
 
+const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
+
 interface Props {
   skill: SkillInfoInterface
   activeTab?: 'Properties' | 'Editor'
 }
 
 const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
+  const prompt = skill.prompt ?? mockPrompt
+  const promptMaxLenght = 1500
   let cx = classNames.bind(s)
-  const [prompt, setPrompt] = useState(skill.prompt ?? mockPrompt)
 
   const handleEditBtnClick = () => {
     // Object merge for mock prompt (need fix)
@@ -42,14 +49,20 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
   return (
     <SkillSidePanel skill={skill} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
-        <div className={s.header}>
-          <span className={s.name}>
-            {skill?.display_name || skill?.name || 'Skill name'}
-          </span>
+        <SidePanelName>{skill?.display_name || 'Skill name'}</SidePanelName>
+        <div className={cx('choose-model')}>
+          <span className={cx('label')}>Generative model:</span>
+          <SkillDropboxSearch
+            placeholder='Choose model'
+            list={mockSkillModels}
+            activeItem={skill?.model}
+          />
+          <Link to='#' className={s.link}>
+            Enter your personal access token here
+          </Link>
         </div>
-
         <div className={cx('prompt-block')}>
-          <span className={cx('prompt-label')}>Prompt:</span>
+          <span className={cx('label')}>Prompt:</span>
           <IntentList>
             <div className={cx('prompt')} onClick={handleEditBtnClick}>
               {prompt}
@@ -58,9 +71,12 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
               </button>
             </div>
           </IntentList>
+          <span className={cx('label', 'count')}>
+            {prompt.length || 0}/{promptMaxLenght}
+          </span>
         </div>
 
-        <div className={cx('btns')}>
+        <SidePanelButtons>
           <Button
             theme='primary'
             props={{
@@ -68,7 +84,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
             }}>
             Save
           </Button>
-        </div>
+        </SidePanelButtons>
       </div>
     </SkillSidePanel>
   )

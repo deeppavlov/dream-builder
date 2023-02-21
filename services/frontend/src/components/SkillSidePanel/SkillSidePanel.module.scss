@@ -1,20 +1,7 @@
 .properties {
   display: flex;
   flex-direction: column;
-  padding: 12px 24px 24px 24px;
   gap: 4px;
-}
-
-.header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.name {
-  @include t3;
 }
 
 .edit-pencil {
@@ -35,6 +22,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 24px;
 
   img {
     border-radius: 50%;
@@ -48,6 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding: 0 24px;
 }
 
 .table-item {
@@ -78,6 +67,8 @@
 .desc {
   @include b3;
   margin-top: 8px;
+  padding: 0 24px;
+  height: 100%;
 }
 
 .btns {

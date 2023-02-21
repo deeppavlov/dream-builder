@@ -1,21 +1,17 @@
+import { useState } from 'react'
 import classNames from 'classnames/bind'
-import { ReactComponent as SkillFallbackIcon } from '../../assets/icons/fallbacks.svg'
-import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.svg'
+import { ReactComponent as SkillFallbackIcon } from '@assets/icons/fallbacks.svg'
 import { ReactComponent as SkillRetrievalIcon } from '@assets/icons/skill_retrieval.svg'
-import { ReactComponent as ForkIcon } from '@assets/icons/fork.svg'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
-import Button from '../../ui/Button/Button'
-import { Accordion } from '../../ui/Accordion/Accordion'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import { useEffect, useState } from 'react'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
-import { SkillInfoInterface } from '../../types/types'
-import ReactTooltip from 'react-tooltip'
-import useTabsManager from '../../hooks/useTabsManager'
-import s from './SkillSidePanel.module.scss'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { getStyleType } from '../../utils/getStyleType'
+import { trigger } from '../../utils/events'
+import { SkillInfoInterface } from '../../types/types'
+import useTabsManager from '../../hooks/useTabsManager'
+import Button from '../../ui/Button/Button'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import s from './SkillSidePanel.module.scss'
 
 interface Props {
   skill: SkillInfoInterface
@@ -59,10 +55,10 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
       </SidePanelHeader>
       {tabsInfo.activeTabId === properties && (
         <div role='tabpanel' className={s.properties}>
-          <div className={s.header}>
-            <span className={s.name}>{skill.name}</span>
+          <SidePanelName>
+            <span>{skill.name}</span>
             <EditPencilIcon className={cx('edit-pencil')} data-disabled />
-          </div>
+          </SidePanelName>
           <div className={cx('author')}>
             <img src={skill.authorImg} alt='Author' />
             <span>{skill.author}</span>
@@ -86,24 +82,19 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
             </li>
           </ul>
           <p className={s.desc}>{skill.desc}</p>
-          <div className={s.btns}>
-            <div className={s.fork}>
-              <Button theme='secondary'>
-                <ForkIcon />
-              </Button>
-            </div>
-
+          <SidePanelButtons>
+            <Button theme='secondary'>Duplicate</Button>
             <div data-tip data-for='skill-add-interact'>
               <Button
-                theme='secondary'
+                theme='primary'
                 props={{
                   // disabled: disabledMsg !== undefined,
                   onClick: handleAddSkillBtnClick,
                 }}>
-                Duplicate
+                Add to ...
               </Button>
             </div>
-          </div>
+          </SidePanelButtons>
           {/* {disabledMsg && (
           <ReactTooltip
             place='bottom'

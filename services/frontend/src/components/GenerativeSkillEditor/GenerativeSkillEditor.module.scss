@@ -2,19 +2,21 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.header {
-  width: 100%;
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 24px 8px 24px;
+  overflow: hidden;
   position: relative;
 }
 
-.name {
-  @include t3;
+.choose-model {
+  padding: 0 24px;
+}
+
+.link {
+  @include b2;
+  text-align: right;
+  text-decoration-line: underline;
+  color: $primary1;
+  margin: 8px 0px;
 }
 
 .prompt-block {
@@ -22,10 +24,16 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 
-.prompt-label {
+.label {
   @include b3;
+  color: $text2;
+}
+
+.count {
+  text-align: right;
   color: $text3;
 }
 
@@ -35,8 +43,8 @@
   background-color: $bcgrnd2;
   padding: 8px 40px 8px 16px;
   display: flex;
-  position: relative;
   height: 100%;
+  position: relative;
   cursor: pointer;
   white-space: pre-line;
 }
@@ -47,13 +55,4 @@
   right: 16px;
   width: 24px;
   height: 24px;
-}
-
-.btns {
-  width: 100%;
-  margin-top: 16px;
-  padding: 0 24px 24px 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
 }

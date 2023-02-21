@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { useQueryClient, useMutation } from 'react-query'
-import { putAssistantDist } from '../../services/putAssistanDist'
+import { postAssistantDist } from '../../services/postAssistanDist'
+import { renameAssistantDist } from '../../services/renameAssistantDist'
+import { subscribe, unsubscribe } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, unsubscribe } from '../../utils/events'
-import { useNavigate } from 'react-router-dom'
-import { generateRoutingName } from '../../utils/generateRoutingName'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
-
+type FormValues = { display_name: string; description: string }
 interface IAssistantInfo
   extends Pick<BotInfoInterface, 'routingName' | 'name' | 'desc'> {}
 
@@ -36,9 +36,12 @@ export const AssistantModal = () => {
     register,
     reset,
     getValues,
-    formState: { errors },
-  } = useForm({ mode: 'all' })
+
+    formState: { errors, isValid },
+  } = useForm<FormValues>({ mode: 'all' })
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
+  const name = bot?.routingName!
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const closeModal = () => {
     setIsOpen(false)
@@ -63,16 +66,32 @@ export const AssistantModal = () => {
     handleSubmit(onFormSubmit)
   }
 
-  const handleCloneBtnClick = () => {}
+  const handleCloneBtnClick = () => {
+    handleSubmit(onFormSubmit)
+  }
 
-  const handleSaveBtnClick = () => {}
-
-  const queryClient = useQueryClient()
+  const handleSaveBtnClick = () => {
+    async function submit() {
+      const succeed = await handleSubmit(onFormSubmit)()
+      return succeed
+    }
+    if (!isValid) return
+    submit().then(() => {
+      closeModal()
+    })
+  }
+  const rename = useMutation({
+    mutationFn: (variables: { data: FormValues; name: string }) => {
+      return renameAssistantDist(variables.name, variables.data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
+    },
+  })
 
   const mutation = useMutation({
-    mutationFn: (data: any) => {
-      // TODO: (A) add typization
-      return putAssistantDist(data)
+    mutationFn: (data: FormValues) => {
+      return postAssistantDist(data)
     },
     onSuccess: data => {
       queryClient
@@ -85,9 +104,10 @@ export const AssistantModal = () => {
     },
   })
 
-  const onFormSubmit = (data: any) => {
-    // TODO: (A) add typization
-    mutation.mutate(data)
+  const onFormSubmit: SubmitHandler<FormValues> = data => {
+    action === 'create' && mutation.mutate(data)
+    action === 'clone' && mutation.mutate(data)
+    action === 'edit' && rename.mutate({ data, name })
   }
 
   useEffect(() => {
@@ -123,11 +143,11 @@ export const AssistantModal = () => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Input
             label='Name'
-            error={errors[NAME_ID]}
+            error={errors[NAME_ID as keyof FormValues]}
             props={{
               placeholder: 'Enter name for your VA',
-              value: getValues()[NAME_ID],
-              ...register(NAME_ID, {
+              value: getValues()[NAME_ID as keyof FormValues],
+              ...register(NAME_ID as keyof FormValues, {
                 required: 'Please add name for your Virtual Assistant',
               }),
             }}
@@ -135,16 +155,16 @@ export const AssistantModal = () => {
           <TextArea
             label='Description'
             withCounter
-            error={errors[DESC_ID]}
+            error={errors[DESC_ID as keyof FormValues]}
             about={
-              <div className={s['text-muted']}>
+              <div className={s.textMuted}>
                 You will be able to edit this information later.
               </div>
             }
             props={{
               placeholder: 'Enter description for your VA',
-              value: getValues()[DESC_ID],
-              ...register(DESC_ID, {
+              value: getValues()[DESC_ID as keyof FormValues],
+              ...register(DESC_ID as keyof FormValues, {
                 required: 'Please add description for your Virtual Assistant.',
                 maxLength: {
                   value: 500,

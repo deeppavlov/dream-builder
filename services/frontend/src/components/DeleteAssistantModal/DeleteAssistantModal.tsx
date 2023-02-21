@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import classNames from 'classnames/bind'
+import { useMutation, useQueryClient } from 'react-query'
+import { deleteAssistantDist } from '../../services/deleteAssistantDist'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -16,7 +17,16 @@ interface IDeleteAssistantModal {
 export const DeleteAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<IDeleteAssistantInfo | null>()
-  let cx = classNames.bind(s)
+  const queryClient = useQueryClient()
+  const deleteDist = useMutation({
+    mutationFn: name => {
+      return deleteAssistantDist(name)
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: 'usersAssistantDists',
+      }),
+  })
   const handleClose = () => {
     setBot(null)
     setIsOpen(false)
@@ -29,7 +39,10 @@ export const DeleteAssistantModal = () => {
 
   const handleCancelBtnClick = () => handleClose()
 
-  const handleDeleteBtnClick = () => {}
+  const handleDeleteBtnClick = () => {
+    deleteDist.mutate(bot?.routingName)
+    handleClose()
+  }
 
   useEffect(() => {
     subscribe('DeleteAssistantModal', handleEventUpdate)
@@ -38,13 +51,15 @@ export const DeleteAssistantModal = () => {
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
-      <div className={cx('deleteAssistantModal')}>
+      <div className={s.deleteAssistantModal}>
         <h4>
           Do you really want to delete <mark>{bot?.name}</mark> Virtual
           Assistant?
         </h4>
-        <span className={cx('desc')}>This action can’t be undone</span>
-        <div className={cx('btns')}>
+
+        <span className={s.desc}>This action can’t be undone</span>
+
+        <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
             Cancel
           </Button>

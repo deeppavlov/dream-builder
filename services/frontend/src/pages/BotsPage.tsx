@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import { RoutesList } from '../router/RoutesList'
@@ -20,11 +20,11 @@ import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { nanoid } from 'nanoid'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { Modal } from '../components/Modal/Modal'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -57,7 +57,7 @@ export const BotsPage = () => {
     data: usersDistData,
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
-  } = useQuery('usersAssistant Dists', getUsersAssistantDists)
+  } = useQuery('usersAssistantDists', getUsersAssistantDists)
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
@@ -113,10 +113,7 @@ export const BotsPage = () => {
             </Wrapper>
             <Wrapper
               title='Your Virtual Assistants & Chatbots'
-              amount={
-                // auth?.user &&
-                usersDistData?.length
-              }
+              amount={auth?.user && usersDistData?.length}
               showAll
               linkTo={RoutesList.yourBots}>
               <Container overflow='hidden'>
@@ -142,7 +139,8 @@ export const BotsPage = () => {
                   {usersDistDataError &&
                     'luck is not on your side! try to refresh the page' +
                       usersDistDataError}
-                  {auth?.user &&
+                  {
+                    // auth?.user &&
                     usersDistData?.map((dist: dist_list, i: number) => {
                       const {
                         display_name,
@@ -178,7 +176,8 @@ export const BotsPage = () => {
                           }
                         />
                       )
-                    })}
+                    })
+                  }
                 </Container>
               </Container>
             </Wrapper>
@@ -295,6 +294,7 @@ export const BotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
+        <Modal />
       </Main>
     </>
   )

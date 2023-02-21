@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import classNames from 'classnames/bind'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { useMutation, useQueryClient } from 'react-query'
 import { BotInfoInterface } from '../../types/types'
+import { publishAssistantDist } from '../../services/publishUsersAssistantDist'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import s from './PublishAssistantModal.module.scss'
@@ -14,8 +15,7 @@ interface IPublishAssistantModal {
 export const PublishAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<IPublishBot | null>(null)
-  let cx = classNames.bind(s)
-
+  const queryClient = useQueryClient()
   const handleEventUpdate = (data: { detail: IPublishAssistantModal }) => {
     setBot(data.detail.bot)
     setIsOpen(!isOpen)
@@ -23,7 +23,23 @@ export const PublishAssistantModal = () => {
 
   const handleNoBtnClick = () => setIsOpen(false)
 
-  const handlePublishBtnClick = () => {}
+  const handlePublishBtnClick = () => {
+    mutation.mutate()
+  }
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      return publishAssistantDist(bot?.routingName!)
+    },
+    onSuccess: () => {
+      queryClient
+        .invalidateQueries({ queryKey: 'assistant_dists' })
+        .then(() => {
+          setIsOpen(false)
+          trigger('Modal', {})
+        })
+    },
+  })
 
   useEffect(() => {
     subscribe('PublishAssistantModal', handleEventUpdate)
@@ -32,12 +48,12 @@ export const PublishAssistantModal = () => {
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className={cx('publishAssistantModal')}>
+      <div className={s.publishAssistantModal}>
         <h4>
           Do you want to publish <mark>{bot?.name}</mark> to Virtual Assistants
           Store?
         </h4>
-        <div className={cx('btns')}>
+        <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
             No
           </Button>

@@ -1,118 +1,88 @@
-import { useState } from 'react'
-import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
-import { dateToUTC } from '../utils/dateToUTC'
+import axios from 'axios'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { BotCard } from '../components/BotCard/BotCard'
-import { Slider } from '../ui/Slider/Slider'
-import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
-import { dist_list } from '../types/types'
-import { useAuth } from '../context/AuthProvider'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
-import { putAssistantDist } from '../services/putAssistanDist'
+import { Container } from '../ui/Container/Container'
 import { useForm } from 'react-hook-form'
-import { Input } from '../ui/Input/Input'
-import Button from '../ui/Button/Button'
-import axios from 'axios'
+import { trigger } from '../utils/events'
+import { Modal } from '../components/Modal/Modal'
 
 export const DraftPage = () => {
-  const queryClient = useQueryClient()
-  const auth = useAuth()
-  const { data: distData } = useQuery(
-    'usersAssistantDists',
-    getUsersAssistantDists
-  )
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ mode: 'all' })
-
-  const onSubmit = data => {
-    console.log(data)
-    putAssistantDist(data).then(() => {
-      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
-    })
+  const styles = {
+    padding: '12px',
+    backgroundColor: 'lightcoral',
+    borderRadius: '10px',
   }
+  const formStyles = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '16px',
+  }
+  const inputStyles = {
+    borderRadius: '12px',
+    padding: '8px',
+  }
+
+  const queryClient = useQueryClient()
+  async function getSMTH() {
+    const { data: some_data } = await axios.get('http://localhost:3004/smth')
+    return some_data
+  }
+  const { data: smth } = useQuery(['smth'], getSMTH)
+  const deleteSMTH = useMutation({
+    mutationFn: id => {
+      return axios.delete(`http://localhost:3004/smth/${id}`)
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: 'smth',
+      }),
+  })
+  const submitHandler = data => {
+    resetField('id')
+    deleteSMTH.mutate(data?.id)
+  }
+  const { handleSubmit, register, resetField } = useForm({ mode: 'all' })
 
   return (
     <>
       <Topbar />
       <Main>
         <Wrapper>
-          {/*  "handleSubmit" will validate your inputs before invoking "onSubmit"
-           */}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Container flexDirection='column' gap='10px' padding='10px'>
-              {/* register your input into the hook by invoking the "register" function */}
-
-              <Input label='Dist Name' props={{ ...register('dist_name') }} />
-
-              {/* include validation with required or other standard HTML validation rules */}
-              <Input
-                label='Description'
-                props={{
-                  ...register('dist_description', {
-                    required: 'This field is required',
-                  }),
-                }}
-                error={errors['dist_description']}
-              />
-
-              {/* errors will return when field validation fails  */}
-              {errors.exampleRequired && <span>This field is required</span>}
-
-              <Button props={{ type: 'submit' }} theme={'primary'} small long>
-                Submit
-              </Button>
-            </Container>
-          </form>
+          <button
+            onClick={() => {
+              trigger('Modal', {})
+            }}
+            style={styles}>
+            Trigger Modal
+          </button>
         </Wrapper>
         <Wrapper>
           <Container>
-            <Slider>
-              {distData?.map((dist: dist_list, i: number) => {
-                const {
-                  display_name,
-                  name,
-                  author,
-                  description,
-                  version,
-                  ram_usage,
-                  gpu_usage,
-                  disk_usage,
-                  date_created,
-                } = dist
-                const dateCreated = dateToUTC(date_created)
-                return (
-                  <BotCard
-                    routingName={name}
-                    key={i}
-                    type='your'
-                    name={display_name}
-                    author={author}
-                    authorImg={DeepPavlovLogo}
-                    dateCreated={dateCreated}
-                    desc={description}
-                    version={version}
-                    ram={ram_usage}
-                    gpu={gpu_usage}
-                    space={disk_usage}
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to clone the bot'
-                    }
-                  />
-                )
-              })}
-            </Slider>
+            <form style={formStyles} onSubmit={handleSubmit(submitHandler)}>
+              <input style={inputStyles} {...register('id')} type='text' />
+              <button style={styles} type='submit'>
+                submit
+              </button>
+            </form>
+          </Container>
+        </Wrapper>
+        <Wrapper>
+          <Container>
+            {smth?.map((item, id: number) => {
+              return (
+                <div
+                  style={{ ...styles, backgroundColor: 'lightgreen' }}
+                  key={id}>
+                  {item.some_data}
+                </div>
+              )
+            })}
           </Container>
         </Wrapper>
       </Main>
+      <Modal />
     </>
   )
 }

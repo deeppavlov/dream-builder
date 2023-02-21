@@ -37,11 +37,13 @@ privateApi.interceptors.response.use(
   response => response,
   async error => {
     const prevRequest = error?.config
+    const errorMsg = error.response.data?.detail?.match(
+      /Access token has expired or token is bad/gi
+    )
     const accessTokenIsExpired =
       error?.response?.status === 400 &&
-      error.response.data?.detail?.match(
-        /Access token has expired or token is bad/gi
-      )
+      errorMsg !== null &&
+      errorMsg !== undefined
 
     console.log(`Access token is expired: ${accessTokenIsExpired}`)
 

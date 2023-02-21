@@ -21,6 +21,11 @@ export type CustomEventName = string
 
 export type CustomEventListener = (data: any) => void
 
+export type PostDistParams = {
+  display_name: string
+  description: string
+}
+
 export interface BotInfoInterface {
   name: string
   routingName: string

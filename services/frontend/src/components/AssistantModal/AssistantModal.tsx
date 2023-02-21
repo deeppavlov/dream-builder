@@ -11,6 +11,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import s from './AssistantModal.module.scss'
+import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
@@ -36,7 +37,6 @@ export const AssistantModal = () => {
     register,
     reset,
     getValues,
-
     formState: { errors, isValid },
   } = useForm<FormValues>({ mode: 'all' })
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
@@ -88,6 +88,20 @@ export const AssistantModal = () => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
     },
   })
+  const clone = useMutation({
+    mutationFn: (variables: { data: FormValues; name: string }) => {
+      return cloneAssistantDist(variables.data, variables.name)
+    },
+    onSuccess: data => {
+      queryClient
+        .invalidateQueries({ queryKey: 'usersAssistantDists' })
+        .then(() => {
+          navigate(`/${data?.name}`, {
+            state: { preview: false, distName: data?.name },
+          })
+        })
+    },
+  })
 
   const mutation = useMutation({
     mutationFn: (data: FormValues) => {
@@ -106,7 +120,7 @@ export const AssistantModal = () => {
 
   const onFormSubmit: SubmitHandler<FormValues> = data => {
     action === 'create' && mutation.mutate(data)
-    action === 'clone' && mutation.mutate(data)
+    action === 'clone' && clone.mutate({ data, name })
     action === 'edit' && rename.mutate({ data, name })
   }
 

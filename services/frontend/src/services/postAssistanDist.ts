@@ -9,9 +9,10 @@ interface PutDistParams {
 
 export async function postAssistantDist(params: PutDistParams) {
   try {
-    const { data } = await axios.post('/assistant_dists/private', {
-      params,
+    const { data } = await privateApi.post('/assistant_dists/', {
+      ...params,
     })
+    console.log(`data = `, data)
     return data
   } catch (e) {
     console.log(e)

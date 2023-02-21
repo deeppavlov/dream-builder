@@ -64,7 +64,7 @@ export const BotCard = ({
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', distribution: bot })
+    trigger('AssistantModal', { action: 'clone', bot: bot })
   }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()

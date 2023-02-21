@@ -12,7 +12,7 @@ async function prepare() {
   }
 }
 
-prepare().then(() => {
+// prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <BrowserRouter>
       <AuthProvider>
@@ -22,4 +22,4 @@ prepare().then(() => {
       </AuthProvider>
     </BrowserRouter>
   )
-})
+// })

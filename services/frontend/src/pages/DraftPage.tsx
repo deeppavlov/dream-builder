@@ -7,6 +7,7 @@ import { Container } from '../ui/Container/Container'
 import { useForm } from 'react-hook-form'
 import { trigger } from '../utils/events'
 import { Modal } from '../components/Modal/Modal'
+import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 
 export const DraftPage = () => {
   const styles = {
@@ -45,10 +46,18 @@ export const DraftPage = () => {
   }
   const { handleSubmit, register, resetField } = useForm({ mode: 'all' })
 
+  const { data: uData } = useQuery('u', getUsersAssistantDists)
+  console.log(`data = `, uData)
+  const clickHandler = () => {}
   return (
     <>
       <Topbar />
       <Main>
+        <Wrapper>
+          <button style={styles} onClick={clickHandler}>
+            GET DISTS
+          </button>
+        </Wrapper>
         <Wrapper>
           <button
             onClick={() => {

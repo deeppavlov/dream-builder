@@ -36,7 +36,8 @@ def _generate_name_from_display_name(display_name: str):
     normalized_name = display_name.replace(" ", "_").lower()
     random_id = secrets.token_hex(4)
 
-    return f"{normalized_name}_{random_id}"
+    # TODO remove "_private" postfix when public/private dists are implemented correctly
+    return f"{normalized_name}_{random_id}_private"
 
 
 def _dist_to_dist_model_short(dream_dist: AssistantDist) -> AssistantDistModelShort:
@@ -124,7 +125,7 @@ async def get_list_of_public_distributions() -> List[AssistantDistModelShort]:
     Lists public Dream distributions
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = [_dist_to_dist_model_short(dist) for dist in distributions]
+    distributions = [_dist_to_dist_model_short(dist) for dist in distributions if dist.name.split("_")[-1] != "private"]
 
     return distributions
 
@@ -138,10 +139,10 @@ async def get_list_of_private_distributions(token: str = Depends(verify_token)) 
 
     -``token``: auth token
     """
-    # distributions = list_dists(DREAM_ROOT_PATH)
-    # distributions = [_dist_to_distmodel_short(dist) for dist in distributions]
+    distributions = list_dists(DREAM_ROOT_PATH)
+    distributions = [_dist_to_dist_model_short(dist) for dist in distributions if dist.name.split("_")[-1] == "private"]
 
-    return []
+    return distributions
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)

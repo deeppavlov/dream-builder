@@ -99,7 +99,7 @@ def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_distribution(payload: CreateAssistantDistModel):
+async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDistModelShort:
     """
     Creates new distribution
 
@@ -112,10 +112,10 @@ async def create_distribution(payload: CreateAssistantDistModel):
     dream_dist = AssistantDist.from_name("dream", DREAM_ROOT_PATH)
 
     new_name = _generate_name_from_display_name(payload.display_name)
-    new_dist = dream_dist.clone(new_name, payload.description)
+    new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
     new_dist.save()
 
-    return _dist_to_dist_model(new_dist)
+    return _dist_to_dist_model_short(new_dist)
 
 
 @assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
@@ -145,7 +145,7 @@ async def get_list_of_private_distributions(token: str = Depends(verify_token)) 
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
-async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -> AssistantDistModel:
+async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -> AssistantDistModelShort:
     """
     Returns existing dist with the given name
 
@@ -158,7 +158,7 @@ async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -
     -``dist_name``: name of the distribution
     """
     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    return _dist_to_dist_model(dream_dist)
+    return _dist_to_dist_model_short(dream_dist)
 
 
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)

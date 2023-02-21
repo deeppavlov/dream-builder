@@ -25,14 +25,28 @@ assistant_dists_router = APIRouter(prefix="/api/assistant_dists")
 
 
 def _generate_name_from_display_name(display_name: str):
+    """Generates unique snake_case name from human-readable name
+
+    Args:
+        display_name: assistant dist display name
+
+    Returns:
+        assistant dist name in snake_case with unique identifier
+    """
     normalized_name = display_name.replace(" ", "_").lower()
     random_id = secrets.token_hex(4)
+
     return f"{normalized_name}_{random_id}"
 
 
-def _dist_to_distmodel_short(dream_dist: AssistantDist) -> AssistantDistModelShort:
-    """
-    AssistantDist -> AssistantDistModelShort
+def _dist_to_dist_model_short(dream_dist: AssistantDist) -> AssistantDistModelShort:
+    """Creates a pydantic object with minimal distribution description
+
+    Args:
+        dream_dist: AssistantDist object
+
+    Returns:
+        Pydantic object with distribution description
     """
     return AssistantDistModelShort(
         name=dream_dist.name,
@@ -40,9 +54,14 @@ def _dist_to_distmodel_short(dream_dist: AssistantDist) -> AssistantDistModelSho
     )
 
 
-def _dist_to_distmodel(dream_dist: AssistantDist) -> AssistantDistModel:
-    """
-    AssistantDist -> AssistantDistModel
+def _dist_to_dist_model(dream_dist: AssistantDist) -> AssistantDistModel:
+    """Creates a pydantic object with extended distribution description
+
+    Args:
+        dream_dist: AssistantDist object
+
+    Returns:
+        Pydantic object with distribution description
     """
     return AssistantDistModel(
         dist_path=str(dream_dist.dist_path),
@@ -55,10 +74,14 @@ def _dist_to_distmodel(dream_dist: AssistantDist) -> AssistantDistModel:
     )
 
 
-def _distmodel_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
-    """
-    Pydantic model to python object
-    AssistantDistModel -> AssistantDist
+def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
+    """Creates AssistantDist object from pydantic distribution object
+
+    Args:
+        dream_dist_model: AssistantDist object
+
+    Returns:
+        AssistantDist object
     """
     return AssistantDist(
         dist_path=dream_dist_model.dist_path,
@@ -77,24 +100,31 @@ def _distmodel_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_distribution(payload: CreateAssistantDistModel):
+    """
+    Creates new distribution
+
+    **Payload args**
+
+    -``display_name``: new assistant dist display name
+
+    -``description``: new assistant dist description
+    """
     dream_dist = AssistantDist.from_name("dream", DREAM_ROOT_PATH)
 
     new_name = _generate_name_from_display_name(payload.display_name)
     new_dist = dream_dist.clone(new_name, payload.description)
     new_dist.save()
 
-    return _dist_to_distmodel(new_dist)
+    return _dist_to_dist_model(new_dist)
 
 
 @assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
 async def get_list_of_public_distributions() -> List[AssistantDistModelShort]:
     """
-    Returns list of dream distributions in format {name: AssistantDistModel}, i.e. {"deepy_adv": AssistantDistModel}
-
-    Very expensive endpoint. Run it carefully.
+    Lists public Dream distributions
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = [_dist_to_distmodel_short(dist) for dist in distributions]
+    distributions = [_dist_to_dist_model_short(dist) for dist in distributions]
 
     return distributions
 
@@ -102,9 +132,11 @@ async def get_list_of_public_distributions() -> List[AssistantDistModelShort]:
 @assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
 async def get_list_of_private_distributions(token: str = Depends(verify_token)) -> List[AssistantDistModelShort]:
     """
-    Returns list of dream distributions in format {name: AssistantDistModel}, i.e. {"deepy_adv": AssistantDistModel}
+    Lists private Dream distributions
 
-    Very expensive endpoint. Run it carefully.
+    **Header args**
+
+    -``token``: auth token
     """
     # distributions = list_dists(DREAM_ROOT_PATH)
     # distributions = [_dist_to_distmodel_short(dist) for dist in distributions]
@@ -112,18 +144,21 @@ async def get_list_of_private_distributions(token: str = Depends(verify_token)) 
     return []
 
 
-@assistant_dists_router.get("/{dist_name}")
+@assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
 async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -> AssistantDistModel:
     """
     Returns existing dist with the given name
 
-    Args:
-        dist_name: name of the distribution
-        token: jwt token
+    **Header args**
 
+    -``token``: auth token
+
+    **Path args**
+
+    -``dist_name``: name of the distribution
     """
     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    return _dist_to_distmodel(dream_dist)
+    return _dist_to_dist_model(dream_dist)
 
 
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
@@ -131,13 +166,21 @@ async def patch_dist_by_name(
     dist_name: str, payload: EditAssistantDistModel, token: str = Depends(verify_token)
 ) -> AssistantDistModelShort:
     """
-    Returns existing dist with edited name and/or description
+    Updates existing dist with edited name and/or description
 
-    Args:
-        dist_name: name of the distribution
-        payload: request data
-        token: jwt token
+    **Header args**
 
+    -``token``: auth token
+
+    **Path args**
+
+    -``dist_name``: name of the distribution
+
+    **Payload args**
+
+    -``display_name``: new assistant dist display name
+
+    -``description``: new assistant dist description
     """
     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
 
@@ -149,20 +192,23 @@ async def patch_dist_by_name(
 
     dream_dist.save(overwrite=True)
 
-    return _dist_to_distmodel_short(dream_dist)
+    return _dist_to_dist_model_short(dream_dist)
 
 
-@assistant_dists_router.delete("/{dist_name}")
+@assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_dist_by_name(
     dist_name: str, token: str = Depends(verify_token)
 ):
     """
     Deletes existing dist
 
-    Args:
-        dist_name: name of the distribution
-        token: jwt token
+    **Header args**
 
+    -``token``: auth token
+
+    **Path args**
+
+    -``dist_name``: name of the distribution
     """
     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
     dream_dist.delete()
@@ -173,13 +219,21 @@ async def clone_dist(
     dist_name: str, payload: CloneAssistantDistModel, token: str = Depends(verify_token)
 ) -> AssistantDistModelShort:
     """
-    Returns existing dist with the given name
+    Clones new distribution from an existing one
 
-    Args:
-        dist_name: name of the distribution
-        payload: request data
-        token: jwt token
+    **Header args**
 
+    -``token``: auth token
+
+    **Path args**
+
+    -``dist_name``: name of the distribution
+
+    **Payload args**
+
+    -``display_name``: new assistant dist display name
+
+    -``description``: new assistant dist description
     """
     dream_dist = AssistantDist.from_name(dist_name, DREAM_ROOT_PATH)
 
@@ -187,7 +241,7 @@ async def clone_dist(
     new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
     new_dist.save(overwrite=False)
 
-    return _dist_to_distmodel_short(new_dist)
+    return _dist_to_dist_model_short(new_dist)
 
 
 # @assistant_dists_router.put("/{dist_name}", status_code=status.HTTP_200_OK)

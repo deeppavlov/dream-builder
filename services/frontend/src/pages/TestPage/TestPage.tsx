@@ -578,7 +578,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'generative',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),

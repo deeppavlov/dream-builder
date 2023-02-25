@@ -1,13 +1,13 @@
+import { useId } from 'react'
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
+import { SettingKey } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { SettingsList } from '../SettingsList/SettingsList'
-import { SettingKey } from '../../types/types'
 import s from './SelectorSettingsSidePanel.module.scss'
-import { useId } from 'react'
 
 export interface SelectorSettings {
   name: string
@@ -65,7 +65,8 @@ const SelectorSettingsSidePanel = ({
               onSubmit={e => {
                 e.preventDefault()
                 console.log(e.currentTarget.elements)
-              }}>
+              }}
+              className={s.settings}>
               <SettingsList
                 key={name}
                 id={settingsId}

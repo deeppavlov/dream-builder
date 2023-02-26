@@ -28,8 +28,8 @@ const SelectorSettingsSidePanel = ({
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: activeTab ?? properties,
     tabList: new Map([
-      [properties, properties],
-      [editor, editor],
+      [properties, { name: properties }],
+      [editor, { name: editor, disabled: true }],
     ]),
   })
   const settingsId = useId()
@@ -40,13 +40,14 @@ const SelectorSettingsSidePanel = ({
     <>
       <SidePanelHeader>
         <ul role='tablist'>
-          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+          {Array.from(tabsInfo.tabs).map(([id, tab]) => (
             <li
               role='tab'
+              data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
               onClick={() => tabsInfo.handleTabSelect(id)}>
-              {name}
+              {tab.name}
             </li>
           ))}
         </ul>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 type ActiveTabId = string
-type TabList = Map<string, string>
+type TabList = Map<string, { name: string; disabled?: boolean }>
 
 interface TabsInfo {
   activeTabId?: ActiveTabId
@@ -31,7 +31,11 @@ const useTabsManager = (
     setActiveTabId(getValidActiveId(info.activeTabId, info.tabList))
   }
 
-  const handleTabSelect = (id: ActiveTabId) => setActiveTabId(id)
+  const handleTabSelect = (id: ActiveTabId) => {
+    const isDisabled = tabs.get(id)?.disabled
+    if (isDisabled) return
+    setActiveTabId(id)
+  }
 
   return [
     {

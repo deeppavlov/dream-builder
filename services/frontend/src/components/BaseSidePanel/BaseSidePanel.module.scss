@@ -13,6 +13,10 @@
     flex-direction: column;
     position: relative;
   }
+
+  [role='tab'][data-disabled='true'] {
+    opacity: 0.3;
+  }
 }
 
 .close {

@@ -30,10 +30,10 @@ const AnnotatorSidePanel = ({
     tabList: new Map(
       isEditor
         ? [
-            [properties, properties],
-            [editor, editor],
+            [properties, { name: properties }],
+            [editor, { name: editor }],
           ]
-        : [[properties, properties]]
+        : [[properties, { name: properties }]]
     ),
   })
 
@@ -43,13 +43,14 @@ const AnnotatorSidePanel = ({
     <>
       <SidePanelHeader>
         <ul role='tablist'>
-          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+          {Array.from(tabsInfo.tabs).map(([id, tab]) => (
             <li
               role='tab'
+              data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
               onClick={() => tabsInfo.handleTabSelect(id)}>
-              {name}
+              {tab.name}
             </li>
           ))}
         </ul>

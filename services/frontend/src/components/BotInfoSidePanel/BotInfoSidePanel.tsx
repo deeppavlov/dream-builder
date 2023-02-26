@@ -29,7 +29,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   const [properties] = ['Properties']
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: properties,
-    tabList: new Map([[properties, properties]]),
+    tabList: new Map([[properties, { name: properties }]]),
   })
 
   const {
@@ -52,13 +52,14 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
     <>
       <SidePanelHeader>
         <ul role='tablist'>
-          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+          {Array.from(tabsInfo.tabs).map(([id, tab]) => (
             <li
               role='tab'
+              data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
               onClick={() => tabsInfo.handleTabSelect(id)}>
-              {name}
+              {tab.name}
             </li>
           ))}
         </ul>

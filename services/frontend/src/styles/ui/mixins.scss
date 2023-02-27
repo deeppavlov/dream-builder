@@ -87,16 +87,24 @@
     color: $text1;
   }
 }
-@mixin btn_add-bot-card_behavior {
+// Works only with RGB color code
+@mixin dashed-bg($border-color, $border-radius) {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='" + $border-radius + "' ry='" + $border-radius + "' stroke='" + $border-color + "' stroke-width='1' stroke-dasharray='5%2c 5' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+}
+
+@mixin btn_add-bot-card_behavior($border-radius) {
+  @include dashed-bg(rgb(141, 150, 181), $border-radius);
+
   &:hover {
-    border: 1px solid #3300ff;
+    @include dashed-bg(rgb(51, 0, 255), $border-radius);
   }
   &:active {
-    border: 1.5px solid #3300ff;
+    background-image: none;
+    border: 1px solid rgb(51, 0, 255);
   }
-  &:disabled {
-    opacity: 0.3;
-  }
+  // &:disabled {
+  //   opacity: 0.3;
+  // }
 }
 @mixin bot-card_behavior {
   &:hover {

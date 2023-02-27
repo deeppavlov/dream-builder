@@ -1,4 +1,5 @@
 import ReactTooltip from 'react-tooltip'
+import { useNavigate } from 'react-router-dom'
 import { ReactComponent as You } from '@assets/icons/team.svg'
 import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
@@ -14,18 +15,21 @@ interface ProfileProps {
  * `TooltipMenu` nedeed for correct render component in `RectTooltip`.
  * Currently for working LogOut button
  */
-const TooltipMenu = ({ auth }: ProfileProps) => (
-  <ul className={s.menu}>
-    <li className={s.item}>
-      <You />
-      <p>{auth?.user?.email}</p>
-    </li>
-    <li onClick={logout} className={s.item}>
-      <LogOut />
-      <p>Log Out</p>
-    </li>
-  </ul>
-)
+const TooltipMenu = ({ auth }: ProfileProps) => {
+  const nav = useNavigate()
+  return (
+    <ul className={s.menu}>
+      <li className={s.item} onClick={() => nav('/profile')}>
+        <You />
+        <p>{auth?.user?.email}</p>
+      </li>
+      <li onClick={logout} className={s.item}>
+        <LogOut />
+        <p>Log Out</p>
+      </li>
+    </ul>
+  )
+}
 
 export const Profile = ({ auth }: ProfileProps) => {
   return (

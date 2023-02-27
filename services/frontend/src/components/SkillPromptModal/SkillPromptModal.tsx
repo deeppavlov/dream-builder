@@ -57,7 +57,11 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => setValue(MODEL_ID, model)
+  const handleModelSelect = (model: string) => {
+    reset({
+      [MODEL_ID]: model,
+    })
+  }
 
   const handleEdit = () => {}
 
@@ -90,9 +94,13 @@ const SkillPromptModal = () => {
           <>
             <h4>{skill?.display_name || 'Skill name'}</h4>
             <SkillDropboxSearch
-              placeholder='Choose model'
               list={mockSkillModels}
               activeItem={skill?.model}
+              error={errors[MODEL_ID]}
+              props={{
+                placeholder: 'Choose model',
+                ...register(MODEL_ID, { required: true }),
+              }}
               onSelect={handleModelSelect}
             />
           </>

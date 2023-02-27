@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getAccessToken, logout } from '../context/AuthProvider'
+import { getAccessToken, logout, setAccessToken } from '../context/AuthProvider'
 import { updateAccessToken } from './updateAccessToken'
 
 /**
@@ -37,28 +37,34 @@ privateApi.interceptors.response.use(
   response => response,
   async error => {
     const prevRequest = error?.config
-    const errorMsg = error.response.data?.detail?.match(
-      /Access token has expired or token is bad/gi
-    )
+    const errorMsg = error.response.data?.detail
+      ?.toString()
+      ?.match(/Access token has expired or token is bad/gi)
     const accessTokenIsExpired =
       error?.response?.status === 400 &&
       errorMsg !== null &&
       errorMsg !== undefined
+    const accessTokenIsExist = getAccessToken() !== null
+    const accessTokenIsValid = !accessTokenIsExpired && accessTokenIsExist
 
-    console.log(`Access token is expired: ${accessTokenIsExpired}`)
+    console.log(`Access token is valid: ${accessTokenIsValid}`)
 
-    if (accessTokenIsExpired && !prevRequest?.sent) {
+    if (!accessTokenIsValid && !prevRequest?.sent) {
       prevRequest.sent = true // Avoid unnecessary repeat on one request
-      const newAccessToken = await updateAccessToken()
 
-      // Logout if update access token is failed
-      if (!newAccessToken) {
+      try {
+        const { data } = await updateAccessToken()
+
+        console.log(data.token)
+        setAccessToken(data.token)
+        prevRequest.headers.token = data.token
+      } catch (error) {
+        // Logout if update access token is failed
         console.log('Update access token is failed')
         logout()
         return
       }
 
-      prevRequest.headers.token = newAccessToken
       return privateApi(prevRequest)
     }
   }

@@ -40,6 +40,8 @@ export const useAuth = () => useContext(AuthContext)
  * Exchange Google `auth_code` for tokens
  */
 export const login = async (code: string) => {
+  localStorage.clear() // Clear all client states
+
   let axiosConfig = {
     mode: 'no-cors',
     headers: {
@@ -56,7 +58,7 @@ export const login = async (code: string) => {
       delete clearUser.refresh_token
     })
     .catch(e => {
-      deleteLocalStorageUser()
+      // deleteLocalStorageUser()
       console.log(`ExchangeAuthCode failed:`, e)
     })
 
@@ -78,7 +80,8 @@ export const logout = async () => {
     console.log('Logout failed!', error)
   }
 
-  deleteLocalStorageUser()
+  // deleteLocalStorageUser()
+  localStorage.clear() // Clear all client states
   location.href = getClearUrl(location.origin)
 }
 

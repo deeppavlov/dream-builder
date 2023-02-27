@@ -10,4 +10,5 @@ export const RoutesList = {
   test: '/test',
   code: '/code',
   start: '/',
+  profile: '/profile',
 } as const

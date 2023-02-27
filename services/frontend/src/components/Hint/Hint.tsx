@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import classNames from 'classnames/bind'
 import { setVisited } from '../../utils/setVisited'
 import s from './Hint.module.scss'
 
 const Hint: FC = () => {
   const [hidden, setHidden] = useState<any>(localStorage.getItem('isVisited'))
-  useEffect(() => {}, [hidden])
+
   const clickHandler = () => {
     setHidden((hidden: any) => !hidden)
     setVisited()

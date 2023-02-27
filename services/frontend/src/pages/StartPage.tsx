@@ -6,6 +6,7 @@ import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
+import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 
 export const StartPage = () => {
   const auth = useAuth()
@@ -16,6 +17,7 @@ export const StartPage = () => {
       <Topbar />
       <Main>
         {user && <Banner name={user.name} />}
+        <AccessTokensBanner />
         <Wrapper>
           <Container>
             <Card

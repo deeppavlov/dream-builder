@@ -1,0 +1,105 @@
+.title {
+  @include t1;
+}
+
+.annotations {
+  @include b1;
+}
+
+.add {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+
+  input {
+    height: 48px;
+    margin-right: 16px;
+  }
+}
+
+.tokens {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.token {
+  @include b1;
+  width: 100%;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 0 12px;
+  background-color: $bcgrnd2;
+  color: $text1;
+}
+
+.state {
+  margin-left: auto;
+  margin-right: 40px;
+  display: flex;
+  color: $primary1;
+
+  span::first-letter {
+    text-transform: uppercase;
+  }
+
+  .icon {
+    fill: $primary1;
+    margin-right: 4px;
+  }
+
+  &.not-valid {
+    color: $orange;
+
+    .icon {
+      fill: $orange;
+    }
+  }
+
+  &.validating {
+    color: $pink;
+    // Dots animation
+    &::after {
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: bottom;
+      -webkit-animation: dotsAnimation steps(4, end) 900ms infinite;
+      animation: dotsAnimation steps(4, end) 900ms infinite;
+      content: '\2026';
+      width: 0px;
+    }
+
+    .icon {
+      fill: $pink;
+    }
+  }
+
+  &.valid {
+    color: $salad;
+
+    .icon {
+      fill: $salad;
+    }
+  }
+}
+
+.remove {
+  @include b1;
+  color: $red;
+}
+
+@keyframes dotsAnimation {
+  to {
+    width: 25%;
+  }
+}
+
+@-webkit-keyframes dotsAnimation {
+  to {
+    width: 25%;
+  }
+}

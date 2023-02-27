@@ -1,5 +1,10 @@
 import axios from 'axios'
-import { getAccessToken, logout, setAccessToken } from '../context/AuthProvider'
+import {
+  getAccessToken,
+  getRefreshToken,
+  logout,
+  setAccessToken,
+} from '../context/AuthProvider'
 import { updateAccessToken } from './updateAccessToken'
 
 /**
@@ -60,8 +65,10 @@ privateApi.interceptors.response.use(
         prevRequest.headers.token = data.token
       } catch (error) {
         // Logout if update access token is failed
+        const isUser = localStorage.getItem('user') !== null // Prevent infinity logout
+
         console.log('Update access token is failed')
-        logout()
+        isUser && logout()
         return
       }
 

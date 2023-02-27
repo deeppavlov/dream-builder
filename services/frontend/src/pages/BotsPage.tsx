@@ -57,7 +57,11 @@ export const BotsPage = () => {
     data: usersDistData,
     isLoading: isUsersDistDataLoading,
     error: usersDistDataError,
-  } = useQuery('usersAssistantDists', getUsersAssistantDists)
+  } = useQuery('usersAssistantDists', getUsersAssistantDists, {
+    // The query will not execute when user is not authorized
+    enabled: !!auth?.user,
+  })
+
   return (
     <>
       <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />

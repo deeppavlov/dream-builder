@@ -38,7 +38,6 @@ export const BotsAllPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return <> {'Loading...'}</>
   if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>
   return (
     <>
@@ -47,10 +46,11 @@ export const BotsAllPage = () => {
         {!listView ? (
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
-            amount={assistantsData.length}>
+            amount={assistantsData?.length}>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+              {isAssistantsLoading && 'Loading...'}
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
                   name,

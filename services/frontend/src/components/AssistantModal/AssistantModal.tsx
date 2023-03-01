@@ -10,8 +10,9 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import s from './AssistantModal.module.scss'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
@@ -40,7 +41,6 @@ export const AssistantModal = () => {
     formState: { errors, isValid },
   } = useForm<FormValues>({ mode: 'all' })
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
-  const name = bot?.routingName!
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const closeModal = () => {
@@ -62,6 +62,9 @@ export const AssistantModal = () => {
     setIsOpen(!isOpen)
   }
 
+  const isTopbarButton = typeof bot === 'string'
+  const name = isTopbarButton ? bot : bot?.routingName!
+
   const handleCreateBtnClick = () => {
     handleSubmit(onFormSubmit)
   }
@@ -82,7 +85,7 @@ export const AssistantModal = () => {
   }
   const rename = useMutation({
     mutationFn: (variables: { data: FormValues; name: string }) => {
-      return renameAssistantDist(variables.name, variables.data)
+      return renameAssistantDist(variables?.name, variables?.data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
@@ -90,15 +93,22 @@ export const AssistantModal = () => {
   })
   const clone = useMutation({
     mutationFn: (variables: { data: FormValues; name: string }) => {
-      return cloneAssistantDist(variables.data, variables.name)
+      return cloneAssistantDist(variables?.data, variables?.name)
     },
     onSuccess: data => {
       queryClient
         .invalidateQueries({ queryKey: 'usersAssistantDists' })
         .then(() => {
           navigate(`/${data?.name}`, {
-            state: { preview: false, distName: data?.name },
+            state: {
+              preview: false,
+              distName: data?.name,
+              displayName: data?.display_name,
+            },
           })
+        })
+        .then(() => {
+          isTopbarButton && closeModal()
         })
     },
   })
@@ -138,7 +148,11 @@ export const AssistantModal = () => {
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>
-                You are creating a copy of a <mark>{botDist?.name}</mark>{' '}
+                You are creating a copy of a{' '}
+                <mark>
+                  {isTopbarButton && capitalizeTitle(bot)}
+                  {botDist?.name}
+                </mark>{' '}
                 distribution
               </div>
             )}

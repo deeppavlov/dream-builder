@@ -58,7 +58,7 @@ export const BotCard = ({
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
-      state: { preview: true, distName: routingName },
+      state: { preview: true, distName: routingName, displayName: name },
     })
   }
 
@@ -69,7 +69,7 @@ export const BotCard = ({
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
-      state: { preview: false, distName: routingName },
+      state: { preview: false, distName: routingName, displayName: name },
     })
   }
   const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {

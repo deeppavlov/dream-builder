@@ -5,6 +5,7 @@ import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
 import s from './SkillDropboxSearch.module.scss'
 
 interface Props {
+  isOpen?: boolean
   list: string[]
   activeItem?: string
   label?: string
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const SkillDropboxSearch = ({
+  isOpen: propIsOpen,
   list,
   activeItem: propActiveItem,
   label,
@@ -21,7 +23,7 @@ const SkillDropboxSearch = ({
   props,
   onSelect,
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
   const [activeItem, setActiveItem] = useState<string | null>(
     propActiveItem ?? null
   )
@@ -42,6 +44,10 @@ const SkillDropboxSearch = ({
     if (!targetIsInput) setIsOpen(!isOpen)
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setActiveItem(e.target.value)
+  }
+
   const handleItemClick = (v: string) => {
     setActiveItem(v)
     setIsOpen(false)
@@ -56,12 +62,18 @@ const SkillDropboxSearch = ({
   return (
     <div
       ref={dropboxRef}
-      className={cx('skillDropboxSearch', isOpen && 'open', error && 'error')}>
+      className={cx('skillDropboxSearch', isOpen && 'open', error && 'error')}
+      onFocus={() => setIsOpen(true)}>
       {label && <span className={s.label}>{label}</span>}
 
       <div className={s.search} onClick={handleSearchClick}>
         <LoupeIcon className={s.icon} />
-        <input {...props} className={s.input} />
+        <input
+          {...props}
+          className={s.input}
+          value={activeItem || ''}
+          onChange={handleSearchChange}
+        />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />
       </div>
 

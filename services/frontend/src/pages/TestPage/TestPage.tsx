@@ -1060,23 +1060,22 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <Input
-            onEnterPress={() => {}}
+            label='Label'
+            withEnterButton
             props={{
               placeholder: 'Assistive text',
-              value: 'Text input Text input Text input Text input',
-              onChange: () => {},
+              defaultValue: 'Text input Text input Text input Text input',
             }}
-            label='Label'
           />
         </div>
         <div className={s.testPage__component}>
           <span>required (with error)</span>
           <Input
+            label='Label'
             props={{
               placeholder: 'Assistive text',
               ...register('test_input_required', { required: 'Error message' }),
             }}
-            label='Label'
             error={errors['test_input_required']}
           />
         </div>
@@ -1101,10 +1100,23 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <TextArea
-            onEnterPress={() => {}}
+            withEnterButton
             props={{
               placeholder: 'Assistive text',
-              value:
+              defaultValue:
+                'Text input Text input Text input Text input Text input Text input Text input Text input',
+            }}
+            label='Label'
+            about='Instructions'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>with counter</span>
+          <TextArea
+            withCounter
+            props={{
+              placeholder: 'Assistive text',
+              defaultValue:
                 'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'

@@ -160,7 +160,6 @@ export const AssistantModal = () => {
             error={errors[NAME_ID as keyof FormValues]}
             props={{
               placeholder: 'Enter name for your VA',
-              value: getValues()[NAME_ID as keyof FormValues],
               ...register(NAME_ID as keyof FormValues, {
                 required: 'Please add name for your Virtual Assistant',
               }),
@@ -177,7 +176,6 @@ export const AssistantModal = () => {
             }
             props={{
               placeholder: 'Enter description for your VA',
-              value: getValues()[DESC_ID as keyof FormValues],
               ...register(DESC_ID as keyof FormValues, {
                 required: 'Please add description for your Virtual Assistant.',
                 maxLength: {

@@ -1,12 +1,12 @@
 import { Topbar } from '../components/Topbar/Topbar'
 import { Main } from '../components/Main/Main'
+import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
-import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 
 export const StartPage = () => {
   const auth = useAuth()

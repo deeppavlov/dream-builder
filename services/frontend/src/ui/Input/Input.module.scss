@@ -86,9 +86,10 @@
 
 .submit {
   position: absolute;
-  top: 6px;
+  top: 50%;
   right: 6px;
   display: none;
+  transform: translateY(-50%);
 
   svg {
     display: none;

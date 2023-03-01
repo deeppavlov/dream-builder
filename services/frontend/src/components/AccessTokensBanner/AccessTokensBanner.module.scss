@@ -10,10 +10,10 @@
   width: 100%;
   display: flex;
   align-items: flex-end;
+  gap: 16px;
 
   input {
     height: 48px;
-    margin-right: 16px;
   }
 }
 
@@ -41,7 +41,6 @@
   margin-left: auto;
   margin-right: 40px;
   display: flex;
-  color: $primary1;
 
   span::first-letter {
     text-transform: uppercase;
@@ -84,6 +83,15 @@
     .icon {
       fill: $salad;
     }
+  }
+}
+
+.validate {
+  @include b1;
+  color: $primary1;
+
+  &::first-letter {
+    text-transform: uppercase;
   }
 }
 

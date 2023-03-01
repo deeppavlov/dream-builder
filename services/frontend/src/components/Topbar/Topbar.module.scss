@@ -21,25 +21,7 @@
     @include b3;
     @include accent_text;
   }
-  .fork {
-    padding: 0px 14px;
-    .container {
-      display: flex;
-      gap: 8px;
-      .circle {
-        background-color: $text3;
-        color: $bcgrnd1;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 14px;
-        @include icon_size_24;
-      }
-    }
-  }
+  
   .btns_area {
     display: flex;
     align-items: center;

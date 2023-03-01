@@ -1,22 +1,15 @@
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
+import { useAuth } from '../../context/AuthProvider'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
-import { useAuth } from '../../context/AuthProvider'
-import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
-import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
-import { History } from './components/History'
 import { Test } from './components/Test'
-import { ReactComponent as ForkIcon } from '@assets/icons/fork.svg'
-import { Resources } from './components/Resources'
-import s from './Topbar.module.scss'
-import ResourcesSidePanel from '../ResourcesSidePanel/ResourcesSidePanel'
-import Button from '../../ui/Button/Button'
 import { trigger } from '../../utils/events'
-import { usePreview } from '../../context/PreviewProvider'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import s from './Topbar.module.scss'
+import { CloneButton } from '../CloneButton/CloneButton'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -24,8 +17,9 @@ interface TopbarProps {
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
   title?: string
-  amount?: number | string
   viewChanger?: boolean
+  tab?: 'Architecture' | 'Skills'
+  name?: string
 }
 
 export const Topbar = ({
@@ -33,20 +27,18 @@ export const Topbar = ({
   viewHandler,
   innerRef,
   title,
-  amount,
   viewChanger,
+  tab,
+  name,
 }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
 
-  const handleCloneBtnClick = (e: any) => {
-    console.log('clone wasclicked!')
+  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', { name: title })
+    trigger('AssistantModal', { action: 'clone', bot: name })
   }
-  const preview = usePreview().isPreview
-  const cleanTitle = title && capitalizeTitle(title)
   switch (type) {
     case 'main':
       return (
@@ -74,35 +66,11 @@ export const Topbar = ({
           <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
-              <Breadcrumbs />
+              <Breadcrumbs tab={tab}>{title}</Breadcrumbs>
             </div>
-            <div style={{ color: 'black' }} className={s.assistantName}>
-              {cleanTitle}
-              {/* добавить разные цвета для различных режимов   */}
-            </div>
-            {preview && (
-              <div className={s.fork}>
-                <Button
-                  theme={'primary'}
-                  small
-                  withIcon
-                  props={{ onClick: handleCloneBtnClick }}>
-                  <div className={s.container}>
-                    <ForkIcon />
-                    <span>Clone</span>
-                    {amount ?? (
-                      <span className={s.circle}>{amount || '42'}</span>
-                    )}
-                  </div>
-                </Button>
-              </div>
-            )}
-
+            <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>
               {viewChanger && <Display viewHandler={viewHandler} />}
-              {/* <History /> */}
-              <Resources />
-              {/* <Notifications /> */}
               <Test />
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
@@ -124,8 +92,7 @@ export const Topbar = ({
     <div className={s.topbar} ref={innerRef}>
       <Menu type='main' />
       <div className={s.logo_area}>
-        <span className={s.logo} />
-        <h3>Dream&nbsp;Builder</h3>
+        <Breadcrumbs />
       </div>
       <div className={s.btns_area}>
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}

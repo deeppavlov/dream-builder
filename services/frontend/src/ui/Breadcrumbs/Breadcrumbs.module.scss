@@ -19,32 +19,21 @@
   background-image: url(../../assets/icons/home.svg);
 }
 .tooltips {
-  height: 45px;
-  background: #8d96b5 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  padding: 4px 12px !important;
-  gap: 10px !important;
-  border-radius: 8px !important;
-  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
-  z-index: 3;
-  offset: 30%;
-  font-size: 18px;
-  line-height: 160%;
-  color: #ffffff;
-  &::after {
-    left: 20% !important;
-  }
+  @include tooltip;
 }
 .routes {
+  white-space: nowrap;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
+  // white-space: 'nowrap';
   .slash {
-    @include lnks_n_btns4;
     color: #8d96b5;
+    &::before {
+      content: '/';
+    }
+    @include lnks_n_btns4;
   }
   span {
     @include b3;

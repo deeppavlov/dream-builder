@@ -16,14 +16,14 @@ export const StartPage = () => {
     <>
       <Topbar />
       <Main>
-        {user && <Banner name={user.name} />}
+        {user && <Banner name={user?.name} />}
         <AccessTokensBanner />
-        <Wrapper>
+        {/* <Wrapper>
           <Container>
             <Card
               title='Virtual Assistants'
               img='VA'
-              link={RoutesList.bots}
+              link={RoutesList.start}
               btnTitle='Go to Virtual Assistants'
               text='Start your journey with constructing your virtual assistant or chatbot from scratch or clone one of the virtual assistants and chatbots published in Dream Builder.'
             />
@@ -36,7 +36,7 @@ export const StartPage = () => {
               buttonColor='purple'
             />
           </Container>
-        </Wrapper>
+        </Wrapper> */}
       </Main>
     </>
   )

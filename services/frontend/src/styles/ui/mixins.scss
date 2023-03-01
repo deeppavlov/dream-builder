@@ -89,7 +89,7 @@
 }
 // Works only with RGB color code
 @mixin dashed-bg($border-color, $border-radius) {
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='" + $border-radius + "' ry='" + $border-radius + "' stroke='" + $border-color + "' stroke-width='1' stroke-dasharray='5%2c 5' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='rgb(249, 250, 252)' rx='" + $border-radius + "' ry='" + $border-radius + "' stroke='" + $border-color + "' stroke-width='1' stroke-dasharray='5%2c 5' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
 @mixin btn_add-bot-card_behavior($border-radius) {
@@ -100,6 +100,7 @@
   }
   &:active {
     background-image: none;
+    background-color: $bcgrnd1;
     border: 1px solid rgb(51, 0, 255);
   }
   // &:disabled {

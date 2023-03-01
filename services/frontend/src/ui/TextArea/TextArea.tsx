@@ -10,7 +10,7 @@ interface TextAreaProps {
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
-  onEnterPress?: (value: string | null) => void
+  withEnterButton?: boolean
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -19,16 +19,19 @@ export const TextArea: FC<TextAreaProps> = ({
   error,
   props,
   withCounter,
-  onEnterPress,
+  withEnterButton,
 }) => {
-  const [value, setValue] = useState<string | null>(
-    props?.value?.toString() ?? null
-  )
-  const [isActive, setIsActive] = useState(false)
-  const [isChanged, setIsChanged] = useState(false)
+  const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
+  const [isChanged, setIsChanged] = useState(false) // for displaying Enter button
+  const [value, setValue] = useState('')
   const textAreaId = props?.id ?? useId()
   const maxLenght = 500
   let cx = classNames.bind(s)
+
+  /** On Enter press set focused state for textarea */
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter') handleEnterBtnClick()
+  }
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (props?.onBlur) props.onBlur(e)
@@ -37,22 +40,21 @@ export const TextArea: FC<TextAreaProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (props?.onChange) props.onChange(e)
+
     setValue(e.target.value)
+
+    if (!e.target.value) {
+      handleEnterBtnClick()
+      return
+    }
+
     setIsActive(true)
     setIsChanged(true)
   }
 
   const handleEnterBtnClick = () => {
-    onEnterPress && onEnterPress(value)
     setIsActive(false)
     setIsChanged(false)
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (onEnterPress && event.key === 'Enter') {
-      event.preventDefault()
-      handleEnterBtnClick()
-    }
   }
 
   return (
@@ -75,7 +77,6 @@ export const TextArea: FC<TextAreaProps> = ({
         <textarea
           {...props}
           id={textAreaId}
-          value={value ?? ''}
           rows={2}
           cols={20}
           onBlur={handleBlur}
@@ -84,12 +85,12 @@ export const TextArea: FC<TextAreaProps> = ({
           className={s.field}
         />
 
-        {onEnterPress && (
+        {withEnterButton && (
           <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
               small
-              props={{ onClick: handleEnterBtnClick }}>
+              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
               Enter
             </Button>
           </div>

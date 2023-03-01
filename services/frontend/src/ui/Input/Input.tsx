@@ -7,22 +7,25 @@ interface InputProps {
   label?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onEnterPress?: (value: string | null) => void
+  withEnterButton?: boolean
 }
 
 export const Input: FC<InputProps> = ({
   label,
   error,
   props,
-  onEnterPress,
+  withEnterButton,
 }) => {
-  const [value, setValue] = useState<string | null>(
-    props?.value?.toString() ?? null
-  )
-  const [isActive, setIsActive] = useState(false)
-  const [isChanged, setIsChanged] = useState(false)
+  const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
+  const [isChanged, setIsChanged] = useState(false) // for display Enter button
   const inputId = props?.id ?? useId()
   let cx = classNames.bind(s)
+
+  /** On Enter press set focused state for input */
+  const handleEnterBtnClick = () => {
+    setIsActive(false)
+    setIsChanged(false)
+  }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (props?.onBlur) props.onBlur(e)
@@ -31,22 +34,18 @@ export const Input: FC<InputProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (props?.onChange) props.onChange(e)
-    setValue(e.target.value)
+
+    if (!e.target.value) {
+      handleEnterBtnClick()
+      return
+    }
+
     setIsActive(true)
     setIsChanged(true)
   }
 
-  const handleEnterBtnClick = () => {
-    onEnterPress && onEnterPress(value)
-    setIsActive(false)
-    setIsChanged(false)
-  }
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (onEnterPress && event.key === 'Enter') {
-      event.preventDefault()
-      handleEnterBtnClick()
-    }
+    if (event.key === 'Enter') handleEnterBtnClick()
   }
 
   return (
@@ -63,18 +62,17 @@ export const Input: FC<InputProps> = ({
         <input
           {...props}
           id={inputId}
-          value={value ?? ''}
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           className={s.field}
         />
-        {onEnterPress && !error && (
+        {withEnterButton && !error && (
           <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
               small
-              props={{ onClick: handleEnterBtnClick }}>
+              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
               Enter
             </Button>
           </div>

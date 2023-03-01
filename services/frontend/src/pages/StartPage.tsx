@@ -1,5 +1,6 @@
 import { Topbar } from '../components/Topbar/Topbar'
 import { Main } from '../components/Main/Main'
+import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
@@ -16,6 +17,7 @@ export const StartPage = () => {
       <Topbar />
       <Main>
         {user && <Banner name={user.name} />}
+        <AccessTokensBanner />
         <Wrapper>
           <Container>
             <Card

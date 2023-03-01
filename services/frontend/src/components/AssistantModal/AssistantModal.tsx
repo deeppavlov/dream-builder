@@ -86,6 +86,7 @@ export const AssistantModal = () => {
   })
 
   const onFormSubmit = (data: any) => {
+    console.log(data)
     // TODO: (A) add typization
     mutation.mutate(data)
   }
@@ -126,7 +127,6 @@ export const AssistantModal = () => {
             error={errors[NAME_ID]}
             props={{
               placeholder: 'Enter name for your VA',
-              value: getValues()[NAME_ID],
               ...register(NAME_ID, {
                 required: 'Please add name for your Virtual Assistant',
               }),
@@ -143,7 +143,6 @@ export const AssistantModal = () => {
             }
             props={{
               placeholder: 'Enter description for your VA',
-              value: getValues()[DESC_ID],
               ...register(DESC_ID, {
                 required: 'Please add description for your Virtual Assistant.',
                 maxLength: {

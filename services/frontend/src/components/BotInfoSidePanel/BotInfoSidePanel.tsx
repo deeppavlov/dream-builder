@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useQuery } from 'react-query'
-import { BotInfoInterface, StackType } from '../../types/types'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { BotInfoInterface } from '../../types/types'
+import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { useAuth } from '../../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../../services/getComponentsFromAssistantDists'
@@ -13,10 +13,10 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
 import DateCard from '../DateCard/DateCard'
-import s from './BotInfoSidePanel.module.scss'
 import { isSelector } from '../../utils/isSelector'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
+import s from './BotInfoSidePanel.module.scss'
 
 interface Props {
   bot: BotInfoInterface
@@ -45,7 +45,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   )
 
   const handleCloneBtnClick = () => {
-    trigger('AssistantModal', { action: 'clone', distribution: bot })
+    trigger('AssistantModal', { action: 'clone', bot: bot })
   }
 
   return (

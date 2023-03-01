@@ -1,5 +1,4 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
-import { getSkillListByDistName } from '../services/getSkillListByDistName'
 import { useAuth } from '../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -39,12 +38,13 @@ export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
   const auth = useAuth()
   const { state } = useLocation()
-  const { distName } = state
+  const { distName, displayName } = state
   const { setIsPreview } = usePreview()
 
   useEffect(() => {
-    state?.preview && setIsPreview(state.preview)
-  }, [])
+    setIsPreview(state?.preview)
+  }, [state])
+  //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
 
   const {
     isLoading: isDistsComponentsLoading,
@@ -58,17 +58,6 @@ export const EditorPage = () => {
     }
   )
 
-  const {
-    isLoading: isSkillListLoading,
-    error: skillListError,
-    data: skillListData,
-  } = useQuery(
-    ['skillList', distName],
-    () => getSkillListByDistName(distName!),
-    {
-      enabled: distName?.length! > 0,
-    }
-  )
   const annotators = distsComponentsData?.annotators
   const candidateAnnotators = distsComponentsData?.candidate_annotators
   const skills = distsComponentsData?.skills
@@ -105,7 +94,9 @@ export const EditorPage = () => {
             viewChanger
             type='editor'
             viewHandler={viewHandler}
-            title={distName}
+            tab='Skills'
+            title={displayName}
+            name={distName}
           />
           <Main sidebar editor>
             {!listView ? (
@@ -115,8 +106,9 @@ export const EditorPage = () => {
                   gridTemplateColumns='repeat(auto-fill, minmax(280px, 1fr))'
                   height='auto'>
                   {/* <AddButton /> */}
-                  {skillListData?.map((skill: any, i: number) => {
-                    const dateCreated = dateToUTC(skill.metadata.date_created)
+                  {skills?.map((skill: any, i: number) => {
+                    const dateCreated = '1234'
+                      // dateToUTC(skill?.metadata?.date_created)
                     return (
                       <SkillCard
                         key={i}
@@ -124,15 +116,15 @@ export const EditorPage = () => {
                         big
                         author={auth?.user?.name!}
                         authorImg={auth?.user?.picture!}
-                        name={skill.metadata.display_name}
+                        name={skill?.metadata?.display_name}
                         dateCreated={dateCreated}
-                        desc={skill.metadata.description}
-                        version={skill.metadata.version}
-                        ram={skill.metadata.ram_usage}
-                        gpu={skill.metadata.gpu_usage}
-                        executionTime={skill.metadata.execution_time}
-                        skillType={skill.metadata.type}
-                        botName={skill.metadata.author}
+                        desc={skill?.metadata?.description}
+                        version={skill?.metadata?.version}
+                        ram={skill?.metadata?.ram_usage}
+                        gpu={skill?.metadata?.gpu_usage}
+                        executionTime={skill?.metadata?.execution_time}
+                        skillType={skill?.metadata?.type}
+                        botName={skill?.metadata?.author}
                       />
                     )
                   })}
@@ -174,7 +166,12 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Topbar type='editor' viewHandler={viewHandler} title={distName} />
+          <Topbar
+            tab='Architecture'
+            type='editor'
+            viewHandler={viewHandler}
+            title={displayName}
+          />
           <Main sidebar editor draggable>
             <Annotators annotators={annotators} />
             <SkillSelector skillSelectors={skillSelectors} />

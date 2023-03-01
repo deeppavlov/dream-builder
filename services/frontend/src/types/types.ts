@@ -1,3 +1,5 @@
+import { RouteObject } from "react-router-dom"
+
 export interface UserInterface {
   name: string
   email: string
@@ -86,6 +88,7 @@ export interface TotalResourcesInterface {
 
 export type BotAvailabilityType = 'public' | 'your'
 export type SkillAvailabilityType = 'public' | 'your'
+export type CustomRouteConfig = RouteObject & { crumb?: string }
 
 export interface dist_list {
   name: string // Routing distribution name
@@ -111,6 +114,7 @@ export interface Skill {
   disk_usage: string | number
   version: string | number
 }
+
 export type SkillType =
   | 'fallbacks'
   | 'retrieval'

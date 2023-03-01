@@ -10,16 +10,18 @@ import s from './Profile.module.scss'
 interface ProfileProps {
   auth: UserContext
 }
-
 /**
  * `TooltipMenu` nedeed for correct render component in `RectTooltip`.
  * Currently for working LogOut button
  */
 const TooltipMenu = ({ auth }: ProfileProps) => {
-  const nav = useNavigate()
+  const navigate = useNavigate()
+  const clickHandler = () => {
+    navigate('/profile')
+  }
   return (
     <ul className={s.menu}>
-      <li className={s.item} onClick={() => nav('/profile')}>
+      <li onClick={clickHandler} className={s.item}>
         <You />
         <p>{auth?.user?.email}</p>
       </li>

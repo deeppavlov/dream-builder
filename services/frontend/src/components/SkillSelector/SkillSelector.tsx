@@ -3,18 +3,31 @@ import SkillSelectorLogo from '../../assets/icons/skill_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
 import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSelector.module.scss'
 
-interface SkillSelctorProps {
-  skillSelectors: []
+type SkillSelector = {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
 }
-const formSubmitHandler = (e: React.FormEvent) => {
-  e.preventDefault()
+
+interface Props {
+  skillSelectors: [SkillSelector]
 }
-export const SkillSelector: FC<SkillSelctorProps> = ({ skillSelectors }) => {
+export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
+  const formSubmitHandler = (e: React.FormEvent) => {
+    e.preventDefault()
+  }
   const { isPreview } = usePreview()
   return (
     <div className={s.stack}>
@@ -41,14 +54,15 @@ export const SkillSelector: FC<SkillSelctorProps> = ({ skillSelectors }) => {
                 <Skill title={'All Skills'} />
               </RadioButton>
             ) : (
-              skillSelectors?.map((item: string, i: number) => {
+              skillSelectors?.map((item: SkillSelector, i: number) => {
                 return (
                   <RadioButton
                     key={i}
-                    id={item}
+                    id={item?.name}
                     name='skill_selector'
-                    htmlFor={item}>
-                    <Skill title={capitalizeTitle(item)} />
+                    checked={skillSelectors?.length === 1}
+                    htmlFor={item?.display_name}>
+                    <Skill title={item?.display_name} />
                   </RadioButton>
                 )
               })

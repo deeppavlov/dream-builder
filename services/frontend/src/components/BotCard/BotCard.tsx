@@ -6,13 +6,12 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { ReactComponent as SaveIcon } from '@assets/icons/save.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import Button from '../../ui/Button/Button'
-import { SmallTag } from '../SmallTag/SmallTag'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
-import s from './BotCard.module.scss'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useNavigate } from 'react-router-dom'
+import s from './BotCard.module.scss'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -103,7 +102,6 @@ export const BotCard = ({
             <CalendarIcon />
             {dateCreated}
           </div>
-          <SmallTag theme='version'>v{version}</SmallTag>
         </div>
         <span className={s.separator} />
       </div>

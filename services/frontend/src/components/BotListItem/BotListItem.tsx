@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
+import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
@@ -9,8 +10,8 @@ import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import s from './BotListItem.module.scss'
 import { useAuth } from '../../context/AuthProvider'
+import s from './BotListItem.module.scss'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -48,19 +49,22 @@ export const BotListItem: FC<BotListItemProps> = ({
     space,
   }
   const auth = useAuth()
+  const navigate = useNavigate()
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+      children: <BotInfoSidePanel key={bot?.name} bot={bot} />,
     })
   }
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', distribution: bot })
+    trigger('AssistantModal', { action: 'clone', bot: bot })
   }
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    location.pathname = bot?.routingName! + '?preview'
+    navigate(`/${routingName}`, {
+      state: { preview: true, distName: routingName, displayName: name },
+    })
   }
 
   return (
@@ -102,9 +106,6 @@ export const BotListItem: FC<BotListItemProps> = ({
           {desc ||
             'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
         </div>
-      </td>
-      <td className={s.td}>
-        <SmallTag theme='version'>v{version || '0.3.4'}</SmallTag>
       </td>
       <td className={s.td}>
         <div className={s.date}>

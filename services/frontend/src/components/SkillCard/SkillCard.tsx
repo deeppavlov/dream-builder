@@ -2,18 +2,18 @@ import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import Calendar from '../../assets/icons/calendar.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { SmallTag } from '../SmallTag/SmallTag'
 import Button from '../../ui/Button/Button'
 import { BotAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import React, { FC, useId, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillCard.module.scss'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
@@ -95,6 +95,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
   const { isPreview } = usePreview()
   let cx = classNames.bind(s)
+
   return (
     <div
       className={cx(
@@ -115,7 +116,7 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.type}>
             <img
               className={s.typeLogo}
-              src={`./src/assets/icons/${skillType}.svg`}
+              src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
             />
             <p className={cx('typeText', skillType)}>
               {skillType ?? 'Type of Skill'}
@@ -144,7 +145,6 @@ export const SkillCard: FC<SkillCardProps> = ({
               <img className={s.icon} src={Calendar} />
               <p className={s.dateText}>{dateCreated ?? '27.10.2022'}</p>
             </div>
-            <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
         </div>
         <span className={s.separator} />

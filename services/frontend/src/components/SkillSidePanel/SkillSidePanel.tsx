@@ -17,6 +17,7 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { getStyleType } from '../../utils/getStyleType'
 import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSidePanel.module.scss'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 
 interface Props {
   skill: SkillInfoInterface
@@ -72,7 +73,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
           <ul className={cx('table')}>
             <li className={cx('table-item')}>
               <span className={cx('table-name')}>Forked from:</span>
-              <span className={cx('table-value')}>Name of The Skill</span>
+              <span className={cx('table-value')}>'--------'</span>
             </li>
             <li className={cx('table-item')}>
               <span className={cx('table-name')}>Type:</span>
@@ -81,8 +82,12 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
                   'table-value',
                   `${getStyleType(skill.skillType)}`
                 )}>
-                {skill.skillType === 'retrieval' && <SkillRetrievalIcon />}
-                {skill.skillType === 'fallbacks' && <SkillFallbackIcon />}
+                <img
+                  className={s.typeLogo}
+                  src={`./src/assets/icons/${
+                    componentTypeMap[skill?.skillType]
+                  }.svg`}
+                />
                 <span>{skill.skillType}</span>
               </span>
             </li>

@@ -55,6 +55,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  img {
+    @include icon_size_24;
+  }
 }
 
 .table-name {

@@ -68,6 +68,7 @@
   .typeText {
     text-transform: capitalize;
     @include t4;
+    @include hide_text;
   }
   @include skillType;
 }

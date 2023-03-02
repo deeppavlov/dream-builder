@@ -13,7 +13,7 @@ import services.auth_api.db.crud as crud
 from services.auth_api.db.db import init_db
 from services.auth_api.db.db_models import UserValid
 from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
-from services.auth_api.models import UserCreate, User, UserValidScheme
+from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
 
 router = APIRouter(prefix="/auth")
 
@@ -55,13 +55,33 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        return
+        return UserModel(
+            id=0,
+            email="cheater@deepdream.builders",
+            sub="subway?",
+            picture="pic",
+            fullname="Deep Pavlov",
+            given_name="Deep",
+            family_name="Pavlov",
+        )
 
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
 
         validate_aud(data["aud"])
         validate_email(data["email"], db)
+        user = crud.get_user_by_email(db, data["email"])
+
+        return UserModel(
+            id=user.id,
+            email=user.email,
+            sub=user.sub,
+            picture=user.picture,
+            fullname=user.fullname,
+            given_name=user.given_name,
+            family_name=user.family_name,
+        )
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

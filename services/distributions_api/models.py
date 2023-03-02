@@ -1,11 +1,12 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 
-from deeppavlov_dreamtools.distconfigs.generics import AnyConfig
+from deeppavlov_dreamtools.distconfigs.generics import AnyConfig, COMPONENT_TYPES, MODEL_TYPES, ComponentEndpoint, \
+    check_memory_format
 from deeppavlov_dreamtools.distconfigs.generics import (
-    PipelineConf,
+    PipelineConfModel,
     ComposeOverride,
     ComposeDev,
     ComposeProxy,
@@ -54,7 +55,7 @@ class AssistantDistModel(BaseModel):
     dist_path: str
     name: str
     dream_root: str
-    pipeline_conf: PipelineConf = None
+    pipeline_conf: PipelineConfModel = None
     compose_override: ComposeOverride = None
     compose_dev: ComposeDev = None
     compose_proxy: ComposeProxy = None
@@ -77,5 +78,29 @@ class AssistantDistConfigsImport(BaseModel):
     data: dict[str, AnyConfig]
 
 
-# class ComponentShort(ComponentMetadata):
-#     name: str
+class ComponentShort(BaseModel):
+    name: str
+    display_name: str
+    component_type: Optional[COMPONENT_TYPES]
+    model_type: MODEL_TYPES
+    is_customizable: bool
+    author: str
+    description: str
+    ram_usage: str
+    gpu_usage: Optional[str]
+    execution_time: float
+    date_created: datetime = Field(default_factory=datetime.utcnow)
+
+    @validator("ram_usage", "gpu_usage")
+    def check_memory_format(cls, v):
+        check_memory_format(v)
+        return v
+
+
+class DistComponentsResponse(BaseModel):
+    annotators: List[ComponentShort]
+    skill_selectors: List[ComponentShort]
+    skills: List[ComponentShort]
+    candidate_annotators: List[ComponentShort]
+    response_selectors: List[ComponentShort]
+    response_annotators: List[ComponentShort]

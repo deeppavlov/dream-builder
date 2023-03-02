@@ -9,8 +9,11 @@ from deeppavlov_dreamtools.distconfigs.assistant_dists import (
     DreamPipeline,
 )
 from deeppavlov_dreamtools.distconfigs.generics import Component
+from deeppavlov_dreamtools.distconfigs.pipeline import Pipeline
 from fastapi import APIRouter, status, Depends
+from fastapi.logger import logger
 
+from services.distributions_api.config import settings
 from services.distributions_api.const import DREAM_ROOT_PATH
 from services.distributions_api.models import (
     AssistantDistModel,
@@ -18,10 +21,16 @@ from services.distributions_api.models import (
     CreateAssistantDistModel,
     CloneAssistantDistModel,
     EditAssistantDistModel,
+    ComponentShort,
+    DistComponentsResponse,
 )
 from services.distributions_api.security.auth import verify_token
+from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
+
+
+emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
 
 
 def _generate_name_from_display_name(display_name: str):
@@ -95,8 +104,32 @@ def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
     )
 
 
-# def _component_to_component_short(component: Component) -> ComponentShort:
-#     return ComponentShort(name=component.name, **component.metadata.dict())
+def _component_to_component_short(component: Component) -> ComponentShort:
+    return ComponentShort(**component.dict(exclude_none=True))
+
+
+def _pipeline_to_dist_component_response(pipeline: Pipeline) -> DistComponentsResponse:
+    all_components = {}
+
+    for group_name in [
+        "annotators",
+        "skill_selectors",
+        "skills",
+        "candidate_annotators",
+        "response_selectors",
+        "response_annotators",
+    ]:
+        group = getattr(pipeline, group_name, {})
+        group_components = []
+
+        if group:
+            for name, component in group.items():
+                component_short = _component_to_component_short(component.config)
+                group_components.append(component_short)
+
+        all_components[group_name] = group_components
+
+    return DistComponentsResponse(**all_components)
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -131,7 +164,7 @@ async def get_list_of_public_distributions() -> List[AssistantDistModelShort]:
 
 
 @assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
-async def get_list_of_private_distributions(token: str = Depends(verify_token)) -> List[AssistantDistModelShort]:
+async def get_list_of_private_distributions(user: str = Depends(verify_token)) -> List[AssistantDistModelShort]:
     """
     Lists private Dream distributions
 
@@ -146,7 +179,7 @@ async def get_list_of_private_distributions(token: str = Depends(verify_token)) 
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
-async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -> AssistantDistModelShort:
+async def get_dist_by_name(dist_name: str, user: str = Depends(verify_token)) -> AssistantDistModelShort:
     """
     Returns existing dist with the given name
 
@@ -164,7 +197,7 @@ async def get_dist_by_name(dist_name: str, token: str = Depends(verify_token)) -
 
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
 async def patch_dist_by_name(
-    dist_name: str, payload: EditAssistantDistModel, token: str = Depends(verify_token)
+    dist_name: str, payload: EditAssistantDistModel, user: str = Depends(verify_token)
 ) -> AssistantDistModelShort:
     """
     Updates existing dist with edited name and/or description
@@ -197,9 +230,7 @@ async def patch_dist_by_name(
 
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_dist_by_name(
-    dist_name: str, token: str = Depends(verify_token)
-):
+async def delete_dist_by_name(dist_name: str, user: str = Depends(verify_token)):
     """
     Deletes existing dist
 
@@ -217,7 +248,7 @@ async def delete_dist_by_name(
 
 @assistant_dists_router.post("/{dist_name}/clone", status_code=status.HTTP_201_CREATED)
 async def clone_dist(
-    dist_name: str, payload: CloneAssistantDistModel, token: str = Depends(verify_token)
+    dist_name: str, payload: CloneAssistantDistModel, user: str = Depends(verify_token)
 ) -> AssistantDistModelShort:
     """
     Clones new distribution from an existing one
@@ -316,33 +347,23 @@ async def clone_dist(
 #
 #     dream_dist.save(overwrite=True)
 #     return _dist_to_distmodel(dream_dist)
-#
-#
-# @assistant_dists_router.get("/{dist_name}/components/")
-# async def get_config_services_by_group(dist_name: str, token: str = Depends(verify_token)):
-#     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#
-#     all_components = {}
-#
-#     groups = [
-#         "annotators",
-#         "skill_selectors",
-#         "skills",
-#         "candidate_annotators",
-#         "response_selectors",
-#         "response_annotators",
-#     ]
-#     for component_group in groups:
-#         components = []
-#
-#         for component in dist.iter_components(component_group):
-#             components.append(_component_to_component_short(component))
-#
-#         all_components[component_group] = components
-#
-#     return all_components
-#
-#
+
+
+@assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
+async def get_dist_components(dist_name: str, user: str = Depends(verify_token)):
+    dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+
+    return _pipeline_to_dist_component_response(dist.pipeline)
+
+
+@assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)
+async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
+    dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+
+    emailer.send_publish_request(user["email"], dist.name)
+    logger.info(f"Sent publish request")
+
+
 # @assistant_dists_router.get("/{dist_name}/components/{component_group}")
 # async def get_config_services_by_group(dist_name: str, component_group: str, token: str = Depends(verify_token)):
 #     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)

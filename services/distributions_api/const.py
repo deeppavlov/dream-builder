@@ -9,7 +9,7 @@ from deeppavlov_dreamtools.distconfigs.assistant_dists import (
     DreamPipeline,
 )
 from deeppavlov_dreamtools.distconfigs.generics import (
-    PipelineConf,
+    PipelineConfModel,
     ComposeOverride,
     ComposeDev,
     ComposeProxy,
@@ -32,7 +32,7 @@ CONFIGNAME_DREAMOBJECT = {
 }
 
 CONFIGNAME_CONFIGOBJECT = {
-    "pipeline_conf": PipelineConf,
+    "pipeline_conf": PipelineConfModel,
     "compose_override": ComposeOverride,
     "compose_dev": ComposeDev,
     "compose_proxy": ComposeProxy,

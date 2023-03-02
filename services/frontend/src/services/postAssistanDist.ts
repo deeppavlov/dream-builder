@@ -12,7 +12,6 @@ export async function postAssistantDist(params: PutDistParams) {
     const { data } = await privateApi.post('/assistant_dists/', {
       ...params,
     })
-    console.log(`data = `, data)
     return data
   } catch (e) {
     console.log(e)

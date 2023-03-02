@@ -7,8 +7,9 @@ import { trigger } from '../../utils/events'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { IAnnotator } from '../../types/types'
-import s from './AnnotatorSidePanel.module.scss'
 import { getStyleType } from '../../utils/getStyleType'
+import s from './AnnotatorSidePanel.module.scss'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 
 interface Props {
   annotator: IAnnotator
@@ -38,7 +39,7 @@ const AnnotatorSidePanel = ({
   })
 
   const handleCloseSP = () => trigger(BASE_SP_EVENT, { isOpen: false })
-
+  console.log(`annotator.type = `, annotator.type)
   return (
     <>
       <SidePanelHeader>
@@ -68,9 +69,13 @@ const AnnotatorSidePanel = ({
             <ul className={cx('table')}>
               <li className={cx('table-item')}>
                 <span className={cx('table-name')}>Type:</span>
-                <span
-                  className={cx('table-value', getStyleType(annotator.type))}>
-                  <BookIcon />
+                <span className={cx('table-value', annotator?.type)}>
+                  <img
+                    className={s.typeLogo}
+                    src={`./src/assets/icons/${
+                      modelTypeMap[annotator?.type]
+                    }.svg`}
+                  />
                   <span>{annotator.type}</span>
                 </span>
               </li>

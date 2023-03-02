@@ -370,31 +370,37 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
     case 'customizable_annotator':
       const MenuTT = () => (
         <ul className={s.menu}>
-          <li className={cx('item', isPreview && 'disabled')}>
+          <li
+            className={cx(
+              'item',
+              // isPreview &&
+              'disabled'
+            )}>
             <div
-              onClick={() => {
-                switch (item.typeItem) {
-                  case 'Intent Catcher':
-                    trigger(BASE_SP_EVENT, {
-                      children: (
-                        <IntentCatcherSidePanel
-                          key='Editor'
-                          annotator={{
-                            name: item.data.display_name,
-                            author: item.data.author,
-                            authorImg: DeepPavlovLogo,
-                            type: item.data.type,
-                            desc: item.data.description,
-                          }}
-                          activeTab='Editor'
-                        />
-                      ),
-                    })
-                    break
-                  default:
-                    break
-                }
-              }}>
+            // onClick={() => {
+            //   switch (item.typeItem) {
+            //     case 'Intent Catcher':
+            //       trigger(BASE_SP_EVENT, {
+            //         children: (
+            //           <IntentCatcherSidePanel
+            //             key='Editor'
+            //             annotator={{
+            //               name: item.data.display_name,
+            //               author: item.data.author,
+            //               authorImg: DeepPavlovLogo,
+            //               type: item?.data?.model_type,
+            //               desc: item.data.description,
+            //             }}
+            //             activeTab='Editor'
+            //           />
+            //         ),
+            //       })
+            //       break
+            //     default:
+            //       break
+            //   }
+            // }}
+            >
               <RenameIcon />
               <p>Edit Annotator</p>
             </div>
@@ -418,7 +424,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            type: item.data.type,
+                            type: item.data.model_type,
                             desc: item.data.description,
                           }}
                         />
@@ -435,7 +441,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            type: item.data.type,
+                            type: item.data.model_type,
                             desc: item.data.description,
                           }}
                         />
@@ -488,7 +494,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                               name: item.data.display_name,
                               author: item.data.author,
                               authorImg: DeepPavlovLogo,
-                              skillType: item.data.type,
+                              skillType: item.data.component_type,
                               botName: 'Name of The Bot',
                               desc: item.data.description,
                               dateCreated: dateToUTC(
@@ -523,7 +529,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            skillType: item.data.type,
+                            skillType: item.data.component_type,
                             botName: 'Name of The Bot',
                             desc: item.data.description,
                             dateCreated: dateToUTC(
@@ -559,7 +565,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            skillType: item.data.type,
+                            skillType: item.data.component_type,
                             botName: 'Name of The Bot',
                             desc: item.data.description,
                             dateCreated: dateToUTC(
@@ -593,7 +599,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            skillType: item.data.type,
+                            skillType: item.data.component_type,
                             botName: 'Name of The Bot',
                             desc: item.data.description,
                             dateCreated: dateToUTC(
@@ -618,7 +624,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                             name: item.data.display_name,
                             author: item.data.author,
                             authorImg: DeepPavlovLogo,
-                            skillType: item.data.type,
+                            skillType: item.data.component_type,
                             botName: 'Name of The Bot',
                             desc: item.data.description,
                             dateCreated: dateToUTC(

@@ -43,7 +43,6 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
   })
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
   const { isPreview } = usePreview()
-
   return (
     <>
       <SidePanelHeader>
@@ -77,11 +76,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
             </li>
             <li className={cx('table-item')}>
               <span className={cx('table-name')}>Type:</span>
-              <span
-                className={cx(
-                  'table-value',
-                  `${getStyleType(skill.skillType)}`
-                )}>
+              <span className={cx('table-value', `${skill.skillType}`)}>
                 <img
                   className={s.typeLogo}
                   src={`./src/assets/icons/${

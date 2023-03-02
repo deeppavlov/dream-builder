@@ -59,14 +59,11 @@ privateApi.interceptors.response.use(
 
       try {
         const { data } = await updateAccessToken()
-
-        console.log(data.token)
         setAccessToken(data.token)
         prevRequest.headers.token = data.token
       } catch (error) {
         // Logout if update access token is failed
         const isUser = localStorage.getItem('user') !== null // Prevent infinity logout
-
         console.log('Update access token is failed')
         isUser && logout()
         return

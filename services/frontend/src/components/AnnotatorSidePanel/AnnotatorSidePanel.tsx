@@ -39,7 +39,6 @@ const AnnotatorSidePanel = ({
   })
 
   const handleCloseSP = () => trigger(BASE_SP_EVENT, { isOpen: false })
-  console.log(`annotator.type = `, annotator.type)
   return (
     <>
       <SidePanelHeader>

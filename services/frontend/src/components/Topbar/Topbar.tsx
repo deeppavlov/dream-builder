@@ -37,6 +37,10 @@ export const Topbar = ({
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    if (!user) {
+      trigger('SignInModal', {})
+      return
+    }
     trigger('AssistantModal', { action: 'clone', bot: name })
   }
   switch (type) {

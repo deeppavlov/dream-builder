@@ -33,6 +33,7 @@ import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { usePreview } from '../context/PreviewProvider'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -196,6 +197,7 @@ export const EditorPage = () => {
       <IntentCatcherModal />
       <IntentResponderModal />
       <SkillPromptModal />
+      <SignInModal />
     </>
   )
 }

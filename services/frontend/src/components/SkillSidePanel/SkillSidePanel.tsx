@@ -17,7 +17,7 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { getStyleType } from '../../utils/getStyleType'
 import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSidePanel.module.scss'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 
 interface Props {
   skill: SkillInfoInterface

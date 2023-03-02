@@ -7,7 +7,7 @@ import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps extends SkillInfoInterface {

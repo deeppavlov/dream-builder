@@ -4,7 +4,7 @@ import { Annotator } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
-import { modelTypeMap } from '../../Mapping/modelTypeMap'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 
 interface ResponseAnnotatorsProps {
   item: Annotator

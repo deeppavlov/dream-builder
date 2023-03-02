@@ -13,7 +13,7 @@ import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import s from './SkillCard.module.scss'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType

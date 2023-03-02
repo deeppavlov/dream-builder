@@ -3,7 +3,7 @@ import classNames from 'classnames/bind'
 import { Annotator } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { modelTypeMap } from '../../Mapping/modelTypeMap'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './Element.module.scss'
 
 interface AnnotatorProps {

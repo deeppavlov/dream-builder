@@ -37,30 +37,35 @@
   color: $text1;
 }
 
+.icon {
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  margin-right: 4px;
+}
+
 .state {
   margin-left: auto;
   margin-right: 40px;
   display: flex;
+  align-items: center;
 
   span::first-letter {
     text-transform: uppercase;
   }
 
-  .icon {
-    fill: $primary1;
-    margin-right: 4px;
-  }
-
   &.not-valid {
     color: $orange;
 
-    .icon {
-      fill: $orange;
+    .icon path {
+      stroke: $orange;
     }
   }
 
   &.validating {
     color: $pink;
+
     // Dots animation
     &::after {
       overflow: hidden;
@@ -73,15 +78,24 @@
     }
 
     .icon {
-      fill: $pink;
+      -webkit-animation: loader-1-1 2s linear infinite;
+      animation: loader-1-1 2s linear infinite;
+      // loader backgorund
+      path:first-child {
+        fill: $primary1;
+      }
+      // loader proggress line
+      path:last-child {
+        fill: $pink;
+      }
     }
   }
 
   &.valid {
     color: $salad;
 
-    .icon {
-      fill: $salad;
+    .icon path {
+      stroke: $salad;
     }
   }
 }
@@ -109,5 +123,22 @@
 @-webkit-keyframes dotsAnimation {
   to {
     width: 25%;
+  }
+}
+
+@-webkit-keyframes loader-1-1 {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes loader-1-1 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

@@ -45,6 +45,7 @@ const SkillDropboxSearch = ({
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    props?.onChange && props.onChange(e)
     setActiveItem(e.target.value)
   }
 

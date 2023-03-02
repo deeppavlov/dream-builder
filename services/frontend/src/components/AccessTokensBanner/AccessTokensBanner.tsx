@@ -3,6 +3,9 @@ import classNames from 'classnames/bind'
 import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
+import { ReactComponent as DoneIcon } from '@assets/icons/done.svg'
+import { ReactComponent as LoaderIcon } from '@assets/icons/circle_loader_small.svg'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
@@ -16,17 +19,16 @@ interface IToken {
   state: TTokenState
 }
 
-interface BannerProps {}
-
-export const AccessTokensBanner = (props: BannerProps) => {
+export const AccessTokensBanner = () => {
   const {
     handleSubmit,
     register,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({ mode: 'onSubmit' })
   const [TOKEN_ID, MODEL_ID] = ['token', 'model']
-  const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
+  const mockServices = ['Open AI', 'GNews API']
   const mockTokens: IToken[] = [
     { id: '0', name: 'Open AI', state: 'not-valid' },
     { id: '1', name: 'GNews API', state: 'validate' },
@@ -68,7 +70,7 @@ export const AccessTokensBanner = (props: BannerProps) => {
   }
 
   const onSubmit = (data: any) => {
-    tokens?.unshift({ id: nanoid(4), name: data.token, state: 'validate' })
+    tokens?.unshift({ id: nanoid(4), name: data.model, state: 'validate' })
 
     reset({
       [TOKEN_ID]: '',
@@ -106,8 +108,9 @@ export const AccessTokensBanner = (props: BannerProps) => {
         />
         <SkillDropboxSearch
           label='Choose service:'
-          list={mockSkillModels}
+          list={mockServices}
           error={errors[MODEL_ID]}
+          onSelect={v => setValue(MODEL_ID, v)}
           props={{
             placeholder: 'Choose model',
             ...register(MODEL_ID, { required: true }),
@@ -128,7 +131,14 @@ export const AccessTokensBanner = (props: BannerProps) => {
                     {state.replace(/-/g, ' ')}
                   </button>
                 ) : (
-                  <span>{state.replace(/-/g, ' ')}</span>
+                  <>
+                    {state === 'not-valid' && <CloseIcon className={s.icon} />}
+                    {state === 'valid' && <DoneIcon className={s.icon} />}
+                    {state === 'validating' && (
+                      <LoaderIcon className={s.icon} />
+                    )}
+                    <span>{state.replace(/-/g, ' ')}</span>
+                  </>
                 )}
               </div>
               <button

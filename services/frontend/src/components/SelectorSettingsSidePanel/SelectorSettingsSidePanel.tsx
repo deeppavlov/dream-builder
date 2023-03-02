@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useEffect, useId } from 'react'
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
 import { SettingKey } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
@@ -14,6 +14,7 @@ export interface SelectorSettings {
   settings: SettingKey[]
   desc?: string
   activeTab?: 'Properties' | 'Editor'
+  isDisabledEditor?: boolean
   withSelectAll?: boolean
 }
 
@@ -22,6 +23,7 @@ const SelectorSettingsSidePanel = ({
   desc,
   settings,
   activeTab,
+  isDisabledEditor,
   withSelectAll,
 }: SelectorSettings) => {
   const [properties, editor] = ['Properties', 'Editor']
@@ -29,7 +31,7 @@ const SelectorSettingsSidePanel = ({
     activeTabId: activeTab ?? properties,
     tabList: new Map([
       [properties, { name: properties }],
-      [editor, { name: editor, disabled: true }],
+      [editor, { name: editor, disabled: isDisabledEditor }],
     ]),
   })
   const settingsId = useId()

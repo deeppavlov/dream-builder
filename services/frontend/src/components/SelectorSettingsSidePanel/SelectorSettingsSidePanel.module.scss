@@ -24,5 +24,8 @@
   button {
     border-radius: 50%;
     padding: 12px;
+    path {
+      stroke: none;
+    }
   }
 }

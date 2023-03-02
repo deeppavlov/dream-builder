@@ -32,7 +32,7 @@ const useTabsManager = (
   }
 
   const handleTabSelect = (id: ActiveTabId) => {
-    const isDisabled = tabs.get(id)?.disabled
+    const isDisabled = tabs.get(id)?.disabled === true
     if (isDisabled) return
     setActiveTabId(id)
   }

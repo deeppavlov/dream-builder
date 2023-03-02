@@ -54,7 +54,7 @@ export const SettingsList = ({ id, settings, withSelectAll }: Props) => {
         </li>
       )}
       {list?.map(({ name, type, value, checked }, i) => (
-        <li className={s.field} key={name + i}>
+        <li className={cx('field', type === 'radio' && 'selectAll')} key={name + i}>
           {type === 'checkbox' && (
             <Checkbox
               label={name}

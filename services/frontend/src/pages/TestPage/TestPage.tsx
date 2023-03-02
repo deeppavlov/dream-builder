@@ -154,7 +154,7 @@ const mockTotalRes: TotalResourcesInterface = {
 }
 
 const mockResponseSelector: SelectorSettings = {
-  name: 'Tag-& Evaluation-based Selector',
+  name: 'Tag-& Evaluation-based Response Selector',
   settings: [
     {
       name: 'HIGH_PRIORITY_INTENTS',
@@ -740,7 +740,11 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockResponseSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Response Selector'
+                      isDisabledEditor
+                      {...mockResponseSelector}
+                    />
                   ),
                 })
               },
@@ -754,6 +758,8 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Rule-based Skill Selector'
+                      isDisabledEditor
                       {...mockRuleBasesSkillSelector}
                     />
                   ),
@@ -768,7 +774,10 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockSingleSkillSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Single Skill Selector'
+                      {...mockSingleSkillSelector}
+                    />
                   ),
                 })
               },
@@ -782,6 +791,7 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Multiple Skill Selector'
                       {...mockMultipleSkillSelector}
                       withSelectAll
                     />

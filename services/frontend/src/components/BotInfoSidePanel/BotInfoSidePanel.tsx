@@ -66,7 +66,6 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
       <div className={s.botInfoSidePanel}>
         <div className={s.header}>
           <span className={s.name}>{bot?.name}</span>
-          <SmallTag theme='version'>v{bot?.version}</SmallTag>
         </div>
         <div className={s.container}>
           <div className={s.main}>

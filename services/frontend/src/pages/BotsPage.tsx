@@ -116,6 +116,7 @@ export const BotsPage = () => {
               </Container>
             </Wrapper>
             <Wrapper
+              primary
               title='Your Virtual Assistants & Chatbots'
               amount={auth?.user && usersDistData?.length}
               showAll
@@ -191,7 +192,7 @@ export const BotsPage = () => {
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
               showAll
-              amount={assistantsData.length}
+              amount={assistantsData?.length}
               linkTo={RoutesList.botsAll}
               fitScreen>
               <Table>
@@ -234,7 +235,7 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper title='Your Virtual Assistants & Chatbots' primary>
               <Table
                 addButton={
                   <AddButton

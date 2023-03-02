@@ -25,7 +25,9 @@
   &.primary {
     border-color: $purple;
   }
-
+  &.skills {
+    border-color: $orange;
+  }
   .close {
     position: absolute;
     right: 12px;

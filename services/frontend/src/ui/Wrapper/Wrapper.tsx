@@ -15,6 +15,7 @@ interface WrapperProps {
   fitScreen?: boolean
   limiter?: boolean
   primary?: boolean
+  skills?: boolean
   children?: ReactNode
 }
 
@@ -30,6 +31,7 @@ export const Wrapper = ({
   fitScreen,
   limiter,
   primary,
+  skills,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   let cx = classNames.bind(s)
@@ -62,7 +64,8 @@ export const Wrapper = ({
             fullHeight && 'fullHeight',
             fitScreen && 'fitScreen',
             limiter && 'limiter',
-            primary && 'primary'
+            primary && 'primary',
+            skills && 'skills'
           )}>
           {closable && (
             <button onClick={onClose} className={s.close}>

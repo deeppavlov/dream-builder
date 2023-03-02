@@ -72,12 +72,11 @@ export const AssistantModal = () => {
   const handleCloneBtnClick = () => {
     handleSubmit(onFormSubmit)
   }
-
+  async function submit() {
+    const succeed = await handleSubmit(onFormSubmit)()
+    return succeed
+  }
   const handleSaveBtnClick = () => {
-    async function submit() {
-      const succeed = await handleSubmit(onFormSubmit)()
-      return succeed
-    }
     if (!isValid) return
     submit().then(() => {
       closeModal()
@@ -122,7 +121,11 @@ export const AssistantModal = () => {
         .invalidateQueries({ queryKey: 'usersAssistantDists' })
         .then(() => {
           navigate(`/${data?.name}`, {
-            state: { preview: false, distName: data?.name },
+            state: {
+              preview: false,
+              distName: data?.name,
+              displayName: data?.display_name,
+            },
           })
         })
     },

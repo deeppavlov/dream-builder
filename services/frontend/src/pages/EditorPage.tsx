@@ -100,15 +100,15 @@ export const EditorPage = () => {
           />
           <Main sidebar editor>
             {!listView ? (
-              <Wrapper>
+              <Wrapper skills>
                 <Container
                   display='grid'
                   gridTemplateColumns='repeat(auto-fill, minmax(280px, 1fr))'
                   height='auto'>
+                  {isDistsComponentsLoading && 'Loading...'}
                   {/* <AddButton /> */}
                   {skills?.map((skill: any, i: number) => {
-                    const dateCreated = '1234'
-                      // dateToUTC(skill?.metadata?.date_created)
+                    const dateCreated = dateToUTC(skill?.date_created)
                     return (
                       <SkillCard
                         key={i}
@@ -116,15 +116,15 @@ export const EditorPage = () => {
                         big
                         author={auth?.user?.name!}
                         authorImg={auth?.user?.picture!}
-                        name={skill?.metadata?.display_name}
+                        name={skill?.display_name}
                         dateCreated={dateCreated}
-                        desc={skill?.metadata?.description}
-                        version={skill?.metadata?.version}
-                        ram={skill?.metadata?.ram_usage}
-                        gpu={skill?.metadata?.gpu_usage}
-                        executionTime={skill?.metadata?.execution_time}
-                        skillType={skill?.metadata?.type}
-                        botName={skill?.metadata?.author}
+                        desc={skill?.description}
+                        version={skill?.version}
+                        ram={skill?.ram_usage}
+                        gpu={skill?.gpu_usage}
+                        executionTime={skill?.execution_time}
+                        skillType={skill?.component_type}
+                        botName={skill?.author}
                       />
                     )
                   })}
@@ -133,6 +133,7 @@ export const EditorPage = () => {
             ) : (
               <Wrapper fullHeight>
                 <Container>
+                  {isDistsComponentsLoading && 'Loading...'}
                   <Table
                     addButton={
                       <AddButton
@@ -140,22 +141,22 @@ export const EditorPage = () => {
                         disabled={auth?.user === null}
                       />
                     }>
-                    {skillListData?.map((skill: any, i: number) => {
-                      const dateCreated = dateToUTC(skill.metadata.date_created)
+                    {skills?.map((skill: any, i: number) => {
+                      const dateCreated = dateToUTC(skill?.date_created)
                       return (
                         <SkillListItem
                           key={i}
                           author={auth?.user?.name!}
                           authorImg={auth?.user?.picture!}
-                          name={skill.metadata.display_name}
+                          name={skill?.display_name}
                           dateCreated={dateCreated}
-                          desc={skill.metadata.description}
-                          version={skill.metadata.version}
-                          ram={skill.metadata.ram_usage}
-                          gpu={skill.metadata.gpu_usage}
-                          executionTime={skill.metadata.execution_time}
-                          skillType={skill.metadata.type}
-                          botName={skill.metadata.author}
+                          desc={skill?.description}
+                          version={skill?.version}
+                          ram={skill?.ram_usage}
+                          gpu={skill?.gpu_usage}
+                          executionTime={skill?.execution_time}
+                          skillType={skill?.component_type}
+                          botName={skill?.author}
                         />
                       )
                     })}
@@ -173,6 +174,7 @@ export const EditorPage = () => {
             title={displayName}
           />
           <Main sidebar editor draggable>
+            {isDistsComponentsLoading && 'Loading...'}
             <Annotators annotators={annotators} />
             <SkillSelector skillSelectors={skillSelectors} />
             <Skills skills={skills} />

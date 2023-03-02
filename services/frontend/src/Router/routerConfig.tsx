@@ -58,7 +58,7 @@ export const routeConfig: CustomRouteConfig[] = [
     path: ':name',
     element: <EditorPage />,
     handle: (
-      <Link to={RoutesList.start}>Your Virtual Assistants & Chatbots</Link>
+      <Link to={RoutesList.start}>Virtual Assistants & Chatbots</Link>
     ),
   },
   {

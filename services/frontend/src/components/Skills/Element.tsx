@@ -6,6 +6,7 @@ import { Skill } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 
 interface SkillProps {
   item: Skill
@@ -18,29 +19,30 @@ export const Element: FC<SkillProps> = ({ item }) => {
   }
   const { isPreview } = usePreview()
   const cx = classNames.bind(s)
-  const title = capitalizeTitle(item.display_name)
 
   return (
     <div className={cx('element', disabled && 'disabled')}>
       <div className={s.left}>
         <div className={s.top}>
-          <img src={`./src/assets/icons/${item.type}.svg`} className={s.icon} />
-          <p className={s.name}>{title || 'some_skill'}</p>
+          <img
+            src={`./src/assets/icons/${
+              componentTypeMap[item.component_type]
+            }.svg`}
+            className={s.icon}
+          />
+          <p className={s.name}>{item?.display_name || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {item.ram_usage +
-              ' RAM ' +
-              '| ' +
-              item.execution_time +
-              ' s Time' || '0.0 GB RAM | 0.00 s '}
+            {item.ram_usage + ' RAM ' + '| ' + item.execution_time + 's Time' ||
+              '0.0 GB RAM | 0.00 s '}
           </p>
         </div>
       </div>
       <div className={s.right}>
         <Kebab
           item={{
-            typeItem: title,
+            typeItem: item.display_name,
             data: item, // Data of Element
           }}
           dataFor='customizable_skill'

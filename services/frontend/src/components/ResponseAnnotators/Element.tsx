@@ -1,10 +1,10 @@
 import { FC, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Annotator } from '../../types/types'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 
 interface ResponseAnnotatorsProps {
   item: Annotator
@@ -15,15 +15,17 @@ export const Element: FC<ResponseAnnotatorsProps> = ({ item }) => {
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
-  const title = capitalizeTitle(item.display_name)
   const cx = classNames.bind(s)
 
   return (
     <div className={cx('element', !disabled && 'disabled')}>
       <div className={s.left}>
         <div className={s.top}>
-          <img src={`./src/assets/icons/${item.type}.svg`} className={s.icon} />
-          <p className={s.name}>{title}</p>
+          <img
+            src={`./src/assets/icons/${modelTypeMap[item?.model_type]}.svg`}
+            className={s.icon}
+          />
+          <p className={s.name}>{item?.display_name}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>

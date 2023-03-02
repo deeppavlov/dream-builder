@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const Annotators: React.FC<Props> = ({ annotators }) => {
+  
   return (
     <div className={s.stack}>
       <div className={s.header}>

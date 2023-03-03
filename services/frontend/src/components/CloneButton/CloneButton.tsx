@@ -16,7 +16,7 @@ export const CloneButton: FC<Props> = ({ amount, handler }) => {
   return (
     <div className={s.clone}>
       <Button
-        theme={isPreview ? 'secondary' : 'primary'}
+        theme={isPreview ? 'primary' : 'secondary'}
         small
         withIcon
         props={{ onClick: handler }}>

@@ -12,46 +12,7 @@
   overflow: hidden;
   @include bot-card_behavior;
 
-  &_type_your {
-    min-width: 350px;
-    max-width: 350px;
-    min-height: 322px;
-    max-height: 322px;
-  }
-
-  &_type_your &__name {
-    background-color: $purple;
-    color: $text4;
-  }
-
-  &_type_your &__desc {
-    max-height: 88px;
-    -webkit-line-clamp: 4;
-  }
-
-  &_type_your &__block {
-    gap: 8px;
-  }
-
-  &_small {
-    min-width: 280px;
-    max-width: 280px;
-    min-height: 344px;
-    max-height: 344px;
-  }
-
-  &_big {
-    min-height: 300px;
-    max-height: 300px;
-    max-width: 344px;
-  }
-
-  &_small &__desc {
-    max-height: 110px;
-    -webkit-line-clamp: 5;
-  }
-
-  &__name {
+  .name {
     @include t4;
     display: block;
     max-height: 40px;
@@ -66,7 +27,7 @@
     text-overflow: ellipsis;
   }
 
-  &__author {
+  .author {
     @include t4;
     display: flex;
     align-items: center;
@@ -80,31 +41,27 @@
     }
   }
 
-  &__block {
+  .block {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 0 16px;
   }
 
-  &__desc {
-    @include b3;
+  .desc {
     color: $text2;
     max-height: 44px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include b3;
+    @include hide_text;
   }
 
-  &__dateAndVersion {
+  .dateAndVersion {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  &__date {
+  .date {
     @include b3;
     display: flex;
     align-items: center;
@@ -117,16 +74,22 @@
     }
   }
 
-  &__resources {
+  .resources {
     padding: 0 16px;
   }
 
-  &__btns {
+  .btns {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 4px 16px 16px 16px;
     gap: 12px;
+    .container {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      flex-direction: row;
+    }
   }
 }
 
@@ -139,4 +102,37 @@
 .tooltips {
   @include tooltip;
   @include tooltip_for_description;
+}
+.your {
+  min-width: 350px;
+  max-width: 350px;
+  min-height: 322px;
+  max-height: 322px;
+  .name {
+    background-color: $purple;
+    color: $text4;
+  }
+  .desc {
+    max-height: 88px;
+    height: 88px;
+    -webkit-line-clamp: 4;
+  }
+  .block {
+    gap: 8px;
+  }
+}
+.small {
+  min-width: 280px;
+  max-width: 280px;
+  min-height: 344px;
+  max-height: 344px;
+  .desc {
+    max-height: 110px;
+    -webkit-line-clamp: 5;
+  }
+}
+.big {
+  min-height: 300px;
+  max-height: 300px;
+  max-width: 344px;
 }

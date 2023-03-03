@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { ReactComponent as Close } from '@assets/icons/close.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import NotificationCard, {
   NotificationCardProps,
 } from '../NotificationCard/NotificationCard'
+import { trigger } from '../../utils/events'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import s from './NotificationsSidePanel.module.scss'
 
 const notificMock: NotificationCardProps[] = [
@@ -36,20 +37,13 @@ const notificMock: NotificationCardProps[] = [
   },
 ]
 
-const NotificationsSidePanel = ({
-  isOpen,
-  setIsOpen,
-  position,
-}: SidePanelProps) => {
+const NotificationsSidePanel = () => {
   const [noteIsOpen, setNoteIsOpen] = useState(true)
-  const handleCloseBtnClick = () => setIsOpen(false)
+  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='Notifications'>
+    <>
+      <SidePanelHeader>Notifications</SidePanelHeader>
       <div className={s.notificationsSidePanel}>
         <div className={`${s.note} ${!noteIsOpen ? s.note_hidden : ''}`}>
           <span className={s.note__name}>Please note:</span> if the score shows{' '}
@@ -79,7 +73,7 @@ const NotificationsSidePanel = ({
           </Button>
         </div>
       </div>
-    </BaseSidePanel>
+    </>
   )
 }
 

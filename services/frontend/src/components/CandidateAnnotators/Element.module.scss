@@ -5,7 +5,7 @@
   justify-content: space-between;
   padding: 12px;
   height: fit-content;
-    background-color: $bcgrnd1;
+  background-color: $bcgrnd1;
   .left {
     cursor: pointer;
     display: flex;
@@ -25,6 +25,10 @@
         @include t3;
       }
     }
+  }
+  .disabled {
+    opacity: 0.3;
+    background: #f0f0f3;
   }
   .right {
     cursor: pointer;

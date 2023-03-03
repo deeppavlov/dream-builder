@@ -2,15 +2,16 @@ import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import s from './Banner.module.scss'
 
 interface BannerProps {
-  name: string
+  name?: string
 }
 
 export const Banner = ({ name }: BannerProps) => {
   return (
     <>
-      <Wrapper closable>
+      <Wrapper id='start-welcome-banner' closable>
         <h5 className={s.title}>
-          {name.split(' ')[0]}, welcome to
+          {!name && 'Welcome to'}
+          {name && name.split(' ')[0] + ', welcome to'}
           <span className={s.accent_text}> Dream Builder</span> Console!
         </h5>
         <ul>

@@ -25,3 +25,12 @@
     align-self: flex-end;
   }
 }
+
+.name {
+  @include t3;
+  margin-bottom: -8px;
+}
+
+.add-faq {
+  padding: 8px 12px;
+}

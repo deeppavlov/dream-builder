@@ -1,3 +1,4 @@
+import { FC, ReactNode } from 'react'
 import s from './RadioButton.module.scss'
 
 interface RadioButtonProps {
@@ -6,20 +7,32 @@ interface RadioButtonProps {
   id: string
   htmlFor: string
   checked?: boolean
+  disabled?: boolean
+  props?: React.InputHTMLAttributes<HTMLInputElement>
 }
-export const RadioButton: React.FC<RadioButtonProps> = ({
+export const RadioButton: FC<RadioButtonProps> = ({
   children,
   name,
   id,
   htmlFor,
   checked,
+  disabled,
+  props,
 }) => {
   return (
-    <div className={s.radio}>
-      <input checked={checked} id={id} name={name} type='radio' />
-      <label htmlFor={htmlFor} className={s.radio_label}>
-        {children}
-      </label>
-    </div>
+    <label htmlFor={htmlFor} className={s.label}>
+      <input
+        id={id}
+        name={name}
+        type='radio'
+        disabled={disabled}
+        defaultChecked={checked}
+        checked={checked}
+        value={children?.toString()}
+        className={s.radio}
+        {...props}
+      />
+      {children}
+    </label>
   )
 }

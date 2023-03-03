@@ -1,35 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
-import { RoutesList } from './RoutesList'
-import { BotsAllPage } from '../pages/BotsAllPage'
-import { EditorPage } from '../pages/EditorPage'
-import { BotsPage } from '../pages/BotsPage'
-import { SkillsAllPage } from '../pages/SkillsAllPage'
-import { SkillsPage } from '../pages/SkillsPage'
-import { StartPage } from '../pages/StartPage'
-import { TestPage } from '../pages/TestPage/TestPage'
-import { DraftPage } from '../pages/DraftPage'
-import { GoogleAuthPage } from '../pages/GoogleAuthPage'
-import { PrivateRoute } from './PrivateRoute'
+import { createBrowserRouter } from 'react-router-dom'
+import { routeConfig } from './routerConfig'
 
-export const Router = () => {
-  return (
-    <Routes>
-      <Route path={RoutesList.draft} element={<DraftPage />} />
-      <Route path={RoutesList.start} element={<StartPage />} />
-      <Route path={RoutesList.bots} element={<BotsPage />} />
-      <Route path={RoutesList.botsAll} element={<BotsAllPage />} />
-      <Route path={RoutesList.skills} element={<SkillsPage />} />
-      <Route path={RoutesList.skillsAll} element={<SkillsAllPage />} />
-      <Route
-        path={':name'}
-        element={
-          <PrivateRoute>
-            <EditorPage />
-          </PrivateRoute>
-        }
-      />
-      <Route path={RoutesList.test} element={<TestPage />} />
-      <Route path={RoutesList.code} element={<GoogleAuthPage />} />
-    </Routes>
-  )
-}
+export const router = createBrowserRouter(routeConfig)

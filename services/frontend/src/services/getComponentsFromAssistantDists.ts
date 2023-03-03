@@ -1,4 +1,4 @@
-import { privateApi } from "./axiosConfig"
+import { privateApi } from './axiosConfig'
 
 export async function getComponentsFromAssistantDists(distName: string) {
   try {

@@ -15,7 +15,7 @@ interface StackProps {
 
 export const Stack: React.FC<StackProps> = ({ type, data }) => {
   let cx = classNames.bind(s)
-  console.log(type)
+
   return (
     type && (
       <div className={cx('stack', type)}>

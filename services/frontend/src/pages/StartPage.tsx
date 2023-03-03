@@ -1,11 +1,12 @@
 import { Topbar } from '../components/Topbar/Topbar'
 import { Main } from '../components/Main/Main'
+import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
-import { useAuth } from '../Router/AuthProvider'
-import { RoutesList } from '../Router/RoutesList'
+import { useAuth } from '../context/AuthProvider'
+import { RoutesList } from '../router/RoutesList'
 
 export const StartPage = () => {
   const auth = useAuth()
@@ -15,13 +16,14 @@ export const StartPage = () => {
     <>
       <Topbar />
       <Main>
-        {user && <Banner name={user.name} />}
-        <Wrapper>
+        {user && <Banner name={user?.name} />}
+        <AccessTokensBanner />
+        {/* <Wrapper>
           <Container>
             <Card
               title='Virtual Assistants'
               img='VA'
-              link={RoutesList.bots}
+              link={RoutesList.start}
               btnTitle='Go to Virtual Assistants'
               text='Start your journey with constructing your virtual assistant or chatbot from scratch or clone one of the virtual assistants and chatbots published in Dream Builder.'
             />
@@ -34,7 +36,7 @@ export const StartPage = () => {
               buttonColor='purple'
             />
           </Container>
-        </Wrapper>
+        </Wrapper> */}
       </Main>
     </>
   )

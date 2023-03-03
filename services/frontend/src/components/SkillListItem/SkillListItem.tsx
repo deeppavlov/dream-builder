@@ -1,12 +1,14 @@
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
+import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
-import s from './SkillListItem.module.scss'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps extends SkillInfoInterface {
   checkbox?: boolean
@@ -16,6 +18,7 @@ interface SkillListItemProps extends SkillInfoInterface {
 export const SkillListItem = ({
   name,
   author,
+  authorImg,
   desc,
   dateCreated,
   version,
@@ -32,6 +35,7 @@ export const SkillListItem = ({
   const skill = {
     name,
     author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -44,19 +48,24 @@ export const SkillListItem = ({
   }
 
   const handleSkillListItemClick = () => {
-    trigger('SkillSidePanel', skill)
+    trigger(BASE_SP_EVENT, {
+      children: <SkillSidePanel key={skill.name} skill={skill} />,
+    })
   }
 
   const handleAddBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', skill)
+    trigger('SkillModal', {
+      action: 'create',
+      parent: skill,
+    })
   }
 
   return (
     <tr className={s.tr} onClick={handleSkillListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
-          <CheckBox />
+          <Checkbox />
         </td>
       )}
       <td className={s.td}>
@@ -71,7 +80,7 @@ export const SkillListItem = ({
         <div className={s.type}>
           <img
             className={s.typeLogo}
-            src={`./src/assets/icons/${skillType}.svg`}
+            src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
           />
           <p className={cx('typeText', skillType)}>
             {skillType || 'Type of Skill'}
@@ -90,11 +99,6 @@ export const SkillListItem = ({
             delayShow={500}
           />
           {desc || 'Lorem  '}
-        </div>
-      </td>
-      <td className={s.td}>
-        <div className={s.version}>
-          <SmallTag theme='version'>{'v' + version ?? 'v.0.01'}</SmallTag>
         </div>
       </td>
       <td className={s.td}>

@@ -1,6 +1,8 @@
 import { ReactComponent as Icon } from '../../../assets/icons/params.svg'
 import { TotalResourcesInterface } from '../../../types/types'
 import { trigger } from '../../../utils/events'
+import { BASE_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
+import ResourcesSidePanel from '../../ResourcesSidePanel/ResourcesSidePanel'
 import s from './Resources.module.scss'
 
 export const Resources = () => {
@@ -19,7 +21,9 @@ export const Resources = () => {
         space: '7.0 GB',
       },
     }
-    trigger('ResourcesSidePanel', totalRes)
+    trigger(BASE_SP_EVENT, {
+      children: <ResourcesSidePanel resources={totalRes} />,
+    })
   }
 
   return (

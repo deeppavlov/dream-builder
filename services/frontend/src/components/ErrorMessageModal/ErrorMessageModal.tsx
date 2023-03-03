@@ -29,7 +29,8 @@ export const ErrorMessageModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={cx('errorMessageModal')}>
-        <h4>Error: {msg}</h4>
+        <h4>Error:</h4>
+        <pre>{msg}</pre>
         <div className={cx('btns')}>
           <Button
             theme='primary'

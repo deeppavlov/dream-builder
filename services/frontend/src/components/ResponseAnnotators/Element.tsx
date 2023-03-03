@@ -1,27 +1,36 @@
-import { useState } from 'react'
-import BadWordsLogo from '../../assets/icons/bad_words.svg'
+import { FC, useState } from 'react'
+import classNames from 'classnames/bind'
+import { Annotator } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './Element.module.scss'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 
-export const Element = ({ item, title, ...props }: any) => {
-  const [disabled, setDisabled] = useState(true)
+interface ResponseAnnotatorsProps {
+  item: Annotator
+}
+
+export const Element: FC<ResponseAnnotatorsProps> = ({ item }) => {
+  const [disabled, setDisabled] = useState<boolean>(true)
   const sliderHandler = () => {
-    setDisabled(!disabled)
+    setDisabled(disabled => !disabled)
   }
+  const cx = classNames.bind(s)
+
   return (
-    <div
-      style={
-        !disabled ? { ...props, opacity: '0.3', background: '#f0f0f3' } : null
-      }
-      className={s.element}>
+    <div className={cx('element', !disabled && 'disabled')}>
       <div className={s.left}>
         <div className={s.top}>
-          <img src={`./src/assets/icons/${item.type}.svg`} className={s.icon} />
-          <p className={s.name}>{title}</p>
+          <img
+            src={`./src/assets/icons/${modelTypeMap[item?.model_type]}.svg`}
+            className={s.icon}
+          />
+          <p className={s.name}>{item?.display_name}</p>
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>2.0 GB RAM | 0.0 GB GPU</p>
+          <p className={s.data}>
+            {item?.ram_usage + ' RAM | ' + item?.gpu_usage + ' GPU'}
+          </p>
         </div>
       </div>
       <div className={s.right}>

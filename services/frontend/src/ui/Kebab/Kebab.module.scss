@@ -14,3 +14,15 @@
   border-radius: 50%;
   background-color: #000;
 }
+.disabled {
+  .dots {
+    @include disabled;
+  }
+  @include disabled;
+}
+.row {
+  flex-direction: row;
+}
+.column {
+  flex-direction: column;
+}

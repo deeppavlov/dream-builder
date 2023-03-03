@@ -1,12 +1,18 @@
+import { FC } from 'react'
 import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import { countResources } from '../../utils/countResources'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
+import { Annotator } from '../../types/types'
 import s from './CandidateAnnotators.module.scss'
 
-export const CandidateAnnotators = ({ candidateAnnotators }: any) => {
+interface Props {
+  candidateAnnotators: [Annotator]
+}
+
+export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -18,22 +24,22 @@ export const CandidateAnnotators = ({ candidateAnnotators }: any) => {
           <Kebab disabled dataFor='all_annotators' />
         </div>
         <div className={s.bottom}>
-          <p className={s.data}>7.356 GB RAM | 0.0 GB GPU</p>
+          <p className={s.data}>
+            {(candidateAnnotators &&
+              countResources(candidateAnnotators, 'ram_usage') +
+                ' | ' +
+                countResources(candidateAnnotators, 'gpu_usage')) ||
+              '0.00 GB RAM | 0.00 GB GPU'}
+          </p>
         </div>
       </div>
-      <div className={s.body}></div>
+      <div className={s.body} />
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
-          {candidateAnnotators?.map((item: string, i: number) => {
-            return (
-              <Element
-                key={i}
-                title={capitalizeTitle(item.display_name)}
-                item={item}
-              />
-            )
+          {candidateAnnotators?.map((item: Annotator, i: number) => {
+            return <Element key={i} item={item} />
           })}
         </Accordion>
       </div>

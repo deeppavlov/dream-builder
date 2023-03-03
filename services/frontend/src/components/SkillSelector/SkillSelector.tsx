@@ -1,12 +1,34 @@
+import { FC } from 'react'
 import SkillSelectorLogo from '../../assets/icons/skill_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { Skill } from './Skill'
+import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSelector.module.scss'
 
-export const SkillSelector = ({ skillSelectors }: any) => {
+type SkillSelector = {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
+}
+
+interface Props {
+  skillSelectors: [SkillSelector]
+}
+export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
+  const formSubmitHandler = (e: React.FormEvent) => {
+    e.preventDefault()
+  }
+  const { isPreview } = usePreview()
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -18,69 +40,35 @@ export const SkillSelector = ({ skillSelectors }: any) => {
         </div>
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
-      <form
-        onSubmit={e => {
-          e.preventDefault()
-        }}>
-        <Accordion title='Customizable'></Accordion>
+      <form onSubmit={formSubmitHandler}>
+        <Accordion title='Customizable' />
         <Accordion title='Non-customizable'>
-          <div
-            style={{
-              backgroundColor: '#fff',
-              width: '100%',
-              padding: '0px 12px',
-            }}>
+          <div className={s.element}>
             {!skillSelectors?.length ? (
               <RadioButton
                 id={'All Skills'}
                 name='skill_selector'
                 htmlFor={'All Skills'}
-                checked={true}>
+                checked={true}
+                disabled={isPreview}>
                 <Skill title={'All Skills'} />
               </RadioButton>
             ) : (
-              skillSelectors?.map((item: string, i: number) => {
+              skillSelectors?.map((item: SkillSelector, i: number) => {
                 return (
                   <RadioButton
                     key={i}
-                    id={item}
+                    id={item?.name}
                     name='skill_selector'
-                    htmlFor={item}>
-                    <Skill title={capitalizeTitle(item)} />
+                    checked={skillSelectors?.length === 1}
+                    htmlFor={item?.display_name}>
+                    <Skill title={item?.display_name} />
                   </RadioButton>
                 )
               })
             )}
-            {/* <RadioButton
-              id='rule_based'
-              name='skill_selector'
-              htmlFor='rule_based'>
-              <Skill title='Rule Based' />
-            </RadioButton>
-            <RadioButton
-              id='single_skill'
-              name='skill_selector'
-              htmlFor='single_skill'>
-              <Skill title='Single Skill' />
-            </RadioButton>
-            <RadioButton
-              id='multiple_skill'
-              name='skill_selector'
-              htmlFor='multiple_skill'>
-              <Skill title='Multiple Skill' />
-            </RadioButton> */}
           </div>
         </Accordion>
-        {/* 
-          <div style={{ padding: '0px 12px' }}>
-            <RadioButton
-              id='all_skill'
-              name='skill_selector'
-              htmlFor='all_skill'>
-              <Skill title='All Skill' />
-            </RadioButton>
-          </div>
-        */}
       </form>
     </div>
   )

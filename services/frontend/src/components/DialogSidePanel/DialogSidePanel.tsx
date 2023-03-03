@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
+import { ReactComponent as DownloadDialogIcon } from '@assets/icons/download_dialog.svg'
 import DialogButton from '../DialogButton/DialogButton'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { trigger } from '../../utils/events'
 import s from './DialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
@@ -13,30 +15,25 @@ interface ChatMessage {
   byBot: boolean
   text: string
 }
-interface props extends SidePanelProps {
+interface props {
   error?: boolean
   start?: boolean
 }
 
-const DialogSidePanel = ({
-  isOpen,
-  setIsOpen,
-  position,
-  error,
-  start,
-}: props) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+const DialogSidePanel = ({ error, start }: props) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [chatHistory, setChatHistory] = useState<ChatMessage[] | []>([
     { byBot: false, text: 'Hello!' },
-    { byBot: true, text: 'Hi! This is a Dream Socialbot.   How are you?' },
+    { byBot: true, text: 'Hi! This is a Dream Socialbot. How are you?' },
   ])
   const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
   const isVoiceChat = chatType === VOICE_CHAT_TYPE
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleChatTypeBtn = (type: ChatType) => setChatType(type)
+  const handleTypeBtnClick = (type: ChatType) => setChatType(type)
+
   const handleSubmit = (e: React.MouseEvent) => {
     const userMessage = textAreaRef.current?.value
     if (!textAreaRef.current) return
@@ -45,15 +42,16 @@ const DialogSidePanel = ({
     setChatHistory([...chatHistory, ...[{ byBot: false, text: userMessage! }]])
     textAreaRef.current.value = ''
   }
+
   const handleStartBtnClick = () => setIsFirstTest(false)
-  const handleGoBackBtnClick = () => setIsOpen(false)
+
+  const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+
+  const handleDownloadBtnClick = () => {}
 
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='Dialog'>
+    <>
+      <SidePanelHeader>Dialog</SidePanelHeader>
       <div
         className={`${s.dialogSidePanel} ${
           isFirstTest && !isError && s.dialogSidePanel_start
@@ -103,9 +101,14 @@ const DialogSidePanel = ({
             <div className={s.dialogSidePanel__controls}>
               <DialogButton
                 active={isTextChat}
-                onClick={() => handleChatTypeBtn(TEXT_CHAT_TYPE)}>
+                onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}>
                 <DialogTextIcon />
               </DialogButton>
+              <button
+                className={s.dialogSidePanel__control}
+                onClick={handleDownloadBtnClick}>
+                <DownloadDialogIcon />
+              </button>
             </div>
             <textarea
               ref={textAreaRef}
@@ -121,7 +124,7 @@ const DialogSidePanel = ({
           </>
         )}
       </div>
-    </BaseSidePanel>
+    </>
   )
 }
 

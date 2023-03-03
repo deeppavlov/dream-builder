@@ -1,29 +1,48 @@
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
+import { useAuth } from '../../context/AuthProvider'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
-import { useAuth } from '../../Router/AuthProvider'
-import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
-import { Notifications } from './components/Notifications'
 import { Display } from './components/Display'
-import { History } from './components/History'
 import { Test } from './components/Test'
-import { Resources } from './components/Resources'
+import { trigger } from '../../utils/events'
 import s from './Topbar.module.scss'
+import { CloneButton } from '../CloneButton/CloneButton'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: () => void
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
+  title?: string
+  viewChanger?: boolean
+  tab?: 'Architecture' | 'Skills'
+  name?: string
 }
 
-export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
+export const Topbar = ({
+  type,
+  viewHandler,
+  innerRef,
+  title,
+  viewChanger,
+  tab,
+  name,
+}: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
   let cx = classNames.bind(s)
 
+  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (!user) {
+      trigger('SignInModal', {})
+      return
+    }
+    trigger('AssistantModal', { action: 'clone', bot: name })
+  }
   switch (type) {
     case 'main':
       return (
@@ -51,12 +70,11 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
           <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu type='editor' />
             <div className={s.logo_area}>
-              <Breadcrumbs />
+              <Breadcrumbs tab={tab}>{title}</Breadcrumbs>
             </div>
+            <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>
-              <History />
-              <Resources />
-              <Notifications />
+              {viewChanger && <Display viewHandler={viewHandler} />}
               <Test />
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
@@ -78,8 +96,7 @@ export const Topbar = ({ type, viewHandler, innerRef }: TopbarProps) => {
     <div className={s.topbar} ref={innerRef}>
       <Menu type='main' />
       <div className={s.logo_area}>
-        <span className={s.logo} />
-        <h3>Dream&nbsp;Builder</h3>
+        <Breadcrumbs />
       </div>
       <div className={s.btns_area}>
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}

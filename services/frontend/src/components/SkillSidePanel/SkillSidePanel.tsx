@@ -1,97 +1,113 @@
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import classNames from 'classnames/bind'
 import { ReactComponent as SkillFallbackIcon } from '../../assets/icons/fallbacks.svg'
 import { ReactComponent as SkillScriptIcon } from '@assets/icons/skill_script.svg'
 import { ReactComponent as SkillRetrievalIcon } from '@assets/icons/skill_retrieval.svg'
+import { ReactComponent as ForkIcon } from '@assets/icons/fork.svg'
+import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import s from './SkillSidePanel.module.scss'
 import { useEffect, useState } from 'react'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { SkillInfoInterface } from '../../types/types'
 import ReactTooltip from 'react-tooltip'
+import useTabsManager from '../../hooks/useTabsManager'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { getStyleType } from '../../utils/getStyleType'
+import { usePreview } from '../../context/PreviewProvider'
+import s from './SkillSidePanel.module.scss'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 
-interface SkillSidePanelProps extends Partial<SidePanelProps> {
-  disabledMsg?: string
+interface Props {
+  skill: SkillInfoInterface
+  activeTab?: 'Properties' | 'Editor'
+  children?: React.ReactNode // Editor Tab element
 }
 
-const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
-  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
-  const [isOpen, setIsOpen] = useState(false)
-
-  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
-    setSkill(data.detail)
-    setIsOpen(!isOpen)
-  }
-
-  const handleAddSkillBtnClick = () => {
-    trigger('CreateSkillModal', skill)
-  }
-
-  useEffect(() => {
-    subscribe('SkillSidePanel', handleEventUpdate)
-
-    return () => unsubscribe('SkillSidePanel', handleEventUpdate)
-  }, [])
-
+const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
+  let cx = classNames.bind(s)
+  const [skill, setSkill] = useState<SkillInfoInterface>(propSkill)
+  const isEditor = children !== undefined
+  const [properties, editor] = ['Properties', 'Editor']
+  const [tabsInfo, setTabsInfo] = useTabsManager({
+    activeTabId: isEditor ? activeTab ?? properties : properties,
+    tabList: new Map(
+      isEditor
+        ? [
+            [properties, properties],
+            [editor, editor],
+          ]
+        : [[properties, properties]]
+    ),
+  })
+  const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+  const { isPreview } = usePreview()
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='Properties'>
-      <div className={`${s.skillSidePanel} ${s[`skillSidePanel_type_${skill?.skillType}`]}`}>
-        <div className={s.skillSidePanel__header}>
-          <span>{skill?.name}</span>
-        </div>
-        <div className={s.skillSidePanel__name}>
-          {skill?.skillType === 'retrieval' && <SkillRetrievalIcon />}
-          {skill?.skillType === 'fallbacks' && <SkillFallbackIcon />}
-          <span>{skill?.skillType}</span>
-        </div>
-        <p className={s.skillSidePanel__desc}>{skill?.desc}</p>
-        {/* <Tabs className={s.tabs}>
-          <TabList className={s.tabs__list}>
-            <Tab className={s.tabs__tab}>Uses</Tab>
-            <Tab className={s.tabs__tab} disabled>
-              Used by
-            </Tab>
-          </TabList>
-          <TabPanel className={s.tabs__panel}>
-            <div className={s.skillSidePanel__accordions}>
-              <Accordion title='Annotators' rounded> */}
-                {/* <div className={s['skillSidePanel__accordion-item']}>
-                  <SkillScriptIcon />
-                  DFF Program-Y Skill
-                </div>
-                <div className={s['skillSidePanel__accordion-item']}>
-                  <SkillScriptIcon />
-                  DFF Intent Responder Skill
-                </div>
-                <div className={s['skillSidePanel__accordion-item']}>
-                  <FallbackIcon /> Dummy Skill
-                </div> */}
-              {/* </Accordion>
-            </div>
-          </TabPanel>
-          <TabPanel className={s.tabs__panel}></TabPanel>
-        </Tabs> */}
-
-        <div className={s.skillSidePanel__btns}>
-          <div data-tip data-for='skill-add-interact' style={{ width: '100%' }}>
-            <Button
-              theme='primary'
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: handleAddSkillBtnClick,
-              }}>
-              Add Skill
-            </Button>
+    <>
+      <SidePanelHeader>
+        <ul role='tablist'>
+          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+            <li
+              role='tab'
+              key={id}
+              aria-selected={tabsInfo.activeTabId === id}
+              className={cx(isPreview && 'disabled')}
+              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}>
+              {name}
+            </li>
+          ))}
+        </ul>
+      </SidePanelHeader>
+      {tabsInfo.activeTabId === properties && (
+        <div role='tabpanel' className={s.properties}>
+          <div className={s.header}>
+            <span className={s.name}>{skill.name}</span>
+            <EditPencilIcon className={cx('edit-pencil')} data-disabled />
           </div>
-        </div>
+          <div className={cx('author')}>
+            <img src={skill.authorImg} alt='Author' />
+            <span>{skill.author}</span>
+          </div>
+          <ul className={cx('table')}>
+            <li className={cx('table-item')}>
+              <span className={cx('table-name')}>Forked from:</span>
+              <span className={cx('table-value')}>'--------'</span>
+            </li>
+            <li className={cx('table-item')}>
+              <span className={cx('table-name')}>Type:</span>
+              <span className={cx('table-value', `${skill.skillType}`)}>
+                <img
+                  className={s.typeLogo}
+                  src={`./src/assets/icons/${
+                    componentTypeMap[skill?.skillType]
+                  }.svg`}
+                />
+                <span>{skill.skillType}</span>
+              </span>
+            </li>
+          </ul>
+          <p className={s.desc}>{skill.desc}</p>
+          <div className={s.btns}>
+            <div className={s.fork}>
+              <Button theme='secondary'>
+                <ForkIcon />
+              </Button>
+            </div>
 
-        {disabledMsg && (
+            <div data-tip data-for='skill-add-interact'>
+              <Button
+                theme='secondary'
+                props={{
+                  // disabled: disabledMsg !== undefined,
+                  disabled: isPreview,
+                  onClick: handleAddSkillBtnClick,
+                }}>
+                Duplicate
+              </Button>
+            </div>
+          </div>
+          {/* {disabledMsg && (
           <ReactTooltip
             place='bottom'
             effect='solid'
@@ -101,9 +117,11 @@ const SkillSidePanel = ({ position, disabledMsg }: SkillSidePanelProps) => {
             id='skill-add-interact'>
             {disabledMsg}
           </ReactTooltip>
-        )}
-      </div>
-    </BaseSidePanel>
+        )} */}
+        </div>
+      )}
+      {children && tabsInfo.activeTabId === editor && children}
+    </>
   )
 }
 

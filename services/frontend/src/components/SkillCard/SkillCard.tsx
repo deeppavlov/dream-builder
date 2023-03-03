@@ -2,15 +2,18 @@ import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import Calendar from '../../assets/icons/calendar.svg'
 import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
-import { SmallTag } from '../SmallTag/SmallTag'
-import s from './SkillCard.module.scss'
 import Button from '../../ui/Button/Button'
 import { BotAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
-import { KebabButton } from '../../ui/KebabButton/KebabButton'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { useState } from 'react'
+import React, { FC, useState } from 'react'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import { usePreview } from '../../context/PreviewProvider'
+import { Kebab } from '../../ui/Kebab/Kebab'
+import s from './SkillCard.module.scss'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
@@ -19,11 +22,13 @@ export interface SkillCardProps extends SkillInfoInterface {
   disabledMsg?: string
 }
 
-export const SkillCard = ({
+export const SkillCard: FC<SkillCardProps> = ({
   type,
   name,
   desc,
   botName,
+  author,
+  authorImg,
   dateCreated,
   version,
   ram,
@@ -34,10 +39,12 @@ export const SkillCard = ({
   checkbox,
   big,
   disabledMsg,
-}: SkillCardProps) => {
+}) => {
   const skill = {
     name,
     botName,
+    author,
+    authorImg,
     desc,
     dateCreated,
     version,
@@ -47,47 +54,69 @@ export const SkillCard = ({
     executionTime,
     skillType,
   }
-  const [disabled, setDisabled] = useState(true)
+  const [disabled, setDisabled] = useState<boolean>(false)
   const ResValues = (): { name: string; value: string }[] =>
     type === 'public'
       ? [
           { name: 'RAM', value: ram },
           { name: 'GPU', value: gpu },
-          { name: 'Execution time', value: executionTime },
+          {
+            name: 'Execution time',
+            value: executionTime.split(' ')[0] + ' s',
+          },
         ]
       : [
           { name: 'RAM', value: ram },
-          { name: 'Execution time', value: executionTime },
+          { name: 'Execution time', value: executionTime + ' s' },
         ]
-  const sliderHandler = (e: MouseEvent) => {
+  const sliderHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
     setDisabled(disabled => !disabled)
   }
-  const handleSkillCardClick = (e: MouseEvent) => {
+  const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    trigger('SkillSidePanel', skill)
+    trigger(BASE_SP_EVENT, {
+      children: <SkillSidePanel key={skill.name} skill={skill} />,
+    })
   }
 
-  const handleAddSkillBtnClick = (e: MouseEvent) => {
+  const handleAddSkillBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
   }
 
+  const handleEditBtnClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    trigger('SkillPromptModal', { skill: skill })
+  }
+  const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+  const { isPreview } = usePreview()
   let cx = classNames.bind(s)
+
   return (
     <div
-      className={cx('card', `${type}Card`, big && 'bigCard')}
+      className={cx(
+        'card',
+        `${type}Card`,
+        big && 'bigCard',
+        disabled && 'disabled'
+      )}
       onClick={handleSkillCardClick}>
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>
-        {type == 'your' && <ToggleButton sliderHandler={sliderHandler} />}
+        {type == 'your' && (
+          <ToggleButton disabled={isPreview} sliderHandler={sliderHandler} />
+        )}
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
             <img
               className={s.typeLogo}
-              src={`./src/assets/icons/${skillType}.svg`}
+              src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
             />
             <p className={cx('typeText', skillType)}>
               {skillType ?? 'Type of Skill'}
@@ -116,7 +145,6 @@ export const SkillCard = ({
               <img className={s.icon} src={Calendar} />
               <p className={s.dateText}>{dateCreated ?? '27.10.2022'}</p>
             </div>
-            <SmallTag theme='version'>v{version || '0.0.0'}</SmallTag>
           </div>
         </div>
         <span className={s.separator} />
@@ -146,11 +174,30 @@ export const SkillCard = ({
                 data-tip
                 data-for='skill-edit-interact'
                 style={{ width: '100%' }}>
-                <Button theme='secondary' long small>
+                <Button
+                  theme='secondary'
+                  long
+                  small
+                  props={{
+                    onClick: handleEditBtnClick,
+                    disabled: isPreview,
+                  }}>
                   Edit
                 </Button>
               </div>
-              <KebabButton dataFor='customizable_skill' />
+              <Button
+                theme='secondary'
+                small
+                withIcon
+                props={{ onClick: handleKebabClick }}>
+                <Kebab
+                  dataFor='customizable_skill'
+                  item={{
+                    typeItem: name,
+                    data: skill, // Data of Element
+                  }}
+                />
+              </Button>
             </>
           )}
         </div>

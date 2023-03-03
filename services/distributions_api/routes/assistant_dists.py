@@ -342,12 +342,17 @@ async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")
-async def debug_template(template_file_path: str):
+async def debug_template(template_file_path: str, owner_address: str, dist_name: str):
     from services.distributions_api.utils.emailer import env
     from starlette.templating import _TemplateResponse
 
     template = env.get_template(f"{template_file_path}.html")
-    return _TemplateResponse(template, {"owner_address": 123, "dist_name": 123})
+    template_kwargs = {
+        "owner_address": owner_address,
+        "dist_name": dist_name,
+    }
+
+    return _TemplateResponse(template, template_kwargs)
 
 
 # @assistant_dists_router.get("/{dist_name}/components/{component_group}")

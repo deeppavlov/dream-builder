@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}New Publish request from {{ from_user }}{% endblock %}
+{% block title %}New Publish request from {{ owner_address }}{% endblock %}
 {% block content %}
     <p class="important">
-        New assistant dist "{{ dist_name }}" is waiting to be published. Review it now!
+        New assistant dist "{{ dist_name }}" from {{ owner_address }} is waiting to be published. Review it now!
     </p>
 {% endblock %}

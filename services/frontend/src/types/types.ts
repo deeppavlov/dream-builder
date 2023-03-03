@@ -30,9 +30,7 @@ export type PostDistParams = {
 
 export interface BotInfoInterface {
   name: string
-  routingName: string
   author: string
-  authorImg: string
   desc: string
   dateCreated: string
   version: string
@@ -123,7 +121,20 @@ export type SkillType =
   | 'script'
   | 'script_with_nns'
 
-export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+export interface SkillInfoInterface {
+  name: string
+  author: string
+  dateCreated: string
+  desc: string
+  version: string
+  ram: string
+  gpu: string
+  skillType: SkillType
+  space?: string
+  time?: string
+  botName?: string
+  executionTime?: string
+}
 
 export type StackType =
   | 'annotators'

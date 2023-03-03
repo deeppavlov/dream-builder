@@ -293,30 +293,6 @@ async def clone_dist(
 #     return _dist_to_distmodel(replacement)
 #
 #
-# @assistant_dists_router.post("/{dist_name}", status_code=status.HTTP_201_CREATED)
-# async def create_config(dist_name: str, configs: AssistantDistConfigsImport, token: str = Depends(verify_token)):
-#     """
-#     Initializes config attribute into dream_dist object. If config is empty it won't be saved in dream distribution
-#
-#     Args:
-#         dist_name: name of the distribution
-#         configs: json with config parameters. Example of json: { "name": name, "data": { "pipeline_conf": ...,
-#         "override": ..., ...}
-#         token:
-#     """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#
-#     for config_name, config_value in configs.data.items():
-#         if not config_value:
-#             continue
-#
-#         # for example, dream_dist.pipeline_conf = config.data.pipeline_conf
-#         setattr(dream_dist, config_name, config_value)
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)
-#
-#
 # @assistant_dists_router.get("/{dist_name}/{config_name}")
 # async def get_config_by_name(
 #     dist_name: str, config_name: DreamConfigLiteral, token: str = Depends(verify_token)
@@ -360,8 +336,17 @@ async def get_dist_components(dist_name: str):
 async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
 
-    emailer.send_publish_request(user["email"], dist.name)
+    emailer.send_publish_request_to_moderators(user["email"], dist.name)
     logger.info(f"Sent publish request")
+
+
+@assistant_dists_router.get("/templates/{template_file_path}")
+async def debug_template(template_file_path: str):
+    from services.distributions_api.utils.emailer import env
+    from starlette.templating import _TemplateResponse
+
+    template = env.get_template(f"{template_file_path}.html")
+    return _TemplateResponse(template, {"owner_address": 123, "dist_name": 123})
 
 
 # @assistant_dists_router.get("/{dist_name}/components/{component_group}")

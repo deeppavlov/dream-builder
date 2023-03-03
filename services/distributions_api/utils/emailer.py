@@ -25,13 +25,44 @@ class Emailer:
         self._server.starttls(context=self.context)
         self._server.login(self.user, self.password)
 
-    def send_publish_request(self, from_user: str, dist_name: str):
-        template = env.get_template("publish_request_email.html")
+    def send_publish_request_to_moderators(self, owner_address: str, dist_name: str) -> None:
+        """
+        Sends email to publisher mailbox notifying moderators about the pending distribution publish request
+
+        Args:
+            owner_address: distribution owner's address
+            dist_name: distribution name
+
+        Returns:
+            None
+        """
+        template = env.get_template("publish_request_to_moderators.html")
         msg = EmailMessage()
 
-        msg["Subject"] = f"Publish Request for {dist_name} from {from_user}"
+        msg["Subject"] = f"Publish Request for {dist_name} from {owner_address}"
         msg["From"] = self.user
         msg["To"] = "publisher@deepdream.builders"
-        msg.set_content(template.render(from_user=from_user, dist_name=dist_name), subtype="html")
+        msg.set_content(template.render(owner_address=owner_address, dist_name=dist_name), subtype="html")
+
+        self._server.send_message(msg)
+
+    def send_publish_request_to_owner(self, owner_address: str, dist_name: str) -> None:
+        """
+        Sends email to distribution owner's mailbox which notifies that their distribution publish request was created
+
+        Args:
+            owner_address: distribution owner's address
+            dist_name: distribution name
+
+        Returns:
+            None
+        """
+        template = env.get_template("send_publish_request_to_owner.html")
+        msg = EmailMessage()
+
+        msg["Subject"] = f"Publish Request for {dist_name} from you"
+        msg["From"] = self.user
+        msg["To"] = owner_address
+        msg.set_content(template.render(owner_address=owner_address, dist_name=dist_name), subtype="html")
 
         self._server.send_message(msg)

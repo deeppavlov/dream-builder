@@ -337,6 +337,7 @@ async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
 
     emailer.send_publish_request_to_moderators(user["email"], dist.name)
+    emailer.send_publish_request_to_owner(user["email"], dist_name)
     logger.info(f"Sent publish request")
 
 

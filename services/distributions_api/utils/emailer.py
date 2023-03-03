@@ -25,6 +25,15 @@ class Emailer:
         self._server.starttls(context=self.context)
         self._server.login(self.user, self.password)
 
+    def _send_message(self, msg, **kwargs):
+        try:
+            self._server.send_message(msg, **kwargs)
+        except smtplib.SMTPServerDisconnected:
+            self._server.login(self.user, self.password)
+            self._server.send_message(msg, **kwargs)
+        except Exception as e:
+            print(f"{type(e)}: {e}")
+
     def send_publish_request_to_moderators(self, owner_address: str, dist_name: str) -> None:
         """
         Sends email to publisher mailbox notifying moderators about the pending distribution publish request
@@ -44,7 +53,7 @@ class Emailer:
         msg["To"] = "publisher@deepdream.builders"
         msg.set_content(template.render(owner_address=owner_address, dist_name=dist_name), subtype="html")
 
-        self._server.send_message(msg)
+        self._send_message(msg)
 
     def send_publish_request_to_owner(self, owner_address: str, dist_name: str) -> None:
         """
@@ -57,7 +66,7 @@ class Emailer:
         Returns:
             None
         """
-        template = env.get_template("send_publish_request_to_owner.html")
+        template = env.get_template("publish_request_to_owner.html")
         msg = EmailMessage()
 
         msg["Subject"] = f"Publish Request for {dist_name} from you"
@@ -65,4 +74,4 @@ class Emailer:
         msg["To"] = owner_address
         msg.set_content(template.render(owner_address=owner_address, dist_name=dist_name), subtype="html")
 
-        self._server.send_message(msg)
+        self._send_message(msg)

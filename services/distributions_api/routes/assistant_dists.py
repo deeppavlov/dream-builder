@@ -350,7 +350,7 @@ async def clone_dist(
 
 
 @assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
-async def get_dist_components(dist_name: str, user: str = Depends(verify_token)):
+async def get_dist_components(dist_name: str):
     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
 
     return _pipeline_to_dist_component_response(dist.pipeline)

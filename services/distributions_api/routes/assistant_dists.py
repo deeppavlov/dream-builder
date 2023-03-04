@@ -2,19 +2,13 @@ import secrets
 from typing import List
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist, list_dists
-from deeppavlov_dreamtools.distconfigs.assistant_dists import (
-    DreamComposeDev,
-    DreamComposeOverride,
-    DreamComposeProxy,
-    DreamPipeline,
-)
 from deeppavlov_dreamtools.distconfigs.generics import Component
 from deeppavlov_dreamtools.distconfigs.pipeline import Pipeline
 from fastapi import APIRouter, status, Depends
 from fastapi.logger import logger
 
 from services.distributions_api.config import settings
-from services.distributions_api.const import DREAM_ROOT_PATH
+from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES
 from services.distributions_api.models import (
     AssistantDistModel,
     AssistantDistModelShort,
@@ -84,24 +78,24 @@ def _dist_to_dist_model(dream_dist: AssistantDist) -> AssistantDistModel:
     )
 
 
-def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
-    """Creates AssistantDist object from pydantic distribution object
-
-    Args:
-        dream_dist_model: AssistantDist object
-
-    Returns:
-        AssistantDist object
-    """
-    return AssistantDist(
-        dist_path=dream_dist_model.dist_path,
-        name=dream_dist_model.name,
-        dream_root=dream_dist_model.dream_root,
-        pipeline_conf=DreamPipeline(dream_dist_model.pipeline_conf),
-        compose_override=DreamComposeOverride(dream_dist_model.compose_override),
-        compose_dev=DreamComposeDev(dream_dist_model.compose_dev),
-        compose_proxy=DreamComposeProxy(dream_dist_model.compose_proxy),
-    )
+# def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
+#     """Creates AssistantDist object from pydantic distribution object
+#
+#     Args:
+#         dream_dist_model: AssistantDist object
+#
+#     Returns:
+#         AssistantDist object
+#     """
+#     return AssistantDist(
+#         dist_path=dream_dist_model.dist_path,
+#         name=dream_dist_model.name,
+#         dream_root=dream_dist_model.dream_root,
+#         pipeline_conf=DreamPipeline(dream_dist_model.pipeline_conf),
+#         compose_override=DreamComposeOverride(dream_dist_model.compose_override),
+#         compose_dev=DreamComposeDev(dream_dist_model.compose_dev),
+#         compose_proxy=DreamComposeProxy(dream_dist_model.compose_proxy),
+#     )
 
 
 def _component_to_component_short(component: Component) -> ComponentShort:
@@ -158,9 +152,13 @@ async def get_list_of_public_distributions() -> List[AssistantDistModelShort]:
     Lists public Dream distributions
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = [_dist_to_dist_model_short(dist) for dist in distributions if dist.name.split("_")[-1] != "private"]
+    valid_distributions = []
 
-    return distributions
+    for dist in distributions:
+        if dist.name.split("_")[-1] != "private" and dist.name not in INVISIBLE_DIST_NAMES:
+            valid_distributions.append(_dist_to_dist_model_short(dist))
+
+    return valid_distributions
 
 
 @assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
@@ -173,9 +171,13 @@ async def get_list_of_private_distributions(user: str = Depends(verify_token)) -
     -``token``: auth token
     """
     distributions = list_dists(DREAM_ROOT_PATH)
-    distributions = [_dist_to_dist_model_short(dist) for dist in distributions if dist.name.split("_")[-1] == "private"]
+    valid_distributions = []
 
-    return distributions
+    for dist in distributions:
+        if dist.name.split("_")[-1] == "private" and dist.name not in INVISIBLE_DIST_NAMES:
+            valid_distributions.append(_dist_to_dist_model_short(dist))
+
+    return valid_distributions
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)

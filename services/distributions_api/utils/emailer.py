@@ -4,10 +4,9 @@ from email.message import EmailMessage
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-
 env = Environment(
     loader=FileSystemLoader("services/distributions_api/templates"),
-    autoescape=select_autoescape()
+    autoescape=select_autoescape(),
 )
 
 

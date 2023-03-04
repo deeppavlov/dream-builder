@@ -10,7 +10,6 @@ from deeppavlov_dreamtools.distconfigs.assistant_dists import (
 from services.distributions_api.const import (
     CONFIGNAME_DREAMOBJECT,
     DREAM_ROOT_PATH,
-    DreamConfigLiteral,
     CONFIGNAME_CONFIGOBJECT,
 )
 

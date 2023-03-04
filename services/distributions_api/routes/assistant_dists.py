@@ -8,7 +8,7 @@ from fastapi import APIRouter, status, Depends
 from fastapi.logger import logger
 
 from services.distributions_api.config import settings
-from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES
+from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES, TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.models import (
     AssistantDistModel,
     AssistantDistModelShort,
@@ -129,7 +129,7 @@ def _pipeline_to_dist_component_response(pipeline: Pipeline) -> DistComponentsRe
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDistModelShort:
     """
-    Creates new distribution
+    Creates new distribution from base template
 
     **Payload args**
 
@@ -137,7 +137,7 @@ async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDis
 
     -``description``: new assistant dist description
     """
-    dream_dist = AssistantDist.from_name("dream", DREAM_ROOT_PATH)
+    dream_dist = AssistantDist.from_name(TEMPLATE_DIST_PROMPT_BASED, DREAM_ROOT_PATH)
 
     new_name = _generate_name_from_display_name(payload.display_name)
     new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)

@@ -8,10 +8,11 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { SettingsList } from '../SettingsList/SettingsList'
 import s from './SelectorSettingsSidePanel.module.scss'
+import { useForm } from 'react-hook-form'
 
 export interface SelectorSettings {
   name: string
-  settings: SettingKey[]
+  settings?: SettingKey[]
   desc?: string
   activeTab?: 'Properties' | 'Editor'
   isDisabledEditor?: boolean
@@ -31,12 +32,26 @@ const SelectorSettingsSidePanel = ({
     activeTabId: activeTab ?? properties,
     tabList: new Map([
       [properties, { name: properties }],
-      [editor, { name: editor, disabled: isDisabledEditor }],
+      [editor, { name: editor, disabled: isDisabledEditor || !settings }],
     ]),
   })
   const settingsId = useId()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm()
 
   const handleCancelBtnClick = () => {}
+
+  const onSubmit = (data: any) => {
+    console.log(data)
+  }
+
+  useEffect(() => {
+    reset() // Remove old settings state
+  }, [settings])
 
   return (
     <>
@@ -55,7 +70,7 @@ const SelectorSettingsSidePanel = ({
         </ul>
       </SidePanelHeader>
       <div className={s.selectorSettingsSidePanel}>
-        <div role='tabpanel'>
+        <form onSubmit={handleSubmit(onSubmit)} role='tabpanel'>
           <SidePanelName>{name}</SidePanelName>
           {tabsInfo.activeTabId === properties && (
             <p className={s.desc}>
@@ -63,18 +78,14 @@ const SelectorSettingsSidePanel = ({
                 'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.'}
             </p>
           )}
-          {tabsInfo.activeTabId === editor && (
-            <form
-              onSubmit={e => {
-                e.preventDefault()
-                console.log(e.currentTarget.elements)
-              }}
-              className={s.settings}>
+          {settings && tabsInfo.activeTabId === editor && (
+            <>
               <SettingsList
                 key={name}
                 id={settingsId}
                 settings={settings}
                 withSelectAll={withSelectAll}
+                register={register}
               />
               <SidePanelButtons>
                 <span className={s.help}>
@@ -93,9 +104,9 @@ const SelectorSettingsSidePanel = ({
                   Save
                 </Button>
               </SidePanelButtons>
-            </form>
+            </>
           )}
-        </div>
+        </form>
       </div>
     </>
   )

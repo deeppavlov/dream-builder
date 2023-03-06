@@ -1,88 +1,41 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
-import { RoutesList } from '../Router/RoutesList'
-import { useAuth } from '../services/AuthProvider'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import { dist_list } from '../types/types'
+import { RoutesList } from '../router/RoutesList'
+import { useAuth } from '../context/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
+import { trigger } from '../utils/events'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
+import { Slider } from '../ui/Slider/Slider'
 import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Slider } from '../ui/Slider/Slider'
-import { trigger } from '../utils/events'
-import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
-import { nanoid } from 'nanoid'
-import { dist_list } from '../types/types'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { Modal } from '../components/Modal/Modal'
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const [bots, setBots] = useState<JSX.Element[]>([])
   const [listView, setListView] = useState<boolean>(false)
   const topbarRef = useRef<HTMLDivElement | undefined>()
   const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
     setListView(listView => !listView)
-    setBots([])
   }
   const addBot = () => {
-    trigger('CreateAssistantModal', null)
-    if (!auth?.user) return
-    !listView
-      ? setBots(
-          bots.concat([
-            <BotCard
-              key={nanoid(8)}
-              type='your'
-              routingName=''
-              dateCreated={dateToUTC(new Date())}
-              author={auth.user.name}
-              authorImg={auth.user.picture}
-              version='0.0.1'
-              name='Name of The Bot'
-              desc='Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. Small description about the project maximum 4 lines. '
-              ram='0.0 GB'
-              gpu='0.0 GB'
-              space='0.0 GB'
-              size='small'
-              disabledMsg={
-                auth?.user
-                  ? undefined
-                  : 'You must be signed in to clone the bot'
-              }
-            />,
-          ])
-        )
-      : setBots(
-          bots.concat([
-            <BotListItem
-              dateCreated={dateToUTC(new Date())}
-              author={auth.user.name ?? 'Name of Company'}
-              authorImg={auth.user.picture}
-              version='0.01'
-              name='Name of The Bot'
-              desc='Small description about the project maximum 4 lines. Small description about the project maximum'
-              ram='0.0 GB'
-              gpu='0.0 GB'
-              space='0.0 GB'
-              disabledMsg={
-                auth?.user
-                  ? undefined
-                  : 'You must be signed in to clone the bot'
-              }
-              routingName={''}
-            />,
-          ])
-        )
+    trigger('AssistantModal', { action: 'create' })
   }
 
   const {
@@ -90,16 +43,23 @@ export const BotsPage = () => {
     error: assistantsError,
     data: assistantsData,
   } = useQuery('assistant_dists', getAssistantDists)
-  console.log(assistantsData)
+
   useEffect(() => {
     if (!isAssistantsLoading) {
       setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
     }
-    console.log(assistantsData)
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
   assistantsError && <>{'An error has occurred:' + { assistantsError }}</>
-  console.log(assistantsData)
+
+  const {
+    data: usersDistData,
+    isLoading: isUsersDistDataLoading,
+    error: usersDistDataError,
+  } = useQuery('usersAssistantDists', getUsersAssistantDists, {
+    // The query will not execute when user is not authorized
+    enabled: !!auth?.user,
+  })
 
   return (
     <>
@@ -127,7 +87,8 @@ export const BotsPage = () => {
                       disk_usage,
                       date_created,
                     } = dist
-                    const dateCreated = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(new Date(date_created))
+
                     return (
                       <BotCard
                         routingName={name}
@@ -153,7 +114,12 @@ export const BotsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots'>
+            <Wrapper
+              primary
+              title='Your Virtual Assistants & Chatbots'
+              amount={auth?.user && usersDistData?.length}
+              showAll
+              linkTo={RoutesList.yourBots}>
               <Container overflow='hidden'>
                 <Container
                   position='sticky'
@@ -172,7 +138,51 @@ export const BotsPage = () => {
                     />
                   </div>
                 </Container>
-                <Container paddingBottom='22px'>{bots}</Container>
+                <Container paddingBottom='22px'>
+                  {isUsersDistDataLoading && 'Loading...'}
+                  {usersDistDataError &&
+                    'luck is not on your side! try to refresh the page' +
+                      usersDistDataError}
+                  {
+                    // auth?.user &&
+                    usersDistData?.map((dist: dist_list, i: number) => {
+                      const {
+                        display_name,
+                        name,
+                        author,
+                        description,
+                        version,
+                        ram_usage,
+                        gpu_usage,
+                        disk_usage,
+                        date_created,
+                      } = dist
+                      const dateCreated = dateToUTC(date_created)
+                      return (
+                        <BotCard
+                          routingName={name}
+                          key={i}
+                          type='your'
+                          size='small'
+                          name={display_name}
+                          author={author}
+                          authorImg={DeepPavlovLogo}
+                          dateCreated={dateCreated}
+                          desc={description}
+                          version={version}
+                          ram={ram_usage}
+                          gpu={gpu_usage}
+                          space={disk_usage}
+                          disabledMsg={
+                            auth?.user
+                              ? undefined
+                              : 'You must be signed in to clone the bot'
+                          }
+                        />
+                      )
+                    })
+                  }
+                </Container>
               </Container>
             </Wrapper>
           </>
@@ -181,11 +191,59 @@ export const BotsPage = () => {
             <Wrapper
               title='Public Virtual Assistants & Chatbots'
               showAll
-              amount={assistantsData.length}
+              amount={assistantsData?.length}
               linkTo={RoutesList.botsAll}
               fitScreen>
               <Table>
                 {assistantsData?.map((dist: dist_list, i: number) => {
+                  const {
+                    name,
+                    display_name,
+                    author,
+                    description,
+                    version,
+                    ram_usage,
+                    gpu_usage,
+                    disk_usage,
+                    date_created,
+                  } = dist
+                  const dateCreated = dateToUTC(new Date(date_created))
+                  const time = timeToUTC(new Date(date_created))
+
+                  return (
+                    <BotListItem
+                      key={i}
+                      routingName={name}
+                      name={display_name}
+                      author={author}
+                      authorImg={DeepPavlovLogo}
+                      dateCreated={dateCreated}
+                      time={time}
+                      desc={description}
+                      version={version}
+                      ram={ram_usage}
+                      gpu={gpu_usage}
+                      space={disk_usage}
+                      disabledMsg={
+                        auth?.user
+                          ? undefined
+                          : 'You must be signed in to clone the bot'
+                      }
+                    />
+                  )
+                })}
+              </Table>
+            </Wrapper>
+            <Wrapper title='Your Virtual Assistants & Chatbots' primary>
+              <Table
+                addButton={
+                  <AddButton
+                    addBot={addBot}
+                    listView={listView}
+                    disabled={auth?.user === null}
+                  />
+                }>
+                {usersDistData?.map((dist: dist_list, i: number) => {
                   const {
                     name,
                     display_name,
@@ -223,18 +281,6 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots' fitContent>
-              <Table
-                addButton={
-                  <AddButton
-                    addBot={addBot}
-                    listView={listView}
-                    disabled={auth?.user === null}
-                  />
-                }>
-                {bots}
-              </Table>
-            </Wrapper>
           </>
         )}
         {auth?.user === null && (
@@ -248,12 +294,11 @@ export const BotsPage = () => {
             You must be signed in to create your own bot
           </ReactTooltip>
         )}
-
-        {/* SidePanel */}
         <BaseSidePanel position={{ top: topbarHeight }} />
-
-        {/* Modals */}
-        <CreateAssistantModal />
+        <AssistantModal />
+        <PublishAssistantModal />
+        <DeleteAssistantModal />
+        <Modal />
       </Main>
     </>
   )

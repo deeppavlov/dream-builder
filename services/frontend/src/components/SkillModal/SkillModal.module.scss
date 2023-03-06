@@ -1,0 +1,36 @@
+.skillModal {
+  height: 100%;
+  min-width: 582px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  h4 {
+    @include t1;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.distribution {
+  @include t3;
+  color: $text3;
+  margin-top: 8px;
+}
+
+.btns {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.muted-text {
+  color: $text3;
+}

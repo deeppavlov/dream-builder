@@ -1,16 +1,15 @@
 import { useState } from 'react'
 import classNames from 'classnames/bind'
-import { ReactComponent as SkillFallbackIcon } from '@assets/icons/fallbacks.svg'
-import { ReactComponent as SkillRetrievalIcon } from '@assets/icons/skill_retrieval.svg'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
-import { getStyleType } from '../../utils/getStyleType'
 import { trigger } from '../../utils/events'
 import { SkillInfoInterface } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
+import { usePreview } from '../../context/PreviewProvider'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -20,9 +19,9 @@ interface Props {
 }
 
 const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
-  let cx = classNames.bind(s)
   const [skill, setSkill] = useState<SkillInfoInterface>(propSkill)
   const isEditor = children !== undefined
+  const { isPreview } = usePreview()
   const [properties, editor] = ['Properties', 'Editor']
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: isEditor ? activeTab ?? properties : properties,
@@ -30,11 +29,12 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
       isEditor
         ? [
             [properties, { name: properties }],
-            [editor, { name: editor }],
+            [editor, { name: editor, disabled: isPreview }],
           ]
         : [[properties, { name: properties }]]
     ),
   })
+  let cx = classNames.bind(s)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
 
@@ -48,7 +48,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}>
               {tab.name}
             </li>
           ))}
@@ -60,6 +60,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
             <span>{skill.name}</span>
             <EditPencilIcon className={cx('edit-pencil')} data-disabled />
           </SidePanelName>
+
           <div className={cx('author')}>
             <img src={skill.authorImg} alt='Author' />
             <span>{skill.author}</span>
@@ -67,17 +68,17 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
           <ul className={cx('table')}>
             <li className={cx('table-item')}>
               <span className={cx('table-name')}>Forked from:</span>
-              <span className={cx('table-value')}>Name of The Skill</span>
+              <span className={cx('table-value')}>'--------'</span>
             </li>
             <li className={cx('table-item')}>
               <span className={cx('table-name')}>Type:</span>
-              <span
-                className={cx(
-                  'table-value',
-                  `${getStyleType(skill.skillType)}`
-                )}>
-                {skill.skillType === 'retrieval' && <SkillRetrievalIcon />}
-                {skill.skillType === 'fallbacks' && <SkillFallbackIcon />}
+              <span className={cx('table-value', `${skill.skillType}`)}>
+                <img
+                  className={s.typeLogo}
+                  src={`./src/assets/icons/${
+                    componentTypeMap[skill?.skillType]
+                  }.svg`}
+                />
                 <span>{skill.skillType}</span>
               </span>
             </li>

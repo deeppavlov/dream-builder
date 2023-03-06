@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { dateToUTC } from '../utils/dateToUTC'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { Container } from '../ui/Container/Container'
@@ -10,11 +11,9 @@ import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../services/AuthProvider'
-import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { useAuth } from '../context/AuthProvider'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { dist_list } from '../types/types'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
 export const BotsAllPage = () => {
@@ -38,7 +37,6 @@ export const BotsAllPage = () => {
     }
   }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
 
-  if (isAssistantsLoading) return <> {'Loading...'}</>
   if (assistantsError) return <>{'An error has occurred: ' + assistantsError}</>
   return (
     <>
@@ -47,10 +45,11 @@ export const BotsAllPage = () => {
         {!listView ? (
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
-            amount={assistantsData.length}>
+            amount={assistantsData?.length}>
             <Container
               display='grid'
               gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+              {isAssistantsLoading && 'Loading...'}
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
                   name,
@@ -63,7 +62,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
+                const dateCreated = dateToUTC(new Date(date_created))
+
                 return (
                   <BotCard
                     key={i}
@@ -107,8 +107,8 @@ export const BotsAllPage = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
-                const time = timeToUTC(date_created)
+                const dateCreated = dateToUTC(new Date(date_created))
+                const time = timeToUTC(new Date(date_created))
                 return (
                   <BotListItem
                     key={i}
@@ -135,7 +135,7 @@ export const BotsAllPage = () => {
           </Wrapper>
         )}
         <BaseSidePanel position={{ top: topbarHeight }} />
-        <CreateAssistantModal />
+        <AssistantModal />
       </Main>
     </>
   )

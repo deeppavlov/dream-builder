@@ -1,3 +1,5 @@
+import { RouteObject } from 'react-router-dom'
+
 export interface UserInterface {
   name: string
   email: string
@@ -6,26 +8,37 @@ export interface UserInterface {
 
 export interface UserContext {
   user: UserInterface | null
-  setUser: (user: UserInterface) => void
-  login: (res: any) => void
-  logout: () => void
 }
 
+export interface ITokens {
+  refresh_token: string
+  token: string
+}
+
+export interface IPreviewContext {
+  isPreview: boolean
+  setIsPreview: (isPreview: boolean) => void
+}
 export type CustomEventName = string
 
 export type CustomEventListener = (data: any) => void
+
+export type PostDistParams = {
+  display_name: string
+  description: string
+}
 
 export interface BotInfoInterface {
   name: string
   routingName: string
   author: string
-  authorImg: string
   desc: string
   dateCreated: string
   version: string
   ram: string
   gpu: string
   space: string
+  authorImg?: string
   annotators?: string[]
   skills?: string[]
 }
@@ -49,6 +62,19 @@ export interface SkillInfoInterface {
   prompt?: string
 }
 
+export interface Annotator {
+  name: string
+  display_name: string
+  author: string
+  type: AnnotatorType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
+}
 export interface ResourcesInterface {
   ram: string
   gpu: string
@@ -62,6 +88,7 @@ export interface TotalResourcesInterface {
 
 export type BotAvailabilityType = 'public' | 'your'
 export type SkillAvailabilityType = 'public' | 'your'
+export type CustomRouteConfig = RouteObject & { crumb?: string }
 
 export interface dist_list {
   name: string // Routing distribution name
@@ -74,15 +101,29 @@ export interface dist_list {
   gpu_usage: string
   disk_usage: string
 }
+export interface Skill {
+  name: string
+  display_name: string
+  author: string
+  type: SkillType
+  description: string
+  date_created: string
+  execution_time: string | number
+  gpu_usage: string | number
+  ram_usage: string | number
+  disk_usage: string | number
+  version: string | number
+}
+
+export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+
 export type SkillType =
-  | 'fallbacks'
+  | 'fallback'
   | 'retrieval'
   | 'generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'
-
-export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type StackType =
   | 'annotators'
@@ -99,6 +140,26 @@ export interface IAnnotator {
   type: string
   desc: string
 }
+
+export type MenuTypes =
+  | 'main'
+  | 'bots'
+  | 'skills_page'
+  | 'editor'
+  | 'bot_public'
+  | 'your_bot'
+  | 'skills'
+  | 'all_annotators'
+  | 'response_annotators'
+  | 'all_skills'
+  | 'customizable_annotator'
+  | 'customizable_skill'
+  | 'non_customizable_annotator'
+  | 'non_customizable_skill'
+  | 'skill_selector'
+  | 'response_selector'
+  | null
+  | false
 
 export interface SettingKey {
   name: string

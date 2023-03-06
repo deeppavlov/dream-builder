@@ -2,13 +2,13 @@ import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { SmallTag } from '../SmallTag/SmallTag'
 import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
-import s from './SkillListItem.module.scss'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps extends SkillInfoInterface {
   checkbox?: boolean
@@ -55,7 +55,10 @@ export const SkillListItem = ({
 
   const handleAddBtnClick = (e: any) => {
     e.stopPropagation()
-    trigger('CreateSkillModal', skill)
+    trigger('SkillModal', {
+      action: 'create',
+      parent: skill,
+    })
   }
 
   return (
@@ -77,7 +80,7 @@ export const SkillListItem = ({
         <div className={s.type}>
           <img
             className={s.typeLogo}
-            src={`./src/assets/icons/${skillType}.svg`}
+            src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
           />
           <p className={cx('typeText', skillType)}>
             {skillType || 'Type of Skill'}
@@ -96,11 +99,6 @@ export const SkillListItem = ({
             delayShow={500}
           />
           {desc || 'Lorem  '}
-        </div>
-      </td>
-      <td className={s.td}>
-        <div className={s.version}>
-          <SmallTag theme='version'>{'v' + version ?? 'v.0.01'}</SmallTag>
         </div>
       </td>
       <td className={s.td}>

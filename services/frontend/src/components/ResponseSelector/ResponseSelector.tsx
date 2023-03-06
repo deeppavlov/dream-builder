@@ -1,11 +1,22 @@
 import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
+import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import { FC } from 'react'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Skill } from './Skill'
 import s from './ResponseSelector.module.scss'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const ResponseSelector = ({ responseSelectors }: any) => {
+interface ResponseSelectorProps {
+  responseSelectors: []
+}
+
+export const ResponseSelector: FC<ResponseSelectorProps> = ({
+  responseSelectors,
+}) => {
+  const submitHandler = (e: React.FormEvent) => {
+    e.preventDefault()
+  }
+
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -17,14 +28,10 @@ export const ResponseSelector = ({ responseSelectors }: any) => {
         </div>
       </div>
       <AddButtonStack disabled={true} text='Add Response Selector' />
-      {responseSelectors?.map((item: string, i: number) => {
+      {responseSelectors?.map((item: { display_name: string }, i: number) => {
         return <Skill key={i} title={capitalizeTitle(item.display_name)} />
       })}
-      {/* <Skill title='Conversational Evaluational Selector' /> */}
-      <form
-        onSubmit={e => {
-          e.preventDefault()
-        }}>
+      <form onSubmit={submitHandler}>
         {/* <Accordion title='Customizable'> */}
         {/* </Accordion> */}
         {/* <Accordion title='Non-customizable'> */}

@@ -3,14 +3,16 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
+import { countResources } from '../../utils/countResources'
+import { Annotator } from '../../types/types'
 import s from './Annotators.module.scss'
 
 interface Props {
-  annotatorsList: object
+  annotators: [Annotator]
 }
 
 export const Annotators: React.FC<Props> = ({ annotators }) => {
+  
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -23,7 +25,11 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {annotators?.recources || '0.00 GB RAM | 0.00 GB GPU'}
+            {(annotators &&
+              countResources(annotators, 'ram_usage') +
+                ' | ' +
+                countResources(annotators, 'gpu_usage')) ||
+              '0.00 GB RAM | 0.00 GB GPU'}
           </p>
         </div>
       </div>
@@ -31,14 +37,8 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
       <div className={s.elements}>
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
-          {annotators?.map((item: string, i: number) => {
-            return (
-              <Element
-                key={i}
-                title={capitalizeTitle(item.display_name)}
-                item={item}
-              />
-            )
+          {annotators?.map((item: Annotator, i: number) => {
+            return <Element key={i} item={item} />
           })}
         </Accordion>
       </div>

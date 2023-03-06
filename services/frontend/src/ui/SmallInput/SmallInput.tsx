@@ -6,9 +6,16 @@ interface Props {
   label?: React.ReactNode
   value?: string
   type?: 'text' | 'number'
+  props?: React.InputHTMLAttributes<HTMLInputElement>
 }
 
-const SmallInput = ({ value: propValue, label, type, disabled }: Props) => {
+const SmallInput = ({
+  value: propValue,
+  label,
+  type,
+  disabled,
+  props,
+}: Props) => {
   const [value, setValue] = useState<string>(propValue ?? '')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -18,6 +25,7 @@ const SmallInput = ({ value: propValue, label, type, disabled }: Props) => {
     <label className={s.container}>
       {label}
       <input
+        {...props}
         className={s.smallInput}
         type={type ?? 'text'}
         value={value}

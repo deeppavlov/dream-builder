@@ -6,23 +6,26 @@ interface Props {
   disabled?: boolean
   label?: React.ReactNode
   switcherLabels?: string[]
+  props?: React.InputHTMLAttributes<HTMLInputElement>
 }
 
-const Switcher = ({ label, switcherLabels, checked: propChecked, disabled }: Props) => {
-  const [checked, setChecked] = useState<boolean>(Boolean(propChecked))
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setChecked(e.target.checked)
-
+const Switcher = ({
+  label,
+  switcherLabels,
+  checked: propChecked,
+  disabled,
+  props,
+}: Props) => {
   return (
     <label className={s.container}>
       {label}
       <div className={s.switcher}>
         <input
+          {...props}
           type='checkbox'
-          checked={checked}
+          // checked={props?.checked}
           disabled={disabled}
-          onChange={handleCheckboxChange}
+          // onChange={handleCheckboxChange}
         />
         <span className={s.switch}>{switcherLabels?.[0] || 0}</span>
         <span className={s.switch}>{switcherLabels?.[1] || 1}</span>

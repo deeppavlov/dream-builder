@@ -1,10 +1,13 @@
 export const RoutesList = {
-  bots: '/bots',
-  botsAll: '/botsAll',
+  distributions: '/distributions',
+  botsAll: '/allbots',
+  yourBots: '/yourbots',
   skills: '/skills',
   skillsAll: '/allskills',
-  editor: '/',
+  yourSkills: '/yourskills',
   draft: '/draft',
   test: '/test',
+  code: '/code',
   start: '/',
+  profile: '/profile',
 } as const

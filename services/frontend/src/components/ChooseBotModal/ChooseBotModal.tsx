@@ -8,7 +8,7 @@ import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Table } from '../../ui/Table/Table'
 import { BotListItem } from '../BotListItem/BotListItem'
 import { dateToUTC } from '../../utils/dateToUTC'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { timeToUTC } from '../../utils/timeToUTC'
 import { useQuery } from 'react-query'
 import { getAssistantDists } from '../../services/getAssistantDists'
@@ -93,8 +93,8 @@ const ChooseBotModal = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(date_created)
-                const time = timeToUTC(date_created)
+                const dateCreated = dateToUTC(new Date(date_created))
+                const time = timeToUTC(new Date(date_created))
                 return (
                   <BotListItem
                     key={i}

@@ -1,12 +1,17 @@
 import ResponseAnnotatorsLogo from '../../assets/icons/response_annotators.svg'
+import { Annotator } from '../../types/types'
+import { countResources } from '../../utils/countResources'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Element } from './Element'
 import s from './ResponseAnnotators.module.scss'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const ResponseAnnotators = ({ responseAnnotators }: any) => {
+interface Props {
+  responseAnnotators: [Annotator]
+}
+
+export const ResponseAnnotators: React.FC<Props> = ({ responseAnnotators }) => {
   return (
     <>
       {responseAnnotators && (
@@ -21,7 +26,10 @@ export const ResponseAnnotators = ({ responseAnnotators }: any) => {
             </div>
             <div className={s.bottom}>
               <p className={s.data}>
-                {responseAnnotators?.recources ||
+                {(responseAnnotators &&
+                  countResources(responseAnnotators, 'ram_usage') +
+                    ' | ' +
+                    countResources(responseAnnotators, 'gpu_usage')) ||
                   '0.00 GB RAM | 0.00 GB GPU'}
               </p>
             </div>
@@ -31,8 +39,8 @@ export const ResponseAnnotators = ({ responseAnnotators }: any) => {
           <div className={s.elements}>
             <Accordion title='Customizable'></Accordion>
             <Accordion title='Non-customizable'>
-              {responseAnnotators?.map((item: string, i: number) => {
-                return <Element key={i} title={capitalizeTitle(item.display_name)} item={item} />
+              {responseAnnotators?.map((item: Annotator, i: number) => {
+                return <Element key={i} item={item} />
               })}
             </Accordion>
           </div>

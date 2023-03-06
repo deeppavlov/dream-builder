@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
@@ -9,7 +10,6 @@ import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { trigger } from '../../utils/events'
-
 import s from './GenerativeSkillEditor.module.scss'
 
 const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
-  const prompt = skill.prompt ?? mockPrompt
+  const [prompt, setPrompt] = useState(skill.prompt ?? mockPrompt)
   const promptMaxLenght = 1500
   let cx = classNames.bind(s)
 

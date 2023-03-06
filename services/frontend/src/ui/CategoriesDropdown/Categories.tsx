@@ -10,9 +10,7 @@ export const Categories = () => {
   const handleOpen = () => {
     setOpen(!open)
   }
-  const handleClick = () => {
-    console.log('clicked!')
-  }
+  const handleClick = () => {}
   return (
     <div ref={ref} className={s.dropdown} onClick={handleOpen}>
       <i className={s.arrow} />

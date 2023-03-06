@@ -65,7 +65,9 @@
   display: flex;
   align-items: center;
   gap: 2px;
-
+  img {
+    @include icon_size_24;
+  }
   svg {
     width: 24px;
     height: 24px;

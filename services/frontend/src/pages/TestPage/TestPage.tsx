@@ -13,7 +13,7 @@ import IntentListItem, {
   IntentListItemInterface,
 } from '../../components/IntentListItem/IntentListItem'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import { CreateAssistantModal } from '../../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import NotificationCard, {
   NotificationCardProps,
@@ -29,7 +29,7 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { CreateSkillModal } from '../../components/CreateSkillModal/CreateSkillModal'
+import { SkillModal } from '../../components/SkillModal/SkillModal'
 import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
 import { dateToUTC } from '../../utils/dateToUTC'
@@ -42,8 +42,16 @@ import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
-import { BotInfoInterface, TotalResourcesInterface } from '../../types/types'
+import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
+import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
+import { useForm } from 'react-hook-form'
+import {
+  BotInfoInterface,
+  SkillInfoInterface,
+  TotalResourcesInterface,
+} from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
+import { SignInModal } from '../../components/SignInModal/SignInModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -111,16 +119,19 @@ const intentItemsMock: IntentListItemInterface[] = [
   },
 ]
 
-const mockSkill = {
-  isEditing: true,
-  name: 'Name of The Skill 1',
-  skillType: 'fallbacks',
-  author: 'Name of The Company',
+const mockSkill: SkillInfoInterface = {
+  botName: 'Name of The Bot',
+  name: 'name_of_the_skill_1',
+  display_name: 'Name of The Skill 1',
+  skillType: 'fallback',
+  author: 'DeepPavlov',
+  authorImg: DeepPavlovLogo,
   desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
   dateCreated: dateToUTC(new Date()),
   version: '0.01',
   ram: '0.0 GB',
   gpu: '0.0 GB',
+  executionTime: '0.0 ms',
 }
 
 const mockAnnotator = {
@@ -181,7 +192,7 @@ const mockResponseSelector: SelectorSettings = {
   ],
 }
 
-const mockRuleBasesSkillSelector: SelectorSettings = {
+export const mockRuleBasesSkillSelector: SelectorSettings = {
   name: 'Rule-based Skill Selector',
   settings: [
     {
@@ -333,31 +344,119 @@ const mockMultipleSkillSelector: SelectorSettings = {
 }
 
 export const TestPage = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({ mode: 'all' })
+
   return (
     <div className={s.testPage}>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>Modals</span>
         <div className={s.testPage__component}>
-          <span>CreateAssistantModal</span>
+          <span>AssistantModal</span>
           <Button
             theme='primary'
-            props={{ onClick: () => trigger('CreateAssistantModal', {}) }}>
-            CreateAssistantModal
-          </Button>
-        </div>
-        <div className={s.testPage__component}>
-          <span>CreateSkillModal</span>
-          <Button
-            theme='primary'
-            props={{ onClick: () => trigger('CreateSkillModal', {}) }}>
-            CreateSkillModal (add)
+            props={{
+              onClick: () => trigger('AssistantModal', { action: 'create' }),
+            }}>
+            AssistantModal (create)
           </Button>
           <Button
             theme='primary'
             props={{
-              onClick: () => trigger('CreateSkillModal', mockSkill),
+              onClick: () =>
+                trigger('AssistantModal', {
+                  action: 'clone',
+                  distribution: {
+                    routingName: 'test',
+                    name: 'Test dist name',
+                  },
+                }),
             }}>
-            CreateSkillModal (edit)
+            AssistantModal (clone)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('AssistantModal', {
+                  action: 'edit',
+                  bot: {
+                    routingName: 'test',
+                    name: 'Bert from Sesame Street bot (Bort)',
+                    desc: 'This bot is helping astronauts in space',
+                  },
+                }),
+            }}>
+            AssistantModal (edit)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>PublishAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('PublishAssistantModal', {
+                  bot: {
+                    routingName: 'test',
+                    name: 'Bert from Sesame Street bot (Bort)',
+                  },
+                }),
+            }}>
+            PublishAssistantModal
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>DeleteAssistantModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('DeleteAssistantModal', {
+                  bot: {
+                    routingName: 'en_dream_to_de_bug',
+                    name: 'EnDreamToDebug',
+                  },
+                }),
+            }}>
+            DeleteAssistantModal
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
+          <span>SkillModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'create',
+                }),
+            }}>
+            SkillModal (create)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'copy',
+                  parent: mockSkill,
+                }),
+            }}>
+            SkillModal (copy)
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () =>
+                trigger('SkillModal', {
+                  action: 'edit',
+                  skill: mockSkill,
+                }),
+            }}>
+            SkillModal (edit)
           </Button>
         </div>
         <div className={s.testPage__component}>
@@ -374,8 +473,8 @@ export const TestPage = () => {
             props={{
               onClick: () =>
                 trigger('SkillPromptModal', {
+                  action: 'edit',
                   skill: mockSkill,
-                  isEditingModal: true,
                 }),
             }}>
             SkillPromptModal (edit)
@@ -469,6 +568,16 @@ export const TestPage = () => {
             IntentResponderModal (edit)
           </Button>
         </div>
+        <div className={s.testPage__component}>
+          <span>SignInModal</span>
+          <Button
+            theme='primary'
+            props={{
+              onClick: () => trigger('SignInModal', {}),
+            }}>
+            SignInModal
+          </Button>
+        </div>
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>SidePanels</span>
@@ -547,7 +656,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'fallback',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),
@@ -609,7 +718,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'fallback',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),
@@ -836,6 +945,19 @@ export const TestPage = () => {
           Secondary Large Long
         </Button>
         <div className={s.testPage__component}>
+          <span>Error</span>
+          <Button theme='error'>Error Large</Button>
+          <Button theme='error' props={{ disabled: true }}>
+            Error Large (disabled)
+          </Button>
+          <Button theme='error' small>
+            Error Small
+          </Button>
+          <Button theme='error' small props={{ disabled: true }}>
+            Error Small (disabled)
+          </Button>
+        </div>
+        <div className={s.testPage__component}>
           <span>Tertiary</span>
           <Button theme='tertiary'>Tertiary Large</Button>
           <Button theme='tertiary' props={{ disabled: true }}>
@@ -960,21 +1082,25 @@ export const TestPage = () => {
           <Input props={{ placeholder: 'Assistive text' }} label='Label' />
         </div>
         <div className={s.testPage__component}>
-          <span>with value</span>
+          <span>with Enter button</span>
           <Input
+            label='Label'
+            withEnterButton
             props={{
               placeholder: 'Assistive text',
-              value: 'Text input Text input Text input Text input',
+              defaultValue: 'Text input Text input Text input Text input',
             }}
-            label='Label'
           />
         </div>
         <div className={s.testPage__component}>
-          <span>error</span>
+          <span>required (with error)</span>
           <Input
-            props={{ placeholder: 'Assistive text' }}
             label='Label'
-            errorMessage='Error message'
+            props={{
+              placeholder: 'Assistive text',
+              ...register('test_input_required', { required: 'Error message' }),
+            }}
+            error={errors['test_input_required']}
           />
         </div>
         <div className={s.testPage__component}>
@@ -996,11 +1122,12 @@ export const TestPage = () => {
           />
         </div>
         <div className={s.testPage__component}>
-          <span>with value</span>
+          <span>with Enter button</span>
           <TextArea
+            withEnterButton
             props={{
               placeholder: 'Assistive text',
-              value:
+              defaultValue:
                 'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
@@ -1008,14 +1135,30 @@ export const TestPage = () => {
           />
         </div>
         <div className={s.testPage__component}>
-          <span>error</span>
+          <span>with counter</span>
           <TextArea
+            withCounter
             props={{
               placeholder: 'Assistive text',
+              defaultValue:
+                'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
             about='Instructions'
-            errorMessage='Error message'
+          />
+        </div>
+        <div className={s.testPage__component}>
+          <span>required (with error)</span>
+          <TextArea
+            props={{
+              placeholder: 'Assistive text',
+              ...register('test_textarea_required', {
+                required: 'Error message',
+              }),
+            }}
+            label='Label'
+            about='Instructions'
+            error={errors['test_textarea_required']}
           />
         </div>
         <div className={s.testPage__component}>
@@ -1083,7 +1226,9 @@ export const TestPage = () => {
           <SkillCard
             type='public'
             name='Name of The Skill1'
-            skillType='fallbacks'
+            author='DeepPavlov'
+            authorImg={DeepPavlovLogo}
+            skillType='fallback'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}
@@ -1097,8 +1242,10 @@ export const TestPage = () => {
           <span>your</span>
           <SkillCard
             type='your'
+            author='DeepPavlov'
+            authorImg={DeepPavlovLogo}
             name='Name of The Skill2'
-            skillType='fallbacks'
+            skillType='fallback'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}
@@ -1113,17 +1260,17 @@ export const TestPage = () => {
       {/* Sidepanels */}
       <BaseSidePanel />
 
-      {/* <SkillSidePanel /> */}
-      {/* <BotInfoSidePanel /> */}
-
       {/* Modals */}
-      <CreateAssistantModal />
-      <CreateSkillModal />
+      <AssistantModal />
+      <PublishAssistantModal />
+      <DeleteAssistantModal />
+      <SkillModal />
       <SkillPromptModal />
       <CreateSkillDistModal />
       <ChooseBotModal />
       <IntentCatcherModal />
       <IntentResponderModal />
+      <SignInModal />
     </div>
   )
 }

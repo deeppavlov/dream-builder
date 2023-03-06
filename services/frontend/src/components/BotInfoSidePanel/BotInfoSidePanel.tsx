@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useQuery } from 'react-query'
-import { BotInfoInterface, StackType } from '../../types/types'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { BotInfoInterface } from '../../types/types'
+import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import { useAuth } from '../../services/AuthProvider'
+import { useAuth } from '../../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../../services/getComponentsFromAssistantDists'
 import { ReactComponent as DeepPavlovLogo } from '@assets/icons/deeppavlov_logo_round.svg'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
@@ -13,10 +13,10 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
 import DateCard from '../DateCard/DateCard'
-import s from './BotInfoSidePanel.module.scss'
 import { isSelector } from '../../utils/isSelector'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
+import s from './BotInfoSidePanel.module.scss'
 
 interface Props {
   bot: BotInfoInterface
@@ -45,7 +45,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   )
 
   const handleCloneBtnClick = () => {
-    trigger('CreateAssistantModal', bot)
+    trigger('AssistantModal', { action: 'clone', bot: bot })
   }
 
   return (
@@ -66,34 +66,33 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
       </SidePanelHeader>
       <div className={s.botInfoSidePanel}>
         <div className={s.header}>
-          <span className={s.name}>{bot.name}</span>
-          <SmallTag theme='version'>v{bot.version}</SmallTag>
+          <span className={s.name}>{bot?.name}</span>
         </div>
         <div className={s.container}>
           <div className={s.main}>
-            <DateCard date={bot.dateCreated} />
+            <DateCard date={bot?.dateCreated} />
             <div className={s.table}>
               <div className={s.author}>
-                <img src={bot.authorImg} alt='Author' />
-                <span>{bot.author}</span>
+                <img src={bot?.authorImg} alt='Author' />
+                <span>{bot?.author}</span>
               </div>
               <ul className={s.table}>
                 <li>
                   <span>RAM:</span>
-                  <span className={s.tableCount}>{bot.ram ?? '0.0 GB'}</span>
+                  <span className={s.tableCount}>{bot?.ram ?? '0.0 GB'}</span>
                 </li>
                 <li>
                   <span>GPU:</span>
-                  <span className={s.tableCount}>{bot.gpu ?? '0.0 GB'}</span>
+                  <span className={s.tableCount}>{bot?.gpu ?? '0.0 GB'}</span>
                 </li>
                 <li>
                   <span>Disk space:</span>
-                  <span className={s.tableCount}>{bot.space ?? '0.0 GB'}</span>
+                  <span className={s.tableCount}>{bot?.space ?? '0.0 GB'}</span>
                 </li>
               </ul>
             </div>
           </div>
-          <p className={s.desc}>{bot.desc}</p>
+          <p className={s.desc}>{bot?.desc}</p>
         </div>
         <div className={s.accordions}>
           {isDistsComponentsLoading && <>{'Loading...'}</>}
@@ -107,11 +106,11 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
                   closed
                   rounded>
                   {group == 'skill_selectors' &&
-                    distsComponentsData.skill_selectors?.length == 0 && (
+                    distsComponentsData?.skill_selectors?.length == 0 && (
                       <div className={s.accordionItem}>All Skills</div>
                     )}
                   {group !== 'skill_selectors' &&
-                    distsComponentsData[group].length == 0 && (
+                    distsComponentsData[group]?.length == 0 && (
                       <div className={s.accordionItem}>None</div>
                     )}
                   {distsComponentsData[group].map(
@@ -123,7 +122,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
                             src={`./src/assets/icons/${item.type}.svg`}
                           />
                         )}
-                        {item.display_name}
+                        {item?.display_name}
                       </div>
                     )
                   )}

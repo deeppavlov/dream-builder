@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
-import { useAuth } from '../services/AuthProvider'
+import { useAuth } from '../context/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -14,17 +14,16 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
-import { RoutesList } from '../Router/RoutesList'
+import { RoutesList } from '../router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
-import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { SkillModal } from '../components/SkillModal/SkillModal'
 import { trigger } from '../utils/events'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 
@@ -54,7 +53,7 @@ export const SkillsPage = () => {
   }
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
-    trigger('CreateSkillModal', null)
+    trigger('SkillModal', {})
     !listView
       ? setSkills(
           skills.concat([
@@ -133,7 +132,7 @@ export const SkillsPage = () => {
                       execution_time,
                       date_created,
                     } = skill?.metadata
-                    const date = dateToUTC(date_created)
+                    const dateCreated = dateToUTC(date_created)
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
@@ -144,7 +143,7 @@ export const SkillsPage = () => {
                         authorImg={DeepPavlovLogo}
                         botName={skill.assistant_dist}
                         skillType={type}
-                        dateCreated={date}
+                        dateCreated={dateCreated}
                         desc={description}
                         version={version}
                         ram={ram_usage}
@@ -161,7 +160,11 @@ export const SkillsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper showAll title='Your Skills'>
+            <Wrapper
+              showAll
+              amount={42}
+              linkTo={RoutesList.yourSkills}
+              title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'
@@ -204,6 +207,7 @@ export const SkillsPage = () => {
                   } = skill.metadata
                   const date = dateToUTC(date_created)
                   const time = timeToUTC(date_created)
+
                   return (
                     <SkillListItem
                       key={i}
@@ -255,10 +259,10 @@ export const SkillsPage = () => {
 
         <BaseSidePanel position={{ top: 64 }} />
 
-        <CreateSkillModal />
+        <SkillModal />
         <SkillPromptModal />
         <CreateSkillDistModal />
-        <CreateAssistantModal />
+        <AssistantModal />
         <ChooseBotModal />
       </Main>
     </>

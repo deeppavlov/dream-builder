@@ -1,22 +1,22 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { useQuery } from 'react-query'
-import { BotInfoInterface } from '../../types/types'
+import { BotInfoInterface, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import { useAuth } from '../../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../../services/getComponentsFromAssistantDists'
-import { ReactComponent as DeepPavlovLogo } from '@assets/icons/deeppavlov_logo_round.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import { SmallTag } from '../SmallTag/SmallTag'
 import DateCard from '../DateCard/DateCard'
-import { isSelector } from '../../utils/isSelector'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
+import { srcForIcons } from '../../utils/srcForIcons'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { isAnnotator } from '../../utils/isAnnotator'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './BotInfoSidePanel.module.scss'
+import { useAuth } from '../../context/AuthProvider'
 
 interface Props {
   bot: BotInfoInterface
@@ -27,27 +27,33 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   const auth = useAuth()
   const [bot, setBot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
+  const navigate = useNavigate()
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: properties,
     tabList: new Map([[properties, properties]]),
   })
-
+  
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,
     data: distsComponentsData,
-  } = useQuery(
-    ['distsComponents', bot?.routingName],
-    () => getComponentsFromAssistantDists(bot?.routingName!),
-    {
-      // enabled: isOpen,
-    }
+  } = useQuery(['distsComponents', bot?.routingName], () =>
+    getComponentsFromAssistantDists(bot?.routingName!)
   )
 
   const handleCloneBtnClick = () => {
     trigger('AssistantModal', { action: 'clone', bot: bot })
   }
-
+  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    navigate(`/${bot?.routingName}`, {
+      state: {
+        preview: true,
+        distName: bot?.routingName,
+        displayName: bot?.name,
+      },
+    })
+  }
   return (
     <>
       <SidePanelHeader>
@@ -67,7 +73,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
         <div className={s.header}>
           <span className={s.name}>{bot?.name}</span>
         </div>
-        <div className={s.container}>
+        <div className={s.topContainer}>
           <div className={s.main}>
             <DateCard date={bot?.dateCreated} />
             <div className={s.table}>
@@ -91,50 +97,64 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
               </ul>
             </div>
           </div>
-          <p className={s.desc}>{bot?.desc}</p>
         </div>
-        <div className={s.accordions}>
-          {isDistsComponentsLoading && <>{'Loading...'}</>}
-          {distsComponentsData &&
-            Object.keys(distsComponentsData).map(
-              (group: string, id: number) => (
-                <Accordion
-                  key={id}
-                  title={capitalizeTitle(group)}
-                  group={group}
-                  closed
-                  rounded>
-                  {group == 'skill_selectors' &&
-                    distsComponentsData?.skill_selectors?.length == 0 && (
-                      <div className={s.accordionItem}>All Skills</div>
+        <div className={s.container}>
+          <p className={s.desc}>{bot?.desc}</p>
+          <div className={s.accordions}>
+            {isDistsComponentsLoading && <>{'Loading...'}</>}
+            {distsComponentsData &&
+              Object.keys(distsComponentsData).map(
+                (group: string, id: number) => (
+                  <Accordion
+                    key={id}
+                    title={capitalizeTitle(group)}
+                    group={group}
+                    closed
+                    rounded>
+                    {group == 'skill_selectors' &&
+                      distsComponentsData?.skill_selectors?.length == 0 && (
+                        <div className={s.accordionItem}>All Skills</div>
+                      )}
+                    {group !== 'skill_selectors' &&
+                      distsComponentsData[group]?.length == 0 && (
+                        <div className={s.accordionItem}>None</div>
+                      )}
+                    {distsComponentsData[group].map(
+                      (item: SkillInfoInterface, id: number) => (
+                        <div key={id} className={s.accordionItem}>
+                          {group === 'skills' && (
+                            <img
+                              className={s.icon}
+                              src={srcForIcons(
+                                componentTypeMap[item?.component_type]
+                              )}
+                            />
+                          )}
+                          {isAnnotator(group) && (
+                            <img
+                              className={s.icon}
+                              src={srcForIcons(modelTypeMap[item?.model_type])}
+                            />
+                          )}
+                          {item?.display_name}
+                        </div>
+                      )
                     )}
-                  {group !== 'skill_selectors' &&
-                    distsComponentsData[group]?.length == 0 && (
-                      <div className={s.accordionItem}>None</div>
-                    )}
-                  {distsComponentsData[group].map(
-                    (item: object, id: number) => (
-                      <div key={id} className={s.accordionItem}>
-                        {!isSelector(group) && (
-                          <img
-                            className={s.icon}
-                            src={`./src/assets/icons/${item.type}.svg`}
-                          />
-                        )}
-                        {item?.display_name}
-                      </div>
-                    )
-                  )}
-                </Accordion>
-              )
-            )}
+                  </Accordion>
+                )
+              )}
+          </div>
         </div>
         <div className={s.btns}>
+          <Button theme='secondary' props={{ onClick: handlePreviewBtnClick }}>
+            Preview
+          </Button>
           <div data-tip data-for='bot-clone-interact'>
             <Button
               theme='primary'
               props={{
-                disabled: disabledMsg !== undefined,
+                disabled: auth?.user === null, // ??????????
+                // disabledMsg !== undefined,
                 onClick: handleCloneBtnClick,
               }}>
               Clone

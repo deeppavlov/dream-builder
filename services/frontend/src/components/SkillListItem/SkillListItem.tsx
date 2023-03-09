@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ReactComponent as PlusLogo } from '../../assets/icons/plus_icon.svg'
 import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { srcForIcons } from '../../utils/srcForIcons'
+import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps extends SkillInfoInterface {
@@ -25,7 +27,8 @@ export const SkillListItem = ({
   ram,
   gpu,
   time,
-  skillType,
+  modelType,
+  componentType,
   checkbox,
   executionTime,
   botName,
@@ -42,12 +45,20 @@ export const SkillListItem = ({
     ram,
     gpu,
     time,
-    skillType,
+    modelType,
+    componentType,
     executionTime,
     botName,
   }
+  const [disabled, setDisabled] = useState<boolean>(false)
 
-  const handleSkillListItemClick = () => {
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDisabled(disabled => !disabled)
+  }
+  const handleSkillListItemClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
     trigger(BASE_SP_EVENT, {
       children: <SkillSidePanel key={skill.name} skill={skill} />,
     })
@@ -60,9 +71,13 @@ export const SkillListItem = ({
       parent: skill,
     })
   }
+  const nameForComponentType = componentTypeMap[componentType]
+  const srcForComponentType = srcForIcons(nameForComponentType)
 
   return (
-    <tr className={s.tr} onClick={handleSkillListItemClick}>
+    <tr
+      className={cx('tr', disabled && 'disabled')}
+      onClick={handleSkillListItemClick}>
       {checkbox && (
         <td className={s.checkboxArea}>
           <Checkbox />
@@ -78,12 +93,9 @@ export const SkillListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.type}>
-          <img
-            className={s.typeLogo}
-            src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
-          />
-          <p className={cx('typeText', skillType)}>
-            {skillType || 'Type of Skill'}
+          <img className={s.typeLogo} src={srcForComponentType} />
+          <p className={cx('typeText', nameForComponentType)}>
+            {componentType || 'Type of Skill'}
           </p>
         </div>
       </td>
@@ -109,14 +121,22 @@ export const SkillListItem = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-for='skill-add-interact'>
+          <ToggleButton handleToggle={handleToggle} />
+          <Kebab
+            dataFor='customizable_skill'
+            item={{
+              typeItem: name,
+              data: skill, // Data of Element
+            }}
+          />
+          {/* <div data-tip data-for='skill-add-interact'>
             <button
               className={s.area}
               onClick={handleAddBtnClick}
               disabled={disabledMsg !== undefined}>
               <PlusLogo />
             </button>
-          </div>
+          </div> */}
         </div>
       </td>
       {disabledMsg && (

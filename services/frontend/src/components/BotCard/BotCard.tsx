@@ -54,14 +54,14 @@ export const BotCard = ({
       children: <BotInfoSidePanel key={bot.name} bot={bot} />,
     })
   }
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
       state: { preview: true, distName: routingName, displayName: name },
     })
   }
 
-  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('AssistantModal', { action: 'clone', bot: bot })
   }
@@ -132,7 +132,7 @@ export const BotCard = ({
               long
               props={{
                 disabled: disabledMsg !== undefined,
-                onClick: handleCloneBtnClick,
+                onClick: handleCloneClick,
               }}>
               Clone
             </Button>
@@ -140,7 +140,7 @@ export const BotCard = ({
               theme='secondary'
               small
               withIcon
-              props={{ onClick: handlePreviewBtnClick }}>
+              props={{ onClick: handlePreviewClick }}>
               <PreviewIcon />
             </Button>
           </div>

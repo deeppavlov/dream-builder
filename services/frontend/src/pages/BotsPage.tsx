@@ -214,6 +214,7 @@ export const BotsPage = () => {
 
                   return (
                     <BotListItem
+                      type='public'
                       key={i}
                       routingName={name}
                       name={display_name}

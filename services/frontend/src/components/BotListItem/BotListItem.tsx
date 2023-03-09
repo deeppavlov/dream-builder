@@ -5,14 +5,15 @@ import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
-import { SmallTag } from '../SmallTag/SmallTag'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useAuth } from '../../context/AuthProvider'
-import s from './BotListItem.module.scss'
 import { Kebab } from '../../ui/Kebab/Kebab'
+import Button from '../../ui/Button/Button'
+import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
+import s from './BotListItem.module.scss'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -59,14 +60,20 @@ export const BotListItem: FC<BotListItemProps> = ({
     })
   }
 
-  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('AssistantModal', { action: 'clone', bot: bot })
   }
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
       state: { preview: true, distName: routingName, displayName: name },
+    })
+  }
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    navigate(`/${routingName}`, {
+      state: { preview: false, distName: routingName, displayName: name },
     })
   }
 
@@ -119,14 +126,19 @@ export const BotListItem: FC<BotListItemProps> = ({
       <td className={s.td}>
         <div data-tip data-for='bot-clone-interact'>
           <div className={s.btns_area}>
-            <button
-              className={s.area}
-              disabled={disabledMsg !== undefined}
-              onClick={handleCloneBtnClick}>
-              <Clone className={s.strokeIcon} />
-            </button>
+            <Button
+              theme='primary'
+              small
+              withIcon
+              props={{
+                disabled: disabledMsg !== undefined,
+                onClick:
+                  type === 'public' ? handleCloneClick : handlEditClick,
+              }}>
+              {type === 'public' ? <Clone /> : <Edit />}
+            </Button>
             {type === 'your' ? (
-              <div className={s.area}>
+              <Button theme='secondary' small withIcon>
                 <Kebab
                   dataFor={type === 'your' && 'your_bot'}
                   item={{
@@ -134,11 +146,15 @@ export const BotListItem: FC<BotListItemProps> = ({
                     data: bot, // Data of Element
                   }}
                 />
-              </div>
+              </Button>
             ) : (
-              <button className={s.area} onClick={handlePreviewBtnClick}>
-                <PreviewIcon className={s.strokeIcon} />
-              </button>
+              <Button
+                theme='secondary'
+                small
+                withIcon
+                props={{ onClick: handlePreviewClick }}>
+                <PreviewIcon />
+              </Button>
             )}
           </div>
         </div>

@@ -4,7 +4,7 @@ import s from './Button.module.scss'
 import classNames from 'classnames/bind'
 
 interface Props extends React.PropsWithChildren {
-  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
+  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error' | 'dark'
   small?: boolean
   long?: boolean
   withIcon?: boolean

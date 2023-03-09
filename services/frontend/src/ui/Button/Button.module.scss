@@ -158,6 +158,11 @@
       @extend .button_theme_primary;
       background-color: $red;
     }
+
+    &_dark {
+      @extend .button_theme_primary;
+      background-color: $primary4;
+    }
   }
 
   &__icon {

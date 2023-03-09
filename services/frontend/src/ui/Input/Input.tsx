@@ -39,9 +39,6 @@ export const Input: FC<InputProps> = ({
       handleEnterBtnClick()
       return
     }
-
-    setIsActive(true)
-    setIsChanged(true)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -79,8 +76,8 @@ export const Input: FC<InputProps> = ({
         )}
       </div>
       {error && (
-        <label htmlFor={inputId} className={s.label}>
-          {error.message}
+        <label htmlFor={inputId} className={cx('label', 'about')}>
+          {error?.message}
         </label>
       )}
     </div>

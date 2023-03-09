@@ -25,7 +25,7 @@ export const AddButton: FC<Props> = ({ text, addBot, listView, disabled }) => {
               onClick={handleClick}
               disabled={disabled}>
               <img src={Add} />
-              <p>{text || 'Create From Template'}</p>
+              <p>{text || 'Create From Scratch'}</p>
             </button>
           </td>
         </tr>

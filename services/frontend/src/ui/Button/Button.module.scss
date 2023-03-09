@@ -69,12 +69,7 @@
       }
 
       &_small:hover {
-        box-shadow: none;
-        background-color: $primary1;
-        color: $text4;
-        > svg path {
-          stroke: $text4;
-        }
+        box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
       }
       > svg path {
         stroke: $text1;
@@ -185,4 +180,3 @@
     fill: $primary4;
   }
 }
-

@@ -12,7 +12,7 @@ import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps extends SkillInfoInterface {
@@ -101,6 +101,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
   const { isPreview } = usePreview()
   let cx = classNames.bind(s)
+
   return (
     <div
       className={cx(

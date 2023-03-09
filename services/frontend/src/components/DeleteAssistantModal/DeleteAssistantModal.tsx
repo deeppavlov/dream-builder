@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { useMutation, useQueryClient } from 'react-query'
 import { deleteAssistantDist } from '../../services/deleteAssistantDist'
 import { BotInfoInterface } from '../../types/types'

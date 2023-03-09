@@ -170,7 +170,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
             <li className={s.item}>
               <div>Publish</div>
             </li>
-
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <div>History</div>

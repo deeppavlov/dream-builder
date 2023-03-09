@@ -28,6 +28,7 @@ class Emailer:
         try:
             self._server.send_message(msg, **kwargs)
         except smtplib.SMTPServerDisconnected:
+            self._server.connect(self.server_name, self.port)
             self._server.login(self.user, self.password)
             self._server.send_message(msg, **kwargs)
         except Exception as e:

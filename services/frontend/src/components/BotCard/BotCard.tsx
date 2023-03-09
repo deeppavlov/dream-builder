@@ -1,4 +1,5 @@
-import ReactTooltip from 'react-tooltip'
+import { useId } from 'react'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { trigger } from '../../utils/events'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
@@ -10,6 +11,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useNavigate } from 'react-router-dom'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import s from './BotCard.module.scss'
 
 interface BotCardProps extends BotInfoInterface {
@@ -46,35 +48,36 @@ export const BotCard = ({
     gpu,
     space,
   }
-
   const navigate = useNavigate()
-  const handleBotCardClick = () => {
+  const tooltipId = useId()
+  let cx = classNames.bind(s)
+
+  const handleBotCardClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     trigger(BASE_SP_EVENT, {
       children: <BotInfoSidePanel key={bot.name} bot={bot} />,
     })
-  }
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+  }
+
+  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     navigate(`/${routingName}`, {
       state: { preview: true, distName: routingName, displayName: name },
     })
+    e.stopPropagation()
   }
 
   const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
     trigger('AssistantModal', { action: 'clone', bot: bot })
-  }
-  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+  }
+
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     navigate(`/${routingName}`, {
       state: { preview: false, distName: routingName, displayName: name },
     })
-  }
-  const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
     e.stopPropagation()
   }
-  let cx = classNames.bind(s)
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -152,19 +155,9 @@ export const BotCard = ({
               props={{ onClick: handlEditClick }}>
               Edit
             </Button>
-            <Button
-              theme='secondary'
-              small
-              withIcon
-              props={{ onClick: handleKebabClick }}>
-              <Kebab
-                dataFor={type === 'your' && 'your_bot'}
-                item={{
-                  typeItem: bot.routingName, // Id for ReactToolTip
-                  data: bot, // Data of Element
-                }}
-              />
-            </Button>
+
+            <Kebab tooltipId={tooltipId} theme='card' />
+            <BotCardToolTip tooltipId={tooltipId} bot={bot} />
           </>
         )}
       </div>

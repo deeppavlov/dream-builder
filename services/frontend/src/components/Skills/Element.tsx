@@ -1,24 +1,26 @@
-import { FC, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { usePreview } from '../../context/PreviewProvider'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import { Skill } from '../../types/types'
+import { IContextMenu, Skill } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import s from './Element.module.scss'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
+import SkillStackToolTip from '../SkillStackToolTip/SkillStackToolTip'
+import s from './Element.module.scss'
 
-interface SkillProps {
-  item: Skill
+interface SkillProps extends IContextMenu {
+  skill: Skill
 }
 
-export const Element: FC<SkillProps> = ({ item }) => {
+export const Element: FC<SkillProps> = ({
+  skill,
+  isCustomizable,
+  isPreview,
+}) => {
   const [disabled, setDisabled] = useState<boolean>(false)
-  const sliderHandler = () => {
-    setDisabled(disabled => !disabled)
-  }
-  const { isPreview } = usePreview()
+  let tooltipId = useId()
   const cx = classNames.bind(s)
+
+  const sliderHandler = () => setDisabled(disabled => !disabled)
 
   return (
     <div className={cx('element', disabled && 'disabled')}>
@@ -26,26 +28,29 @@ export const Element: FC<SkillProps> = ({ item }) => {
         <div className={s.top}>
           <img
             src={`./src/assets/icons/${
-              componentTypeMap[item.component_type]
+              componentTypeMap[skill.component_type]
             }.svg`}
             className={s.icon}
           />
-          <p className={s.name}>{item?.display_name || 'some_skill'}</p>
+          <p className={s.name}>{skill?.display_name || 'some_skill'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {item.ram_usage + ' RAM ' + '| ' + item.execution_time + 's Time' ||
-              '0.0 GB RAM | 0.00 s '}
+            {skill.ram_usage +
+              ' RAM ' +
+              '| ' +
+              skill.execution_time +
+              's Time' || '0.0 GB RAM | 0.00 s '}
           </p>
         </div>
       </div>
       <div className={s.right}>
-        <Kebab
-          item={{
-            typeItem: item.display_name,
-            data: item, // Data of Element
-          }}
-          dataFor='customizable_skill'
+        <Kebab tooltipId={tooltipId} />
+        <SkillStackToolTip
+          tooltipId={tooltipId}
+          skill={skill}
+          isCustomizable={isCustomizable}
+          isPreview={isPreview}
         />
         <ToggleButton disabled={isPreview} sliderHandler={sliderHandler} />
       </div>

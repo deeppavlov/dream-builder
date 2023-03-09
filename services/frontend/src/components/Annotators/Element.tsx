@@ -1,44 +1,50 @@
-import { FC, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Annotator } from '../../types/types'
+import { Annotator, IContextMenu } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './Element.module.scss'
+import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
 
-interface AnnotatorProps {
-  item: Annotator
+interface AnnotatorProps extends IContextMenu {
+  annotator: Annotator
 }
 
-export const Element: FC<AnnotatorProps> = ({ item }) => {
+export const Element: FC<AnnotatorProps> = ({
+  annotator,
+  isCustomizable,
+  isPreview,
+}) => {
   const [disabled, setDisabled] = useState<boolean>(true)
-  const sliderHandler = () => {
-    setDisabled(disabled => !disabled)
-  }
+  const tooltipId = useId()
   const cx = classNames.bind(s)
+
+  const sliderHandler = () => setDisabled(disabled => !disabled)
+
   return (
     <div className={cx('element', !disabled && disabled)}>
       <div className={s.left}>
         <div className={s.top}>
           <img
-            src={`./src/assets/icons/${modelTypeMap[item?.model_type]}.svg`}
+            src={`./src/assets/icons/${
+              modelTypeMap[annotator?.model_type]
+            }.svg`}
             className={s.icon}></img>
-          <p className={s.name}>{item.display_name || 'some_annotator'}</p>
+          <p className={s.name}>{annotator.display_name || 'some_annotator'}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {item?.ram_usage + ' RAM | ' + item?.gpu_usage + ' GPU'}
+            {annotator?.ram_usage + ' RAM | ' + annotator?.gpu_usage + ' GPU'}
           </p>
         </div>
       </div>
       <div className={s.right}>
-        <Kebab
-          disabled={!disabled}
-          dataFor='customizable_annotator'
-          item={{
-            typeItem: item?.display_name, // Type of Element, like Intent Catcher, Intent Responder, FAQ etc.
-            data: item, // Data of Element
-          }}
+        <Kebab disabled={!disabled} tooltipId={tooltipId} />
+        <AnnotatorStackToolTip
+          annotator={annotator}
+          tooltipId={tooltipId}
+          isCustomizable={isCustomizable}
+          isPreview={isPreview}
         />
         {/* <ToggleButton sliderHandler={sliderHandler} /> */}
       </div>

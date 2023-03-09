@@ -30,10 +30,12 @@ const SelectorSettingsSidePanel = ({
   const [properties, editor] = ['Properties', 'Editor']
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: activeTab ?? properties,
-    tabList: new Map([
-      [properties, { name: properties }],
-      [editor, { name: editor, disabled: isDisabledEditor || !settings }],
-    ]),
+    tabList: settings
+      ? new Map([
+          [properties, { name: properties }],
+          [editor, { name: editor, disabled: isDisabledEditor }],
+        ])
+      : new Map([[properties, { name: properties }]]),
   })
   const settingsId = useId()
   const {

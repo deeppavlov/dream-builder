@@ -1,18 +1,17 @@
 import React, { useState } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
-import { ReactComponent as BookIcon } from '@assets/icons/book.svg'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { trigger } from '../../utils/events'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
-import { IAnnotator } from '../../types/types'
-import { getStyleType } from '../../utils/getStyleType'
-import s from './AnnotatorSidePanel.module.scss'
+import { Annotator } from '../../types/types'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
+import s from './AnnotatorSidePanel.module.scss'
 
 interface Props {
-  annotator: IAnnotator
+  annotator: Annotator
   activeTab?: 'Properties' | 'Editor'
   children?: React.ReactNode // Editor Tab element
 }
@@ -63,7 +62,7 @@ const AnnotatorSidePanel = ({
               <EditPencilIcon className={cx('edit-pencil')} data-disabled />
             </div>
             <div className={cx('author')}>
-              <img src={annotator.authorImg} alt='Author' />
+              <img src={DeepPavlovLogo} alt='Author' />
               <span>{annotator.author}</span>
             </div>
             <ul className={cx('table')}>
@@ -73,14 +72,14 @@ const AnnotatorSidePanel = ({
                   <img
                     className={s.typeLogo}
                     src={`./src/assets/icons/${
-                      modelTypeMap[annotator?.type]
+                      modelTypeMap[annotator?.model_type]
                     }.svg`}
                   />
-                  <span>{annotator.type}</span>
+                  <span>{annotator.model_type}</span>
                 </span>
               </li>
             </ul>
-            <p className={cx('desc')}>{annotator.desc}</p>
+            <p className={cx('desc')}>{annotator.description}</p>
           </div>
         </div>
       )}

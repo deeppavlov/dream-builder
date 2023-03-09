@@ -1,4 +1,5 @@
 .avatar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -71,6 +72,8 @@
   }
 }
 .profile_menu {
+  position: absolute;
+  top: calc(100% + 13px);
   width: 264px;
   padding: 0px !important;
   color: rgba(0, 0, 0, 0.9) !important;
@@ -81,5 +84,6 @@
   border: none !important;
   &::after {
     left: 84% !important;
+    background-color: red;
   }
 }

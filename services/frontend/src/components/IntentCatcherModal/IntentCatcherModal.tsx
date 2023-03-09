@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as TrashIcon } from '@assets/icons/trash_icon.svg'
 import { ReactComponent as IntentErrorCircle } from '@assets/icons/intent_error_circle.svg'

@@ -39,8 +39,10 @@ $color2: #3300ff;
     -webkit-appearance: none;
     border-radius: 100%;
     border: calc(1.5 / 16) + rem solid $text2;
-    width: 20px;
-    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
     transition: all 150ms ease;
     cursor: pointer;
 

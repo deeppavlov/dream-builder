@@ -41,7 +41,14 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {skills?.map((item: Skill, i: number) => {
-            return <Element key={i} item={item} />
+            return (
+              <Element
+                key={i}
+                skill={item}
+                isCustomizable={false}
+                isPreview={isPreview}
+              />
+            )
           })}
         </Accordion>
       </div>

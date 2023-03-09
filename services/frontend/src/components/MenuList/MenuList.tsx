@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { ReactComponent as CloneIcon } from '../../assets/icons/clone.svg'
@@ -7,7 +7,7 @@ import { ReactComponent as DisableIcon } from '../../assets/icons/disable.svg'
 import { ReactComponent as AddIcon } from '../../assets/icons/add.svg'
 import { ReactComponent as PropertiesIcon } from '../../assets/icons/properties.svg'
 import { ReactComponent as PublishIcon } from '../../assets/icons/publish.svg'
-import { ReactComponent as RenameIcon } from '../../assets/icons/rename.svg'
+import { ReactComponent as RenameIcon } from '../../assets/icons/edit.svg'
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete.svg'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -21,6 +21,7 @@ import GenerativeSkillEditor from '../GenerativeSkillEditor/GenerativeSkillEdito
 import s from './MenuList.module.scss'
 import { MenuTypes } from '../../types/types'
 import SelectorSettingsSidePanel from '../SelectorSettingsSidePanel/SelectorSettingsSidePanel'
+import BaseToolTipMenu from '../BaseContextMenu/BaseContextMenu'
 
 export interface MenuListProps {
   type: MenuTypes
@@ -35,7 +36,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
   const { isPreview } = usePreview()
   const cx = classNames.bind(s)
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
     switch (e?.currentTarget?.innerText!) {
@@ -201,15 +202,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
       )
     case 'your_bot':
       return (
-        <ReactTooltip
-          event='click'
-          globalEventOff='click'
-          arrowColor='#fff'
-          clickable={true}
-          className={s.menulist}
-          id={privateDataFor}
-          place='right'
-          effect='solid'>
+        <ReactTooltip id={privateDataFor} place='right' effect='solid'>
           <ul className={s.menu}>
             <li className={s.item}>
               <div onClick={handleClick}>
@@ -473,7 +466,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
         </ReactTooltip>
       )
     case 'customizable_skill':
-      const CusSkillMenu = () => (
+      const CustomizableSkillMenu = () => (
         <ul className={s.menu}>
           <li className={cx('item', isPreview && 'disabled')}>
             <div
@@ -666,7 +659,7 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
           id={privateDataFor}
           place='right'
           effect='solid'>
-          <CusSkillMenu />
+          <CustomizableSkillMenu />
           {/* <hr style={{ border: '0.8px solid #F0F0F3' }} /> */}
           {/* <div style={{ padding: '10px' }}>
             <Wrapper padding='5px 12px' borderRadius='8px'>
@@ -753,7 +746,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
           <li className={s.item}>
             <div
               onClick={() => {
-                console.log('lol')
                 switch (item?.typeItem) {
                   default:
                     trigger(BASE_SP_EVENT, {

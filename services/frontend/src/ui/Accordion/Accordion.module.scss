@@ -1,9 +1,4 @@
-.elements {
-  overflow: hidden;
-  transition: height ease 0.2s;
-  max-width: 440px;
-}
-.arrowDropdown {
+.accordion {
   @include t3;
   display: flex;
   padding: 4px 12px;
@@ -15,6 +10,7 @@
   background: #f0f0f3;
   color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
+
   &.annotators {
     background: #d8dbe5;
   }
@@ -34,16 +30,24 @@
   &.rounded {
     border-radius: 8px;
   }
+  &.closed {
+    svg {
+      transition: ease 0.2s;
+      transform: rotate(0deg);
+    }
+  }
+
   svg {
     fill: rgba(0, 0, 0, 0.7);
     transition: ease 0.2s;
     cursor: pointer;
     @include icon_size_24;
+    transform: rotate(180deg);
   }
-  &.close {
-    svg {
-      transition: ease 0.2s;
-      transform: rotate(180deg);
-    }
-  }
+}
+
+.elements {
+  overflow: hidden;
+  transition: height ease 0.2s;
+  max-width: 440px;
 }

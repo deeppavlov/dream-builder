@@ -1228,7 +1228,7 @@ export const TestPage = () => {
             name='Name of The Skill1'
             author='DeepPavlov'
             authorImg={DeepPavlovLogo}
-            skillType='fallback'
+            skillType='generative'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}
@@ -1245,7 +1245,7 @@ export const TestPage = () => {
             author='DeepPavlov'
             authorImg={DeepPavlovLogo}
             name='Name of The Skill2'
-            skillType='fallback'
+            skillType='generative'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}

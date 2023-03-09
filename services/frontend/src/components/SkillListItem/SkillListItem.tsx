@@ -1,4 +1,4 @@
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'

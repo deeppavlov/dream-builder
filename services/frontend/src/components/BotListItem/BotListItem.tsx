@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'

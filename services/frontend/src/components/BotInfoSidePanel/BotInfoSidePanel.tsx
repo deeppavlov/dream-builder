@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { useQuery } from 'react-query'
 import { BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'

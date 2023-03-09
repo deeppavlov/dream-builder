@@ -66,7 +66,7 @@ export interface Annotator {
   name: string
   display_name: string
   author: string
-  type: AnnotatorType
+  model_type: AnnotatorType
   description: string
   date_created: string
   execution_time: string | number
@@ -115,6 +115,34 @@ export interface Skill {
   version: string | number
 }
 
+export interface ISkillSelector {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
+}
+
+export interface ISkillResponder {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
+}
+
 export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type SkillType =
@@ -132,14 +160,6 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
-
-export interface IAnnotator {
-  name: string
-  author: string
-  authorImg: string
-  type: string
-  desc: string
-}
 
 export type MenuTypes =
   | 'main'
@@ -166,4 +186,9 @@ export interface SettingKey {
   type: 'switch' | 'checkbox' | 'radio' | 'input'
   value?: any
   checked?: boolean
+}
+
+export interface IContextMenu {
+  isPreview: boolean
+  isCustomizable: boolean
 }

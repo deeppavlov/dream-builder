@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { trigger } from '../../utils/events'
@@ -8,8 +7,6 @@ import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import SidePanelName from '../../ui/SidePanelName/SidePanelName'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -18,8 +15,7 @@ interface Props {
   children?: React.ReactNode // Editor Tab element
 }
 
-const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
-  const [skill, setSkill] = useState<SkillInfoInterface>(propSkill)
+const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
   const isEditor = children !== undefined
   const { isPreview } = usePreview()
   const [properties, editor] = ['Properties', 'Editor']
@@ -56,10 +52,10 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
       </SidePanelHeader>
       {tabsInfo.activeTabId === properties && (
         <div role='tabpanel' className={s.properties}>
-          <SidePanelName>
-            <span>{skill.name}</span>
+          <div className={s.header}>
+            <span className={s.name}>{skill.display_name || skill.name}</span>
             <EditPencilIcon className={cx('edit-pencil')} data-disabled />
-          </SidePanelName>
+          </div>
 
           <div className={cx('author')}>
             <img src={skill.authorImg} alt='Author' />
@@ -84,7 +80,7 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
             </li>
           </ul>
           <p className={s.desc}>{skill.desc}</p>
-          <SidePanelButtons>
+          <div className={s.btns}>
             <Button theme='secondary'>Duplicate</Button>
             <div data-tip data-for='skill-add-interact'>
               <Button
@@ -96,7 +92,8 @@ const SkillSidePanel = ({ skill: propSkill, activeTab, children }: Props) => {
                 Add to ...
               </Button>
             </div>
-          </SidePanelButtons>
+          </div>
+
           {/* {disabledMsg && (
           <ReactTooltip
             place='bottom'

@@ -6,13 +6,15 @@ import { Element } from './Element'
 import { countResources } from '../../utils/countResources'
 import { Annotator } from '../../types/types'
 import s from './Annotators.module.scss'
+import { usePreview } from '../../context/PreviewProvider'
 
 interface Props {
   annotators: [Annotator]
 }
 
 export const Annotators: React.FC<Props> = ({ annotators }) => {
-  
+  const { isPreview } = usePreview()
+
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -38,7 +40,14 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {annotators?.map((item: Annotator, i: number) => {
-            return <Element key={i} item={item} />
+            return (
+              <Element
+                key={i}
+                annotator={item}
+                isCustomizable={false}
+                isPreview={isPreview}
+              />
+            )
           })}
         </Accordion>
       </div>

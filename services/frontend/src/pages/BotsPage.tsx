@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { dist_list } from '../types/types'
 import { RoutesList } from '../router/RoutesList'

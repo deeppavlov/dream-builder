@@ -146,42 +146,44 @@ export const BotsPage = () => {
                   {usersDistDataError &&
                     'luck is not on your side! try to refresh the page' +
                       usersDistDataError}
-                  {usersDistData?.map((dist: dist_list, i: number) => {
-                    const {
-                      display_name,
-                      name,
-                      author,
-                      description,
-                      version,
-                      ram_usage,
-                      gpu_usage,
-                      disk_usage,
-                      date_created,
-                    } = dist
-                    const dateCreated = dateToUTC(date_created)
-                    return (
-                      <BotCard
-                        routingName={name}
-                        key={i}
-                        type='your'
-                        size='small'
-                        name={display_name}
-                        author={author}
-                        authorImg={DeepPavlovLogo}
-                        dateCreated={dateCreated}
-                        desc={description}
-                        version={version}
-                        ram={ram_usage}
-                        gpu={gpu_usage}
-                        space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  })}
+                  <Slider>
+                    {usersDistData?.map((dist: dist_list, i: number) => {
+                      const {
+                        display_name,
+                        name,
+                        author,
+                        description,
+                        version,
+                        ram_usage,
+                        gpu_usage,
+                        disk_usage,
+                        date_created,
+                      } = dist
+                      const dateCreated = dateToUTC(date_created)
+                      return (
+                        <BotCard
+                          routingName={name}
+                          key={i}
+                          type='your'
+                          size='small'
+                          name={display_name}
+                          author={author}
+                          authorImg={DeepPavlovLogo}
+                          dateCreated={dateCreated}
+                          desc={description}
+                          version={version}
+                          ram={ram_usage}
+                          gpu={gpu_usage}
+                          space={disk_usage}
+                          disabledMsg={
+                            auth?.user
+                              ? undefined
+                              : 'You must be signed in to clone the bot'
+                          }
+                        />
+                      )
+                    })}
+                  </Slider>
                 </Container>
               </Container>
             </Wrapper>

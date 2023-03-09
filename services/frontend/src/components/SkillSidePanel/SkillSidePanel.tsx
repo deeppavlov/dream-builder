@@ -8,7 +8,7 @@ import useTabsManager from '../../hooks/useTabsManager'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
 import { usePreview } from '../../context/PreviewProvider'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './SkillSidePanel.module.scss'
 

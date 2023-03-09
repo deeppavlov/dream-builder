@@ -12,7 +12,7 @@ import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps extends SkillInfoInterface {

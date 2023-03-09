@@ -12,7 +12,7 @@ import DateCard from '../DateCard/DateCard'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './BotInfoSidePanel.module.scss'
@@ -32,7 +32,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
     activeTabId: properties,
     tabList: new Map([[properties, properties]]),
   })
-  
+
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,

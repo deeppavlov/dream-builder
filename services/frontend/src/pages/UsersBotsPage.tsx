@@ -45,7 +45,9 @@ export const UsersBotsPage = () => {
           <Wrapper
             title='Your Virtual Assistants & Chatbots'
             amount={usersDistData?.length}>
-            <Container>
+            <Container
+              display='grid'
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
               {isUsersDistDataLoading && 'Loading...'}
               {usersDistDataError &&
                 'luck is not on your side! try to refresh the page' +
@@ -68,7 +70,7 @@ export const UsersBotsPage = () => {
                     routingName={name}
                     key={i}
                     type='your'
-                    size='small'
+                    size='big'
                     name={display_name}
                     author={author}
                     authorImg={DeepPavlovLogo}

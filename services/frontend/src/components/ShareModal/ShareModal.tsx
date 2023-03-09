@@ -41,7 +41,7 @@ export const ShareModal = () => {
   }, [])
 
   useEffect(() => {
-    reset({ link: import.meta.env.VITE_APP_URL_DEV + bot })
+    reset({ link: import.meta.env.VITE_APP_URL_LOCAL + bot })
   }, [bot])
   return (
     <>

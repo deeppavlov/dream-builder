@@ -1,7 +1,7 @@
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { ReactComponent as RightIcon } from '@assets/icons/arrow_left_button.svg'
-import s from './Button.module.scss'
 import classNames from 'classnames/bind'
+import s from './Button.module.scss'
 
 interface Props extends React.PropsWithChildren {
   theme: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
@@ -9,9 +9,18 @@ interface Props extends React.PropsWithChildren {
   long?: boolean
   withIcon?: boolean
   props?: React.ButtonHTMLAttributes<HTMLButtonElement>
+  clone?: boolean
 }
 
-const Button = ({ theme, small, long, withIcon, children, props }: Props) => {
+export const Button = ({
+  theme,
+  small,
+  long,
+  withIcon,
+  children,
+  clone,
+  props,
+}: Props) => {
   const cx = classNames.bind(s)
   return (
     <button
@@ -21,7 +30,8 @@ const Button = ({ theme, small, long, withIcon, children, props }: Props) => {
         small && `button_theme_${theme}_small`,
         small && 'button_small',
         long && 'button_long',
-        withIcon && 'button_with-icon'
+        withIcon && 'button_with-icon',
+        clone && 'button_clone'
       )}
       {...props}>
       {theme === 'tertiary' && <PlusIcon className={s.button__icon} />}

@@ -12,14 +12,16 @@ import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import s from './SkillCard.module.scss'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: BotAvailabilityType
   big?: boolean
   checkbox?: boolean
   disabledMsg?: string
+  componentType: string
+  modelType: string
 }
 
 export const SkillCard: FC<SkillCardProps> = ({
@@ -39,6 +41,8 @@ export const SkillCard: FC<SkillCardProps> = ({
   checkbox,
   big,
   disabledMsg,
+  modelType,
+  componentType,
 }) => {
   const skill = {
     name,
@@ -53,6 +57,8 @@ export const SkillCard: FC<SkillCardProps> = ({
     space,
     executionTime,
     skillType,
+    modelType,
+    componentType,
   }
   const [disabled, setDisabled] = useState<boolean>(false)
   const ResValues = (): { name: string; value: string }[] =>
@@ -69,7 +75,7 @@ export const SkillCard: FC<SkillCardProps> = ({
           { name: 'RAM', value: ram },
           { name: 'Execution time', value: executionTime + ' s' },
         ]
-  const sliderHandler = (e: React.MouseEvent) => {
+  const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
     setDisabled(disabled => !disabled)
   }
@@ -108,7 +114,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       <div className={s.header}>
         <p className={s.botName}>{name ?? 'Name of The Skill'} </p>
         {type == 'your' && (
-          <ToggleButton disabled={isPreview} sliderHandler={sliderHandler} />
+          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
         )}
       </div>
       <div className={s.body}>
@@ -116,10 +122,10 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.type}>
             <img
               className={s.typeLogo}
-              src={`./src/assets/icons/${componentTypeMap[skillType]}.svg`}
+              src={`./src/assets/icons/${componentTypeMap[componentType]}.svg`}
             />
-            <p className={cx('typeText', skillType)}>
-              {skillType ?? 'Type of Skill'}
+            <p className={cx('typeText', componentTypeMap[componentType])}>
+              {componentType ?? 'Type of Skill'}
             </p>
           </div>
           <div className={s.name}>

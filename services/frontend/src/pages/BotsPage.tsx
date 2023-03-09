@@ -25,6 +25,8 @@ import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { Modal } from '../components/Modal/Modal'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import { Toaster } from 'react-hot-toast'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -144,45 +146,42 @@ export const BotsPage = () => {
                   {usersDistDataError &&
                     'luck is not on your side! try to refresh the page' +
                       usersDistDataError}
-                  {
-                    // auth?.user &&
-                    usersDistData?.map((dist: dist_list, i: number) => {
-                      const {
-                        display_name,
-                        name,
-                        author,
-                        description,
-                        version,
-                        ram_usage,
-                        gpu_usage,
-                        disk_usage,
-                        date_created,
-                      } = dist
-                      const dateCreated = dateToUTC(date_created)
-                      return (
-                        <BotCard
-                          routingName={name}
-                          key={i}
-                          type='your'
-                          size='small'
-                          name={display_name}
-                          author={author}
-                          authorImg={DeepPavlovLogo}
-                          dateCreated={dateCreated}
-                          desc={description}
-                          version={version}
-                          ram={ram_usage}
-                          gpu={gpu_usage}
-                          space={disk_usage}
-                          disabledMsg={
-                            auth?.user
-                              ? undefined
-                              : 'You must be signed in to clone the bot'
-                          }
-                        />
-                      )
-                    })
-                  }
+                  {usersDistData?.map((dist: dist_list, i: number) => {
+                    const {
+                      display_name,
+                      name,
+                      author,
+                      description,
+                      version,
+                      ram_usage,
+                      gpu_usage,
+                      disk_usage,
+                      date_created,
+                    } = dist
+                    const dateCreated = dateToUTC(date_created)
+                    return (
+                      <BotCard
+                        routingName={name}
+                        key={i}
+                        type='your'
+                        size='small'
+                        name={display_name}
+                        author={author}
+                        authorImg={DeepPavlovLogo}
+                        dateCreated={dateCreated}
+                        desc={description}
+                        version={version}
+                        ram={ram_usage}
+                        gpu={gpu_usage}
+                        space={disk_usage}
+                        disabledMsg={
+                          auth?.user
+                            ? undefined
+                            : 'You must be signed in to clone the bot'
+                        }
+                      />
+                    )
+                  })}
                 </Container>
               </Container>
             </Wrapper>
@@ -235,7 +234,12 @@ export const BotsPage = () => {
                 })}
               </Table>
             </Wrapper>
-            <Wrapper title='Your Virtual Assistants & Chatbots' primary>
+            <Wrapper
+              title='Your Virtual Assistants & Chatbots'
+              primary
+              showAll
+              amount={auth?.user && usersDistData?.length}
+              linkTo={RoutesList.yourBots}>
               <Table
                 addButton={
                   <AddButton
@@ -260,6 +264,7 @@ export const BotsPage = () => {
                   const time = timeToUTC(date_created)
                   return (
                     <BotListItem
+                      type='your'
                       key={i}
                       routingName={name}
                       name={display_name}
@@ -299,8 +304,10 @@ export const BotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
+        <ShareModal />
         <Modal />
       </Main>
+      <Toaster />
     </>
   )
 }

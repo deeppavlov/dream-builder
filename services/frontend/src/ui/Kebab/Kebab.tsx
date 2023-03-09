@@ -2,6 +2,7 @@ import { FC } from 'react'
 import classNames from 'classnames/bind'
 import { MenuTypes } from '../../types/types'
 import { MenuList } from '../../components/MenuList/MenuList'
+import { ReactComponent as KebabLogo } from '../../assets/icons/kebab.svg'
 import s from './Kebab.module.scss'
 
 interface KebabProps {
@@ -26,9 +27,7 @@ export const Kebab: FC<KebabProps> = ({ disabled, type, item, dataFor }) => {
         onClick={clickHandler}
         data-for={privateDataFor()}
         className={cx('kebab', type, disabled && 'disabled')}>
-        <figure className={s.dots} />
-        <figure className={s.dots} />
-        <figure className={s.dots} />
+        <KebabLogo />
       </button>
       <MenuList type={dataFor} item={item} privateDataFor={privateDataFor()} />
     </>

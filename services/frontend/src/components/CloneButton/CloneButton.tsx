@@ -2,7 +2,7 @@ import { FC } from 'react'
 import classNames from 'classnames/bind'
 import { usePreview } from '../../context/PreviewProvider'
 import Button from '../../ui/Button/Button'
-import { ReactComponent as CloneIcon } from '@assets/icons/clone.svg'
+import { ReactComponent as CloneIcon } from '../../assets/icons/clone.svg'
 import s from './CloneButton.module.scss'
 
 interface Props {
@@ -19,14 +19,15 @@ export const CloneButton: FC<Props> = ({ amount, handler }) => {
         theme={isPreview ? 'primary' : 'secondary'}
         small
         withIcon
+        clone
         props={{ onClick: handler }}>
+        <CloneIcon />
         <div className={s.container}>
-          <CloneIcon />
           <span>Clone</span>
           {amount ?? (
-            <span className={cx('circle', isPreview ? 'preview' : 'edit')}>
+            <div className={cx('circle', isPreview ? 'preview' : 'edit')}>
               {amount || '42'}
-            </span>
+            </div>
           )}
         </div>
       </Button>

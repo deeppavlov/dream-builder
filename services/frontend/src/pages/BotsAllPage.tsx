@@ -16,6 +16,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { Toaster } from 'react-hot-toast'
 
 export const BotsAllPage = () => {
   const auth = useAuth()
@@ -93,8 +94,7 @@ export const BotsAllPage = () => {
         ) : (
           <Wrapper
             title='Public Virtual Assistants & Chatbots'
-            amount={assistantsData.length}
-            showAll>
+            amount={assistantsData?.length}>
             <Table>
               {assistantsData?.map((dist: dist_list, i: number) => {
                 const {
@@ -138,6 +138,7 @@ export const BotsAllPage = () => {
         <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />
       </Main>
+      <Toaster/>
     </>
   )
 }

@@ -3,6 +3,13 @@
   .container {
     display: flex;
     gap: 8px;
+    span {
+      padding-left: 4px;
+    }
+    svg {
+      @include icon_size_24;
+      stroke: #000;
+    }
     .circle {
       border-radius: 50%;
       display: flex;
@@ -14,12 +21,12 @@
       @include icon_size_24;
     }
     .circle.edit {
-      background-color: $bcgrnd1;
-      color: $text1;
+      background-color: #8D96B5;
+      color: #fff;
     }
     .circle.preview {
-      background-color: $text3;
-      color: $text4;
+      background-color: #fff;
+      color: $text1;
     }
   }
 }

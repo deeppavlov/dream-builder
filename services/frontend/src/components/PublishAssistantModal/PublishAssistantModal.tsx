@@ -6,6 +6,7 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import s from './PublishAssistantModal.module.scss'
+import toast from 'react-hot-toast'
 
 interface IPublishBot extends Pick<BotInfoInterface, 'routingName' | 'name'> {}
 interface IPublishAssistantModal {
@@ -24,21 +25,27 @@ export const PublishAssistantModal = () => {
   const handleNoBtnClick = () => setIsOpen(false)
 
   const handlePublishBtnClick = () => {
+    toast.promise(mutation.mutateAsync(), {
+      loading: 'Publishing...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
+
     mutation.mutate()
+    setIsOpen(false)
   }
 
   const mutation = useMutation({
     mutationFn: () => {
       return publishAssistantDist(bot?.routingName!)
     },
-    onSuccess: () => {
-      queryClient
-        .invalidateQueries({ queryKey: 'assistant_dists' })
-        .then(() => {
-          setIsOpen(false)
-          trigger('Modal', {})
-        })
-    },
+    // onSuccess: () =>
+    //   queryClient
+    //     .invalidateQueries({ queryKey: 'assistant_dists' })
+    //     .then(() => {
+    //       setIsOpen(false)
+    //       trigger('Modal', {})
+    //     }),
   })
 
   useEffect(() => {

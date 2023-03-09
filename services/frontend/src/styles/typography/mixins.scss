@@ -152,14 +152,14 @@
   @include font;
   @include bold;
 }
-@mixin skillType {
+@mixin componentType {
   .retrieval {
     color: $salad;
   }
   .generative {
     color: $turquoise;
   }
-  .fallbacks {
+  .fallback {
     color: $magenta;
   }
   .q_a {
@@ -170,5 +170,19 @@
   }
   .script_with_nns {
     color: $purple;
+  }
+}
+@mixin modelType {
+  .dictionary {
+    color: $orange;
+  }
+  .nn_based {
+    color: $pink;
+  }
+  .ml_based {
+    color: $purple;
+  }
+  .external {
+    color: $salad;
   }
 }

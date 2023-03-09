@@ -1,4 +1,4 @@
-import { RouteObject } from "react-router-dom"
+import { RouteObject } from 'react-router-dom'
 
 export interface UserInterface {
   name: string
@@ -29,6 +29,7 @@ export type PostDistParams = {
 }
 
 export interface BotInfoInterface {
+  routingName:string
   name: string
   author: string
   desc: string
@@ -42,7 +43,10 @@ export interface BotInfoInterface {
 }
 
 export interface SkillInfoInterface {
-  skillType: SkillType
+  model_type: any
+  component_type: any
+  componentType: string
+  modelType: string
   name: string
   botName: string
   author: string
@@ -64,7 +68,7 @@ export interface Annotator {
   name: string
   display_name: string
   author: string
-  type: AnnotatorType
+  type: Annotator
   description: string
   date_created: string
   execution_time: string | number
@@ -114,27 +118,27 @@ export interface Skill {
 }
 
 export type SkillType =
-  | 'fallbacks'
+  | 'fallback'
   | 'retrieval'
   | 'generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'
 
-export interface SkillInfoInterface {
-  name: string
-  author: string
-  dateCreated: string
-  desc: string
-  version: string
-  ram: string
-  gpu: string
-  skillType: SkillType
-  space?: string
-  time?: string
-  botName?: string
-  executionTime?: string
-}
+// export interface SkillInfoInterface {
+//   name: string
+//   author: string
+//   dateCreated: string
+//   desc: string
+//   version: string
+//   ram: string
+//   gpu: string
+//   skillType: SkillType
+//   space?: string
+//   time?: string
+//   botName?: string
+//   executionTime?: string
+// }
 
 export type StackType =
   | 'annotators'

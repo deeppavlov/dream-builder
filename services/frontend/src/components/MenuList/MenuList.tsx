@@ -22,8 +22,9 @@ import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import IntentResponderSidePanel from '../IntentResponderSidePanel/IntentResponderSidePanel'
 import { BotInfoInterface, MenuTypes } from '../../types/types'
 import { usePreview } from '../../context/PreviewProvider'
-import s from './MenuList.module.scss'
 import GenerativeSkillEditor from '../GenerativeSkillEditor/GenerativeSkillEditor'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import s from './MenuList.module.scss'
 
 export interface MenuListProps {
   type: MenuTypes
@@ -38,8 +39,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
   })
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
     switch (e?.currentTarget?.innerText!) {
       case 'Rename':
         trigger('AssistantModal', { action: 'edit', bot: item.data })
@@ -52,9 +51,18 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
       case 'Publish':
         trigger('PublishAssistantModal', { bot: item.data })
         break
+      case 'Properties':
+        trigger(BASE_SP_EVENT, {
+          children: <BotInfoSidePanel key={item.data?.name} bot={item.data} />,
+        })
+        break
+      case 'Share':
+        trigger('ShareModal', { bot: item?.data, smthElse: '1234' })
+        break
     }
+    e.preventDefault()
+    e.stopPropagation()
   }
-
   const { isPreview } = usePreview()
   const cx = classNames.bind(s)
 
@@ -162,9 +170,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
             <li className={s.item}>
               <div>Publish</div>
             </li>
-            {/* <li className={s.item}>
-              <div>Download</div>
-            </li> */}
             <hr style={{ border: '0.8px solid #8D96B5' }} />
             <li className={s.item}>
               <div>History</div>
@@ -187,14 +192,6 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
           place='right'
           effect='solid'>
           <ul className={s.menu}>
-            {/* <Link to='/editor'>
-              <li className={s.item}>
-                <div>
-                  <CloneIcon />
-                  <p>Clone Bot</p>
-                </div>
-              </li>
-            </Link> */}
             <li className={s.item}>
               <div>
                 <PropertiesIcon />
@@ -224,8 +221,20 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
             </li>
             <li className={s.item}>
               <div onClick={handleClick}>
+                <PropertiesIcon />
+                <p>Properties</p>
+              </div>
+            </li>
+            <li className={s.item}>
+              <div onClick={handleClick}>
                 <PublishIcon />
                 <p>Publish</p>
+              </div>
+            </li>
+            <li className={s.item}>
+              <div onClick={handleClick}>
+                <DownloadIcon />
+                <p>Share</p>
               </div>
             </li>
             <hr className={s.border} />
@@ -482,7 +491,9 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
         <ul className={s.menu}>
           <li className={cx('item', isPreview && 'disabled')}>
             <div
-              onClick={() => {
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault()
+                e.stopPropagation()
                 switch (item?.typeItem) {
                   case 'Dff Intent Responder Skill':
                     !isPreview &&
@@ -621,19 +632,18 @@ export const MenuList: FC<MenuListProps> = ({ type, privateDataFor, item }) => {
                         <SkillSidePanel
                           key={item.typeItem}
                           skill={{
-                            name: item.data.display_name,
-                            author: item.data.author,
+                            name: item?.data?.name,
+                            author: item?.data?.author,
                             authorImg: DeepPavlovLogo,
-                            skillType: item.data.component_type,
+                            componentType: item?.data.componentType,
+                            modelType: item?.data.modelType,
                             botName: 'Name of The Bot',
-                            desc: item.data.description,
-                            dateCreated: dateToUTC(
-                              new Date(item.data.date_created)
-                            ),
-                            version: item.data.version,
-                            ram: item.data.ram_usage,
-                            gpu: item.data.gpu_usage,
-                            executionTime: item.data.execution_time,
+                            desc: item.data.desc,
+                            dateCreated: new Date(item?.data.dateCreated),
+                            // version: item.data.version,
+                            ram: item.data.ram,
+                            gpu: item.data.gpu,
+                            executionTime: item.data.executionTime,
                           }}
                         />
                       ),

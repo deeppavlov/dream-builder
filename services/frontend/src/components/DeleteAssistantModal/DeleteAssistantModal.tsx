@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useMutation, useQueryClient } from 'react-query'
 import { deleteAssistantDist } from '../../services/deleteAssistantDist'
 import { BotInfoInterface } from '../../types/types'
@@ -18,9 +19,10 @@ export const DeleteAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<IDeleteAssistantInfo | null>()
   const queryClient = useQueryClient()
+  
   const deleteDist = useMutation({
     mutationFn: name => {
-      return deleteAssistantDist(name)
+      return deleteAssistantDist(name!)
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
@@ -40,7 +42,11 @@ export const DeleteAssistantModal = () => {
   const handleCancelBtnClick = () => handleClose()
 
   const handleDeleteBtnClick = () => {
-    deleteDist.mutate(bot?.routingName)
+    toast.promise(deleteDist.mutateAsync(bot?.routingName!), {
+      loading: 'Deleting...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
     handleClose()
   }
 
@@ -56,9 +62,7 @@ export const DeleteAssistantModal = () => {
           Do you really want to delete <mark>{bot?.name}</mark> Virtual
           Assistant?
         </h4>
-
         <span className={s.desc}>This action can’t be undone</span>
-
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
             Cancel

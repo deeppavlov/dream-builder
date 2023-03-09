@@ -13,6 +13,7 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import s from './AssistantModal.module.scss'
+import toast from 'react-hot-toast'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
@@ -86,15 +87,14 @@ export const AssistantModal = () => {
     mutationFn: (variables: { data: FormValues; name: string }) => {
       return renameAssistantDist(variables?.name, variables?.data)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' })
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' }),
   })
   const clone = useMutation({
     mutationFn: (variables: { data: FormValues; name: string }) => {
       return cloneAssistantDist(variables?.data, variables?.name)
     },
-    onSuccess: data => {
+    onSuccess: data =>
       queryClient
         .invalidateQueries({ queryKey: 'usersAssistantDists' })
         .then(() => {
@@ -108,15 +108,14 @@ export const AssistantModal = () => {
         })
         .then(() => {
           isTopbarButton && closeModal()
-        })
-    },
+        }),
   })
 
   const mutation = useMutation({
     mutationFn: (data: FormValues) => {
       return postAssistantDist(data)
     },
-    onSuccess: data => {
+    onSuccess: data =>
       queryClient
         .invalidateQueries({ queryKey: 'usersAssistantDists' })
         .then(() => {
@@ -127,14 +126,28 @@ export const AssistantModal = () => {
               displayName: data?.display_name,
             },
           })
-        })
-    },
+        }),
   })
 
   const onFormSubmit: SubmitHandler<FormValues> = data => {
-    action === 'create' && mutation.mutate(data)
-    action === 'clone' && clone.mutate({ data, name })
-    action === 'edit' && rename.mutate({ data, name })
+    action === 'create' &&
+      toast.promise(mutation.mutateAsync(data), {
+        loading: 'Creating...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      })
+    action === 'clone' &&
+      toast.promise(clone.mutateAsync({ data, name }), {
+        loading: 'Cloning...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      })
+    action === 'edit' &&
+      toast.promise(rename.mutateAsync({ data, name }), {
+        loading: 'Renaming...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      })
   }
 
   useEffect(() => {

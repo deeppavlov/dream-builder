@@ -16,6 +16,11 @@ import { dist_list } from '../types/types'
 import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { Modal } from '../components/Modal/Modal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import { Toaster } from 'react-hot-toast'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
@@ -104,6 +109,7 @@ export const UsersBotsPage = () => {
                 const time = timeToUTC(date_created)
                 return (
                   <BotListItem
+                    type='your'
                     key={i}
                     routingName={name}
                     name={display_name}
@@ -129,7 +135,12 @@ export const UsersBotsPage = () => {
         )}
         <BaseSidePanel position={{ top: 64 }} />
         <AssistantModal />
+        <PublishAssistantModal />
+        <DeleteAssistantModal />
+        <ShareModal />
+        <Modal />
       </Main>
+      <Toaster />
     </>
   )
 }

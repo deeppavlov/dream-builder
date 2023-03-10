@@ -11,8 +11,8 @@ import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { UsersSkillsPage } from '../pages/UsersSkillsPage'
 import { CustomRouteConfig } from '../types/types'
+import { Crumb, CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
 import { RoutesList } from './RoutesList'
-
 
 export const routeConfig: CustomRouteConfig[] = [
   {
@@ -57,9 +57,7 @@ export const routeConfig: CustomRouteConfig[] = [
   {
     path: ':name',
     element: <EditorPage />,
-    handle: (
-      <Link to={RoutesList.start}>Virtual Assistants & Chatbots</Link>
-    ),
+    handle: <CrumbForEditor />,
   },
   {
     path: RoutesList.test,

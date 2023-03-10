@@ -9,7 +9,6 @@ interface Props {
 
 export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
   const matches = useMatches()
-
   return (
     <>
       <div
@@ -23,7 +22,7 @@ export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
       <div className={s.routes}>
         {matches.at(-1)?.pathname !== '/' && <span className={s.slash} />}
         {matches.map(crumb => {
-          return crumb.pathname !== '/' && crumb.handle
+          return crumb.pathname !== '/' && crumb?.handle
         })}
         {children && <span className={s.slash} />}
         {children}

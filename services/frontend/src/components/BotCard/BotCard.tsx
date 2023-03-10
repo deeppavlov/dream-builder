@@ -157,7 +157,7 @@ export const BotCard = ({
             </Button>
 
             <Kebab tooltipId={tooltipId} theme='card' />
-            <BotCardToolTip tooltipId={tooltipId} bot={bot} />
+            <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
           </>
         )}
       </div>

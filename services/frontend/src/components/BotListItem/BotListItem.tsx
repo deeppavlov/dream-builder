@@ -6,18 +6,20 @@ import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { SmallTag } from '../SmallTag/SmallTag'
-import { BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useAuth } from '../../context/AuthProvider'
 import s from './BotListItem.module.scss'
+import { Kebab } from '../../ui/Kebab/Kebab'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
   time?: string
   disabledMsg?: string
   routingName: string
+  type: BotAvailabilityType
 }
 
 export const BotListItem: FC<BotListItemProps> = ({
@@ -34,6 +36,7 @@ export const BotListItem: FC<BotListItemProps> = ({
   gpu,
   space,
   disabledMsg,
+  type,
 }) => {
   const bot = {
     name,
@@ -84,7 +87,11 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          <img src={authorImg} referrerPolicy='no-referrer' />
+          {/* {author === 'DeepPavlov' ? ( */}
+          <Logo />
+          {/* ) : ( */}
+          {/* <img src={auth?.user?.picture} referrerPolicy='no-referrer' /> */}
+          {/* )} */}
           <p>{author}</p>
         </div>
       </td>
@@ -116,11 +123,23 @@ export const BotListItem: FC<BotListItemProps> = ({
               className={s.area}
               disabled={disabledMsg !== undefined}
               onClick={handleCloneBtnClick}>
-              <Clone className={s.fillIcon} />
+              <Clone className={s.strokeIcon} />
             </button>
-            <button className={s.area} onClick={handlePreviewBtnClick}>
-              <PreviewIcon className={s.strokeIcon} />
-            </button>
+            {type === 'your' ? (
+              <div className={s.area}>
+                <Kebab
+                  dataFor={type === 'your' && 'your_bot'}
+                  item={{
+                    typeItem: bot.routingName, // Id for ReactToolTip
+                    data: bot, // Data of Element
+                  }}
+                />
+              </div>
+            ) : (
+              <button className={s.area} onClick={handlePreviewBtnClick}>
+                <PreviewIcon className={s.strokeIcon} />
+              </button>
+            )}
           </div>
         </div>
       </td>

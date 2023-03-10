@@ -44,12 +44,10 @@
     padding: 0px 24px;
     cursor: pointer;
     &:hover {
-      background: #f9fafc;
+      background: $bcgrnd3;
       p {
         color: rgba(0, 0, 0, 0.7);
-        // color: #fff;
       }
-      // color: #fff;
     }
     p {
       padding: 8px 0px;
@@ -66,9 +64,6 @@
       stroke: rgba(0, 0, 0, 0.9);
       @include icon_size_24;
     }
-    // &:hover {
-    //   // color: #fff;
-    // }
   }
 }
 .profile_menu {
@@ -77,13 +72,13 @@
   width: 264px;
   padding: 0px !important;
   color: rgba(0, 0, 0, 0.9) !important;
-  background: #8d96b5 !important;
+  background: #fff !important;
   border-radius: 8px !important;
   box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
   opacity: 1 !important;
   border: none !important;
   &::after {
     left: 84% !important;
-    background-color: red;
+    background: #fff !important;
   }
 }

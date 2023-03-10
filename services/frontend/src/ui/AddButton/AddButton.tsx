@@ -1,33 +1,31 @@
+import { FC } from 'react'
 import Add from '../../assets/icons/+.svg'
 import s from './AddButton.module.scss'
 
-export const AddButton = ({ addBot, listView, disabled, ...props }: any) => {
-  const handleClick = () => {
-    addBot()
-  }
+interface Props {
+  text?: string
+  addBot: () => void
+  listView?: boolean
+  disabled?: boolean
+}
+
+export const AddButton: FC<Props> = ({ text, addBot, listView, disabled }) => {
+  const handleClick = () => addBot()
   return (
     <>
       {!listView ? (
-        <button
-          style={{ ...props }}
-          onClick={() => {
-            handleClick()
-          }}
-          className={s.add_card}
-          disabled={disabled}>
+        <button onClick={handleClick} className={s.forCard} disabled={disabled}>
           <img src={Add} />
         </button>
       ) : (
         <tr className={s.tr}>
-          <td colSpan={7} className={s.td}>
+          <td colSpan={5} className={s.td}>
             <button
-              className={s.add_list_item}
-              onClick={() => {
-                handleClick()
-              }}
+              className={s.forTable}
+              onClick={handleClick}
               disabled={disabled}>
               <img src={Add} />
-              <p>Create From Template</p>
+              <p>{text || 'Create From Template'}</p>
             </button>
           </td>
         </tr>

@@ -22,27 +22,36 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
+  const handleShareBtnClick = () =>
+    trigger('ShareModal', { bot, smthElse: '1234' })
+
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {type === 'public' ? (
+      {type === 'your' && (
         <ContextMenuButton
-          name='Properties'
-          type='properties'
-          handleClick={handlePropertiesBtnClick}
+          name='Rename'
+          type='edit'
+          handleClick={handleRenameBtnClick}
         />
-      ) : (
+      )}
+      <ContextMenuButton
+        name='Properties'
+        type='properties'
+        handleClick={handlePropertiesBtnClick}
+      />
+      {type === 'your' && (
         <>
-          <ContextMenuButton
-            name='Rename'
-            type='edit'
-            handleClick={handleRenameBtnClick}
-          />
           <ContextMenuButton
             name='Publish'
             type='publish'
             handleClick={handlePublishBtnClick}
+          />
+          <ContextMenuButton
+            name='Share'
+            type='download'
+            handleClick={handleShareBtnClick}
           />
           <hr />
           <ContextMenuButton

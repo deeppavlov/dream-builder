@@ -1,0 +1,22 @@
+.baseToast {
+  background: $bcgrnd1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1), 0px 1px 1px rgba(0, 0, 0, 0.06),
+    0px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.succes {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  color: $text1;
+  @include b1;
+
+  svg {
+    @include icon_size_24;
+  }
+}

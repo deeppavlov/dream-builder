@@ -8,6 +8,7 @@ interface InputProps {
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
   withEnterButton?: boolean
+  big?: boolean
 }
 
 export const Input: FC<InputProps> = ({
@@ -15,6 +16,7 @@ export const Input: FC<InputProps> = ({
   error,
   props,
   withEnterButton,
+  big,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isChanged, setIsChanged] = useState(false) // for display Enter button
@@ -62,7 +64,7 @@ export const Input: FC<InputProps> = ({
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className={s.field}
+          className={cx('field', big && 'big')}
         />
         {withEnterButton && !error && (
           <div className={cx('submit', isChanged && 'submit-active')}>

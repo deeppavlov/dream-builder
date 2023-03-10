@@ -12,7 +12,7 @@ import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { SkillCard } from '../components/SkillCard/SkillCard'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
@@ -36,11 +36,23 @@ export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
   const auth = useAuth()
   const { state } = useLocation()
-  const { distName, displayName } = state
-  const { setIsPreview } = usePreview()
+  const location = useLocation()
+  const nameFromURL = location?.pathname?.substring(1)
 
+  const makeDisplayName = (name: string) => {
+    const splitted = name.split('_')
+    splitted.length = splitted.length - 2
+    return splitted
+      .map((word: string) => {
+        return word[0].toUpperCase() + word.slice(1)
+      })
+      .join(' ')
+  }
+  const displayName = makeDisplayName(nameFromURL)
+
+  const { setIsPreview } = usePreview()
   useEffect(() => {
-    setIsPreview(state?.preview)
+    setIsPreview(state?.preview == undefined ? true : state?.preview)
   }, [state])
   //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
 
@@ -49,10 +61,10 @@ export const EditorPage = () => {
     error: distsComponentsError,
     data: distsComponentsData,
   } = useQuery(
-    ['distsComponents', distName],
-    () => getComponentsFromAssistantDists(distName!),
+    ['distsComponents', state?.distName],
+    () => getComponentsFromAssistantDists(state?.distName! || nameFromURL),
     {
-      enabled: distName?.length! > 0,
+      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
     }
   )
 
@@ -93,8 +105,8 @@ export const EditorPage = () => {
             type='editor'
             viewHandler={viewHandler}
             tab='Skills'
-            title={displayName}
-            name={distName}
+            title={state?.displayName || displayName}
+            name={state?.distName || nameFromURL}
           />
           <Main sidebar editor>
             {!listView ? (
@@ -121,8 +133,9 @@ export const EditorPage = () => {
                         ram={skill?.ram_usage}
                         gpu={skill?.gpu_usage}
                         executionTime={skill?.execution_time}
-                        skillType={skill?.component_type}
-                        botName={skill?.botName}
+                        componentType={skill?.component_type}
+                        modelType={skill?.model_type}
+                        botName={skill?.author}
                       />
                     )
                   })}
@@ -133,10 +146,12 @@ export const EditorPage = () => {
                 <Container>
                   {isDistsComponentsLoading && 'Loading...'}
                   <Table
+                    second='Type'
                     addButton={
                       <AddButton
                         listView={listView}
                         disabled={auth?.user === null}
+                        text='Create From Scratch'
                       />
                     }>
                     {skills?.map((skill: any, i: number) => {
@@ -153,8 +168,10 @@ export const EditorPage = () => {
                           ram={skill?.ram_usage}
                           gpu={skill?.gpu_usage}
                           executionTime={skill?.execution_time}
-                          skillType={skill?.component_type}
+                          componentType={skill?.component_type}
+                          modelType={skill?.model_type}
                           botName={skill?.author}
+                          skillType={'script'}
                         />
                       )
                     })}
@@ -169,7 +186,7 @@ export const EditorPage = () => {
             tab='Architecture'
             type='editor'
             viewHandler={viewHandler}
-            title={displayName}
+            title={state?.displayName || displayName}
           />
           <Main sidebar editor draggable>
             {isDistsComponentsLoading && 'Loading...'}

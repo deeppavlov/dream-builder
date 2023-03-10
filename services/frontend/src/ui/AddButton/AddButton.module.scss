@@ -1,4 +1,4 @@
-.add_card {
+.forCard {
   position: sticky;
   left: 0;
   top: 0;
@@ -39,7 +39,7 @@
   gap: 32px;
   height: 64px;
   padding: 12px;
-  .add_list_item {
+  .forTable {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -55,7 +55,6 @@
     p {
       @include lnks_n_btns5;
       color: $text1;
-      
     }
     img {
       stroke: $text1;

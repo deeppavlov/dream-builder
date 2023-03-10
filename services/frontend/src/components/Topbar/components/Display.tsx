@@ -6,7 +6,7 @@ import s from './Display.module.scss'
 export const Display = ({ viewHandler }: any) => {
   const [view, setView] = useState(false)
   const changeView = () => {
-    setView(!view)
+    setView(view => !view)
     viewHandler()
   }
   return (

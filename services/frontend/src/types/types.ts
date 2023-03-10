@@ -44,7 +44,10 @@ export interface BotInfoInterface {
 }
 
 export interface SkillInfoInterface {
-  skillType: SkillType
+  model_type: any
+  component_type: any
+  componentType: string
+  modelType: string
   name: string
   botName: string
   author: string
@@ -66,7 +69,7 @@ export interface Annotator {
   name: string
   display_name: string
   author: string
-  model_type: AnnotatorType
+  type: Annotator
   description: string
   date_created: string
   execution_time: string | number
@@ -152,6 +155,21 @@ export type SkillType =
   | 'q_a'
   | 'script'
   | 'script_with_nns'
+
+// export interface SkillInfoInterface {
+//   name: string
+//   author: string
+//   dateCreated: string
+//   desc: string
+//   version: string
+//   ram: string
+//   gpu: string
+//   skillType: SkillType
+//   space?: string
+//   time?: string
+//   botName?: string
+//   executionTime?: string
+// }
 
 export type StackType =
   | 'annotators'

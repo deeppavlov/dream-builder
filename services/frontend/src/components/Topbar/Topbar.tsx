@@ -18,6 +18,7 @@ interface TopbarProps {
   title?: string
   viewChanger?: boolean
   tab?: 'Architecture' | 'Skills'
+  name?: string
 }
 
 export const Topbar = ({
@@ -27,6 +28,7 @@ export const Topbar = ({
   title,
   viewChanger,
   tab,
+  name,
 }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
@@ -38,8 +40,7 @@ export const Topbar = ({
       trigger('SignInModal', {})
       return
     }
-
-    trigger('AssistantModal', { action: 'clone', bot: title })
+    trigger('AssistantModal', { action: 'clone', bot: name })
   }
   switch (type) {
     case 'main':

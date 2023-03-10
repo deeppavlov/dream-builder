@@ -23,7 +23,7 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
             <img src={AnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Annotators</p>
           </div>
-          <Kebab disabled dataFor='all_annotators' />
+          {/* <Kebab disabled dataFor='all_annotators' /> */}
         </div>
         <div className={s.bottom}>
           <p className={s.data}>

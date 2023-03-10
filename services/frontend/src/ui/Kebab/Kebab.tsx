@@ -1,8 +1,6 @@
 import { FC } from 'react'
 import classNames from 'classnames/bind'
 import Button from '../Button/Button'
-import { MenuTypes } from '../../types/types'
-import { MenuList } from '../../components/MenuList/MenuList'
 import { ReactComponent as KebabLogo } from '../../assets/icons/kebab.svg'
 import s from './Kebab.module.scss'
 

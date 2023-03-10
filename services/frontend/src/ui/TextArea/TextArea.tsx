@@ -65,7 +65,7 @@ export const TextArea: FC<TextAreaProps> = ({
           {label && <span className={s.title}>{label}</span>}
           {withCounter && (
             <span className={s.counter}>
-              {value?.length ?? 0}/{maxLenght}
+              {value?.toString()?.length ?? 0}/{maxLenght}
             </span>
           )}
         </label>

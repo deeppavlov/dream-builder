@@ -104,7 +104,7 @@
   @include tooltip_for_description;
 }
 .your {
-  min-width: 350px;
+  // min-width: 350px; //this style broke grid on 'yourbots' page
   max-width: 350px;
   min-height: 322px;
   max-height: 322px;

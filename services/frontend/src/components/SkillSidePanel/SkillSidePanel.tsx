@@ -9,8 +9,10 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../Mapping/componentTypeMap'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import s from './SkillSidePanel.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { useAuth } from '../../context/AuthProvider'
 
 interface Props {
   skill: SkillInfoInterface
@@ -19,6 +21,7 @@ interface Props {
 }
 
 const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
+  const auth = useAuth()
   const isEditor = children !== undefined
   const { isPreview } = usePreview()
   const [properties, editor] = ['Properties', 'Editor']
@@ -36,10 +39,17 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
   let cx = classNames.bind(s)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
-  const { name, authorImg, botName, author, componentType, modelType, desc } =
-    skill
-  const nameForComponentType = componentTypeMap[componentType]
-  const nameForModelType = modelTypeMap[modelType]
+  const {
+    display_name,
+    authorImg,
+    botName,
+    author,
+    component_type,
+    model_type,
+    desc,
+  } = skill
+  const nameForComponentType = componentTypeMap[component_type]
+  const nameForModelType = modelTypeMap[model_type]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const srcForModelType = srcForIcons(nameForModelType)
   return (
@@ -61,7 +71,7 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
       {tabsInfo.activeTabId === properties && (
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
-            <span className={s.name}>{name}</span>
+            <span className={s.name}>{display_name}</span>
             <EditPencilIcon className={s.icon} data-disabled />
           </div>
           <div className={s.author}>
@@ -78,14 +88,14 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
               <span className={s.name}>Component Type:</span>
               <span className={cx('value', nameForComponentType)}>
                 <img className={s.logo} src={srcForComponentType} />
-                <span>{componentType}</span>
+                <span>{component_type}</span>
               </span>
             </li>
             <li className={s.item}>
               <span className={s.name}>Model Type:</span>
               <span className={cx('value', nameForModelType)}>
                 <img className={s.logo} src={srcForModelType} />
-                <span>{modelType}</span>
+                <span>{model_type}</span>
               </span>
             </li>
             <br />
@@ -96,7 +106,7 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
           </ul>
           <p className={s.desc}>{desc}</p>
           <div className={s.btns}>
-            <div data-tip data-for='skill-add-interact'>
+            <div data-tip data-tooltip-id={'skillAddTo' + skill.name}>
               <Button
                 theme='primary'
                 props={{
@@ -108,17 +118,12 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
             </div>
           </div>
 
-          {/* {disabledMsg && (
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className='tooltips'
-            arrowColor='#8d96b5'
-            delayShow={1000}
-            id='skill-add-interact'>
-            {disabledMsg}
-          </ReactTooltip>
-        )} */}
+          {(isPreview || !auth?.user) && (
+            <BaseToolTip
+              id={'skillAddTo' + skill.name}
+              content='You must be signed in to add the skill'
+            />
+          )}
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}

@@ -1,4 +1,3 @@
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
 import { useAuth } from '../../context/AuthProvider'
@@ -8,8 +7,8 @@ import { Menu } from '../../ui/Menu/Menu'
 import { Display } from './components/Display'
 import { Test } from './components/Test'
 import { trigger } from '../../utils/events'
-import s from './Topbar.module.scss'
 import { CloneButton } from '../CloneButton/CloneButton'
+import s from './Topbar.module.scss'
 
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
@@ -19,7 +18,6 @@ interface TopbarProps {
   title?: string
   viewChanger?: boolean
   tab?: 'Architecture' | 'Skills'
-  name?: string
 }
 
 export const Topbar = ({
@@ -29,7 +27,6 @@ export const Topbar = ({
   title,
   viewChanger,
   tab,
-  name,
 }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
@@ -41,7 +38,8 @@ export const Topbar = ({
       trigger('SignInModal', {})
       return
     }
-    trigger('AssistantModal', { action: 'clone', bot: name })
+
+    trigger('AssistantModal', { action: 'clone', bot: title })
   }
   switch (type) {
     case 'main':
@@ -55,13 +53,6 @@ export const Topbar = ({
             <Display viewHandler={viewHandler} />
             {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
           </div>
-          <ReactTooltip
-            id='topbar_tooltip'
-            place='bottom'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
-          />
         </div>
       )
     case 'editor':
@@ -79,13 +70,6 @@ export const Topbar = ({
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
           </div>
-          <ReactTooltip
-            id='topbar_tooltip'
-            place='bottom'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
-          />
         </>
       )
     case 'dff':

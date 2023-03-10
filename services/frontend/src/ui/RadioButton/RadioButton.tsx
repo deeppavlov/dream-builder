@@ -5,7 +5,6 @@ interface RadioButtonProps {
   children: React.ReactNode
   name: string
   id: string
-  value: string
   htmlFor: string
   checked?: boolean
   disabled?: boolean
@@ -16,7 +15,6 @@ export const RadioButton: FC<RadioButtonProps> = ({
   name,
   id,
   htmlFor,
-  value,
   checked,
   disabled,
   props,

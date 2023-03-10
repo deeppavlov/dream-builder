@@ -1,4 +1,5 @@
 .cpu {
+  position: relative;
   cursor: pointer;
   width: $sidebar-width;
   @include sidebar_btn_height;

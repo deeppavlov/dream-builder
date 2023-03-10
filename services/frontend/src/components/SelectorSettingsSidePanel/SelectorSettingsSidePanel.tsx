@@ -1,4 +1,5 @@
 import { useEffect, useId } from 'react'
+import { useForm } from 'react-hook-form'
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
 import { SettingKey } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
@@ -8,7 +9,7 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { SettingsList } from '../SettingsList/SettingsList'
 import s from './SelectorSettingsSidePanel.module.scss'
-import { useForm } from 'react-hook-form'
+
 
 export interface SelectorSettings {
   name: string

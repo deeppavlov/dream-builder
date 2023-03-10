@@ -1,5 +1,5 @@
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -11,6 +11,8 @@ import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import { srcForIcons } from '../../utils/srcForIcons'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './SkillListItem.module.scss'
+import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
+import { usePreview } from '../../context/PreviewProvider'
 
 interface SkillListItemProps extends SkillInfoInterface {
   checkbox?: boolean
@@ -51,6 +53,8 @@ export const SkillListItem = ({
     botName,
   }
   const [disabled, setDisabled] = useState<boolean>(false)
+  const tooltipId = useId()
+  const { isPreview } = usePreview()
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -122,12 +126,11 @@ export const SkillListItem = ({
       <td className={s.td}>
         <div className={s.btns_area}>
           <ToggleButton handleToggle={handleToggle} />
-          <Kebab
-            dataFor='customizable_skill'
-            item={{
-              typeItem: name,
-              data: skill, // Data of Element
-            }}
+          <Kebab tooltipId={tooltipId} theme='card' />
+          <SkillCardToolTip
+            skill={skill}
+            tooltipId={tooltipId}
+            isPreview={isPreview}
           />
           {/* <div data-tip data-for='skill-add-interact'>
             <button

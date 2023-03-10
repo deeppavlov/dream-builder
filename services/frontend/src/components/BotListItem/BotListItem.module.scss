@@ -33,7 +33,6 @@
   max-height: 64px;
   min-width: 460px;
   color: rgba(0, 0, 0, 0.7);
-  @include hide_text;
   @include b3;
   .tooltips {
     @include tooltip;
@@ -67,17 +66,23 @@
     align-items: center;
     color: #3300ff;
     @include b3;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 .name {
   display: flex;
   flex-direction: column;
   white-space: nowrap;
-  @include hide_text;
   max-width: 170px;
   .botName {
     color: rgba(0, 0, 0, 0.7);
     @include t4;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .params {
     flex-wrap: nowrap;
@@ -106,24 +111,4 @@
   flex-direction: row;
   align-items: center;
   gap: 24px;
-}
-.area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: #f0f0f3;
-  border-radius: 8px;
-  cursor: pointer;
-  &:hover {
-    background-color: #3300ff;
-    cursor: pointer;
-    .fillIcon {
-      fill: #fff;
-    }
-    .strokeIcon {
-      stroke: #fff;
-    }
-  }
 }

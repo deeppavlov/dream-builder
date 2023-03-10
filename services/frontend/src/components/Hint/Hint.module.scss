@@ -1,19 +1,19 @@
 .hint {
-  @include tooltip;
   width: 465px;
   height: fit-content;
   position: absolute;
-  left: calc($sidebar-width + 10px) !important;
-  top: 58px;
+  left: calc(100% + 10px);
+  top: 0%;
+  @include tooltip;
 }
 .arrow {
   position: absolute;
-  left: -9px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid #8d96b5;
+  background: inherit;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  left: -5px;
+  top: 17px;
 }
 .hidden {
   display: none !important;

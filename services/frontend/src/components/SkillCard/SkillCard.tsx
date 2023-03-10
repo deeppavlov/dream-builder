@@ -1,5 +1,6 @@
+import React, { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { Tooltip as ReactTooltip, Tooltip } from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Button from '../../ui/Button/Button'
@@ -7,13 +8,13 @@ import { SkillAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import React, { FC, useId, useState } from 'react'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
-import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
+import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 export interface SkillCardProps extends SkillInfoInterface {
   type: SkillAvailabilityType
@@ -43,7 +44,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   big,
   disabledMsg,
   modelType,
-  componentType,
+  component_type,
 }) => {
   const skill = {
     name,
@@ -59,8 +60,8 @@ export const SkillCard: FC<SkillCardProps> = ({
     space,
     executionTime,
     skillType,
-    modelType,
-    componentType,
+    model_type: modelType,
+    component_type,
   }
   const [disabled, setDisabled] = useState<boolean>(false)
   const ResValues = (): { name: string; value: string }[] =>
@@ -119,10 +120,10 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.type}>
             <img
               className={s.typeLogo}
-              src={`./src/assets/icons/${componentTypeMap[componentType]}.svg`}
+              src={`./src/assets/icons/${componentTypeMap[component_type]}.svg`}
             />
-            <p className={cx('typeText', componentTypeMap[componentType])}>
-              {componentType ?? 'Type of Skill'}
+            <p className={cx('typeText', componentTypeMap[component_type])}>
+              {component_type ?? 'Type of Skill'}
             </p>
           </div>
           <div className={s.name}>
@@ -175,7 +176,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <>
               <div
                 data-tip
-                data-for='skill-edit-interact'
+                data-tooltip-id={'editSkill' + skill.name}
                 style={{ width: '100%' }}>
                 <Button
                   theme='secondary'
@@ -199,15 +200,13 @@ export const SkillCard: FC<SkillCardProps> = ({
         </div>
       </div>
 
-      {/* {disabledMsg && (
-        <ReactTooltip
-          place='bottom'
-          className='tooltips'
-          delayShow={1000}
-          id='skill-add-interact'>
-          You must be signed in to add the skill
-        </ReactTooltip>
-      )} */}
+      {isPreview && (
+        <BaseToolTip
+          id={'editSkill' + skill.name}
+          content='You must be signed in to edit the skill'
+          theme='small'
+        />
+      )}
     </div>
   )
 }

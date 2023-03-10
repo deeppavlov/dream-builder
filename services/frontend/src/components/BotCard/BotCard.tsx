@@ -13,6 +13,8 @@ import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useNavigate } from 'react-router-dom'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import s from './BotCard.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { useAuth } from '../../context/AuthProvider'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -48,25 +50,34 @@ export const BotCard = ({
     gpu,
     space,
   }
+  const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
+  const signInMessage = !auth?.user
+    ? 'You must be signed in to clone the bot'
+    : undefined
   let cx = classNames.bind(s)
 
-  const handleBotCardClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+      children: (
+        <BotInfoSidePanel
+          key={bot.name}
+          bot={bot}
+          disabledMsg={signInMessage}
+        />
+      ),
     })
-    e.stopPropagation()
   }
-
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     navigate(`/${routingName}`, {
       state: { preview: true, distName: routingName, displayName: name },
     })
-    e.stopPropagation()
   }
 
-  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     trigger('AssistantModal', { action: 'clone', bot: bot })
     e.stopPropagation()
   }
@@ -90,13 +101,13 @@ export const BotCard = ({
             <span>{author}</span>
           </div>
         )}
-        <div className={s.desc} data-for='descriptionTooltip' data-tip={desc}>
+        <div className={s.desc} data-tooltip-id={'botCardDesc' + bot.name}>
           {desc}
-          <ReactTooltip
-            id='descriptionTooltip'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
+          <BaseToolTip
+            id={'botCardDesc' + bot.name}
+            content={desc}
+            place='top'
+            theme='description'
           />
         </div>
         <div className={s.dateAndVersion}>
@@ -127,25 +138,30 @@ export const BotCard = ({
       </div>
       <div className={s.btns}>
         {type === 'public' ? (
-          <div data-tip data-for='bot-clone-interact' className={s.container}>
-            <Button
-              theme='primary'
-              small
-              long
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: handleCloneBtnClick,
-              }}>
-              Clone
-            </Button>
+          <>
+            <div
+              data-tip
+              data-tooltip-id={'botClone' + bot.name}
+              className={s.container}>
+              <Button
+                theme='primary'
+                small
+                long
+                props={{
+                  disabled: disabledMsg !== undefined,
+                  onClick: handleCloneClick,
+                }}>
+                Clone
+              </Button>
+            </div>
             <Button
               theme='secondary'
               small
               withIcon
-              props={{ onClick: handlePreviewBtnClick }}>
+              props={{ onClick: handlePreviewClick }}>
               <PreviewIcon />
             </Button>
-          </div>
+          </>
         ) : (
           <>
             <Button
@@ -163,15 +179,12 @@ export const BotCard = ({
       </div>
 
       {disabledMsg && (
-        <ReactTooltip
+        <BaseToolTip
+          id={'botClone' + bot.name}
+          content={disabledMsg}
           place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='bot-clone-interact'>
-          {disabledMsg}
-        </ReactTooltip>
+          theme='small'
+        />
       )}
     </div>
   )

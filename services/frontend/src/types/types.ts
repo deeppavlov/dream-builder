@@ -29,8 +29,8 @@ export type PostDistParams = {
 }
 
 export interface BotInfoInterface {
+  routingName:string
   name: string
-  routingName: string
   author: string
   desc: string
   dateCreated: string
@@ -69,7 +69,7 @@ export interface Annotator {
   name: string
   display_name: string
   author: string
-  type: Annotator
+  type: string
   description: string
   date_created: string
   execution_time: string | number
@@ -178,6 +178,14 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
+
+export interface IAnnotator {
+  name: string
+  author: string
+  authorImg: string
+  type: string
+  desc: string
+}
 
 export type MenuTypes =
   | 'main'

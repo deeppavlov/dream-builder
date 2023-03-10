@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { dist_list } from '../types/types'
-import { RoutesList } from '../router/RoutesList'
+import { RoutesList } from '../Router/RoutesList'
 import { useAuth } from '../context/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
@@ -122,65 +122,69 @@ export const BotsPage = () => {
               amount={auth?.user && usersDistData?.length}
               showAll
               linkTo={RoutesList.yourBots}>
-              <Container overflow='hidden'>
+              <Container overflow='visible'>
                 <Container
                   position='sticky'
                   left='0'
                   top='0'
                   width='280px'
                   minWidth='280px'
-                  overflow='hidden'
+                  overflow='visible'
                   padding='0'
                   paddingBottom='22px'>
-                  <div data-tip data-for='add-btn-new-bot'>
-                    <AddButton
-                      listView={listView}
-                      addBot={addBot}
-                      disabled={auth?.user === null}
-                    />
-                  </div>
+                  <AddButton
+                    listView={listView}
+                    addBot={addBot}
+                    disabledMsg={
+                      !auth?.user
+                        ? 'You must be signed in to create your own bot'
+                        : undefined
+                    }
+                  />
                 </Container>
                 <Container paddingBottom='22px'>
                   {isUsersDistDataLoading && 'Loading...'}
                   {usersDistDataError &&
                     'luck is not on your side! try to refresh the page' +
                       usersDistDataError}
-                  {usersDistData?.map((dist: dist_list, i: number) => {
-                    const {
-                      display_name,
-                      name,
-                      author,
-                      description,
-                      version,
-                      ram_usage,
-                      gpu_usage,
-                      disk_usage,
-                      date_created,
-                    } = dist
-                    const dateCreated = dateToUTC(date_created)
-                    return (
-                      <BotCard
-                        routingName={name}
-                        key={i}
-                        type='your'
-                        size='small'
-                        name={display_name}
-                        author={author}
-                        authorImg={DeepPavlovLogo}
-                        dateCreated={dateCreated}
-                        desc={description}
-                        version={version}
-                        ram={ram_usage}
-                        gpu={gpu_usage}
-                        space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  })}
+                  <Slider>
+                    {usersDistData?.map((dist: dist_list, i: number) => {
+                      const {
+                        display_name,
+                        name,
+                        author,
+                        description,
+                        version,
+                        ram_usage,
+                        gpu_usage,
+                        disk_usage,
+                        date_created,
+                      } = dist
+                      const dateCreated = dateToUTC(date_created)
+                      return (
+                        <BotCard
+                          routingName={name}
+                          key={i}
+                          type='your'
+                          size='small'
+                          name={display_name}
+                          author={author}
+                          authorImg={DeepPavlovLogo}
+                          dateCreated={dateCreated}
+                          desc={description}
+                          version={version}
+                          ram={ram_usage}
+                          gpu={gpu_usage}
+                          space={disk_usage}
+                          disabledMsg={
+                            auth?.user
+                              ? undefined
+                              : 'You must be signed in to clone the bot'
+                          }
+                        />
+                      )
+                    })}
+                  </Slider>
                 </Container>
               </Container>
             </Wrapper>
@@ -211,6 +215,7 @@ export const BotsPage = () => {
 
                   return (
                     <BotListItem
+                      type='public'
                       key={i}
                       routingName={name}
                       name={display_name}
@@ -244,7 +249,11 @@ export const BotsPage = () => {
                   <AddButton
                     addBot={addBot}
                     listView={listView}
-                    disabled={auth?.user === null}
+                    disabledMsg={
+                      !auth?.user
+                        ? 'You must be signed in to create your own bot'
+                        : undefined
+                    }
                   />
                 }>
                 {usersDistData?.map((dist: dist_list, i: number) => {
@@ -287,17 +296,6 @@ export const BotsPage = () => {
               </Table>
             </Wrapper>
           </>
-        )}
-        {auth?.user === null && (
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className='tooltips'
-            arrowColor='#8d96b5'
-            delayShow={1000}
-            id='add-btn-new-bot'>
-            You must be signed in to create your own bot
-          </ReactTooltip>
         )}
         <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />

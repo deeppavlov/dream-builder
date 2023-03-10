@@ -7,7 +7,7 @@ import { trigger } from '../../utils/events'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { Annotator } from '../../types/types'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import s from './AnnotatorSidePanel.module.scss'
 
 interface Props {
@@ -58,7 +58,7 @@ const AnnotatorSidePanel = ({
         <div role='tabpanel'>
           <div className={s.properties}>
             <div className={cx('annotator-header')}>
-              <span className={cx('name')}>{annotator.name}</span>
+              <span className={cx('name')}>{annotator.display_name}</span>
               <EditPencilIcon className={cx('edit-pencil')} data-disabled />
             </div>
             <div className={cx('author')}>
@@ -68,14 +68,14 @@ const AnnotatorSidePanel = ({
             <ul className={cx('table')}>
               <li className={cx('table-item')}>
                 <span className={cx('table-name')}>Type:</span>
-                <span className={cx('table-value', annotator?.type)}>
+                <span className={cx('table-value', annotator?.model_type)}>
                   <img
                     className={s.typeLogo}
                     src={`./src/assets/icons/${
                       modelTypeMap[annotator?.model_type]
                     }.svg`}
                   />
-                  <span>{annotator.model_type}</span>
+                  <span>{annotator?.model_type}</span>
                 </span>
               </li>
             </ul>

@@ -35,6 +35,7 @@ export const SkillModal = () => {
     formState: { errors },
   } = useForm({ mode: 'all' })
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
+  const descriptionMaxLenght = 500
 
   const closeModal = () => {
     setIsOpen(false)
@@ -121,10 +122,11 @@ export const SkillModal = () => {
             label='Name'
             error={errors[NAME_ID]}
             props={{
-              placeholder: 'Enter name of your skill',
-              value: getValues()[NAME_ID],
+              placeholder:
+                'A short name describing your Virtual Assistant’s skill',
+              defaultValue: getValues()[NAME_ID],
               ...register(NAME_ID, {
-                required: 'Please add name for your skill',
+                required: 'This field can’t be empty',
               }),
             }}
           />
@@ -133,19 +135,16 @@ export const SkillModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID]}
-            about={
-              <div className={s['muted-text']}>
-                You will be able to edit this information later.
-              </div>
-            }
+            maxLenght={descriptionMaxLenght}
             props={{
-              placeholder: 'Enter description for your skill',
-              value: getValues()[DESC_ID],
+              placeholder:
+                'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
+              defaultValue: getValues()[DESC_ID],
               ...register(DESC_ID, {
-                required: 'Please add description for your skill.',
+                required: 'This field can’t be empty',
                 maxLength: {
-                  value: 500,
-                  message: 'You’ve reached limit of the signs.',
+                  value: descriptionMaxLenght,
+                  message: `Limit text description to ${descriptionMaxLenght} characters`,
                 },
               }),
             }}

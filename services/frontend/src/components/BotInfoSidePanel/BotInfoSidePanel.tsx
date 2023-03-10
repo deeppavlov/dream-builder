@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ReactTooltip from 'react-tooltip'
 import { useQuery } from 'react-query'
 import { BotInfoInterface, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
@@ -12,11 +11,12 @@ import DateCard from '../DateCard/DateCard'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
-import s from './BotInfoSidePanel.module.scss'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import { useAuth } from '../../context/AuthProvider'
+import s from './BotInfoSidePanel.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 interface Props {
   bot: BotInfoInterface
@@ -30,7 +30,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   const navigate = useNavigate()
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: properties,
-    tabList: new Map([[properties, properties]]),
+    tabList: new Map([[properties, { name: properties }]]),
   })
 
   const {
@@ -58,13 +58,14 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
     <>
       <SidePanelHeader>
         <ul role='tablist'>
-          {Array.from(tabsInfo.tabs).map(([id, name]) => (
+          {Array.from(tabsInfo.tabs).map(([id, tab]) => (
             <li
               role='tab'
+              data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
               onClick={() => tabsInfo.handleTabSelect(id)}>
-              {name}
+              {tab.name}
             </li>
           ))}
         </ul>
@@ -149,29 +150,23 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
           <Button theme='secondary' props={{ onClick: handlePreviewBtnClick }}>
             Preview
           </Button>
-          <div data-tip data-for='bot-clone-interact'>
+          <div data-tip data-tooltip-id={'botClone' + bot.name}>
             <Button
               theme='primary'
               props={{
-                disabled: auth?.user === null, // ??????????
-                // disabledMsg !== undefined,
+                disabled: !auth?.user || disabledMsg !== undefined,
                 onClick: handleCloneBtnClick,
               }}>
               Clone
             </Button>
           </div>
         </div>
-        {disabledMsg && (
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className='tooltips'
-            arrowColor='#8d96b5'
-            delayShow={1000}
-            id='bot-clone-interact'>
-            {disabledMsg}
-          </ReactTooltip>
-        )}
+        <BaseToolTip
+          id={'botClone' + bot.name}
+          content={disabledMsg}
+          place='top'
+          theme='small'
+        />
       </div>
     </>
   )

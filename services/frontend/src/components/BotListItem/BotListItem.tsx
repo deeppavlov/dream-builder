@@ -1,10 +1,11 @@
-import { FC } from 'react'
-import ReactTooltip from 'react-tooltip'
+import { FC, useId } from 'react'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
+import { SmallTag } from '../SmallTag/SmallTag'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -14,6 +15,8 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import s from './BotListItem.module.scss'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 interface BotListItemProps extends BotInfoInterface {
   checkbox?: boolean
@@ -54,9 +57,16 @@ export const BotListItem: FC<BotListItemProps> = ({
   }
   const auth = useAuth()
   const navigate = useNavigate()
+  const tooltipId = useId()
+  const signInMessage = !auth?.user
+    ? 'You must be signed in to clone the bot'
+    : undefined
+
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot?.name} bot={bot} />,
+      children: (
+        <BotInfoSidePanel key={bot?.name} bot={bot} disabledMsg={disabledMsg} />
+      ),
     })
   }
 
@@ -105,16 +115,14 @@ export const BotListItem: FC<BotListItemProps> = ({
       <td className={s.td}>
         <div
           className={s.description}
-          data-for='descriptionTooltip'
-          data-tip={desc}>
-          <ReactTooltip
-            id='descriptionTooltip'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
+          data-tooltip-id={'botTableDesc' + bot.name}>
+          {desc}
+          <BaseToolTip
+            id={'botTableDesc' + bot.name}
+            content={desc}
+            place='top'
+            theme='description'
           />
-          {desc ||
-            'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
         </div>
       </td>
       <td className={s.td}>
@@ -124,51 +132,43 @@ export const BotListItem: FC<BotListItemProps> = ({
         </div>
       </td>
       <td className={s.td}>
-        <div data-tip data-for='bot-clone-interact'>
-          <div className={s.btns_area}>
+        <div className={s.btns_area}>
+          <div data-tip data-tooltip-id={'botClone' + bot.name}>
             <Button
               theme='primary'
               small
               withIcon
               props={{
                 disabled: disabledMsg !== undefined,
-                onClick:
-                  type === 'public' ? handleCloneClick : handlEditClick,
+                onClick: type === 'public' ? handleCloneClick : handlEditClick,
               }}>
               {type === 'public' ? <Clone /> : <Edit />}
             </Button>
-            {type === 'your' ? (
-              <Button theme='secondary' small withIcon>
-                <Kebab
-                  dataFor={type === 'your' && 'your_bot'}
-                  item={{
-                    typeItem: bot.routingName, // Id for ReactToolTip
-                    data: bot, // Data of Element
-                  }}
-                />
-              </Button>
-            ) : (
-              <Button
-                theme='secondary'
-                small
-                withIcon
-                props={{ onClick: handlePreviewClick }}>
-                <PreviewIcon />
-              </Button>
-            )}
           </div>
+
+          {type === 'your' ? (
+            <>
+              <Kebab tooltipId={tooltipId} theme='card' />
+              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+            </>
+          ) : (
+            <Button
+              theme='secondary'
+              small
+              withIcon
+              props={{ onClick: handlePreviewClick }}>
+              <PreviewIcon />
+            </Button>
+          )}
         </div>
       </td>
       {disabledMsg && (
-        <ReactTooltip
+        <BaseToolTip
+          id={'botClone' + bot.name}
+          content={disabledMsg}
           place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='bot-clone-interact'>
-          {disabledMsg}
-        </ReactTooltip>
+          theme='small'
+        />
       )}
     </tr>
   )

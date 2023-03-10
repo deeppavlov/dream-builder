@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 export const useTooltip = () => {
   useEffect(() => {

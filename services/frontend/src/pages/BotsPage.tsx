@@ -1,27 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
-import { RoutesList } from '../router/RoutesList'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import { dist_list } from '../types/types'
+import { RoutesList } from '../Router/RoutesList'
 import { useAuth } from '../context/AuthProvider'
 import { getAssistantDists } from '../services/getAssistantDists'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
+import { trigger } from '../utils/events'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
+import { Slider } from '../ui/Slider/Slider'
 import { BotCard } from '../components/BotCard/BotCard'
 import { BotListItem } from '../components/BotListItem/BotListItem'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Slider } from '../ui/Slider/Slider'
-import { trigger } from '../utils/events'
-import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { dist_list } from '../types/types'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
 import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { Modal } from '../components/Modal/Modal'
@@ -123,23 +122,25 @@ export const BotsPage = () => {
               amount={auth?.user && usersDistData?.length}
               showAll
               linkTo={RoutesList.yourBots}>
-              <Container overflow='hidden'>
+              <Container overflow='visible'>
                 <Container
                   position='sticky'
                   left='0'
                   top='0'
                   width='280px'
                   minWidth='280px'
-                  overflow='hidden'
+                  overflow='visible'
                   padding='0'
                   paddingBottom='22px'>
-                  <div data-tip data-for='add-btn-new-bot'>
-                    <AddButton
-                      listView={listView}
-                      addBot={addBot}
-                      disabled={auth?.user === null}
-                    />
-                  </div>
+                  <AddButton
+                    listView={listView}
+                    addBot={addBot}
+                    disabledMsg={
+                      !auth?.user
+                        ? 'You must be signed in to create your own bot'
+                        : undefined
+                    }
+                  />
                 </Container>
                 <Container paddingBottom='22px'>
                   {isUsersDistDataLoading && 'Loading...'}
@@ -248,7 +249,11 @@ export const BotsPage = () => {
                   <AddButton
                     addBot={addBot}
                     listView={listView}
-                    disabled={auth?.user === null}
+                    disabledMsg={
+                      !auth?.user
+                        ? 'You must be signed in to create your own bot'
+                        : undefined
+                    }
                   />
                 }>
                 {usersDistData?.map((dist: dist_list, i: number) => {
@@ -291,17 +296,6 @@ export const BotsPage = () => {
               </Table>
             </Wrapper>
           </>
-        )}
-        {auth?.user === null && (
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className='tooltips'
-            arrowColor='#8d96b5'
-            delayShow={1000}
-            id='add-btn-new-bot'>
-            You must be signed in to create your own bot
-          </ReactTooltip>
         )}
         <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />

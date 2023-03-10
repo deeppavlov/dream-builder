@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
 import { useAuth } from '../context/AuthProvider'

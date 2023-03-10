@@ -1,34 +1,58 @@
-import { FC } from 'react'
+import { FC, useId } from 'react'
 import Add from '../../assets/icons/+.svg'
+import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
 import s from './AddButton.module.scss'
 
 interface Props {
   text?: string
   addBot: () => void
   listView?: boolean
-  disabled?: boolean
+  disabledMsg?: string
 }
 
-export const AddButton: FC<Props> = ({ text, addBot, listView, disabled }) => {
+export const AddButton: FC<Props> = ({
+  text,
+  addBot,
+  listView,
+  disabledMsg,
+}) => {
+  const tooltipId = useId()
+
   const handleClick = () => addBot()
+
   return (
     <>
       {!listView ? (
-        <button onClick={handleClick} className={s.forCard} disabled={disabled}>
+        <button
+          data-tip
+          data-tooltip-id={tooltipId}
+          onClick={handleClick}
+          className={s.forCard}
+          disabled={disabledMsg !== undefined}>
           <img src={Add} />
         </button>
       ) : (
         <tr className={s.tr}>
           <td colSpan={5} className={s.td}>
             <button
+              data-tip
+              data-tooltip-id={tooltipId}
               className={s.forTable}
               onClick={handleClick}
-              disabled={disabled}>
+              disabled={disabledMsg !== undefined}>
               <img src={Add} />
               <p>{text || 'Create From Scratch'}</p>
             </button>
           </td>
         </tr>
+      )}
+      {disabledMsg && (
+        <BaseToolTip
+          id={tooltipId}
+          content={disabledMsg}
+          theme='small'
+          place='top'
+        />
       )}
     </>
   )

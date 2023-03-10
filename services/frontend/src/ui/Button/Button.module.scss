@@ -68,9 +68,12 @@
         background: #cfd3e2;
       }
 
-      &_small:hover {
-        box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+      &_small{
+        &:hover {
+          box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+        }
       }
+      
       > svg path {
         stroke: $text1;
       }
@@ -154,6 +157,11 @@
       @extend .button_theme_primary;
       background-color: $red;
     }
+
+    &_dark {
+      @extend .button_theme_primary;
+      background-color: $primary4;
+    }
   }
 
   &__icon {
@@ -180,3 +188,4 @@
     fill: $primary4;
   }
 }
+

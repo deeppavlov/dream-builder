@@ -4,7 +4,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
 
   form {
     display: flex;
@@ -16,6 +16,7 @@
   @include t3;
   color: $text3;
   margin-top: 8px;
+  margin-bottom: 12px;
 }
 
 .btns {

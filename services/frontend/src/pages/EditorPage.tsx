@@ -1,4 +1,5 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { useAuth } from '../context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -15,10 +16,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
-import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
-import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import { dateToUTC } from '../utils/dateToUTC'
 import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
@@ -34,6 +31,7 @@ import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { usePreview } from '../context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -91,7 +89,15 @@ export const EditorPage = () => {
               alignItems='center'
               flexDirection='column'
               gap='12px'
-              overflow='hidden'>
+              overflow='visible'>
+              {/* If Tooltip put in Tab, then they will be glitching */}
+              <BaseToolTip
+                id='sidebarSkillTab'
+                content='Skills'
+                place='right'
+              />
+              {/* {localStorage.getItem('isVisited') && (
+              )} */}
               <Tab>
                 <SkillsTab />
               </Tab>
@@ -100,7 +106,6 @@ export const EditorPage = () => {
               </Tab>
             </Container>
           </TabList>
-          <Hint />
         </Sidebar>
         <TabPanel>
           <Topbar
@@ -127,16 +132,17 @@ export const EditorPage = () => {
                         key={i}
                         type='your'
                         big
-                        author={auth?.user?.name!}
-                        authorImg={auth?.user?.picture!}
-                        name={skill?.display_name}
+                        author={skill?.author}
+                        authorImg={DeepPavlovLogo}
+                        name={skill.name}
+                        display_name={skill?.display_name}
                         dateCreated={dateCreated}
                         desc={skill?.description}
                         version={skill?.version}
                         ram={skill?.ram_usage}
                         gpu={skill?.gpu_usage}
                         executionTime={skill?.execution_time}
-                        componentType={skill?.component_type}
+                        component_type={skill?.component_type}
                         modelType={skill?.model_type}
                         botName={skill?.author}
                       />
@@ -203,11 +209,6 @@ export const EditorPage = () => {
         </TabPanel>
       </Tabs>
 
-      {/* Sidepanels */}
-      {/* <SkillSidePanel position={{ top: 64 }} />
-      <IntentCatcherSidePanel position={{ top: 64 }} />
-      <IntentResponderSidePanel position={{ top: 64 }} />
-    <AnnotatorSidePanel position={{ top: 64 }} /> */}
       {/* Modals */}
       <BaseSidePanel position={{ top: 64 }} />
       <AssistantModal />

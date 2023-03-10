@@ -4,8 +4,9 @@ import { countResources } from '../../utils/countResources'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import { Element } from './Element'
 import { Annotator } from '../../types/types'
+import { usePreview } from '../../context/PreviewProvider'
+import { Element } from './Element'
 import s from './CandidateAnnotators.module.scss'
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
+  const { isPreview } = usePreview()
+
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -21,7 +24,7 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
             <img src={CandidateAnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Candidate Annotators</p>
           </div>
-          <Kebab disabled dataFor='all_annotators' />
+          {/* <Kebab disabled dataFor='all_annotators' /> */}
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
@@ -39,7 +42,14 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
         <Accordion title='Customizable'></Accordion>
         <Accordion title='Non-customizable'>
           {candidateAnnotators?.map((item: Annotator, i: number) => {
-            return <Element key={i} item={item} />
+            return (
+              <Element
+                key={i}
+                annotator={item}
+                isPreview={isPreview}
+                isCustomizable={false}
+              />
+            )
           })}
         </Accordion>
       </div>

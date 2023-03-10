@@ -5,7 +5,7 @@ import s from './Button.module.scss'
 
 
 interface Props extends React.PropsWithChildren {
-  theme: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
+  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error' | 'dark'
   small?: boolean
   long?: boolean
   withIcon?: boolean
@@ -27,7 +27,7 @@ export const Button = ({
     <button
       className={cx(
         'button',
-        `button_theme_${theme}`,
+        theme && `button_theme_${theme}`,
         small && `button_theme_${theme}_small`,
         small && 'button_small',
         long && 'button_long',

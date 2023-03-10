@@ -1,0 +1,21 @@
+.container {
+  .tooltip {
+    @include tooltip;
+  }
+
+  .small {
+    @include tooltip_small;
+  }
+
+  .description {
+    @include tooltip_for_description;
+  }
+
+  .arrow {
+    position: absolute;
+    background: inherit;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+  }
+}

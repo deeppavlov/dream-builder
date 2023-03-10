@@ -168,8 +168,7 @@ export const AssistantModal = () => {
                 <mark>
                   {isTopbarButton && capitalizeTitle(bot)}
                   {botDist?.name}
-                </mark>{' '}
-                distribution
+                </mark>
               </div>
             )}
             {action === 'create' && (
@@ -179,7 +178,7 @@ export const AssistantModal = () => {
             )}
             {action === 'edit' && (
               <div>
-                You are editing <mark>{bot?.name}</mark> distribution
+                You are editing <mark>{bot?.name}</mark>
               </div>
             )}
           </div>
@@ -189,9 +188,10 @@ export const AssistantModal = () => {
             label='Name'
             error={errors[NAME_ID as keyof FormValues]}
             props={{
-              placeholder: 'Enter name for your VA',
+              placeholder: 'A short name describing your Virtual Assistant',
+              defaultValue: getValues().display_name,
               ...register(NAME_ID as keyof FormValues, {
-                required: 'Please add name for your Virtual Assistant',
+                required: 'This field can’t be empty',
               }),
             }}
           />
@@ -199,18 +199,16 @@ export const AssistantModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID as keyof FormValues]}
-            about={
-              <div className={s.textMuted}>
-                You will be able to edit this information later.
-              </div>
-            }
+            maxLenght={500}
             props={{
-              placeholder: 'Enter description for your VA',
+              placeholder:
+                'Describe your Virtual Assistant ability, where you can use it and for what purpose',
+              defaultValue: getValues().description,
               ...register(DESC_ID as keyof FormValues, {
-                required: 'Please add description for your Virtual Assistant.',
+                required: 'This field can’t be empty',
                 maxLength: {
                   value: 500,
-                  message: 'You’ve reached limit of the signs.',
+                  message: 'Limit text description to 500 characters',
                 },
               }),
             }}

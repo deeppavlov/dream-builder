@@ -1,9 +1,9 @@
-import ReactTooltip from 'react-tooltip'
+import { useId } from 'react'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { trigger } from '../../utils/events'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { ReactComponent as SaveIcon } from '@assets/icons/save.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import Button from '../../ui/Button/Button'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
@@ -11,7 +11,10 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useNavigate } from 'react-router-dom'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import s from './BotCard.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { useAuth } from '../../context/AuthProvider'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -47,11 +50,23 @@ export const BotCard = ({
     gpu,
     space,
   }
-
+  const auth = useAuth()
   const navigate = useNavigate()
+  const tooltipId = useId()
+  const signInMessage = !auth?.user
+    ? 'You must be signed in to clone the bot'
+    : undefined
+  let cx = classNames.bind(s)
+
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+      children: (
+        <BotInfoSidePanel
+          key={bot.name}
+          bot={bot}
+          disabledMsg={signInMessage}
+        />
+      ),
     })
   }
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -64,18 +79,16 @@ export const BotCard = ({
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('AssistantModal', { action: 'clone', bot: bot })
-  }
-  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+  }
+
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     navigate(`/${routingName}`, {
       state: { preview: false, distName: routingName, displayName: name },
     })
-  }
-  const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
     e.stopPropagation()
   }
-  let cx = classNames.bind(s)
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -88,13 +101,13 @@ export const BotCard = ({
             <span>{author}</span>
           </div>
         )}
-        <div className={s.desc} data-for='descriptionTooltip' data-tip={desc}>
+        <div className={s.desc} data-tooltip-id={'botCardDesc' + bot.name}>
           {desc}
-          <ReactTooltip
-            id='descriptionTooltip'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
+          <BaseToolTip
+            id={'botCardDesc' + bot.name}
+            content={desc}
+            place='top'
+            theme='description'
           />
         </div>
         <div className={s.dateAndVersion}>
@@ -125,17 +138,22 @@ export const BotCard = ({
       </div>
       <div className={s.btns}>
         {type === 'public' ? (
-          <div data-tip data-for='bot-clone-interact' className={s.container}>
-            <Button
-              theme='primary'
-              small
-              long
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: handleCloneClick,
-              }}>
-              Clone
-            </Button>
+          <>
+            <div
+              data-tip
+              data-tooltip-id={'botClone' + bot.name}
+              className={s.container}>
+              <Button
+                theme='primary'
+                small
+                long
+                props={{
+                  disabled: disabledMsg !== undefined,
+                  onClick: handleCloneClick,
+                }}>
+                Clone
+              </Button>
+            </div>
             <Button
               theme='secondary'
               small
@@ -143,7 +161,7 @@ export const BotCard = ({
               props={{ onClick: handlePreviewClick }}>
               <PreviewIcon />
             </Button>
-          </div>
+          </>
         ) : (
           <>
             <Button
@@ -153,33 +171,20 @@ export const BotCard = ({
               props={{ onClick: handlEditClick }}>
               Edit
             </Button>
-            <Button
-              theme='secondary'
-              small
-              withIcon
-              props={{ onClick: handleKebabClick }}>
-              <Kebab
-                dataFor={type === 'your' && 'your_bot'}
-                item={{
-                  typeItem: bot.routingName, // Id for ReactToolTip
-                  data: bot, // Data of Element
-                }}
-              />
-            </Button>
+
+            <Kebab tooltipId={tooltipId} theme='card' />
+            <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
           </>
         )}
       </div>
 
       {disabledMsg && (
-        <ReactTooltip
+        <BaseToolTip
+          id={'botClone' + bot.name}
+          content={disabledMsg}
           place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='bot-clone-interact'>
-          {disabledMsg}
-        </ReactTooltip>
+          theme='small'
+        />
       )}
     </div>
   )

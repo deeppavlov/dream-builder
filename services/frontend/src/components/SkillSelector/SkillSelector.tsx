@@ -6,29 +6,18 @@ import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { Skill } from './Skill'
 import { usePreview } from '../../context/PreviewProvider'
 import s from './SkillSelector.module.scss'
-
-type SkillSelector = {
-  name: string
-  display_name: string
-  author: string
-  component_type: string
-  model_type: string
-  date_created: string | Date
-  description: string
-  is_customizable: boolean
-  ram_usage: string
-  gpu_usage: string
-  execution_type: string
-}
+import { ISkillSelector } from '../../types/types'
 
 interface Props {
-  skillSelectors: [SkillSelector]
+  skillSelectors: ISkillSelector[]
 }
 export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
+  const { isPreview } = usePreview()
+
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault()
   }
-  const { isPreview } = usePreview()
+
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -46,26 +35,40 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
           <div className={s.element}>
             {!skillSelectors?.length ? (
               <RadioButton
-                id={'All Skills'}
+                id='All Skills'
+                value='All Skills'
                 name='skill_selector'
-                htmlFor={'All Skills'}
+                htmlFor='All Skills'
                 checked={true}
                 disabled={isPreview}>
-                <Skill title={'All Skills'} />
+                <Skill
+                  withContextMenu={false}
+                  isCustomizable={false}
+                  skill={{
+                    display_name: 'All Skills',
+                    description: 'All Skills',
+                  }}
+                />
               </RadioButton>
             ) : (
-              skillSelectors?.map((item: SkillSelector, i: number) => {
-                return (
+              skillSelectors?.map((item: ISkillSelector, i: number) => (
+                <>
                   <RadioButton
                     key={i}
                     id={item?.name}
+                    value={item.name}
                     name='skill_selector'
                     checked={skillSelectors?.length === 1}
-                    htmlFor={item?.display_name}>
-                    <Skill title={item?.display_name} />
+                    htmlFor={item?.name}>
+                    <Skill
+                      withContextMenu
+                      isCustomizable={false}
+                      skill={item}
+                      isPreview={isPreview}
+                    />
                   </RadioButton>
-                )
-              })
+                </>
+              ))
             )}
           </div>
         </Accordion>

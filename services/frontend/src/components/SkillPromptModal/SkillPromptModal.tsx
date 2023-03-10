@@ -31,7 +31,8 @@ const SkillPromptModal = () => {
     setValue,
     formState: { errors },
   } = useForm({ mode: 'all' })
-  const [NAME_ID, MODEL_ID, PROMPT_ID] = ['display_name', 'model', 'prompt']
+  const [MODEL_ID, PROMPT_ID] = ['display_name', 'model', 'prompt']
+  const tokensMaxLenght = 1500
 
   const closeModal = () => {
     setIsOpen(false)
@@ -40,6 +41,7 @@ const SkillPromptModal = () => {
   }
 
   const handleCancelBtnClick = () => closeModal()
+  const handleBackBtnClick = () => closeModal()
 
   /**
    * Set modal is open and getting skill info
@@ -63,8 +65,6 @@ const SkillPromptModal = () => {
     })
   }
 
-  const handleEdit = () => {}
-
   const handleCreate = (data: any) => {
     const newSkill = {
       ...skill,
@@ -80,6 +80,8 @@ const SkillPromptModal = () => {
     }
   }
 
+  const handleTestBtnClick = () => {}
+
   useEffect(() => {
     subscribe('SkillPromptModal', handleEventUpdate)
     return () => unsubscribe('SkillPromptModal', handleEventUpdate)
@@ -90,58 +92,59 @@ const SkillPromptModal = () => {
       <form
         className={s.skillPromptModal}
         onSubmit={handleSubmit(onFormSubmit)}>
-        {action === 'create' && (
-          <>
-            <h4>{skill?.display_name || 'Skill name'}</h4>
-            <SkillDropboxSearch
-              list={mockSkillModels}
-              activeItem={skill?.model}
-              error={errors[MODEL_ID]}
-              props={{
-                placeholder: 'Choose model',
-                ...register(MODEL_ID, { required: true }),
-              }}
-              onSelect={handleModelSelect}
-            />
-          </>
-        )}
-        {action === 'edit' && (
-          <Input
-            label='Name'
-            error={errors[NAME_ID]}
-            props={{
-              placeholder: 'You can change name here',
-              value: getValues()[NAME_ID],
-              ...register(NAME_ID, {
-                required: 'Please add name for your skill',
-              }),
-            }}
-          />
-        )}
+        <h4>{skill?.display_name || 'Skill name'}</h4>
+        <SkillDropboxSearch
+          list={mockSkillModels}
+          activeItem={skill?.model}
+          error={errors[MODEL_ID]}
+          props={{
+            placeholder: 'Choose model',
+            ...register(MODEL_ID, { required: true }),
+          }}
+          onSelect={handleModelSelect}
+        />
         <TextArea
           label='Enter prompt:'
           withCounter
           error={errors[PROMPT_ID]}
+          maxLenght={tokensMaxLenght}
           props={{
             placeholder:
               "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-            value: getValues()[PROMPT_ID],
+            defaultValue: getValues()[PROMPT_ID],
             ...register(PROMPT_ID, {
-              required: 'Please write promt before you continue next step',
+              required: 'This field can’t be empty',
               maxLength: {
-                value: 500,
-                message: 'You’ve reached limit of the signs.',
+                value: tokensMaxLenght,
+                message: `Limit prompt tokens to ${tokensMaxLenght}`,
               },
             }),
           }}
         />
         <div className={s.btns}>
-          <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
-            {action === 'edit' ? 'Cancel' : 'Back'}
-          </Button>
-          <Button theme='primary' props={{ type: 'submit' }}>
-            Save
-          </Button>
+          {action === 'create' && (
+            <>
+              <Button theme='secondary' props={{ onClick: handleBackBtnClick }}>
+                Back
+              </Button>
+              <Button theme='primary' props={{ type: 'submit' }}>
+                Save
+              </Button>
+            </>
+          )}
+          {action === 'edit' && (
+            <>
+              <Button theme='dark' props={{ onClick: handleCancelBtnClick }}>
+                Cancel
+              </Button>
+              <Button theme='secondary' props={{ onClick: handleTestBtnClick }}>
+                Save & Test
+              </Button>
+              <Button theme='primary' props={{ type: 'submit' }}>
+                Save & Close
+              </Button>
+            </>
+          )}
         </div>
       </form>
     </BaseModal>

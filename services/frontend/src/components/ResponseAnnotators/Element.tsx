@@ -1,21 +1,27 @@
-import { FC, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Annotator } from '../../types/types'
+import { Annotator, IContextMenu } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import s from './Element.module.scss'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
+import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
+import s from './Element.module.scss'
 
-interface ResponseAnnotatorsProps {
-  item: Annotator
+interface ResponseAnnotatorsProps extends IContextMenu {
+  annotator: Annotator
 }
 
-export const Element: FC<ResponseAnnotatorsProps> = ({ item }) => {
+export const Element: FC<ResponseAnnotatorsProps> = ({
+  annotator,
+  isCustomizable,
+  isPreview,
+}) => {
   const [disabled, setDisabled] = useState<boolean>(true)
+  const tooltipId = useId()
+  const cx = classNames.bind(s)
+
   const sliderHandler = () => {
     setDisabled(disabled => !disabled)
   }
-  const cx = classNames.bind(s)
 
   return (
     <div className={cx('element', !disabled && 'disabled')}>
@@ -25,17 +31,22 @@ export const Element: FC<ResponseAnnotatorsProps> = ({ item }) => {
             src={`./src/assets/icons/${modelTypeMap[item?.model_type]}.svg`}
             className={s.icon}
           />
-          <p className={s.name}>{item?.display_name}</p>
+          <p className={s.name}>{annotator?.display_name}</p>
         </div>
         <div className={s.bottom}>
           <p className={s.data}>
-            {item?.ram_usage + ' RAM | ' + item?.gpu_usage + ' GPU'}
+            {annotator?.ram_usage + ' RAM | ' + annotator?.gpu_usage + ' GPU'}
           </p>
         </div>
       </div>
       <div className={s.right}>
-        <Kebab disabled={!disabled} dataFor='customizable_annotator' />
-        {/* <ToggleButton sliderHandler={sliderHandler} /> */}
+        <Kebab disabled={!disabled} tooltipId={tooltipId} />
+        <AnnotatorStackToolTip
+          annotator={annotator}
+          tooltipId={tooltipId}
+          isCustomizable={isCustomizable}
+          isPreview={isPreview}
+        />
       </div>
     </div>
   )

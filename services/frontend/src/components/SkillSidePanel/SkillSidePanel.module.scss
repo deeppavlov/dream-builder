@@ -21,12 +21,12 @@
   height: 24px;
   width: 24px;
 
-  path {
-    stroke: $text2;
-  }
-
   &[data-disabled] {
     opacity: 0.3;
+  }
+
+  path {
+    stroke: $text2;
   }
 }
 

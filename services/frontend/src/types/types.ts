@@ -38,6 +38,7 @@ export interface BotInfoInterface {
   ram: string
   gpu: string
   space: string
+  authorImg?: string
   annotators?: string[]
   skills?: string[]
 }
@@ -68,7 +69,7 @@ export interface Annotator {
   name: string
   display_name: string
   author: string
-  type: Annotator
+  type: string
   description: string
   date_created: string
   execution_time: string | number
@@ -116,6 +117,36 @@ export interface Skill {
   disk_usage: string | number
   version: string | number
 }
+
+export interface ISkillSelector {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
+}
+
+export interface ISkillResponder {
+  name: string
+  display_name: string
+  author: string
+  component_type: string
+  model_type: string
+  date_created: string | Date
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_type: string
+}
+
+export type AnnotatorType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type SkillType =
   | 'fallback'
@@ -181,4 +212,9 @@ export interface SettingKey {
   type: 'switch' | 'checkbox' | 'radio' | 'input'
   value?: any
   checked?: boolean
+}
+
+export interface IContextMenu {
+  isPreview: boolean
+  isCustomizable: boolean
 }

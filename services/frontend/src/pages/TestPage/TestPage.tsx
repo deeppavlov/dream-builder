@@ -120,15 +120,18 @@ const intentItemsMock: IntentListItemInterface[] = [
 ]
 
 const mockSkill: SkillInfoInterface = {
+  botName: 'Name of The Bot',
   name: 'name_of_the_skill_1',
   display_name: 'Name of The Skill 1',
-  skillType: 'fallbacks',
-  author: 'Name of The Company',
+  skillType: 'fallback',
+  author: 'DeepPavlov',
+  authorImg: DeepPavlovLogo,
   desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
   dateCreated: dateToUTC(new Date()),
   version: '0.01',
   ram: '0.0 GB',
   gpu: '0.0 GB',
+  executionTime: '0.0 ms',
 }
 
 const mockAnnotator = {
@@ -162,7 +165,7 @@ const mockTotalRes: TotalResourcesInterface = {
 }
 
 const mockResponseSelector: SelectorSettings = {
-  name: 'Tag-& Evaluation-based Selector',
+  name: 'Tag-& Evaluation-based Response Selector',
   settings: [
     {
       name: 'HIGH_PRIORITY_INTENTS',
@@ -189,7 +192,7 @@ const mockResponseSelector: SelectorSettings = {
   ],
 }
 
-const mockRuleBasesSkillSelector: SelectorSettings = {
+export const mockRuleBasesSkillSelector: SelectorSettings = {
   name: 'Rule-based Skill Selector',
   settings: [
     {
@@ -653,7 +656,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'fallback',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),
@@ -684,7 +687,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'generative',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),
@@ -715,7 +718,7 @@ export const TestPage = () => {
                         name: 'Name of The Skill',
                         author: 'Deep Pavlov',
                         authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
+                        skillType: 'fallback',
                         botName: 'Name of The Bot',
                         desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
                         dateCreated: dateToUTC(new Date()),
@@ -846,7 +849,11 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockResponseSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Response Selector'
+                      isDisabledEditor
+                      {...mockResponseSelector}
+                    />
                   ),
                 })
               },
@@ -860,6 +867,8 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Rule-based Skill Selector'
+                      isDisabledEditor
                       {...mockRuleBasesSkillSelector}
                     />
                   ),
@@ -874,7 +883,10 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockSingleSkillSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Single Skill Selector'
+                      {...mockSingleSkillSelector}
+                    />
                   ),
                 })
               },
@@ -888,6 +900,7 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Multiple Skill Selector'
                       {...mockMultipleSkillSelector}
                       withSelectAll
                     />
@@ -1213,7 +1226,9 @@ export const TestPage = () => {
           <SkillCard
             type='public'
             name='Name of The Skill1'
-            skillType='fallbacks'
+            author='DeepPavlov'
+            authorImg={DeepPavlovLogo}
+            skillType='generative'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}
@@ -1227,8 +1242,10 @@ export const TestPage = () => {
           <span>your</span>
           <SkillCard
             type='your'
+            author='DeepPavlov'
+            authorImg={DeepPavlovLogo}
             name='Name of The Skill2'
-            skillType='fallbacks'
+            skillType='generative'
             botName='Name of The Bot'
             desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
             dateCreated={dateToUTC(new Date())}

@@ -1,22 +1,23 @@
-import ReactTooltip from 'react-tooltip'
+import React, { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import Calendar from '../../assets/icons/calendar.svg'
-import CompanyLogo from '../../assets/icons/pavlovInCard.svg'
+import { Tooltip as ReactTooltip, Tooltip } from 'react-tooltip'
+import Calendar from '@assets/icons/calendar.svg'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Button from '../../ui/Button/Button'
-import { BotAvailabilityType, SkillInfoInterface } from '../../types/types'
+import { SkillAvailabilityType, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import React, { FC, useState } from 'react'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
+import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 export interface SkillCardProps extends SkillInfoInterface {
-  type: BotAvailabilityType
+  type: SkillAvailabilityType
   big?: boolean
   checkbox?: boolean
   disabledMsg?: string
@@ -27,6 +28,7 @@ export interface SkillCardProps extends SkillInfoInterface {
 export const SkillCard: FC<SkillCardProps> = ({
   type,
   name,
+  display_name,
   desc,
   botName,
   author,
@@ -42,10 +44,11 @@ export const SkillCard: FC<SkillCardProps> = ({
   big,
   disabledMsg,
   modelType,
-  componentType,
+  component_type,
 }) => {
   const skill = {
     name,
+    display_name,
     botName,
     author,
     authorImg,
@@ -57,8 +60,8 @@ export const SkillCard: FC<SkillCardProps> = ({
     space,
     executionTime,
     skillType,
-    modelType,
-    componentType,
+    model_type: modelType,
+    component_type,
   }
   const [disabled, setDisabled] = useState<boolean>(false)
   const ResValues = (): { name: string; value: string }[] =>
@@ -75,32 +78,27 @@ export const SkillCard: FC<SkillCardProps> = ({
           { name: 'RAM', value: ram },
           { name: 'Execution time', value: executionTime + ' s' },
         ]
+  const { isPreview } = usePreview()
+  const tooltipId = useId()
+  let cx = classNames.bind(s)
+
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
     setDisabled(disabled => !disabled)
   }
-  const handleSkillCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    trigger(BASE_SP_EVENT, {
-      children: <SkillSidePanel key={skill.name} skill={skill} />,
-    })
-  }
+
+  const handleSkillCardClick = (e: React.MouseEvent) =>
+    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
     trigger('CreateSkillDistModal', skill)
+    e.stopPropagation()
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    trigger('SkillPromptModal', { skill: skill })
-  }
-  const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
+    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
-  const { isPreview } = usePreview()
-  let cx = classNames.bind(s)
 
   return (
     <div
@@ -122,14 +120,14 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.type}>
             <img
               className={s.typeLogo}
-              src={`./src/assets/icons/${componentTypeMap[componentType]}.svg`}
+              src={`./src/assets/icons/${componentTypeMap[component_type]}.svg`}
             />
-            <p className={cx('typeText', componentTypeMap[componentType])}>
-              {componentType ?? 'Type of Skill'}
+            <p className={cx('typeText', componentTypeMap[component_type])}>
+              {component_type ?? 'Type of Skill'}
             </p>
           </div>
           <div className={s.name}>
-            <img className={s.companyLogo} src={CompanyLogo} />
+            <img className={s.companyLogo} src={DeepPavlovLogo} />
             <p className={s.companyName}>{botName ?? 'Name of The Bot'}</p>
           </div>
           <div
@@ -178,7 +176,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <>
               <div
                 data-tip
-                data-for='skill-edit-interact'
+                data-tooltip-id={'editSkill' + skill.name}
                 style={{ width: '100%' }}>
                 <Button
                   theme='secondary'
@@ -191,34 +189,23 @@ export const SkillCard: FC<SkillCardProps> = ({
                   Edit
                 </Button>
               </div>
-              <Button
-                theme='secondary'
-                small
-                withIcon
-                props={{ onClick: handleKebabClick }}>
-                <Kebab
-                  dataFor='customizable_skill'
-                  item={{
-                    typeItem: name,
-                    data: skill, // Data of Element
-                  }}
-                />
-              </Button>
+              <Kebab tooltipId={tooltipId} theme='card' />
+              <SkillCardToolTip
+                skill={skill}
+                tooltipId={tooltipId}
+                isPreview={isPreview}
+              />
             </>
           )}
         </div>
       </div>
 
-      {disabledMsg && (
-        <ReactTooltip
-          place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='skill-add-interact'>
-          You must be signed in to add the skill
-        </ReactTooltip>
+      {isPreview && (
+        <BaseToolTip
+          id={'editSkill' + skill.name}
+          content='You must be signed in to edit the skill'
+          theme='small'
+        />
       )}
     </div>
   )

@@ -1,4 +1,4 @@
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import s from './BurgerMenu.module.scss'
 
 export const BurgerMenu = () => {

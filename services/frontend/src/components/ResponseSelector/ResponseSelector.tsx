@@ -1,18 +1,24 @@
 import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import { FC } from 'react'
+import { FC, useId } from 'react'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Skill } from './Skill'
+import { Skill } from '../SkillSelector/Skill'
+import { RadioButton } from '../../ui/RadioButton/RadioButton'
+import { usePreview } from '../../context/PreviewProvider'
+import { ISkillResponder } from '../../types/types'
 import s from './ResponseSelector.module.scss'
 
 interface ResponseSelectorProps {
-  responseSelectors: []
+  responseSelectors: ISkillResponder[]
 }
 
 export const ResponseSelector: FC<ResponseSelectorProps> = ({
   responseSelectors,
 }) => {
+  const { isPreview } = usePreview()
+  const tooltipId = useId()
+
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault()
   }
@@ -28,15 +34,34 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
         </div>
       </div>
       <AddButtonStack disabled={true} text='Add Response Selector' />
-      {responseSelectors?.map((item: { display_name: string }, i: number) => {
-        return <Skill key={i} title={capitalizeTitle(item.display_name)} />
-      })}
+
       <form onSubmit={submitHandler}>
-        {/* <Accordion title='Customizable'> */}
-        {/* </Accordion> */}
-        {/* <Accordion title='Non-customizable'> */}
-        {/* <Skill title='Confidence Based' /> */}
-        {/* </Accordion> */}
+        <Accordion title='Customizable'></Accordion>
+        <Accordion title='Non-customizable'>
+          <div className={s.element}>
+            {responseSelectors?.map((item: ISkillResponder, i: number) => {
+              return (
+                <>
+                  <RadioButton
+                    key={i}
+                    id={item?.name}
+                    value={item.name}
+                    name='response_selector'
+                    checked={responseSelectors?.length === 1}
+                    htmlFor={item?.name}>
+                    <Skill
+                      id={tooltipId}
+                      withContextMenu
+                      isCustomizable={false}
+                      skill={item}
+                      isPreview={isPreview}
+                    />
+                  </RadioButton>
+                </>
+              )
+            })}
+          </div>
+        </Accordion>
       </form>
     </div>
   )

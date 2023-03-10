@@ -22,7 +22,7 @@ export const ResponseAnnotators: React.FC<Props> = ({ responseAnnotators }) => {
                 <img src={ResponseAnnotatorsLogo} className={s.icon} />
                 <p className={s.type}>Response Annotators</p>
               </div>
-              <Kebab disabled dataFor='response_annotators' />
+              {/* <Kebab disabled dataFor='response_annotators' /> */}
             </div>
             <div className={s.bottom}>
               <p className={s.data}>

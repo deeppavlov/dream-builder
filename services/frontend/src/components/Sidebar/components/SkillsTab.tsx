@@ -1,9 +1,10 @@
 import { ReactComponent as Puzzle } from '../../../assets/icons/puzzle.svg'
+import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import s from './SkillsTab.module.scss'
 
 export const SkillsTab = () => {
   return (
-    <button data-tip='Skills' data-for='sidebar_tooltip' className={s.puzzle}>
+    <button data-tooltip-id='sidebarSkillTab' className={s.puzzle}>
       <Puzzle />
     </button>
   )

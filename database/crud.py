@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from services.auth_api import models
-from services.auth_api.db.db_models import GoogleUser, UserValid
+from database.models import GoogleUser, UserValid
 
 
 def check_user_exists(db: Session, email) -> bool:

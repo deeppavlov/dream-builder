@@ -5,7 +5,9 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 
-def init_db(user: str, password: str, host: str, port: int, database: str) -> sessionmaker:
+def init_db(
+    user: str, password: str, host: str, port: int, database: str, force_recreate: bool = False
+) -> sessionmaker:
     """Create sqlalchemy sessionmaker
 
     Args:
@@ -14,6 +16,7 @@ def init_db(user: str, password: str, host: str, port: int, database: str) -> se
         host: database host
         port: database port
         database: database name
+        force_recreate: force recreate tables
 
     Returns:
         Callable sessionmaker object
@@ -22,6 +25,9 @@ def init_db(user: str, password: str, host: str, port: int, database: str) -> se
     engine = create_engine(db_url)
     session_callable = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-    Base.metadata.create_all(bind=engine)
+    if force_recreate:
+        Base.metadata.drop_all(bind=engine)
+
+    Base.metadata.create_all(bind=engine, checkfirst=not force_recreate)
 
     return session_callable

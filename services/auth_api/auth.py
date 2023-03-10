@@ -9,9 +9,9 @@ from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
 
 
-import services.auth_api.db.crud as crud
-from services.auth_api.db.db import init_db
-from services.auth_api.db.db_models import UserValid
+import database.crud as crud
+from database.core import init_db
+from database.models import UserValid
 from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
 

@@ -1,6 +1,6 @@
 export async function prepare() {
-  if (process.env.NODE_ENV === 'development') {
-    return import('./mocks/browser').then(({ worker }) => {
+  if (import.meta.env.MODE === 'msw') {
+    return import('./browser').then(({ worker }) => {
       worker.start()
     })
   }

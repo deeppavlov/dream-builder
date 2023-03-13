@@ -106,7 +106,7 @@ export const BotCard = ({
           <BaseToolTip
             id={'botCardDesc' + bot.name}
             content={desc}
-            place='top'
+            place='bottom'
             theme='description'
           />
         </div>

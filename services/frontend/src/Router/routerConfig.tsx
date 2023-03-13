@@ -11,8 +11,8 @@ import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { UsersSkillsPage } from '../pages/UsersSkillsPage'
 import { CustomRouteConfig } from '../types/types'
+import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
-
 
 export const routeConfig: CustomRouteConfig[] = [
   {
@@ -31,17 +31,29 @@ export const routeConfig: CustomRouteConfig[] = [
   },
   {
     path: RoutesList.profile,
-    element: <StartPage />,
+    element: (
+      <PrivateRoute>
+        <StartPage />
+      </PrivateRoute>
+    ),
     handle: 'Connected Services',
   },
   {
     path: RoutesList.yourBots,
-    element: <UsersBotsPage />,
+    element: (
+      <PrivateRoute>
+        <UsersBotsPage />
+      </PrivateRoute>
+    ),
     handle: 'Your Virtual Assistants & Chatbots',
   },
   {
     path: RoutesList.yourSkills,
-    element: <UsersSkillsPage />,
+    element: (
+      <PrivateRoute>
+        <UsersSkillsPage />
+      </PrivateRoute>
+    ),
     handle: 'Your Skills',
   },
   {
@@ -57,9 +69,7 @@ export const routeConfig: CustomRouteConfig[] = [
   {
     path: ':name',
     element: <EditorPage />,
-    handle: (
-      <Link to={RoutesList.start}>Virtual Assistants & Chatbots</Link>
-    ),
+    handle: <Link to={RoutesList.start}>Virtual Assistants & Chatbots</Link>,
   },
   {
     path: RoutesList.test,

@@ -1,18 +1,17 @@
 import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Annotator, IContextMenu } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
 import s from './Element.module.scss'
 
 interface ResponseAnnotatorsProps extends IContextMenu {
-  annotator: Annotator
+  annotator: IStackElement
 }
 
 export const Element: FC<ResponseAnnotatorsProps> = ({
   annotator,
-  isCustomizable,
   isPreview,
 }) => {
   const [disabled, setDisabled] = useState<boolean>(true)
@@ -28,7 +27,9 @@ export const Element: FC<ResponseAnnotatorsProps> = ({
       <div className={s.left}>
         <div className={s.top}>
           <img
-            src={`./src/assets/icons/${modelTypeMap[item?.model_type]}.svg`}
+            src={`./src/assets/icons/${
+              modelTypeMap[annotator?.model_type]
+            }.svg`}
             className={s.icon}
           />
           <p className={s.name}>{annotator?.display_name}</p>
@@ -44,7 +45,6 @@ export const Element: FC<ResponseAnnotatorsProps> = ({
         <AnnotatorStackToolTip
           annotator={annotator}
           tooltipId={tooltipId}
-          isCustomizable={isCustomizable}
           isPreview={isPreview}
         />
       </div>

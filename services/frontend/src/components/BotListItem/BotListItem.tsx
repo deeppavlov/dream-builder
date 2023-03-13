@@ -10,7 +10,7 @@ import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
@@ -120,7 +120,7 @@ export const BotListItem: FC<BotListItemProps> = ({
           <BaseToolTip
             id={'botTableDesc' + bot.name}
             content={desc}
-            place='top'
+            place='bottom'
             theme='description'
           />
         </div>

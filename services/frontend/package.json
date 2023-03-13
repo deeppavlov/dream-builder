@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
+    "dev": "vite --host --mode development",
+    "msw": "vite --host --mode msw",
+    "prod": "vite --host --mode production",
+    "build": "vite build --moe production",
     "preview": "vite preview --port 5173"
   },
   "dependencies": {

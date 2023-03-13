@@ -1,13 +1,13 @@
 .container {
-  .tooltip {
+  &.tooltip {
     @include tooltip;
   }
 
-  .small {
+  &.small {
     @include tooltip_small;
   }
 
-  .description {
+  &.description {
     @include tooltip_for_description;
   }
 

@@ -1,16 +1,15 @@
 import { FC } from 'react'
 import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg'
 import { countResources } from '../../utils/countResources'
-import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import { Annotator } from '../../types/types'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import { Element } from './Element'
 import s from './CandidateAnnotators.module.scss'
+import { IStackElement } from '../../types/types'
 
 interface Props {
-  candidateAnnotators: [Annotator]
+  candidateAnnotators: IStackElement[]
 }
 
 export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
@@ -39,17 +38,30 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
       <div className={s.body} />
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
-        <Accordion title='Customizable'></Accordion>
+        <Accordion title='Customizable'>
+          {candidateAnnotators?.map((annotator, i) => {
+            if (annotator.is_customizable) {
+              return (
+                <Element
+                  key={annotator.name + i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
+          })}
+        </Accordion>
         <Accordion title='Non-customizable'>
-          {candidateAnnotators?.map((item: Annotator, i: number) => {
-            return (
-              <Element
-                key={i}
-                annotator={item}
-                isPreview={isPreview}
-                isCustomizable={false}
-              />
-            )
+          {candidateAnnotators?.map((annotator, i) => {
+            if (!annotator.is_customizable) {
+              return (
+                <Element
+                  key={annotator.name + i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
           })}
         </Accordion>
       </div>

@@ -2,11 +2,11 @@ import { BASE_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { SkillAvailabilityType, SkillInfoInterface } from '../types/types'
+import { ISkill, SkillAvailabilityType } from '../types/types'
 import { trigger } from './events'
 
 interface Props {
-  skill: SkillInfoInterface
+  skill: ISkill
   activeTab: 'Properties' | 'Editor'
   type?: SkillAvailabilityType
 }
@@ -45,8 +45,8 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
     return
   }
 
-  switch (skill.skillType) {
-    case 'generative':
+  switch (skill.component_type) {
+    case 'Generative':
       trigger(BASE_SP_EVENT, {
         children: (
           <GenerativeSkillEditor

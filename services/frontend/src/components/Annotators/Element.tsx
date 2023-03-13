@@ -1,20 +1,16 @@
 import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Annotator, IContextMenu } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
 import s from './Element.module.scss'
 
 interface AnnotatorProps extends IContextMenu {
-  annotator: Annotator
+  annotator: IStackElement
 }
 
-export const Element: FC<AnnotatorProps> = ({
-  annotator,
-  isCustomizable,
-  isPreview,
-}) => {
+export const Element: FC<AnnotatorProps> = ({ annotator, isPreview }) => {
   const [disabled, setDisabled] = useState<boolean>(true)
   const tooltipId = useId()
   const cx = classNames.bind(s)
@@ -43,7 +39,6 @@ export const Element: FC<AnnotatorProps> = ({
         <AnnotatorStackToolTip
           annotator={annotator}
           tooltipId={tooltipId}
-          isCustomizable={isCustomizable}
           isPreview={isPreview}
         />
         {/* <ToggleButton sliderHandler={sliderHandler} /> */}

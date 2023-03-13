@@ -5,12 +5,12 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Element } from './Element'
 import { countResources } from '../../utils/countResources'
-import { usePreview } from '../../context/PreviewProvider'
-import { Skill } from '../../types/types'
+import { usePreview } from '../../Context/PreviewProvider'
+import { IStackElement } from '../../types/types'
 import s from './Skills.module.scss'
 
 interface SkillsStackProps {
-  skills: [Skill]
+  skills: IStackElement[]
 }
 
 export const Skills: FC<SkillsStackProps> = ({ skills }) => {
@@ -38,30 +38,30 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
       </div>
       <AddButtonStack disabled={isPreview} text='Add Skills' />
       <div className={s.elements}>
-        <Accordion title='Customizable'></Accordion>
+        <Accordion title='Customizable'>
+          {skills?.map((skill, i) => {
+            if (skill.is_customizable) {
+              return (
+                <Element
+                  key={skill.name + i}
+                  skill={skill}
+                  isPreview={isPreview}
+                />
+              )
+            }
+          })}
+        </Accordion>
         <Accordion title='Non-customizable'>
-          {skills?.map((item: Skill, i: number) => {
-            console.log(item)
-            return (
-              <Element
-                key={i}
-                isPreview={isPreview}
-                skill={{
-                  author: item?.author,
-                  authorImg: DeepPavlovLogo,
-                  name: item.name,
-                  display_name: item?.display_name,
-                  desc: item?.description,
-                  component_type: item?.component_type,
-                  model_type: item?.model_type,
-                  version: item?.version,
-                  ram_usage: item?.ram_usage,
-                  gpu_usage: item?.gpu_usage,
-                  execution_time: item?.execution_time,
-                  isCustomizable: false,
-                }}
-              />
-            )
+          {skills?.map((skill, i) => {
+            if (!skill.is_customizable) {
+              return (
+                <Element
+                  key={skill.name + i}
+                  skill={skill}
+                  isPreview={isPreview}
+                />
+              )
+            }
           })}
         </Accordion>
       </div>

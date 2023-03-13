@@ -1,19 +1,14 @@
-import { IContextMenu, Skill } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  skill: Skill
+  skill: IStackElement
 }
 
-const SkillStackToolTip = ({
-  tooltipId,
-  skill,
-  isCustomizable,
-  isPreview,
-}: Props) => {
+const SkillStackToolTip = ({ tooltipId, skill, isPreview }: Props) => {
   const handleEditBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Editor' })
 
@@ -24,7 +19,7 @@ const SkillStackToolTip = ({
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {isCustomizable && (
+      {skill.is_customizable && (
         <ContextMenuButton
           name='Edit Skill'
           type='edit'

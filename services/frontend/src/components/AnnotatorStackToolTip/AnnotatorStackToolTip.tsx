@@ -1,19 +1,14 @@
-import { Annotator, IContextMenu } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import getAnnotatorSidePanel from '../../utils/triggerAnnotatorSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  annotator: Annotator
+  annotator: IStackElement
 }
 
-const AnnotatorStackToolTip = ({
-  tooltipId,
-  annotator,
-  isCustomizable,
-  isPreview,
-}: Props) => {
+const AnnotatorStackToolTip = ({ tooltipId, annotator, isPreview }: Props) => {
   const handleEditBtnClick = () =>
     getAnnotatorSidePanel({ annotator, activeTab: 'Editor' })
 
@@ -22,7 +17,7 @@ const AnnotatorStackToolTip = ({
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {isCustomizable && (
+      {annotator.is_customizable && (
         <ContextMenuButton
           name='Edit Annotator'
           type='edit'

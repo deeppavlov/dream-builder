@@ -1,6 +1,5 @@
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { useAuth } from '../context/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
@@ -12,11 +11,10 @@ import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { SkillCard } from '../components/SkillCard/SkillCard'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
-import { dateToUTC } from '../utils/dateToUTC'
 import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
@@ -25,13 +23,13 @@ import { useEffect, useState } from 'react'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
-import Hint from '../components/Hint/Hint'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { usePreview } from '../context/PreviewProvider'
+import { usePreview } from '../Context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
+import { ISkill } from '../types/types'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -52,6 +50,7 @@ export const EditorPage = () => {
   const displayName = makeDisplayName(nameFromURL)
 
   const { setIsPreview } = usePreview()
+
   useEffect(() => {
     setIsPreview(state?.preview == undefined ? true : state?.preview)
   }, [state])
@@ -71,7 +70,7 @@ export const EditorPage = () => {
 
   const annotators = distsComponentsData?.annotators
   const candidateAnnotators = distsComponentsData?.candidate_annotators
-  const skills = distsComponentsData?.skills
+  const skills: ISkill[] = distsComponentsData?.skills
   const skillSelectors = distsComponentsData?.skill_selectors
   const responseSelectors = distsComponentsData?.response_selectors
   const responseAnnotators = distsComponentsData?.response_annotators
@@ -125,29 +124,9 @@ export const EditorPage = () => {
                   height='auto'>
                   {isDistsComponentsLoading && 'Loading...'}
                   {/* <AddButton /> */}
-                  {skills?.map((skill: any, i: number) => {
-                    const dateCreated = dateToUTC(skill?.date_created)
-                    return (
-                      <SkillCard
-                        key={i}
-                        type='your'
-                        big
-                        author={skill?.author}
-                        authorImg={DeepPavlovLogo}
-                        name={skill.name}
-                        display_name={skill?.display_name}
-                        dateCreated={dateCreated}
-                        desc={skill?.description}
-                        version={skill?.version}
-                        ram={skill?.ram_usage}
-                        gpu={skill?.gpu_usage}
-                        executionTime={skill?.execution_time}
-                        component_type={skill?.component_type}
-                        modelType={skill?.model_type}
-                        botName={skill?.author}
-                      />
-                    )
-                  })}
+                  {skills?.map((skill, i) => (
+                    <SkillCard key={i} type='your' big skill={skill} />
+                  ))}
                 </Container>
               </Wrapper>
             ) : (
@@ -159,31 +138,18 @@ export const EditorPage = () => {
                     addButton={
                       <AddButton
                         listView={listView}
-                        disabled={auth?.user === null}
+                        addBot={() => {}}
+                        disabledMsg={
+                          auth?.user
+                            ? 'You should to clone the virtual assistant for edit'
+                            : undefined
+                        }
                         text='Create From Scratch'
                       />
                     }>
-                    {skills?.map((skill: any, i: number) => {
-                      const dateCreated = dateToUTC(skill?.date_created)
-                      return (
-                        <SkillListItem
-                          key={i}
-                          author={auth?.user?.name!}
-                          authorImg={auth?.user?.picture!}
-                          name={skill?.display_name}
-                          dateCreated={dateCreated}
-                          desc={skill?.description}
-                          version={skill?.version}
-                          ram={skill?.ram_usage}
-                          gpu={skill?.gpu_usage}
-                          executionTime={skill?.execution_time}
-                          componentType={skill?.component_type}
-                          modelType={skill?.model_type}
-                          botName={skill?.author}
-                          skillType={'script'}
-                        />
-                      )
-                    })}
+                    {skills?.map((skill, i) => (
+                      <SkillListItem key={i} skill={skill} />
+                    ))}
                   </Table>
                 </Container>
               </Wrapper>

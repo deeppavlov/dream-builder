@@ -1,4 +1,4 @@
-import { IContextMenu, Skill } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -7,15 +7,10 @@ import SelectorSettingsSidePanel from '../SelectorSettingsSidePanel/SelectorSett
 
 interface Props extends IContextMenu {
   tooltipId: string
-  skill: Skill
+  skill: IStackElement
 }
 
-const SkillSelectorStackToolTip = ({
-  tooltipId,
-  skill,
-  isCustomizable,
-  isPreview,
-}: Props) => {
+const SkillSelectorStackToolTip = ({ tooltipId, skill, isPreview }: Props) => {
   const handlePropertiesBtnClick = () =>
     trigger(BASE_SP_EVENT, {
       children: (

@@ -1,4 +1,6 @@
-type ComponentTypeMap = { [key: string]: string }
+import { ComponentType } from "../types/types"
+
+type ComponentTypeMap = { [key: string]: ComponentType }
 
 export const componentTypeMap: ComponentTypeMap = {
   'Script-based with NNs': 'script_with_nns',

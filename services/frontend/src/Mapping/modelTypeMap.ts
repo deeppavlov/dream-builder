@@ -1,4 +1,6 @@
-type ModelTypeMap = { [key: string]: string }
+import { ModelType } from '../types/types'
+
+type ModelTypeMap = { [key: string]: ModelType }
 
 export const modelTypeMap: ModelTypeMap = {
   'Dictionary/Pattern-based': 'dictionary',

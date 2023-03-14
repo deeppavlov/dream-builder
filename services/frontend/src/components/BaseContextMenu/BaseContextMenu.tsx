@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
 import { useCheckClickOutside } from '../../hooks/useCheckClickOutside'
@@ -22,22 +23,31 @@ const BaseContextMenu: React.FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
+  const [domReady, setDomReady] = React.useState(false)
+  const container = document.body
+
+  useEffect(() => {
+    setDomReady(true)
+  }, [])
 
   useCheckClickOutside(isOpen, ref, setIsOpen)
   useCheckDocumentScroll(isOpen, setIsOpen)
 
-  return (
-    <ReactTooltip
-      className={s.contextMenu}
-      id={tooltipId}
-      events={['click']}
-      clickable
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      place={place}>
-      <div ref={ref}>{children}</div>
-    </ReactTooltip>
-  )
+  return domReady
+    ? createPortal(
+        <ReactTooltip
+          className={s.contextMenu}
+          id={tooltipId}
+          events={['click']}
+          clickable
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          place={place}>
+          <div ref={ref}>{children}</div>
+        </ReactTooltip>,
+        container
+      )
+    : null
 }
 
 export default BaseContextMenu

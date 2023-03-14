@@ -6,3 +6,20 @@
   gap: 16px;
   overflow: auto;
 }
+.gridForCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+}
+.layoutForTabs {
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  overflow: visible;
+}
+.heightAuto {
+  height: auto;
+}
+.overflowForAddButton {
+  overflow: visible;
+}

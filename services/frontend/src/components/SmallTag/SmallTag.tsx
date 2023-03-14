@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import s from './SmallTag.module.scss'
 
 interface SmallTagProps extends React.PropsWithChildren {
@@ -6,7 +6,7 @@ interface SmallTagProps extends React.PropsWithChildren {
   isLoading?: boolean
 }
 
-export const SmallTag = ({ theme, isLoading, children }: SmallTagProps) => {
+export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
   return (
     <span
       className={`${s.smallTag} ${theme ? s[`smallTag_theme_${theme}`] : ''} ${

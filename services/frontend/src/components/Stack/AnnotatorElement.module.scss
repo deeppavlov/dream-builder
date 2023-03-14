@@ -4,17 +4,18 @@
   display: flex;
   justify-content: space-between;
   padding: 12px;
-  height: fit-content;
+  height: 50px;
   background-color: $bcgrnd1;
   .left {
     cursor: pointer;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 4px;
     .top {
       cursor: pointer;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       .icon {
         cursor: pointer;
@@ -34,6 +35,8 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
     height: 100%;
   }

@@ -1,5 +1,4 @@
 import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { FC, useId } from 'react'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
@@ -7,6 +6,7 @@ import { Skill } from '../SkillSelector/Skill'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { usePreview } from '../../context/PreviewProvider'
 import { ISkillResponder } from '../../types/types'
+import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import s from './ResponseSelector.module.scss'
 
 interface ResponseSelectorProps {
@@ -34,9 +34,10 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
         </div>
       </div>
       <AddButtonStack disabled={true} text='Add Response Selector' />
-
       <form onSubmit={submitHandler}>
-        <Accordion title='Customizable'></Accordion>
+        <Accordion closed title='Customizable'>
+          <WaitForNextRelease />
+        </Accordion>
         <Accordion title='Non-customizable'>
           <div className={s.element}>
             {responseSelectors?.map((item: ISkillResponder, i: number) => {

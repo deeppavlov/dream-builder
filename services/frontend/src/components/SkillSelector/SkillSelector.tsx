@@ -5,15 +5,15 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { Skill } from './Skill'
 import { usePreview } from '../../context/PreviewProvider'
-import s from './SkillSelector.module.scss'
 import { ISkillSelector } from '../../types/types'
+import s from './SkillSelector.module.scss'
+import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 
 interface Props {
   skillSelectors: ISkillSelector[]
 }
 export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
   const { isPreview } = usePreview()
-
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault()
   }
@@ -30,7 +30,9 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
       <form onSubmit={formSubmitHandler}>
-        <Accordion title='Customizable' />
+        <Accordion closed title='Customizable'>
+          <WaitForNextRelease />
+        </Accordion>
         <Accordion title='Non-customizable'>
           <div className={s.element}>
             {!skillSelectors?.length ? (

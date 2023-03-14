@@ -24,14 +24,11 @@ interface BotListItemProps {
 }
 
 export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
-  const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
-  const signInMessage = !auth?.user
-    ? 'You must be signed in to clone the bot'
-    : undefined
+
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (

@@ -1,3 +1,4 @@
+import { useAuth } from '../../Context/AuthProvider'
 import { BotAvailabilityType, IStackElement } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
@@ -12,9 +13,13 @@ interface Props {
 }
 
 const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
+  const auth = useAuth()
+
   const handlePropertiesBtnClick = () =>
     trigger(BASE_SP_EVENT, {
-      children: <BotInfoSidePanel key={bot.name} bot={bot} />,
+      children: (
+        <BotInfoSidePanel key={bot.name} bot={bot} disabled={!auth?.user} />
+      ),
     })
 
   const handleRenameBtnClick = () =>

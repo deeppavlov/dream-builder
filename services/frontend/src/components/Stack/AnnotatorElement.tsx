@@ -2,17 +2,20 @@ import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Component } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
+import { modelTypeMap } from '../../Mapping//modelTypeMap'
 import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
 import { srcForIcons } from '../../utils/srcForIcons'
 import s from './AnnotatorElement.module.scss'
 
 interface AnnotatorProps {
-  annotator: Component 
+  annotator: Component
   isPreview: boolean
 }
 
-export const AnnotatorElement: FC<AnnotatorProps> = ({ annotator, isPreview }) => {
+export const AnnotatorElement: FC<AnnotatorProps> = ({
+  annotator,
+  isPreview,
+}) => {
   const [disabled, setDisabled] = useState<boolean>(true)
   const tooltipId = useId()
   const cx = classNames.bind(s)

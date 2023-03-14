@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import { subscribe, unsubscribe } from '../../utils/events'
@@ -17,11 +17,11 @@ interface BaseSidePanel {
   children?: React.ReactNode
 }
 
-const BaseSidePanel = ({
+export const BaseSidePanel: FC<BaseSidePanel> = ({
   isOpen: propIsOpen,
   position,
   children,
-}: BaseSidePanel) => {
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
   const [content, setContent] = useState<React.ReactNode>(children)
 
@@ -64,5 +64,3 @@ const BaseSidePanel = ({
     </SidePanel>
   )
 }
-
-export default BaseSidePanel

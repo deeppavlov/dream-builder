@@ -25,12 +25,10 @@ interface BotCardProps {
   type: BotAvailabilityType
   bot: BotInfoInterface
   size?: BotCardSize
-  // disabledMsg?: string
   disabled: boolean
 }
 
 export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
-  const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
   let cx = classNames.bind(s)

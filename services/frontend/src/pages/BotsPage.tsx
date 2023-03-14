@@ -72,7 +72,7 @@ export const BotsPage = () => {
           primary
           showAll
           title='Your Virtual Assistants & Chatbots'
-          amount={auth?.user && privateDists?.length}
+          amount={!auth?.user && privateDists?.length}
           linkTo={RoutesList.yourBots}>
           {listView ? (
             <Table addButton={<AddButton listView={listView} />}>

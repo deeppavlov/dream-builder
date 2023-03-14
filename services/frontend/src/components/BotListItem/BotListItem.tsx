@@ -18,16 +18,11 @@ import { timeToUTC } from '../../utils/timeToUTC'
 import s from './BotListItem.module.scss'
 
 interface BotListItemProps {
-  disabledMsg?: string
   type: BotAvailabilityType
   bot: BotInfoInterface
 }
 
-export const BotListItem: FC<BotListItemProps> = ({
-  disabledMsg,
-  type,
-  bot,
-}) => {
+export const BotListItem: FC<BotListItemProps> = ({ type, bot }) => {
   const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
@@ -36,7 +31,7 @@ export const BotListItem: FC<BotListItemProps> = ({
   const signInMessage = !auth?.user
     ? 'You must be signed in to clone the bot'
     : undefined
-
+  const disabled = !auth?.user
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (

@@ -6,10 +6,7 @@ import { BotListItem } from '../BotListItem/BotListItem'
 
 export const DistList: FC<DistListProps> = ({ view, dists, type, size }) => {
   const auth = useAuth()
-  const disabledMsg = auth?.user
-    ? undefined
-    : 'You must be signed in to clone the bot'
-
+  const disabled = !auth?.user
   return (
     <>
       {dists?.map((bot: BotInfoInterface, i: number) => {
@@ -18,16 +15,10 @@ export const DistList: FC<DistListProps> = ({ view, dists, type, size }) => {
             key={i}
             bot={bot}
             type={type}
-            disabledMsg={disabledMsg}
+            disabled={ disabled}
           />
         ) : (
-          <BotCard
-            key={i}
-            bot={bot}
-            size={size}
-            type={type}
-            disabledMsg={disabledMsg}
-          />
+          <BotCard key={i} bot={bot} size={size} type={type} disabled={disabled} />
         )
       })}
     </>

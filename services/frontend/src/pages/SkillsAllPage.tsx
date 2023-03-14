@@ -14,7 +14,7 @@ import { timeToUTC } from '../utils/timeToUTC'
 import { SkillModal } from '../components/SkillModal/SkillModal'
 import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
-import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import {BaseSidePanel} from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string

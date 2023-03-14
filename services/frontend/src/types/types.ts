@@ -31,8 +31,6 @@ export interface BotInfoInterface {
   disk_usage: string
 }
 
-export interface SkillInfoInterface extends Component {}
-
 export interface Component {
   name: string
   display_name: string
@@ -46,6 +44,7 @@ export interface Component {
   ram_usage: string | number | null
   is_customizable: boolean
 }
+
 export interface ResourcesInterface {
   ram: string
   gpu: string
@@ -57,33 +56,6 @@ export interface TotalResourcesInterface {
   custom?: { containers: string } & ResourcesInterface
 }
 
-export interface ISkillSelector {
-  name: string
-  display_name: string
-  author: string
-  component_type: string
-  model_type: string
-  date_created: string | Date
-  description: string
-  is_customizable: boolean
-  ram_usage: string
-  gpu_usage: string
-  execution_type: string
-}
-
-export interface ISkillResponder {
-  name: string
-  display_name: string
-  author: string
-  component_type: string
-  model_type: string
-  date_created: string | Date
-  description: string
-  is_customizable: boolean
-  ram_usage: string
-  gpu_usage: string
-  execution_type: string
-}
 export interface SettingKey {
   name: string
   type: 'switch' | 'checkbox' | 'radio' | 'input'
@@ -137,6 +109,7 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
 }
+
 export type CustomRouteConfig = RouteObject & { crumb?: string }
 
 export type CustomEventName = string
@@ -173,23 +146,3 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
-
-export type MenuTypes =
-  | 'main'
-  | 'bots'
-  | 'skills_page'
-  | 'editor'
-  | 'bot_public'
-  | 'your_bot'
-  | 'skills'
-  | 'all_annotators'
-  | 'response_annotators'
-  | 'all_skills'
-  | 'customizable_annotator'
-  | 'customizable_skill'
-  | 'non_customizable_annotator'
-  | 'non_customizable_skill'
-  | 'skill_selector'
-  | 'response_selector'
-  | null
-  | false

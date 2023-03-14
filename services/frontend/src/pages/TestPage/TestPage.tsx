@@ -49,8 +49,9 @@ import { useForm } from 'react-hook-form'
 import {
   BotInfoInterface,
   ISkill,
-  IStackElement,
+  Component,
   TotalResourcesInterface,
+  IStackElement,
 } from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
@@ -124,13 +125,13 @@ const intentItemsMock: IntentListItemInterface[] = [
 const mockSkill: ISkill = {
   name: 'name_of_the_skill_1',
   display_name: 'Name of The Skill 1',
-  component_type: 'Generative',
-  model_type: 'NN-based',
+  component_type: 'generative',
+  model_type: 'nn_based',
   is_customizable: true,
   author: 'DeepPavlov',
   description:
     'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
-  date_created: dateToUTC(new Date()),
+  date_created: new Date(),
   ram_usage: '0.0 GB',
   gpu_usage: '0.0 GB',
   execution_time: '0.0 ms',
@@ -145,23 +146,21 @@ const mockAnnotator: IStackElement = {
   is_customizable: true,
   description:
     'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.',
-  date_created: dateToUTC(new Date()),
+  date_created: new Date(),
   ram_usage: '0.0 GB',
   gpu_usage: '0.0 GB',
   execution_time: '0.0 ms',
 }
 
 const mockBot: BotInfoInterface = {
-  name: 'Name of the bot',
-  routingName: 'dream_russian',
+  display_name: 'Name of the bot',
+  name: 'dream_russian',
   author: 'Name of the company',
-  authorImg: DeepPavlovLogo,
-  dateCreated: dateToUTC(new Date()),
-  desc: 'Some information about this bot writing in 2 lines',
-  version: '0.0.1',
-  ram: '0.0 GB',
-  gpu: '0.0 GB',
-  space: '0.0 GB',
+  date_created: new Date().toString(),
+  description: 'Some information about this bot writing in 2 lines',
+  ram_usage: '0.0 GB',
+  gpu_usage: '0.0 GB',
+  disk_usage: '0.0 GB',
 }
 
 const mockTotalRes: TotalResourcesInterface = {
@@ -1136,37 +1135,11 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>BotCard</span>
         <div className={s.testPage__component}>
           <span>public</span>
-          <BotCard
-            type='public'
-            name='Name of the bot'
-            routingName='#'
-            author='Name of the company'
-            authorImg={CompanyLogo}
-            dateCreated={dateToUTC(new Date())}
-            desc='Some information about this bot writing in 2 lines'
-            version='0.0.1'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            space='0.0 GB'
-            disabled={false}
-          />
+          <BotCard type='public' bot={mockBot} disabled={false} />
         </div>
         <div className={s.testPage__component}>
           <span>your</span>
-          <BotCard
-            type='your'
-            routingName='#'
-            name='Name of the bot'
-            author='Name of the company'
-            authorImg={CompanyLogo}
-            dateCreated={dateToUTC(new Date())}
-            desc='Some information about this bot writing in 2 lines'
-            version='0.0.1'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            space='0.0 GB'
-            disabled={false}
-          />
+          <BotCard type='your' bot={mockBot} disabled={false} />
         </div>
       </div>
       <div className={s.testPage__block}>

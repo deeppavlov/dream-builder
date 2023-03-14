@@ -23,7 +23,7 @@ import { srcForIcons } from '../../utils/srcForIcons'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
-  skill: SkillInfoInterface
+  skill: ISkill
   type: SkillAvailabilityType
   big?: boolean
   disabledMsg?: string

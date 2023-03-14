@@ -1,6 +1,6 @@
 import React, { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Tooltip as ReactTooltip, Tooltip } from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Button from '../../ui/Button/Button'
@@ -10,74 +10,54 @@ import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
-import s from './SkillCard.module.scss'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { srcForIcons } from '../../utils/srcForIcons'
+import s from './SkillCard.module.scss'
 
-export interface SkillCardProps extends SkillInfoInterface {
+export interface SkillCardProps {
+  skill: SkillInfoInterface
   type: SkillAvailabilityType
   big?: boolean
-  checkbox?: boolean
   disabledMsg?: string
-  componentType: string
-  modelType: string
 }
 
 export const SkillCard: FC<SkillCardProps> = ({
-  type,
-  name,
-  display_name,
-  desc,
-  botName,
-  author,
-  authorImg,
-  dateCreated,
-  version,
-  ram,
-  gpu,
-  space,
-  executionTime,
-  skillType,
-  checkbox,
-  big,
   disabledMsg,
-  modelType,
-  component_type,
+  big,
+  type,
+  skill,
 }) => {
-  const skill = {
+  const {
     name,
     display_name,
-    botName,
     author,
-    authorImg,
-    desc,
-    dateCreated,
-    version,
-    ram,
-    gpu,
-    space,
-    executionTime,
-    skillType,
-    model_type: modelType,
+    description,
+    date_created,
+    ram_usage,
+    gpu_usage,
+    execution_time,
     component_type,
-  }
+  } = skill
   const [disabled, setDisabled] = useState<boolean>(false)
-  const ResValues = (): { name: string; value: string }[] =>
-    type === 'public'
-      ? [
-          { name: 'RAM', value: ram },
-          { name: 'GPU', value: gpu },
-          {
-            name: 'Execution time',
-            value: executionTime.split(' ')[0] + ' s',
-          },
-        ]
-      : [
-          { name: 'RAM', value: ram },
-          { name: 'Execution time', value: executionTime + ' s' },
-        ]
+  // const ResValues = (): { name: string; value: string }[] =>
+  //   type === 'public'
+  //     ? [
+  //         { name: 'RAM', value: ram_usage },
+  //         { name: 'GPU', value: gpu_usage },
+  //         {
+  //           name: 'Execution time',
+  //           value: execution_time.split(' ')[0] + ' s',
+  //         },
+  //       ]
+  //     : [
+  //         { name: 'RAM', value: ram_usage },
+  //         { name: 'Execution time', value: execution_time + ' s' },
+  //       ]
+  const dateCreated = dateToUTC(date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
   let cx = classNames.bind(s)
@@ -99,7 +79,8 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
-
+  const nameForComponentType = componentTypeMap[component_type]
+  const srcForComponentType = srcForIcons(nameForComponentType)
   return (
     <div
       className={cx(
@@ -110,7 +91,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       )}
       onClick={handleSkillCardClick}>
       <div className={s.header}>
-        <p className={s.botName}>{name ?? 'Name of The Skill'} </p>
+        <p className={s.botName}>{display_name ?? '------'} </p>
         {type == 'your' && (
           <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
         )}
@@ -118,49 +99,41 @@ export const SkillCard: FC<SkillCardProps> = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
-            <img
-              className={s.typeLogo}
-              src={`./src/assets/icons/${componentTypeMap[component_type]}.svg`}
-            />
-            <p className={cx('typeText', componentTypeMap[component_type])}>
-              {component_type ?? 'Type of Skill'}
+            <img className={s.typeLogo} src={srcForComponentType} />
+            <p className={cx('typeText', nameForComponentType)}>
+              {component_type ?? '------'}
             </p>
           </div>
           <div className={s.name}>
             <img className={s.companyLogo} src={DeepPavlovLogo} />
-            <p className={s.companyName}>{botName ?? 'Name of The Bot'}</p>
+            <p className={s.companyName}>{author ?? '------'}</p>
           </div>
           <div
             className={s.description}
             data-for='descriptionTooltip'
-            data-tip={desc}>
+            data-tip={description}>
             <ReactTooltip
               id='descriptionTooltip'
-              effect='solid'
               className={s.tooltips}
               delayShow={500}
             />
-            <div className={s.descriptionText}>
-              {desc ?? 'Lorem ipsum dolores est'}
-            </div>
+            <div className={s.descriptionText}>{description ?? '------'}</div>
           </div>
+
+        <span className={s.separator} />
           <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
-              <p className={s.dateText}>{dateCreated ?? '27.10.2022'}</p>
+              <p className={s.dateText}>{dateCreated ?? '------'}</p>
             </div>
           </div>
         </div>
-        <span className={s.separator} />
-        <div className={s.middle}>
+        {/* <div className={s.middle}>
           <ResourcesTable values={ResValues()} />
-        </div>
+        </div> */}
         <div className={s.bottom}>
           {type === 'public' ? (
-            <div
-              data-tip
-              data-for='skill-add-interact'
-              style={{ width: '100%' }}>
+            <div className={s.btns} data-tip data-for='skill-add-interact'>
               <Button
                 theme='primary'
                 small
@@ -175,11 +148,11 @@ export const SkillCard: FC<SkillCardProps> = ({
           ) : (
             <>
               <div
+                className={s.btns}
                 data-tip
-                data-tooltip-id={'editSkill' + skill.name}
-                style={{ width: '100%' }}>
+                data-tooltip-id={'editSkill' + skill.name}>
                 <Button
-                  theme='secondary'
+                  theme='primary'
                   long
                   small
                   props={{
@@ -199,10 +172,9 @@ export const SkillCard: FC<SkillCardProps> = ({
           )}
         </div>
       </div>
-
       {isPreview && (
         <BaseToolTip
-          id={'editSkill' + skill.name}
+          id={'editSkill' + name}
           content='You must be signed in to edit the skill'
           theme='small'
         />

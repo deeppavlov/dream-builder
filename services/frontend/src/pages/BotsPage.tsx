@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { RoutesList } from '../Router/RoutesList'
+import { RoutesList } from '../router/RoutesList'
 import { useAuth } from '../Context/AuthProvider'
 import { getPublicDists } from '../services/getPublicDists'
 import { getPrivateDists } from '../services/getPrivateDists'
@@ -71,7 +71,7 @@ export const BotsPage = () => {
           primary
           showAll
           title='Your Virtual Assistants & Chatbots'
-          amount={!auth?.user && privateDists?.length}
+          amount={auth?.user && privateDists?.length}
           linkTo={RoutesList.yourBots}>
           {listView ? (
             <Table addButton={<AddButton listView={listView} />}>

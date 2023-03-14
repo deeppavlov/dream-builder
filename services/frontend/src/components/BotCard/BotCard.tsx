@@ -25,7 +25,7 @@ interface BotCardProps {
   type: BotAvailabilityType
   bot: BotInfoInterface
   size?: BotCardSize
-  disabledMsg?: string
+  // disabledMsg?: string
   disabled: boolean
 }
 
@@ -119,10 +119,7 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
                   theme='primary'
                   small
                   long
-                  props={{
-                    disabled: disabledMsg !== undefined,
-                    onClick: handleCloneClick,
-                  }}>
+                  props={{ onClick: handleCloneClick }}>
                   Clone
                 </Button>
               </div>
@@ -150,14 +147,6 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
           )}
         </div>
       </div>
-      {disabledMsg && (
-        <BaseToolTip
-          id={'botClone' + bot?.name}
-          content={disabledMsg}
-          place='bottom'
-          theme='small'
-        />
-      )}
     </div>
   )
 }

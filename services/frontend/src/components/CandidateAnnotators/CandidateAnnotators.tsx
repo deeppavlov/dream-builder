@@ -28,8 +28,8 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
       <div className={s.body} />
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
-        <Accordion title='Customizable'>
-            <WaitForNextRelease />
+        <Accordion closed title='Customizable'>
+          <WaitForNextRelease />
           {candidateAnnotators?.map((annotator, i) => {
             if (annotator.is_customizable) {
               return (

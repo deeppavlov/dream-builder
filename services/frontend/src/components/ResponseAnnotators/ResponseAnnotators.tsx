@@ -30,7 +30,7 @@ export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
           <div className={s.body}></div>
           <AddButtonStack disabled={true} text='Add Response Annotators' />
           <div className={s.elements}>
-            <Accordion title='Customizable'>
+            <Accordion closed title='Customizable'>
               <WaitForNextRelease />
               {responseAnnotators?.map((annotator, i) => {
                 if (annotator.is_customizable) {

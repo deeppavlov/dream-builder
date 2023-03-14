@@ -36,7 +36,7 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
       <form onSubmit={formSubmitHandler}>
-        <Accordion title='Customizable'>
+        <Accordion closed title='Customizable'>
           <div className={s.element}>
             <WaitForNextRelease />
             {customizable?.map((skill, i) => (

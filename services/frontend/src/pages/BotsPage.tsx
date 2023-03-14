@@ -43,7 +43,7 @@ export const BotsPage = () => {
     error: privateDistsError,
     isLoading: isPrivateDistsLoading,
   } = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user,
+    enabled: !auth?.user,
   })
 
   return (

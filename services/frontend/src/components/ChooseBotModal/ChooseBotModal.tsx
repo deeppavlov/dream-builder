@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import classNames from 'classnames/bind'
 import Modal from 'react-modal'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { dist_list, SkillInfoInterface } from '../../types/types'
+import { SkillInfoInterface } from '../../types/types'
 import { subscribe, unsubscribe } from '../../utils/events'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Table } from '../../ui/Table/Table'
@@ -11,7 +11,7 @@ import { dateToUTC } from '../../utils/dateToUTC'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { timeToUTC } from '../../utils/timeToUTC'
 import { useQuery } from 'react-query'
-import { getAssistantDists } from '../../services/getAssistantDists'
+import { getPublicDists } from '../../services/getPublicDists'
 import s from './ChooseBotModal.module.scss'
 
 const ChooseBotModal = () => {
@@ -37,7 +37,7 @@ const ChooseBotModal = () => {
     isLoading: isAssistantsLoading,
     error: assistantsError,
     data: assistantsData,
-  } = useQuery('assistant_dists', getAssistantDists)
+  } = useQuery('publicDists', getPublicDists)
 
   useEffect(() => {
     subscribe('ChooseBotModal', handleEventUpdate)

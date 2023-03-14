@@ -120,10 +120,10 @@ export const SkillCard = ({
           <div
             className={s.description}
             data-tip
-            data-tooltip-id={'skillCardDesc' + skill.name}>
+            data-tooltip-id={'skillCardDesc' + tooltipId}>
             <div className={s.descriptionText}>{description ?? 'Empty'}</div>
             <BaseToolTip
-              id={'skillCardDesc' + name}
+              id={'skillCardDesc' + tooltipId}
               content={description}
               theme='description'
             />
@@ -162,7 +162,7 @@ export const SkillCard = ({
             <>
               <div
                 data-tip
-                data-tooltip-id={'editSkill' + skill.name}
+                data-tooltip-id={'editSkill' + tooltipId}
                 style={{ width: '100%' }}>
                 <Button
                   theme='secondary'
@@ -175,10 +175,10 @@ export const SkillCard = ({
                   Edit
                 </Button>
               </div>
-              <Kebab tooltipId={tooltipId} theme='card' />
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
               <SkillCardToolTip
                 skill={skill}
-                tooltipId={tooltipId}
+                tooltipId={'ctxMenu' + tooltipId}
                 isPreview={isPreview}
               />
             </>
@@ -188,8 +188,8 @@ export const SkillCard = ({
 
       {isPreview && (
         <BaseToolTip
-          id={'editSkill' + skill.name}
-          content='You must be signed in to edit the skill'
+          id={'editSkill' + tooltipId}
+          content='You need to clone the virtual assistant to edit'
           theme='small'
         />
       )}

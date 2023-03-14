@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
@@ -45,6 +45,7 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
         : [[properties, { name: properties }]]
     ),
   })
+  const tooltipId = useId()
   const nameForComponentType = componentTypeMap[component_type ?? '']
   const nameForModelType = modelTypeMap[model_type ?? '']
   const srcForComponentType = srcForIcons(nameForComponentType)
@@ -107,7 +108,7 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
           </ul>
           <p className={s.desc}>{skill.description}</p>
           <div className={s.btns}>
-            <div data-tip data-tooltip-id={'skillAddTo' + name}>
+            <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
               <Button
                 theme='primary'
                 props={{
@@ -121,8 +122,8 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
 
           {(isPreview || !auth?.user) && (
             <BaseToolTip
-              id={'skillAddTo' + name}
-              content='You must be signed in to add the skill'
+              id={'skillAddTo' + tooltipId}
+              content='You need to clone the virtual assistant to edit'
             />
           )}
         </div>

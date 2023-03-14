@@ -55,12 +55,8 @@ export const BotListItem: FC<BotListItemProps> = ({
     gpu,
     space,
   }
-  const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
-  const signInMessage = !auth?.user
-    ? 'You must be signed in to clone the bot'
-    : undefined
 
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
@@ -115,10 +111,10 @@ export const BotListItem: FC<BotListItemProps> = ({
       <td className={s.td}>
         <div
           className={s.description}
-          data-tooltip-id={'botTableDesc' + bot.name}>
+          data-tooltip-id={'botTableDesc' + tooltipId}>
           {desc}
           <BaseToolTip
-            id={'botTableDesc' + bot.name}
+            id={'botTableDesc' + tooltipId}
             content={desc}
             place='bottom'
             theme='description'
@@ -133,7 +129,7 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-tooltip-id={'botClone' + bot.name}>
+          <div data-tip data-tooltip-id={'botClone' + tooltipId}>
             <Button
               theme='primary'
               small
@@ -148,8 +144,12 @@ export const BotListItem: FC<BotListItemProps> = ({
 
           {type === 'your' ? (
             <>
-              <Kebab tooltipId={tooltipId} theme='card' />
-              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <BotCardToolTip
+                tooltipId={'ctxMenu' + tooltipId}
+                bot={bot}
+                type={type}
+              />
             </>
           ) : (
             <Button
@@ -164,7 +164,7 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       {disabledMsg && (
         <BaseToolTip
-          id={'botClone' + bot.name}
+          id={'botClone' + tooltipId}
           content={disabledMsg}
           place='bottom'
           theme='small'

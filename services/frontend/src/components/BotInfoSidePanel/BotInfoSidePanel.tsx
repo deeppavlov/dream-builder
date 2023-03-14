@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { BotInfoInterface, SkillInfoInterface } from '../../types/types'
@@ -14,9 +14,9 @@ import { srcForIcons } from '../../utils/srcForIcons'
 import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
 import { modelTypeMap } from '../../Mapping/modelTypeMap'
-import { useAuth } from '../../context/AuthProvider'
-import s from './BotInfoSidePanel.module.scss'
+import { useAuth } from '../../Context/AuthProvider'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import s from './BotInfoSidePanel.module.scss'
 
 interface Props {
   bot: BotInfoInterface
@@ -32,6 +32,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
+  const tooltipId = useId()
 
   const {
     isLoading: isDistsComponentsLoading,
@@ -150,7 +151,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
           <Button theme='secondary' props={{ onClick: handlePreviewBtnClick }}>
             Preview
           </Button>
-          <div data-tip data-tooltip-id={'botClone' + bot.name}>
+          <div data-tip data-tooltip-id={'botSPClone' + tooltipId}>
             <Button
               theme='primary'
               props={{
@@ -162,7 +163,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
           </div>
         </div>
         <BaseToolTip
-          id={'botClone' + bot.name}
+          id={'botSPClone' + tooltipId}
           content={disabledMsg}
           place='top'
           theme='small'

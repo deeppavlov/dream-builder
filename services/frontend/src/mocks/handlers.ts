@@ -30,7 +30,7 @@ export const handlers = [
   }),
 
   rest.get('/assistant_dists/private', (req, res, ctx) => {
-    if (req.headers.token === undefined) {
+    if (localStorage.getItem('user') == null) {
       return res(ctx.status(400), ctx.json({ details: 'Token is required' }))
     }
 

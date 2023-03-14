@@ -141,7 +141,7 @@ export const EditorPage = () => {
                         addBot={() => {}}
                         disabledMsg={
                           auth?.user
-                            ? 'You should to clone the virtual assistant for edit'
+                            ? 'You need to clone the virtual assistant to edit'
                             : undefined
                         }
                         text='Create From Scratch'

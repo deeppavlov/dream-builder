@@ -11,6 +11,10 @@
     @include tooltip_for_description;
   }
 
+  &.show {
+    opacity: 1;
+  }
+
   .arrow {
     position: absolute;
     background: inherit;

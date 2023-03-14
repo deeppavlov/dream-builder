@@ -9,7 +9,7 @@ interface TextAreaProps {
   about?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
   maxLenght?: number | string
-  props?: React.InputHTMLAttributes<HTMLTextAreaElement>
+  props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
 }
@@ -73,10 +73,10 @@ export const TextArea: FC<TextAreaProps> = ({
       <div className={cx('container', 'resizer-container')}>
         <TextAreaLogo className={s.resizer} />
         <textarea
-          {...props}
-          id={textAreaId}
           rows={2}
           cols={20}
+          {...props}
+          id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

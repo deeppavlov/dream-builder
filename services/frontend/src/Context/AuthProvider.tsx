@@ -98,10 +98,11 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
 
   useEffect(() => {
-    const user = getLocalStorageUser()
+    const localStorageUser = getLocalStorageUser()
 
-    if (!user) return
-    setUser(user)
+    if (user === null && localStorageUser !== null) {
+      setUser(localStorageUser)
+    }
   }, [])
 
   const userContextValue = useMemo(

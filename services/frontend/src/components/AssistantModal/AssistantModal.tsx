@@ -204,6 +204,7 @@ export const AssistantModal = () => {
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
               defaultValue: getValues().description,
+              rows: 3,
               ...register(DESC_ID as keyof FormValues, {
                 required: 'This field can’t be empty',
                 maxLength: {

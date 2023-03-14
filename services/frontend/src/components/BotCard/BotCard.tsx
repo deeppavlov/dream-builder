@@ -1,5 +1,4 @@
 import { useId } from 'react'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import classNames from 'classnames/bind'
 import { trigger } from '../../utils/events'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
@@ -14,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import s from './BotCard.module.scss'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
@@ -101,10 +100,10 @@ export const BotCard = ({
             <span>{author}</span>
           </div>
         )}
-        <div className={s.desc} data-tooltip-id={'botCardDesc' + bot.name}>
+        <div className={s.desc} data-tooltip-id={'botCardDesc' + tooltipId}>
           {desc}
           <BaseToolTip
-            id={'botCardDesc' + bot.name}
+            id={'botCardDesc' + tooltipId}
             content={desc}
             place='bottom'
             theme='description'
@@ -141,7 +140,7 @@ export const BotCard = ({
           <>
             <div
               data-tip
-              data-tooltip-id={'botClone' + bot.name}
+              data-tooltip-id={'botCardClone' + tooltipId}
               className={s.container}>
               <Button
                 theme='primary'
@@ -172,15 +171,19 @@ export const BotCard = ({
               Edit
             </Button>
 
-            <Kebab tooltipId={tooltipId} theme='card' />
-            <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+            <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+            <BotCardToolTip
+              tooltipId={'ctxMenu' + tooltipId}
+              bot={bot}
+              type={type}
+            />
           </>
         )}
       </div>
 
       {disabledMsg && (
         <BaseToolTip
-          id={'botClone' + bot.name}
+          id={'botCardClone' + tooltipId}
           content={disabledMsg}
           place='bottom'
           theme='small'

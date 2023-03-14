@@ -1,9 +1,7 @@
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
@@ -12,49 +10,34 @@ import { srcForIcons } from '../../utils/srcForIcons'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import s from './SkillListItem.module.scss'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { ISkill } from '../../types/types'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { timeToUTC } from '../../utils/timeToUTC'
 
-interface SkillListItemProps extends SkillInfoInterface {
+interface Props {
+  skill: ISkill
   checkbox?: boolean
   disabledMsg?: string
 }
 
-export const SkillListItem = ({
-  name,
-  author,
-  authorImg,
-  desc,
-  dateCreated,
-  version,
-  ram,
-  gpu,
-  time,
-  modelType,
-  componentType,
-  checkbox,
-  executionTime,
-  botName,
-  disabledMsg,
-}: SkillListItemProps) => {
-  let cx = classNames.bind(s)
-  const skill = {
+export const SkillListItem = ({ skill, checkbox, disabledMsg }: Props) => {
+  const {
     name,
-    author,
-    authorImg,
-    desc,
-    dateCreated,
-    version,
-    ram,
-    gpu,
-    time,
-    modelType,
-    componentType,
-    executionTime,
-    botName,
-  }
+    display_name,
+    description,
+    component_type,
+    date_created,
+    model_type,
+    ram_usage,
+    gpu_usage,
+    execution_time,
+  } = skill
+  const { isPreview } = usePreview()
   const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
-  const { isPreview } = usePreview()
+  let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -75,7 +58,7 @@ export const SkillListItem = ({
       parent: skill,
     })
   }
-  const nameForComponentType = componentTypeMap[componentType]
+  const nameForComponentType = componentTypeMap[component_type ?? '']
   const srcForComponentType = srcForIcons(nameForComponentType)
 
   return (
@@ -89,9 +72,9 @@ export const SkillListItem = ({
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p className={s.skillName}>{name || 'Name of The Skill'}</p>
+          <p className={s.skillName}>{display_name || 'Empty'}</p>
           <span className={s.params}>
-            {`RAM ${ram} | GPU ${gpu} | DS ${executionTime}s`}
+            {`RAM ${ram_usage} | GPU ${gpu_usage} | DS ${execution_time}s`}
           </span>
         </div>
       </td>
@@ -99,37 +82,40 @@ export const SkillListItem = ({
         <div className={s.type}>
           <img className={s.typeLogo} src={srcForComponentType} />
           <p className={cx('typeText', nameForComponentType)}>
-            {componentType || 'Type of Skill'}
+            {component_type || 'Empty'}
           </p>
         </div>
       </td>
       <td className={s.td}>
         <div
           className={s.description}
-          data-for='descriptionTooltip'
-          data-tip={desc}>
-          <ReactTooltip
-            id='descriptionTooltip'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
+          data-tip
+          data-tooltip-id={'skillTableDesc' + tooltipId}>
+          {description}
+          <BaseToolTip
+            id={'skillTableDesc' + tooltipId}
+            content={description}
+            theme='description'
           />
-          {desc || 'Lorem  '}
         </div>
       </td>
       <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated}</p>
-          <p className={s.time}>{time} </p>
+          <p className={s.ddmmyyyy}>
+            {date_created ? dateToUTC(date_created) : 'Empty'}
+          </p>
+          <p className={s.time}>
+            {date_created ? timeToUTC(date_created) : 'Empty'}{' '}
+          </p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
           <ToggleButton handleToggle={handleToggle} />
-          <Kebab tooltipId={tooltipId} theme='card' />
+          <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
           <SkillCardToolTip
             skill={skill}
-            tooltipId={tooltipId}
+            tooltipId={'ctxMenu' + tooltipId}
             isPreview={isPreview}
           />
           {/* <div data-tip data-for='skill-add-interact'>
@@ -142,17 +128,6 @@ export const SkillListItem = ({
           </div> */}
         </div>
       </td>
-      {disabledMsg && (
-        <ReactTooltip
-          place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='skill-add-interact'>
-          {disabledMsg}
-        </ReactTooltip>
-      )}
     </tr>
   )
 }

@@ -23,26 +23,26 @@ export const AddButton: FC<Props> = ({
   return (
     <>
       {!listView ? (
-        <button
-          data-tip
-          data-tooltip-id={tooltipId}
-          onClick={handleClick}
-          className={s.forCard}
-          disabled={disabledMsg !== undefined}>
-          <img src={Add} />
-        </button>
+        <div data-tip data-tooltip-id={tooltipId}>
+          <button
+            onClick={handleClick}
+            className={s.forCard}
+            disabled={disabledMsg !== undefined}>
+            <img src={Add} />
+          </button>
+        </div>
       ) : (
         <tr className={s.tr}>
           <td colSpan={5} className={s.td}>
-            <button
-              data-tip
-              data-tooltip-id={tooltipId}
-              className={s.forTable}
-              onClick={handleClick}
-              disabled={disabledMsg !== undefined}>
-              <img src={Add} />
-              <p>{text || 'Create From Scratch'}</p>
-            </button>
+            <div data-tip data-tooltip-id={tooltipId}>
+              <button
+                className={s.forTable}
+                onClick={handleClick}
+                disabled={disabledMsg !== undefined}>
+                <img src={Add} />
+                <p>{text || 'Create From Scratch'}</p>
+              </button>
+            </div>
           </td>
         </tr>
       )}

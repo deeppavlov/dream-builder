@@ -3,7 +3,7 @@ import classNames from 'classnames/bind'
 import GoogleLogo from '@assets/images/GoogleLogo.svg'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import { subscribe, unsubscribe } from '../../utils/events'
-import { login } from '../../context/AuthProvider'
+import { login } from '../../Context/AuthProvider'
 import s from './SignInModal.module.scss'
 
 type MessageType = JSX.Element | string

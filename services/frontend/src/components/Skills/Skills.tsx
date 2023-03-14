@@ -10,7 +10,7 @@ import { IStackElement } from '../../types/types'
 import s from './Skills.module.scss'
 
 interface SkillsStackProps {
-  skills: [Component]
+  skills: Component[]
 }
 
 export const Skills: FC<SkillsStackProps> = ({ skills }) => {
@@ -43,7 +43,7 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
           <WaitForNextRelease />
         </Accordion>
         <Accordion title='Non-customizable'>
-          {skills?.map((skill: Component, i: number) => {
+          {skills?.map((skill, i) => {
             return (
               <Element
                 key={skill.name + i}

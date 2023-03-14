@@ -1,4 +1,4 @@
-import { FC,useState } from 'react'
+import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { BotInfoInterface, ISkill, SkillInfoInterface } from '../../types/types'
@@ -20,14 +20,12 @@ import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './BotInfoSidePanel.module.scss'
 import { Loader } from '../Loader/Loader'
 
-
 interface Props {
   bot: BotInfoInterface
-  disabled: boolean
+  disabled?: boolean
 }
 
 const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled }) => {
-  const auth = useAuth()
   const [bot, setBot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
   const navigate = useNavigate()

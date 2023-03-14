@@ -29,7 +29,7 @@ const BaseModal = ({
         ...{
           overlay: {
             position: 'fixed',
-            top: 64,
+            top: 0,
             left: 0,
             right: 0,
             bottom: 0,

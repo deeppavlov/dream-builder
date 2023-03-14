@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import BaseLink from '../../components/BaseLink/BaseLink'
-import BaseSidePanel, {
+import {
+  BaseSidePanel,
   BASE_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'

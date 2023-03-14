@@ -1,11 +1,11 @@
-import { Annotator, IContextMenu } from '../../types/types'
+import { Component, IContextMenu } from '../../types/types'
 import getAnnotatorSidePanel from '../../utils/triggerAnnotatorSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  annotator: Annotator
+  annotator: Component
 }
 
 const AnnotatorStackToolTip = ({

@@ -165,7 +165,7 @@ export const AssistantModal = () => {
                 You are creating a copy of a{' '}
                 <mark>
                   {isTopbarButton && capitalizeTitle(bot)}
-                  {botDist?.name}
+                  {bot?.display_name}
                 </mark>
               </div>
             )}

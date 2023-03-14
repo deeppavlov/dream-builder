@@ -1,11 +1,8 @@
 import { FC, useId } from 'react'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
-import { SmallTag } from '../SmallTag/SmallTag'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -14,50 +11,28 @@ import { useAuth } from '../../context/AuthProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
-import s from './BotListItem.module.scss'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { timeToUTC } from '../../utils/timeToUTC'
+import s from './BotListItem.module.scss'
 
-interface BotListItemProps extends BotInfoInterface {
-  checkbox?: boolean
-  time?: string
+interface BotListItemProps {
   disabledMsg?: string
-  routingName: string
   type: BotAvailabilityType
+  bot: BotInfoInterface
 }
 
 export const BotListItem: FC<BotListItemProps> = ({
-  checkbox,
-  name,
-  routingName,
-  authorImg,
-  author,
-  desc,
-  dateCreated,
-  time,
-  version,
-  ram,
-  gpu,
-  space,
   disabledMsg,
   type,
+  bot,
 }) => {
-  const bot = {
-    name,
-    routingName,
-    author,
-    authorImg,
-    desc,
-    dateCreated,
-    time,
-    version,
-    ram,
-    gpu,
-    space,
-  }
   const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
+  const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const time = timeToUTC(new Date(bot?.date_created))
   const signInMessage = !auth?.user
     ? 'You must be signed in to clone the bot'
     : undefined
@@ -76,50 +51,46 @@ export const BotListItem: FC<BotListItemProps> = ({
   }
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    navigate(`/${routingName}`, {
-      state: { preview: true, distName: routingName, displayName: name },
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: true,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
     })
   }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    navigate(`/${routingName}`, {
-      state: { preview: false, distName: routingName, displayName: name },
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: false,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
     })
   }
 
   return (
     <tr className={s.tr} onClick={handleBotListItemClick}>
-      {checkbox && (
-        <td className={s.checkboxArea}>
-          <Checkbox />
-        </td>
-      )}
       <td className={s.td}>
         <div className={s.name}>
-          <p className={s.botName}>{name || 'Name of The Bot'}</p>
-          <span className={s.params}>
-            {`RAM ${ram} | GPU ${gpu} | DS ${space}`}
-          </span>
+          <p className={s.botName}>{bot?.display_name || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          {/* {author === 'DeepPavlov' ? ( */}
           <Logo />
-          {/* ) : ( */}
-          {/* <img src={auth?.user?.picture} referrerPolicy='no-referrer' /> */}
-          {/* )} */}
-          <p>{author}</p>
+          <p>{bot?.author}</p>
         </div>
       </td>
       <td className={s.td}>
         <div
           className={s.description}
           data-tooltip-id={'botTableDesc' + bot.name}>
-          {desc}
+          {bot?.description}
           <BaseToolTip
             id={'botTableDesc' + bot.name}
-            content={desc}
+            content={bot?.description}
             place='top'
             theme='description'
           />
@@ -127,13 +98,13 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated || 'Dec 12, 2022'}</p>
-          <p className={s.time}>{time || '5:21 PM '}</p>
+          <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
+          <p className={s.time}>{time || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-tooltip-id={'botClone' + bot.name}>
+          <div data-tip data-tooltip-id={'botClone' + bot?.name}>
             <Button
               theme='primary'
               small
@@ -164,7 +135,7 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       {disabledMsg && (
         <BaseToolTip
-          id={'botClone' + bot.name}
+          id={'botClone' + bot?.name}
           content={disabledMsg}
           place='bottom'
           theme='small'

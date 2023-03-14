@@ -1,5 +1,5 @@
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { useId, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -7,54 +7,34 @@ import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { srcForIcons } from '../../utils/srcForIcons'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import s from './SkillListItem.module.scss'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import { usePreview } from '../../context/PreviewProvider'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { timeToUTC } from '../../utils/timeToUTC'
+import s from './SkillListItem.module.scss'
 
-interface SkillListItemProps extends SkillInfoInterface {
+interface SkillListItemProps {
   checkbox?: boolean
   disabledMsg?: string
+  skill: SkillInfoInterface
 }
 
-export const SkillListItem = ({
-  name,
-  author,
-  authorImg,
-  desc,
-  dateCreated,
-  version,
-  ram,
-  gpu,
-  time,
-  modelType,
-  componentType,
+export const SkillListItem: FC<SkillListItemProps> = ({
   checkbox,
-  executionTime,
-  botName,
+  skill,
   disabledMsg,
-}: SkillListItemProps) => {
-  let cx = classNames.bind(s)
-  const skill = {
-    name,
-    author,
-    authorImg,
-    desc,
-    dateCreated,
-    version,
-    ram,
-    gpu,
-    time,
-    modelType,
-    componentType,
-    executionTime,
-    botName,
-  }
+}) => {
+  const dateCreated = dateToUTC(skill?.date_created)
+  const time = timeToUTC(new Date(skill?.date_created))
   const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()
+  const nameForComponentType = componentTypeMap[skill?.component_type]
+  const srcForComponentType = srcForIcons(nameForComponentType)
+  let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -64,7 +44,7 @@ export const SkillListItem = ({
     e.stopPropagation()
     e.preventDefault()
     trigger(BASE_SP_EVENT, {
-      children: <SkillSidePanel key={skill.name} skill={skill} />,
+      children: <SkillSidePanel key={skill?.name} skill={skill} />,
     })
   }
 
@@ -75,8 +55,6 @@ export const SkillListItem = ({
       parent: skill,
     })
   }
-  const nameForComponentType = componentTypeMap[componentType]
-  const srcForComponentType = srcForIcons(nameForComponentType)
 
   return (
     <tr
@@ -89,17 +67,14 @@ export const SkillListItem = ({
       )}
       <td className={s.td}>
         <div className={s.name}>
-          <p className={s.skillName}>{name || 'Name of The Skill'}</p>
-          <span className={s.params}>
-            {`RAM ${ram} | GPU ${gpu} | DS ${executionTime}s`}
-          </span>
+          <p className={s.skillName}>{skill?.display_name || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.type}>
           <img className={s.typeLogo} src={srcForComponentType} />
           <p className={cx('typeText', nameForComponentType)}>
-            {componentType || 'Type of Skill'}
+            {skill?.component_type || '------'}
           </p>
         </div>
       </td>
@@ -107,47 +82,36 @@ export const SkillListItem = ({
         <div
           className={s.description}
           data-for='descriptionTooltip'
-          data-tip={desc}>
+          data-tip={skill?.description}>
           <ReactTooltip
             id='descriptionTooltip'
-            effect='solid'
             className={s.tooltips}
             delayShow={500}
           />
-          {desc || 'Lorem  '}
+          {skill?.description || '------'}
         </div>
       </td>
       <td className={s.td}>
         <div className={s.date}>
           <p className={s.ddmmyyyy}>{dateCreated}</p>
-          <p className={s.time}>{time} </p>
+          <p className={s.time}>{time || '------'} </p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <ToggleButton handleToggle={handleToggle} />
+          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
           <Kebab tooltipId={tooltipId} theme='card' />
           <SkillCardToolTip
             skill={skill}
             tooltipId={tooltipId}
             isPreview={isPreview}
           />
-          {/* <div data-tip data-for='skill-add-interact'>
-            <button
-              className={s.area}
-              onClick={handleAddBtnClick}
-              disabled={disabledMsg !== undefined}>
-              <PlusLogo />
-            </button>
-          </div> */}
         </div>
       </td>
       {disabledMsg && (
         <ReactTooltip
           place='bottom'
-          effect='solid'
           className='tooltips'
-          arrowColor='#8d96b5'
           delayShow={1000}
           id='skill-add-interact'>
           {disabledMsg}

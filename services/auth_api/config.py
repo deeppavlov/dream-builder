@@ -26,10 +26,18 @@ class AuthSettings(BaseModel):
     redirect_uri: str
 
 
+class SmtpSettings(BaseModel):
+    server: str
+    port: int
+    user: str
+    password: str
+
+
 class Settings(BaseSettings):
     url: UrlSettings
     db: DatabaseSettings
     auth: AuthSettings
+    smtp: SmtpSettings
 
     class Config:
         env_file = ".env"
@@ -38,7 +46,6 @@ class Settings(BaseSettings):
 
     @property
     def auth_client_info(self):
-
         return {
             "client_id": self.auth.google_client_id,
             "client_secret": self.auth.google_client_secret,
@@ -46,4 +53,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

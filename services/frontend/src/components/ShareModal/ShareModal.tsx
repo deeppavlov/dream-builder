@@ -17,7 +17,7 @@ export const ShareModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
-    setBot(data?.detail?.bot?.routingName)
+    setBot(data?.detail?.bot?.name)
     setIsOpen(!isOpen)
   }
   const { register, getValues, reset } = useForm({

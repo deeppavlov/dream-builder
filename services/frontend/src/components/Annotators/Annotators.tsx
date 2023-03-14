@@ -4,17 +4,16 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { Component } from '../../types/types'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../сontext/PreviewProvider'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import s from './Annotators.module.scss'
 
 interface Props {
-  annotators: [Component]
+  annotators: Component[]
 }
 
 export const Annotators: FC<Props> = ({ annotators }) => {
   const { isPreview } = usePreview()
-
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -30,16 +29,29 @@ export const Annotators: FC<Props> = ({ annotators }) => {
       <div className={s.elements}>
         <Accordion closed title='Customizable'>
           <WaitForNextRelease />
+          {annotators?.map((annotator, i) => {
+            if (annotator?.is_customizable) {
+              return (
+                <AnnotatorElement
+                  key={annotator.name + i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
+          })}
         </Accordion>
         <Accordion title='Non-customizable'>
-          {annotators?.map((item: Component, i: number) => {
-            return (
-              <AnnotatorElement
-                key={i}
-                annotator={item}
-                isPreview={isPreview}
-              />
-            )
+          {annotators?.map((annotator, i) => {
+            if (!annotator.is_customizable) {
+              return (
+                <AnnotatorElement
+                  key={i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
           })}
         </Accordion>
       </div>

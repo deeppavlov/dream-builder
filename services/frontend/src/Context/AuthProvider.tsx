@@ -97,13 +97,13 @@ export const logout = async () => {
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
 
- useEffect(() => {
-   const localStorageUser = getLocalStorageUser()
+  useEffect(() => {
+    const localStorageUser = getLocalStorageUser()
 
-   if (user === null && localStorageUser !== null) {
-     setUser(localStorageUser)
-   }
- }, [])
+    if (user === null && localStorageUser !== null) {
+      setUser(localStorageUser)
+    }
+  }, [])
 
   const userContextValue = useMemo(
     () => ({

@@ -43,6 +43,7 @@ services:
       - "6999:6999"
     volumes:
       - ./services/auth_api:/src/services/auth_api
+      - ./database:/src/database
     deploy:
       resources:
         limits:
@@ -57,13 +58,14 @@ services:
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
-        PORT: 7000
+        PORT: 6998
     depends_on:
       - auth-api
     ports:
-      - "7000:7000"
+      - "6998:6998"
     volumes:
       - ./services/distributions_api:/src/services/distributions_api
+      - ./database:/src/database
     deploy:
       resources:
         limits:

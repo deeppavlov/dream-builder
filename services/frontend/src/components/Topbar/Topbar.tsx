@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'

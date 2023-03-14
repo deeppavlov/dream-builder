@@ -8,12 +8,7 @@ interface Props extends IContextMenu {
   annotator: Component
 }
 
-const AnnotatorStackToolTip = ({
-  tooltipId,
-  annotator,
-  isCustomizable,
-  isPreview,
-}: Props) => {
+const AnnotatorStackToolTip = ({ tooltipId, annotator, isPreview }: Props) => {
   const handleEditBtnClick = () =>
     getAnnotatorSidePanel({ annotator, activeTab: 'Editor' })
 
@@ -22,7 +17,7 @@ const AnnotatorStackToolTip = ({
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {isCustomizable && (
+      {annotator.is_customizable && (
         <ContextMenuButton
           name='Edit Annotator'
           type='edit'

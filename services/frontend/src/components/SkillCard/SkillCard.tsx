@@ -4,11 +4,15 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Button from '../../ui/Button/Button'
-import { SkillAvailabilityType, SkillInfoInterface } from '../../types/types'
+import {
+  ISkill,
+  SkillAvailabilityType,
+  SkillInfoInterface,
+} from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -31,33 +35,8 @@ export const SkillCard: FC<SkillCardProps> = ({
   type,
   skill,
 }) => {
-  const {
-    name,
-    display_name,
-    author,
-    description,
-    date_created,
-    ram_usage,
-    gpu_usage,
-    execution_time,
-    component_type,
-  } = skill
   const [disabled, setDisabled] = useState<boolean>(false)
-  // const ResValues = (): { name: string; value: string }[] =>
-  //   type === 'public'
-  //     ? [
-  //         { name: 'RAM', value: ram_usage },
-  //         { name: 'GPU', value: gpu_usage },
-  //         {
-  //           name: 'Execution time',
-  //           value: execution_time.split(' ')[0] + ' s',
-  //         },
-  //       ]
-  //     : [
-  //         { name: 'RAM', value: ram_usage },
-  //         { name: 'Execution time', value: execution_time + ' s' },
-  //       ]
-  const dateCreated = dateToUTC(date_created)
+  const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
   let cx = classNames.bind(s)
@@ -79,7 +58,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
-  const nameForComponentType = componentTypeMap[component_type]
+  const nameForComponentType = componentTypeMap[skill?.component_type]
   const srcForComponentType = srcForIcons(nameForComponentType)
   return (
     <div
@@ -91,7 +70,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       )}
       onClick={handleSkillCardClick}>
       <div className={s.header}>
-        <p className={s.botName}>{display_name ?? '------'} </p>
+        <p className={s.botName}>{skill?.display_name ?? '------'} </p>
         {type == 'your' && (
           <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
         )}
@@ -101,26 +80,28 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.type}>
             <img className={s.typeLogo} src={srcForComponentType} />
             <p className={cx('typeText', nameForComponentType)}>
-              {component_type ?? '------'}
+              {skill?.component_type ?? '------'}
             </p>
           </div>
           <div className={s.name}>
             <img className={s.companyLogo} src={DeepPavlovLogo} />
-            <p className={s.companyName}>{author ?? '------'}</p>
+            <p className={s.companyName}>{skill?.author ?? 'Empty'}</p>
           </div>
           <div
             className={s.description}
-            data-for='descriptionTooltip'
-            data-tip={description}>
-            <ReactTooltip
-              id='descriptionTooltip'
-              className={s.tooltips}
-              delayShow={500}
+            data-tip
+            data-tooltip-id={'skillCardDesc' + tooltipId}>
+            <div className={s.descriptionText}>
+              {skill?.description ?? 'Empty'}
+            </div>
+            <BaseToolTip
+              id={'skillCardDesc' + tooltipId}
+              content={skill?.description}
+              theme='description'
             />
-            <div className={s.descriptionText}>{description ?? '------'}</div>
           </div>
 
-        <span className={s.separator} />
+          <span className={s.separator} />
           <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
@@ -128,9 +109,6 @@ export const SkillCard: FC<SkillCardProps> = ({
             </div>
           </div>
         </div>
-        {/* <div className={s.middle}>
-          <ResourcesTable values={ResValues()} />
-        </div> */}
         <div className={s.bottom}>
           {type === 'public' ? (
             <div className={s.btns} data-tip data-for='skill-add-interact'>
@@ -150,7 +128,8 @@ export const SkillCard: FC<SkillCardProps> = ({
               <div
                 className={s.btns}
                 data-tip
-                data-tooltip-id={'editSkill' + skill.name}>
+                data-tooltip-id={'editSkill' + tooltipId}
+                style={{ width: '100%' }}>
                 <Button
                   theme='primary'
                   long
@@ -162,10 +141,10 @@ export const SkillCard: FC<SkillCardProps> = ({
                   Edit
                 </Button>
               </div>
-              <Kebab tooltipId={tooltipId} theme='card' />
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
               <SkillCardToolTip
                 skill={skill}
-                tooltipId={tooltipId}
+                tooltipId={'ctxMenu' + tooltipId}
                 isPreview={isPreview}
               />
             </>
@@ -174,8 +153,8 @@ export const SkillCard: FC<SkillCardProps> = ({
       </div>
       {isPreview && (
         <BaseToolTip
-          id={'editSkill' + name}
-          content='You must be signed in to edit the skill'
+          id={'editSkill' + tooltipId}
+          content='You need to clone the virtual assistant to edit'
           theme='small'
         />
       )}

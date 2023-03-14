@@ -17,7 +17,7 @@ import s from './ChooseBotModal.module.scss'
 const ChooseBotModal = () => {
   let cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState(false)
-  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
+  const [skill, setSkill] = useState<ISkill | null>(null)
 
   const closeModal = () => {
     setIsOpen(false)
@@ -27,7 +27,7 @@ const ChooseBotModal = () => {
   /**
    * Set modal is open and getting skill info
    */
-  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
+  const handleEventUpdate = (data: { detail: ISkill }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
     setIsOpen(!isOpen)

@@ -5,8 +5,8 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
 import { Card } from '../components/Card/Card'
 import { Banner } from '../components/Banner/Banner'
-import { useAuth } from '../context/AuthProvider'
-import { RoutesList } from '../router/RoutesList'
+import { useAuth } from '../Context/AuthProvider'
+import { RoutesList } from '../Router/RoutesList'
 
 export const StartPage = () => {
   const auth = useAuth()

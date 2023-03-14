@@ -9,12 +9,17 @@ ENV DREAM_ROOT_PATH=$DREAM_ROOT_PATH
 ENV PORT=$PORT
 
 RUN apt-get update && apt-get install -y --no-install-recommends git
-RUN git clone https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
+RUN git clone -b feat/enable-disable-components https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 
 COPY services/distributions_api/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt
 
 COPY services/distributions_api /src/services/distributions_api
+COPY log_config.yml /src/log_config.yml
 
 WORKDIR src/
-CMD uvicorn services.distributions_api.app:app --host 0.0.0.0 --port $PORT --reload
+CMD uvicorn services.distributions_api.app:app \
+    --host 0.0.0.0 \
+    --port $PORT \
+    --log-config=log_config.yml \
+    --reload

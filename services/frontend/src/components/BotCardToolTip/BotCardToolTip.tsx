@@ -1,4 +1,4 @@
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType, IStackElement } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -7,7 +7,7 @@ import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props {
   tooltipId: string
-  bot: BotInfoInterface
+  bot: IStackElement
   type?: BotAvailabilityType
 }
 
@@ -28,7 +28,7 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 
   return (
-    <BaseContextMenu tooltipId={tooltipId}>
+    <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       {type === 'your' && (
         <ContextMenuButton
           name='Rename'

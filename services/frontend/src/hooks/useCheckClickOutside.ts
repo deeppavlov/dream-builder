@@ -6,8 +6,14 @@ export const useCheckClickOutside = (open: any, ref: any, setOpen: any) => {
       if (open && ref.current && !ref?.current.contains(e.target)) {
         setOpen(false)
       }
+
+      document.removeEventListener('mousedown', checkIfClickedOutside)
     }
-    document.addEventListener('mousedown', checkIfClickedOutside)
+
+    if (open) {
+      document.addEventListener('mousedown', checkIfClickedOutside)
+    }
+
     return () => {
       document.removeEventListener('mousedown', checkIfClickedOutside)
     }

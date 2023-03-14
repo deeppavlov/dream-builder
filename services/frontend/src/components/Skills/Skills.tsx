@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import SkillsLogo from '../../assets/icons/skills.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
@@ -7,6 +6,7 @@ import { Element } from './Element'
 import { usePreview } from '../../context/PreviewProvider'
 import { Component } from '../../types/types'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
+import { IStackElement } from '../../types/types'
 import s from './Skills.module.scss'
 
 interface SkillsStackProps {
@@ -29,11 +29,28 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
       <AddButtonStack disabled={isPreview} text='Add Skills' />
       <div className={s.elements}>
         <Accordion closed title='Customizable'>
+          {skills?.map((skill, i) => {
+            if (skill.is_customizable) {
+              return (
+                <Element
+                  key={skill.name + i}
+                  skill={skill}
+                  isPreview={isPreview}
+                />
+              )
+            }
+          })}
           <WaitForNextRelease />
         </Accordion>
         <Accordion title='Non-customizable'>
           {skills?.map((skill: Component, i: number) => {
-            return <Element key={i} isPreview={isPreview} skill={skill} />
+            return (
+              <Element
+                key={skill.name + i}
+                isPreview={isPreview}
+                skill={skill}
+              />
+            )
           })}
         </Accordion>
       </div>

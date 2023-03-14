@@ -1,11 +1,11 @@
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props {
   tooltipId: string
-  skill: SkillInfoInterface
+  skill: ISkill
   isPreview?: boolean
 }
 
@@ -22,12 +22,14 @@ const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      <ContextMenuButton
-        name='Edit Skill'
-        type='edit'
-        disabled={isPreview}
-        handleClick={handleEditBtnClick}
-      />
+      {skill.is_customizable && (
+        <ContextMenuButton
+          name='Edit Skill'
+          type='edit'
+          disabled={isPreview}
+          handleClick={handleEditBtnClick}
+        />
+      )}
       <ContextMenuButton
         name='Properties'
         type='properties'
@@ -37,7 +39,6 @@ const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
         name='Disable Skill'
         type='disable'
         disabled={isPreview}
-        handleClick={handleDisableBtnClick}
       />
       <hr />
       <ContextMenuButton

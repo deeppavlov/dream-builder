@@ -7,17 +7,21 @@ import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { usePreview } from '../../context/PreviewProvider'
 import { ISkillResponder } from '../../types/types'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
+import { IStackElement } from '../../types/types'
 import s from './ResponseSelector.module.scss'
 
 interface ResponseSelectorProps {
-  responseSelectors: ISkillResponder[]
+  responseSelectors: IStackElement[]
 }
 
 export const ResponseSelector: FC<ResponseSelectorProps> = ({
   responseSelectors,
 }) => {
   const { isPreview } = usePreview()
-  const tooltipId = useId()
+  const customizable = responseSelectors?.filter(skill => skill.is_customizable)
+  const nonCustomizable = responseSelectors?.filter(
+    skill => !skill.is_customizable
+  )
 
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,28 +41,35 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
       <form onSubmit={submitHandler}>
         <Accordion closed title='Customizable'>
           <WaitForNextRelease />
+          <div className={s.element}>
+            {customizable?.map((skill, i) => {
+              return (
+                <RadioButton
+                  key={skill.name + i}
+                  id={skill.name}
+                  value={skill.name}
+                  name='response_selector'
+                  // checked={responseSelectors?.length === 1}
+                  htmlFor={skill.name}>
+                  <Skill skill={skill} isPreview={isPreview} />
+                </RadioButton>
+              )
+            })}
+          </div>
         </Accordion>
         <Accordion title='Non-customizable'>
           <div className={s.element}>
-            {responseSelectors?.map((item: ISkillResponder, i: number) => {
+            {nonCustomizable?.map((skill, i) => {
               return (
-                <>
-                  <RadioButton
-                    key={i}
-                    id={item?.name}
-                    value={item.name}
-                    name='response_selector'
-                    checked={responseSelectors?.length === 1}
-                    htmlFor={item?.name}>
-                    <Skill
-                      id={tooltipId}
-                      withContextMenu
-                      isCustomizable={false}
-                      skill={item}
-                      isPreview={isPreview}
-                    />
-                  </RadioButton>
-                </>
+                <RadioButton
+                  key={skill.name + i}
+                  id={skill.name}
+                  value={skill.name}
+                  name='response_selector'
+                  checked={nonCustomizable?.length === 1}
+                  htmlFor={skill.name}>
+                  <Skill skill={skill} isPreview={isPreview} />
+                </RadioButton>
               )
             })}
           </div>

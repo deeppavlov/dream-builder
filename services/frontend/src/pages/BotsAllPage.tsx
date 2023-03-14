@@ -12,6 +12,7 @@ import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const BotsAllPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -40,6 +41,7 @@ export const BotsAllPage = () => {
         </Wrapper>
         <BaseSidePanel />
         <AssistantModal />
+        <SignInModal />
       </Main>
       <Toaster />
     </>

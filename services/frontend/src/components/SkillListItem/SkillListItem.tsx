@@ -1,9 +1,7 @@
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
@@ -14,6 +12,8 @@ import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import { usePreview } from '../../context/PreviewProvider'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
+import { SkillInfoInterface } from '../../types/types'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
@@ -27,7 +27,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   skill,
   disabledMsg,
 }) => {
-  const dateCreated = dateToUTC(skill?.date_created)
+  const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
   const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
@@ -81,42 +81,33 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       <td className={s.td}>
         <div
           className={s.description}
-          data-for='descriptionTooltip'
-          data-tip={skill?.description}>
-          <ReactTooltip
-            id='descriptionTooltip'
-            className={s.tooltips}
-            delayShow={500}
+          data-tip
+          data-tooltip-id={'skillTableDesc' + tooltipId}>
+          {skill?.description}
+          <BaseToolTip
+            id={'skillTableDesc' + tooltipId}
+            content={skill?.description}
+            theme='description'
           />
-          {skill?.description || '------'}
         </div>
       </td>
       <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated}</p>
-          <p className={s.time}>{time || '------'} </p>
+          <p className={s.ddmmyyyy}>{date || 'Empty'}</p>
+          <p className={s.time}>{time || 'Empty'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-          <Kebab tooltipId={tooltipId} theme='card' />
+          <ToggleButton handleToggle={handleToggle} />
+          <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
           <SkillCardToolTip
             skill={skill}
-            tooltipId={tooltipId}
+            tooltipId={'ctxMenu' + tooltipId}
             isPreview={isPreview}
           />
         </div>
       </td>
-      {disabledMsg && (
-        <ReactTooltip
-          place='bottom'
-          className='tooltips'
-          delayShow={1000}
-          id='skill-add-interact'>
-          {disabledMsg}
-        </ReactTooltip>
-      )}
     </tr>
   )
 }

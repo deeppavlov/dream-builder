@@ -7,7 +7,7 @@ import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
@@ -40,15 +40,22 @@ export const BotListItem: FC<BotListItemProps> = ({
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot?.name} bot={bot} disabledMsg={disabledMsg} />
+        <BotInfoSidePanel key={bot?.name} bot={bot} disabled={disabled} />
       ),
     })
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', bot: bot })
+
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
   }
+
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${bot?.name}`, {
@@ -59,6 +66,7 @@ export const BotListItem: FC<BotListItemProps> = ({
       },
     })
   }
+
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${bot?.name}`, {
@@ -86,12 +94,12 @@ export const BotListItem: FC<BotListItemProps> = ({
       <td className={s.td}>
         <div
           className={s.description}
-          data-tooltip-id={'botTableDesc' + bot.name}>
+          data-tooltip-id={'botTableDesc' + tooltipId}>
           {bot?.description}
           <BaseToolTip
-            id={'botTableDesc' + bot.name}
+            id={'botTableDesc' + tooltipId}
             content={bot?.description}
-            place='top'
+            place='bottom'
             theme='description'
           />
         </div>
@@ -104,23 +112,24 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-tooltip-id={'botClone' + bot?.name}>
-            <Button
-              theme='primary'
-              small
-              withIcon
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: type === 'public' ? handleCloneClick : handlEditClick,
-              }}>
-              {type === 'public' ? <Clone /> : <Edit />}
-            </Button>
-          </div>
+          <Button
+            theme='primary'
+            small
+            withIcon
+            props={{
+              onClick: type === 'public' ? handleCloneClick : handlEditClick,
+            }}>
+            {type === 'public' ? <Clone /> : <Edit />}
+          </Button>
 
           {type === 'your' ? (
             <>
-              <Kebab tooltipId={tooltipId} theme='card' />
-              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <BotCardToolTip
+                tooltipId={'ctxMenu' + tooltipId}
+                bot={bot}
+                type={type}
+              />
             </>
           ) : (
             <Button
@@ -133,14 +142,6 @@ export const BotListItem: FC<BotListItemProps> = ({
           )}
         </div>
       </td>
-      {disabledMsg && (
-        <BaseToolTip
-          id={'botClone' + bot?.name}
-          content={disabledMsg}
-          place='bottom'
-          theme='small'
-        />
-      )}
     </tr>
   )
 }

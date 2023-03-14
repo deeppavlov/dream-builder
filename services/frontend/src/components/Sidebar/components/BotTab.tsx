@@ -25,7 +25,7 @@ export const BotTab = () => {
         {hintIsVisited ? (
           <BaseToolTip id='sidebarBotTab' content='Bot' place='right' />
         ) : (
-          <Hint handleClose={() => setHintIsVisited(true)} />
+          <Hint id='sidebarBotTab' handleClose={() => setHintIsVisited(true)} />
         )}
       </button>
     </>

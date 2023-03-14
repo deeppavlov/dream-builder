@@ -108,6 +108,35 @@ export interface DistListProps {
   type: BotAvailabilityType
   size?: BotCardSize
 }
+export interface SettingKey {
+  name: string
+  type: 'switch' | 'checkbox' | 'radio' | 'input'
+  value?: any
+  checked?: boolean
+}
+
+export interface IContextMenu {
+  isPreview: boolean
+}
+
+export interface IStackElement {
+  name: string // Routing name
+  display_name: string
+  author: string
+  component_type: string | null
+  model_type: string | null
+  date_created: string | Date | null
+  description: string
+  is_customizable: boolean
+  ram_usage: string
+  gpu_usage: string
+  execution_time: string
+}
+
+export interface ISkill extends IStackElement {
+  model?: string
+  prompt?: string
+}
 export type CustomRouteConfig = RouteObject & { crumb?: string }
 
 export type CustomEventName = string

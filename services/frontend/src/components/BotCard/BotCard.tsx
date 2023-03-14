@@ -26,29 +26,24 @@ interface BotCardProps {
   bot: BotInfoInterface
   size?: BotCardSize
   disabledMsg?: string
+  disabled: boolean
 }
 
-export const BotCard = ({ type, bot, size, disabledMsg }: BotCardProps) => {
+export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
-  const signInMessage = !auth?.user
-    ? 'You must be signed in to clone the bot'
-    : undefined
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
 
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel
-          key={bot?.name}
-          bot={bot}
-          disabledMsg={signInMessage}
-        />
+        <BotInfoSidePanel key={bot?.name} bot={bot} disabled={disabled} />
       ),
     })
   }
+
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${bot?.name}`, {
@@ -62,7 +57,13 @@ export const BotCard = ({ type, bot, size, disabledMsg }: BotCardProps) => {
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', bot: bot })
+
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
     e.stopPropagation()
   }
 

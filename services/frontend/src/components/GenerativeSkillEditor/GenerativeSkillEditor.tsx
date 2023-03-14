@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import { RoutesList } from '../../Router/RoutesList'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
@@ -31,33 +31,32 @@ chieve them unless they violate the first or the seconf laws`
 const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
 
 interface Props {
-  skill: SkillInfoInterface
+  skill: ISkill
   activeTab?: 'Properties' | 'Editor'
 }
 
 const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
-  const [prompt, setPrompt] = useState(skill.prompt ?? mockPrompt)
   const promptMaxLenght = 1500
   let cx = classNames.bind(s)
 
   const handleEditBtnClick = () => {
     // Object merge for mock prompt (need fix)
-    trigger('SkillPromptModal', { skill: { ...skill, ...{ prompt } } })
+    trigger('SkillPromptModal', { skill, action: 'edit' })
   }
   const handleSaveBtnClick = () => {}
 
   return (
     <SkillSidePanel skill={skill} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
-        <SidePanelName>{skill?.display_name || 'Skill name'}</SidePanelName>
+        <SidePanelName>{skill.display_name}</SidePanelName>
         <div className={cx('choose-model')}>
           <span className={cx('label')}>Generative model:</span>
           <SkillDropboxSearch
-            placeholder='Choose model'
             list={mockSkillModels}
             activeItem={skill?.model}
+            props={{ placeholder: 'Choose model' }}
           />
-          <Link to='#' className={s.link}>
+          <Link to={RoutesList.profile} className={s.link}>
             Enter your personal access token here
           </Link>
         </div>
@@ -65,14 +64,14 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
           <span className={cx('label')}>Prompt:</span>
           <IntentList>
             <div className={cx('prompt')} onClick={handleEditBtnClick}>
-              {prompt}
+              {skill?.prompt ?? mockPrompt}
               <button>
                 <EditPencilIcon className={cx('edit-pencil')} />
               </button>
             </div>
           </IntentList>
           <span className={cx('label', 'count')}>
-            {prompt.length || 0}/{promptMaxLenght}
+            {(skill?.prompt || mockPrompt)?.length || 0}/{promptMaxLenght}
           </span>
         </div>
 

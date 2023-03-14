@@ -26,7 +26,7 @@ import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { usePreview } from '../context/PreviewProvider'
+import { usePreview } from '../Context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { SkillInfoInterface } from '../types/types'
@@ -52,6 +52,7 @@ export const EditorPage = () => {
   const displayName = makeDisplayName(nameFromURL)
 
   const { setIsPreview } = usePreview()
+
   useEffect(() => {
     setIsPreview(state?.preview == undefined ? true : state?.preview)
   }, [state])

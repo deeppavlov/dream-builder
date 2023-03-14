@@ -5,13 +5,15 @@ import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
+import { usePreview } from '../../Context/PreviewProvider'
 import s from './ResponseAnnotators.module.scss'
 
 interface Props {
-  responseAnnotators: [Component]
+  responseAnnotators: Component[]
 }
 
 export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
+  const { isPreview } = usePreview()
   return (
     <>
       {responseAnnotators && (
@@ -28,12 +30,31 @@ export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
           <div className={s.body}></div>
           <AddButtonStack disabled={true} text='Add Response Annotators' />
           <div className={s.elements}>
-            <Accordion closed title='Customizable'>
+            <Accordion title='Customizable'>
               <WaitForNextRelease />
+              {responseAnnotators?.map((annotator, i) => {
+                if (annotator.is_customizable) {
+                  return (
+                    <AnnotatorElement
+                      key={annotator.name + i}
+                      annotator={annotator}
+                      isPreview={isPreview}
+                    />
+                  )
+                }
+              })}
             </Accordion>
             <Accordion title='Non-customizable'>
-              {responseAnnotators?.map((item: Component, i: number) => {
-                return <AnnotatorElement key={i} item={item} />
+              {responseAnnotators?.map((annotator, i) => {
+                if (!annotator.is_customizable) {
+                  return (
+                    <AnnotatorElement
+                      key={annotator.name + i}
+                      annotator={annotator}
+                      isPreview={isPreview}
+                    />
+                  )
+                }
               })}
             </Accordion>
           </div>

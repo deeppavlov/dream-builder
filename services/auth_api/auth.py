@@ -9,11 +9,11 @@ from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
 
 
-import services.auth_api.db.crud as crud
-from services.auth_api.db.db import init_db
-from services.auth_api.db.db_models import UserValid
+import database.crud as crud
+from database.core import init_db, Database
+from database.models import UserValid
 from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
-from services.auth_api.models import UserCreate, User, UserValidScheme
+from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
 
 router = APIRouter(prefix="/auth")
 
@@ -47,23 +47,11 @@ async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
     return response
 
 
-@router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
-    """
-    Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
-    Check is carried out via `_fetch_user_info_by_access_token` function
-    raise HTTPException with status_code == 400
-    """
-    if token == settings.auth.test_token:
-        return
+def _check_refresh_token_validity(expire_date: datetime) -> bool:
+    if datetime.now() > expire_date:
+        return False
 
-    try:
-        data = await _fetch_user_info_by_access_token(access_token=token)
-
-        validate_aud(data["aud"])
-        validate_email(data["email"], db)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return True
 
 
 def validate_aud(input_aud: str) -> None:
@@ -79,11 +67,7 @@ def validate_email(email: str, db: Session) -> None:
         raise ValueError("User is not listed in the database")
 
 
-# @router.get("/login")
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
-    """
-    TODO: endpoint -> method due to no usage from frontend
-    """
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
@@ -91,6 +75,45 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
 
     user = crud.get_user_by_email(db, data["email"]).__dict__
     return User(**user, name=user["fullname"])
+
+
+@router.get("/token", status_code=status.HTTP_200_OK)
+async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
+    """
+    Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
+    Check is carried out via `_fetch_user_info_by_access_token` function
+    raise HTTPException with status_code == 400
+    """
+    if token == settings.auth.test_token:
+        return UserModel(
+            id=0,
+            email="cheater@deepdream.builders",
+            sub="subway?",
+            picture="pic",
+            fullname="Deep Pavlov",
+            given_name="Deep",
+            family_name="Pavlov",
+        )
+
+    try:
+        data = await _fetch_user_info_by_access_token(access_token=token)
+
+        validate_aud(data["aud"])
+        validate_email(data["email"], db)
+        user = crud.get_user_by_email(db, data["email"])
+
+        return UserModel(
+            id=user.id,
+            email=user.email,
+            sub=user.sub,
+            picture=user.picture,
+            fullname=user.fullname,
+            given_name=user.given_name,
+            family_name=user.family_name,
+        )
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -157,10 +180,3 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
     response = requests.post("https://oauth2.googleapis.com/token", data=info).json()
     access_token = response["access_token"]
     return {"token": access_token}
-
-
-def _check_refresh_token_validity(expire_date: datetime) -> bool:
-    if datetime.now() > expire_date:
-        return False
-
-    return True

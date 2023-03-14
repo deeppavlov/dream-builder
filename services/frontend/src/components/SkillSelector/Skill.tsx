@@ -1,21 +1,15 @@
 import { FC, useId } from 'react'
-import { IContextMenu, ISkillSelector } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import SkillSelectorStackToolTip from '../SkillSelectorStackToolTip/SkillSelectorStackToolTip'
 import s from './Skill.module.scss'
 
 interface SelectorProps extends IContextMenu {
-  skill: ISkillSelector
-  withContextMenu: boolean
+  skill: IStackElement
 }
 
-export const Skill: FC<SelectorProps> = ({
-  skill,
-  withContextMenu,
-  isCustomizable,
-  isPreview,
-}) => {
+export const Skill: FC<SelectorProps> = ({ skill, isPreview }) => {
   const cleanTitle = capitalizeTitle(skill.display_name)
   const tooltipId = useId()
 
@@ -24,17 +18,14 @@ export const Skill: FC<SelectorProps> = ({
       <div className={s.left}>
         <p className={s.name}>{cleanTitle}</p>
       </div>
-      {withContextMenu && (
-        <div className={s.arrow}>
-          <Kebab tooltipId={tooltipId} />
-          <SkillSelectorStackToolTip
-            tooltipId={tooltipId}
-            skill={skill}
-            isCustomizable={isCustomizable}
-            isPreview={isPreview}
-          />
-        </div>
-      )}
+      <div className={s.arrow}>
+        <Kebab tooltipId={tooltipId} />
+        <SkillSelectorStackToolTip
+          tooltipId={tooltipId}
+          skill={skill}
+          isPreview={isPreview}
+        />
+      </div>
     </div>
   )
 }

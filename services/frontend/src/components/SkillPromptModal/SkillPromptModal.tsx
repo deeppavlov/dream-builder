@@ -134,7 +134,7 @@ const SkillPromptModal = () => {
           )}
           {action === 'edit' && (
             <>
-              <Button theme='dark' props={{ onClick: handleCancelBtnClick }}>
+              <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
                 Cancel
               </Button>
               <Button theme='secondary' props={{ onClick: handleTestBtnClick }}>

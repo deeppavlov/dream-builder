@@ -1,19 +1,17 @@
-import { useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel, { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
+import { trigger } from '../../utils/events'
+import { ISkill } from '../../types/types'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
-import s from './IntentResponderSidePanel.module.scss'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import { SkillInfoInterface } from '../../types/types'
-import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
+import s from './IntentResponderSidePanel.module.scss'
 
 export const intentsMock: IntentListItemInterface[] = [
   {
@@ -61,7 +59,7 @@ export const intentsMock: IntentListItemInterface[] = [
 ]
 
 interface Props {
-  skill: SkillInfoInterface
+  skill: ISkill
   activeTab?: 'Properties' | 'Editor'
   disabled?: boolean
 }

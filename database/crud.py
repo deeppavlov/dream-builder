@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from services.auth_api import models
-from services.auth_api.db.db_models import GoogleUser, UserValid
+from database.models import GoogleUser, UserValid
 
 
 def check_user_exists(db: Session, email) -> bool:
@@ -19,6 +19,7 @@ def add_google_user(db: Session, user: models.UserCreate) -> GoogleUser:
         fullname=user.name,
         given_name=user.given_name,
         family_name=user.family_name,
+        role_id=1,
     )
     db.add(db_user)
     db.commit()

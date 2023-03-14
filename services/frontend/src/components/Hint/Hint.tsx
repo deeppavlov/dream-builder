@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import s from './Hint.module.scss'
 
 interface Props {
+  id: string
   handleClose: () => void
 }
 
-const Hint = ({ handleClose }: Props) => {
+const Hint = ({ id, handleClose }: Props) => {
   const [isHidden, setIsHidden] = useState<boolean>(
     JSON.parse(`${localStorage.getItem('HINT_IS_VISITED')}`) === true
   )
@@ -26,13 +26,14 @@ const Hint = ({ handleClose }: Props) => {
 
   return (
     <BaseToolTip
-      id='sidebarBotTab'
+      id={id}
       children={
         <>
           Click here to control your Virtual Assistant: <br />
           annotators, skill & response selectors, and skills.
         </>
       }
+      events={['click']}
       isOpen={!isHidden}
       place='right'
     />

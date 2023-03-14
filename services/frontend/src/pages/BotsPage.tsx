@@ -5,6 +5,7 @@ import { RoutesList } from '../router/RoutesList'
 import { useAuth } from '../context/AuthProvider'
 import { getPublicDists } from '../services/getPublicDists'
 import { getPrivateDists } from '../services/getPrivateDists'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -21,6 +22,7 @@ import { ShareModal } from '../components/ShareModal/ShareModal'
 import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -93,6 +95,7 @@ export const BotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <SignInModal />
       </Main>
       <Toaster />
     </>

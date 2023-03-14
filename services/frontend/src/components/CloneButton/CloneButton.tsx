@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import classNames from 'classnames/bind'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as CloneIcon } from '../../assets/icons/clone.svg'
 import s from './CloneButton.module.scss'

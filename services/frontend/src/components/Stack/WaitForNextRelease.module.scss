@@ -1,0 +1,13 @@
+.element {
+  display: flex;
+  flex-direction: row;
+  padding: 12px;
+  gap: 8px;
+  svg {
+    @include icon_size_24;
+  }
+  p {
+    color: #8d96b5;
+    @include t3;
+  }
+}

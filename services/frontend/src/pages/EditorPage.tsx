@@ -29,9 +29,9 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { usePreview } from '../Context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
-import { SkillInfoInterface } from '../types/types'
 import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { ISkill } from '../types/types'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -80,15 +80,13 @@ export const EditorPage = () => {
   const responseSelectors = components?.response_selectors
   const responseAnnotators = components?.response_annotators
 
-  const skillCardsList = skills?.map((skill: SkillInfoInterface, i: number) => {
+  const skillCardsList = skills?.map((skill: ISkill, i: number) => {
     return <SkillCard key={i} type='your' big skill={skill} />
   })
 
-  const skillTablesList = skills?.map(
-    (skill: SkillInfoInterface, i: number) => {
-      return <SkillListItem key={i} skill={skill} />
-    }
-  )
+  const skillTablesList = skills?.map((skill: ISkill, i: number) => {
+    return <SkillListItem key={i} skill={skill} />
+  })
 
   return (
     <>
@@ -134,7 +132,7 @@ export const EditorPage = () => {
                   addButton={
                     <AddButton
                       listView={listView}
-                      disabled={auth?.user === null}
+                      disabled={!auth?.user}
                       text='Create From Scratch'
                     />
                   }>

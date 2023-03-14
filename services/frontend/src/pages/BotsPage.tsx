@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { RoutesList } from '../router/RoutesList'
+import { RoutesList } from '../Router/RoutesList'
 import { useAuth } from '../Context/AuthProvider'
 import { getPublicDists } from '../services/getPublicDists'
 import { getPrivateDists } from '../services/getPrivateDists'
@@ -74,12 +74,15 @@ export const BotsPage = () => {
           amount={auth?.user && privateDists?.length}
           linkTo={RoutesList.yourBots}>
           {listView ? (
-            <Table addButton={<AddButton listView={listView} />}>
+            <Table
+              addButton={
+                <AddButton listView={listView} disabled={!auth?.user} />
+              }>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <AddButton listView={listView} />
+              <AddButton listView={listView} disabled={!auth?.user} />
               <Slider>
                 <Loader isLoading={isPrivateDistsLoading} />
                 <ErrorHandler error={privateDistsError} />

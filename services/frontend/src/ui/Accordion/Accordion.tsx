@@ -8,7 +8,7 @@ interface AccordionProps extends React.PropsWithChildren {
   title: string
   small?: boolean
   rounded?: boolean
-  group: StackType
+  group?: StackType
   closed?: boolean
 }
 

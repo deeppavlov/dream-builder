@@ -19,6 +19,7 @@ def add_google_user(db: Session, user: models.UserCreate) -> GoogleUser:
         fullname=user.name,
         given_name=user.given_name,
         family_name=user.family_name,
+        role_id=1,
     )
     db.add(db_user)
     db.commit()

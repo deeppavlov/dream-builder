@@ -1,13 +1,25 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import sessionmaker, Session, declarative_base, DeclarativeMeta
 
 Base = declarative_base()
 
 
-def init_db(
-    user: str, password: str, host: str, port: int, database: str, force_recreate: bool = False
-) -> sessionmaker:
+class Database:
+    def __init__(
+        self,
+        base: DeclarativeMeta,
+        engine: Engine,
+        session_callable: sessionmaker,
+    ):
+        self.base = base
+        self.engine = engine
+        self.sessionmaker = session_callable
+
+    def __call__(self, **kwargs) -> Session:
+        return self.sessionmaker(**kwargs)
+
+
+def init_db(user: str, password: str, host: str, port: int, database: str, force_recreate: bool = False) -> Database:
     """Create sqlalchemy sessionmaker
 
     Args:
@@ -25,9 +37,13 @@ def init_db(
     engine = create_engine(db_url)
     session_callable = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+    database = Database(Base, engine, session_callable)
+
     if force_recreate:
-        Base.metadata.drop_all(bind=engine)
+        print(f"Dropping all tables because force_recreate = {force_recreate}")
+        # Base.metadata.drop_all(bind=engine)
+        database.base.metadata.clear()
 
-    Base.metadata.create_all(bind=engine, checkfirst=not force_recreate)
+    database.base.metadata.create_all(bind=engine, checkfirst=not force_recreate)
 
-    return session_callable
+    return database

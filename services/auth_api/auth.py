@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 
 import database.crud as crud
-from database.core import init_db
+from database.core import init_db, Database
 from database.models import UserValid
 from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
@@ -45,6 +45,36 @@ async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
         raise ValueError(f"Access token has expired or token is bad.\nResponse body:\n{response}")
 
     return response
+
+
+def _check_refresh_token_validity(expire_date: datetime) -> bool:
+    if datetime.now() > expire_date:
+        return False
+
+    return True
+
+
+def validate_aud(input_aud: str) -> None:
+    base = settings.auth.google_client_id
+
+    if input_aud != base:
+        raise ValueError("Audience is not valid!")
+
+
+def validate_email(email: str, db: Session) -> None:
+
+    if not crud.check_user_exists(db, email):
+        raise ValueError("User is not listed in the database")
+
+
+def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
+    if not crud.check_user_exists(db, data["email"]):
+        user = UserCreate(**data)
+        crud.add_google_user(db, user)
+        return User(**data)
+
+    user = crud.get_user_by_email(db, data["email"]).__dict__
+    return User(**user, name=user["fullname"])
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
@@ -84,33 +114,6 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
-def validate_aud(input_aud: str) -> None:
-    base = settings.auth.google_client_id
-
-    if input_aud != base:
-        raise ValueError("Audience is not valid!")
-
-
-def validate_email(email: str, db: Session) -> None:
-
-    if not crud.check_user_exists(db, email):
-        raise ValueError("User is not listed in the database")
-
-
-# @router.get("/login")
-def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
-    """
-    TODO: endpoint -> method due to no usage from frontend
-    """
-    if not crud.check_user_exists(db, data["email"]):
-        user = UserCreate(**data)
-        crud.add_google_user(db, user)
-        return User(**data)
-
-    user = crud.get_user_by_email(db, data["email"]).__dict__
-    return User(**user, name=user["fullname"])
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -177,10 +180,3 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
     response = requests.post("https://oauth2.googleapis.com/token", data=info).json()
     access_token = response["access_token"]
     return {"token": access_token}
-
-
-def _check_refresh_token_validity(expire_date: datetime) -> bool:
-    if datetime.now() > expire_date:
-        return False
-
-    return True

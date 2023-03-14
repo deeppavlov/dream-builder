@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, BaseSettings
 
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
@@ -16,6 +18,7 @@ class DatabaseSettings(BaseModel):
     host: str
     port: int
     name: str
+    dream_root_path: Optional[str]
 
 
 class AuthSettings(BaseModel):

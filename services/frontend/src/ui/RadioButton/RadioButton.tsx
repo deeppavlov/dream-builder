@@ -4,11 +4,12 @@ import s from './RadioButton.module.scss'
 interface RadioButtonProps {
   children: React.ReactNode
   name: string
-  id: string
+  id: string | undefined // ???
   htmlFor: string
   checked?: boolean
   disabled?: boolean
   props?: React.InputHTMLAttributes<HTMLInputElement>
+  value: string
 }
 export const RadioButton: FC<RadioButtonProps> = ({
   children,

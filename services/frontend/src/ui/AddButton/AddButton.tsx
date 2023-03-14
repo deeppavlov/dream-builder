@@ -1,24 +1,29 @@
 import { FC, useId } from 'react'
 import Add from '../../assets/icons/+.svg'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
+import { useAuth } from '../../context/AuthProvider'
+import { trigger } from '../../utils/events'
 import s from './AddButton.module.scss'
 
 interface Props {
   text?: string
-  addBot: () => void
   listView?: boolean
-  disabledMsg?: string
+  disabled?: boolean
 }
 
-export const AddButton: FC<Props> = ({
-  text,
-  addBot,
-  listView,
-  disabledMsg,
-}) => {
+export const AddButton: FC<Props> = ({ text, listView, disabled }) => {
   const tooltipId = useId()
+  const auth = useAuth()
+
+  const addBot = () => {
+    trigger('AssistantModal', { action: 'create' })
+  }
 
   const handleClick = () => addBot()
+
+  const disabledMsg = !auth?.user
+    ? 'You must be signed in to create your own bot'
+    : undefined
 
   return (
     <>
@@ -28,7 +33,7 @@ export const AddButton: FC<Props> = ({
           data-tooltip-id={tooltipId}
           onClick={handleClick}
           className={s.forCard}
-          disabled={disabledMsg !== undefined}>
+          disabled={disabled || disabledMsg !== undefined}>
           <img src={Add} />
         </button>
       ) : (
@@ -39,7 +44,7 @@ export const AddButton: FC<Props> = ({
               data-tooltip-id={tooltipId}
               className={s.forTable}
               onClick={handleClick}
-              disabled={disabledMsg !== undefined}>
+              disabled={disabled || disabledMsg !== undefined}>
               <img src={Add} />
               <p>{text || 'Create From Scratch'}</p>
             </button>

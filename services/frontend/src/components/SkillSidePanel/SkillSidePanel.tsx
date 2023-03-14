@@ -1,18 +1,19 @@
-import { FC, useState } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { srcForIcons } from '../../utils/srcForIcons'
+import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { trigger } from '../../utils/events'
 import { SkillInfoInterface } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
 import { usePreview } from '../../context/PreviewProvider'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
-import { modelTypeMap } from '../../Mapping/modelTypeMap'
-import s from './SkillSidePanel.module.scss'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { useAuth } from '../../context/AuthProvider'
+import s from './SkillSidePanel.module.scss'
+import { FC } from 'react'
 
 interface Props {
   skill: SkillInfoInterface
@@ -20,11 +21,12 @@ interface Props {
   children?: React.ReactNode // Editor Tab element
 }
 
-const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
-  const auth = useAuth()
-  const isEditor = children !== undefined
-  const { isPreview } = usePreview()
+const SkillSidePanel: FC<Props> = ({ skill, activeTab, children }) => {
   const [properties, editor] = ['Properties', 'Editor']
+  const isEditor = children !== undefined
+  const auth = useAuth()
+  const { isPreview } = usePreview()
+  let cx = classNames.bind(s)
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: isEditor ? activeTab ?? properties : properties,
     tabList: new Map(
@@ -36,20 +38,11 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
         : [[properties, { name: properties }]]
     ),
   })
-  let cx = classNames.bind(s)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
-  const {
-    display_name,
-    authorImg,
-    botName,
-    author,
-    component_type,
-    model_type,
-    desc,
-  } = skill
-  const nameForComponentType = componentTypeMap[component_type]
-  const nameForModelType = modelTypeMap[model_type]
+
+  const nameForComponentType = componentTypeMap[skill?.component_type]
+  const nameForModelType = modelTypeMap[skill?.model_type]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const srcForModelType = srcForIcons(nameForModelType)
   return (
@@ -71,31 +64,31 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
       {tabsInfo.activeTabId === properties && (
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
-            <span className={s.name}>{display_name}</span>
+            <span className={s.name}>{skill?.display_name}</span>
             <EditPencilIcon className={s.icon} data-disabled />
           </div>
           <div className={s.author}>
-            <img src={authorImg} alt='Author' />
-            <span>{author}</span>
+            <Logo />
+            <span>{skill?.author}</span>
           </div>
           <ul className={s.table}>
             <li className={s.item}>
               <span className={s.name}>Original author:</span>
-              <span className={s.value}>{botName}</span>
+              <span className={s.value}>{skill?.author}</span>
             </li>
 
             <li className={s.item}>
               <span className={s.name}>Component Type:</span>
               <span className={cx('value', nameForComponentType)}>
                 <img className={s.logo} src={srcForComponentType} />
-                <span>{component_type}</span>
+                <span>{skill?.component_type}</span>
               </span>
             </li>
             <li className={s.item}>
               <span className={s.name}>Model Type:</span>
               <span className={cx('value', nameForModelType)}>
                 <img className={s.logo} src={srcForModelType} />
-                <span>{model_type}</span>
+                <span>{skill?.model_type}</span>
               </span>
             </li>
             <br />
@@ -104,7 +97,7 @@ const SkillSidePanel = ({ skill, activeTab, children }: Props) => {
               <span className={s.value}>empty</span>
             </li>
           </ul>
-          <p className={s.desc}>{desc}</p>
+          <p className={s.desc}>{skill?.description}</p>
           <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + skill.name}>
               <Button

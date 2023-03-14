@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { Toaster } from 'react-hot-toast'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { dist_list } from '../types/types'
 import { RoutesList } from '../Router/RoutesList'
@@ -25,7 +25,7 @@ import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { Modal } from '../components/Modal/Modal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Toaster } from 'react-hot-toast'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -105,11 +105,7 @@ export const BotsPage = () => {
                         ram={ram_usage}
                         gpu={gpu_usage}
                         space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
+                        disabled={!auth?.user}
                       />
                     )
                   })}
@@ -135,11 +131,7 @@ export const BotsPage = () => {
                   <AddButton
                     listView={listView}
                     addBot={addBot}
-                    disabledMsg={
-                      !auth?.user
-                        ? 'You must be signed in to create your own bot'
-                        : undefined
-                    }
+                    disabled={!auth?.user}
                   />
                 </Container>
                 <Container paddingBottom='22px'>
@@ -176,11 +168,7 @@ export const BotsPage = () => {
                           ram={ram_usage}
                           gpu={gpu_usage}
                           space={disk_usage}
-                          disabledMsg={
-                            auth?.user
-                              ? undefined
-                              : 'You must be signed in to clone the bot'
-                          }
+                          disabled={!auth?.user}
                         />
                       )
                     })}
@@ -228,11 +216,7 @@ export const BotsPage = () => {
                       ram={ram_usage}
                       gpu={gpu_usage}
                       space={disk_usage}
-                      disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
+                      disabled={!auth?.user}
                     />
                   )
                 })}
@@ -249,11 +233,7 @@ export const BotsPage = () => {
                   <AddButton
                     addBot={addBot}
                     listView={listView}
-                    disabledMsg={
-                      !auth?.user
-                        ? 'You must be signed in to create your own bot'
-                        : undefined
-                    }
+                    disabled={!auth?.user}
                   />
                 }>
                 {usersDistData?.map((dist: dist_list, i: number) => {
@@ -285,11 +265,7 @@ export const BotsPage = () => {
                       ram={ram_usage}
                       gpu={gpu_usage}
                       space={disk_usage}
-                      disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
+                      disabled={!auth?.user}
                     />
                   )
                 })}
@@ -303,6 +279,7 @@ export const BotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <SignInModal />
       </Main>
       <Toaster />
     </>

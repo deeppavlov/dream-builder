@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { BotInfoInterface, SkillInfoInterface } from '../../types/types'
+import { BotInfoInterface, ISkill, SkillInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import { getComponentsFromAssistantDists } from '../../services/getComponentsFromAssistantDists'
@@ -14,17 +14,14 @@ import { srcForIcons } from '../../utils/srcForIcons'
 import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
 import { modelTypeMap } from '../../Mapping/modelTypeMap'
-import { useAuth } from '../../Context/AuthProvider'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './BotInfoSidePanel.module.scss'
 
 interface Props {
   bot: BotInfoInterface
-  disabledMsg?: string
+  disabled: boolean
 }
 
-const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
-  const auth = useAuth()
+const BotInfoSidePanel = ({ bot: propBot, disabled }: Props) => {
   const [bot, setBot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
   const navigate = useNavigate()
@@ -32,8 +29,6 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
-  const tooltipId = useId()
-
   const {
     isLoading: isDistsComponentsLoading,
     error: distsComponentsError,
@@ -43,8 +38,14 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
   )
 
   const handleCloneBtnClick = () => {
-    trigger('AssistantModal', { action: 'clone', bot: bot })
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
   }
+
   const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${bot?.routingName}`, {
@@ -55,6 +56,7 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
       },
     })
   }
+
   return (
     <>
       <SidePanelHeader>
@@ -122,20 +124,20 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
                         <div className={s.accordionItem}>None</div>
                       )}
                     {distsComponentsData[group].map(
-                      (item: SkillInfoInterface, id: number) => (
+                      (item: ISkill, id: number) => (
                         <div key={id} className={s.accordionItem}>
                           {group === 'skills' && (
                             <img
                               className={s.icon}
                               src={srcForIcons(
-                                componentTypeMap[item?.component_type]
+                                componentTypeMap[item?.component_type || '']
                               )}
                             />
                           )}
                           {isAnnotator(group) && (
                             <img
                               className={s.icon}
-                              src={srcForIcons(modelTypeMap[item?.model_type])}
+                              src={srcForIcons(modelTypeMap[item?.model_type || ''])}
                             />
                           )}
                           {item?.display_name}
@@ -151,23 +153,10 @@ const BotInfoSidePanel = ({ bot: propBot, disabledMsg }: Props) => {
           <Button theme='secondary' props={{ onClick: handlePreviewBtnClick }}>
             Preview
           </Button>
-          <div data-tip data-tooltip-id={'botSPClone' + tooltipId}>
-            <Button
-              theme='primary'
-              props={{
-                disabled: !auth?.user || disabledMsg !== undefined,
-                onClick: handleCloneBtnClick,
-              }}>
-              Clone
-            </Button>
-          </div>
+          <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
+            Clone
+          </Button>
         </div>
-        <BaseToolTip
-          id={'botSPClone' + tooltipId}
-          content={disabledMsg}
-          place='top'
-          theme='small'
-        />
       </div>
     </>
   )

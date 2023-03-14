@@ -139,11 +139,7 @@ export const EditorPage = () => {
                       <AddButton
                         listView={listView}
                         addBot={() => {}}
-                        disabledMsg={
-                          auth?.user
-                            ? 'You need to clone the virtual assistant to edit'
-                            : undefined
-                        }
+                        disabled={!auth?.user}
                         text='Create From Scratch'
                       />
                     }>

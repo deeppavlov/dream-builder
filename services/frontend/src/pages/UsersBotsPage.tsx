@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import { dateToUTC } from '../utils/dateToUTC'
-import { getAssistantDists } from '../services/getAssistantDists'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -80,11 +79,7 @@ export const UsersBotsPage = () => {
                     ram={ram_usage}
                     gpu={gpu_usage}
                     space={disk_usage}
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to clone the bot'
-                    }
+                    disabled={!auth?.user}
                   />
                 )
               })}
@@ -124,11 +119,7 @@ export const UsersBotsPage = () => {
                     ram={ram_usage}
                     gpu={gpu_usage}
                     space={disk_usage}
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to clone the bot'
-                    }
+                    disabled={!auth?.user}
                   />
                 )
               })}

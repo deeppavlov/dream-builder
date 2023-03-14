@@ -11,15 +11,13 @@ import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { useNavigate } from 'react-router-dom'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import s from './BotCard.module.scss'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { useAuth } from '../../Context/AuthProvider'
+import s from './BotCard.module.scss'
 
 interface BotCardProps extends BotInfoInterface {
   type: BotAvailabilityType
+  disabled: boolean
   size?: 'small' | 'big'
-  disabledMsg?: string
-  routingName: string
 }
 
 export const BotCard = ({
@@ -35,7 +33,7 @@ export const BotCard = ({
   gpu,
   space,
   size,
-  disabledMsg,
+  disabled,
 }: BotCardProps) => {
   const bot = {
     routingName,
@@ -49,25 +47,18 @@ export const BotCard = ({
     gpu,
     space,
   }
-  const auth = useAuth()
   const navigate = useNavigate()
   const tooltipId = useId()
-  const signInMessage = !auth?.user
-    ? 'You must be signed in to clone the bot'
-    : undefined
   let cx = classNames.bind(s)
 
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel
-          key={bot.name}
-          bot={bot}
-          disabledMsg={signInMessage}
-        />
+        <BotInfoSidePanel key={bot.name} bot={bot} disabled={disabled} />
       ),
     })
   }
+
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
@@ -77,14 +68,25 @@ export const BotCard = ({
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', bot: bot })
+
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
     e.stopPropagation()
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${routingName}`, {
-      state: { preview: false, distName: routingName, displayName: name },
-    })
+    if (!disabled) {
+      navigate(`/${routingName}`, {
+        state: { preview: false, distName: routingName, displayName: name },
+      })
+      return
+    }
+
+    trigger('SignInModal', {})
     e.stopPropagation()
   }
 
@@ -138,21 +140,15 @@ export const BotCard = ({
       <div className={s.btns}>
         {type === 'public' ? (
           <>
-            <div
-              data-tip
-              data-tooltip-id={'botCardClone' + tooltipId}
-              className={s.container}>
-              <Button
-                theme='primary'
-                small
-                long
-                props={{
-                  disabled: disabledMsg !== undefined,
-                  onClick: handleCloneClick,
-                }}>
-                Clone
-              </Button>
-            </div>
+            <Button
+              theme='primary'
+              small
+              long
+              props={{
+                onClick: handleCloneClick,
+              }}>
+              Clone
+            </Button>
             <Button
               theme='secondary'
               small
@@ -180,15 +176,6 @@ export const BotCard = ({
           </>
         )}
       </div>
-
-      {disabledMsg && (
-        <BaseToolTip
-          id={'botCardClone' + tooltipId}
-          content={disabledMsg}
-          place='bottom'
-          theme='small'
-        />
-      )}
     </div>
   )
 }

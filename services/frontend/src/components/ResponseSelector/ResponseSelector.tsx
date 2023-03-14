@@ -17,8 +17,8 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
   responseSelectors,
 }) => {
   const { isPreview } = usePreview()
-  const customizable = responseSelectors.filter(skill => skill.is_customizable)
-  const nonCustomizable = responseSelectors.filter(
+  const customizable = responseSelectors?.filter(skill => skill.is_customizable)
+  const nonCustomizable = responseSelectors?.filter(
     skill => !skill.is_customizable
   )
 

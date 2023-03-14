@@ -19,11 +19,10 @@ import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 interface BotListItemProps extends BotInfoInterface {
+  disabled: boolean
+  type: BotAvailabilityType
   checkbox?: boolean
   time?: string
-  disabledMsg?: string
-  routingName: string
-  type: BotAvailabilityType
 }
 
 export const BotListItem: FC<BotListItemProps> = ({
@@ -39,7 +38,7 @@ export const BotListItem: FC<BotListItemProps> = ({
   ram,
   gpu,
   space,
-  disabledMsg,
+  disabled,
   type,
 }) => {
   const bot = {
@@ -61,26 +60,40 @@ export const BotListItem: FC<BotListItemProps> = ({
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot?.name} bot={bot} disabledMsg={disabledMsg} />
+        <BotInfoSidePanel key={bot?.name} bot={bot} disabled={disabled} />
       ),
     })
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('AssistantModal', { action: 'clone', bot: bot })
+
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
   }
+
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     navigate(`/${routingName}`, {
       state: { preview: true, distName: routingName, displayName: name },
     })
   }
+
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    navigate(`/${routingName}`, {
-      state: { preview: false, distName: routingName, displayName: name },
-    })
+
+    if (!disabled) {
+      navigate(`/${routingName}`, {
+        state: { preview: false, distName: routingName, displayName: name },
+      })
+      return
+    }
+
+    trigger('SignInModal', {})
   }
 
   return (
@@ -129,18 +142,15 @@ export const BotListItem: FC<BotListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-tooltip-id={'botClone' + tooltipId}>
-            <Button
-              theme='primary'
-              small
-              withIcon
-              props={{
-                disabled: disabledMsg !== undefined,
-                onClick: type === 'public' ? handleCloneClick : handlEditClick,
-              }}>
-              {type === 'public' ? <Clone /> : <Edit />}
-            </Button>
-          </div>
+          <Button
+            theme='primary'
+            small
+            withIcon
+            props={{
+              onClick: type === 'public' ? handleCloneClick : handlEditClick,
+            }}>
+            {type === 'public' ? <Clone /> : <Edit />}
+          </Button>
 
           {type === 'your' ? (
             <>
@@ -162,14 +172,6 @@ export const BotListItem: FC<BotListItemProps> = ({
           )}
         </div>
       </td>
-      {disabledMsg && (
-        <BaseToolTip
-          id={'botClone' + tooltipId}
-          content={disabledMsg}
-          place='bottom'
-          theme='small'
-        />
-      )}
     </tr>
   )
 }

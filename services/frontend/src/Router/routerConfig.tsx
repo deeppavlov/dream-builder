@@ -47,25 +47,25 @@ export const routeConfig: CustomRouteConfig[] = [
     ),
     handle: 'Your Virtual Assistants & Chatbots',
   },
-  {
-    path: RoutesList.yourSkills,
-    element: (
-      <PrivateRoute>
-        <UsersSkillsPage />
-      </PrivateRoute>
-    ),
-    handle: 'Your Skills',
-  },
-  {
-    path: RoutesList.skills,
-    element: <SkillsPage />,
-    handle: 'Public Skills',
-  },
-  {
-    path: RoutesList.skillsAll,
-    element: <SkillsAllPage />,
-    handle: 'All Public Skills',
-  },
+  // {
+  //   path: RoutesList.yourSkills,
+  //   element: (
+  //     <PrivateRoute>
+  //       <UsersSkillsPage />
+  //     </PrivateRoute>
+  //   ),
+  //   handle: 'Your Skills',
+  // },
+  // {
+  //   path: RoutesList.skills,
+  //   element: <SkillsPage />,
+  //   handle: 'Public Skills',
+  // },
+  // {
+  //   path: RoutesList.skillsAll,
+  //   element: <SkillsAllPage />,
+  //   handle: 'All Public Skills',
+  // },
   {
     path: ':name',
     element: <EditorPage />,

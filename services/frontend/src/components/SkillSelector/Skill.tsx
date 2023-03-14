@@ -18,16 +18,14 @@ export const Skill: FC<SelectorProps> = ({ skill, isPreview }) => {
       <div className={s.left}>
         <p className={s.name}>{cleanTitle}</p>
       </div>
-      {skill.is_customizable && (
-        <div className={s.arrow}>
-          <Kebab tooltipId={tooltipId} />
-          <SkillSelectorStackToolTip
-            tooltipId={tooltipId}
-            skill={skill}
-            isPreview={isPreview}
-          />
-        </div>
-      )}
+      <div className={s.arrow}>
+        <Kebab tooltipId={tooltipId} />
+        <SkillSelectorStackToolTip
+          tooltipId={tooltipId}
+          skill={skill}
+          isPreview={isPreview}
+        />
+      </div>
     </div>
   )
 }

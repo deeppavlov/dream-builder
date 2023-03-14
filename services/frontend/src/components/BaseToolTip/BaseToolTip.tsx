@@ -11,7 +11,7 @@ interface Props extends ITooltip {
 const BaseToolTip = (props: Props) => {
   const [domReady, setDomReady] = React.useState(false)
   const container = document.body
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(props?.isOpen ?? false)
   let cx = classNames.bind(s)
 
   useEffect(() => {

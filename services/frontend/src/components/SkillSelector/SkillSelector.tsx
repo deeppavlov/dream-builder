@@ -13,8 +13,8 @@ interface Props {
 }
 export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
   const { isPreview } = usePreview()
-  const customizable = skillSelectors.filter(skill => skill.is_customizable)
-  const nonCustomizable = skillSelectors.filter(skill => !skill.is_customizable)
+  const customizable = skillSelectors?.filter(skill => skill.is_customizable)
+  const nonCustomizable = skillSelectors?.filter(skill => !skill.is_customizable)
 
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +66,7 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
                     author: 'DeepPavlov',
                     component_type: null,
                     date_created: null,
-                    execution_type: '0',
+                    execution_time: '0',
                     gpu_usage: '0',
                     model_type: null,
                     ram_usage: '0',

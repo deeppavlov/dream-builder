@@ -41,7 +41,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
 
   const handleEditBtnClick = () => {
     // Object merge for mock prompt (need fix)
-    trigger('SkillPromptModal', { skill })
+    trigger('SkillPromptModal', { skill, action: 'edit' })
   }
   const handleSaveBtnClick = () => {}
 

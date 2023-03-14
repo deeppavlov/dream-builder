@@ -15,6 +15,8 @@ import { useAuth } from '../Context/AuthProvider'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
 import { Toaster } from 'react-hot-toast'
+import { dist_list } from '../types/types'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const BotsAllPage = () => {
   const auth = useAuth()
@@ -79,11 +81,7 @@ export const BotsAllPage = () => {
                     ram={ram_usage}
                     gpu={gpu_usage}
                     space={disk_usage}
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to clone the bot'
-                    }
+                    disabled={!auth?.user}
                   />
                 )
               })}
@@ -111,6 +109,7 @@ export const BotsAllPage = () => {
                 return (
                   <BotListItem
                     key={i}
+                    type='public'
                     routingName={name}
                     name={display_name}
                     author={author}
@@ -122,11 +121,7 @@ export const BotsAllPage = () => {
                     ram={ram_usage}
                     gpu={gpu_usage}
                     space={disk_usage}
-                    disabledMsg={
-                      auth?.user
-                        ? undefined
-                        : 'You must be signed in to clone the bot'
-                    }
+                    disabled={!auth?.user}
                   />
                 )
               })}
@@ -135,8 +130,9 @@ export const BotsAllPage = () => {
         )}
         <BaseSidePanel position={{ top: topbarHeight }} />
         <AssistantModal />
+        <SignInModal />
       </Main>
-      <Toaster/>
+      <Toaster />
     </>
   )
 }

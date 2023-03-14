@@ -5,7 +5,7 @@ import s from './Button.module.scss'
 
 
 interface Props extends React.PropsWithChildren {
-  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error' | 'dark'
+  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
   small?: boolean
   long?: boolean
   withIcon?: boolean

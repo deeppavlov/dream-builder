@@ -18,10 +18,10 @@ import toast from 'react-hot-toast'
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
 interface IAssistantInfo
-  extends Pick<BotInfoInterface, 'routingName' | 'name' | 'desc'> {}
+  extends Pick<BotInfoInterface, 'name' | 'display_name' | 'description'> {}
 
 interface IAssistantDistInfo
-  extends Pick<BotInfoInterface, 'routingName' | 'name'> {}
+  extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
 
 interface IAssistantModal {
   action: TAssistantModalAction
@@ -57,14 +57,14 @@ export const AssistantModal = () => {
     setBotDist(data.detail?.distribution ?? null)
     // Reset values and errors states
     reset({
-      [NAME_ID]: data?.detail?.bot?.name,
-      [DESC_ID]: data?.detail?.bot?.desc,
+      [NAME_ID]: data?.detail?.bot?.display_name,
+      [DESC_ID]: data?.detail?.bot?.description,
     })
     setIsOpen(!isOpen)
   }
 
   const isTopbarButton = typeof bot === 'string'
-  const name = isTopbarButton ? bot : bot?.routingName!
+  const name = isTopbarButton ? bot : bot?.name!
 
   const handleCreateBtnClick = () => {
     handleSubmit(onFormSubmit)
@@ -88,7 +88,7 @@ export const AssistantModal = () => {
       return renameAssistantDist(variables?.name, variables?.data)
     },
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' }),
+      queryClient.invalidateQueries({ queryKey: 'privateDists' }),
   })
   const clone = useMutation({
     mutationFn: (variables: { data: FormValues; name: string }) => {
@@ -96,7 +96,7 @@ export const AssistantModal = () => {
     },
     onSuccess: data =>
       queryClient
-        .invalidateQueries({ queryKey: 'usersAssistantDists' })
+        .invalidateQueries({ queryKey: 'privateDists' })
         .then(() => {
           navigate(`/${data?.name}`, {
             state: {
@@ -116,17 +116,15 @@ export const AssistantModal = () => {
       return postAssistantDist(data)
     },
     onSuccess: data =>
-      queryClient
-        .invalidateQueries({ queryKey: 'usersAssistantDists' })
-        .then(() => {
-          navigate(`/${data?.name}`, {
-            state: {
-              preview: false,
-              distName: data?.name,
-              displayName: data?.display_name,
-            },
-          })
-        }),
+      queryClient.invalidateQueries({ queryKey: 'privateDists' }).then(() => {
+        navigate(`/${data?.name}`, {
+          state: {
+            preview: false,
+            distName: data?.name,
+            displayName: data?.display_name,
+          },
+        })
+      }),
   })
 
   const onFormSubmit: SubmitHandler<FormValues> = data => {
@@ -178,7 +176,7 @@ export const AssistantModal = () => {
             )}
             {action === 'edit' && (
               <div>
-                You are editing <mark>{bot?.name}</mark>
+                You are editing <mark>{bot?.display_name}</mark>
               </div>
             )}
           </div>

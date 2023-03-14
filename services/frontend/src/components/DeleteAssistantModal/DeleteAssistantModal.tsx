@@ -9,7 +9,7 @@ import { subscribe, unsubscribe } from '../../utils/events'
 import s from './DeleteAssistantModal.module.scss'
 
 interface IDeleteAssistantInfo
-  extends Pick<BotInfoInterface, 'routingName' | 'name'> {}
+  extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
 
 interface IDeleteAssistantModal {
   bot: IDeleteAssistantInfo
@@ -26,7 +26,7 @@ export const DeleteAssistantModal = () => {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: 'usersAssistantDists',
+        queryKey: 'privateDists',
       }),
   })
   const handleClose = () => {
@@ -42,7 +42,7 @@ export const DeleteAssistantModal = () => {
   const handleCancelBtnClick = () => handleClose()
 
   const handleDeleteBtnClick = () => {
-    toast.promise(deleteDist.mutateAsync(bot?.routingName!), {
+    toast.promise(deleteDist.mutateAsync(bot?.name!), {
       loading: 'Deleting...',
       success: 'Success!',
       error: 'Something Went Wrong...',
@@ -59,7 +59,7 @@ export const DeleteAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
       <div className={s.deleteAssistantModal}>
         <h4>
-          Do you really want to delete <mark>{bot?.name}</mark> Virtual
+          Do you really want to delete <mark>{bot?.display_name}</mark> Virtual
           Assistant?
         </h4>
         <span className={s.desc}>This action can’t be undone</span>

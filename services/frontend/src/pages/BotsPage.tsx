@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { RoutesList } from '../Router/RoutesList'
+import { RoutesList } from '../router/RoutesList'
 import { useAuth } from '../Context/AuthProvider'
 import { getPublicDists } from '../services/getPublicDists'
 import { getPrivateDists } from '../services/getPrivateDists'
@@ -42,7 +42,7 @@ export const BotsPage = () => {
     error: privateDistsError,
     isLoading: isPrivateDistsLoading,
   } = useQuery('privateDists', getPrivateDists, {
-    enabled: !auth?.user,
+    enabled: !!auth?.user,
   })
 
   return (

@@ -4,11 +4,7 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Button from '../../ui/Button/Button'
-import {
-  ISkill,
-  SkillAvailabilityType,
-  SkillInfoInterface,
-} from '../../types/types'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
 import { trigger } from '../../utils/events'
 import ResourcesTable from '../ResourcesTable/ResourcesTable'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'

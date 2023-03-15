@@ -123,7 +123,7 @@ export const EditorPage = () => {
               <ErrorHandler error={componentsError} />
               {!listView ? (
                 <Container gridForCards heightAuto>
-                  <AddButton />
+                  {/* <AddButton /> */}
                   {skillCardsList}
                 </Container>
               ) : (

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useAuth } from '../../Context/AuthProvider'
+import { useAuth } from '../../context/AuthProvider'
 import { BotInfoInterface, DistListProps } from '../../types/types'
 import { BotCard } from '../BotCard/BotCard'
 import { BotListItem } from '../BotListItem/BotListItem'

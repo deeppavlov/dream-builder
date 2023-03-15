@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { usePreview } from '../../Context/PreviewProvider'
-import { RoutesList } from '../../Router/RoutesList'
+import { usePreview } from '../../context/PreviewProvider'
+import { RoutesList } from '../../router/RoutesList'
 
 export const CrumbForEditor = () => {
   const { isPreview } = usePreview()

@@ -12,9 +12,9 @@ import { getSkillList } from '../services/getSkillsList'
 import { dateToUTC } from '../utils/dateToUTC'
 import { timeToUTC } from '../utils/timeToUTC'
 import { SkillModal } from '../components/SkillModal/SkillModal'
-import { useAuth } from '../Context/AuthProvider'
+import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
-import {BaseSidePanel} from '../components/BaseSidePanel/BaseSidePanel'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string

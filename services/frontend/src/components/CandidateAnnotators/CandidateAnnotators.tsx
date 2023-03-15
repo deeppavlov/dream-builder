@@ -3,7 +3,7 @@ import CandidateAnnotatorsLogo from '../../assets/icons/candidate_annotators.svg
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { Component } from '../../types/types'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import { IStackElement } from '../../types/types'

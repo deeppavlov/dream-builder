@@ -21,13 +21,13 @@ import s from './SkillCard.module.scss'
 export interface SkillCardProps {
   skill: ISkill
   type: SkillAvailabilityType
-  big?: boolean
+  forGrid?: boolean
   disabledMsg?: string
 }
 
 export const SkillCard: FC<SkillCardProps> = ({
   disabledMsg,
-  big,
+  forGrid,
   type,
   skill,
 }) => {
@@ -54,14 +54,15 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
-  const nameForComponentType = componentTypeMap[skill?.component_type]
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
+
   return (
     <div
       className={cx(
         'card',
         `${type}Card`,
-        big && 'bigCard',
+        forGrid && 'forGrid',
         disabled && 'disabled'
       )}
       onClick={handleSkillCardClick}>
@@ -132,7 +133,7 @@ export const SkillCard: FC<SkillCardProps> = ({
                   small
                   props={{
                     onClick: handleEditBtnClick,
-                    disabled: isPreview,
+                    disabled: isPreview || !skill?.is_customizable,
                   }}>
                   Edit
                 </Button>

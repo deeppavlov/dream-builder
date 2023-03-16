@@ -1,3 +1,6 @@
+.card.forGrid {
+ @include forGrid; 
+}
 .card {
   display: flex;
   flex-direction: column;

@@ -57,8 +57,8 @@ export const PublishAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
         <h4>
-          Do you want to publish <mark>{bot?.name}</mark> to Virtual Assistants
-          Store?
+          Do you want to publish <mark>{bot?.display_name}</mark> to Virtual
+          Assistants Store?
         </h4>
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>

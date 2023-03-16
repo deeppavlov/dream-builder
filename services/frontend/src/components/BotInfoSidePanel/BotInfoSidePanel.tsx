@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
@@ -21,9 +21,10 @@ import { Loader } from '../Loader/Loader'
 interface Props {
   bot: BotInfoInterface
   disabled?: boolean
+  type?: BotAvailabilityType
 }
 
-const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled }) => {
+const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
   const [bot, setBot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
   const navigate = useNavigate()
@@ -56,7 +57,16 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled }) => {
       },
     })
   }
-
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: false,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
+    })
+    e.stopPropagation()
+  }
   return (
     <>
       <SidePanelHeader>
@@ -134,12 +144,28 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled }) => {
           </div>
         </div>
         <div className={s.btns}>
-          <Button theme='secondary' props={{ onClick: handlePreviewBtnClick }}>
-            Preview
-          </Button>
-          <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
-            Clone
-          </Button>
+          {type === 'public' && (
+            <>
+              <Button
+                theme='secondary'
+                props={{ onClick: handlePreviewBtnClick }}>
+                Preview
+              </Button>
+              <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
+                Clone
+              </Button>
+            </>
+          )}
+          {type === 'your' && (
+            <>
+              <Button props={{}} theme='secondary'>
+                More
+              </Button>
+              <Button props={{ onClick: handlEditClick }} theme='primary'>
+                Edit
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </>

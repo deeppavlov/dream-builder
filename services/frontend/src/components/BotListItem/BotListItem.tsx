@@ -31,7 +31,12 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot?.name} bot={bot} disabled={disabled} />
+        <BotInfoSidePanel
+          type={type}
+          key={bot?.name}
+          bot={bot}
+          disabled={disabled}
+        />
       ),
     })
   }

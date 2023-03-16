@@ -35,13 +35,17 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot?.name} bot={bot} disabled={disabled} />
+        <BotInfoSidePanel
+          type={type}
+          key={bot?.name}
+          bot={bot}
+          disabled={disabled}
+        />
       ),
     })
   }
 
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
     navigate(`/${bot?.name}`, {
       state: {
         preview: true,
@@ -49,18 +53,17 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
         displayName: bot?.display_name,
       },
     })
+    e.stopPropagation()
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-
     if (!disabled) {
       trigger('AssistantModal', { action: 'clone', bot: bot })
       return
     }
 
     trigger('SignInModal', {})
-    e.stopPropagation()
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {

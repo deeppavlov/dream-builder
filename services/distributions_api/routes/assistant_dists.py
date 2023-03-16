@@ -1,4 +1,5 @@
 import secrets
+from asyncio import sleep
 from typing import List
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist, list_dists
@@ -7,9 +8,9 @@ from deeppavlov_dreamtools.distconfigs.pipeline import Pipeline
 from fastapi import APIRouter, status, Depends
 from fastapi.logger import logger
 
-from services.distributions_api.config import settings
+from apiconfig.config import settings
 from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES, TEMPLATE_DIST_PROMPT_BASED
-from services.distributions_api.models import (
+from services.distributions_api.schemas import (
     AssistantDistModel,
     AssistantDistModelShort,
     CreateAssistantDistModel,
@@ -17,6 +18,8 @@ from services.distributions_api.models import (
     EditAssistantDistModel,
     ComponentShort,
     DistComponentsResponse,
+    AssistantDistChatRequest,
+    AssistantDistChatResponse,
 )
 from services.distributions_api.security.auth import verify_token
 from services.distributions_api.utils.emailer import Emailer
@@ -341,6 +344,13 @@ async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
     emailer.send_publish_request_to_moderators(user["email"], dist.name)
     emailer.send_publish_request_to_owner(user["email"], dist_name)
     logger.info(f"Sent publish request")
+
+
+@assistant_dists_router.post("/{dist_name}/chat/", status_code=status.HTTP_200_OK)
+async def chat_dist(dist_name: str, payload: AssistantDistChatRequest):
+    await sleep(3)
+
+    return AssistantDistChatResponse(text="Lorem ipsum dolores est")
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

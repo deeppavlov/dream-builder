@@ -44,6 +44,7 @@ services:
     volumes:
       - ./services/auth_api:/src/services/auth_api
       - ./database:/src/database
+      - ./apiconfig:/src/apiconfig
     deploy:
       resources:
         limits:
@@ -66,6 +67,7 @@ services:
     volumes:
       - ./services/distributions_api:/src/services/distributions_api
       - ./database:/src/database
+      - ./apiconfig:/src/apiconfig
     deploy:
       resources:
         limits:

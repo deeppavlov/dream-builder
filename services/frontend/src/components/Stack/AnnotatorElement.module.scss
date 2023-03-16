@@ -17,6 +17,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      max-width: 254px;
       .icon {
         cursor: pointer;
         @include icon_size_24;
@@ -24,6 +25,9 @@
       .name {
         cursor: pointer;
         @include t3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }

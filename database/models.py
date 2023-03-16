@@ -1,3 +1,7 @@
+import logging
+from pathlib import Path
+from typing import Union, Dict, Type, Callable
+
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.compiler import compiles
@@ -59,6 +63,29 @@ class UserValid(Base):
     expire_date = Column(DateTime, nullable=False)
 
 
+class ApiToken(Base):
+    __tablename__ = "api_token"
+
+    id = Column(Integer, index=True, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+    base_url = Column(String)
+
+
+class UserApiToken(Base):
+    __tablename__ = "user_api_token"
+
+    id = Column(Integer, index=True, primary_key=True)
+
+    user_id = Column(Integer, ForeignKey("google_user.id"), nullable=False)
+    user = relationship("GoogleUser")
+
+    api_token_id = Column(Integer, ForeignKey("api_token.id"), unique=True, nullable=False)
+    api_token = relationship("ApiToken")
+
+    token_value = Column(String)
+
+
 class VirtualAssistant(Base):
     __tablename__ = "virtual_assistant"
 
@@ -117,18 +144,33 @@ class VirtualAssistantComponent(Base):
     component = relationship("Component")
 
 
+def _pre_populate_from_tsv(
+    path: Union[Path, str],
+    target,
+    connection,
+    map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None,
+):
+    logging.warning(f"Pre-populating {target.name} from {path}")
+
+    for row in utils.iter_tsv_rows(path, map_value_types):
+        connection.execute(target.insert(), row)
+
+
 @listens_for(Role.__table__, "after_create")
 def pre_populate_role(target, connection, **kw):
-    connection.execute(
-        target.insert(),
-        [
-            {"name": "1", "can_confirm_publish": True, "can_set_roles": True},
-            {"name": "2", "can_confirm_publish": True, "can_set_roles": True},
-            {"name": "3", "can_confirm_publish": True, "can_set_roles": True},
-        ]
+    _pre_populate_from_tsv(
+        "database/initial_data/role.tsv",
+        target,
+        connection,
+        map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
     )
 
 
 @listens_for(GoogleUser.__table__, "after_create")
 def pre_populate_google_user(target, connection, **kw):
-    connection.execute(target.insert(), *utils.iter_tsv_rows("database/initial_data/google_user.tsv"))
+    _pre_populate_from_tsv("database/initial_data/google_user.tsv", target, connection)
+
+
+@listens_for(ApiToken.__table__, "after_create")
+def pre_populate_api_token(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/api_token.tsv", target, connection)

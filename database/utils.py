@@ -1,11 +1,9 @@
 import csv
 from pathlib import Path
-from typing import Union
+from typing import Union, Dict, Type, Callable
 
 
-def sqlalchemy_url(
-    driver: str, user: str, password: str, host: str, port: int, database: str
-) -> str:
+def sqlalchemy_url(driver: str, user: str, password: str, host: str, port: int, database: str) -> str:
     """Create sqlalchemy sessionmaker
 
     Args:
@@ -22,7 +20,9 @@ def sqlalchemy_url(
     return f"{driver}://{user}:{password}@{host}:{port}/{database}"
 
 
-def iter_tsv_rows(path: Union[Path, str]):
+def iter_tsv_rows(
+    path: Union[Path, str], map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None
+):
     path = Path(path)
 
     with path.open("r", encoding="utf-8") as tsv_f:
@@ -31,4 +31,10 @@ def iter_tsv_rows(path: Union[Path, str]):
         header = next(rd)
 
         for row in rd:
-            yield dict(zip(header, row))
+            named_row = dict(zip(header, row))
+
+            if map_value_types:
+                for column_name, column_type in map_value_types.items():
+                    named_row[column_name] = column_type(named_row[column_name])
+
+            yield named_row

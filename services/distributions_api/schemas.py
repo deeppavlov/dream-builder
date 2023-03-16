@@ -1,10 +1,15 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, EmailStr
 
-from deeppavlov_dreamtools.distconfigs.generics import AnyConfig, COMPONENT_TYPES, MODEL_TYPES, ComponentEndpoint, \
-    check_memory_format
+from deeppavlov_dreamtools.distconfigs.generics import (
+    AnyConfig,
+    COMPONENT_TYPES,
+    MODEL_TYPES,
+    ComponentEndpoint,
+    check_memory_format,
+)
 from deeppavlov_dreamtools.distconfigs.generics import (
     PipelineConfModel,
     ComposeOverride,
@@ -14,6 +19,21 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     Component,
     PipelineConfMetadata,
 )
+
+
+class BaseOrmModel(BaseModel):
+    class Config:
+        orm_mode = True
+
+
+class User(BaseOrmModel):
+    id: int
+    email: EmailStr
+    sub: str
+    picture: Optional[str]
+    fullname: Optional[str]
+    given_name: Optional[str]
+    family_name: Optional[str]
 
 
 class EditAssistantDistModel(BaseModel):
@@ -62,6 +82,14 @@ class AssistantDistModel(BaseModel):
     compose_local: ComposeLocal = None
 
 
+class AssistantDistChatRequest(BaseModel):
+    text: str
+
+
+class AssistantDistChatResponse(BaseModel):
+    text: str
+
+
 class AssistantDistConfigsImport(BaseModel):
     """
     {
@@ -88,7 +116,6 @@ class ComponentShort(BaseModel):
     description: str
     ram_usage: str
     gpu_usage: Optional[str]
-    execution_time: float
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
@@ -104,3 +131,28 @@ class DistComponentsResponse(BaseModel):
     candidate_annotators: List[ComponentShort]
     response_selectors: List[ComponentShort]
     response_annotators: List[ComponentShort]
+
+
+class ApiToken(BaseOrmModel):
+    id: int
+    name: str
+    description: str
+    base_url: str
+
+
+class UserApiToken(BaseOrmModel):
+    id: int
+    user_id: int
+    api_token_id: int
+    token_value: str
+
+
+class CreateTokenRequest(BaseModel):
+    api_token_id: int
+    token_value: str
+
+
+class CreateTokenResponse(BaseModel):
+    user_id: int
+    api_token_id: int
+    token_value: str

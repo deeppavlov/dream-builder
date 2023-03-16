@@ -10,9 +10,10 @@ from sqlalchemy.orm import Session
 
 
 import database.crud as crud
-from database.core import init_db, Database
+from database.core import init_db
 from database.models import UserValid
-from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
+from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
+from services.auth_api import schemas
 from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
 
 router = APIRouter(prefix="/auth")
@@ -42,7 +43,7 @@ async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
             resp_status = resp.status
 
     if resp_status != 200:
-        raise ValueError(f"Access token has expired or token is bad.\nResponse body:\n{response}")
+        raise ValueError(f"Access token has expired or token is bad. Response: {response}")
 
     return response
 
@@ -85,15 +86,7 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        return UserModel(
-            id=0,
-            email="cheater@deepdream.builders",
-            sub="subway?",
-            picture="pic",
-            fullname="Deep Pavlov",
-            given_name="Deep",
-            family_name="Pavlov",
-        )
+        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
 
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
@@ -101,19 +94,10 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
         validate_aud(data["aud"])
         validate_email(data["email"], db)
         user = crud.get_user_by_email(db, data["email"])
-
-        return UserModel(
-            id=user.id,
-            email=user.email,
-            sub=user.sub,
-            picture=user.picture,
-            fullname=user.fullname,
-            given_name=user.given_name,
-            family_name=user.family_name,
-        )
-
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+    return schemas.User.from_orm(user)
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)

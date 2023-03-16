@@ -246,14 +246,15 @@
       .time {
         color: #3300ff;
       }
-      background-color: rgba(51, 0, 255, 0.1);
     }
   }
+
+  // background-color: rgba(51, 0, 255, 0.1);
 }
 
 @mixin slider_btns {
   position: absolute;
-  top: 50%;
+  top: 47.5%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,4 +302,7 @@
   height: 1px;
   width: 100%;
   border-top: 1px dashed $text3;
+}
+@mixin forGrid {
+  max-width: 344px;
 }

@@ -1,6 +1,5 @@
 import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { trigger } from '../../utils/events'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -12,27 +11,26 @@ import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import { usePreview } from '../../context/PreviewProvider'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import Button from '../../ui/Button/Button'
+import { ReactComponent as Add } from '../../assets/icons/add.svg'
+import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
+import toast from 'react-hot-toast'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
-  checkbox?: boolean
-  disabledMsg?: string
-  skill: SkillInfoInterface
+  skill: ISkill
+  forModal?: boolean
 }
 
-export const SkillListItem: FC<SkillListItemProps> = ({
-  checkbox,
-  skill,
-  disabledMsg,
-}) => {
+export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
   const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()
-  const nameForComponentType = componentTypeMap[skill?.component_type]
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
   let cx = classNames.bind(s)
 
@@ -47,8 +45,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       children: <SkillSidePanel key={skill?.name} skill={skill} />,
     })
   }
-
-  const handleAddBtnClick = (e: any) => {
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    toast.success('Successfully Added!', { id: 'addSkill' })
+  }
+  const handleAddBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     trigger('SkillModal', {
       action: 'create',
@@ -60,11 +62,6 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     <tr
       className={cx('tr', disabled && 'disabled')}
       onClick={handleSkillListItemClick}>
-      {checkbox && (
-        <td className={s.checkboxArea}>
-          <Checkbox />
-        </td>
-      )}
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.skillName}>{skill?.display_name || '------'}</p>
@@ -99,8 +96,30 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <ToggleButton handleToggle={handleToggle} />
-          <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+          {forModal ? (
+            <>
+              <Button
+                theme='primary'
+                small
+                withIcon
+                props={{ onClick: handleAddClick }}>
+                <Add />
+              </Button>
+              <Button
+                theme='secondary'
+                small
+                withIcon
+                props={{ onClick: handleSkillListItemClick }}>
+                <Properties />
+              </Button>
+            </>
+          ) : (
+            <>
+              <ToggleButton handleToggle={handleToggle} disabled={isPreview} />
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+            </>
+          )}
+
           <SkillCardToolTip
             skill={skill}
             tooltipId={'ctxMenu' + tooltipId}

@@ -10,7 +10,6 @@
   padding: 0px 24px;
   svg {
     @include icon_size_24;
-    fill: rgba(0, 0, 0, 0.7);
   }
 }
 .checkboxArea {
@@ -46,7 +45,7 @@
     color: #313030;
     padding: 0px 24px;
     svg {
-      fill: rgba(0, 0, 0, 0.7);
+      // fill: rgba(0, 0, 0, 0.7);
       @include icon_size_24;
     }
   }

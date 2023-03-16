@@ -74,15 +74,12 @@ export const BotsPage = () => {
           amount={auth?.user && privateDists?.length}
           linkTo={RoutesList.yourBots}>
           {listView ? (
-            <Table
-              addButton={
-                <AddButton listView={listView} disabled={!auth?.user} />
-              }>
+            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <AddButton listView={listView} disabled={!auth?.user} />
+              <AddButton disabled={!auth?.user} />
               <Slider>
                 <Loader isLoading={isPrivateDistsLoading} />
                 <ErrorHandler error={privateDistsError} />

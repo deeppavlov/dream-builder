@@ -19,8 +19,10 @@ import { ShareModal } from '../components/ShareModal/ShareModal'
 import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
+import { AddButton } from '../ui/AddButton/AddButton'
 
 export const UsersBotsPage = () => {
+  const auth = useAuth()
   const [listView, setListView] = useState<boolean>(false)
   const { data, error, isLoading } = useQuery('privateDists', getPrivateDists)
   const viewHandler = () => {
@@ -37,11 +39,19 @@ export const UsersBotsPage = () => {
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />
           {listView ? (
-            <Table>
+            <Table
+              addButton={
+                <AddButton
+                  forTable
+                  disabled={!auth?.user}
+                  text='Create From Scratch'
+                />
+              }>
               <DistList view='table' dists={data} type='your' />
             </Table>
           ) : (
             <Container gridForCards>
+              <AddButton forGrid />
               <DistList view='cards' dists={data} type='your' size='big' />
             </Container>
           )}

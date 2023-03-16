@@ -127,8 +127,7 @@
         }
 
         svg {
-          width: 24px;
-          height: 24px;
+          @include icon_size_24;
 
           path {
             stroke: $text1;

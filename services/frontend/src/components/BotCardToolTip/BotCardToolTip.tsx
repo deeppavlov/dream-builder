@@ -1,5 +1,5 @@
 import { useAuth } from '../../context/AuthProvider'
-import { BotAvailabilityType, IStackElement } from '../../types/types'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -8,7 +8,7 @@ import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props {
   tooltipId: string
-  bot: IStackElement
+  bot: BotInfoInterface
   type?: BotAvailabilityType
 }
 

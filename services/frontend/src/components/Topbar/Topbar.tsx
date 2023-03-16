@@ -40,7 +40,10 @@ export const Topbar = ({
       trigger('SignInModal', {})
       return
     }
-    trigger('AssistantModal', { action: 'clone', bot: name })
+    trigger('AssistantModal', {
+      action: 'clone',
+      bot: { name: name, display_name: title },
+    })
   }
   switch (type) {
     case 'main':

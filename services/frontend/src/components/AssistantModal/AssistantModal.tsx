@@ -11,9 +11,8 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import s from './AssistantModal.module.scss'
 import toast from 'react-hot-toast'
+import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
@@ -62,9 +61,8 @@ export const AssistantModal = () => {
     })
     setIsOpen(!isOpen)
   }
-
-  const isTopbarButton = typeof bot === 'string'
-  const name = isTopbarButton ? bot : bot?.name!
+  const isTopbarButton = bot && Object.keys(bot).length === 2
+  const name = bot?.name!
 
   const handleCreateBtnClick = () => {
     handleSubmit(onFormSubmit)
@@ -162,16 +160,12 @@ export const AssistantModal = () => {
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>
-                You are creating a copy of a{' '}
-                <mark>
-                  {isTopbarButton && capitalizeTitle(bot)}
-                  {bot?.display_name}
-                </mark>
+                You are creating a copy of a <mark>{bot?.display_name}</mark>
               </div>
             )}
             {action === 'create' && (
               <div>
-                You are creating a new distribution from <mark>scratch</mark>
+                You are creating a new Virtual Assistant from <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (

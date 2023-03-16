@@ -45,8 +45,8 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
     return
   }
 
-  switch (skill.component_type) {
-    case 'Generative':
+  switch (skill.name.includes('prompted')) {
+    case true:
       trigger(BASE_SP_EVENT, {
         children: (
           <GenerativeSkillEditor

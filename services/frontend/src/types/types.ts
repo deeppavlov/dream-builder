@@ -76,9 +76,17 @@ export interface IAnnotator {
 }
 export interface DistListProps {
   view: ViewType
-  dists: [BotInfoInterface]
+  dists: BotInfoInterface[]
   type: BotAvailabilityType
   size?: BotCardSize
+}
+export interface SkillListProps {
+  skills: ISkill[]
+  view: ViewType
+  type?: SkillAvailabilityType
+  size?: SkillCardSize
+  forGrid?: boolean
+  forModal?: boolean
 }
 export interface SettingKey {
   name: string
@@ -97,7 +105,7 @@ export interface IStackElement {
   author: string
   component_type: string | null
   model_type: string | null
-  date_created: string | Date | null
+  date_created: string | Date
   description: string
   is_customizable: boolean
   ram_usage: string
@@ -109,6 +117,8 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
 }
+
+export type SkillCardSize = BotCardSize
 
 export type CustomRouteConfig = RouteObject & { crumb?: string }
 

@@ -9,11 +9,12 @@ from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
 
 
-import services.auth_api.db.crud as crud
-from services.auth_api.db.db import init_db
-from services.auth_api.db.db_models import UserValid
-from services.auth_api.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
-from services.auth_api.models import UserCreate, User, UserValidScheme
+import database.crud as crud
+from database.core import init_db
+from database.models import UserValid
+from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
+from services.auth_api import schemas
+from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
 
 router = APIRouter(prefix="/auth")
 
@@ -42,28 +43,16 @@ async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
             resp_status = resp.status
 
     if resp_status != 200:
-        raise ValueError(f"Access token has expired or token is bad.\nResponse body:\n{response}")
+        raise ValueError(f"Access token has expired or token is bad. Response: {response}")
 
     return response
 
 
-@router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
-    """
-    Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
-    Check is carried out via `_fetch_user_info_by_access_token` function
-    raise HTTPException with status_code == 400
-    """
-    if token == settings.auth.test_token:
-        return
+def _check_refresh_token_validity(expire_date: datetime) -> bool:
+    if datetime.now() > expire_date:
+        return False
 
-    try:
-        data = await _fetch_user_info_by_access_token(access_token=token)
-
-        validate_aud(data["aud"])
-        validate_email(data["email"], db)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return True
 
 
 def validate_aud(input_aud: str) -> None:
@@ -79,11 +68,7 @@ def validate_email(email: str, db: Session) -> None:
         raise ValueError("User is not listed in the database")
 
 
-# @router.get("/login")
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
-    """
-    TODO: endpoint -> method due to no usage from frontend
-    """
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
         crud.add_google_user(db, user)
@@ -91,6 +76,28 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
 
     user = crud.get_user_by_email(db, data["email"]).__dict__
     return User(**user, name=user["fullname"])
+
+
+@router.get("/token", status_code=status.HTTP_200_OK)
+async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
+    """
+    Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
+    Check is carried out via `_fetch_user_info_by_access_token` function
+    raise HTTPException with status_code == 400
+    """
+    if token == settings.auth.test_token:
+        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+
+    try:
+        data = await _fetch_user_info_by_access_token(access_token=token)
+
+        validate_aud(data["aud"])
+        validate_email(data["email"], db)
+        user = crud.get_user_by_email(db, data["email"])
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return schemas.User.from_orm(user)
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -157,10 +164,3 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
     response = requests.post("https://oauth2.googleapis.com/token", data=info).json()
     access_token = response["access_token"]
     return {"token": access_token}
-
-
-def _check_refresh_token_validity(expire_date: datetime) -> bool:
-    if datetime.now() > expire_date:
-        return False
-
-    return True

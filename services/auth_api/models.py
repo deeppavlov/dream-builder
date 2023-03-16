@@ -28,3 +28,13 @@ class UserValidScheme(UserBase):
     refresh_token: str
     is_valid: bool
     expire_date: datetime
+
+
+class UserModel(UserBase):
+    id: int
+    email: str
+    sub: str
+    picture: str
+    fullname: str
+    given_name: str
+    family_name: str

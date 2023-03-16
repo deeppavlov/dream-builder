@@ -4,7 +4,6 @@ import s from './Container.module.scss'
 
 interface ContainerProps {
   children?: ReactNode
-  [x: string]: any
   gridForCards?: boolean
   heightAuto?: boolean
   layoutForTabs?: boolean
@@ -17,14 +16,10 @@ export const Container = ({
   gridForCards,
   overflowForAddButton,
   layoutForTabs,
-  ...props
 }: ContainerProps) => {
   const cx = classNames.bind(s)
   return (
     <div
-      style={{
-        ...props,
-      }}
       className={cx(
         'container',
         heightAuto && 'heightAuto',

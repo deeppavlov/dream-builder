@@ -23,7 +23,7 @@ const SidePanel = ({
   const closeTimeoutMS = 300
   const customStyles = {
     overlay: {
-      top: 0,
+      top: 64,
       left: position?.left ?? 'auto',
       right: position?.right ?? 0,
       bottom: position?.bottom ?? 0,

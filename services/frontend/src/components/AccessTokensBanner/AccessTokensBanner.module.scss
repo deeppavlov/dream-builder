@@ -9,7 +9,7 @@
 .add {
   width: 100%;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 16px;
 
   input {
@@ -18,6 +18,7 @@
 }
 
 .tokens {
+  margin-top: -24px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -45,100 +46,19 @@
   margin-right: 4px;
 }
 
-.state {
+.right {
   margin-left: auto;
-  margin-right: 40px;
   display: flex;
   align-items: center;
-
-  span::first-letter {
-    text-transform: uppercase;
-  }
-
-  &.not-valid {
-    color: $orange;
-
-    .icon path {
-      stroke: $orange;
-    }
-  }
-
-  &.validating {
-    color: $pink;
-
-    // Dots animation
-    &::after {
-      overflow: hidden;
-      display: inline-block;
-      vertical-align: bottom;
-      -webkit-animation: dotsAnimation steps(4, end) 900ms infinite;
-      animation: dotsAnimation steps(4, end) 900ms infinite;
-      content: '\2026';
-      width: 0px;
-    }
-
-    .icon {
-      -webkit-animation: loader-1-1 2s linear infinite;
-      animation: loader-1-1 2s linear infinite;
-      // loader backgorund
-      path:first-child {
-        fill: $primary1;
-      }
-      // loader proggress line
-      path:last-child {
-        fill: $pink;
-      }
-    }
-  }
-
-  &.valid {
-    color: $salad;
-
-    .icon path {
-      stroke: $salad;
-    }
-  }
+  gap: 40px;
 }
 
 .validate {
   @include b1;
   color: $primary1;
-
-  &::first-letter {
-    text-transform: uppercase;
-  }
 }
 
 .remove {
   @include b1;
   color: $red;
-}
-
-@keyframes dotsAnimation {
-  to {
-    width: 25%;
-  }
-}
-
-@-webkit-keyframes dotsAnimation {
-  to {
-    width: 25%;
-  }
-}
-
-@-webkit-keyframes loader-1-1 {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes loader-1-1 {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }

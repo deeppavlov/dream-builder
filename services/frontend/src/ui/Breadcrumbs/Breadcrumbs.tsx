@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { Link, useMatches } from 'react-router-dom'
+import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
 import s from './Breadcrumbs.module.scss'
 
 interface Props {
@@ -9,21 +10,19 @@ interface Props {
 
 export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
   const matches = useMatches()
-
   return (
     <>
-      <div
-        data-tip='Go to Home Page'
-        data-for='topbar_tooltip'
-        className={s.breadcrumbs}>
+      <div data-tip data-tooltip-id='home' className={s.breadcrumbs}>
         <Link to='/'>
           <button className={s.home} />
         </Link>
+        <BaseToolTip id='home' content='Go to home page' />
       </div>
+
       <div className={s.routes}>
         {matches.at(-1)?.pathname !== '/' && <span className={s.slash} />}
         {matches.map(crumb => {
-          return crumb.pathname !== '/' && crumb.handle
+          return crumb.pathname !== '/' && crumb?.handle
         })}
         {children && <span className={s.slash} />}
         {children}

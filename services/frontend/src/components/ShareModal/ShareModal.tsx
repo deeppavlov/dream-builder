@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import classNames from 'classnames/bind'
 import { useForm } from 'react-hook-form'
@@ -9,7 +9,6 @@ import Button from '../../ui/Button/Button'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
 import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
-import { BotInfoInterface } from '../../types/types'
 import s from './ShareModal.module.scss'
 
 export const ShareModal = () => {
@@ -17,7 +16,7 @@ export const ShareModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
-    setBot(data?.detail?.bot?.routingName)
+    setBot(data?.detail?.bot?.name)
     setIsOpen(!isOpen)
   }
   const { register, getValues, reset } = useForm({
@@ -41,7 +40,7 @@ export const ShareModal = () => {
   }, [])
 
   useEffect(() => {
-    reset({ link: import.meta.env.VITE_APP_URL_LOCAL + bot })
+    reset({ link: import.meta.env.VITE_APP_URL + bot })
   }, [bot])
   return (
     <>

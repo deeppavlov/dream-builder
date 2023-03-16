@@ -2,20 +2,24 @@ import { FC } from 'react'
 import SkillsLogo from '../../assets/icons/skills.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Kebab } from '../../ui/Kebab/Kebab'
-import { Element } from './Element'
-import { countResources } from '../../utils/countResources'
+import { SkillElement } from './SkillElement'
 import { usePreview } from '../../context/PreviewProvider'
-import { Skill } from '../../types/types'
+import { ISkill } from '../../types/types'
 import s from './Skills.module.scss'
-
+import { trigger } from '../../utils/events'
+import { mockSkills } from '../../mocks/database/mockSkills'
 interface SkillsStackProps {
-  skills: [Skill]
+  skills: ISkill[]
 }
 
 export const Skills: FC<SkillsStackProps> = ({ skills }) => {
   const { isPreview } = usePreview()
 
+  const customizable = skills?.filter(skill => skill?.is_customizable)
+  const nonCustomizable = skills?.filter(skill => !skill?.is_customizable)
+  const handleAddClick = () => {
+    trigger('SkillsListModal', { mockSkills })
+  }
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -24,24 +28,34 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
             <img src={SkillsLogo} className={s.icon} />
             <p className={s.type}>Skills</p>
           </div>
-          <Kebab disabled={isPreview} dataFor='all_skills' />
-        </div>
-        <div className={s.bottom}>
-          <p className={s.data}>
-            {(skills &&
-              countResources(skills, 'ram_usage') +
-                ' | ' +
-                countResources(skills, 'gpu_usage')) ||
-              '0.00 GB RAM | 0.00 GB GPU'}
-          </p>
         </div>
       </div>
-      <AddButtonStack disabled={isPreview} text='Add Skills' />
+      <AddButtonStack
+        disabled={isPreview}
+        text='Add Skills'
+        onClick={handleAddClick}
+      />
       <div className={s.elements}>
-        <Accordion title='Customizable'></Accordion>
-        <Accordion title='Non-customizable'>
-          {skills?.map((item: Skill, i: number) => {
-            return <Element key={i} item={item} />
+        <Accordion title='Customizable'>
+          {customizable?.map((skill, i) => {
+            return (
+              <SkillElement
+                key={skill.name + i}
+                skill={skill}
+                isPreview={isPreview}
+              />
+            )
+          })}
+        </Accordion>
+        <Accordion title='Non-Customizable'>
+          {nonCustomizable?.map((skill, i) => {
+            return (
+              <SkillElement
+                key={skill.name + i}
+                skill={skill}
+                isPreview={isPreview}
+              />
+            )
           })}
         </Accordion>
       </div>

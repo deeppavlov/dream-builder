@@ -9,15 +9,16 @@ import { prepare } from './mocks/prepare'
 
 const queryClient = new QueryClient()
 
-//  prepare().then(() => {
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <AuthProvider>
-    <PreviewProvider>
-      <QueryClientProvider client={queryClient}>
-        <App>
-          <RouterProvider router={router} />
-        </App>
-      </QueryClientProvider>
-    </PreviewProvider>
-  </AuthProvider>
-)
+prepare().then(() => {
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <AuthProvider>
+      <PreviewProvider>
+        <QueryClientProvider client={queryClient}>
+          <App>
+            <RouterProvider router={router} />
+          </App>
+        </QueryClientProvider>
+      </PreviewProvider>
+    </AuthProvider>
+  )
+})

@@ -8,6 +8,8 @@
   width: 100%;
   border-radius: 12px;
   gap: 2px;
+  position: relative;
+  padding: 24px 0px;
 
   &[data-active='true'] {
     .field {
@@ -43,6 +45,14 @@
 .label {
   @include b3;
   color: $text2;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.about {
+  top: 100%;
+  transform: translateY(-100%);
 }
 
 .title {
@@ -97,6 +107,10 @@
   svg {
     display: none;
   }
+}
+
+.submit-active {
+  display: block;
 }
 
 .submit-active {

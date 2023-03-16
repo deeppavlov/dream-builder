@@ -1,15 +1,47 @@
 .avatar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: end;
   width: 80px;
+  cursor: pointer;
+
+  &:hover .arrow {
+    fill: #3300ff;
+    stroke: #3300ff;
+  }
+
   &__picture {
     border-radius: 50%;
     width: 40px;
     height: 40px;
     background-color: $text3;
   }
+
+  .profile_menu {
+    left: auto !important;
+    top: calc(100% + 18px) !important;
+    right: 8px;
+    width: 264px;
+    padding: 0px !important;
+    color: rgba(0, 0, 0, 0.9) !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+    border: none !important;
+    opacity: 1 !important;
+  }
+
+  .tooltipArrow {
+    position: absolute;
+    background: inherit;
+    left: 85% !important;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+  }
 }
+
 .arrow {
   cursor: pointer;
   stroke: #8d96b5;
@@ -27,8 +59,10 @@
     opacity: 0.3;
   }
 }
+
 .menu {
   width: 100%;
+  margin-right: 20px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -63,19 +97,5 @@
       stroke: rgba(0, 0, 0, 0.9);
       @include icon_size_24;
     }
-  }
-}
-.profile_menu {
-  width: 264px;
-  padding: 0px !important;
-  color: rgba(0, 0, 0, 0.9) !important;
-  background: #fff !important;
-  border-radius: 8px !important;
-  box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
-  opacity: 1 !important;
-  border: none !important;
-  &::after {
-    left: 84% !important;
-    background: #fff !important;
   }
 }

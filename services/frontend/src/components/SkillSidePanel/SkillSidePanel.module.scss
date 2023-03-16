@@ -15,18 +15,19 @@
 
 .name {
   @include t3;
+  color: $text1;
 }
 
 .icon {
   height: 24px;
   width: 24px;
 
-  path {
-    stroke: $text2;
-  }
-
   &[data-disabled] {
     opacity: 0.3;
+  }
+
+  path {
+    stroke: $text2;
   }
 }
 
@@ -35,9 +36,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
-  img {
-    border-radius: 50%;
+  svg {
     height: 32px;
     width: 32px;
   }
@@ -62,7 +61,7 @@
   }
 }
 
-.name {
+.table-name {
   @include t4;
   color: $text2;
 }

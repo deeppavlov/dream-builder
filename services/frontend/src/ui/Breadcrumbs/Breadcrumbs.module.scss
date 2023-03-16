@@ -18,25 +18,21 @@
   height: $topbar_btn;
   background-image: url(../../assets/icons/home.svg);
 }
-.tooltips {
-  @include tooltip;
-}
 .routes {
   white-space: nowrap;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
+  @include b3;
+  @include accent_text;
   // white-space: 'nowrap';
+
   .slash {
     color: #8d96b5;
     &::before {
       content: '/';
     }
     @include lnks_n_btns4;
-  }
-  span {
-    @include b3;
-    @include accent_text;
   }
 }

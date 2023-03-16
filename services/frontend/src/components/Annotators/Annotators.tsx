@@ -1,18 +1,19 @@
+import { FC } from 'react'
 import AnnotatorsLogo from '../../assets/icons/annotators.svg'
-import { Kebab } from '../../ui/Kebab/Kebab'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import { Element } from './Element'
-import { countResources } from '../../utils/countResources'
-import { Annotator } from '../../types/types'
+import { AnnotatorElement } from '../Stack/AnnotatorElement'
+import { Component } from '../../types/types'
+import { usePreview } from '../../context/PreviewProvider'
+import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import s from './Annotators.module.scss'
 
 interface Props {
-  annotators: [Annotator]
+  annotators: Component[]
 }
 
-export const Annotators: React.FC<Props> = ({ annotators }) => {
-  
+export const Annotators: FC<Props> = ({ annotators }) => {
+  const { isPreview } = usePreview()
   return (
     <div className={s.stack}>
       <div className={s.header}>
@@ -21,24 +22,36 @@ export const Annotators: React.FC<Props> = ({ annotators }) => {
             <img src={AnnotatorsLogo} className={s.icon} />
             <p className={s.type}>Annotators</p>
           </div>
-          <Kebab disabled dataFor='all_annotators' />
         </div>
-        <div className={s.bottom}>
-          <p className={s.data}>
-            {(annotators &&
-              countResources(annotators, 'ram_usage') +
-                ' | ' +
-                countResources(annotators, 'gpu_usage')) ||
-              '0.00 GB RAM | 0.00 GB GPU'}
-          </p>
-        </div>
+        <div className={s.bottom}></div>
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        <Accordion title='Customizable'></Accordion>
+        <Accordion closed title='Customizable'>
+          <WaitForNextRelease />
+          {annotators?.map((annotator, i) => {
+            if (annotator?.is_customizable) {
+              return (
+                <AnnotatorElement
+                  key={annotator.name + i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
+          })}
+        </Accordion>
         <Accordion title='Non-customizable'>
-          {annotators?.map((item: Annotator, i: number) => {
-            return <Element key={i} item={item} />
+          {annotators?.map((annotator, i) => {
+            if (!annotator.is_customizable) {
+              return (
+                <AnnotatorElement
+                  key={i}
+                  annotator={annotator}
+                  isPreview={isPreview}
+                />
+              )
+            }
           })}
         </Accordion>
       </div>

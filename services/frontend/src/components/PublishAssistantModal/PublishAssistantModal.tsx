@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { BotInfoInterface } from '../../types/types'
 import { publishAssistantDist } from '../../services/publishUsersAssistantDist'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { subscribe, unsubscribe } from '../../utils/events'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
-import s from './PublishAssistantModal.module.scss'
 import toast from 'react-hot-toast'
+import s from './PublishAssistantModal.module.scss'
 
-interface IPublishBot extends Pick<BotInfoInterface, 'routingName' | 'name'> {}
+interface IPublishBot extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
 interface IPublishAssistantModal {
   bot: IPublishBot
 }
@@ -37,7 +37,7 @@ export const PublishAssistantModal = () => {
 
   const mutation = useMutation({
     mutationFn: () => {
-      return publishAssistantDist(bot?.routingName!)
+      return publishAssistantDist(bot?.name!)
     },
     // onSuccess: () =>
     //   queryClient
@@ -57,8 +57,8 @@ export const PublishAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
         <h4>
-          Do you want to publish <mark>{bot?.name}</mark> to Virtual Assistants
-          Store?
+          Do you want to publish <mark>{bot?.display_name}</mark> to Virtual
+          Assistants Store?
         </h4>
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>

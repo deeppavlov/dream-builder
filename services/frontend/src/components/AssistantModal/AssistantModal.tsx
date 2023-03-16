@@ -11,17 +11,16 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import s from './AssistantModal.module.scss'
 import toast from 'react-hot-toast'
+import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
 interface IAssistantInfo
-  extends Pick<BotInfoInterface, 'routingName' | 'name' | 'desc'> {}
+  extends Pick<BotInfoInterface, 'name' | 'display_name' | 'description'> {}
 
 interface IAssistantDistInfo
-  extends Pick<BotInfoInterface, 'routingName' | 'name'> {}
+  extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
 
 interface IAssistantModal {
   action: TAssistantModalAction
@@ -57,14 +56,13 @@ export const AssistantModal = () => {
     setBotDist(data.detail?.distribution ?? null)
     // Reset values and errors states
     reset({
-      [NAME_ID]: data?.detail?.bot?.name,
-      [DESC_ID]: data?.detail?.bot?.desc,
+      [NAME_ID]: data?.detail?.bot?.display_name,
+      [DESC_ID]: data?.detail?.bot?.description,
     })
     setIsOpen(!isOpen)
   }
-
-  const isTopbarButton = typeof bot === 'string'
-  const name = isTopbarButton ? bot : bot?.routingName!
+  const isTopbarButton = bot && Object.keys(bot).length === 2
+  const name = bot?.name!
 
   const handleCreateBtnClick = () => {
     handleSubmit(onFormSubmit)
@@ -88,7 +86,7 @@ export const AssistantModal = () => {
       return renameAssistantDist(variables?.name, variables?.data)
     },
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: 'usersAssistantDists' }),
+      queryClient.invalidateQueries({ queryKey: 'privateDists' }),
   })
   const clone = useMutation({
     mutationFn: (variables: { data: FormValues; name: string }) => {
@@ -96,7 +94,7 @@ export const AssistantModal = () => {
     },
     onSuccess: data =>
       queryClient
-        .invalidateQueries({ queryKey: 'usersAssistantDists' })
+        .invalidateQueries({ queryKey: 'privateDists' })
         .then(() => {
           navigate(`/${data?.name}`, {
             state: {
@@ -116,17 +114,15 @@ export const AssistantModal = () => {
       return postAssistantDist(data)
     },
     onSuccess: data =>
-      queryClient
-        .invalidateQueries({ queryKey: 'usersAssistantDists' })
-        .then(() => {
-          navigate(`/${data?.name}`, {
-            state: {
-              preview: false,
-              distName: data?.name,
-              displayName: data?.display_name,
-            },
-          })
-        }),
+      queryClient.invalidateQueries({ queryKey: 'privateDists' }).then(() => {
+        navigate(`/${data?.name}`, {
+          state: {
+            preview: false,
+            distName: data?.name,
+            displayName: data?.display_name,
+          },
+        })
+      }),
   })
 
   const onFormSubmit: SubmitHandler<FormValues> = data => {
@@ -164,22 +160,17 @@ export const AssistantModal = () => {
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>
-                You are creating a copy of a{' '}
-                <mark>
-                  {isTopbarButton && capitalizeTitle(bot)}
-                  {botDist?.name}
-                </mark>{' '}
-                distribution
+                You are creating a copy of a <mark>{bot?.display_name}</mark>
               </div>
             )}
             {action === 'create' && (
               <div>
-                You are creating a new distribution from <mark>scratch</mark>
+                You are creating a new Virtual Assistant from <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (
               <div>
-                You are editing <mark>{bot?.name}</mark> distribution
+                You are editing <mark>{bot?.display_name}</mark>
               </div>
             )}
           </div>
@@ -189,9 +180,10 @@ export const AssistantModal = () => {
             label='Name'
             error={errors[NAME_ID as keyof FormValues]}
             props={{
-              placeholder: 'Enter name for your VA',
+              placeholder: 'A short name describing your Virtual Assistant',
+              defaultValue: getValues().display_name,
               ...register(NAME_ID as keyof FormValues, {
-                required: 'Please add name for your Virtual Assistant',
+                required: 'This field can’t be empty',
               }),
             }}
           />
@@ -199,18 +191,17 @@ export const AssistantModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID as keyof FormValues]}
-            about={
-              <div className={s.textMuted}>
-                You will be able to edit this information later.
-              </div>
-            }
+            maxLenght={500}
             props={{
-              placeholder: 'Enter description for your VA',
+              placeholder:
+                'Describe your Virtual Assistant ability, where you can use it and for what purpose',
+              defaultValue: getValues().description,
+              rows: 3,
               ...register(DESC_ID as keyof FormValues, {
-                required: 'Please add description for your Virtual Assistant.',
+                required: 'This field can’t be empty',
                 maxLength: {
                   value: 500,
-                  message: 'You’ve reached limit of the signs.',
+                  message: 'Limit text description to 500 characters',
                 },
               }),
             }}

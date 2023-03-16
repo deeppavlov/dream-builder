@@ -3,14 +3,14 @@ import classNames from 'classnames/bind'
 import s from './ToggleButton.module.scss'
 
 interface ToggleProps {
-  handleToggle: () => void
+  handleToggle: (e: React.MouseEvent) => void
   disabled?: boolean
 }
 
 export const ToggleButton: FC<ToggleProps> = ({ handleToggle, disabled }) => {
   const clickHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
-    handleToggle()
+    handleToggle(e)
   }
   const cx = classNames.bind(s)
   return (

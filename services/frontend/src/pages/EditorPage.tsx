@@ -1,8 +1,13 @@
+import { useEffect, useState } from 'react'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
+import { useLocation } from 'react-router-dom'
+import { useQuery } from 'react-query'
 import { useAuth } from '../context/AuthProvider'
-import { getComponentsFromAssistantDists } from '../services/getComponentsFromAssistantDists'
+import { getComponents } from '../services/getComponents'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { AddButton } from '../ui/AddButton/AddButton'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { Sidebar } from '../components/Sidebar/Sidebar'
@@ -10,30 +15,23 @@ import { BotTab } from '../components/Sidebar/components/BotTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { SkillCard } from '../components/SkillCard/SkillCard'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useQuery } from 'react-query'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
-import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
-import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import { dateToUTC } from '../utils/dateToUTC'
 import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { useEffect, useState } from 'react'
-import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { Table } from '../ui/Table/Table'
-import { AddButton } from '../ui/AddButton/AddButton'
-import Hint from '../components/Hint/Hint'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
-import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { usePreview } from '../context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
+import { Loader } from '../components/Loader/Loader'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { SkillList } from '../components/SkillList/SkillList'
+import { Toaster } from 'react-hot-toast'
+import { SkillsListModal } from '../components/SkillsListModal/SkillsListModal'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -53,45 +51,46 @@ export const EditorPage = () => {
   }
   const displayName = makeDisplayName(nameFromURL)
 
-  const { setIsPreview } = usePreview()
+  const { isPreview, setIsPreview } = usePreview()
+
   useEffect(() => {
     setIsPreview(state?.preview == undefined ? true : state?.preview)
   }, [state])
   //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
+  const viewHandler = () => {
+    setListView(listView => !listView)
+  }
 
   const {
-    isLoading: isDistsComponentsLoading,
-    error: distsComponentsError,
-    data: distsComponentsData,
+    isLoading: isComponentsLoading,
+    error: componentsError,
+    data: components,
   } = useQuery(
-    ['distsComponents', state?.distName],
-    () => getComponentsFromAssistantDists(state?.distName! || nameFromURL),
+    ['components', state?.distName],
+    () => getComponents(state?.distName! || nameFromURL),
     {
       enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
     }
   )
 
-  const annotators = distsComponentsData?.annotators
-  const candidateAnnotators = distsComponentsData?.candidate_annotators
-  const skills = distsComponentsData?.skills
-  const skillSelectors = distsComponentsData?.skill_selectors
-  const responseSelectors = distsComponentsData?.response_selectors
-  const responseAnnotators = distsComponentsData?.response_annotators
+  const annotators = components?.annotators
+  const candidateAnnotators = components?.candidate_annotators
+  const skills = components?.skills
+  const skillSelectors = components?.skill_selectors
+  const responseSelectors = components?.response_selectors
+  const responseAnnotators = components?.response_annotators
 
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
   return (
     <>
       <Tabs>
         <Sidebar>
           <TabList>
-            <Container
-              width='100%'
-              alignItems='center'
-              flexDirection='column'
-              gap='12px'
-              overflow='hidden'>
+            <Container layoutForTabs>
+              <BaseToolTip
+                id='sidebarSkillTab'
+                content='Skills'
+                place='right'
+              />
               <Tab>
                 <SkillsTab />
               </Tab>
@@ -100,7 +99,6 @@ export const EditorPage = () => {
               </Tab>
             </Container>
           </TabList>
-          <Hint />
         </Sidebar>
         <TabPanel>
           <Topbar
@@ -112,76 +110,34 @@ export const EditorPage = () => {
             name={state?.distName || nameFromURL}
           />
           <Main sidebar editor>
-            {!listView ? (
-              <Wrapper skills>
-                <Container
-                  display='grid'
-                  gridTemplateColumns='repeat(auto-fill, minmax(280px, 1fr))'
-                  height='auto'>
-                  {isDistsComponentsLoading && 'Loading...'}
-                  {/* <AddButton /> */}
-                  {skills?.map((skill: any, i: number) => {
-                    const dateCreated = dateToUTC(skill?.date_created)
-                    return (
-                      <SkillCard
-                        key={i}
-                        type='your'
-                        big
-                        author={auth?.user?.name!}
-                        authorImg={auth?.user?.picture!}
-                        name={skill?.display_name}
-                        dateCreated={dateCreated}
-                        desc={skill?.description}
-                        version={skill?.version}
-                        ram={skill?.ram_usage}
-                        gpu={skill?.gpu_usage}
-                        executionTime={skill?.execution_time}
-                        componentType={skill?.component_type}
-                        modelType={skill?.model_type}
-                        botName={skill?.author}
+            <Wrapper title='Skills' skills>
+              <Loader isLoading={isComponentsLoading} />
+              <ErrorHandler error={componentsError} />
+              {listView && (
+                <Table
+                  second='Type'
+                  addButton={
+                    !isPreview && (
+                      <AddButton
+                        forTable
+                        forSkills
+                        disabled={!auth?.user && isPreview}
+                        text='Add Skill'
                       />
                     )
-                  })}
+                  }>
+                  <SkillList skills={skills} view='table' type='your' />
+                </Table>
+              )}
+              {!listView && (
+                <Container gridForCards heightAuto>
+                  {!isPreview && (
+                    <AddButton disabled={isPreview} forGrid forSkills />
+                  )}
+                  <SkillList skills={skills} view='cards' type='your' forGrid />
                 </Container>
-              </Wrapper>
-            ) : (
-              <Wrapper fullHeight>
-                <Container>
-                  {isDistsComponentsLoading && 'Loading...'}
-                  <Table
-                    second='Type'
-                    addButton={
-                      <AddButton
-                        listView={listView}
-                        disabled={auth?.user === null}
-                        text='Create From Scratch'
-                      />
-                    }>
-                    {skills?.map((skill: any, i: number) => {
-                      const dateCreated = dateToUTC(skill?.date_created)
-                      return (
-                        <SkillListItem
-                          key={i}
-                          author={auth?.user?.name!}
-                          authorImg={auth?.user?.picture!}
-                          name={skill?.display_name}
-                          dateCreated={dateCreated}
-                          desc={skill?.description}
-                          version={skill?.version}
-                          ram={skill?.ram_usage}
-                          gpu={skill?.gpu_usage}
-                          executionTime={skill?.execution_time}
-                          componentType={skill?.component_type}
-                          modelType={skill?.model_type}
-                          botName={skill?.author}
-                          skillType={'script'}
-                        />
-                      )
-                    })}
-                  </Table>
-                </Container>
-              </Wrapper>
-            )}
+              )}
+            </Wrapper>
           </Main>
         </TabPanel>
         <TabPanel>
@@ -192,7 +148,7 @@ export const EditorPage = () => {
             title={state?.displayName || displayName}
           />
           <Main sidebar editor draggable>
-            {isDistsComponentsLoading && 'Loading...'}
+            <Loader isLoading={isComponentsLoading} />
             <Annotators annotators={annotators} />
             <SkillSelector skillSelectors={skillSelectors} />
             <Skills skills={skills} />
@@ -202,14 +158,10 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
+      <Toaster />
+      <SkillsListModal />
 
-      {/* Sidepanels */}
-      {/* <SkillSidePanel position={{ top: 64 }} />
-      <IntentCatcherSidePanel position={{ top: 64 }} />
-      <IntentResponderSidePanel position={{ top: 64 }} />
-    <AnnotatorSidePanel position={{ top: 64 }} /> */}
-      {/* Modals */}
-      <BaseSidePanel position={{ top: 64 }} />
+      <BaseSidePanel />
       <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />

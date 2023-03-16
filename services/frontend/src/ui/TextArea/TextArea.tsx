@@ -8,7 +8,8 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
-  props?: React.InputHTMLAttributes<HTMLTextAreaElement>
+  maxLenght?: number | string
+  props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
 }
@@ -17,16 +18,21 @@ export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
   error,
+  maxLenght,
   props,
   withCounter,
   withEnterButton,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isChanged, setIsChanged] = useState(false) // for displaying Enter button
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(props?.defaultValue || '')
   const textAreaId = props?.id ?? useId()
-  const maxLenght = 500
   let cx = classNames.bind(s)
+
+  const handleEnterBtnClick = () => {
+    setIsActive(false)
+    setIsChanged(false)
+  }
 
   /** On Enter press set focused state for textarea */
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -47,14 +53,6 @@ export const TextArea: FC<TextAreaProps> = ({
       handleEnterBtnClick()
       return
     }
-
-    setIsActive(true)
-    setIsChanged(true)
-  }
-
-  const handleEnterBtnClick = () => {
-    setIsActive(false)
-    setIsChanged(false)
   }
 
   return (
@@ -67,7 +65,7 @@ export const TextArea: FC<TextAreaProps> = ({
           {label && <span className={s.title}>{label}</span>}
           {withCounter && (
             <span className={s.counter}>
-              {value?.length ?? 0}/{maxLenght}
+              {value?.toString()?.length ?? 0}/{maxLenght}
             </span>
           )}
         </label>
@@ -75,10 +73,10 @@ export const TextArea: FC<TextAreaProps> = ({
       <div className={cx('container', 'resizer-container')}>
         <TextAreaLogo className={s.resizer} />
         <textarea
-          {...props}
-          id={textAreaId}
           rows={2}
           cols={20}
+          {...props}
+          id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -98,7 +96,7 @@ export const TextArea: FC<TextAreaProps> = ({
       </div>
 
       {(about || error) && (
-        <label htmlFor={textAreaId} className={s.label}>
+        <label htmlFor={textAreaId} className={cx('label', 'about')}>
           {error ? error.message : about}
         </label>
       )}

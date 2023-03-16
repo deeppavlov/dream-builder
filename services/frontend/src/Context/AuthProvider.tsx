@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { authApi } from '../services/axiosConfig'
+import { getGoogleOAuthURL } from '../services/getGoogleOAuthUrl'
 import { ITokens, UserContext, UserInterface } from '../types/types'
 
 export const deleteLocalStorageUser = () => localStorage.removeItem('user')
@@ -39,9 +40,7 @@ export const useAuth = () => useContext(AuthContext)
 /**
  * Exchange Google `auth_code` for tokens
  */
-export const login = async (code: string) => {
-  localStorage.clear() // Clear all client states
-
+export const exchangeAuthCode = async (code: string) => {
   let axiosConfig = {
     mode: 'no-cors',
     headers: {
@@ -49,20 +48,31 @@ export const login = async (code: string) => {
     },
   }
 
+  localStorage.clear()
+
   await authApi
     .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
     .then(({ data }) => {
       setLocalStorageUser(data)
-      const clearUser = data
-      delete clearUser.token
-      delete clearUser.refresh_token
     })
     .catch(e => {
-      // deleteLocalStorageUser()
-      console.log(`ExchangeAuthCode failed:`, e)
+      console.log('ExchangeAuthCode failed!')
     })
 
   location.href = getClearUrl(location.origin)
+}
+
+export const login = () => {
+  /**
+   * TODO: Save URL from that user signed in,
+   * for user redirect to that page after.
+   *
+   * Notes: after login in to the app, user
+   * always will redirected to /code route
+   * for parsing auth_code
+   */
+
+  location.href = getGoogleOAuthURL()
 }
 
 export const logout = async () => {
@@ -80,8 +90,7 @@ export const logout = async () => {
     console.log('Logout failed!', error)
   }
 
-  // deleteLocalStorageUser()
-  localStorage.clear() // Clear all client states
+  localStorage.clear()
   location.href = getClearUrl(location.origin)
 }
 
@@ -89,10 +98,11 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
 
   useEffect(() => {
-    const user = getLocalStorageUser()
+    const localStorageUser = getLocalStorageUser()
 
-    if (!user) return
-    setUser(user)
+    if (user === null && localStorageUser !== null) {
+      setUser(localStorageUser)
+    }
   }, [])
 
   const userContextValue = useMemo(

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
 import { useAuth } from '../context/AuthProvider'
@@ -25,7 +25,7 @@ import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
-import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string
@@ -175,7 +175,7 @@ export const SkillsPage = () => {
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
-                      listView={listView}
+                      forTable
                       addBot={addBot}
                       disabled={auth?.user === null}
                     />
@@ -237,7 +237,7 @@ export const SkillsPage = () => {
               <Table second='Type'>
                 <AddButton
                   addBot={addBot}
-                  listView={listView}
+                  forTable
                   disabled={auth?.user === null}
                 />
                 {skills}

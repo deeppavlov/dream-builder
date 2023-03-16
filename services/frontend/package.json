@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
+    "dev": "vite --host --mode development",
+    "msw": "vite --host --mode msw",
+    "prod": "vite --host --mode production",
+    "build": "vite build --moe production",
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
@@ -27,7 +29,7 @@
     "react-query": "^3.39.2",
     "react-router-dom": "^6.4.2",
     "react-tabs": "^5.1.0",
-    "react-tooltip": "^4.4.3",
+    "react-tooltip": "^5.10.0",
     "sort-by": "^1.2.0",
     "url": "^0.11.0",
     "vite-plugin-svgr": "^2.2.2"

@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import BaseLink from '../../components/BaseLink/BaseLink'
-import BaseSidePanel, {
+import {
+  BaseSidePanel,
   BASE_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
@@ -47,8 +48,10 @@ import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/Dele
 import { useForm } from 'react-hook-form'
 import {
   BotInfoInterface,
-  SkillInfoInterface,
+  ISkill,
+  Component,
   TotalResourcesInterface,
+  IStackElement,
 } from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
@@ -119,37 +122,45 @@ const intentItemsMock: IntentListItemInterface[] = [
   },
 ]
 
-const mockSkill: SkillInfoInterface = {
+const mockSkill: ISkill = {
   name: 'name_of_the_skill_1',
   display_name: 'Name of The Skill 1',
-  skillType: 'fallbacks',
-  author: 'Name of The Company',
-  desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
-  dateCreated: dateToUTC(new Date()),
-  version: '0.01',
-  ram: '0.0 GB',
-  gpu: '0.0 GB',
+  component_type: 'generative',
+  model_type: 'nn_based',
+  is_customizable: true,
+  author: 'DeepPavlov',
+  description:
+    'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about',
+  date_created: new Date(),
+  ram_usage: '0.0 GB',
+  gpu_usage: '0.0 GB',
+  execution_time: '0.0 ms',
 }
 
-const mockAnnotator = {
-  name: 'Intent Catcher',
+const mockAnnotator: IStackElement = {
+  name: 'intent_catcher',
+  display_name: 'Intent Catcher',
   author: 'Deep Pavlov',
-  authorImg: DeepPavlovLogo,
-  type: 'Dictionary — &Pattern-based',
-  desc: 'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.',
+  model_type: 'Dictionary — &Pattern-based',
+  component_type: null,
+  is_customizable: true,
+  description:
+    'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.',
+  date_created: new Date(),
+  ram_usage: '0.0 GB',
+  gpu_usage: '0.0 GB',
+  execution_time: '0.0 ms',
 }
 
 const mockBot: BotInfoInterface = {
-  name: 'Name of the bot',
-  routingName: 'dream_russian',
+  display_name: 'Name of the bot',
+  name: 'dream_russian',
   author: 'Name of the company',
-  authorImg: DeepPavlovLogo,
-  dateCreated: dateToUTC(new Date()),
-  desc: 'Some information about this bot writing in 2 lines',
-  version: '0.0.1',
-  ram: '0.0 GB',
-  gpu: '0.0 GB',
-  space: '0.0 GB',
+  date_created: new Date().toString(),
+  description: 'Some information about this bot writing in 2 lines',
+  ram_usage: '0.0 GB',
+  gpu_usage: '0.0 GB',
+  disk_usage: '0.0 GB',
 }
 
 const mockTotalRes: TotalResourcesInterface = {
@@ -162,7 +173,7 @@ const mockTotalRes: TotalResourcesInterface = {
 }
 
 const mockResponseSelector: SelectorSettings = {
-  name: 'Tag-& Evaluation-based Selector',
+  name: 'Tag-& Evaluation-based Response Selector',
   settings: [
     {
       name: 'HIGH_PRIORITY_INTENTS',
@@ -189,7 +200,7 @@ const mockResponseSelector: SelectorSettings = {
   ],
 }
 
-const mockRuleBasesSkillSelector: SelectorSettings = {
+export const mockRuleBasesSkillSelector: SelectorSettings = {
   name: 'Rule-based Skill Selector',
   settings: [
     {
@@ -647,23 +658,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: (
-                    <SkillSidePanel
-                      skill={{
-                        name: 'Name of The Skill',
-                        author: 'Deep Pavlov',
-                        authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
-                        botName: 'Name of The Bot',
-                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
-                        dateCreated: dateToUTC(new Date()),
-                        version: '0.01',
-                        ram: '0.0 GB',
-                        gpu: '0.0 GB',
-                        executionTime: '0.0 ms',
-                      }}
-                    />
-                  ),
+                  children: <SkillSidePanel skill={mockSkill} />,
                 })
               },
             }}>
@@ -680,20 +675,7 @@ export const TestPage = () => {
                   children: (
                     <GenerativeSkillEditor
                       activeTab='Editor'
-                      skill={{
-                        name: 'Name of The Skill',
-                        author: 'Deep Pavlov',
-                        authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
-                        botName: 'Name of The Bot',
-                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
-                        dateCreated: dateToUTC(new Date()),
-                        version: '0.01',
-                        ram: '0.0 GB',
-                        gpu: '0.0 GB',
-                        executionTime: '0.0 ms',
-                        model: 'GPT-3',
-                      }}
+                      skill={mockSkill}
                     />
                   ),
                 })
@@ -709,23 +691,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: (
-                    <IntentResponderSidePanel
-                      skill={{
-                        name: 'Name of The Skill',
-                        author: 'Deep Pavlov',
-                        authorImg: DeepPavlovLogo,
-                        skillType: 'fallbacks',
-                        botName: 'Name of The Bot',
-                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
-                        dateCreated: dateToUTC(new Date()),
-                        version: '0.01',
-                        ram: '0.0 GB',
-                        gpu: '0.0 GB',
-                        executionTime: '0.0 ms',
-                      }}
-                    />
-                  ),
+                  children: <IntentResponderSidePanel skill={mockSkill} />,
                 })
               },
             }}>
@@ -739,23 +705,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: (
-                    <FAQSidePanel
-                      skill={{
-                        name: 'Name of The Skill',
-                        author: 'Deep Pavlov',
-                        authorImg: DeepPavlovLogo,
-                        skillType: 'q_a',
-                        botName: 'Name of The Bot',
-                        desc: 'Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo',
-                        dateCreated: dateToUTC(new Date()),
-                        version: '0.01',
-                        ram: '0.0 GB',
-                        gpu: '0.0 GB',
-                        executionTime: '0.0 ms',
-                      }}
-                    />
-                  ),
+                  children: <FAQSidePanel skill={mockSkill} />,
                 })
               },
             }}>
@@ -805,7 +755,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
-                  children: <BotInfoSidePanel bot={mockBot} />,
+                  children: <BotInfoSidePanel bot={mockBot} disabled={false} />,
                 })
               },
             }}>
@@ -846,7 +796,11 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockResponseSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Response Selector'
+                      isDisabledEditor
+                      {...mockResponseSelector}
+                    />
                   ),
                 })
               },
@@ -860,6 +814,8 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Rule-based Skill Selector'
+                      isDisabledEditor
                       {...mockRuleBasesSkillSelector}
                     />
                   ),
@@ -874,7 +830,10 @@ export const TestPage = () => {
               onClick: () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
-                    <SelectorSettingsSidePanel {...mockSingleSkillSelector} />
+                    <SelectorSettingsSidePanel
+                      key='Single Skill Selector'
+                      {...mockSingleSkillSelector}
+                    />
                   ),
                 })
               },
@@ -888,6 +847,7 @@ export const TestPage = () => {
                 trigger(BASE_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
+                      key='Multiple Skill Selector'
                       {...mockMultipleSkillSelector}
                       withSelectAll
                     />
@@ -1175,68 +1135,22 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>BotCard</span>
         <div className={s.testPage__component}>
           <span>public</span>
-          <BotCard
-            type='public'
-            name='Name of the bot'
-            routingName='#'
-            author='Name of the company'
-            authorImg={CompanyLogo}
-            dateCreated={dateToUTC(new Date())}
-            desc='Some information about this bot writing in 2 lines'
-            version='0.0.1'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            space='0.0 GB'
-          />
+          <BotCard type='public' bot={mockBot} disabled={false} />
         </div>
         <div className={s.testPage__component}>
           <span>your</span>
-          <BotCard
-            type='your'
-            routingName='#'
-            name='Name of the bot'
-            author='Name of the company'
-            authorImg={CompanyLogo}
-            dateCreated={dateToUTC(new Date())}
-            desc='Some information about this bot writing in 2 lines'
-            version='0.0.1'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            space='0.0 GB'
-          />
+          <BotCard type='your' bot={mockBot} disabled={false} />
         </div>
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>SkillCard</span>
         <div className={s.testPage__component}>
           <span>public</span>
-          <SkillCard
-            type='public'
-            name='Name of The Skill1'
-            skillType='fallbacks'
-            botName='Name of The Bot'
-            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
-            dateCreated={dateToUTC(new Date())}
-            version='0.01'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            executionTime='0.0 ms'
-          />
+          <SkillCard type='public' skill={mockSkill} />
         </div>
         <div className={s.testPage__component}>
           <span>your</span>
-          <SkillCard
-            type='your'
-            name='Name of The Skill2'
-            skillType='fallbacks'
-            botName='Name of The Bot'
-            desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
-            dateCreated={dateToUTC(new Date())}
-            version='0.01'
-            ram='0.0 GB'
-            gpu='0.0 GB'
-            executionTime='0.0 ms'
-          />
+          <SkillCard type='your' skill={mockSkill} />
         </div>
       </div>
 

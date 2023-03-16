@@ -1,311 +1,100 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
+import { Toaster } from 'react-hot-toast'
 import { RoutesList } from '../router/RoutesList'
 import { useAuth } from '../context/AuthProvider'
-import { getAssistantDists } from '../services/getAssistantDists'
-import { dateToUTC } from '../utils/dateToUTC'
-import { timeToUTC } from '../utils/timeToUTC'
+import { getPublicDists } from '../services/getPublicDists'
+import { getPrivateDists } from '../services/getPrivateDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { BotCard } from '../components/BotCard/BotCard'
-import { BotListItem } from '../components/BotListItem/BotListItem'
+import { Slider } from '../ui/Slider/Slider'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Slider } from '../ui/Slider/Slider'
-import { trigger } from '../utils/events'
-import BotInfoSidePanel from '../components/BotInfoSidePanel/BotInfoSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { dist_list } from '../types/types'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
-import { getUsersAssistantDists } from '../services/getUsersAssistantDists'
-import BaseSidePanel from '../components/BaseSidePanel/BaseSidePanel'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { Modal } from '../components/Modal/Modal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Toaster } from 'react-hot-toast'
+import { Loader } from '../components/Loader/Loader'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { DistList } from '../components/DistList/DistList'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 
 export const BotsPage = () => {
   const auth = useAuth()
   const [listView, setListView] = useState<boolean>(false)
-  const topbarRef = useRef<HTMLDivElement | undefined>()
-  const [topbarHeight, setTopbarHeight] = useState(0)
 
   const viewHandler = () => {
     setListView(listView => !listView)
   }
-  const addBot = () => {
-    trigger('AssistantModal', { action: 'create' })
-  }
 
   const {
-    isLoading: isAssistantsLoading,
-    error: assistantsError,
-    data: assistantsData,
-  } = useQuery('assistant_dists', getAssistantDists)
-
-  useEffect(() => {
-    if (!isAssistantsLoading) {
-      setTopbarHeight(topbarRef.current?.getBoundingClientRect().height ?? 0)
-    }
-  }, [isAssistantsLoading]) // Await when Topbar will mounted for calc his height in DOM
-
-  assistantsError && <>{'An error has occurred:' + { assistantsError }}</>
+    data: publicDists,
+    error: publicDistsError,
+    isLoading: isPublicDistsLoading,
+  } = useQuery('publicDists', getPublicDists)
 
   const {
-    data: usersDistData,
-    isLoading: isUsersDistDataLoading,
-    error: usersDistDataError,
-  } = useQuery('usersAssistantDists', getUsersAssistantDists, {
-    // The query will not execute when user is not authorized
+    data: privateDists,
+    error: privateDistsError,
+    isLoading: isPrivateDistsLoading,
+  } = useQuery('privateDists', getPrivateDists, {
     enabled: !!auth?.user,
   })
 
   return (
     <>
-      <Topbar innerRef={topbarRef} viewHandler={viewHandler} type='main' />
+      <Topbar viewHandler={viewHandler} type='main' />
       <Main>
-        {!listView ? (
-          <>
-            <Wrapper
-              title='Public Virtual Assistants & Chatbots'
-              amount={assistantsData?.length}
-              linkTo={RoutesList.botsAll}
-              showAll>
-              <Container>
-                <Slider>
-                  {isAssistantsLoading && <>{'Loading...'}</>}
-                  {assistantsData?.map((dist: dist_list, i: number) => {
-                    const {
-                      display_name,
-                      name,
-                      author,
-                      description,
-                      version,
-                      ram_usage,
-                      gpu_usage,
-                      disk_usage,
-                      date_created,
-                    } = dist
-                    const dateCreated = dateToUTC(new Date(date_created))
-
-                    return (
-                      <BotCard
-                        routingName={name}
-                        key={i}
-                        type='public'
-                        name={display_name}
-                        author={author}
-                        authorImg={DeepPavlovLogo}
-                        dateCreated={dateCreated}
-                        desc={description}
-                        version={version}
-                        ram={ram_usage}
-                        gpu={gpu_usage}
-                        space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  })}
-                </Slider>
-              </Container>
-            </Wrapper>
-            <Wrapper
-              primary
-              title='Your Virtual Assistants & Chatbots'
-              amount={auth?.user && usersDistData?.length}
-              showAll
-              linkTo={RoutesList.yourBots}>
-              <Container overflow='hidden'>
-                <Container
-                  position='sticky'
-                  left='0'
-                  top='0'
-                  width='280px'
-                  minWidth='280px'
-                  overflow='hidden'
-                  padding='0'
-                  paddingBottom='22px'>
-                  <div data-tip data-for='add-btn-new-bot'>
-                    <AddButton
-                      listView={listView}
-                      addBot={addBot}
-                      disabled={auth?.user === null}
-                    />
-                  </div>
-                </Container>
-                <Container paddingBottom='22px'>
-                  {isUsersDistDataLoading && 'Loading...'}
-                  {usersDistDataError &&
-                    'luck is not on your side! try to refresh the page' +
-                      usersDistDataError}
-                  {usersDistData?.map((dist: dist_list, i: number) => {
-                    const {
-                      display_name,
-                      name,
-                      author,
-                      description,
-                      version,
-                      ram_usage,
-                      gpu_usage,
-                      disk_usage,
-                      date_created,
-                    } = dist
-                    const dateCreated = dateToUTC(date_created)
-                    return (
-                      <BotCard
-                        routingName={name}
-                        key={i}
-                        type='your'
-                        size='small'
-                        name={display_name}
-                        author={author}
-                        authorImg={DeepPavlovLogo}
-                        dateCreated={dateCreated}
-                        desc={description}
-                        version={version}
-                        ram={ram_usage}
-                        gpu={gpu_usage}
-                        space={disk_usage}
-                        disabledMsg={
-                          auth?.user
-                            ? undefined
-                            : 'You must be signed in to clone the bot'
-                        }
-                      />
-                    )
-                  })}
-                </Container>
-              </Container>
-            </Wrapper>
-          </>
-        ) : (
-          <>
-            <Wrapper
-              title='Public Virtual Assistants & Chatbots'
-              showAll
-              amount={assistantsData?.length}
-              linkTo={RoutesList.botsAll}
-              fitScreen>
-              <Table>
-                {assistantsData?.map((dist: dist_list, i: number) => {
-                  const {
-                    name,
-                    display_name,
-                    author,
-                    description,
-                    version,
-                    ram_usage,
-                    gpu_usage,
-                    disk_usage,
-                    date_created,
-                  } = dist
-                  const dateCreated = dateToUTC(new Date(date_created))
-                  const time = timeToUTC(new Date(date_created))
-
-                  return (
-                    <BotListItem
-                      key={i}
-                      routingName={name}
-                      name={display_name}
-                      author={author}
-                      authorImg={DeepPavlovLogo}
-                      dateCreated={dateCreated}
-                      time={time}
-                      desc={description}
-                      version={version}
-                      ram={ram_usage}
-                      gpu={gpu_usage}
-                      space={disk_usage}
-                      disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
-                    />
-                  )
-                })}
-              </Table>
-            </Wrapper>
-            <Wrapper
-              title='Your Virtual Assistants & Chatbots'
-              primary
-              showAll
-              amount={auth?.user && usersDistData?.length}
-              linkTo={RoutesList.yourBots}>
-              <Table
-                addButton={
-                  <AddButton
-                    addBot={addBot}
-                    listView={listView}
-                    disabled={auth?.user === null}
-                  />
-                }>
-                {usersDistData?.map((dist: dist_list, i: number) => {
-                  const {
-                    name,
-                    display_name,
-                    author,
-                    description,
-                    version,
-                    ram_usage,
-                    gpu_usage,
-                    disk_usage,
-                    date_created,
-                  } = dist
-                  const dateCreated = dateToUTC(date_created)
-                  const time = timeToUTC(date_created)
-                  return (
-                    <BotListItem
-                      type='your'
-                      key={i}
-                      routingName={name}
-                      name={display_name}
-                      author={author}
-                      authorImg={DeepPavlovLogo}
-                      dateCreated={dateCreated}
-                      time={time}
-                      desc={description}
-                      version={version}
-                      ram={ram_usage}
-                      gpu={gpu_usage}
-                      space={disk_usage}
-                      disabledMsg={
-                        auth?.user
-                          ? undefined
-                          : 'You must be signed in to clone the bot'
-                      }
-                    />
-                  )
-                })}
-              </Table>
-            </Wrapper>
-          </>
-        )}
-        {auth?.user === null && (
-          <ReactTooltip
-            place='bottom'
-            effect='solid'
-            className='tooltips'
-            arrowColor='#8d96b5'
-            delayShow={1000}
-            id='add-btn-new-bot'>
-            You must be signed in to create your own bot
-          </ReactTooltip>
-        )}
-        <BaseSidePanel position={{ top: topbarHeight }} />
+        <Wrapper
+          title='Public Virtual Assistants & Chatbots'
+          showAll
+          amount={publicDists?.length}
+          linkTo={RoutesList.botsAll}
+          fitScreen={listView}>
+          <Loader isLoading={isPublicDistsLoading} />
+          <ErrorHandler error={publicDistsError} />
+          {listView ? (
+            <Table>
+              <DistList view='table' dists={publicDists} type='public' />
+            </Table>
+          ) : (
+            <Slider>
+              <DistList view='cards' dists={publicDists} type='public' />
+            </Slider>
+          )}
+        </Wrapper>
+        <Wrapper
+          primary
+          showAll
+          title='Your Virtual Assistants & Chatbots'
+          amount={auth?.user && privateDists?.length}
+          linkTo={RoutesList.yourBots}>
+          {listView ? (
+            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
+              <DistList view='table' dists={privateDists} type='your' />
+            </Table>
+          ) : (
+            <Container overflowForAddButton>
+              <AddButton disabled={!auth?.user} />
+              <Slider>
+                <Loader isLoading={isPrivateDistsLoading} />
+                <ErrorHandler error={privateDistsError} />
+                <DistList view='cards' dists={privateDists} type='your' />
+              </Slider>
+            </Container>
+          )}
+        </Wrapper>
+        <BaseSidePanel />
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <SignInModal />
       </Main>
       <Toaster />
     </>

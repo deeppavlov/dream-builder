@@ -1,8 +1,8 @@
-import { getGoogleOAuthURL } from '../../services/getGoogleOAuthUrl'
+import { login } from '../../context/AuthProvider'
 import Button from '../../ui/Button/Button'
 
 const GoogleSignInButton = () => {
-  const handleBtnClick = () => (location.href = getGoogleOAuthURL())
+  const handleBtnClick = () => login()
 
   return (
     <Button theme='secondary' small props={{ onClick: handleBtnClick }}>

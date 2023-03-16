@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { trigger } from '../../utils/events'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
 import IntentListItem, {
   IntentListItemInterface,
@@ -11,9 +10,9 @@ import IntentList from '../IntentList/IntentList'
 import BaseLink from '../BaseLink/BaseLink'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
-import s from './IntentCatcherSidePanel.module.scss'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
-import { IAnnotator } from '../../types/types'
+import { Annotator } from '../../types/types'
+import s from './IntentCatcherSidePanel.module.scss'
 
 const intentsMock: IntentListItemInterface[] = [
   {
@@ -121,7 +120,7 @@ const intentsMock: IntentListItemInterface[] = [
 ]
 
 interface Props {
-  annotator: IAnnotator
+  annotator: Annotator
   disabled?: boolean
   activeTab?: 'Properties' | 'Editor'
 }

@@ -1,22 +1,19 @@
 import { useState } from 'react'
-import classNames from 'classnames/bind'
 import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { ReactComponent as DoneIcon } from '@assets/icons/done.svg'
-import { ReactComponent as LoaderIcon } from '@assets/icons/circle_loader_small.svg'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './AccessTokensBanner.module.scss'
 
-type TTokenState = 'validate' | 'not-valid' | 'validating' | 'valid'
+type TTokenState = 'not-valid' | 'validating' | 'valid'
 
 interface IToken {
   id: string
   name: string
-  state: TTokenState
+  state?: TTokenState
 }
 
 export const AccessTokensBanner = () => {
@@ -28,16 +25,14 @@ export const AccessTokensBanner = () => {
     formState: { errors },
   } = useForm({ mode: 'onSubmit' })
   const [TOKEN_ID, MODEL_ID] = ['token', 'model']
-  const mockServices = ['Open AI', 'GNews API']
+  const mockServices = ['Open AI']
   const mockTokens: IToken[] = [
     { id: '0', name: 'Open AI', state: 'not-valid' },
-    { id: '1', name: 'GNews API', state: 'validate' },
+    { id: '1', name: 'GNews API' },
     { id: '2', name: 'GNews API', state: 'validating' },
     { id: '3', name: 'GNews API', state: 'valid' },
   ]
   const [tokens, setTokens] = useState<IToken[] | null>(mockTokens)
-
-  let cx = classNames.bind(s)
 
   const setTokenState = (id: string, state: TTokenState) => {
     setTokens(prev =>
@@ -70,7 +65,7 @@ export const AccessTokensBanner = () => {
   }
 
   const onSubmit = (data: any) => {
-    tokens?.unshift({ id: nanoid(4), name: data.model, state: 'validate' })
+    tokens?.unshift({ id: nanoid(4), name: data.model })
 
     reset({
       [TOKEN_ID]: '',
@@ -123,29 +118,21 @@ export const AccessTokensBanner = () => {
             <li className={s.token} key={id}>
               <TokenKeyIcon className={s.icon} />
               <div>{name}</div>
-              <div className={cx('state', state)}>
-                {state === 'validate' ? (
-                  <button
-                    className={s.validate}
-                    onClick={() => handleValidateBtnClick(id)}>
-                    {state.replace(/-/g, ' ')}
-                  </button>
-                ) : (
-                  <>
-                    {state === 'not-valid' && <CloseIcon className={s.icon} />}
-                    {state === 'valid' && <DoneIcon className={s.icon} />}
-                    {state === 'validating' && (
-                      <LoaderIcon className={s.icon} />
-                    )}
-                    <span>{state.replace(/-/g, ' ')}</span>
-                  </>
+              <div className={s.right}>
+                {state && (
+                  <SmallTag theme={state}>{state.replace(/-/g, ' ')}</SmallTag>
                 )}
+                <button
+                  className={s.validate}
+                  onClick={() => handleValidateBtnClick(id)}>
+                  Validate
+                </button>
+                <button
+                  className={s.remove}
+                  onClick={() => handleRemoveBtnClick(id)}>
+                  Remove
+                </button>
               </div>
-              <button
-                className={s.remove}
-                onClick={() => handleRemoveBtnClick(id)}>
-                Remove
-              </button>
             </li>
           ))}
         </ul>

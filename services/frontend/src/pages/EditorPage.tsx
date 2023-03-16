@@ -15,14 +15,12 @@ import { BotTab } from '../components/Sidebar/components/BotTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
-import { SkillCard } from '../components/SkillCard/SkillCard'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
 import { Annotators } from '../components/Annotators/Annotators'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { Skills } from '../components/Skills/Skills'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { SkillListItem } from '../components/SkillListItem/SkillListItem'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
@@ -31,7 +29,9 @@ import { SignInModal } from '../components/SignInModal/SignInModal'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { ISkill } from '../types/types'
+import { SkillList } from '../components/SkillList/SkillList'
+import { Toaster } from 'react-hot-toast'
+import { SkillsListModal } from '../components/SkillsListModal/SkillsListModal'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -51,7 +51,7 @@ export const EditorPage = () => {
   }
   const displayName = makeDisplayName(nameFromURL)
 
-  const { setIsPreview } = usePreview()
+  const { isPreview, setIsPreview } = usePreview()
 
   useEffect(() => {
     setIsPreview(state?.preview == undefined ? true : state?.preview)
@@ -79,14 +79,6 @@ export const EditorPage = () => {
   const skillSelectors = components?.skill_selectors
   const responseSelectors = components?.response_selectors
   const responseAnnotators = components?.response_annotators
-
-  const skillCardsList = skills?.map((skill: ISkill, i: number) => {
-    return <SkillCard key={i} type='your' big skill={skill} />
-  })
-
-  const skillTablesList = skills?.map((skill: ISkill, i: number) => {
-    return <SkillListItem key={i} skill={skill} />
-  })
 
   return (
     <>
@@ -118,26 +110,32 @@ export const EditorPage = () => {
             name={state?.distName || nameFromURL}
           />
           <Main sidebar editor>
-            <Wrapper skills>
+            <Wrapper title='Skills' skills>
               <Loader isLoading={isComponentsLoading} />
               <ErrorHandler error={componentsError} />
-              {!listView ? (
-                <Container gridForCards heightAuto>
-                  {/* <AddButton /> */}
-                  {skillCardsList}
-                </Container>
-              ) : (
+              {listView && (
                 <Table
                   second='Type'
                   addButton={
-                    <AddButton
-                      listView={listView}
-                      disabled={!auth?.user}
-                      text='Create From Scratch'
-                    />
+                    !isPreview && (
+                      <AddButton
+                        forTable
+                        forSkills
+                        disabled={!auth?.user && isPreview}
+                        text='Add Skill'
+                      />
+                    )
                   }>
-                  {skillTablesList}
+                  <SkillList skills={skills} view='table' type='your' />
                 </Table>
+              )}
+              {!listView && (
+                <Container gridForCards heightAuto>
+                  {!isPreview && (
+                    <AddButton disabled={isPreview} forGrid forSkills />
+                  )}
+                  <SkillList skills={skills} view='cards' type='your' forGrid />
+                </Container>
               )}
             </Wrapper>
           </Main>
@@ -160,6 +158,8 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
+      <Toaster />
+      <SkillsListModal />
 
       <BaseSidePanel />
       <AssistantModal />

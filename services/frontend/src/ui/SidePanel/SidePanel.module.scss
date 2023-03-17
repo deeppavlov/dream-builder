@@ -10,8 +10,11 @@
   }
   .ReactModal__Content:has([data-modal-type='side-panel']) {
     transform: translateX(100%);
-    transition: all 0.3s linear;
     box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+
+    &:has([data-with-transition='true']) {
+      transition: all 0.3s linear;
+    }
   }
 
   .ReactModal__Content--after-open:has([data-modal-type='side-panel']) {

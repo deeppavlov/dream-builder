@@ -32,6 +32,11 @@ import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { SkillList } from '../components/SkillList/SkillList'
 import { Toaster } from 'react-hot-toast'
 import { SkillsListModal } from '../components/SkillsListModal/SkillsListModal'
+import { getDist } from '../services/getDist'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import CopilotDialogSidePanel from '../components/CopilotDialogSidePanel/CopilotDialogSidePanel'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -162,6 +167,7 @@ export const EditorPage = () => {
       <SkillsListModal />
 
       <BaseSidePanel />
+      <CopilotDialogSidePanel />
       <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />

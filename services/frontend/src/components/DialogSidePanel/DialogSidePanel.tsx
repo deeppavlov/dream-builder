@@ -97,7 +97,16 @@ const DialogSidePanel = ({ error, start }: props) => {
   const chatPanel = !isFirstTest && !isError
   return (
     <>
-      <SidePanelHeader>Dialog</SidePanelHeader>
+      <SidePanelHeader>
+        <ul role='tablist'>
+          <li role='tab' key='Current  Skill' aria-selected>
+            Current Skill
+          </li>
+          <li role='tab' key='All Skills'>
+            All Skills
+          </li>
+        </ul>
+      </SidePanelHeader>
       <div
         className={cx(
           'dialogSidePanel',

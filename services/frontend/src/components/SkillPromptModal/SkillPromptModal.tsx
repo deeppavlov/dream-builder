@@ -8,6 +8,8 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
 
 const mockSkillModels = ['ChatGPT', 'GPT-3.5', 'GPT-J 6B', 'BLOOMZ 7B']
 
@@ -37,6 +39,9 @@ const SkillPromptModal = () => {
     setIsOpen(false)
     setAction(null)
     setSkill(null)
+
+    trigger(BASE_SP_EVENT, { isOpen: false, withTransition: false })
+    trigger('CopilotDialogSidePanel', { isOpen: false })
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -46,6 +51,14 @@ const SkillPromptModal = () => {
    */
   const handleEventUpdate = (data: { detail: Props }) => {
     const { skill, action } = data.detail
+
+    trigger(BASE_SP_EVENT, {
+      children: <DialogSidePanel key={skill?.name} start />,
+      withTransition: false,
+      isClosable: false,
+    })
+
+    trigger('CopilotDialogSidePanel', {})
 
     setAction(action ?? 'create')
     setSkill(skill ?? null)
@@ -86,7 +99,11 @@ const SkillPromptModal = () => {
   }, [])
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      handleClose={closeModal}
+      customStyles={{ overlay: { top: 64, right: 368, left: 368 } }}>
       <form
         className={s.skillPromptModal}
         onSubmit={handleSubmit(onFormSubmit)}>

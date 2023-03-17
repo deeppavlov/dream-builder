@@ -1,11 +1,13 @@
 import classNames from 'classnames/bind'
-import React, { FC, useId, useState } from 'react'
+import React, { FC, useEffect, useId, useState } from 'react'
+import { FormState } from 'react-hook-form'
 import Button from '../Button/Button'
 import s from './Input.module.scss'
 
 interface InputProps {
   label?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
+  formState?: FormState<any>
   props?: React.InputHTMLAttributes<HTMLInputElement>
   withEnterButton?: boolean
   big?: boolean
@@ -14,19 +16,22 @@ interface InputProps {
 export const Input: FC<InputProps> = ({
   label,
   error,
+  formState,
   props,
   withEnterButton,
   big,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
-  const [isChanged, setIsChanged] = useState(false) // for display Enter button
+  const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const inputId = props?.id ?? useId()
   let cx = classNames.bind(s)
 
-  /** On Enter press set focused state for input */
-  const handleEnterBtnClick = () => {
-    setIsActive(false)
-    setIsChanged(false)
+  // Hide Enter button everytime, when form submitted successfully
+  const handleFormSubmit = () => {
+    const isSubmitted = formState?.isSubmitted === true
+    const isSubmitSuccessful = formState?.isSubmitSuccessful === true
+
+    setIsEnter(isSubmitted && !isSubmitSuccessful)
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -36,16 +41,13 @@ export const Input: FC<InputProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (props?.onChange) props.onChange(e)
-
-    if (!e.target.value) {
-      handleEnterBtnClick()
-      return
-    }
+    setIsActive(true)
+    setIsEnter(true)
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') handleEnterBtnClick()
-  }
+  useEffect(() => {
+    if (withEnterButton && formState) handleFormSubmit()
+  }, [withEnterButton && formState?.isSubmitSuccessful])
 
   return (
     <div
@@ -63,15 +65,11 @@ export const Input: FC<InputProps> = ({
           id={inputId}
           onBlur={handleBlur}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           className={cx('field', big && 'big')}
         />
-        {withEnterButton && !error && (
-          <div className={cx('submit', isChanged && 'submit-active')}>
-            <Button
-              theme='tertiary'
-              small
-              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
+        {withEnterButton && (
+          <div className={cx('submit', isEnter && 'submit-active')}>
+            <Button theme='tertiary' small props={{ type: 'submit' }}>
               Enter
             </Button>
           </div>

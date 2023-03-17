@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
@@ -16,61 +16,76 @@ interface IToken {
   state?: TTokenState
 }
 
+interface FormValues {
+  tokenValue: string
+  tokenId: string
+}
+
 export const AccessTokensBanner = () => {
-  const {
-    handleSubmit,
-    register,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm({ mode: 'onSubmit' })
-  const [TOKEN_ID, MODEL_ID] = ['token', 'model']
-  const mockServices = ['Open AI']
-  const mockTokens: IToken[] = [
-    { id: '0', name: 'Open AI', state: 'not-valid' },
-    { id: '1', name: 'GNews API' },
-    { id: '2', name: 'GNews API', state: 'validating' },
-    { id: '3', name: 'GNews API', state: 'valid' },
-  ]
-  const [tokens, setTokens] = useState<IToken[] | null>(mockTokens)
+  const { handleSubmit, register, reset, setValue, formState } =
+    useForm<FormValues>({ mode: 'onSubmit' })
+  const mockServices = ['OpenAI']
+  const [tokens, setTokens] = useState<IToken[]>([])
+  const { errors } = formState
+
+  const getUserTokens = () => {
+    const localStorageTokens = localStorage.getItem('API_TOKENS')
+    if (!localStorageTokens) return
+    return JSON.parse(localStorageTokens)
+  }
 
   const setTokenState = (id: string, state: TTokenState) => {
     setTokens(prev =>
-      prev
-        ? prev.map(token => {
-            if (token.id === id) {
-              return { ...token, ...{ state } }
-            }
-            return token
-          })
-        : null
+      prev.map(token => {
+        if (token.id === id) {
+          return { ...token, ...{ state } }
+        }
+        return token
+      })
+    )
+    localStorage.setItem(
+      'API_TOKENS',
+      JSON.stringify(
+        tokens.map(token => {
+          if (token.id === id) {
+            return { ...token, ...{ state } }
+          }
+          return token
+        })
+      )
     )
   }
 
+  // Mock Validating timeout
   const handleValidateBtnClick = (id: string) => {
     setTokenState(id, 'validating')
-
-    // Mock Validating timeout
     setTimeout(() => {
-      const validationState: TTokenState = ['valid', 'not-valid'][
-        Math.floor(Math.random() * 2)
-      ] as TTokenState
-
-      setTokenState(id, validationState)
+      setTokenState(id, 'valid')
     }, 600)
   }
 
   const handleRemoveBtnClick = (id: string) => {
-    setTokens(prev => (prev ? prev.filter(token => token.id !== id) : null))
+    setTokens(prev => prev.filter(token => token.id !== id))
+    localStorage.setItem(
+      'API_TOKENS',
+      JSON.stringify(tokens.filter(token => token.id !== id))
+    )
   }
 
-  const onSubmit = (data: any) => {
-    tokens?.unshift({ id: nanoid(4), name: data.model })
-
-    reset({
-      [TOKEN_ID]: '',
-    })
+  // Mock adding user token
+  const postUserToken = ({ tokenId, tokenValue }: FormValues) => {
+    tokens?.unshift({ id: nanoid(4), name: tokenId })
+    localStorage.setItem('API_TOKENS', JSON.stringify(tokens))
   }
+
+  const onSubmit = (data: FormValues) => {
+    postUserToken(data)
+    reset({ tokenValue: '' })
+  }
+
+  useEffect(() => {
+    setTokens(getUserTokens() || [])
+  }, [])
 
   return (
     <Wrapper>
@@ -95,20 +110,21 @@ export const AccessTokensBanner = () => {
         <Input
           label='Add a new personal access token:'
           withEnterButton
-          error={errors[TOKEN_ID]}
+          formState={formState}
+          error={errors.tokenValue}
           props={{
             placeholder: 'Assistive text',
-            ...register(TOKEN_ID, { required: true }),
+            ...register('tokenValue', { required: true }),
           }}
         />
         <SkillDropboxSearch
           label='Choose service:'
           list={mockServices}
-          error={errors[MODEL_ID]}
-          onSelect={v => setValue(MODEL_ID, v)}
+          error={errors.tokenId}
+          onSelect={v => setValue('tokenId', v)}
           props={{
-            placeholder: 'Choose model',
-            ...register(MODEL_ID, { required: true }),
+            placeholder: 'Choose service',
+            ...register('tokenId', { required: true }),
           }}
         />
       </form>

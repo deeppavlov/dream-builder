@@ -15,6 +15,19 @@ export interface ITokens {
   token: string
 }
 
+export interface IAPIToken {
+  id: number
+  name: string
+  description: string
+  base_url: string
+}
+
+export interface IPostUserToken {
+  user_id: number
+  api_token_id: number
+  token_value: string
+}
+
 export interface IPreviewContext {
   isPreview: boolean
   setIsPreview: (isPreview: boolean) => void

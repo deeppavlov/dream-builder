@@ -4,6 +4,7 @@ $animation-delay: 300ms;
   position: relative;
   min-width: 310px;
   max-width: 310px;
+  height: fit-content;
 
   &.open {
     .search {

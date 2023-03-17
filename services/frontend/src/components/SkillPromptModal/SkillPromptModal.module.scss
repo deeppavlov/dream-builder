@@ -1,15 +1,36 @@
 .skillPromptModal {
   max-width: 957px;
-  max-height: 594px;
   width: 1085px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
   textArea {
-    max-height: 373px;
-    height: 351px;
+    max-height: 329px;
+    height: 329px;
   }
+}
+
+.top {
+  display: flex;
+  column-gap: 24px;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  align-items: flex-end;
+}
+
+.tip {
+  @include b3;
+  color: $text3;
+}
+
+.tip-bold {
+  @include t4;
+  color: $text3;
 }
 
 .btns {
@@ -18,5 +39,8 @@
   justify-content: flex-end;
   width: 100%;
   gap: 24px;
-  margin-top: 8px;
+}
+
+.history {
+  margin-right: auto;
 }

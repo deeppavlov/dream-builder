@@ -79,6 +79,23 @@
       }
     }
 
+    &_secondary-dark {
+      background-color: $primary4;
+      color: $text4;
+
+      &:hover {
+        box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+      }
+
+      &:active {
+        background: #0f004d;
+      }
+
+      > svg path {
+        stroke: $text4;
+      }
+    }
+
     &_tertiary {
       min-height: 28px;
       padding: 11px 8px;
@@ -93,12 +110,28 @@
         background-color: $primary1;
         border-color: $text4;
         color: $text4;
+
+        svg path {
+          stroke: $text4;
+        }
       }
 
       &:active {
         background-color: $primary4;
         border-color: $text4;
         color: $text4;
+
+        svg path {
+          stroke: $text4;
+        }
+      }
+
+      svg {
+        @include icon_size_24;
+
+        path {
+          stroke: $text2;
+        }
       }
 
       &_small {
@@ -125,15 +158,12 @@
             stroke: $text3;
           }
         }
-
-        svg {
-          @include icon_size_24;
-
-          path {
-            stroke: $text1;
-          }
-        }
       }
+    }
+
+    &_tertiary-round {
+      @extend .button_theme_tertiary;
+      border-radius: 8px;
     }
 
     &_ghost {

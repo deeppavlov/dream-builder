@@ -1,8 +1,8 @@
 import { privateApi } from './axiosConfig'
 
-export async function getTokens() {
+export async function getUserId() {
   try {
-    const { data } = await privateApi.get('api_tokens/')
+    const { data } = await privateApi.get('users/self')
     return data
   } catch (e) {
     console.log(e)

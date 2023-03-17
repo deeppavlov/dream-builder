@@ -3,9 +3,15 @@ import { ReactComponent as RightIcon } from '@assets/icons/arrow_left_button.svg
 import classNames from 'classnames/bind'
 import s from './Button.module.scss'
 
-
 interface Props extends React.PropsWithChildren {
-  theme?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'error'
+  theme?:
+    | 'primary'
+    | 'secondary'
+    | 'secondary-dark'
+    | 'tertiary'
+    | 'tertiary-round'
+    | 'ghost'
+    | 'error'
   small?: boolean
   long?: boolean
   withIcon?: boolean
@@ -34,6 +40,7 @@ export const Button = ({
         withIcon && 'button_with-icon',
         clone && 'button_clone'
       )}
+      type='button'
       {...props}>
       {theme === 'tertiary' && <PlusIcon className={s.button__icon} />}
       {theme === 'ghost' && <RightIcon className={s.button__icon} />}

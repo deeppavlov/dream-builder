@@ -6,10 +6,10 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { RoutesList } from '../../router/RoutesList'
+import { usePreview } from '../../context/PreviewProvider'
+import { trigger } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
-import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-import { trigger } from '../../utils/events'
 import s from './GenerativeSkillEditor.module.scss'
 
 const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
@@ -28,7 +28,7 @@ unless that violates the first law.
 3. You shall have own goals based on your interests and strive to
 chieve them unless they violate the first or the seconf laws`
 
-const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
+const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'BLOOM']
 
 interface Props {
   skill: ISkill
@@ -36,52 +36,52 @@ interface Props {
 }
 
 const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
-  const promptMaxLenght = 1500
+  const { isPreview } = usePreview()
+  const [properties, editor] = ['Properties', 'Editor']
+  const tabs = new Map([
+    [properties, { name: properties }],
+    [editor, { name: 'Details', disabled: isPreview }],
+  ])
+  const promptWordsMaxLenght = 1500
+  const promptWordsLenght = skill.prompt?.match(/\S+/g)?.length || 0
   let cx = classNames.bind(s)
 
-  const handleEditBtnClick = () => {
-    // Object merge for mock prompt (need fix)
+  const triggerEditModal = () => {
     trigger('SkillPromptModal', { skill, action: 'edit' })
   }
-  const handleSaveBtnClick = () => {}
 
   return (
-    <SkillSidePanel skill={skill} activeTab={activeTab}>
+    <SkillSidePanel skill={skill} tabs={tabs} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
         <SidePanelName>{skill.display_name}</SidePanelName>
-        <div className={cx('choose-model')}>
-          <span className={cx('label')}>Generative model:</span>
-          <SkillDropboxSearch
-            list={mockSkillModels}
-            activeItem={skill?.model}
-            props={{ placeholder: 'Choose model' }}
-          />
-          <Link to={RoutesList.profile} className={s.link}>
-            Enter your personal access token here
-          </Link>
-        </div>
+        <ul className={s.table}>
+          <li className={s.item}>
+            <span className={cx('table-name')}>Generative model:</span>
+            <span className={s.value}>{skill.model || 'Empty'}</span>
+          </li>
+        </ul>
+        <Link to={RoutesList.profile} className={s.link}>
+          Enter your personal access token here
+        </Link>
         <div className={cx('prompt-block')}>
-          <span className={cx('label')}>Prompt:</span>
+          <div className={cx('prompt-header')}>
+            <span className={cx('label')}>Prompt:</span>
+            <span className={cx('label', 'count')}>
+              {promptWordsLenght}/{promptWordsMaxLenght} words
+            </span>
+          </div>
           <IntentList>
-            <div className={cx('prompt')} onClick={handleEditBtnClick}>
-              {skill?.prompt ?? mockPrompt}
+            <div className={cx('prompt')} onClick={triggerEditModal}>
+              {skill.prompt}
               <button>
                 <EditPencilIcon className={cx('edit-pencil')} />
               </button>
             </div>
           </IntentList>
-          <span className={cx('label', 'count')}>
-            {(skill?.prompt || mockPrompt)?.length || 0}/{promptMaxLenght}
-          </span>
         </div>
-
         <SidePanelButtons>
-          <Button
-            theme='primary'
-            props={{
-              onClick: handleSaveBtnClick,
-            }}>
-            Save
+          <Button theme='primary' props={{ onClick: triggerEditModal }}>
+            Edit
           </Button>
         </SidePanelButtons>
       </div>

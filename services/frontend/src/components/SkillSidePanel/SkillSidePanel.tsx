@@ -5,7 +5,7 @@ import { srcForIcons } from '../../utils/srcForIcons'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { trigger } from '../../utils/events'
 import { ISkill } from '../../types/types'
-import useTabsManager from '../../hooks/useTabsManager'
+import useTabsManager, { TabList } from '../../hooks/useTabsManager'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
 import { usePreview } from '../../context/PreviewProvider'
@@ -18,10 +18,11 @@ import s from './SkillSidePanel.module.scss'
 interface Props {
   skill: ISkill
   activeTab?: 'Properties' | 'Editor'
+  tabs?: TabList
   children?: React.ReactNode // Editor Tab element
 }
 
-const SkillSidePanel: FC<Props> = ({ skill, activeTab, children }) => {
+const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
   const [properties, editor] = ['Properties', 'Editor']
   const isEditor = children !== undefined
   const auth = useAuth()
@@ -30,22 +31,24 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, children }) => {
   const tooltipId = useId()
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: isEditor ? activeTab ?? properties : properties,
-    tabList: new Map(
-      isEditor
-        ? [
-            [properties, { name: properties }],
-            [editor, { name: editor, disabled: isPreview }],
-          ]
-        : [[properties, { name: properties }]]
-    ),
+    tabList:
+      tabs ??
+      new Map(
+        isEditor
+          ? [
+              [properties, { name: properties }],
+              [editor, { name: editor, disabled: isPreview }],
+            ]
+          : [[properties, { name: properties }]]
+      ),
   })
-
-  const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
-
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const nameForModelType = modelTypeMap[skill?.model_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const srcForModelType = srcForIcons(nameForModelType)
+
+  const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+
   return (
     <>
       <SidePanelHeader>
@@ -74,7 +77,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, children }) => {
           </div>
           <ul className={s.table}>
             <li className={s.item}>
-              <span className={s.name}>Original author:</span>
+              <span className={cx('table-name')}>Original author:</span>
               <span className={s.value}>{skill?.author}</span>
             </li>
 

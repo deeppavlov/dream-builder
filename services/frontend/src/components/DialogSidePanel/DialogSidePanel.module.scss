@@ -28,8 +28,13 @@
     background-color: inherit;
     gap: 16px;
     align-items: center;
+    justify-content: space-between;
   }
-
+  .left {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+  }
   &__control {
     display: flex;
     align-items: center;
@@ -86,6 +91,7 @@
     padding: 12px;
     border-radius: 12px 12px 0px 12px;
     width: fit-content;
+    max-width: 256px;
 
     &_bot {
       background: rgba(255, 204, 0, 0.1);
@@ -118,26 +124,5 @@
 .right {
   .container {
     padding: 0px 18px;
-  }
-}
-.start,
-.error {
-  padding: 52px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  button {
-    @include large_btn;
-    @include lnks_n_btns3;
-    @include primary_btn;
-    @include btn_primary_behavior;
-  }
-}
-
-.error {
-  color: #ff3b30;
-  button {
-    background-color: #ff3b30;
   }
 }

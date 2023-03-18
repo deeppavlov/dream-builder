@@ -13,8 +13,8 @@ import Button from '../../ui/Button/Button'
 import { getHistory } from '../../services/getHistory'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
-import s from './DialogSidePanel.module.scss'
 import classNames from 'classnames/bind'
+import s from './DialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -39,7 +39,7 @@ const DialogSidePanel = ({ error, start }: props) => {
   const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
   const isVoiceChat = chatType === VOICE_CHAT_TYPE
-  const { handleSubmit, register, reset } = useForm()
+  const { handleSubmit, register, reset, getFieldState, getValues } = useForm()
   const queryClient = useQueryClient()
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
@@ -52,9 +52,11 @@ const DialogSidePanel = ({ error, start }: props) => {
     })
   }
 
+  const [message, setMessage] = useState('')
   const handleSend = (data: Message) => {
     const id = dialogSession?.id!
     const message = data?.message!
+    setMessage(message)
     send.mutate({ id, message })
     reset()
   }
@@ -85,7 +87,8 @@ const DialogSidePanel = ({ error, start }: props) => {
       return renewDialog()
     },
     onSuccess: data => {
-      setDialogueSession(data)
+      queryClient.invalidateQueries({ queryKey: 'history' }),
+        setDialogueSession(data)
     },
   })
 
@@ -138,7 +141,13 @@ const DialogSidePanel = ({ error, start }: props) => {
                     </span>
                   </div>
                 ))}
-                {/* {isHistoryLoading ? message : history} */}
+                {send?.isLoading && (
+                  <>
+                    <div className={`${s.chat__container}`}>
+                      <span className={`${s.chat__message} `}>{message}</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <div className={s.dialogSidePanel__controls}>
@@ -172,6 +181,7 @@ const DialogSidePanel = ({ error, start }: props) => {
                 placeholder='Type...'
                 {...register('message')}
               />
+              <input type='submit' hidden />
               <div className={s.dialogSidePanel__btns}>
                 <button type='submit'>Send</button>
               </div>

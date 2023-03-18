@@ -1,20 +1,26 @@
-import React, { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DownloadDialogIcon } from '@assets/icons/download_dialog.svg'
+import { ReactComponent as Renew } from '@assets/icons/renew.svg'
+import { trigger } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import { trigger } from '../../utils/events'
+import Button from '../../ui/Button/Button'
+import { getHistory } from '../../services/getHistory'
+import { sendMessage } from '../../services/sendMessage'
+import { renewDialog } from '../../services/renewDialog'
 import s from './DialogSidePanel.module.scss'
+import classNames from 'classnames/bind'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
 
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
-interface ChatMessage {
-  byBot: boolean
-  text: string
-}
+
 interface props {
   error?: boolean
   start?: boolean
@@ -30,9 +36,12 @@ const DialogSidePanel = ({ error, start }: props) => {
   const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
   const isVoiceChat = chatType === VOICE_CHAT_TYPE
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const { handleSubmit, register, reset } = useForm()
+  const queryClient = useQueryClient()
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
+  const handleDownloadBtnClick = () => {}
+  const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   const handleSubmit = (e: React.MouseEvent) => {
     const userMessage = textAreaRef.current?.value
@@ -43,19 +52,55 @@ const DialogSidePanel = ({ error, start }: props) => {
     textAreaRef.current.value = ''
   }
 
-  const handleStartBtnClick = () => setIsFirstTest(false)
+  const handleSend = (data: Message) => {
+    const id = dialogSession?.id!
+    const message = data?.message!
+    send.mutate({ id, message })
+    reset()
+  }
+  const handleRenewClick = () => {
+    renew.mutateAsync().then()
+  }
 
-  const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const [dialogSession, setDialogueSession] =
+    useState<DialogSessionConfig | null>(null)
 
-  const handleDownloadBtnClick = () => {}
+  const {
+    data: history,
+    isLoading: isHistoryLoading,
+    isError: historyError,
+  } = useQuery(['history', dialogSession?.id], () =>
+    getHistory(dialogSession?.id!)
+  )
 
+  const send = useMutation({
+    mutationFn: (variables: { id: number; message: string }) => {
+      return sendMessage(variables?.id, variables?.message)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
+  })
+
+  const renew = useMutation({
+    mutationFn: () => {
+      return renewDialog()
+    },
+    onSuccess: data => {
+      setDialogueSession(data)
+    },
+  })
+
+  const cx = classNames.bind(s)
+  const startPanel = isFirstTest && !isError
+  const chatPanel = !isFirstTest && !isError
   return (
     <>
       <SidePanelHeader>Dialog</SidePanelHeader>
       <div
-        className={`${s.dialogSidePanel} ${
-          isFirstTest && !isError && s.dialogSidePanel_start
-        } ${isError && s.dialogSidePanel_error}`}>
+        className={cx(
+          'dialogSidePanel',
+          startPanel && 'start',
+          isError && 'error'
+        )}>
         {isError && (
           <>
             <span className={s['dialogSidePanel__alert-name']}>Alert!</span>
@@ -65,7 +110,7 @@ const DialogSidePanel = ({ error, start }: props) => {
             <button onClick={handleGoBackBtnClick}>Go back</button>
           </>
         )}
-        {isFirstTest && !isError && (
+        {startPanel && (
           <>
             <span className={s['dialogSidePanel__alert-name']}>
               Run your bot
@@ -77,11 +122,11 @@ const DialogSidePanel = ({ error, start }: props) => {
             <button onClick={handleStartBtnClick}>Run Test</button>
           </>
         )}
-        {!isFirstTest && !isError && (
+        {chatPanel && (
           <>
             <div className={s['dialogSidePanel__chat']}>
               <div className={s.chat}>
-                {chatHistory?.map((m, index) => (
+                {history?.map((block, index) => (
                   <div
                     key={`${m.byBot}${index}`}
                     className={`${s.chat__container} ${

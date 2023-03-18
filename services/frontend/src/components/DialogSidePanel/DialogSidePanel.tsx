@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
@@ -20,10 +20,11 @@ const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
 
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
-
+type ChatPanelType = 'bot' | 'skill'
 interface props {
   error?: boolean
   start?: boolean
+  chatWith: ChatPanelType
 }
 interface DialogSessionConfig {
   id: number
@@ -32,7 +33,7 @@ interface DialogSessionConfig {
   virtual_assistant_id: number
 }
 type Message = { message: string }
-const DialogSidePanel = ({ error, start }: props) => {
+const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [chatHistory, setChatHistory] = useState([])
   const [isError, setIsError] = useState(error ?? false)
@@ -98,14 +99,27 @@ const DialogSidePanel = ({ error, start }: props) => {
   return (
     <>
       <SidePanelHeader>
-        <ul role='tablist'>
-          <li role='tab' key='Current  Skill' aria-selected>
-            Current Skill
-          </li>
-          <li role='tab' key='All Skills'>
-            All Skills
-          </li>
-        </ul>
+        {chatWith == 'skill' && (
+          <>
+            <ul role='tablist'>
+              <li role='tab' key='Current  Skill' aria-selected>
+                Current Skill
+              </li>
+              <li role='tab' key='All Skills'>
+                All Skills
+              </li>
+            </ul>
+          </>
+        )}
+        {chatWith == 'bot' && (
+          <>
+            <ul role='tablist'>
+              <li role='tab' key='Dialog' aria-selected>
+                Dialog
+              </li>
+            </ul>
+          </>
+        )}
       </SidePanelHeader>
       <div
         className={cx(
@@ -136,17 +150,17 @@ const DialogSidePanel = ({ error, start }: props) => {
           <>
             <div className={s['dialogSidePanel__chat']}>
               <div className={s.chat}>
-                {history?.map((block, index) => (
+                {history?.map((block, i: number) => (
                   <div
-                    key={`${block.author == 'bot'}${index}`}
+                    key={`${block?.author == 'bot'}${i}`}
                     className={`${s.chat__container} ${
-                      block.author == 'bot' && s.chat__container_bot
+                      block?.author == 'bot' && s.chat__container_bot
                     }`}>
                     <span
                       className={`${s.chat__message} ${
-                        block.author == 'bot' && s.chat__message_bot
+                        block?.author == 'bot' && s.chat__message_bot
                       }`}>
-                      {block.text}
+                      {block?.text}
                     </span>
                   </div>
                 ))}

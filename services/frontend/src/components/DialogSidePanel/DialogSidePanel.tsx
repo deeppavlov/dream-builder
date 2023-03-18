@@ -4,21 +4,17 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DownloadDialogIcon } from '@assets/icons/download_dialog.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
+import { trigger } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import { trigger } from '../../utils/events'
-import classNames from 'classnames/bind'
 import Button from '../../ui/Button/Button'
-import s from './DialogSidePanel.module.scss'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { getHistory } from '../../services/getHistory'
-import { useForm } from 'react-hook-form'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
-import { Loader } from '../Loader/Loader'
+import s from './DialogSidePanel.module.scss'
+import classNames from 'classnames/bind'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -46,14 +42,6 @@ const DialogSidePanel = ({ error, start }: props) => {
   const { handleSubmit, register, reset } = useForm()
   const queryClient = useQueryClient()
 
-  const {
-    handleSubmit,
-    register,
-    reset,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm()
-
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
   const handleDownloadBtnClick = () => {}
   const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
@@ -64,24 +52,15 @@ const DialogSidePanel = ({ error, start }: props) => {
     })
   }
 
-  const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
-
-  const {
-    data: history,
-    isLoading: isHistoryLoading,
-    isError: historyError,
-  } = useQuery(['history', dialogSession?.id], () =>
-    getHistory(dialogSession?.id!)
-  )
-
   const handleSend = (data: Message) => {
     const id = dialogSession?.id!
     const message = data?.message!
     send.mutate({ id, message })
     reset()
   }
-
-  const queryClient = useQueryClient()
+  const handleRenewClick = () => {
+    renew.mutateAsync().then()
+  }
 
   const [dialogSession, setDialogueSession] =
     useState<DialogSessionConfig | null>(null)
@@ -94,13 +73,13 @@ const DialogSidePanel = ({ error, start }: props) => {
     getHistory(dialogSession?.id!)
   )
 
-  // history && setChatHistory(history)
   const send = useMutation({
     mutationFn: (variables: { id: number; message: string }) => {
       return sendMessage(variables?.id, variables?.message)
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
+
   const renew = useMutation({
     mutationFn: () => {
       return renewDialog()
@@ -110,11 +89,9 @@ const DialogSidePanel = ({ error, start }: props) => {
     },
   })
 
-  const handleRenewClick = () => {
-    renew.mutateAsync().then()
-  }
   const cx = classNames.bind(s)
-
+  const startPanel = isFirstTest && !isError
+  const chatPanel = !isFirstTest && !isError
   return (
     <>
       <SidePanelHeader>Dialog</SidePanelHeader>
@@ -147,17 +124,6 @@ const DialogSidePanel = ({ error, start }: props) => {
           <>
             <div className={s['dialogSidePanel__chat']}>
               <div className={s.chat}>
-                {/* {history?.map(block => {
-                  return (
-                    <span
-                      className={`${s.chat__message} ${
-                        block.author == 'bot' && s.chat__message_bot
-                      }`}>
-                      {block.text}
-                    </span>
-                  )
-                })} */}
-
                 {history?.map((block, index) => (
                   <div
                     key={`${block.author == 'bot'}${index}`}

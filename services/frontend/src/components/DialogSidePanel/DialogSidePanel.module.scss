@@ -126,3 +126,24 @@
     padding: 0px 18px;
   }
 }
+.start,
+.error {
+  padding: 52px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  button {
+    @include large_btn;
+    @include lnks_n_btns3;
+    @include primary_btn;
+    @include btn_primary_behavior;
+  }
+}
+
+.error {
+  color: #ff3b30;
+  button {
+    background-color: #ff3b30;
+  }
+}

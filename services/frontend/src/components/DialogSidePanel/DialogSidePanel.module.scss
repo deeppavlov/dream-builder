@@ -53,6 +53,7 @@
     &::-webkit-input-placeholder, /* Webkit based */
     &::placeholder {
       color: $text3;
+      opacity: 0.4;
     }
   }
 

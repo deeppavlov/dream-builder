@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import { ISkill } from '../../types/types'
-import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
@@ -11,9 +10,37 @@ import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
 import s from './SkillPromptModal.module.scss'
-import { RoutesList } from '../../router/RoutesList'
 
-const mockSkillModels = ['ChatGPT', 'GPT-3.5', 'GPT-J 6B', 'BLOOMZ 7B']
+const mockSkillModels = new Map([
+  [
+    'ChatGPT',
+    {
+      text: 'ChatGPT is the GPT-3.5 model optimized for chat at 1/10th the cost of text-davinci-003. ChatGPT is available as gpt-3.5-turbo in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. ChatGPT accepts at maximum 4,096 tokens.',
+      link: 'https://chat.openai.com/',
+    },
+  ],
+  [
+    'GPT-3.5',
+    {
+      text: 'GPT-3.5 is a language model available as text-davinci-003 in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. GPT-3.5 accepts at maximum 4,097 tokens.',
+      link: 'https://beta.openai.com/playground',
+    },
+  ],
+  [
+    'GPT-J 6B',
+    {
+      text: 'GPT-J 6B is an open-source language model from transformers. It contains 6 billion parameters, and is 30 times smaller than GPT-3 175B while having a comparable generation quality. GPT-J 6B accepts at maximum 2,048 tokens.',
+      link: 'https://huggingface.co/EleutherAI/gpt-j-6B',
+    },
+  ],
+  [
+    'BLOOMZ 7B',
+    {
+      text: 'BLOOMZ 7B is an open-source multilingual language model from transformers. It contains 7.1 billion parameters. BLOOMZ 7B accepts at maximum 2,048 tokens.',
+      link: 'https://huggingface.co/bigscience/bloomz-7b1',
+    },
+  ],
+])
 
 type TAction = 'create' | 'edit'
 
@@ -22,9 +49,10 @@ interface Props {
   skill?: ISkill
   isOpen?: boolean
   dialogHandler?: () => void
+  handleClose?: () => void
 }
 
-const SkillPromptModal = ({ dialogHandler }: Props) => {
+const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
@@ -33,10 +61,13 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
     register,
     reset,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
   } = useForm({ mode: 'all' })
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 1500
+  const model = getValues()[MODEL_ID] as string
+  const skillModelTip = mockSkillModels.get(model)?.text
+  const skillModelLink = mockSkillModels.get(model)?.link
 
   const closeModal = () => {
     setIsOpen(false)
@@ -45,6 +76,8 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
 
     trigger(BASE_SP_EVENT, { isOpen: false, withTransition: false })
     trigger('HelperDialogSidePanel', { isOpen: false })
+
+    handleClose && handleClose()
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -70,7 +103,7 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
     if (dialogHandler) dialogHandler()
 
     trigger(BASE_SP_EVENT, {
-      children: <DialogSidePanel key={skill?.name} start chatWith='skill' />,
+      children: <DialogSidePanel key={skill?.name} chatWith='skill' />,
       withTransition: false,
       isClosable: false,
     })
@@ -101,14 +134,22 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
     trigger('CreateSkillDistModal', newSkill)
   }
 
-  const onFormSubmit = (data: any) => {
+  const onFormSubmit = (data: any, afterClose?: boolean) => {
     if (action === 'create') {
       handleCreate(data)
       return
     }
+
+    // For prompt & model editing
+    if (action === 'edit') {
+    }
+
+    if (afterClose) closeModal()
   }
 
-  const handleTestBtnClick = () => {}
+  const handleSaveAndClose = () => {
+    handleSubmit(data => onFormSubmit(data, true))()
+  }
 
   useEffect(() => {
     subscribe('SkillPromptModal', handleEventUpdate)
@@ -143,12 +184,12 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
       }}>
       <form
         className={s.skillPromptModal}
-        onSubmit={handleSubmit(onFormSubmit)}>
+        onSubmit={handleSubmit(data => onFormSubmit(data))}>
         <div className={s.top}>
           <SkillDropboxSearch
             label='Generative model:'
-            list={mockSkillModels}
-            // activeItem={skill?.model}
+            list={Array.from(mockSkillModels).map(([name]) => name)}
+            activeItem={model}
             error={errors[MODEL_ID]}
             props={{
               placeholder: 'Choose model',
@@ -156,17 +197,19 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
             }}
             onSelect={handleModelSelect}
           />
-          <p className={s.tip}>
-            <span className={s['tip-bold']}>
-              Keep in mind how to modify promt for the modal:
-            </span>
-            <br />
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus
-            turpis odio, dictum egestas enim scelerisque ac. Praesent quis enim
-            nisi. Etiam ut imperdiet enim, at vulputate ipsum. Quisque pulvinar
-            tempor mollis. Etiam in lorem a massa pellentesque ornare bibendum
-            in lorem. Nunc mattis libero tellus, eu porta massa tempus nec.
-          </p>
+          {model?.length > 0 && (
+            <p className={s.tip}>
+              <span className={s['tip-bold']}>Details:</span>
+              <span>{skillModelTip}</span>
+              <a
+                href={skillModelLink}
+                target='_blank'
+                rel='noopener noreferrer'>
+                {skillModelLink}
+              </a>
+              <br />
+            </p>
+          )}
         </div>
 
         <TextArea
@@ -206,25 +249,23 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
             )}
             {action === 'edit' && (
               <>
-                {/* <div className={s.history}>
+                <div className={s.history}>
                   <Button theme='tertiary-round'>
                     <HistoryIcon />
                     History
                   </Button>
-                </div> */}
+                </div>
                 {/* <Button
                   theme='secondary'
                   props={{ onClick: handleBackBtnClick }}>
                   Back
                 </Button> */}
-                <Button
-                  theme='secondary-dark'
-                  props={{ type: 'submit', onClick: handleTestBtnClick }}>
+                <Button theme='secondary-dark' props={{ type: 'submit' }}>
                   Save & Test
                 </Button>
-                {/* <Button theme='primary' props={{ type: 'submit' }}>
+                <Button theme='primary' props={{ onClick: handleSaveAndClose }}>
                   Save & Close
-                </Button> */}
+                </Button>
               </>
             )}
           </div>

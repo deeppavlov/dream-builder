@@ -217,7 +217,10 @@ export const EditorPage = () => {
       </Tabs>
       <AreYouSureModal />
 
-      <SkillPromptModal dialogHandler={dialogHandler}/>
+      <SkillPromptModal
+        dialogHandler={dialogHandler}
+        handleClose={() => setActiveTab(0)}
+      />
       <HelperDialogSidePanel />
 
       <Toaster />

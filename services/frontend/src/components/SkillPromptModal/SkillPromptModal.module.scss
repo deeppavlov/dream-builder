@@ -11,9 +11,17 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 40px;
+  text-align: start;
+
+  a {
+    width: fit-content;
+    text-decoration: underline;
+  }
 
   .tip,
   .tip-bold {
+    display: flex;
+    flex-direction: column;
     color: $text2;
   }
 }

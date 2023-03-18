@@ -28,6 +28,7 @@ const HelperDialogSidePanel = () => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [chatHistory, setChatHistory] = useState<ChatMessage[] | []>([])
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const chatRef = useRef<HTMLDivElement>(null)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
 
@@ -49,6 +50,12 @@ const HelperDialogSidePanel = () => {
     return () => unsubscribe('HelperDialogSidePanel', handleTrigger)
   }, [])
 
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight
+    }
+  }, [chatHistory])
+
   return (
     <SidePanel
       isOpen={isOpen}
@@ -57,31 +64,29 @@ const HelperDialogSidePanel = () => {
       withTransition={false}
       key={'HelperDialogSidePanel'}>
       <div className={s.container}>
-        <SidePanelHeader>
-          <span className={s.header}>
-            <img src={DeepyHelperIcon} alt='Deepy' className={s.deepy} />
-            Deepy
-          </span>
-        </SidePanelHeader>
         <div className={s.dialogSidePanel}>
-          <div className={s['dialogSidePanel__chat']}>
-            <div className={s.chat}>
-              {chatHistory?.map((m, index) => (
-                <div
-                  key={`${m.byBot}${index}`}
-                  className={`${s.chat__container} ${
-                    m.byBot && s.chat__container_bot
+          <SidePanelHeader>
+            <span className={s.header}>
+              <img src={DeepyHelperIcon} alt='Deepy' className={s.deepy} />
+              Deepy
+            </span>
+          </SidePanelHeader>
+          <div className={s.chat} ref={chatRef}>
+            {chatHistory?.map((m, index) => (
+              <div
+                key={`${m.byBot}${index}`}
+                className={`${s.chat__container} ${
+                  m.byBot && s.chat__container_bot
+                }`}>
+                {m.byBot && <span className={s.chat__avatar}></span>}
+                <span
+                  className={`${s.chat__message} ${
+                    m.byBot && s.chat__message_bot
                   }`}>
-                  {m.byBot && <span className={s.chat__avatar}></span>}
-                  <span
-                    className={`${s.chat__message} ${
-                      m.byBot && s.chat__message_bot
-                    }`}>
-                    {m.text}
-                  </span>
-                </div>
-              ))}
-            </div>
+                  {m.text}
+                </span>
+              </div>
+            ))}
           </div>
           <div className={s.dialogSidePanel__controls}>
             <DialogButton

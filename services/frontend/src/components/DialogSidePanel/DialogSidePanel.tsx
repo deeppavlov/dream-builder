@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
@@ -43,6 +43,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const isVoiceChat = chatType === VOICE_CHAT_TYPE
   const { handleSubmit, register, reset, getFieldState, getValues } = useForm()
   const queryClient = useQueryClient()
+  const chatRef = useRef<HTMLDivElement>(null)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
   const handleDownloadBtnClick = () => {}
@@ -97,8 +98,15 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const cx = classNames.bind(s)
   const startPanel = isFirstTest && !isError
   const chatPanel = !isFirstTest && !isError
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight
+    }
+  }, [chatHistory])
+
   return (
-    <>
+    <div className={s.container}>
       <SidePanelHeader>
         {chatWith == 'skill' && (
           <>
@@ -149,30 +157,28 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
         )}
         {chatPanel && (
           <>
-            <div className={s['dialogSidePanel__chat']}>
-              <div className={s.chat}>
-                {history?.map((block, i: number) => (
-                  <div
-                    key={`${block?.author == 'bot'}${i}`}
-                    className={`${s.chat__container} ${
-                      block?.author == 'bot' && s.chat__container_bot
+            <div className={s.chat}>
+              {history?.map((block, i: number) => (
+                <div
+                  key={`${block?.author == 'bot'}${i}`}
+                  className={`${s.chat__container} ${
+                    block?.author == 'bot' && s.chat__container_bot
+                  }`}>
+                  <span
+                    className={`${s.chat__message} ${
+                      block?.author == 'bot' && s.chat__message_bot
                     }`}>
-                    <span
-                      className={`${s.chat__message} ${
-                        block?.author == 'bot' && s.chat__message_bot
-                      }`}>
-                      {block?.text}
-                    </span>
+                    {block?.text}
+                  </span>
+                </div>
+              ))}
+              {send?.isLoading && (
+                <>
+                  <div className={`${s.chat__container}`}>
+                    <span className={`${s.chat__message} `}>{message}</span>
                   </div>
-                ))}
-                {send?.isLoading && (
-                  <>
-                    <div className={`${s.chat__container}`}>
-                      <span className={`${s.chat__message} `}>{message}</span>
-                    </div>
-                  </>
-                )}
-              </div>
+                </>
+              )}
             </div>
             <div className={s.dialogSidePanel__controls}>
               <div className={s.left}>
@@ -193,7 +199,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
                   theme='secondary'
                   withIcon
                   props={{ onClick: handleRenewClick }}>
-                  <div className={s.container} data-tooltip-id='renew'>
+                  <div className={s['right-container']} data-tooltip-id='renew'>
                     <Renew />
                   </div>
                 </Button>
@@ -216,7 +222,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
         )}
       </div>
       <BaseToolTip id='renew' content='Start a new dialog' />
-    </>
+    </div>
   )
 }
 

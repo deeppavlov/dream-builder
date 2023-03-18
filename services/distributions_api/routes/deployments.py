@@ -7,11 +7,11 @@ from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 
-deployments_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
+deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
 
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
-def get_all_lm_services(db: Session = Depends(get_db)):
+async def get_all_lm_services(db: Session = Depends(get_db)):
     """ """
     all_lm_services = [
         "BLOOMZ 7B",
@@ -23,7 +23,7 @@ def get_all_lm_services(db: Session = Depends(get_db)):
 
 
 # @deployments_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
-# def get_dialog_session(
+# async def get_dialog_session(
 #     dialog_session_id: int,
 #     user: schemas.User = Depends(verify_token),
 #     db: Session = Depends(get_db),
@@ -37,7 +37,7 @@ def get_all_lm_services(db: Session = Depends(get_db)):
 #
 #
 # @deployments_router.post("/{dialog_session_id}/chat", status_code=status.HTTP_201_CREATED)
-# def send_dialog_session_message(
+# async def send_dialog_session_message(
 #     dialog_session_id: int,
 #     payload: schemas.DialogChatMessageRequest,
 #     user: schemas.User = Depends(verify_token),
@@ -57,7 +57,7 @@ def get_all_lm_services(db: Session = Depends(get_db)):
 #
 #
 # @deployments_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
-# def get_dialog_session_history(
+# async def get_dialog_session_history(
 #     dialog_session_id: int,
 #     user: schemas.User = Depends(verify_token),
 #     db: Session = Depends(get_db),

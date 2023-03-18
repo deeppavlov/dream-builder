@@ -134,13 +134,13 @@ class DistComponentsResponse(BaseModel):
 
 
 class CreateDialogSessionRequest(BaseModel):
-    virtual_assistant_id: int
+    virtual_assistant_name: str
 
 
 class DialogSession(BaseOrmModel):
     id: int
     user_id: int
-    virtual_assistant_id: int
+    deployment_id: int
     is_active: bool
 
 
@@ -184,3 +184,15 @@ class CreateTokenResponse(BaseModel):
 
 class LmServiceOption(BaseModel):
     name: str
+
+
+class Deployment(BaseOrmModel):
+    id: int
+    virtual_assistant_id: int
+    chat_url: str
+    prompt: Optional[str]
+    lm_service: Optional[str]
+
+
+class Prompt(BaseModel):
+    text: str

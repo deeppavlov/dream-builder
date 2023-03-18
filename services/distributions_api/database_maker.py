@@ -8,7 +8,7 @@ SessionLocal = init_db(
     settings.db.host,
     settings.db.port,
     settings.db.name,
-    populate_initial_data=True,
+    # populate_initial_data=True,
 )
 
 

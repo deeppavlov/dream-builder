@@ -7,9 +7,13 @@ from deeppavlov_dreamtools.distconfigs.generics import Component
 from deeppavlov_dreamtools.distconfigs.pipeline import Pipeline
 from fastapi import APIRouter, status, Depends
 from fastapi.logger import logger
+from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
+from database import crud
+from services.distributions_api import schemas
 from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES, TEMPLATE_DIST_PROMPT_BASED
+from services.distributions_api.database_maker import get_db
 from services.distributions_api.schemas import (
     AssistantDistModel,
     AssistantDistModelShort,
@@ -351,6 +355,38 @@ async def chat_dist(dist_name: str, payload: AssistantDistChatRequest):
     await sleep(3)
 
     return AssistantDistChatResponse(text="Lorem ipsum dolores est")
+
+
+@assistant_dists_router.get("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
+async def get_dist_prompt(
+    dist_name: str, user: dict = Depends(verify_token), db: Session = Depends(get_db)
+):
+    prompt = crud.get_deployment_prompt_by_virtual_assistant_name(db, dist_name)
+    return schemas.Prompt(text=prompt)
+
+
+@assistant_dists_router.post("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
+async def set_dist_prompt(
+    dist_name: str, payload: schemas.Prompt, user: dict = Depends(verify_token), db: Session = Depends(get_db)
+):
+    deployment = crud.set_deployment_prompt_by_virtual_assistant_name(db, dist_name, payload.text)
+    return schemas.Deployment.from_orm(deployment)
+
+
+@assistant_dists_router.get("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
+async def get_dist_lm_service(
+    dist_name: str, user: dict = Depends(verify_token), db: Session = Depends(get_db)
+):
+    lm_service = crud.get_deployment_lm_service_by_virtual_assistant_name(db, dist_name)
+    return schemas.Prompt(text=lm_service)
+
+
+@assistant_dists_router.post("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
+async def set_dist_lm_service(
+    dist_name: str, payload: schemas.LmServiceOption, user: dict = Depends(verify_token), db: Session = Depends(get_db)
+):
+    deployment = crud.set_deployment_lm_service_by_virtual_assistant_name(db, dist_name, payload.name)
+    return schemas.Deployment.from_orm(deployment)
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

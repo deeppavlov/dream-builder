@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base, DeclarativeMeta
 
-from database.scripts import register_initial_data_population
+# from database.scripts import register_initial_data_population
 
 Base = declarative_base()
 
@@ -28,7 +28,7 @@ def init_db(
     port: int,
     database: str,
     force_recreate: bool = False,
-    populate_initial_data: bool = False,
+    # populate_initial_data: bool = False,
 ) -> Database:
     """Create sqlalchemy sessionmaker
 
@@ -54,8 +54,8 @@ def init_db(
         # Base.metadata.drop_all(bind=engine)
         database.base.metadata.clear()
 
-    if populate_initial_data:
-        register_initial_data_population()
+    # if populate_initial_data:
+    #     register_initial_data_population()
 
     database.base.metadata.create_all(bind=engine, checkfirst=True)
 

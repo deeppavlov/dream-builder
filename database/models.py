@@ -52,7 +52,7 @@ class GoogleUser(Base):
     role = relationship("Role")
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author")
-    dialog_sessions = relationship("DialogSessions", back_populates="user")
+    dialog_sessions = relationship("DialogSession", back_populates="user")
 
 
 class UserValid(Base):
@@ -172,7 +172,9 @@ class DialogSession(Base):
     deployment_id = Column(Integer, ForeignKey("deployment.id"), nullable=False)
     deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")
 
-    is_active = True
+    agent_dialog_id = Column(String)
+
+    is_active = Column(Boolean, nullable=False)
 
 
 def _pre_populate_from_tsv(

@@ -18,7 +18,7 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
   const handlePropertiesBtnClick = () =>
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot.name} bot={bot} disabled={!auth?.user} />
+        <BotInfoSidePanel key={bot.name} bot={bot} disabled={!auth?.user} type={type} />
       ),
     })
 

@@ -21,7 +21,7 @@ import { Loader } from '../Loader/Loader'
 interface Props {
   bot: BotInfoInterface
   disabled?: boolean
-  type?: BotAvailabilityType
+  type: BotAvailabilityType
 }
 
 const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {

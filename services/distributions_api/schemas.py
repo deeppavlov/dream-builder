@@ -133,6 +133,30 @@ class DistComponentsResponse(BaseModel):
     response_annotators: List[ComponentShort]
 
 
+class CreateDialogSessionRequest(BaseModel):
+    virtual_assistant_id: int
+
+
+class DialogSession(BaseOrmModel):
+    id: int
+    user_id: int
+    virtual_assistant_id: int
+    is_active: bool
+
+
+class DialogChatMessageRequest(BaseModel):
+    text: str
+
+
+class DialogChatMessageResponse(BaseModel):
+    text: str
+
+
+class DialogUtterance(BaseModel):
+    author: str
+    text: str
+
+
 class ApiToken(BaseOrmModel):
     id: int
     name: str
@@ -156,3 +180,7 @@ class CreateTokenResponse(BaseModel):
     user_id: int
     api_token_id: int
     token_value: str
+
+
+class LmServiceOption(BaseModel):
+    name: str

@@ -45,7 +45,7 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
     return
   }
 
-  switch (skill.name.includes('prompted')) {
+  switch (skill?.name?.includes('prompted')) {
     case true:
       trigger(BASE_SP_EVENT, {
         children: (

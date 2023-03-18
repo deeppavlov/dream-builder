@@ -53,7 +53,7 @@ const SkillPromptModal = () => {
     const { skill, action } = data.detail
 
     trigger(BASE_SP_EVENT, {
-      children: <DialogSidePanel key={skill?.name} start />,
+      children: <DialogSidePanel key={skill?.name} start chatWith='skill' />,
       withTransition: false,
       isClosable: false,
     })

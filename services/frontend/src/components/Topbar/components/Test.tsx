@@ -13,7 +13,9 @@ export const Test = () => {
         alt='Play'
         className={s.test}
         onClick={() =>
-          trigger(BASE_SP_EVENT, { children: <DialogSidePanel /> })
+          trigger(BASE_SP_EVENT, {
+            children: <DialogSidePanel key={0} start chatWith={'bot'} />,
+          })
         }
       />
       <BaseToolTip id='chatWithBot' content='Chat with your bot' />

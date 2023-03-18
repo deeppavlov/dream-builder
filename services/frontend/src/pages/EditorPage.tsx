@@ -37,6 +37,7 @@ import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteA
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
 import CopilotDialogSidePanel from '../components/CopilotDialogSidePanel/CopilotDialogSidePanel'
+import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -163,6 +164,7 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
+      <AreYouSureModal />
       <Toaster />
       <SkillsListModal />
 

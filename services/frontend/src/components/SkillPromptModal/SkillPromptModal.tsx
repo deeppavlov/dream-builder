@@ -125,7 +125,7 @@ const SkillPromptModal = ({ dialogHandler }: Props) => {
           right: 368,
           left: 448,
           position: 'fixed',
-          zIndex: 2,
+          zIndex: 1,
         },
         content: {
           top: 0,

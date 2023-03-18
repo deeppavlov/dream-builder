@@ -36,17 +36,31 @@ interface DialogSessionConfig {
 type Message = { message: string }
 const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
-  const [chatHistory, setChatHistory] = useState([])
   const [isError, setIsError] = useState(error ?? false)
-  const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
-  const isTextChat = chatType === TEXT_CHAT_TYPE
-  const isVoiceChat = chatType === VOICE_CHAT_TYPE
+  const [isFirstTest, setIsFirstTest] = useState(start)
+  const [message, setMessage] = useState('')
   const { handleSubmit, register, reset, getFieldState, getValues } = useForm()
   const queryClient = useQueryClient()
+  const [dialogSession, setDialogueSession] =
+    useState<DialogSessionConfig | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
+  const isTextChat = chatType === TEXT_CHAT_TYPE
+  const isVoiceChat = chatType === VOICE_CHAT_TYPE
+  const startPanel = isFirstTest && !isError
+  const chatPanel = !isFirstTest && !isError
+  const {
+    data: history,
+    isLoading: isHistoryLoading,
+    isError: historyError,
+  } = useQuery(['history', dialogSession?.id], () =>
+    getHistory(dialogSession?.id!)
+  )
+  const cx = classNames.bind(s)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
+
   const handleDownloadBtnClick = () => {}
+
   const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   const handleStartBtnClick = () => {
@@ -55,7 +69,6 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     })
   }
 
-  const [message, setMessage] = useState('')
   const handleSend = (data: Message) => {
     const id = dialogSession?.id!
     const message = data?.message!
@@ -63,20 +76,10 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     send.mutate({ id, message })
     reset()
   }
+
   const handleRenewClick = () => {
     renew.mutateAsync().then()
   }
-
-  const [dialogSession, setDialogueSession] =
-    useState<DialogSessionConfig | null>(null)
-
-  const {
-    data: history,
-    isLoading: isHistoryLoading,
-    isError: historyError,
-  } = useQuery(['history', dialogSession?.id], () =>
-    getHistory(dialogSession?.id!)
-  )
 
   const send = useMutation({
     mutationFn: (variables: { id: number; message: string }) => {
@@ -95,15 +98,18 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     },
   })
 
-  const cx = classNames.bind(s)
-  const startPanel = isFirstTest && !isError
-  const chatPanel = !isFirstTest && !isError
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(handleSend)()
+    }
+  }
 
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
-  }, [chatHistory])
+  }, [history])
 
   return (
     <div className={s.container}>
@@ -209,6 +215,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
               <textarea
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
+                onKeyDown={handleTextAreaKeyDown}
                 {...register('message')}
               />
               <input type='submit' hidden />

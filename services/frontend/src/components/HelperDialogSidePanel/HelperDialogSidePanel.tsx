@@ -45,6 +45,13 @@ const HelperDialogSidePanel = () => {
     setIsOpen(data.detail.isOpen ?? !isOpen)
   }
 
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit()
+    }
+  }
+
   useEffect(() => {
     subscribe('HelperDialogSidePanel', handleTrigger)
     return () => unsubscribe('HelperDialogSidePanel', handleTrigger)
@@ -104,6 +111,7 @@ const HelperDialogSidePanel = () => {
             name='dialog'
             id='dialog'
             placeholder='Type...'
+            onKeyDown={handleTextAreaKeyDown}
           />
           <SidePanelButtons>
             <Button theme='secondary' props={{ onClick: handleSubmit }}>

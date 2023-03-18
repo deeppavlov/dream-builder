@@ -4,7 +4,7 @@ import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
 import s from './Breadcrumbs.module.scss'
 
 interface Props {
-  tab?: 'Architecture' | 'Skills'
+  tab?: string
   children?: React.ReactNode
 }
 
@@ -21,8 +21,12 @@ export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
 
       <div className={s.routes}>
         {matches.at(-1)?.pathname !== '/' && <span className={s.slash} />}
-        {matches.map(crumb => {
-          return crumb.pathname !== '/' && crumb?.handle
+        {matches.map((crumb, i) => {
+          return (
+            crumb.pathname !== '/' && (
+              <span key={i}>{crumb?.handle as string}</span>
+            )
+          )
         })}
         {children && <span className={s.slash} />}
         {children}

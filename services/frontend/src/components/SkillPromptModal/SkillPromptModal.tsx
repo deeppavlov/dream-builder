@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import Modal from 'react-modal'
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
@@ -7,9 +8,10 @@ import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-import s from './SkillPromptModal.module.scss'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
+import s from './SkillPromptModal.module.scss'
+import { RoutesList } from '../../router/RoutesList'
 
 const mockSkillModels = ['ChatGPT', 'GPT-3.5', 'GPT-J 6B', 'BLOOMZ 7B']
 
@@ -18,9 +20,11 @@ type TAction = 'create' | 'edit'
 interface Props {
   action?: TAction
   skill?: ISkill
+  isOpen?: boolean
+  dialogHandler?: () => void
 }
 
-const SkillPromptModal = () => {
+const SkillPromptModal = ({ dialogHandler }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
@@ -29,10 +33,9 @@ const SkillPromptModal = () => {
     register,
     reset,
     getValues,
-    setValue,
     formState: { errors },
   } = useForm({ mode: 'all' })
-  const [MODEL_ID, PROMPT_ID] = ['display_name', 'model', 'prompt']
+  const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 1500
 
   const closeModal = () => {
@@ -41,7 +44,7 @@ const SkillPromptModal = () => {
     setSkill(null)
 
     trigger(BASE_SP_EVENT, { isOpen: false, withTransition: false })
-    trigger('CopilotDialogSidePanel', { isOpen: false })
+    trigger('HelperDialogSidePanel', { isOpen: false })
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -52,13 +55,27 @@ const SkillPromptModal = () => {
   const handleEventUpdate = (data: { detail: Props }) => {
     const { skill, action } = data.detail
 
+    if (data.detail.isOpen !== undefined && !data.detail.isOpen) {
+      closeModal()
+      return
+    }
+
+    // Push skill name for breadcrumbs bar
+    history.pushState(
+      { dialogSkillId: skill?.display_name },
+      '',
+      location.pathname
+    )
+
+    if (dialogHandler) dialogHandler()
+
     trigger(BASE_SP_EVENT, {
       children: <DialogSidePanel key={skill?.name} start chatWith='skill' />,
       withTransition: false,
       isClosable: false,
     })
 
-    trigger('CopilotDialogSidePanel', {})
+    trigger('HelperDialogSidePanel', {})
 
     setAction(action ?? 'create')
     setSkill(skill ?? null)
@@ -99,22 +116,42 @@ const SkillPromptModal = () => {
   }, [])
 
   return (
-    <BaseModal
+    <Modal
       isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      handleClose={closeModal}
-      customStyles={{ overlay: { top: 64, right: 368, left: 368 } }}>
+      onRequestClose={closeModal}
+      style={{
+        overlay: {
+          top: 64,
+          right: 368,
+          left: 448,
+          position: 'fixed',
+          zIndex: 2,
+        },
+        content: {
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 0,
+          transform: 'none',
+          height: '100%',
+          width: '100%',
+          border: 'none',
+          background: 'none',
+          borderRadius: 0,
+          padding: 0,
+        },
+      }}>
       <form
         className={s.skillPromptModal}
         onSubmit={handleSubmit(onFormSubmit)}>
-        <h4>{skill?.display_name || 'Skill name'}</h4>
         <div className={s.top}>
           <SkillDropboxSearch
+            label='Generative model:'
             list={mockSkillModels}
-            activeItem={skill?.model}
+            // activeItem={skill?.model}
             error={errors[MODEL_ID]}
             props={{
-              placeholder: 'Choose service',
+              placeholder: 'Choose model',
               ...register(MODEL_ID, { required: true }),
             }}
             onSelect={handleModelSelect}
@@ -169,31 +206,31 @@ const SkillPromptModal = () => {
             )}
             {action === 'edit' && (
               <>
-                <div className={s.history}>
+                {/* <div className={s.history}>
                   <Button theme='tertiary-round'>
                     <HistoryIcon />
                     History
                   </Button>
-                </div>
-                <Button
+                </div> */}
+                {/* <Button
                   theme='secondary'
                   props={{ onClick: handleBackBtnClick }}>
                   Back
-                </Button>
+                </Button> */}
                 <Button
                   theme='secondary-dark'
                   props={{ type: 'submit', onClick: handleTestBtnClick }}>
                   Save & Test
                 </Button>
-                <Button theme='primary' props={{ type: 'submit' }}>
+                {/* <Button theme='primary' props={{ type: 'submit' }}>
                   Save & Close
-                </Button>
+                </Button> */}
               </>
             )}
           </div>
         </div>
       </form>
-    </BaseModal>
+    </Modal>
   )
 }
 

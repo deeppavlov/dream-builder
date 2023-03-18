@@ -14,6 +14,7 @@ import { getHistory } from '../../services/getHistory'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
 import classNames from 'classnames/bind'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import s from './DialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
@@ -205,9 +206,11 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
                 {...register('message')}
               />
               <input type='submit' hidden />
-              <div className={s.dialogSidePanel__btns}>
-                <button type='submit'>Send</button>
-              </div>
+              <SidePanelButtons>
+                <Button theme='primary' props={{ type: 'submit' }}>
+                  Send
+                </Button>
+              </SidePanelButtons>
             </form>
           </>
         )}

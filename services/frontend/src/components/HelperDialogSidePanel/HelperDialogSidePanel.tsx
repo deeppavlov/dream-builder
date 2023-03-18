@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
+import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
+import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
 import DialogButton from '../DialogButton/DialogButton'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import SidePanel from '../../ui/SidePanel/SidePanel'
+import Button from '../../ui/Button/Button'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { subscribe, unsubscribe } from '../../utils/events'
-import s from './CopilotDialogSidePanel.module.scss'
+import s from './HelperDialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -19,11 +23,10 @@ interface Props {
   isOpen?: boolean
 }
 
-const CopilotDialogSidePanel = () => {
+const HelperDialogSidePanel = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [chatHistory, setChatHistory] = useState<ChatMessage[] | []>([])
-  const isTextChat = chatType === TEXT_CHAT_TYPE
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
@@ -42,24 +45,23 @@ const CopilotDialogSidePanel = () => {
   }
 
   useEffect(() => {
-    subscribe('CopilotDialogSidePanel', handleTrigger)
-    return () => unsubscribe('CopilotDialogSidePanel', handleTrigger)
+    subscribe('HelperDialogSidePanel', handleTrigger)
+    return () => unsubscribe('HelperDialogSidePanel', handleTrigger)
   }, [])
 
   return (
     <SidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      position={{ left: 0, right: 'auto', bottom: 0 }}
+      position={{ left: 80, right: 'auto', bottom: 0 }}
       withTransition={false}
-      key={'CopilotDialog'}>
+      key={'HelperDialogSidePanel'}>
       <div className={s.container}>
         <SidePanelHeader>
-          <ul role='tablist'>
-            <li role='tab' key='Copilot' aria-selected>
-              Copilot
-            </li>
-          </ul>
+          <span className={s.header}>
+            <img src={DeepyHelperIcon} alt='Deepy' className={s.deepy} />
+            Deepy
+          </span>
         </SidePanelHeader>
         <div className={s.dialogSidePanel}>
           <div className={s['dialogSidePanel__chat']}>
@@ -83,9 +85,12 @@ const CopilotDialogSidePanel = () => {
           </div>
           <div className={s.dialogSidePanel__controls}>
             <DialogButton
-              active={isTextChat}
+              active={chatType === 'text'}
               onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}>
               <DialogTextIcon />
+            </DialogButton>
+            <DialogButton active={chatType === 'voice'}>
+              <DialogMicrophoneIcon />
             </DialogButton>
           </div>
           <textarea
@@ -95,14 +100,15 @@ const CopilotDialogSidePanel = () => {
             id='dialog'
             placeholder='Type...'
           />
-          <div className={s.dialogSidePanel__btns}>
-            {/* Change to onSubmit, maybe need to wrap TextArea and button in to HTML Form */}
-            <button onClick={handleSubmit}>Send</button>
-          </div>
+          <SidePanelButtons>
+            <Button theme='secondary' props={{ onClick: handleSubmit }}>
+              Send
+            </Button>
+          </SidePanelButtons>
         </div>
       </div>
     </SidePanel>
   )
 }
 
-export default CopilotDialogSidePanel
+export default HelperDialogSidePanel

@@ -32,12 +32,8 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import { trigger } from '../../utils/events'
-import s from './TestPage.module.scss'
-import { dateToUTC } from '../../utils/dateToUTC'
 import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
 import { BotCard } from '../../components/BotCard/BotCard'
-import CompanyLogo from '@assets/icons/pavlovInCard.svg'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
@@ -49,13 +45,13 @@ import { useForm } from 'react-hook-form'
 import {
   BotInfoInterface,
   ISkill,
-  Component,
   TotalResourcesInterface,
   IStackElement,
 } from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
-import CopilotDialogSidePanel from '../../components/CopilotDialogSidePanel/CopilotDialogSidePanel'
+import HelperDialogSidePanel from '../../components/HelperDialogSidePanel/HelperDialogSidePanel'
+import s from './TestPage.module.scss'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -1157,7 +1153,7 @@ export const TestPage = () => {
 
       {/* Sidepanels */}
       <BaseSidePanel />
-      <CopilotDialogSidePanel />
+      <HelperDialogSidePanel />
 
       {/* Modals */}
       <AssistantModal />

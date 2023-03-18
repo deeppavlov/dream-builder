@@ -36,11 +36,15 @@ import { getDist } from '../services/getDist'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import CopilotDialogSidePanel from '../components/CopilotDialogSidePanel/CopilotDialogSidePanel'
 import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
+import HelperDialogSidePanel from '../components/HelperDialogSidePanel/HelperDialogSidePanel'
+import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
+import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
+import { trigger } from '../utils/events'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
+  const [activeTab, setActiveTab] = useState<number>(0)
   const auth = useAuth()
   const { state } = useLocation()
   const location = useLocation()
@@ -67,6 +71,27 @@ export const EditorPage = () => {
     setListView(listView => !listView)
   }
 
+  const dialogHandler = () => {
+    setActiveTab(2)
+    trigger('SkillPromptModal', { action: 'edit' })
+  }
+
+  const handleTabSelect = (index: number) => {
+    const previousTabIsHelper = activeTab === 2 && index !== 2
+    const selectedHelperTab = activeTab !== 2 && index === 2
+
+    if (previousTabIsHelper) {
+      trigger('SkillPromptModal', { isOpen: false })
+    }
+
+    if (selectedHelperTab) {
+      dialogHandler()
+      return
+    }
+
+    setActiveTab(index)
+  }
+
   const {
     isLoading: isComponentsLoading,
     error: componentsError,
@@ -88,7 +113,7 @@ export const EditorPage = () => {
 
   return (
     <>
-      <Tabs>
+      <Tabs selectedIndex={activeTab} onSelect={handleTabSelect}>
         <Sidebar>
           <TabList>
             <Container layoutForTabs>
@@ -103,6 +128,13 @@ export const EditorPage = () => {
               <Tab>
                 <BotTab />
               </Tab>
+              <div style={{ height: '100%' }}></div>
+              <Tab>
+                <DeepyHelperTab />
+              </Tab>
+              <Tab>
+                <SettingsTab />
+              </Tab>
             </Container>
           </TabList>
         </Sidebar>
@@ -111,6 +143,7 @@ export const EditorPage = () => {
             viewChanger
             type='editor'
             viewHandler={viewHandler}
+            dialogHandler={dialogHandler}
             tab='Skills'
             title={state?.displayName || displayName}
             name={state?.distName || nameFromURL}
@@ -163,17 +196,37 @@ export const EditorPage = () => {
             <ResponseAnnotators responseAnnotators={responseAnnotators} />
           </Main>
         </TabPanel>
+        <TabPanel>
+          <Topbar
+            tab={history.state?.dialogSkillId || 'Current Skill'}
+            type='editor'
+            viewHandler={viewHandler}
+            dialogHandler={dialogHandler}
+            title={state?.displayName}
+          />
+        </TabPanel>
+        <TabPanel>
+          <Topbar
+            tab='Settings'
+            type='editor'
+            viewHandler={viewHandler}
+            dialogHandler={dialogHandler}
+            title={state?.displayName}
+          />
+        </TabPanel>
       </Tabs>
       <AreYouSureModal />
+
+      <SkillPromptModal dialogHandler={dialogHandler}/>
+      <HelperDialogSidePanel />
+
       <Toaster />
       <SkillsListModal />
 
       <BaseSidePanel />
-      <CopilotDialogSidePanel />
       <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />
-      <SkillPromptModal />
       <SignInModal />
     </>
   )

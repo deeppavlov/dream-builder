@@ -94,6 +94,18 @@
   }
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: -12px;
+}
+
+.deepy {
+  width: 32px;
+  height: 35px;
+}
+
 .container {
   position: relative;
   width: 368px;

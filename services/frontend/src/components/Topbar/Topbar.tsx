@@ -13,17 +13,19 @@ import s from './Topbar.module.scss'
 interface TopbarProps {
   type?: 'main' | 'editor' | 'dff'
   viewHandler?: () => void
+  dialogHandler?: () => void
   children?: React.ReactNode
   innerRef?: React.LegacyRef<any>
   title?: string
   viewChanger?: boolean
-  tab?: 'Architecture' | 'Skills'
+  tab?: string
   name?: string
 }
 
 export const Topbar = ({
   type,
   viewHandler,
+  dialogHandler,
   innerRef,
   title,
   viewChanger,
@@ -70,7 +72,7 @@ export const Topbar = ({
             <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>
               {viewChanger && <Display viewHandler={viewHandler} />}
-              <Test />
+              <Test dialogHandler={dialogHandler} />
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
           </div>

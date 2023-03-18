@@ -1,19 +1,21 @@
 .skillPromptModal {
-  max-width: 957px;
-  width: 1085px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-
-  textArea {
-    max-height: 329px;
-    height: 329px;
-  }
+  height: 100%;
+  background-color: $bcgrnd3;
+  padding: 48px 64px;
 }
 
 .top {
   display: flex;
-  column-gap: 24px;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+
+  .tip,
+  .tip-bold {
+    color: $text2;
+  }
 }
 
 .bottom {
@@ -21,6 +23,7 @@
   flex-direction: column;
   gap: 17px;
   align-items: flex-end;
+  margin-top: 54px;
 }
 
 .tip {

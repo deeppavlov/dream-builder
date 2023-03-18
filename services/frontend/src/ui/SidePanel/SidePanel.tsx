@@ -26,7 +26,7 @@ const SidePanel = ({
   const customStyles = {
     overlay: {
       top: 64,
-      left: position?.left ?? 'auto',
+      left: 'auto',
       right: position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       background: 'transparent',

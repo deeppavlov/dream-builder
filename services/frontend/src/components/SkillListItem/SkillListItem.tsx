@@ -115,11 +115,13 @@ export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
             </>
           ) : (
             <>
-              <ToggleButton handleToggle={handleToggle} disabled={isPreview} />
+              <ToggleButton
+                handleToggle={!isPreview && handleToggle}
+                disabled={isPreview}
+              />
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}
-
           <SkillCardToolTip
             skill={skill}
             tooltipId={'ctxMenu' + tooltipId}

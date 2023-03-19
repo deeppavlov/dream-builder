@@ -222,7 +222,6 @@ export const EditorPage = () => {
         handleClose={() => setActiveTab(0)}
       />
       <HelperDialogSidePanel />
-
       <Toaster />
       <SkillsListModal />
 

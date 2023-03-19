@@ -14,6 +14,7 @@ import { getHistory } from '../../services/getHistory'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
 import classNames from 'classnames/bind'
+import { useOnKey } from '../../hooks/useOnKey'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import s from './DialogSidePanel.module.scss'
 
@@ -39,7 +40,8 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start)
   const [message, setMessage] = useState('')
-  const { handleSubmit, register, reset, getFieldState, getValues } = useForm()
+  const { handleSubmit, register, reset } = useForm()
+  // const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
   const queryClient = useQueryClient()
   const [dialogSession, setDialogueSession] =
     useState<DialogSessionConfig | null>(null)
@@ -98,18 +100,19 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     },
   })
 
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(handleSend)()
-    }
-  }
-
+  // const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault()
+  //     handleSubmit(handleSend)()
+  //   }
+  // }
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
   }, [history])
+
+  useOnKey(handleSend, 'Enter')
 
   return (
     <div className={s.container}>
@@ -215,7 +218,6 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
               <textarea
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
-                onKeyDown={handleTextAreaKeyDown}
                 {...register('message')}
               />
               <input type='submit' hidden />

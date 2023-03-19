@@ -9,7 +9,7 @@ import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 interface Props {
   tooltipId: string
   bot: BotInfoInterface
-  type?: BotAvailabilityType
+  type: BotAvailabilityType
 }
 
 const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
@@ -18,7 +18,12 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
   const handlePropertiesBtnClick = () =>
     trigger(BASE_SP_EVENT, {
       children: (
-        <BotInfoSidePanel key={bot.name} bot={bot} disabled={!auth?.user} type={type} />
+        <BotInfoSidePanel
+          key={bot.name}
+          bot={bot}
+          disabled={!auth?.user}
+          type={type}
+        />
       ),
     })
 

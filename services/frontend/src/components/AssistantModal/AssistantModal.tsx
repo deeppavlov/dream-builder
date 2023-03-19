@@ -12,6 +12,7 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import toast from 'react-hot-toast'
+import { useOnKey } from '../../hooks/useOnKey'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -146,10 +147,13 @@ export const AssistantModal = () => {
       })
   }
 
+  useOnKey(handleSubmit(onFormSubmit), 'Enter')
+
   useEffect(() => {
     subscribe('AssistantModal', handleEventUpdate)
     return () => unsubscribe('AssistantModal', handleEventUpdate)
   }, [])
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.assistantModal}>
@@ -203,6 +207,7 @@ export const AssistantModal = () => {
                   value: 500,
                   message: 'Limit text description to 500 characters',
                 },
+                // validate: {isEmpty:},
               }),
             }}
           />

@@ -1,13 +1,26 @@
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
-import { Modal } from '../components/Modal/Modal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { trigger } from '../utils/events'
+import { useOnKey } from '../hooks/useOnKey'
 
 export const DraftPage = () => {
+  const onFormSubmit = (e: any) => {
+    e.preventDefault()
+    trigger('AssistantModal', {})
+  }
+  useOnKey(onFormSubmit, 'Enter')
+
   return (
     <>
       <Topbar />
-      <Main>{}</Main>
-      <Modal />
+      <Main>
+        <form onSubmit={onFormSubmit}>
+          <input type='text' />
+          <button type='submit' />
+        </form>
+      </Main>
+      <AssistantModal />
     </>
   )
 }

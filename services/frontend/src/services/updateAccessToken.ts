@@ -1,4 +1,4 @@
-import { getRefreshToken } from '../Context/AuthProvider'
+import { getRefreshToken } from '../context/AuthProvider'
 import { authApi } from './axiosConfig'
 
 export const updateAccessToken = async () =>

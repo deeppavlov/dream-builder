@@ -1,4 +1,4 @@
-import { useAuth } from '../../Context/AuthProvider'
+import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'

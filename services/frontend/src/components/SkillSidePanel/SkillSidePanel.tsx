@@ -8,11 +8,11 @@ import { ISkill } from '../../types/types'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../Mapping//componentTypeMap'
 import { modelTypeMap } from '../../Mapping//modelTypeMap'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { useAuth } from '../../Context/AuthProvider'
+import { useAuth } from '../../context/AuthProvider'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {

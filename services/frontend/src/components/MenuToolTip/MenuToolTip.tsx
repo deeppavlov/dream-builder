@@ -3,7 +3,7 @@ import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 import { mockSkills } from '../../mocks/database/mockSkills'
 import { BotInfoInterface } from '../../types/types'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { useNavigate } from 'react-router-dom'
 import { RoutesList } from '../../router/RoutesList'
 

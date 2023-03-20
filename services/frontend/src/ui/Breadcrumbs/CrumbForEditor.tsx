@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { usePreview } from '../../Context/PreviewProvider'
+import { usePreview } from '../../context/PreviewProvider'
 import { RoutesList } from '../../router/RoutesList'
 
 export const CrumbForEditor = () => {

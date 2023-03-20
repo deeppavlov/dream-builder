@@ -73,7 +73,7 @@ export const EditorPage = () => {
 
   const dialogHandler = () => {
     setActiveTab(2)
-    trigger('SkillPromptModal', { action: 'edit' })
+    trigger('SkillPromptModal', { action: 'edit', dist: dist })
   }
 
   const handleTabSelect = (index: number) => {
@@ -140,6 +140,7 @@ export const EditorPage = () => {
         </Sidebar>
         <TabPanel>
           <Topbar
+            dist={dist}
             viewChanger
             type='editor'
             viewHandler={viewHandler}
@@ -181,6 +182,7 @@ export const EditorPage = () => {
         </TabPanel>
         <TabPanel>
           <Topbar
+            dist={dist}
             tab='Architecture'
             type='editor'
             viewHandler={viewHandler}
@@ -203,6 +205,7 @@ export const EditorPage = () => {
             viewHandler={viewHandler}
             dialogHandler={dialogHandler}
             title={state?.displayName}
+            dist={dist}
           />
         </TabPanel>
         <TabPanel>
@@ -220,6 +223,8 @@ export const EditorPage = () => {
       <SkillPromptModal
         dialogHandler={dialogHandler}
         handleClose={() => setActiveTab(0)}
+        dist={dist}
+        distName={state?.distName!}
       />
       <HelperDialogSidePanel />
       <Toaster />

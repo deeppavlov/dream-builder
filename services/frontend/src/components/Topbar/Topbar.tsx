@@ -20,6 +20,7 @@ interface TopbarProps {
   viewChanger?: boolean
   tab?: string
   name?: string
+  dist?: BotInfoInterface
 }
 
 export const Topbar = ({
@@ -31,6 +32,7 @@ export const Topbar = ({
   viewChanger,
   tab,
   name,
+  dist,
 }: TopbarProps) => {
   const auth = useAuth()
   const user = auth?.user
@@ -65,14 +67,14 @@ export const Topbar = ({
       return (
         <>
           <div className={cx('topbar', 'editor')} ref={innerRef}>
-            <Menu type='editor' />
+            <Menu dist={dist} type='editor' />
             <div className={s.logo_area}>
               <Breadcrumbs tab={tab}>{title}</Breadcrumbs>
             </div>
             <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>
               {viewChanger && <Display viewHandler={viewHandler} />}
-              <Test dialogHandler={dialogHandler} />
+              <Test dist={ dist} dialogHandler={dialogHandler} />
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
           </div>

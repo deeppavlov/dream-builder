@@ -140,6 +140,7 @@ export interface IStackElement {
 export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
+  lm_service:string
 }
 
 export type SkillCardSize = BotCardSize

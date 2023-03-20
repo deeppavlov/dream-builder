@@ -1,11 +1,18 @@
 import Play from '../../../assets/icons/test.svg'
+import { BotInfoInterface } from '../../../types/types'
 import { trigger } from '../../../utils/events'
 import { BASE_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import DialogSidePanel from '../../DialogSidePanel/DialogSidePanel'
 import s from './Test.module.scss'
 
-export const Test = ({ dialogHandler }: { dialogHandler?: () => void }) => {
+export const Test = ({
+  dialogHandler,
+  dist,
+}: {
+  dialogHandler?: () => void
+  dist: BotInfoInterface
+}) => {
   return (
     <button data-tooltip-id='chatWithBot' className={s.test}>
       <img
@@ -15,7 +22,15 @@ export const Test = ({ dialogHandler }: { dialogHandler?: () => void }) => {
         // onClick={dialogHandler}
         onClick={() =>
           trigger(BASE_SP_EVENT, {
-            children: <DialogSidePanel key={0} start chatWith='bot' />,
+            children: (
+              <DialogSidePanel
+                debug={false}
+                key={0}
+                start
+                chatWith='bot'
+                dist={dist}
+              />
+            ),
           })
         }
       />

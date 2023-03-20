@@ -97,8 +97,12 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
             </li>
             <br />
             <li className={s.item}>
-              <span className={cx('table-name')}>Model:</span>
-              <span className={s.value}>empty</span>
+              {skill?.lm_service! && (
+                <>
+                  <span className={cx('table-name')}>Model:</span>
+                  <span className={s.value}>{skill?.lm_service!}</span>
+                </>
+              )}
             </li>
           </ul>
           <p className={s.desc}>{skill?.description}</p>

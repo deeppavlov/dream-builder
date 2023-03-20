@@ -40,7 +40,9 @@ export const ShareModal = () => {
   }, [])
 
   useEffect(() => {
-    reset({ link: import.meta.env.VITE_APP_URL + bot })
+    reset({
+      link: 'https://assistants.deepdream.builders/?assistant=' + bot,
+    })
   }, [bot])
   return (
     <>

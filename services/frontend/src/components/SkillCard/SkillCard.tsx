@@ -49,7 +49,8 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
+    // triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
+    trigger('SkillPromptModal', { skill, action: 'edit' })
     e.stopPropagation()
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]

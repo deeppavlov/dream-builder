@@ -1,4 +1,5 @@
 import { ISkill } from '../../types/types'
+import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
@@ -10,8 +11,10 @@ interface Props {
 }
 
 const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
-  const handleEditBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Editor' })
+  const handleEditBtnClick = () => {
+    trigger('SkillPromptModal', { skill, action: 'edit' })
+  }
+  // triggerSkillSidePanel({ skill, activeTab: 'Editor' })
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })

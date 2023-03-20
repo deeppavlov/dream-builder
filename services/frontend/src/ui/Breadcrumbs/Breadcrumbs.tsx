@@ -5,10 +5,10 @@ import s from './Breadcrumbs.module.scss'
 
 interface Props {
   tab?: string
-  children?: React.ReactNode
+  path?: string[]
 }
 
-export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
+export const Breadcrumbs: FC<Props> = ({ path, tab }) => {
   const matches = useMatches()
   return (
     <>
@@ -28,8 +28,13 @@ export const Breadcrumbs: FC<Props> = ({ children, tab }) => {
             )
           )
         })}
-        {children && <span className={s.slash} />}
-        {children}
+        {path?.map(name => (
+          <>
+            <span className={s.slash} />
+            {name}
+          </>
+        ))}
+
         {tab && <span className={s.slash} />}
         {tab}
       </div>

@@ -67,7 +67,14 @@ export const Topbar = ({
         </div>
       )
     case 'editor':
+      const path = [title as string, tab as string]
+      const skillEditorPath = [
+        title as string,
+        'Skills',
+        history.state.dialogSkillName,
+      ]
       const [isSkillEditor, setIsSkillEditor] = useState(false)
+
       const handleSkillEditorTrigger = (data: {
         detail: { isOpen: boolean }
       }) => setIsSkillEditor(data.detail.isOpen)
@@ -82,15 +89,12 @@ export const Topbar = ({
           <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu dist={dist} type='editor' />
             <div className={s.logo_area}>
-              <Breadcrumbs
-                tab={isSkillEditor ? history.state.dialogSkillName : tab}>
-                {isSkillEditor ? 'Skills' : title}
-              </Breadcrumbs>
+              <Breadcrumbs path={isSkillEditor ? skillEditorPath : path} />
             </div>
             <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>
               {viewChanger && <Display viewHandler={viewHandler} />}
-              <Test dist={ dist} dialogHandler={dialogHandler} />
+              <Test dist={dist} dialogHandler={dialogHandler} />
               {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { privateApi } from './axiosConfig'
 
-export async function postPrompt(id: number, message: string) {
+export async function sendMessage(id: number, message: string) {
+  
   try {
     const { data } = await privateApi.post(`dialog_sessions/${id}/chat`, {
       text: message,

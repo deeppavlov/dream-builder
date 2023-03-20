@@ -76,6 +76,33 @@ const SkillPromptModal = ({
   const [skill, setSkill] = useState<ISkill | null>(null)
   const queryClient = useQueryClient()
 
+  const setPromptForDist = useMutation({
+    mutationFn: (variables: { distName: string; prompt: string }) => {
+      return postPrompt(variables?.distName, variables?.prompt)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries('prompt')
+    },
+  })
+  const setServiceForDist = useMutation({
+    mutationFn: (variables: { distName: string; service: string }) => {
+      return changeLMservice(variables?.distName, variables?.service)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries('lm_service')
+    },
+  })
+  const setPromptForDebugDist = useMutation({
+    mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
+      return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
+    },
+  })
+  const setServiceForDebugDist = useMutation({
+    mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
+      return changeLMservice(variables?.DEBUG_DIST, variables?.service)
+    },
+  })
+
   const {
     data: services,
     isLoading: isServicesLoading,
@@ -87,16 +114,31 @@ const SkillPromptModal = ({
     isLoading: isServiceLoading,
     isError: isServiceError,
     isSuccess: isServiceSucces,
-  } = useQuery(['lm_service', dist?.name], () =>
-    getLMservice(distName || dist?.name)
+  } = useQuery(
+    ['lm_service', dist?.name],
+    () => getLMservice(distName || dist?.name),
+    {
+      onSuccess: data => {
+        const service = data?.service
+        setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
+      },
+    }
   )
-
   const {
     data: prompt,
     isLoading: isPromptLoading,
     isError: isPromptError,
     isSuccess: isPromptSucces,
-  } = useQuery(['prompt', dist?.name!], () => getPrompt(distName || dist?.name))
+  } = useQuery(
+    ['prompt', dist?.name!],
+    () => getPrompt(distName || dist?.name),
+    {
+      onSuccess: data => {
+        const prompt = data?.text
+        setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
+      },
+    }
+  )
 
   const {
     handleSubmit,
@@ -211,50 +253,33 @@ const SkillPromptModal = ({
     // if (afterClose) closeModal()
   }
 
-  const handleSaveAndTest = data => {
+  async function handleSaveAndTest(data) {
     const service = mockSkillModels.get(model).name
     const prompt = data?.prompt
     const distName = dist?.name
 
-    setPromptForDist.mutate({ distName, prompt })
-    setServiceForDist.mutate({ distName, service })
+    setPromptForDist.mutateAsync({ distName, prompt })
+    setServiceForDist.mutateAsync({ distName, service })
 
-    setPromptForDebugDist.mutate({ DEBUG_DIST, prompt })
-    setServiceForDebugDist.mutate({ DEBUG_DIST, service })
+    setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
+    setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
 
     reset()
+    trigger('RenewChat', {})
   }
 
-  const setPromptForDist = useMutation({
-    mutationFn: (variables: { distName: string; prompt: string }) => {
-      return postPrompt(variables?.distName, variables?.prompt)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries('prompt')
-    },
-  })
-  const setServiceForDist = useMutation({
-    mutationFn: (variables: { distName: string; service: string }) => {
-      return changeLMservice(variables?.distName, variables?.service)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries('lm_service')
-    },
-  })
-  const setPromptForDebugDist = useMutation({
-    mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
-      return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
-    },
-  })
-  const setServiceForDebugDist = useMutation({
-    mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
-      return changeLMservice(variables?.DEBUG_DIST, variables?.service)
-    },
-  })
-
   const handleSaveAndClose = () => {
+    // async function updateDists() {}
+    // updateDists().then(() => {
+    // })
     handleSubmit(handleSaveAndTest)()
-    closeModal()
+      .then(() => {
+        closeModal()
+      })
+      .catch(e => {
+        console.log(`e = `, e)
+        closeModal()
+      })
   }
 
   const updateIniversal = () => {}

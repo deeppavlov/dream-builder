@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
-import { trigger } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
@@ -107,8 +107,11 @@ const DialogSidePanel: FC<Props> = ({
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
-console.log(`debug = `, debug)
+
+ 
+
   const handleRenewClick = () => {
+    console.log(`renew  `)
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
   }
   const renew = useMutation({
@@ -137,6 +140,12 @@ console.log(`debug = `, debug)
   }, [history])
 
   // useOnKey(handleSend, 'Enter')
+
+  useEffect(() => {
+    console.log(`listener was mounted`)
+    subscribe('RenewChat', handleRenewClick)
+    return () => unsubscribe('RenewChat', handleRenewClick)
+  }, [])
 
   return (
     <div className={s.container}>

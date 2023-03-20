@@ -3,7 +3,7 @@ import { Main } from '../components/Main/Main'
 import { AccessTokensBanner } from '../components/AccessTokensBanner/AccessTokensBanner'
 
 import { Banner } from '../components/Banner/Banner'
-import { useAuth } from '../context/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 
 export const StartPage = () => {
   const auth = useAuth()

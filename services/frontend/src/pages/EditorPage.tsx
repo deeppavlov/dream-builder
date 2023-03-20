@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
 import { useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { useAuth } from '../context/AuthProvider'
+import { useAuth } from '../Context/AuthProvider'
 import { getComponents } from '../services/getComponents'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Container } from '../ui/Container/Container'
@@ -24,7 +24,7 @@ import { CandidateAnnotators } from '../components/CandidateAnnotators/Candidate
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { usePreview } from '../context/PreviewProvider'
+import { usePreview } from '../Context/PreviewProvider'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Loader } from '../components/Loader/Loader'
@@ -71,23 +71,23 @@ export const EditorPage = () => {
     setListView(listView => !listView)
   }
 
-  const dialogHandler = () => {
-    setActiveTab(2)
-    trigger('SkillPromptModal', { action: 'edit', dist: dist })
-  }
+  // const dialogHandler = () => {
+  //   setActiveTab(2)
+  //   trigger('SkillPromptModal', { action: 'edit' })
+  // }
 
   const handleTabSelect = (index: number) => {
-    const previousTabIsHelper = activeTab === 2 && index !== 2
-    const selectedHelperTab = activeTab !== 2 && index === 2
+    // const previousTabIsHelper = activeTab === 2 && index !== 2
+    // const selectedHelperTab = activeTab !== 2 && index === 2
 
-    if (previousTabIsHelper) {
-      trigger('SkillPromptModal', { isOpen: false })
-    }
+    // if (previousTabIsHelper) {
+    //   trigger('SkillPromptModal', { isOpen: false })
+    // }
 
-    if (selectedHelperTab) {
-      dialogHandler()
-      return
-    }
+    // if (selectedHelperTab) {
+    //   dialogHandler()
+    //   return
+    // }
 
     setActiveTab(index)
   }
@@ -129,12 +129,18 @@ export const EditorPage = () => {
                 <BotTab />
               </Tab>
               <div style={{ height: '100%' }}></div>
-              <Tab>
+              <div
+                style={{
+                  width: '100%',
+                  borderTop: '1px solid #F0F0F3',
+                  paddingTop: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}>
                 <DeepyHelperTab />
-              </Tab>
-              <Tab>
                 <SettingsTab />
-              </Tab>
+              </div>
             </Container>
           </TabList>
         </Sidebar>
@@ -144,7 +150,6 @@ export const EditorPage = () => {
             viewChanger
             type='editor'
             viewHandler={viewHandler}
-            dialogHandler={dialogHandler}
             tab='Skills'
             title={state?.displayName || displayName}
             name={state?.distName || nameFromURL}
@@ -198,34 +203,10 @@ export const EditorPage = () => {
             <ResponseAnnotators responseAnnotators={responseAnnotators} />
           </Main>
         </TabPanel>
-        <TabPanel>
-          <Topbar
-            tab={history.state?.dialogSkillId || 'Current Skill'}
-            type='editor'
-            viewHandler={viewHandler}
-            dialogHandler={dialogHandler}
-            title={state?.displayName}
-            dist={dist}
-          />
-        </TabPanel>
-        <TabPanel>
-          <Topbar
-            tab='Settings'
-            type='editor'
-            viewHandler={viewHandler}
-            dialogHandler={dialogHandler}
-            title={state?.displayName}
-          />
-        </TabPanel>
       </Tabs>
-      <AreYouSureModal />
 
-      <SkillPromptModal
-        dialogHandler={dialogHandler}
-        handleClose={() => setActiveTab(0)}
-        dist={dist}
-        distName={state?.distName!}
-      />
+      <AreYouSureModal />
+      <SkillPromptModal />
       <HelperDialogSidePanel />
       <Toaster />
       <SkillsListModal />

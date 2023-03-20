@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/download_dialog.svg'
+import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import { trigger } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
@@ -128,7 +128,7 @@ const DialogSidePanel: FC<Props> = ({
     }
   }, [history])
 
-  // useOnKey(handleSubmit(handleSend), 'Enter')
+  // useOnKey(handleSend, 'Enter')
 
   return (
     <div className={s.container}>

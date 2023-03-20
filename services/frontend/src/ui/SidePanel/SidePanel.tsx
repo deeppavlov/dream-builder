@@ -5,6 +5,7 @@ import s from './SidePanel.module.scss'
 export interface SidePanelProps {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
+  handleClose?: () => void
   position?: Partial<{
     top: number | 'auto'
     left: number | 'auto'
@@ -12,17 +13,18 @@ export interface SidePanelProps {
     bottom: number | 'auto'
   }>
   children?: React.ReactNode
-  withTransition?: boolean
+  transition?: 'left' | 'right' | 'none'
 }
 
 const SidePanel = ({
   isOpen,
   setIsOpen,
+  handleClose,
   position,
   children,
-  withTransition = true,
+  transition = 'right',
 }: SidePanelProps) => {
-  const closeTimeoutMS = withTransition ? 300 : 0
+  const closeTimeoutMS = transition === 'none' ? 0 : 300
   const customStyles = {
     overlay: {
       top: 64,
@@ -45,12 +47,16 @@ const SidePanel = ({
     },
   }
 
-  const handleCloseModal = () => setIsOpen(false)
+  const handleCloseModal = () => {
+    setIsOpen(false)
+    handleClose && handleClose()
+  }
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
+      shouldCloseOnEsc={false}
       style={customStyles}
       contentLabel='SidePanel'
       closeTimeoutMS={closeTimeoutMS}
@@ -59,7 +65,7 @@ const SidePanel = ({
       <div
         className={s.sidePanel}
         data-modal-type='side-panel'
-        data-with-transition={withTransition}>
+        data-transition={transition}>
         {children}
       </div>
     </Modal>

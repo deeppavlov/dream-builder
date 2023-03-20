@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
+import classNames from 'classnames/bind'
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import { BotInfoInterface, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import DialogSidePanel, { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { getLMservice } from '../../services/getLMservice'
-import { getPrompt } from '../../services/getPrompt'
-import { getAllLMservices } from '../../services/getAllLMservices'
+import { HELPER_SIDEPANEL_TRIGGER } from '../HelperDialogSidePanel/HelperDialogSidePanel'
+import SkillDialog from '../SkillDialog/SkillDialog'
 import s from './SkillPromptModal.module.scss'
 import { postPrompt } from '../../services/postPrompt'
 import { changeLMservice } from '../../services/changeLMservice'
+
+export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
 
 const mockSkillModels = new Map([
   [
@@ -65,67 +64,38 @@ interface Props {
   isOpen?: boolean
   distName: string
   dialogHandler?: () => void
-  handleClose?: () => void
+  withLeftPadding?: boolean
 }
 
 const SkillPromptModal = ({
+  withLeftPadding = false,
   dialogHandler,
-  handleClose,
-  dist,
-  distName,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
-  const queryClient = useQueryClient()
-  const {
-    data: services,
-    isLoading: isServicesLoading,
-    isError: isServicesError,
-  } = useQuery('lm_services', getAllLMservices)
-  const {
-    data: service,
-    isLoading: isServiceLoading,
-    isError: isServiceError,
-  } = useQuery(['lm_service', dist?.name], () =>
-    getLMservice(distName || dist?.name)
-  )
-  const {
-    data: prompt,
-    isLoading: isPromptLoading,
-    isError: isPromptError,
-  } = useQuery(['prompt', dist?.name!], () => getPrompt(distName || dist?.name))
-
+  const [withSidePanel, setWithSidePanel] = useState(withLeftPadding)
   const {
     handleSubmit,
     register,
     reset,
     getValues,
-    formState: { errors, isSubmitSuccessful },
-  } = useForm({
-    mode: 'all',
-    defaultValues: {
-      MODEL_ID: service?.displayName,
-      PROMPT_ID: prompt?.text,
-    },
-  })
+    formState: { errors },
+  } = useForm({ mode: 'all' })
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 3000
   const model = getValues()[MODEL_ID] as string
 
   const skillModelTip = mockSkillModels.get(model)?.description
   const skillModelLink = mockSkillModels.get(model)?.link
-  const skillModelName = mockSkillModels.get(model)?.name
+  let cx = classNames.bind(s)
 
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setSkill(null)
-
-    trigger(BASE_SP_EVENT, { isOpen: false, withTransition: false })
-    trigger('HelperDialogSidePanel', { isOpen: false })
-
-    handleClose && handleClose()
+    trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+    history.pushState({ dialogSkillName: null }, '', location.pathname)
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -143,28 +113,13 @@ const SkillPromptModal = ({
 
     // Push skill name for breadcrumbs bar
     history.pushState(
-      { dialogSkillId: skill?.display_name },
+      { dialogSkillName: skill?.display_name },
       '',
       location.pathname
     )
+    trigger(SKILL_EDITOR_TRIGGER, { isOpen: true })
 
     // if (dialogHandler) dialogHandler()
-
-    trigger(BASE_SP_EVENT, {
-      children: (
-        <DialogSidePanel
-          debug
-          dist={dist}
-          key={skill?.name}
-          chatWith='skill'
-          start
-        />
-      ),
-      withTransition: false,
-      isClosable: false,
-    })
-
-    trigger('HelperDialogSidePanel', {})
 
     setAction(action ?? 'create')
     setSkill(skill ?? null)
@@ -266,6 +221,12 @@ const SkillPromptModal = ({
     handleSubmit(data => onFormSubmit(data, true))()
   }
 
+  const handleLeftSidePanelTrigger = (data: {
+    detail: { isOpen: boolean }
+  }) => {
+    setWithSidePanel(data.detail?.isOpen ?? false)
+  }
+
   useEffect(() => {
     reset({
       MODEL_ID: service?.display_name,
@@ -275,7 +236,14 @@ const SkillPromptModal = ({
 
   useEffect(() => {
     subscribe('SkillPromptModal', handleEventUpdate)
-    return () => unsubscribe('SkillPromptModal', handleEventUpdate)
+    // Handle Deepy Helper opening
+    subscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
+
+    return () => {
+      unsubscribe('SkillPromptModal', handleEventUpdate)
+      unsubscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
+      history.pushState({ dialogSkillName: null }, '', location.pathname)
+    }
   }, [])
 
   return (
@@ -285,8 +253,8 @@ const SkillPromptModal = ({
       style={{
         overlay: {
           top: 64,
-          right: 368,
-          left: 448,
+          right: 0,
+          left: 80,
           position: 'fixed',
           zIndex: 1,
         },
@@ -304,100 +272,101 @@ const SkillPromptModal = ({
           padding: 0,
         },
       }}>
-      <form
-        className={s.skillPromptModal}
-        onSubmit={handleSubmit(onFormSubmit)}>
-        <div className={s.top}>
-          <SkillDropboxSearch
-            label='Generative model:'
-            list={
-              services &&
-              services?.map(service => {
-                return service?.display_name
-              })
-            }
-            activeItem={service?.display_name}
-            error={errors[MODEL_ID]}
-            props={{
-              defaultValue: service?.display_name,
-              placeholder: 'Choose model',
-              ...register(MODEL_ID, { required: true }),
-            }}
-            onSelect={handleModelSelect}
-          />
-          {model?.length > 0 && (
-            <p className={s.tip}>
-              <span className={s['tip-bold']}>Details:</span>
-              <span>{skillModelTip}</span>
-              <a
-                href={skillModelLink}
-                target='_blank'
-                rel='noopener noreferrer'>
-                {skillModelLink}
-              </a>
-              <br />
-            </p>
-          )}
-        </div>
-
-        <TextArea
-          label='Enter prompt:'
-          withCounter
-          error={errors[PROMPT_ID]}
-          maxLenght={promptWordsMaxLenght}
-          props={{
-            // placeholder: prompt?.text,
-            defaultValue: prompt?.text,
-            ...register(PROMPT_ID, {
-              required: 'This field can’t be empty',
-              maxLength: {
-                value: promptWordsMaxLenght,
-                message: `Limit prompt to ${promptWordsMaxLenght} words`,
-              },
-            }),
-          }}
-        />
-        <div className={s.bottom}>
-          <span className={s['tip-bold']}>
-            Click "Save & Test" to test your new prompt
-          </span>
-          <div className={s.btns}>
-            {action === 'create' && (
-              <>
-                <Button
-                  theme='secondary'
-                  props={{ onClick: handleBackBtnClick }}>
-                  Back
-                </Button>
-                <Button theme='primary' props={{ type: 'submit' }}>
-                  Save
-                </Button>
-              </>
-            )}
-            {action === 'edit' && (
-              <>
-                <div className={s.history}>
-                  <Button theme='tertiary-round'>
-                    <HistoryIcon />
-                    History
-                  </Button>
-                </div>
-                {/* <Button
-                  theme='secondary'
-                  props={{ onClick: handleBackBtnClick }}>
-                  Back
-                </Button> */}
-                <Button theme='secondary-dark' props={{ type: 'submit' }}>
-                  Save & Test
-                </Button>
-                <Button theme='primary' props={{ onClick: handleSaveAndClose }}>
-                  Save & Close
-                </Button>
-              </>
-            )}
+      <div className={s.skillPromptModal}>
+        <form
+          onSubmit={handleSubmit(data => onFormSubmit(data))}
+          className={cx('editor', withSidePanel && 'withSidePanel')}>
+          <div className={s.header}>
+            {skill?.display_name ?? 'Current Skill'}: Editor
           </div>
-        </div>
-      </form>
+          <div className={s['editor-container']}>
+            <div className={s.top}>
+              <SkillDropboxSearch
+                label='Generative model:'
+                list={Array.from(mockSkillModels).map(([name]) => name)}
+                activeItem={model}
+                error={errors[MODEL_ID]}
+                props={{
+                  placeholder: 'Choose model',
+                  ...register(MODEL_ID, { required: true }),
+                }}
+                onSelect={handleModelSelect}
+                fullWidth
+              />
+              {model?.length > 0 && (
+                <p className={s.tip}>
+                  <span className={s['tip-bold']}>Details:</span>
+                  <span>{skillModelTip}</span>
+                  <a
+                    href={skillModelLink}
+                    target='_blank'
+                    rel='noopener noreferrer'>
+                    {skillModelLink}
+                  </a>
+                  <br />
+                </p>
+              )}
+            </div>
+
+            <TextArea
+              label='Enter prompt:'
+              withCounter
+              error={errors[PROMPT_ID]}
+              maxLenght={promptWordsMaxLenght}
+              props={{
+                placeholder:
+                  "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space.",
+                defaultValue: getValues()[PROMPT_ID],
+                ...register(PROMPT_ID, {
+                  required: 'This field can’t be empty',
+                  maxLength: {
+                    value: promptWordsMaxLenght,
+                    message: `Limit prompt to ${promptWordsMaxLenght} words`,
+                  },
+                }),
+              }}
+            />
+            <div className={s.bottom}>
+              <span className={s['tip-bold']}>
+                Click "Save & Test" to test your new prompt
+              </span>
+              <div className={s.btns}>
+                {action === 'create' && (
+                  <>
+                    <Button
+                      theme='secondary'
+                      props={{ onClick: handleBackBtnClick }}>
+                      Back
+                    </Button>
+                    <Button theme='primary' props={{ type: 'submit' }}>
+                      Save
+                    </Button>
+                  </>
+                )}
+                {action === 'edit' && (
+                  <>
+                    <div className={s.history}>
+                      <Button theme='tertiary-round'>
+                        <HistoryIcon />
+                        History
+                      </Button>
+                    </div>
+                    <Button theme='secondary-dark' props={{ type: 'submit' }}>
+                      Save & Test
+                    </Button>
+                    <Button
+                      theme='primary'
+                      props={{ onClick: handleSaveAndClose }}>
+                      Save & Close
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </form>
+        <SkillDialog />
+      </div>
     </Modal>
   )
 }

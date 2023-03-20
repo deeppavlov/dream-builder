@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getAccessToken, logout, setAccessToken } from '../context/AuthProvider'
+import { getAccessToken, logout, setAccessToken } from '../Context/AuthProvider'
 import { updateAccessToken } from './updateAccessToken'
 
 export const mode =

@@ -16,19 +16,19 @@ interface BaseSidePanel {
   }>
   children?: React.ReactNode
   isClosable?: boolean
-  withTransition?: boolean
+  transition?: 'left' | 'right' | 'none'
 }
 
 export const BaseSidePanel: FC<BaseSidePanel> = ({
   isOpen: propIsOpen,
   position,
   children,
-  withTransition: propWithTransition = true,
+  transition,
   isClosable: propsIsClosable = true,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
-  const [withTransition, setWithTransition] =
-    useState<boolean>(propWithTransition)
+  // const [withTransition, setWithTransition] =
+  //   useState<boolean>(propWithTransition)
   const [isClosable, setIsClosable] = useState<boolean>(propsIsClosable)
   const [content, setContent] = useState<React.ReactNode>(children)
 
@@ -40,9 +40,9 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
    * Update BaseSidePanel content, when it's triggered
    */
   const updateState = (data: BaseSidePanel) => {
-    if (data.withTransition !== undefined) {
-      setWithTransition(data.withTransition)
-    } else setWithTransition(true)
+    // if (data.withTransition !== undefined) {
+    //   setWithTransition(data.withTransition)
+    // } else setWithTransition(true)
 
     if (data.isClosable !== undefined) {
       setIsClosable(data.isClosable)
@@ -73,7 +73,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       position={position}
-      withTransition={withTransition}>
+      transition={transition}>
       <div className={s.baseSidePanel}>
         {isClosable && (
           <button className={s.close} onClick={handleClose}>

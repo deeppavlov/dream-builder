@@ -14,6 +14,7 @@ interface TextAreaProps {
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
+  resizable?: boolean
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -25,6 +26,7 @@ export const TextArea: FC<TextAreaProps> = ({
   props,
   withCounter,
   withEnterButton,
+  resizable = true,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
@@ -71,8 +73,8 @@ export const TextArea: FC<TextAreaProps> = ({
           )}
         </label>
       )}
-      <div className={cx('container', 'resizer-container')}>
-        <TextAreaLogo className={s.resizer} />
+      <div className={cx('container', resizable && 'resizer-container')}>
+        {resizable && <TextAreaLogo className={s.resizer} />}
         <textarea
           rows={2}
           cols={20}
@@ -80,7 +82,7 @@ export const TextArea: FC<TextAreaProps> = ({
           id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
-          className={s.field}
+          className={cx('field', resizable && 'resizable')}
         />
 
         {withEnterButton && (

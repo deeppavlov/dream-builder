@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
@@ -7,7 +8,7 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import s from './HelperDialogSidePanel.module.scss'
 import { Message, useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -19,6 +20,8 @@ import { renewDialog } from '../../services/renewDialog'
 import { getHistory } from '../../services/getHistory'
 
 import classNames from 'classnames/bind'
+
+export const HELPER_SIDEPANEL_TRIGGER = 'HELPER_SIDEPANEL_TRIGGER'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -41,31 +44,31 @@ const HelperDialogSidePanel = () => {
   const [dialogSession, setDialogueSession] =
     useState<SessionConfig | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
-  const queryClient = useQueryClient()
-  const { handleSubmit, register, reset } = useForm()
+
+  const handleClose = () => {
+    setIsOpen(false)
+    trigger(HELPER_SIDEPANEL_TRIGGER, { isOpen: false })
+  }
+
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
   const cx = classNames.bind(s)
 
-  const {
-    data: history,
-    isLoading: isHistoryLoading,
-    isError: historyError,
-  } = useQuery(
-    ['history', dialogSession?.id],
-    () => getHistory(dialogSession?.id!),
-    { enabled: !!message }
-  )
-  const renew = useMutation({
-    mutationFn: (data: string) => {
-      return renewDialog(data)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: 'history' }),
-        setDialogueSession(data)
-    },
-  })
+  const handleSubmit = (e?: React.MouseEvent) => {
+    const userMessage = textAreaRef.current?.value
+    if (!textAreaRef.current) return
+    if (!userMessage && userMessage === '') return
+
+    setChatHistory([...chatHistory, ...[{ byBot: false, text: userMessage! }]])
+    textAreaRef.current.value = ''
+  }
+
   const handleTrigger = (data: { detail: Props }) => {
-    setIsOpen(data.detail.isOpen ?? !isOpen)
+    setIsOpen(prev => {
+      const state = data.detail?.isOpen ?? !prev
+
+      trigger(HELPER_SIDEPANEL_TRIGGER, { isOpen: state })
+      return state
+    })
   }
 
   const handleSend = (data: FromForm) => {
@@ -103,8 +106,9 @@ const HelperDialogSidePanel = () => {
     <SidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
+      handleClose={handleClose}
       position={{ left: 80, right: 'auto', bottom: 0 }}
-      withTransition={false}
+      transition='left'
       key={'HelperDialogSidePanel'}>
       <div className={s.container}>
         <div className={s.dialogSidePanel}>
@@ -113,6 +117,9 @@ const HelperDialogSidePanel = () => {
               <img src={DeepyHelperIcon} alt='Deepy' className={s.deepy} />
               Deepy
             </span>
+            <button className={s.close} onClick={handleClose}>
+              <CloseIcon />
+            </button>
           </SidePanelHeader>
           <div className={s.chat}>
             {history &&

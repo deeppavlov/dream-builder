@@ -5,7 +5,7 @@ import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import s from './ResponseAnnotators.module.scss'
 
 interface Props {

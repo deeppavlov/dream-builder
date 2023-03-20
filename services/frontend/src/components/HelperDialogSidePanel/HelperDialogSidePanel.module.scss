@@ -155,3 +155,18 @@
     }
   }
 }
+
+.close {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 12px;
+  right: 24px;
+  align-self: center;
+  z-index: 1;
+  cursor: pointer;
+
+  path {
+    stroke: $text3;
+  }
+}

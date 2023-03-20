@@ -90,6 +90,7 @@
   padding: 8px 24px;
   outline: none;
   background-color: $bcgrnd2;
+  resize: none;
   @include b2;
 
   &::placeholder {
@@ -128,6 +129,10 @@
   &::-webkit-scrollbar-corner {
     background: transparent;
   }
+}
+
+.resizable {
+  resize: both;
 }
 
 .submit {

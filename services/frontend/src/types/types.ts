@@ -33,21 +33,20 @@ export interface IPreviewContext {
   setIsPreview: (isPreview: boolean) => void
 }
 
+export interface IAuthor {
+  email: string
+  family_name: string
+  fullname: string
+  given_name: string
+  id: number
+  picture: string
+  sub: string
+}
+
 export interface BotInfoInterface {
   name: string
   display_name: string
-  author: {
-    id: number
-    email: string
-    family_name: string
-    fullname: string
-    given_name: string
-    picture: string
-    sub: string
-  }
-  id: number
-  source: string
-  cloned_from: number
+  author: IAuthor
   description: string
   date_created: string
   ram_usage: string

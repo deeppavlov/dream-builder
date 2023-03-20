@@ -3,7 +3,7 @@ import classNames from 'classnames/bind'
 import { ISkill } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import SkillStackToolTip from '../SkillStackToolTip/SkillStackToolTip'
 import { srcForIcons } from '../../utils/srcForIcons'
 import s from './SkillElement.module.scss'
@@ -18,7 +18,8 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
   let tooltipId = useId()
   const cx = classNames.bind(s)
 
-  const handleToggle = (e: React.MouseEvent) => setDisabled(disabled => !disabled)
+  const handleToggle = (e: React.MouseEvent) =>
+    setDisabled(disabled => !disabled)
 
   return (
     <div className={cx('element', disabled && 'disabled')}>

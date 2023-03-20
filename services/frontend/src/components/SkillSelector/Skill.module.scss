@@ -18,6 +18,7 @@
     .name {
       cursor: pointer;
       @include t3;
+      width: 100%;
     }
   }
 }

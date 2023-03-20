@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { exchangeAuthCode } from '../context/AuthProvider'
+import { exchangeAuthCode } from '../Context/AuthProvider'
 
 /**
  * Parsing `auth_code` that comes from Google

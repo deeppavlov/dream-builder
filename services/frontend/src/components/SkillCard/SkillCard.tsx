@@ -6,9 +6,9 @@ import Button from '../../ui/Button/Button'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../mapping//componentTypeMap'
+import { componentTypeMap } from '../../Mapping//componentTypeMap'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
@@ -44,13 +44,18 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
-    trigger('CreateSkillDistModal', skill)
+    trigger('CreateSkillDistModal', { skill })
     e.stopPropagation()
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    // triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
-    trigger('SkillPromptModal', { skill, action: 'edit' })
+    if (skill.component_type === 'Generative') {
+      trigger('SkillPromptModal', { skill, action: 'edit' })
+      e.stopPropagation()
+      return
+    }
+
+    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]

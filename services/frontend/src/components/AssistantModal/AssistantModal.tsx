@@ -158,9 +158,9 @@ export const AssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.assistantModal}>
         <div>
-          {action === 'create' && <h4>Create a new virtual assistant</h4>}
-          {action === 'clone' && <h4>Create clone of a virtual assistant</h4>}
-          {action === 'edit' && <h4>Edit virtual assistant</h4>}
+          {action === 'create' && <h4>Create a new Virtual Assistant</h4>}
+          {action === 'clone' && <h4>Create a clone of a Virtual Assistant</h4>}
+          {action === 'edit' && <h4>Edit Virtual Assistant</h4>}
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>

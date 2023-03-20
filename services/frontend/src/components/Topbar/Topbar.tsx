@@ -1,13 +1,16 @@
 import classNames from 'classnames/bind'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../Context/AuthProvider'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { Profile } from '../../ui/Profile/Profile'
 import { Menu } from '../../ui/Menu/Menu'
 import { Display } from './components/Display'
 import { Test } from './components/Test'
-import { trigger } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { CloneButton } from '../CloneButton/CloneButton'
+import { BotInfoInterface } from '../../types/types'
+import { useEffect, useState } from 'react'
+import { SKILL_EDITOR_TRIGGER } from '../SkillPromptModal/SkillPromptModal'
 import s from './Topbar.module.scss'
 
 interface TopbarProps {
@@ -64,12 +67,25 @@ export const Topbar = ({
         </div>
       )
     case 'editor':
+      const [isSkillEditor, setIsSkillEditor] = useState(false)
+      const handleSkillEditorTrigger = (data: {
+        detail: { isOpen: boolean }
+      }) => setIsSkillEditor(data.detail.isOpen)
+
+      useEffect(() => {
+        subscribe(SKILL_EDITOR_TRIGGER, handleSkillEditorTrigger)
+        return () => unsubscribe(SKILL_EDITOR_TRIGGER, handleSkillEditorTrigger)
+      }, [])
+
       return (
         <>
           <div className={cx('topbar', 'editor')} ref={innerRef}>
             <Menu dist={dist} type='editor' />
             <div className={s.logo_area}>
-              <Breadcrumbs tab={tab}>{title}</Breadcrumbs>
+              <Breadcrumbs
+                tab={isSkillEditor ? history.state.dialogSkillName : tab}>
+                {isSkillEditor ? 'Skills' : title}
+              </Breadcrumbs>
             </div>
             <CloneButton handler={handleCloneBtnClick} />
             <div className={s.btns_area}>

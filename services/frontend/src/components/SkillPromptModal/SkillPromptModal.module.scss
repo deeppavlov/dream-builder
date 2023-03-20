@@ -1,16 +1,40 @@
 .skillPromptModal {
   display: flex;
-  flex-direction: column;
   height: 100%;
+}
+
+.editor {
+  display: flex;
   background-color: $bcgrnd3;
-  padding: 48px 64px;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  transition: padding 0.3s linear;
+}
+
+.withSidePanel {
+  padding-left: 368px;
+}
+
+.editor-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  padding: 0 64px 24px 64px;
+}
+
+.header {
+  @include t2;
+  padding: 8px 64px 10px 64px;
+  border-bottom: 1px dashed $text3;
 }
 
 .top {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 40px;
+  margin: 12px 0 40px 0;
   text-align: start;
 
   a {

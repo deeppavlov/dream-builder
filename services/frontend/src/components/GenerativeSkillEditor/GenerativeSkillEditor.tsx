@@ -6,11 +6,12 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { RoutesList } from '../../router/RoutesList'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import { trigger } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
 import s from './GenerativeSkillEditor.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 
 const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
 your own goals, but you also need to help user achieve their
@@ -48,6 +49,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
 
   const triggerEditModal = () => {
     trigger('SkillPromptModal', { skill, action: 'edit' })
+    trigger(BASE_SP_EVENT, { isOpen: false })
   }
 
   return (

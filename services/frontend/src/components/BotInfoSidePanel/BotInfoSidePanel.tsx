@@ -1,7 +1,12 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import {
+  BotAvailabilityType,
+  BotInfoInterface,
+  ISkill,
+  StackType,
+} from '../../types/types'
 import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
@@ -12,11 +17,12 @@ import DateCard from '../DateCard/DateCard'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { componentTypeMap } from '../../Mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
-import s from './BotInfoSidePanel.module.scss'
+import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import { Loader } from '../Loader/Loader'
+import s from './BotInfoSidePanel.module.scss'
+
 
 interface Props {
   bot: BotInfoInterface
@@ -94,11 +100,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <div className={s.table}>
               <div className={s.author}>
                 <img src={DeepPavlovLogo} alt='Author' />
-                <span>
-                  {bot?.author?.fullname! == 'Deepy Pavlova'
-                    ? 'DeepPavlov'
-                    : bot?.author?.fullname!}
-                </span>
+                <span>{bot?.author.fullname}</span>
               </div>
             </div>
           </div>
@@ -112,7 +114,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                 <Accordion
                   key={id}
                   title={capitalizeTitle(group)}
-                  group={group}
+                  group={group as StackType}
                   closed
                   rounded>
                   {group == 'skill_selectors' &&
@@ -123,27 +125,27 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                     components[group]?.length == 0 && (
                       <div className={s.accordionItem}>None</div>
                     )}
-                  {components[group].map(
-                    (item: SkillInfoInterface, id: number) => (
-                      <div key={id} className={s.accordionItem}>
-                        {group === 'skills' && (
-                          <img
-                            className={s.icon}
-                            src={srcForIcons(
-                              componentTypeMap[item?.component_type]
-                            )}
-                          />
-                        )}
-                        {isAnnotator(group) && (
-                          <img
-                            className={s.icon}
-                            src={srcForIcons(modelTypeMap[item?.model_type])}
-                          />
-                        )}
-                        {item?.display_name}
-                      </div>
-                    )
-                  )}
+                  {components[group].map((item: ISkill, id: number) => (
+                    <div key={id} className={s.accordionItem}>
+                      {group === 'skills' && (
+                        <img
+                          className={s.icon}
+                          src={srcForIcons(
+                            componentTypeMap[item?.component_type || '']
+                          )}
+                        />
+                      )}
+                      {isAnnotator(group) && (
+                        <img
+                          className={s.icon}
+                          src={srcForIcons(
+                            modelTypeMap[item?.model_type || '']
+                          )}
+                        />
+                      )}
+                      {item?.display_name}
+                    </div>
+                  ))}
                 </Accordion>
               ))}
           </div>

@@ -4,7 +4,7 @@ import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { Component } from '../../types/types'
-import { usePreview } from '../../context/PreviewProvider'
+import { usePreview } from '../../Context/PreviewProvider'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import s from './Annotators.module.scss'
 

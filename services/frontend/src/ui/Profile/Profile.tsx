@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ReactComponent as You } from '@assets/icons/team.svg'
 import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
-import { logout } from '../../context/AuthProvider'
+import { logout } from '../../Context/AuthProvider'
 import { UserContext } from '../../types/types'
 import s from './Profile.module.scss'
 

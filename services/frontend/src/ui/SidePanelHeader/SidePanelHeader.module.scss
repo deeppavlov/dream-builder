@@ -1,5 +1,6 @@
 .sidePanelHeader {
-  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
   width: 100%;
   border-bottom: 1px solid $bcgrnd3;
   display: flex;

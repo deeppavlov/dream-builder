@@ -28,6 +28,10 @@ $animation-delay: 300ms;
       border-color: $red;
     }
   }
+
+  &.fullWidth {
+    max-width: 100%;
+  }
 }
 
 .label {

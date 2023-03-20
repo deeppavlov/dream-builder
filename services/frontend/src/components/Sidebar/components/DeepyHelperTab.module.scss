@@ -3,4 +3,22 @@
   cursor: pointer;
   width: $sidebar-width;
   @include sidebar_btn_height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.active {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    background-color: $orange;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
 }

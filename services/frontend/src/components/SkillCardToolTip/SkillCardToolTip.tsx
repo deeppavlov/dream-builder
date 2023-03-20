@@ -11,10 +11,14 @@ interface Props {
 }
 
 const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
-  const handleEditBtnClick = () => {
-    trigger('SkillPromptModal', { skill, action: 'edit' })
+  const handleEditBtnClick = (e: React.MouseEvent) => {
+    if (skill.component_type === 'Generative') {
+      trigger('SkillPromptModal', { skill, action: 'edit' })
+      return
+    }
+
+    triggerSkillSidePanel({ skill, activeTab: 'Editor' })
   }
-  // triggerSkillSidePanel({ skill, activeTab: 'Editor' })
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })

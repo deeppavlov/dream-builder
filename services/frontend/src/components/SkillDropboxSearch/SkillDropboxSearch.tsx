@@ -12,6 +12,7 @@ interface Props {
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
   onSelect?: (value: string) => void
+  fullWidth?: boolean
 }
 
 const SkillDropboxSearch = ({
@@ -21,6 +22,7 @@ const SkillDropboxSearch = ({
   label,
   error,
   props,
+  fullWidth,
   onSelect,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
@@ -63,7 +65,7 @@ const SkillDropboxSearch = ({
   return (
     <div
       ref={dropboxRef}
-      className={cx('skillDropboxSearch', isOpen && 'open', error && 'error')}
+      className={cx('skillDropboxSearch', isOpen && 'open', error && 'error', fullWidth && 'fullWidth')}
       onFocus={() => setIsOpen(true)}>
       {label && <span className={s.label}>{label}</span>}
 

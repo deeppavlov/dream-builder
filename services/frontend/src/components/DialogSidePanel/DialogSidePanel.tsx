@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
@@ -16,47 +16,61 @@ import { renewDialog } from '../../services/renewDialog'
 import classNames from 'classnames/bind'
 import { useOnKey } from '../../hooks/useOnKey'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import { BotInfoInterface } from '../../types/types'
+import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
-
+export const DEBUG_DIST = 'universal_prompted_assistant'
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 type ChatPanelType = 'bot' | 'skill'
-interface props {
+type Message = { message: string }
+interface Props {
   error?: boolean
   start?: boolean
   chatWith: ChatPanelType
+  dist: BotInfoInterface
+  debug: boolean
 }
-interface DialogSessionConfig {
+export interface SessionConfig {
   id: number
   is_active: boolean
   user_id: boolean
   virtual_assistant_id: number
 }
-type Message = { message: string }
-const DialogSidePanel = ({ error, start, chatWith }: props) => {
+const DialogSidePanel: FC<Props> = ({
+  error,
+  start,
+  chatWith,
+  dist,
+  debug,
+}) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<string>('')
   const { handleSubmit, register, reset } = useForm()
-  // const [isFirstTest, setIsFirstTest] = useState(start ?? chatHistory === null)
+  const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
+    null
+  )
   const queryClient = useQueryClient()
-  const [dialogSession, setDialogueSession] =
-    useState<DialogSessionConfig | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
   const isVoiceChat = chatType === VOICE_CHAT_TYPE
   const startPanel = isFirstTest && !isError
   const chatPanel = !isFirstTest && !isError
+
   const {
     data: history,
     isLoading: isHistoryLoading,
     isError: historyError,
-  } = useQuery(['history', dialogSession?.id], () =>
-    getHistory(dialogSession?.id!)
+  } = useQuery(
+    ['history', dialogSession?.id],
+    () => getHistory(dialogSession?.id!),
+    { enabled: !!message }
   )
+
   const cx = classNames.bind(s)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
@@ -66,7 +80,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
   const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
 
   const handleStartBtnClick = () => {
-    renew.mutateAsync().then(() => {
+    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!).then(() => {
       setIsFirstTest(false)
     })
   }
@@ -79,10 +93,6 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     reset()
   }
 
-  const handleRenewClick = () => {
-    renew.mutateAsync().then()
-  }
-
   const send = useMutation({
     mutationFn: (variables: { id: number; message: string }) => {
       return sendMessage(variables?.id, variables?.message)
@@ -90,29 +100,35 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
 
+  const handleRenewClick = () => {
+    renew.mutateAsync(dist?.name!).then()
+  }
   const renew = useMutation({
-    mutationFn: () => {
-      return renewDialog()
+    mutationFn: (data: string) => {
+      return renewDialog(data)
     },
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: 'history' }),
         setDialogueSession(data)
     },
+    onError: () => {
+      setIsError(true)
+    },
   })
 
-  // const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === 'Enter' && !e.shiftKey) {
-  //     e.preventDefault()
-  //     handleSubmit(handleSend)()
-  //   }
-  // }
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(handleSend)()
+    }
+  }
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
   }, [history])
 
-  useOnKey(handleSend, 'Enter')
+  // useOnKey(handleSubmit(handleSend), 'Enter')
 
   return (
     <div className={s.container}>
@@ -156,35 +172,45 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
         )}
         {startPanel && (
           <>
-            <span className={s.alerName}>Run your bot</span>
+            <span className={s.alertName}>Run your bot</span>
             <p className={s.alertDesc}>
               Start a test to interact with your bot using text, voice or
               buttons
             </p>
-            <button onClick={handleStartBtnClick}>Run Test</button>
+            <button onClick={handleStartBtnClick}>
+              {renew.isLoading ? <TextLoader /> : 'Run Test'}
+            </button>
           </>
         )}
         {chatPanel && (
           <>
             <div className={s.chat}>
-              {history?.map((block, i: number) => (
-                <div
-                  key={`${block?.author == 'bot'}${i}`}
-                  className={`${s.chat__container} ${
-                    block?.author == 'bot' && s.chat__container_bot
-                  }`}>
-                  <span
-                    className={`${s.chat__message} ${
-                      block?.author == 'bot' && s.chat__message_bot
-                    }`}>
-                    {block?.text}
-                  </span>
-                </div>
-              ))}
+              {history &&
+                history?.map((block, i: number) => (
+                  <div
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx(
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
+                    )}>
+                    <span
+                      className={cx(
+                        'chat__message',
+                        block?.author == 'bot' && 'chat__message_bot'
+                      )}>
+                      {block?.text}
+                    </span>
+                  </div>
+                ))}
               {send?.isLoading && (
                 <>
                   <div className={`${s.chat__container}`}>
                     <span className={`${s.chat__message} `}>{message}</span>
+                  </div>
+                  <div className={cx('chat__container_bot', 'chat__container')}>
+                    <span className={cx('chat__message', 'chat__message_bot')}>
+                      <TextLoader />
+                    </span>
                   </div>
                 </>
               )}
@@ -216,6 +242,7 @@ const DialogSidePanel = ({ error, start, chatWith }: props) => {
             </div>
             <form onSubmit={handleSubmit(handleSend)}>
               <textarea
+                onKeyDown={handleTextAreaKeyDown}
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
                 {...register('message')}

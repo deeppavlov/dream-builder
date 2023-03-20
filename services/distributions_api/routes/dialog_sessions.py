@@ -96,13 +96,23 @@ async def send_dialog_session_message(
     text
     """
     dialog_session = crud.get_dialog_session(db, dialog_session_id)
+    virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
+
+    if virtual_assistant.publish_request is not None:
+        chat_url = dialog_session.deployment.chat_url
+    else:
+        chat_url = "http://54.234.141.146:4249"
+
+    lm_service = None
+    if dialog_session.deployment.lm_service:
+        lm_service = dialog_session.deployment.lm_service.display_name
 
     agent_dialog_id, bot_response = await send_chat_request_to_deployed_agent(
-        dialog_session.deployment.chat_url,
+        chat_url,
         dialog_session.id,
         payload.text,
         dialog_session.deployment.prompt,
-        dialog_session.deployment.lm_service,
+        lm_service,
     )
 
     crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)

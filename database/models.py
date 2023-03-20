@@ -109,17 +109,29 @@ class VirtualAssistant(Base):
     deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant")
 
 
+class LmService(Base):
+    __tablename__ = "lm_service"
+
+    id = Column(Integer, index=True, primary_key=True)
+
+    name = Column(String, nullable=False)
+    display_name = Column(String, nullable=False)
+    description = Column(String)
+    project_url = Column(String)
+
+
 class Deployment(Base):
     __tablename__ = "deployment"
 
     id = Column(Integer, index=True, primary_key=True)
 
     virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False, unique=True)
-    virtual_assistant = relationship("VirtualAssistant", uselist=False)
+    virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
     chat_url = Column(String, nullable=False)
     prompt = Column(String)
-    lm_service = Column(String)
+    lm_service_id = Column(Integer, ForeignKey("lm_service.id"))
+    lm_service = relationship("LmService", uselist=False, foreign_keys="Deployment.lm_service_id")
 
 
 class PublishRequest(Base):
@@ -130,7 +142,7 @@ class PublishRequest(Base):
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
-    virtual_assistant = relationship("VirtualAssistant")
+    virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id")
 
     user_id = Column(Integer, ForeignKey("google_user.id"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
@@ -222,6 +234,11 @@ def pre_populate_publish_request(target, connection, **kw):
         connection,
         map_value_types={"is_confirmed": lambda x: bool(int(x))},
     )
+
+
+@listens_for(LmService.__table__, "after_create")
+def pre_populate_lm_service(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/lm_service.tsv", target, connection)
 
 
 @listens_for(Deployment.__table__, "after_create")

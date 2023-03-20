@@ -36,6 +36,18 @@ class User(BaseOrmModel):
     family_name: Optional[str]
 
 
+class VirtualAssistant(BaseOrmModel):
+    id: int
+    author: User
+    source: str
+    name: str
+    display_name: str
+    description: str
+    date_created: datetime
+    cloned_from_id: Optional[int]
+    # clones: List[VirtualAssistant]
+
+
 class EditAssistantDistModel(BaseModel):
     display_name: Optional[str]
     description: Optional[str]
@@ -116,6 +128,7 @@ class ComponentShort(BaseModel):
     description: str
     ram_usage: str
     gpu_usage: Optional[str]
+    lm_service: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
@@ -135,13 +148,6 @@ class DistComponentsResponse(BaseModel):
 
 class CreateDialogSessionRequest(BaseModel):
     virtual_assistant_name: str
-
-
-class DialogSession(BaseOrmModel):
-    id: int
-    user_id: int
-    deployment_id: int
-    is_active: bool
 
 
 class DialogChatMessageRequest(BaseModel):
@@ -182,7 +188,15 @@ class CreateTokenResponse(BaseModel):
     token_value: str
 
 
-class LmServiceOption(BaseModel):
+class LmService(BaseOrmModel):
+    id: int
+    name: str
+    display_name: str
+    description: str
+    project_url: str
+
+
+class SetLmServiceRequest(BaseModel):
     name: str
 
 
@@ -191,8 +205,15 @@ class Deployment(BaseOrmModel):
     virtual_assistant_id: int
     chat_url: str
     prompt: Optional[str]
-    lm_service: Optional[str]
+    lm_service: Optional[LmService]
 
 
 class Prompt(BaseModel):
     text: str
+
+
+class DialogSession(BaseOrmModel):
+    id: int
+    user_id: int
+    deployment: Deployment
+    is_active: bool

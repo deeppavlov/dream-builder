@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, and_
+from sqlalchemy import select, update, and_, or_, delete
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -103,6 +103,66 @@ def create_or_update_user_api_token(
     return user_api_token
 
 
+def get_virtual_assistant(db: Session, id: int):
+    return db.get(models.VirtualAssistant, id)
+
+
+def get_all_virtual_assistants(db: Session):
+    return db.scalars(select(models.VirtualAssistant)).all()
+
+
+def get_all_public_virtual_assistants(db: Session):
+    return db.scalars(
+        select(models.VirtualAssistant).where(models.VirtualAssistant.publish_request.has(is_confirmed=True))
+    ).all()
+
+
+def get_all_private_virtual_assistants(db: Session, user_id: int):
+    return db.scalars(
+        select(models.VirtualAssistant).where(~models.VirtualAssistant.publish_request.has(is_confirmed=True))
+    ).all()
+
+
+def create_virtual_assistant(
+    db: Session,
+    cloned_from_id: int,
+    author_id: int,
+    source: str,
+    name: str,
+    display_name: str,
+    description: str,
+):
+    new_virtual_assistant = db.scalar(
+        insert(models.VirtualAssistant)
+        .values(
+            cloned_from_id=cloned_from_id,
+            author_id=author_id,
+            source=source,
+            name=name,
+            display_name=display_name,
+            description=description,
+        )
+        .returning(models.VirtualAssistant)
+    )
+    db.commit()
+
+    return new_virtual_assistant
+
+
+def delete_virtual_assistant_by_name(db: Session, name: str):
+    virtual_assistant = get_virtual_assistant_by_name(db, name)
+    db.execute(
+        delete(models.Deployment)
+        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
+    )
+
+    db.execute(
+        delete(models.VirtualAssistant)
+        .where(models.VirtualAssistant.name == name)
+    )
+    db.commit()
+
+
 def get_dialog_session(db: Session, dialog_session_id: int):
     return db.get(models.DialogSession, dialog_session_id)
 
@@ -141,19 +201,54 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
     db.commit()
 
 
+def get_all_lm_services(db: Session):
+    return db.scalars(select(models.LmService)).all()
+
+
+def get_lm_service_by_name(db: Session, name: str):
+    return db.scalar(select(models.LmService).filter_by(name=name))
+
+
 def get_virtual_assistant_by_name(db: Session, name: str):
     return db.scalar(select(models.VirtualAssistant).filter_by(name=name))
 
 
 def get_deployment_by_virtual_assistant_name(db: Session, name: str):
     virtual_assistant = get_virtual_assistant_by_name(db, name)
-    return db.scalar(select(models.Deployment).filter_by(virtual_assistant_id=virtual_assistant.id))
+
+    try:
+        deployment = db.scalar(select(models.Deployment).filter_by(virtual_assistant_id=virtual_assistant.id))
+    except AttributeError:
+        raise ValueError(f"No deployments for virtual_assistant.name = {name}")
+
+    return deployment
 
 
 def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str):
     deployment = get_deployment_by_virtual_assistant_name(db, name)
 
     return deployment.prompt
+
+
+def create_deployment_from_copy(db: Session, original_virtual_assistant_id: int, new_virtual_assistant_id: int):
+    original_deployment = db.scalar(
+        select(models.Deployment)
+        .where(models.Deployment.virtual_assistant_id == original_virtual_assistant_id)
+    )
+
+    deployment = db.scalar(
+        insert(models.Deployment)
+        .values(
+            virtual_assistant_id=new_virtual_assistant_id,
+            chat_url=original_deployment.chat_url,
+            prompt=original_deployment.prompt,
+            lm_service_id=original_deployment.lm_service_id,
+        )
+        .returning(models.Deployment)
+    )
+    db.commit()
+
+    return deployment
 
 
 def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs):
@@ -182,8 +277,9 @@ def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str):
 
 
 def set_deployment_lm_service_by_virtual_assistant_name(
-    db: Session, name: str, lm_service: str
+    db: Session, name: str, lm_service_name: str
 ) -> models.Deployment:
-    deployment = update_deployment_by_virtual_assistant_name(db, name, lm_service=lm_service)
+    lm_service = get_lm_service_by_name(db, lm_service_name)
+    deployment = update_deployment_by_virtual_assistant_name(db, name, lm_service_id=lm_service.id)
 
     return deployment

@@ -13,13 +13,7 @@ deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
 async def get_all_lm_services(db: Session = Depends(get_db)):
     """ """
-    all_lm_services = [
-        "BLOOMZ 7B",
-        "GPT-J 6B",
-        "GPT-3.5",
-        "ChatGPT",
-    ]
-    return [schemas.LmServiceOption(name=name) for name in all_lm_services]
+    return [schemas.LmService.from_orm(name) for name in crud.get_all_lm_services(db)]
 
 
 # @deployments_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)

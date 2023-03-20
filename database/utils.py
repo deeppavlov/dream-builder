@@ -31,7 +31,14 @@ def iter_tsv_rows(
         header = next(rd)
 
         for row in rd:
-            named_row = dict(zip(header, row))
+            cleaned_row = []
+            for item in row:
+                if item == "":
+                    cleaned_row.append(None)
+                else:
+                    cleaned_row.append(item)
+
+            named_row = dict(zip(header, cleaned_row))
 
             if map_value_types:
                 for column_name, column_type in map_value_types.items():

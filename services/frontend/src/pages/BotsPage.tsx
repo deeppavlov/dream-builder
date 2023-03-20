@@ -54,7 +54,8 @@ export const BotsPage = () => {
           showAll
           amount={publicDists?.length}
           linkTo={RoutesList.botsAll}
-          fitScreen={listView}>
+          // fitScreen={!!listView}
+        >
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
           {listView ? (

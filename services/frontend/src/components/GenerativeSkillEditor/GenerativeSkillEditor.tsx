@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { ISkill } from '../../types/types'
@@ -12,6 +12,9 @@ import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
 import s from './GenerativeSkillEditor.module.scss'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { useQuery } from 'react-query'
+import { getLMservice } from '../../services/getLMservice'
+import { getPrompt } from '../../services/getPrompt'
 
 const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
 your own goals, but you also need to help user achieve their
@@ -52,6 +55,15 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
     trigger(BASE_SP_EVENT, { isOpen: false })
   }
 
+  const { state } = useLocation()
+
+  const { data: service } = useQuery(['lm_service', state?.distName], () =>
+    getLMservice(state?.distName)
+  )
+  const { data: prompt } = useQuery(['prompt', state?.distName], () =>
+    getPrompt(state?.distName)
+  )
+
   return (
     <SkillSidePanel skill={skill} tabs={tabs} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
@@ -59,7 +71,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
         <ul className={s.table}>
           <li className={s.item}>
             <span className={cx('table-name')}>Generative model:</span>
-            <span className={s.value}>{skill.model || 'Empty'}</span>
+            <span className={s.value}>{service?.display_name || 'Empty'}</span>
           </li>
         </ul>
         <Link to={RoutesList.profile} className={s.link}>
@@ -74,7 +86,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
           </div>
           <IntentList>
             <div className={cx('prompt')} onClick={triggerEditModal}>
-              {skill.prompt}
+              {prompt?.text}
               <button>
                 <EditPencilIcon className={cx('edit-pencil')} />
               </button>

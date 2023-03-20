@@ -193,7 +193,11 @@ export const EditorPage = () => {
       </Tabs>
 
       <AreYouSureModal />
-      <SkillPromptModal />
+      <SkillPromptModal
+        handleClose={() => setActiveTab(0)}
+        dist={dist}
+        distName={state?.distName!}
+      />
       <HelperDialogSidePanel />
       <Toaster />
       <SkillsListModal />

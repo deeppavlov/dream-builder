@@ -31,7 +31,17 @@ const MenuToolTip = ({ tooltipId, type }: Props) => {
           <hr />
           <ContextMenuButton name='Add Skills' type='add' />
           <hr />
-          <ContextMenuButton name='Publish' type='publish' />
+          <ContextMenuButton
+            disabled={isPreview}
+            name='Publish'
+            type='publish'
+            handleClick={handlePublishClick}
+          />
+          <ContextMenuButton
+            name='Share'
+            type='download'
+            handleClick={handleShareClick}
+          />
           <hr />
           <ContextMenuButton name='Delete' type='delete' />
         </>

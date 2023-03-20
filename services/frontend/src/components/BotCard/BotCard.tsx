@@ -67,6 +67,7 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(bot.name)
     navigate(`/${bot?.name}`, {
       state: {
         preview: false,

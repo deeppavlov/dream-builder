@@ -13,6 +13,17 @@
   padding: 0px;
   box-sizing: border-box;
 }
+// *::-webkit-scrollbar {
+//   width: 8px;
+//   height: 8px;
+//   border-radius: 4px;
+//   background: transparent;
+// }
+
+// *::-webkit-scrollbar-thumb {
+//   background: $bcgrnd5;
+//   border-radius: 4px;
+// }
 html,
 body {
   overflow: auto;

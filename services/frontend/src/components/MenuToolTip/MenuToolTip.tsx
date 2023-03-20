@@ -44,7 +44,7 @@ const MenuToolTip = ({ tooltipId, type }: Props) => {
           />
           <ContextMenuButton
             name='Share'
-            type='download'
+            type='share'
             handleClick={handleShareClick}
           />
           <hr />

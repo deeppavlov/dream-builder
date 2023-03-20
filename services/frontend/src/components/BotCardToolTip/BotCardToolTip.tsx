@@ -39,38 +39,37 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
-      {type === 'your' && (
-        <ContextMenuButton
-          name='Rename'
-          type='edit'
-          handleClick={handleRenameBtnClick}
-        />
-      )}
+      <ContextMenuButton
+        name='Publish'
+        type='publish'
+        disabled={type === 'public'}
+        handleClick={handlePublishBtnClick}
+      />
+      <ContextMenuButton
+        name='Share'
+        type='share'
+        disabled={type === 'public'}
+        handleClick={handleShareBtnClick}
+      />
+      <hr />
+      <ContextMenuButton
+        name='Rename'
+        type='edit'
+        disabled={type === 'public'}
+        handleClick={handleRenameBtnClick}
+      />
       <ContextMenuButton
         name='Properties'
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
-      {type === 'your' && (
-        <>
-          <ContextMenuButton
-            name='Publish'
-            type='publish'
-            handleClick={handlePublishBtnClick}
-          />
-          <ContextMenuButton
-            name='Share'
-            type='download'
-            handleClick={handleShareBtnClick}
-          />
-          <hr />
-          <ContextMenuButton
-            name='Delete'
-            type='delete'
-            handleClick={handleDeleteBtnClick}
-          />
-        </>
-      )}
+      <hr />
+      <ContextMenuButton
+        name='Delete'
+        type='delete'
+        disabled={type === 'public'}
+        handleClick={handleDeleteBtnClick}
+      />
     </BaseContextMenu>
   )
 }

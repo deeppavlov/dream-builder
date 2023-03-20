@@ -11,18 +11,24 @@
   color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
 
-  &.annotators {
-    background: #d8dbe5;
+  &.annotators,
+  &.candidate_annotators,
+  &.response_annotators {
+    background: #f0f0f3;
+    border: 1px solid #8d96b5;
   }
+
+  &.skill_selectors,
   &.response_selectors {
-    background: #ffcc00;
+    background: #ffcc001a;
+    border: 1px solid #ffcc00;
   }
-  &.skill_selectors {
-    background: #ffcc00;
-  }
+
   &.skills {
-    background: #ff9500;
+    background: #ff95001a;
+    border: 1px solid #ff9500;
   }
+
   &.small {
     max-height: 32px;
     @include b3;

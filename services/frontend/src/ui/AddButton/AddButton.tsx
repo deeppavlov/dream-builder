@@ -54,7 +54,7 @@ export const AddButton: FC<Props> = ({
       <img src={Add} />
     </button>
   ) : (
-    <tr className={cx('tr', disabled && 'disabled')}>
+    <tr className={cx('tr')}>
       <td colSpan={5} className={s.td}>
         <button className={s.forTable} onClick={handleClick}>
           <img src={Add} />

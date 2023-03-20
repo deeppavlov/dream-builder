@@ -12,6 +12,7 @@ type TMenuItem =
   | 'enable'
   | 'add'
   | 'download'
+  | 'share'
   | 'save'
   | 'about'
 

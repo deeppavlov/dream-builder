@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import classNames from 'classnames/bind'
+import { ReactComponent as PublicIcon } from '@assets/icons/eye.svg'
+import { ReactComponent as PrivateIcon } from '@assets/icons/private_eye.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as DoneIcon } from '@assets/icons/done.svg'
 import { ReactComponent as LoaderIcon } from '@assets/icons/circle_loader_small.svg'
@@ -13,6 +15,8 @@ type Theme =
   | 'valid'
   | 'validating'
   | 'not-valid'
+  | 'public'
+  | 'your'
 
 interface SmallTagProps extends React.PropsWithChildren {
   theme?: Theme
@@ -25,6 +29,10 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
   const getIcon = (theme?: Theme) => {
     if (!theme) return
     switch (theme) {
+      case 'public':
+        return <PublicIcon className={s.icon} />
+      case 'your':
+        return <PrivateIcon className={s.icon} />
       case 'not-valid':
         return <CloseIcon className={s.icon} />
       case 'valid':

@@ -150,14 +150,14 @@ export const EditorPage = () => {
                 <Table
                   second='Type'
                   addButton={
-                    !isPreview && (
+                    !isPreview ? (
                       <AddButton
                         forTable
                         forSkills
                         disabled={!auth?.user && isPreview}
                         text='Add Skill'
                       />
-                    )
+                    ) : undefined
                   }>
                   <SkillList skills={skills} view='table' type='your' />
                 </Table>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import {
@@ -10,10 +10,10 @@ import {
 import { trigger } from '../../utils/events'
 import { capitalizeTitle } from '../../utils/capitalizeTitle'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { getComponents } from '../../services/getComponents'
 import Button from '../../ui/Button/Button'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import DateCard from '../DateCard/DateCard'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { srcForIcons } from '../../utils/srcForIcons'
@@ -22,7 +22,9 @@ import { isAnnotator } from '../../utils/isAnnotator'
 import { modelTypeMap } from '../../Mapping/modelTypeMap'
 import { Loader } from '../Loader/Loader'
 import s from './BotInfoSidePanel.module.scss'
-
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { SmallTag } from '../SmallTag/SmallTag'
 
 interface Props {
   bot: BotInfoInterface
@@ -43,6 +45,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     error: componentsError,
     data: components,
   } = useQuery(['components', bot?.name], () => getComponents(bot?.name!))
+  const tooltipId = useId()
 
   const handleCloneBtnClick = () => {
     if (!disabled) {
@@ -95,59 +98,66 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
           <span className={s.name}>{bot?.display_name}</span>
         </div>
         <div className={s.topContainer}>
-          <div className={s.main}>
-            <DateCard date={bot?.date_created} />
-            <div className={s.table}>
-              <div className={s.author}>
-                <img src={DeepPavlovLogo} alt='Author' />
-                <span>{bot?.author.fullname}</span>
-              </div>
+          <div className={s.author}>
+            <img src={DeepPavlovLogo} alt='Author' />
+            <span>{bot?.author.fullname}</span>
+          </div>
+          <span className={s.separator} />
+          <div className={s.dateAndVersion}>
+            <div className={s.date}>
+              <CalendarIcon />
+              {dateToUTC(bot?.date_created)}
             </div>
+            <SmallTag theme={type}>
+              {type === 'your' ? 'Private' : type}
+            </SmallTag>
           </div>
         </div>
-        <div className={s.container}>
-          <p className={s.desc}>{bot?.description}</p>
-          <div className={s.accordions}>
-            <Loader isLoading={isComponentsLoading} />
-            {components &&
-              Object.keys(components).map((group: string, id: number) => (
-                <Accordion
-                  key={id}
-                  title={capitalizeTitle(group)}
-                  group={group as StackType}
-                  closed
-                  rounded>
-                  {group == 'skill_selectors' &&
-                    components?.skill_selectors?.length == 0 && (
-                      <div className={s.accordionItem}>All Skills</div>
-                    )}
-                  {group !== 'skill_selectors' &&
-                    components[group]?.length == 0 && (
-                      <div className={s.accordionItem}>None</div>
-                    )}
-                  {components[group].map((item: ISkill, id: number) => (
-                    <div key={id} className={s.accordionItem}>
-                      {group === 'skills' && (
-                        <img
-                          className={s.icon}
-                          src={srcForIcons(
-                            componentTypeMap[item?.component_type || '']
-                          )}
-                        />
+        <div className={s.scroll}>
+          <div className={s.container}>
+            <p className={s.desc}>{bot?.description}</p>
+            <div className={s.accordions}>
+              <Loader isLoading={isComponentsLoading} />
+              {components &&
+                Object.keys(components).map((group: string, id: number) => (
+                  <Accordion
+                    key={id}
+                    title={capitalizeTitle(group)}
+                    group={group as StackType}
+                    closed
+                    rounded>
+                    {group == 'skill_selectors' &&
+                      components?.skill_selectors?.length == 0 && (
+                        <div className={s.accordionItem}>All Skills</div>
                       )}
-                      {isAnnotator(group) && (
-                        <img
-                          className={s.icon}
-                          src={srcForIcons(
-                            modelTypeMap[item?.model_type || '']
-                          )}
-                        />
+                    {group !== 'skill_selectors' &&
+                      components[group]?.length == 0 && (
+                        <div className={s.accordionItem}>None</div>
                       )}
-                      {item?.display_name}
-                    </div>
-                  ))}
-                </Accordion>
-              ))}
+                    {components[group].map((item: ISkill, id: number) => (
+                      <div key={id} className={s.accordionItem}>
+                        {group === 'skills' && (
+                          <img
+                            className={s.icon}
+                            src={srcForIcons(
+                              componentTypeMap[item?.component_type || '']
+                            )}
+                          />
+                        )}
+                        {isAnnotator(group) && (
+                          <img
+                            className={s.icon}
+                            src={srcForIcons(
+                              modelTypeMap[item?.model_type || '']
+                            )}
+                          />
+                        )}
+                        {item?.display_name}
+                      </div>
+                    ))}
+                  </Accordion>
+                ))}
+            </div>
           </div>
         </div>
         <div className={s.btns}>
@@ -165,12 +175,15 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
           )}
           {type === 'your' && (
             <>
-              <Button props={{}} theme='secondary'>
+              <Button
+                props={{ 'data-tooltip-id': tooltipId }}
+                theme='secondary'>
                 More
               </Button>
               <Button props={{ onClick: handlEditClick }} theme='primary'>
                 Edit
               </Button>
+              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>
           )}
         </div>

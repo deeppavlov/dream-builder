@@ -9,15 +9,15 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './HelperDialogSidePanel.module.scss'
-import { useOnKey } from '../../hooks/useOnKey'
 import { Message, useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { sendMessage } from '../../services/sendMessage'
 import TextLoader from '../TextLoader/TextLoader'
-import { DialogSessionConfig } from '../DialogSidePanel/DialogSidePanel'
-import dist from 'react-hot-toast'
+import { SessionConfig } from '../DialogSidePanel/DialogSidePanel'
+
 import { renewDialog } from '../../services/renewDialog'
 import { getHistory } from '../../services/getHistory'
+
 import classNames from 'classnames/bind'
 
 const TEXT_CHAT_TYPE = 'text'
@@ -39,7 +39,7 @@ const HelperDialogSidePanel = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[] | []>([])
   const [message, setMessage] = useState<string>('')
   const [dialogSession, setDialogueSession] =
-    useState<DialogSessionConfig | null>(null)
+    useState<SessionConfig | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
   const { handleSubmit, register, reset } = useForm()

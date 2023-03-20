@@ -49,18 +49,6 @@ export const EditorPage = () => {
   const { state } = useLocation()
   const location = useLocation()
   const nameFromURL = location?.pathname?.substring(1)
-
-  const makeDisplayName = (name: string) => {
-    const splitted = name.split('_')
-    splitted.length = splitted.length - 2
-    return splitted
-      .map((word: string) => {
-        return word[0].toUpperCase() + word.slice(1)
-      })
-      .join(' ')
-  }
-  const displayName = makeDisplayName(nameFromURL)
-
   const { isPreview, setIsPreview } = usePreview()
 
   useEffect(() => {

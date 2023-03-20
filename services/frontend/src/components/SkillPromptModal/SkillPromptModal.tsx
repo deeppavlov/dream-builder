@@ -74,14 +74,44 @@ const SkillPromptModal = ({
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
-  const [withSidePanel, setWithSidePanel] = useState(withLeftPadding)
+  const queryClient = useQueryClient()
+
+  const {
+    data: services,
+    isLoading: isServicesLoading,
+    isError: isServicesError,
+  } = useQuery('lm_services', getAllLMservices)
+
+  const {
+    data: service,
+    isLoading: isServiceLoading,
+    isError: isServiceError,
+    isSuccess: isServiceSucces,
+  } = useQuery(['lm_service', dist?.name], () =>
+    getLMservice(distName || dist?.name)
+  )
+
+  const {
+    data: prompt,
+    isLoading: isPromptLoading,
+    isError: isPromptError,
+    isSuccess: isPromptSucces,
+  } = useQuery(['prompt', dist?.name!], () => getPrompt(distName || dist?.name))
+
   const {
     handleSubmit,
     register,
     reset,
     getValues,
-    formState: { errors },
-  } = useForm({ mode: 'all' })
+    formState: { errors, isSubmitSuccessful },
+  } = useForm({
+    mode: 'all',
+    defaultValues: {
+      MODEL_ID: service?.displayName,
+      PROMPT_ID: prompt?.text,
+    },
+  })
+
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 3000
   const model = getValues()[MODEL_ID] as string
@@ -121,6 +151,27 @@ const SkillPromptModal = ({
 
     // if (dialogHandler) dialogHandler()
 
+    trigger(BASE_SP_EVENT, {
+      children: (
+        <DialogSidePanel
+          setP={setPromptForDebugDist}
+          setS={setServiceForDebugDist}
+          service={service}
+          prompt={prompt}
+          distName={distName}
+          debug
+          dist={dist}
+          key={skill?.name}
+          chatWith='skill'
+          start
+        />
+      ),
+      withTransition: false,
+      isClosable: false,
+    })
+
+    trigger('HelperDialogSidePanel', {})
+
     setAction(action ?? 'create')
     setSkill(skill ?? null)
     // Reset values and errors states
@@ -159,15 +210,15 @@ const SkillPromptModal = ({
 
     // if (afterClose) closeModal()
   }
+
   const handleSaveAndTest = data => {
     const service = mockSkillModels.get(model).name
     const prompt = data?.prompt
     const distName = dist?.name
-    
 
     setPromptForDist.mutate({ distName, prompt })
     setServiceForDist.mutate({ distName, service })
-    
+
     setPromptForDebugDist.mutate({ DEBUG_DIST, prompt })
     setServiceForDebugDist.mutate({ DEBUG_DIST, service })
 
@@ -181,51 +232,32 @@ const SkillPromptModal = ({
     onSuccess: data => {
       queryClient.invalidateQueries('prompt')
     },
-    onError: () => {},
-    onSettled: () => {},
   })
   const setServiceForDist = useMutation({
     mutationFn: (variables: { distName: string; service: string }) => {
-      // console.log(`dist inside mfn = `, dist)
       return changeLMservice(variables?.distName, variables?.service)
     },
     onSuccess: data => {
       queryClient.invalidateQueries('lm_service')
     },
-    onError: () => {},
-    onSettled: () => {},
   })
   const setPromptForDebugDist = useMutation({
     mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
       return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
     },
-    onSuccess: data => {
-      console.log(`dist = `, data)
-    },
-    onError: () => {},
-    onSettled: () => {},
   })
   const setServiceForDebugDist = useMutation({
     mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
-      // console.log(`dist inside mfn = `, dist)
       return changeLMservice(variables?.DEBUG_DIST, variables?.service)
     },
-    onSuccess: data => {
-      console.log(`setService = `, data)
-    },
-    onError: () => {},
-    onSettled: () => {},
   })
 
   const handleSaveAndClose = () => {
-    handleSubmit(data => onFormSubmit(data, true))()
+    handleSubmit(handleSaveAndTest)()
+    closeModal()
   }
 
-  const handleLeftSidePanelTrigger = (data: {
-    detail: { isOpen: boolean }
-  }) => {
-    setWithSidePanel(data.detail?.isOpen ?? false)
-  }
+  const updateIniversal = () => {}
 
   useEffect(() => {
     reset({

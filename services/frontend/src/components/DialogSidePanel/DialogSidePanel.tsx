@@ -32,6 +32,9 @@ interface Props {
   chatWith: ChatPanelType
   dist: BotInfoInterface
   debug: boolean
+  distName: string
+  service: string
+  prompt: string
 }
 export interface SessionConfig {
   id: number
@@ -45,6 +48,11 @@ const DialogSidePanel: FC<Props> = ({
   chatWith,
   dist,
   debug,
+  distName,
+  service,
+  prompt,
+  setP,
+  setS,
 }) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [isError, setIsError] = useState(error ?? false)
@@ -99,9 +107,9 @@ const DialogSidePanel: FC<Props> = ({
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
-
+console.log(`debug = `, debug)
   const handleRenewClick = () => {
-    renew.mutateAsync(dist?.name!).then()
+    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
   }
   const renew = useMutation({
     mutationFn: (data: string) => {

@@ -100,7 +100,7 @@ const HelperDialogSidePanel = () => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
-  }, [chatHistory])
+  }, [history])
   // useOnKey(handleSubmit(handleSend), 'Enter')
   return (
     <SidePanel

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQueryClient, useMutation } from 'react-query'
 import { postAssistantDist } from '../../services/postAssistanDist'
 import { renameAssistantDist } from '../../services/renameAssistantDist'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -14,6 +14,7 @@ import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import toast from 'react-hot-toast'
 import { useOnKey } from '../../hooks/useOnKey'
 import s from './AssistantModal.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 type FormValues = { display_name: string; description: string }
@@ -107,6 +108,7 @@ export const AssistantModal = () => {
         })
         .then(() => {
           isTopbarButton && closeModal()
+          trigger(BASE_SP_EVENT, { isOpen: false })
         }),
   })
 

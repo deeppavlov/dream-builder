@@ -156,7 +156,11 @@ const SkillPromptModal = ({
     setAction(null)
     setSkill(null)
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
-    history.pushState({ dialogSkillName: null }, '', location.pathname)
+    history.pushState(
+      Object.assign({}, history.state, { dialogSkillName: null }),
+      '',
+      location.pathname
+    )
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -174,7 +178,9 @@ const SkillPromptModal = ({
 
     // Push skill name for breadcrumbs bar
     history.pushState(
-      { dialogSkillName: skill?.display_name },
+      Object.assign({}, history.state, {
+        dialogSkillName: skill?.display_name,
+      }),
       '',
       location.pathname
     )
@@ -288,7 +294,11 @@ const SkillPromptModal = ({
     return () => {
       unsubscribe('SkillPromptModal', handleEventUpdate)
       unsubscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
-      history.pushState({ dialogSkillName: null }, '', location.pathname)
+      history.pushState(
+        Object.assign({}, history.state, { dialogSkillName: null }),
+        '',
+        location.pathname
+      )
     }
   }, [])
   const cx = classNames.bind(s)

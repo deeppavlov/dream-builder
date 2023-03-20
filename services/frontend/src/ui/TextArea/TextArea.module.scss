@@ -10,10 +10,10 @@
   height: 100%;
 
   &[data-active='true'] {
-    .field {
+    .container {
       box-shadow: none !important;
       color: $text1;
-      padding-right: 69px;
+      // padding-right: 69px;
     }
 
     .resizer {
@@ -22,7 +22,7 @@
   }
 
   &[data-error='true'] {
-    .field {
+    .container {
       // &:invalid,
       border-color: $red !important;
       background-color: $bcgrnd1;
@@ -37,8 +37,14 @@
     }
   }
 
-  &:hover .resizer path {
-    stroke: $primary1;
+  &:hover {
+    .container {
+      border-color: $primary1;
+      background-color: $bcgrnd1;
+    }
+    .resizer path {
+      stroke: $primary1;
+    }
   }
 
   &:has(.field:disabled) {
@@ -53,10 +59,41 @@
 }
 
 .container {
-  position: relative;
   display: flex;
+  min-height: 100%;
+  max-height: 100%;
+  min-width: 100%;
   max-width: 100%;
+  position: relative;
+
   height: 100%;
+  width: 100%;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  padding: 8px 0;
+  background-color: $bcgrnd2;
+
+  &:focus-within {
+    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+    border-color: $primary1;
+    color: $text1;
+    background-color: $bcgrnd1;
+  }
+
+  &:has(.field:disabled) {
+    background-color: $bcgrnd3;
+    color: $text3;
+    border-color: $text3;
+
+    opacity: 0.3;
+
+    .filed {
+      resize: none;
+      &::placeholder {
+        color: $text3;
+      }
+    }
+  }
 }
 
 .label {
@@ -83,43 +120,19 @@
 }
 
 .field {
-  width: 100%;
+  min-width: 100%;
   min-height: 80px;
-  border: 1px solid $text3;
-  border-radius: 12px;
-  padding: 8px 24px;
+
+  padding: 0 24px;
   outline: none;
-  background-color: $bcgrnd2;
   resize: none;
   @include b2;
+  border: none;
+  background-color: transparent;
 
   &::placeholder {
     color: $text3;
     opacity: 0.4;
-  }
-
-  &:hover {
-    border-color: $primary1;
-    background-color: $bcgrnd1;
-  }
-
-  &:focus {
-    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
-    border-color: $primary1;
-    color: $text1;
-    background-color: $bcgrnd1;
-  }
-
-  &:disabled {
-    background-color: $bcgrnd3;
-    color: $text3;
-    border-color: $text3;
-    resize: none;
-    opacity: 0.3;
-
-    &::placeholder {
-      color: $text3;
-    }
   }
 
   &::-webkit-resizer {

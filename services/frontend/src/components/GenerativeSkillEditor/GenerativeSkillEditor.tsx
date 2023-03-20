@@ -47,7 +47,8 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
     [editor, { name: 'Details', disabled: isPreview }],
   ])
   const promptWordsMaxLenght = 1500
-  const promptWordsLenght = skill.prompt?.match(/\S+/g)?.length || 0
+  const getPromptWordsLenght = (prompt: string) =>
+    prompt?.match(/\S+/g)?.length || 0
   let cx = classNames.bind(s)
 
   const triggerEditModal = () => {
@@ -81,7 +82,8 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
           <div className={cx('prompt-header')}>
             <span className={cx('label')}>Prompt:</span>
             <span className={cx('label', 'count')}>
-              {promptWordsLenght}/{promptWordsMaxLenght} words
+              {getPromptWordsLenght(prompt?.text || '')}/{promptWordsMaxLenght}{' '}
+              words
             </span>
           </div>
           <IntentList>

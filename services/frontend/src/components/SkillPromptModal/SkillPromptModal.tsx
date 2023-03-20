@@ -2,42 +2,56 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
-import { ISkill } from '../../types/types'
+import { BotInfoInterface, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
+import DialogSidePanel, { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { getLMservice } from '../../services/getLMservice'
+import { getPrompt } from '../../services/getPrompt'
+import { getAllLMservices } from '../../services/getAllLMservices'
 import s from './SkillPromptModal.module.scss'
+import { postPrompt } from '../../services/postPrompt'
+import { changeLMservice } from '../../services/changeLMservice'
 
 const mockSkillModels = new Map([
   [
     'ChatGPT',
     {
-      text: 'ChatGPT is the GPT-3.5 model optimized for chat at 1/10th the cost of text-davinci-003. ChatGPT is available as gpt-3.5-turbo in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. ChatGPT accepts at maximum 4,096 tokens.',
+      description:
+        'ChatGPT is the GPT-3.5 model optimized for chat at 1/10th the cost of text-davinci-003. ChatGPT is available as gpt-3.5-turbo in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. ChatGPT accepts at maximum 4,096 tokens.',
       link: 'https://chat.openai.com/',
+      name: 'openai-api-chatgpt',
     },
   ],
   [
     'GPT-3.5',
     {
-      text: 'GPT-3.5 is a language model available as text-davinci-003 in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. GPT-3.5 accepts at maximum 4,097 tokens.',
+      description:
+        'GPT-3.5 is a language model available as text-davinci-003 in OpenAI API on a paid basis and requiring an individual API key. It contains 175 billion parameters. GPT-3.5 accepts at maximum 4,097 tokens.',
       link: 'https://beta.openai.com/playground',
+      name: 'openai-api-davinci3',
     },
   ],
   [
     'GPT-J 6B',
     {
-      text: 'GPT-J 6B is an open-source language model from transformers. It contains 6 billion parameters, and is 30 times smaller than GPT-3 175B while having a comparable generation quality. GPT-J 6B accepts at maximum 2,048 tokens.',
+      description:
+        'GPT-J 6B is an open-source language model from transformers. It contains 6 billion parameters, and is 30 times smaller than GPT-3 175B while having a comparable generation quality. GPT-J 6B accepts at maximum 2,048 tokens.',
       link: 'https://huggingface.co/EleutherAI/gpt-j-6B',
+      name: 'transformers-lm-gptj',
     },
   ],
   [
     'BLOOMZ 7B',
     {
-      text: 'BLOOMZ 7B is an open-source multilingual language model from transformers. It contains 7.1 billion parameters. BLOOMZ 7B accepts at maximum 2,048 tokens.',
+      description:
+        'BLOOMZ 7B is an open-source multilingual language model from transformers. It contains 7.1 billion parameters. BLOOMZ 7B accepts at maximum 2,048 tokens.',
       link: 'https://huggingface.co/bigscience/bloomz-7b1',
+      name: 'transformers-lm-bloomz7b',
     },
   ],
 ])
@@ -45,29 +59,63 @@ const mockSkillModels = new Map([
 type TAction = 'create' | 'edit'
 
 interface Props {
+  dist: BotInfoInterface
   action?: TAction
   skill?: ISkill
   isOpen?: boolean
+  distName: string
   dialogHandler?: () => void
   handleClose?: () => void
 }
 
-const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
+const SkillPromptModal = ({
+  dialogHandler,
+  handleClose,
+  dist,
+  distName,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
+  const queryClient = useQueryClient()
+  const {
+    data: services,
+    isLoading: isServicesLoading,
+    isError: isServicesError,
+  } = useQuery('lm_services', getAllLMservices)
+  const {
+    data: service,
+    isLoading: isServiceLoading,
+    isError: isServiceError,
+  } = useQuery(['lm_service', dist?.name], () =>
+    getLMservice(distName || dist?.name)
+  )
+  const {
+    data: prompt,
+    isLoading: isPromptLoading,
+    isError: isPromptError,
+  } = useQuery(['prompt', dist?.name!], () => getPrompt(distName || dist?.name))
+
   const {
     handleSubmit,
     register,
     reset,
     getValues,
     formState: { errors, isSubmitSuccessful },
-  } = useForm({ mode: 'all' })
+  } = useForm({
+    mode: 'all',
+    defaultValues: {
+      MODEL_ID: service?.displayName,
+      PROMPT_ID: prompt?.text,
+    },
+  })
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
-  const promptWordsMaxLenght = 1500
+  const promptWordsMaxLenght = 3000
   const model = getValues()[MODEL_ID] as string
-  const skillModelTip = mockSkillModels.get(model)?.text
+
+  const skillModelTip = mockSkillModels.get(model)?.description
   const skillModelLink = mockSkillModels.get(model)?.link
+  const skillModelName = mockSkillModels.get(model)?.name
 
   const closeModal = () => {
     setIsOpen(false)
@@ -86,7 +134,7 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
    * Set modal is open and getting skill info
    */
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill, action } = data.detail
+    const { skill, action, dist } = data.detail
 
     if (data.detail.isOpen !== undefined && !data.detail.isOpen) {
       closeModal()
@@ -100,10 +148,18 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
       location.pathname
     )
 
-    if (dialogHandler) dialogHandler()
+    // if (dialogHandler) dialogHandler()
 
     trigger(BASE_SP_EVENT, {
-      children: <DialogSidePanel key={skill?.name} chatWith='skill' />,
+      children: (
+        <DialogSidePanel
+          debug
+          dist={dist}
+          key={skill?.name}
+          chatWith='skill'
+          start
+        />
+      ),
       withTransition: false,
       isClosable: false,
     })
@@ -113,10 +169,10 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
     // Reset values and errors states
-    reset({
-      [MODEL_ID]: skill?.model,
-      [PROMPT_ID]: skill?.prompt,
-    })
+    // reset({
+    //   [MODEL_ID]: skill?.model,
+    //   [PROMPT_ID]: skill?.prompt,
+    // })
     setIsOpen(!isOpen)
   }
 
@@ -135,6 +191,7 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
   }
 
   const onFormSubmit = (data: any, afterClose?: boolean) => {
+    console.log(`data in form submit = `, data)
     if (action === 'create') {
       handleCreate(data)
       return
@@ -142,14 +199,79 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
 
     // For prompt & model editing
     if (action === 'edit') {
+      handleSaveAndTest(data)
     }
 
-    if (afterClose) closeModal()
+    // if (afterClose) closeModal()
   }
+  const handleSaveAndTest = data => {
+    const service = mockSkillModels.get(model).name
+    const prompt = data?.prompt
+    const distName = dist?.name
+    
+
+    setPromptForDist.mutate({ distName, prompt })
+    setServiceForDist.mutate({ distName, service })
+    
+    setPromptForDebugDist.mutate({ DEBUG_DIST, prompt })
+    setServiceForDebugDist.mutate({ DEBUG_DIST, service })
+
+    reset()
+  }
+
+  const setPromptForDist = useMutation({
+    mutationFn: (variables: { distName: string; prompt: string }) => {
+      return postPrompt(variables?.distName, variables?.prompt)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries('prompt')
+    },
+    onError: () => {},
+    onSettled: () => {},
+  })
+  const setServiceForDist = useMutation({
+    mutationFn: (variables: { distName: string; service: string }) => {
+      // console.log(`dist inside mfn = `, dist)
+      return changeLMservice(variables?.distName, variables?.service)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries('lm_service')
+    },
+    onError: () => {},
+    onSettled: () => {},
+  })
+  const setPromptForDebugDist = useMutation({
+    mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
+      return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
+    },
+    onSuccess: data => {
+      console.log(`dist = `, data)
+    },
+    onError: () => {},
+    onSettled: () => {},
+  })
+  const setServiceForDebugDist = useMutation({
+    mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
+      // console.log(`dist inside mfn = `, dist)
+      return changeLMservice(variables?.DEBUG_DIST, variables?.service)
+    },
+    onSuccess: data => {
+      console.log(`setService = `, data)
+    },
+    onError: () => {},
+    onSettled: () => {},
+  })
 
   const handleSaveAndClose = () => {
     handleSubmit(data => onFormSubmit(data, true))()
   }
+
+  useEffect(() => {
+    reset({
+      MODEL_ID: service?.display_name,
+      PROMPT_ID: prompt?.text,
+    })
+  }, [service, prompt])
 
   useEffect(() => {
     subscribe('SkillPromptModal', handleEventUpdate)
@@ -184,14 +306,20 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
       }}>
       <form
         className={s.skillPromptModal}
-        onSubmit={handleSubmit(data => onFormSubmit(data))}>
+        onSubmit={handleSubmit(onFormSubmit)}>
         <div className={s.top}>
           <SkillDropboxSearch
             label='Generative model:'
-            list={Array.from(mockSkillModels).map(([name]) => name)}
-            activeItem={model}
+            list={
+              services &&
+              services?.map(service => {
+                return service?.display_name
+              })
+            }
+            activeItem={service?.display_name}
             error={errors[MODEL_ID]}
             props={{
+              defaultValue: service?.display_name,
               placeholder: 'Choose model',
               ...register(MODEL_ID, { required: true }),
             }}
@@ -218,9 +346,8 @@ const SkillPromptModal = ({ dialogHandler, handleClose }: Props) => {
           error={errors[PROMPT_ID]}
           maxLenght={promptWordsMaxLenght}
           props={{
-            placeholder:
-              "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-            defaultValue: getValues()[PROMPT_ID],
+            // placeholder: prompt?.text,
+            defaultValue: prompt?.text,
             ...register(PROMPT_ID, {
               required: 'This field can’t be empty',
               maxLength: {

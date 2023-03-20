@@ -53,7 +53,7 @@ privateApi.interceptors.response.use(
     const accessTokenIsExist = getAccessToken() !== null
     const accessTokenIsValid = !accessTokenIsExpired && accessTokenIsExist
 
-    console.log(`Access token is valid: ${accessTokenIsValid}`)
+    // console.log(`Access token is valid: ${accessTokenIsValid}`)
 
     if (!accessTokenIsValid && !prevRequest?.sent) {
       prevRequest.sent = true // Avoid unnecessary repeat on one request
@@ -62,11 +62,11 @@ privateApi.interceptors.response.use(
         const { data } = await updateAccessToken()
         setAccessToken(data.token)
         prevRequest.headers.token = data.token
-        console.log('Access token successfully updated!')
+        // console.log('Access token successfully updated!')
       } catch (error) {
         // Logout if update access token is failed
         const isUser = localStorage.getItem('user') !== null // Prevent infinity logout
-        console.log('Update access token is failed!')
+        // console.log('Update access token is failed!')
         isUser && logout()
         return
       }

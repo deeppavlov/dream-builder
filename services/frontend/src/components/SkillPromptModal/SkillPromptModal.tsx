@@ -68,8 +68,9 @@ interface Props {
 }
 
 const SkillPromptModal = ({
+  dist,
+  distName,
   withLeftPadding = false,
-  dialogHandler,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
@@ -103,33 +104,21 @@ const SkillPromptModal = ({
     },
   })
 
-  const {
-    data: services,
-    isLoading: isServicesLoading,
-    isError: isServicesError,
-  } = useQuery('lm_services', getAllLMservices)
+  const { data: services } = useQuery('lm_services', getAllLMservices)
 
-  const {
-    data: service,
-    isLoading: isServiceLoading,
-    isError: isServiceError,
-    isSuccess: isServiceSucces,
-  } = useQuery(
+  const { data: service } = useQuery(
     ['lm_service', dist?.name],
     () => getLMservice(distName || dist?.name),
     {
+      enabled: dist?.name?.length > 0,
       onSuccess: data => {
+        
         const service = data?.service
         setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
       },
     }
   )
-  const {
-    data: prompt,
-    isLoading: isPromptLoading,
-    isError: isPromptError,
-    isSuccess: isPromptSucces,
-  } = useQuery(
+  const { data: prompt } = useQuery(
     ['prompt', dist?.name!],
     () => getPrompt(distName || dist?.name),
     {
@@ -145,7 +134,7 @@ const SkillPromptModal = ({
     register,
     reset,
     getValues,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm({
     mode: 'all',
     defaultValues: {
@@ -193,34 +182,34 @@ const SkillPromptModal = ({
 
     // if (dialogHandler) dialogHandler()
 
-    trigger(BASE_SP_EVENT, {
-      children: (
-        <DialogSidePanel
-          setP={setPromptForDebugDist}
-          setS={setServiceForDebugDist}
-          service={service}
-          prompt={prompt}
-          distName={distName}
-          debug
-          dist={dist}
-          key={skill?.name}
-          chatWith='skill'
-          start
-        />
-      ),
-      withTransition: false,
-      isClosable: false,
-    })
+    // trigger(BASE_SP_EVENT, {
+    //   children: (
+    //     <DialogSidePanel
+    //       setP={setPromptForDebugDist}
+    //       setS={setServiceForDebugDist}
+    //       service={service}
+    //       prompt={prompt}
+    //       distName={distName}
+    //       debug
+    //       dist={dist}
+    //       key={skill?.name}
+    //       chatWith='skill'
+    //       start
+    //     />
+    //   ),
+    //   withTransition: false,
+    //   isClosable: false,
+    // })
 
-    trigger('HelperDialogSidePanel', {})
+    // trigger('HelperDialogSidePanel', {})
 
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    // Reset values and errors states
-    // reset({
-    //   [MODEL_ID]: skill?.model,
-    //   [PROMPT_ID]: skill?.prompt,
-    // })
+  
+    reset({
+      [MODEL_ID]: skill?.model,
+      [PROMPT_ID]: skill?.prompt,
+    })
     setIsOpen(!isOpen)
   }
 
@@ -239,7 +228,7 @@ const SkillPromptModal = ({
   }
 
   const onFormSubmit = (data: any, afterClose?: boolean) => {
-    console.log(`data in form submit = `, data)
+    
     if (action === 'create') {
       handleCreate(data)
       return
@@ -302,7 +291,7 @@ const SkillPromptModal = ({
       history.pushState({ dialogSkillName: null }, '', location.pathname)
     }
   }, [])
-
+  const cx = classNames.bind(s)
   return (
     <Modal
       isOpen={isOpen}
@@ -340,8 +329,13 @@ const SkillPromptModal = ({
             <div className={s.top}>
               <SkillDropboxSearch
                 label='Generative model:'
-                list={Array.from(mockSkillModels).map(([name]) => name)}
-                activeItem={model}
+                list={
+                  services &&
+                  services?.map(service => {
+                    return service?.display_name
+                  })
+                }
+                activeItem={service?.display_name}
                 error={errors[MODEL_ID]}
                 props={{
                   placeholder: 'Choose model',
@@ -371,9 +365,9 @@ const SkillPromptModal = ({
               error={errors[PROMPT_ID]}
               maxLenght={promptWordsMaxLenght}
               props={{
-                placeholder:
-                  "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space.",
-                defaultValue: getValues()[PROMPT_ID],
+                // placeholder:
+                //   "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space.",
+                defaultValue: prompt?.text,
                 ...register(PROMPT_ID, {
                   required: 'This field can’t be empty',
                   maxLength: {
@@ -422,7 +416,7 @@ const SkillPromptModal = ({
             </div>
           </div>
         </form>
-        <SkillDialog />
+        <SkillDialog debug chatWith={'skill'} dist={dist} />
       </div>
     </Modal>
   )

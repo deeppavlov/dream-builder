@@ -142,6 +142,26 @@ export interface ISkill extends IStackElement {
   lm_service:string
 }
 
+export interface SessionConfig {
+  id: number
+  is_active: boolean
+  user_id: boolean
+  virtual_assistant_id: number
+}
+
+export interface SkillDialogProps {
+  error?: boolean
+  start?: boolean
+  chatWith: ChatPanelType
+  dist: BotInfoInterface
+  debug: boolean
+  distName: string
+  service: string
+  prompt: string
+}
+// export type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
+export type Message = { message: string }
+export type ChatPanelType = 'bot' | 'skill'
 export type SkillCardSize = BotCardSize
 
 export type CustomRouteConfig = RouteObject & { crumb?: string }

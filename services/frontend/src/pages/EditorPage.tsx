@@ -40,7 +40,6 @@ import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 import HelperDialogSidePanel from '../components/HelperDialogSidePanel/HelperDialogSidePanel'
 import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
-import { trigger } from '../utils/events'
 
 export const EditorPage = () => {
   const [listView, setListView] = useState<boolean>(false)
@@ -52,7 +51,7 @@ export const EditorPage = () => {
   const { isPreview, setIsPreview } = usePreview()
 
   useEffect(() => {
-    setIsPreview(state?.preview == undefined ? true : state?.preview)
+    setIsPreview(state?.preview == undefined ? false : state?.preview)
   }, [state])
   //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
   const viewHandler = () => {

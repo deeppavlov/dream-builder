@@ -130,6 +130,13 @@
     &_bot {
       background: rgba(255, 204, 0, 0.1);
       border-radius: 12px 12px 12px 0px;
+      cursor: pointer;
+      &:hover {
+        background: rgba(255, 204, 0, 0.2);
+      }
+      &:active {
+        background: rgba(255, 204, 0, 0.3);
+      }
     }
   }
 

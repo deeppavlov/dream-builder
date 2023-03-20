@@ -97,6 +97,7 @@ const DialogSidePanel: FC<Props> = ({
     const id = dialogSession?.id!
     const message = data?.message!
     setMessage(message)
+
     send.mutate({ id, message })
     reset()
   }
@@ -108,10 +109,7 @@ const DialogSidePanel: FC<Props> = ({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
 
- 
-
   const handleRenewClick = () => {
-    console.log(`renew  `)
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
   }
   const renew = useMutation({
@@ -130,7 +128,7 @@ const DialogSidePanel: FC<Props> = ({
   const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleSend)()
+      handleSubmit(handleSend)
     }
   }
   useEffect(() => {
@@ -139,10 +137,7 @@ const DialogSidePanel: FC<Props> = ({
     }
   }, [history])
 
-  // useOnKey(handleSend, 'Enter')
-
   useEffect(() => {
-    console.log(`listener was mounted`)
     subscribe('RenewChat', handleRenewClick)
     return () => unsubscribe('RenewChat', handleRenewClick)
   }, [])

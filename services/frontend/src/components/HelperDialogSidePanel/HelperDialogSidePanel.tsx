@@ -9,17 +9,17 @@ import SidePanel from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
-import s from './HelperDialogSidePanel.module.scss'
 import { Message, useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { sendMessage } from '../../services/sendMessage'
 import TextLoader from '../TextLoader/TextLoader'
 import { SessionConfig } from '../DialogSidePanel/DialogSidePanel'
-
 import { renewDialog } from '../../services/renewDialog'
 import { getHistory } from '../../services/getHistory'
-
 import classNames from 'classnames/bind'
+import toast from 'react-hot-toast'
+import { ToastCopySucces } from '../Toasts/Toasts'
+import s from './HelperDialogSidePanel.module.scss'
 
 export const HELPER_SIDEPANEL_TRIGGER = 'HELPER_SIDEPANEL_TRIGGER'
 
@@ -41,8 +41,9 @@ const HelperDialogSidePanel = () => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [chatHistory, setChatHistory] = useState<ChatMessage[] | []>([])
   const [message, setMessage] = useState<string>('')
-  const [dialogSession, setDialogueSession] =
-    useState<SessionConfig | null>(null)
+  const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
+    null
+  )
   const chatRef = useRef<HTMLDivElement>(null)
 
   const handleClose = () => {
@@ -101,7 +102,15 @@ const HelperDialogSidePanel = () => {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
   }, [history])
-  // useOnKey(handleSubmit(handleSend), 'Enter')
+  const ref = useRef<HTMLSpanElement>()
+  const handleMessageClick = () => {
+    navigator.clipboard.writeText(ref?.current?.textContent!)
+    toast.custom(<ToastCopySucces />, {
+      position: 'top-center',
+      id: 'copySucces',
+      duration: 1000,
+    })
+  }
   return (
     <SidePanel
       isOpen={isOpen}
@@ -131,6 +140,8 @@ const HelperDialogSidePanel = () => {
                     block?.author == 'bot' && 'chat__container_bot'
                   )}>
                   <span
+                    ref={ref}
+                    onClick={handleMessageClick}
                     className={cx(
                       'chat__message',
                       block?.author == 'bot' && 'chat__message_bot'
@@ -142,10 +153,16 @@ const HelperDialogSidePanel = () => {
             {send?.isLoading && (
               <>
                 <div className={`${s.chat__container}`}>
-                  <span className={`${s.chat__message} `}>{message}</span>
+                  <span
+                    onClick={handleMessageClick}
+                    className={`${s.chat__message} `}>
+                    {message}
+                  </span>
                 </div>
                 <div className={cx('chat__container_bot', 'chat__container')}>
-                  <span className={cx('chat__message', 'chat__message_bot')}>
+                  <span
+                    onClick={handleMessageClick}
+                    className={cx('chat__message', 'chat__message_bot')}>
                     <TextLoader />
                   </span>
                 </div>

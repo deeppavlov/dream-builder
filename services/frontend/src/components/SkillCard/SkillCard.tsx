@@ -15,6 +15,7 @@ import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { srcForIcons } from '../../utils/srcForIcons'
 import s from './SkillCard.module.scss'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 
 export interface SkillCardProps {
   skill: ISkill
@@ -51,6 +52,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const handleEditBtnClick = (e: React.MouseEvent) => {
     if (skill.component_type === 'Generative') {
       trigger('SkillPromptModal', { skill, action: 'edit' })
+      trigger(BASE_SP_EVENT, { isOpen: false })
       e.stopPropagation()
       return
     }

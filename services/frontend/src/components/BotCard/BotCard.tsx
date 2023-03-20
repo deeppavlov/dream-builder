@@ -76,7 +76,6 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
     })
     e.stopPropagation()
   }
-
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -87,7 +86,11 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
           {type === 'public' && (
             <div className={s.author}>
               <img referrerPolicy='no-referrer' src={DeepPavlovLogo} />
-              <span>{bot?.author}</span>
+              <span>
+                {bot?.author?.fullname! == 'Deepy Pavlova'
+                  ? 'DeepPavlov'
+                  : bot?.author?.fullname!}
+              </span>
             </div>
           )}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>

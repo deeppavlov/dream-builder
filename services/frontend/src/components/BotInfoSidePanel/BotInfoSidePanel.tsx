@@ -67,6 +67,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     })
     e.stopPropagation()
   }
+
   return (
     <>
       <SidePanelHeader>
@@ -93,7 +94,11 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <div className={s.table}>
               <div className={s.author}>
                 <img src={DeepPavlovLogo} alt='Author' />
-                <span>{bot?.author}</span>
+                <span>
+                  {bot?.author?.fullname! == 'Deepy Pavlova'
+                    ? 'DeepPavlov'
+                    : bot?.author?.fullname!}
+                </span>
               </div>
             </div>
           </div>

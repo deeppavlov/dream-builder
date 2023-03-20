@@ -84,7 +84,11 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       <td className={s.td}>
         <div className={s.author}>
           <Logo />
-          <p>{bot?.author}</p>
+          <p>
+            {bot?.author?.fullname! == 'Deepy Pavlova'
+              ? 'DeepPavlov'
+              : bot?.author?.fullname!}
+          </p>
         </div>
       </td>
       <td className={s.td}>

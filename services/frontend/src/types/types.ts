@@ -36,7 +36,18 @@ export interface IPreviewContext {
 export interface BotInfoInterface {
   name: string
   display_name: string
-  author: string
+  author: {
+    id: number
+    email: string
+    family_name: string
+    fullname: string
+    given_name: string
+    picture: string
+    sub: string
+  }
+  id: number
+  source: string
+  cloned_from: number
   description: string
   date_created: string
   ram_usage: string
@@ -169,3 +180,5 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
+
+export type BotVisabilityType = 'public' | 'unlisted'

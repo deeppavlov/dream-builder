@@ -151,6 +151,16 @@ def create_virtual_assistant(
 
 def delete_virtual_assistant_by_name(db: Session, name: str):
     virtual_assistant = get_virtual_assistant_by_name(db, name)
+    deployments = db.scalars(
+        select(models.Deployment)
+        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
+    )
+    for deployment in deployments:
+        db.execute(
+            delete(models.DialogSession)
+            .where(models.DialogSession.deployment_id == deployment.id)
+        )
+
     db.execute(
         delete(models.Deployment)
         .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)

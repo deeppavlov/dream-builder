@@ -44,7 +44,9 @@ def _generate_name_from_display_name(display_name: str):
     Returns:
         assistant dist name in snake_case with unique identifier
     """
-    normalized_name = display_name.replace(" ", "_").lower()
+    normalized_name = "".join(
+        char for char in display_name.replace(" ", "_").lower() if char.isalnum() or char in ["_"]
+    )
     random_id = secrets.token_hex(4)
 
     return f"{normalized_name}_{random_id}"
@@ -282,8 +284,11 @@ async def delete_dist_by_name(
 
     -``dist_name``: name of the distribution
     """
-    dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    dream_dist.delete()
+    try:
+        dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+        dream_dist.delete()
+    except FileNotFoundError:
+        pass
 
     crud.delete_virtual_assistant_by_name(db, dist_name)
 

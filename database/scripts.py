@@ -89,3 +89,4 @@ def register_initial_data_population():
     #                 logging.warning(f"Inserted {inserted_row}")
     #     except ImportError:
     #         pass
+

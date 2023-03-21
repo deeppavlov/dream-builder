@@ -14,7 +14,7 @@ dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_
 async def send_chat_request_to_deployed_agent(agent_url: str, session_id: int, text: str, prompt: str, lm_service: str):
     """ """
     data = {
-        "user_id": session_id,
+        "user_id": f"dream_builder_user_{session_id}",
         "payload": text,
         "prompt": prompt,
         "lm_service": lm_service,

@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base, DeclarativeMeta
 
+# from database.scripts import register_initial_data_population
+
 Base = declarative_base()
 
 
@@ -19,7 +21,15 @@ class Database:
         return self.sessionmaker(**kwargs)
 
 
-def init_db(user: str, password: str, host: str, port: int, database: str, force_recreate: bool = False) -> Database:
+def init_db(
+    user: str,
+    password: str,
+    host: str,
+    port: int,
+    database: str,
+    force_recreate: bool = False,
+    # populate_initial_data: bool = False,
+) -> Database:
     """Create sqlalchemy sessionmaker
 
     Args:
@@ -44,6 +54,9 @@ def init_db(user: str, password: str, host: str, port: int, database: str, force
         # Base.metadata.drop_all(bind=engine)
         database.base.metadata.clear()
 
-    database.base.metadata.create_all(bind=engine, checkfirst=not force_recreate)
+    # if populate_initial_data:
+    #     register_initial_data_population()
+
+    database.base.metadata.create_all(bind=engine, checkfirst=True)
 
     return database

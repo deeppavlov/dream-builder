@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Union, Dict, Type, Callable
 
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
@@ -51,6 +52,7 @@ class GoogleUser(Base):
     role = relationship("Role")
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author")
+    dialog_sessions = relationship("DialogSession", back_populates="user")
 
 
 class UserValid(Base):
@@ -104,6 +106,32 @@ class VirtualAssistant(Base):
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     publish_request = relationship("PublishRequest", uselist=False, back_populates="virtual_assistant")
+    deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant")
+
+
+class LmService(Base):
+    __tablename__ = "lm_service"
+
+    id = Column(Integer, index=True, primary_key=True)
+
+    name = Column(String, nullable=False)
+    display_name = Column(String, nullable=False)
+    description = Column(String)
+    project_url = Column(String)
+
+
+class Deployment(Base):
+    __tablename__ = "deployment"
+
+    id = Column(Integer, index=True, primary_key=True)
+
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False, unique=True)
+    virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
+
+    chat_url = Column(String, nullable=False)
+    prompt = Column(String)
+    lm_service_id = Column(Integer, ForeignKey("lm_service.id"))
+    lm_service = relationship("LmService", uselist=False, foreign_keys="Deployment.lm_service_id")
 
 
 class PublishRequest(Base):
@@ -113,8 +141,8 @@ class PublishRequest(Base):
     slug = Column(String, unique=True)
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"))
-    virtual_assistant = relationship("VirtualAssistant")
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
+    virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id")
 
     user_id = Column(Integer, ForeignKey("google_user.id"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
@@ -129,7 +157,7 @@ class Component(Base):
 
     id = Column(Integer, index=True, primary_key=True)
     group = Column(String, nullable=False)
-    directory = Column(String, nullable=False)
+    source = Column(String, nullable=False)
     container = Column(String, nullable=False)
     endpoint = Column(String, nullable=False)
 
@@ -138,10 +166,27 @@ class VirtualAssistantComponent(Base):
     __tablename__ = "virtual_assistant_component"
 
     id = Column(Integer, index=True, primary_key=True)
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"))
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
     virtual_assistant = relationship("VirtualAssistant")
-    component_id = Column(Integer, ForeignKey("component.id"))
+    component_id = Column(Integer, ForeignKey("component.id"), nullable=False)
     component = relationship("Component")
+    is_enabled = Column(Boolean, nullable=False)
+
+
+class DialogSession(Base):
+    __tablename__ = "dialog_session"
+
+    id = Column(Integer, index=True, primary_key=True)
+
+    user_id = Column(Integer, ForeignKey("google_user.id"))
+    user = relationship("GoogleUser", uselist=False, foreign_keys="DialogSession.user_id")
+
+    deployment_id = Column(Integer, ForeignKey("deployment.id"), nullable=False)
+    deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")
+
+    agent_dialog_id = Column(String)
+
+    is_active = Column(Boolean, nullable=False)
 
 
 def _pre_populate_from_tsv(
@@ -150,7 +195,7 @@ def _pre_populate_from_tsv(
     connection,
     map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None,
 ):
-    logging.warning(f"Pre-populating {target.name} from {path}")
+    logging.error(f"Pre-populating {target.name} from {path}")
 
     for row in utils.iter_tsv_rows(path, map_value_types):
         connection.execute(target.insert(), row)
@@ -174,3 +219,28 @@ def pre_populate_google_user(target, connection, **kw):
 @listens_for(ApiToken.__table__, "after_create")
 def pre_populate_api_token(target, connection, **kw):
     _pre_populate_from_tsv("database/initial_data/api_token.tsv", target, connection)
+
+
+@listens_for(VirtualAssistant.__table__, "after_create")
+def pre_populate_virtual_assistant(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/virtual_assistant.tsv", target, connection)
+
+
+@listens_for(PublishRequest.__table__, "after_create")
+def pre_populate_publish_request(target, connection, **kw):
+    _pre_populate_from_tsv(
+        "database/initial_data/publish_request.tsv",
+        target,
+        connection,
+        map_value_types={"is_confirmed": lambda x: bool(int(x))},
+    )
+
+
+@listens_for(LmService.__table__, "after_create")
+def pre_populate_lm_service(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/lm_service.tsv", target, connection)
+
+
+@listens_for(Deployment.__table__, "after_create")
+def pre_populate_deployment(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/deployment.tsv", target, connection)

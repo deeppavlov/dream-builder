@@ -13,6 +13,11 @@
   }
 }
 
+.name {
+  @include t3;
+  margin-bottom: -8px;
+}
+
 .attention {
   background: $bcgrnd2;
   border-radius: 8px;

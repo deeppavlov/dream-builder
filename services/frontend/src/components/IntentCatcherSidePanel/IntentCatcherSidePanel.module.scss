@@ -7,6 +7,7 @@
   position: relative;
 
   &__container {
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -15,6 +16,12 @@
     gap: 16px;
     padding: 12px 24px 24px 24px;
   }
+}
+
+.name {
+  @include t3;
+  width: 100%;
+  margin-bottom: -8px;
 }
 
 .training {

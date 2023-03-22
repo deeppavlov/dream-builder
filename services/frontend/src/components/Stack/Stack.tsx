@@ -15,7 +15,7 @@ interface StackProps {
 
 export const Stack: React.FC<StackProps> = ({ type, data }) => {
   let cx = classNames.bind(s)
-  console.log(type)
+
   return (
     type && (
       <div className={cx('stack', type)}>
@@ -43,7 +43,7 @@ export const Stack: React.FC<StackProps> = ({ type, data }) => {
           />
         )}
         <div className={s.elements}>
-          <Accordion title='Customizable'></Accordion>
+          <Accordion closed title='Customizable'></Accordion>
           <Accordion title='Non-customizable'>
             {data?.map((item: object, id: number) => {
               return <StackElement key={id} item={item} type={type} />

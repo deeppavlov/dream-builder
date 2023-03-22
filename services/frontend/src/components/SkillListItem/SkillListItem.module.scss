@@ -10,12 +10,22 @@
   padding: 0px 24px;
   svg {
     @include icon_size_24;
-    fill: rgba(0, 0, 0, 0.7);
   }
 }
 .checkboxArea {
   background: #fff;
   padding-left: 24px;
+}
+.disabled {
+  @include disabled;
+}
+.tr:last-child {
+  .td:first-child {
+    border-bottom-left-radius: 12px;
+  }
+  .td:last-child {
+    border-bottom-right-radius: 12px;
+  }
 }
 .tr {
   border-top: 1px solid #f0f0f3;
@@ -23,6 +33,7 @@
   height: 64px;
   padding: 12px;
   @include tr_behavior;
+
   .td {
     &:nth-child(2) {
       padding-left: 0;
@@ -34,7 +45,7 @@
     color: #313030;
     padding: 0px 24px;
     svg {
-      fill: rgba(0, 0, 0, 0.7);
+      // fill: rgba(0, 0, 0, 0.7);
       @include icon_size_24;
     }
   }
@@ -45,8 +56,11 @@
 }
 .description {
   display: flex;
-  align-items: center;
+  align-items: start;
+  max-height: 64px;
+  min-width: 460px;
   color: rgba(0, 0, 0, 0.7);
+  @include hide_text;
   @include b3;
   .tooltips {
     @include tooltip;
@@ -68,8 +82,9 @@
   .typeText {
     text-transform: capitalize;
     @include t4;
+    @include hide_text;
   }
-  @include skillType;
+  @include componentType;
 }
 .name {
   display: flex;

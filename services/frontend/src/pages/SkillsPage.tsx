@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { getSkillList } from '../services/getSkillsList'
-import { useAuth } from '../Router/AuthProvider'
+import { useAuth } from '../context/AuthProvider'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -13,18 +14,18 @@ import { SkillCard } from '../components/SkillCard/SkillCard'
 import { Main } from '../components/Main/Main'
 import { Topbar } from '../components/Topbar/Topbar'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { SkillInBotCard } from '../components/SkillInBotCard/SkillInBotCard'
-import { RoutesList } from '../Router/RoutesList'
+import { RoutesList } from '../router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillType } from '../types/types'
 import { nanoid } from 'nanoid'
-import { CreateSkillModal } from '../components/CreateSkillModal/CreateSkillModal'
+import { SkillModal } from '../components/SkillModal/SkillModal'
 import { trigger } from '../utils/events'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
-import { CreateAssistantModal } from '../components/CreateAssistantModal/CreateAssistantModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 
 interface skill_list {
   assistant_dist: string
@@ -52,7 +53,7 @@ export const SkillsPage = () => {
   }
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
-    trigger('CreateSkillModal', null)
+    trigger('SkillModal', {})
     !listView
       ? setSkills(
           skills.concat([
@@ -60,6 +61,8 @@ export const SkillsPage = () => {
               key={nanoid(8)}
               type='your'
               name='Name of The Skill'
+              author={`${auth?.user?.name}`}
+              authorImg={`${auth?.user?.picture}`}
               skillType='fallbacks'
               botName='Name of The Bot'
               desc='Helps users locate the nearest store. And we can write 3 lines here and this is maximum about skill info infoinfo'
@@ -76,6 +79,8 @@ export const SkillsPage = () => {
             <SkillListItem
               key={nanoid(8)}
               name='Name of The Skill'
+              author={`${auth?.user?.name}`}
+              authorImg={`${auth?.user?.picture}`}
               desc='Helps users locate the nearest store. And we can write 3 lines
               here and this is maximum about'
               botName={'Name of The Bot'}
@@ -127,15 +132,15 @@ export const SkillsPage = () => {
                       execution_time,
                       date_created,
                     } = skill?.metadata
-                    // const dateCreated = dateToUTC(date_created)
-                    const dateCreated = dateToUTC(new Date())
-                    const time = timeToUTC(new Date())    
+                    const dateCreated = dateToUTC(date_created)
                     isSkillsLoading && <>{'Loading...'}</>
                     return (
                       <SkillCard
                         type='public'
                         key={i}
                         name={display_name}
+                        author='Deep Pavlov'
+                        authorImg={DeepPavlovLogo}
                         botName={skill.assistant_dist}
                         skillType={type}
                         dateCreated={dateCreated}
@@ -155,7 +160,11 @@ export const SkillsPage = () => {
                 </Slider>
               </Container>
             </Wrapper>
-            <Wrapper showAll title='Your Skills'>
+            <Wrapper
+              showAll
+              amount={42}
+              linkTo={RoutesList.yourSkills}
+              title='Your Skills'>
               <Container>
                 <Container
                   position='sticky'
@@ -166,7 +175,7 @@ export const SkillsPage = () => {
                   paddingBottom='22px'>
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
-                      listView={listView}
+                      forTable
                       addBot={addBot}
                       disabled={auth?.user === null}
                     />
@@ -196,17 +205,17 @@ export const SkillsPage = () => {
                     execution_time,
                     date_created,
                   } = skill.metadata
-                  // const date = dateToUTC(date_created)
-                  // const time = timeToUTC(date_created)
-                  const dateCreated = dateToUTC(new Date())
-                  const time = timeToUTC(new Date())
-  
+                  const date = dateToUTC(date_created)
+                  const time = timeToUTC(date_created)
+
                   return (
                     <SkillListItem
                       key={i}
                       name={display_name}
                       botName={skill?.assistant_dist}
-                      dateCreated={dateCreated}
+                      dateCreated={date}
+                      author='Deep Pavlov'
+                      authorImg={DeepPavlovLogo}
                       time={time}
                       desc={description}
                       version={version}
@@ -228,7 +237,7 @@ export const SkillsPage = () => {
               <Table second='Type'>
                 <AddButton
                   addBot={addBot}
-                  listView={listView}
+                  forTable
                   disabled={auth?.user === null}
                 />
                 {skills}
@@ -248,18 +257,13 @@ export const SkillsPage = () => {
           </ReactTooltip>
         )}
 
-        <SkillSidePanel
-          disabledMsg={
-            auth?.user ? undefined : 'You must be signed in to add the skill'
-          }
-          position={{ top: 64 }}
-        />
+        <BaseSidePanel position={{ top: 64 }} />
 
-        <CreateSkillModal />
+        <SkillModal />
         <SkillPromptModal />
         <CreateSkillDistModal />
-        <CreateAssistantModal />
-        {/* <ChooseBotModal /> */}
+        <AssistantModal />
+        <ChooseBotModal />
       </Main>
     </>
   )

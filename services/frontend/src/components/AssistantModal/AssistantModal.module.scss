@@ -1,0 +1,33 @@
+.assistantModal {
+  height: 100%;
+  min-width: 582px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+.distribution {
+  @include t3;
+  color: $text3;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.btns {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.textMuted {
+  color: $text3;
+}

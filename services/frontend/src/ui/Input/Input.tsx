@@ -1,86 +1,85 @@
-import React, { FC, useState } from 'react'
-import { nanoid } from 'nanoid'
+import classNames from 'classnames/bind'
+import React, { FC, useId, useState } from 'react'
 import Button from '../Button/Button'
 import s from './Input.module.scss'
 
 interface InputProps {
   label?: string | JSX.Element
-  errorMessage?: string
+  error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onSubmit?: (value: string) => void
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  withEnterButton?: boolean
+  big?: boolean
 }
 
 export const Input: FC<InputProps> = ({
   label,
-  errorMessage,
+  error,
   props,
-  onSubmit,
-  onChange,
+  withEnterButton,
+  big,
 }) => {
-  const [value, setValue] = useState(props?.value ?? '')
-  const [isActive, setIsActive] = useState(false)
-  const [errorMsg, setErrorMsg] = useState(errorMessage)
-  const inputId = nanoid(8)
+  const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
+  const [isChanged, setIsChanged] = useState(false) // for display Enter button
+  const inputId = props?.id ?? useId()
+  let cx = classNames.bind(s)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(e)
-
-    const targetValue = e.target.value
-    const valueIsEmpty = targetValue.length === 0
-
-    setValue(targetValue)
-
-    if (valueIsEmpty) {
-      setIsActive(false)
-      return
-    }
-
-    setIsActive(true)
-  }
-
+  /** On Enter press set focused state for input */
   const handleEnterBtnClick = () => {
     setIsActive(false)
-    if (onSubmit && value !== undefined && value !== '') {
-      onSubmit(value.toString())
+    setIsChanged(false)
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (props?.onBlur) props.onBlur(e)
+    setIsActive(false)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (props?.onChange) props.onChange(e)
+
+    if (!e.target.value) {
+      handleEnterBtnClick()
+      return
     }
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') handleEnterBtnClick()
   }
 
   return (
-    <div className={s.input}>
+    <div
+      className={s.input}
+      data-active={isActive}
+      data-error={error !== undefined}>
       {label && (
-        <label htmlFor={inputId} className={s.input__label}>
+        <label htmlFor={inputId} className={cx('label', 'title')}>
           {label}
         </label>
       )}
-      <div className={s.input__container}>
+      <div className={s.container}>
         <input
           {...props}
           id={inputId}
-          value={value}
-          type='text'
-          onChange={handleInputChange}
-          className={`${s.input__field} ${
-            isActive ? s.input__field_active : ''
-          } ${errorMsg ? s.input__field_error : ''}`}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          className={cx('field', big && 'big')}
         />
-        {onSubmit && (
-          <div className={s.input__submit}>
+        {withEnterButton && !error && (
+          <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
               small
-              props={{ onClick: handleEnterBtnClick }}>
+              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
               Enter
             </Button>
           </div>
         )}
       </div>
-
-      {errorMsg && (
-        <label
-          htmlFor={inputId}
-          className={`${s.input__label} ${s['input__error-msg']}`}>
-          {errorMsg}
+      {error && (
+        <label htmlFor={inputId} className={cx('label', 'about')}>
+          {error?.message}
         </label>
       )}
     </div>

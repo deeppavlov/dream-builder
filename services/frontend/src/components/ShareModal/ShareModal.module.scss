@@ -1,0 +1,77 @@
+.shareModal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 32px;
+  .header {
+    @include t1;
+    align-items: start;
+    width: 100%;
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    .top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .text {
+      width: 100%;
+      color: $text3;
+      @include t3;
+      text-align: center;
+    }
+    .icons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      svg {
+        width: 61px;
+        height: 61px;
+      }
+    }
+  }
+  .text {
+    width: 100%;
+    color: $text3;
+    @include t3;
+    text-align: center;
+  }
+  .lines {
+    position: relative;
+    &:after {
+      content: ' ';
+      height: 1px;
+      width: 187px;
+      background: #f1f1f1;
+      display: block;
+      position: absolute;
+      top: 50%;
+      right: 0px;
+    }
+    &:before {
+      content: ' ';
+      height: 1px;
+      width: 187px;
+      background: #f1f1f1;
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 0px;
+    }
+  }
+  .footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+  }
+}
+

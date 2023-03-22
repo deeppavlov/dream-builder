@@ -1,10 +1,11 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import classNames from 'classnames/bind'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
-import classNames from 'classnames/bind'
 
 interface WrapperProps {
+  id?: string
   amount?: number | string
   linkTo?: string
   title?: string
@@ -13,10 +14,13 @@ interface WrapperProps {
   fullHeight?: boolean
   fitScreen?: boolean
   limiter?: boolean
+  primary?: boolean
+  skills?: boolean
   children?: ReactNode
 }
 
 export const Wrapper = ({
+  id,
   amount,
   children,
   linkTo,
@@ -26,12 +30,31 @@ export const Wrapper = ({
   fullHeight,
   fitScreen,
   limiter,
+  primary,
+  skills,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
-  const onClose = () => {
-    setVisible(!visible)
-  }
   let cx = classNames.bind(s)
+
+  const onClose = () => {
+    // For store state in localStorage need to get `closable` & `id` props
+    if (closable && id) {
+      localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
+    }
+
+    setVisible(false)
+  }
+
+  useEffect(() => {
+    if (closable && id) {
+      const state = localStorage.getItem(`${id}_is_visible`.toUpperCase())
+
+      if (state !== null) {
+        setVisible(state === 'true')
+      }
+    }
+  }, [])
+
   return (
     <>
       {visible && (
@@ -40,7 +63,9 @@ export const Wrapper = ({
             'wrapper',
             fullHeight && 'fullHeight',
             fitScreen && 'fitScreen',
-            limiter && 'limiter'
+            limiter && 'limiter',
+            primary && 'primary',
+            skills && 'skills'
           )}>
           {closable && (
             <button onClick={onClose} className={s.close}>

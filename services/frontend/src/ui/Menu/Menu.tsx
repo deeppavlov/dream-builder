@@ -1,16 +1,22 @@
 import Logo from '../../assets/icons/logo.png'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
-import { MenuList } from '../../components/MenuList/MenuList'
 import s from './Menu.module.scss'
+import MenuToolTip from '../../components/MenuToolTip/MenuToolTip'
 
-type Props = { type: string }
+export type TMenu = 'main' | 'editor' | 'bots'
 
-export const Menu: React.FC<Props> = ({ type }) => {
+interface Props {
+  type: TMenu
+}
+
+export const Menu = ({ type }: Props) => {
   return (
-    <div className={s.menu} data-tip data-for={type || null}>
-      <img src={Logo} />
-      <Arrow />
-      <MenuList type={type || null} />
-    </div>
+    <>
+      <div className={s.menu} data-tip data-tooltip-id={type}>
+        <img src={Logo} />
+        <Arrow />
+      </div>
+      <MenuToolTip tooltipId={type} type={type} />
+    </>
   )
 }

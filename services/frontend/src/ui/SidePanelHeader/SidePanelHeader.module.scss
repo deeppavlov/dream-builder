@@ -1,0 +1,35 @@
+.sidePanelHeader {
+  height: 48px;
+  width: 100%;
+  border-bottom: 1px solid $bcgrnd3;
+  display: flex;
+  @include t2;
+  padding: 13px 24px;
+  align-items: center;
+
+  &:has([role='tablist']) {
+    padding: 0;
+  }
+
+  [role='tablist'] {
+    display: flex;
+    padding: 0 24px;
+    gap: 24px;
+  }
+
+  [role='tab'] {
+    padding: 8px 0;
+    color: $text3;
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+      border-bottom: 2px solid $primary1;
+      margin-bottom: -1px;
+      color: $text1;
+    }
+
+    &[data-disabled='true'] {
+      opacity: 0.3;
+    }
+  }
+}

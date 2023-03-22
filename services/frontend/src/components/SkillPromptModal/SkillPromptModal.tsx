@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { SkillInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -9,78 +10,77 @@ import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
-const mockSkillModels = ['Chit-Chat GPT', 'GPT-3', 'GPT-J', 'Bloom']
+const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'Bloom']
+
+type TAction = 'create' | 'edit'
 
 interface Props {
+  action?: TAction
   skill?: SkillInfoInterface
-  isEditingModal?: boolean
 }
 
 const SkillPromptModal = () => {
-  let cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState(false)
+  const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
-  const [skillModel, setSkillModel] = useState<string | null>(null)
-  const [skillPrompt, setSkillPrompt] = useState<string | null>(null)
-  const [isEditingModal, setIsEditingModal] = useState(false)
-  const isHaveSkillName = skill?.name !== undefined && skill.name !== ''
-  const isHaveModelAndPrompt = skillModel !== null && skillPrompt !== null
+  const {
+    handleSubmit,
+    register,
+    reset,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm({ mode: 'all' })
+  const [MODEL_ID, PROMPT_ID] = ['display_name', 'model', 'prompt']
+  const tokensMaxLenght = 1500
 
   const closeModal = () => {
     setIsOpen(false)
-    setSkillModel(null)
-    setSkillPrompt(null)
+    setAction(null)
+    setSkill(null)
   }
 
-  const handleBackBtnClick = () => closeModal()
   const handleCancelBtnClick = () => closeModal()
+  const handleBackBtnClick = () => closeModal()
 
   /**
    * Set modal is open and getting skill info
    */
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill, isEditingModal } = data.detail
+    const { skill, action } = data.detail
 
-    setSkill(skill?.name ? skill : null)
-    setSkillModel(skill?.model ? skill.model : null)
-    setSkillPrompt(skill?.prompt ? skill.prompt : null)
-    setIsEditingModal(Boolean(isEditingModal))
+    setAction(action ?? 'create')
+    setSkill(skill ?? null)
+    // Reset values and errors states
+    reset({
+      [MODEL_ID]: skill?.model,
+      [PROMPT_ID]: skill?.prompt,
+    })
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => setSkillModel(model)
-
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target
-    const isValue = value !== ''
-    setSkillPrompt(isValue ? value : null)
+  const handleModelSelect = (model: string) => {
+    reset({
+      [MODEL_ID]: model,
+    })
   }
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    const newSkill = { ...skill, ...{ name: value } } as SkillInfoInterface
-    setSkill(newSkill)
-    console.log(newSkill, isHaveSkillName)
-  }
-
-  const handleSaveBtnClick = () => {
+  const handleCreate = (data: any) => {
     const newSkill = {
       ...skill,
-      ...{ model: skillModel, prompt: skillPrompt },
+      ...{ model: data[MODEL_ID], prompt: data[PROMPT_ID] },
     }
+    trigger('CreateSkillDistModal', newSkill)
+  }
 
-    // isEditing
-    if (isEditingModal) {
-      // update here edited skill
-      closeModal()
+  const onFormSubmit = (data: any) => {
+    if (action === 'create') {
+      handleCreate(data)
       return
     }
-
-    // isCreating
-    if (!isHaveModelAndPrompt) return
-    trigger('CreateSkillDistModal', newSkill)
-    closeModal()
   }
+
+  const handleTestBtnClick = () => {}
 
   useEffect(() => {
     subscribe('SkillPromptModal', handleEventUpdate)
@@ -89,55 +89,64 @@ const SkillPromptModal = () => {
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className={cx('skillPromptModal')}>
-        {!isEditingModal && <h4>{skill?.name || 'Skill name'}</h4>}
-        {!isEditingModal ? (
-          <SkillDropboxSearch
-            placeholder='Choose model'
-            list={mockSkillModels}
-            onSelect={handleModelSelect}
-          />
-        ) : (
-          <Input
-            label={'You can change name here'}
-            props={{
-              placeholder: 'You can change name here',
-              value: skill?.name || '',
-            }}
-            onChange={handleNameChange}
-          />
-        )}
+      <form
+        className={s.skillPromptModal}
+        onSubmit={handleSubmit(onFormSubmit)}>
+        <h4>{skill?.display_name || 'Skill name'}</h4>
+        <SkillDropboxSearch
+          list={mockSkillModels}
+          activeItem={skill?.model}
+          error={errors[MODEL_ID]}
+          props={{
+            placeholder: 'Choose model',
+            ...register(MODEL_ID, { required: true }),
+          }}
+          onSelect={handleModelSelect}
+        />
         <TextArea
           label='Enter prompt:'
+          withCounter
+          error={errors[PROMPT_ID]}
+          maxLenght={tokensMaxLenght}
           props={{
             placeholder:
               "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-            value: skillPrompt || '',
+            defaultValue: getValues()[PROMPT_ID],
+            ...register(PROMPT_ID, {
+              required: 'This field can’t be empty',
+              maxLength: {
+                value: tokensMaxLenght,
+                message: `Limit prompt tokens to ${tokensMaxLenght}`,
+              },
+            }),
           }}
-          onChange={handlePromptChange}
         />
-        <div className={cx('btns')}>
-          <Button
-            theme='secondary'
-            props={{
-              onClick: isEditingModal
-                ? handleCancelBtnClick
-                : handleBackBtnClick,
-            }}>
-            {isEditingModal ? 'Cancel' : 'Back'}
-          </Button>
-          <Button
-            theme='primary'
-            props={{
-              disabled: isEditingModal
-                ? !isHaveSkillName
-                : !isHaveModelAndPrompt,
-              onClick: handleSaveBtnClick,
-            }}>
-            Save
-          </Button>
+        <div className={s.btns}>
+          {action === 'create' && (
+            <>
+              <Button theme='secondary' props={{ onClick: handleBackBtnClick }}>
+                Back
+              </Button>
+              <Button theme='primary' props={{ type: 'submit' }}>
+                Save
+              </Button>
+            </>
+          )}
+          {action === 'edit' && (
+            <>
+              <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
+                Cancel
+              </Button>
+              <Button theme='secondary' props={{ onClick: handleTestBtnClick }}>
+                Save & Test
+              </Button>
+              <Button theme='primary' props={{ type: 'submit' }}>
+                Save & Close
+              </Button>
+            </>
+          )}
         </div>
-      </div>
+      </form>
     </BaseModal>
   )
 }

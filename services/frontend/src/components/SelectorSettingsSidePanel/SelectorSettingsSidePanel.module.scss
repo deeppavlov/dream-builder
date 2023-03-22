@@ -2,42 +2,30 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 12px 24px 24px 24px;
-  gap: 16px;
+  overflow: hidden;
+  position: relative;
+}
 
-  &__name {
-    @include t3;
-    color: $text2;
-  }
-
-  &__btns {
-    width: 100%;
-    margin-top: auto;
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-  }
-
-  &__help {
-    margin-right: auto;
-    button {
-      border-radius: 50%;
-      padding: 12px;
-    }
-  }
+.desc {
+  @include b3;
+  padding: 0 24px;
 }
 
 .settings {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
 
-  &__field {
-    @include b4;
-    color: $text2;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+.help {
+  margin-right: auto;
+  button {
+    border-radius: 50%;
+    padding: 12px;
+    path {
+      stroke: none;
+    }
   }
 }

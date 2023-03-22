@@ -1,15 +1,17 @@
+.card.forGrid {
+ @include forGrid; 
+}
 .card {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 280px;
   max-width: 280px;
-  min-height: 330px;
-  max-height: 330px;
   border: 1px solid $text3;
   border-radius: 12px;
   background-color: $bcgrnd1;
   overflow: hidden;
+  @include min_max_height_skill;
   @include bot-card_behavior;
   .header {
     display: flex;
@@ -19,10 +21,14 @@
     height: 40px;
     width: 100%;
     padding: 8px 16px;
+    gap: 16px;
     background-color: $bcgrnd5;
     .botName {
       color: rgba(0, 0, 0, 0.9);
-      @include hide_text;
+      white-space: nowrap;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
       @include t4;
     }
   }
@@ -32,12 +38,14 @@
     width: 100%;
     padding: 16px;
     gap: 4px;
+
     .top {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: start;
       gap: 4px;
+
       .type {
         display: flex;
         flex-direction: row;
@@ -52,7 +60,7 @@
           text-transform: capitalize;
           @include t4;
         }
-        @include skillType;
+        @include componentType;
       }
       .name {
         display: flex;
@@ -73,9 +81,10 @@
         display: flex;
         justify-content: start;
         align-items: start;
-        min-height: 44px;
+        min-height: 67px;
         max-height: 44px;
         width: 100%;
+
         .tooltips {
           @include tooltip;
           @include tooltip_for_description;
@@ -109,10 +118,7 @@
         @include icon_size_24;
       }
     }
-    .separator {
-      margin: 2px 0px;
-      border-top: 1px dashed $text3;
-    }
+
     .middle {
       display: flex;
       flex-direction: column;
@@ -151,7 +157,15 @@
     }
   }
 }
-
 .bigCard {
   max-width: 344px;
+}
+.disabled {
+  @include disabled;
+}
+.btns {
+  width: 100%;
+}
+.separator {
+  @include separator;
 }

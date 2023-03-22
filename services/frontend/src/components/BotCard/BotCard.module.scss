@@ -1,58 +1,17 @@
 .botCard {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   min-width: 280px;
   max-width: 280px;
-  min-height: 300px;
-  max-height: 300px;
   border: 1px solid $text3;
   border-radius: 12px;
   background-color: $bcgrnd1;
   overflow: hidden;
+  @include min_max_height;
   @include bot-card_behavior;
 
-  &_type_your {
-    min-width: 350px;
-    max-width: 350px;
-    min-height: 322px;
-    max-height: 322px;
-  }
-
-  &_type_your &__name {
-    background-color: $purple;
-    color: $text4;
-  }
-
-  &_type_your &__desc {
-    max-height: 88px;
-    -webkit-line-clamp: 4;
-  }
-
-  &_type_your &__block {
-    gap: 8px;
-  }
-
-  &_small {
-    min-width: 280px;
-    max-width: 280px;
-    min-height: 344px;
-    max-height: 344px;
-  }
-
-  &_big {
-    min-height: 300px;
-    max-height: 300px;
-    max-width: 344px;
-  }
-
-  &_small &__desc {
-    max-height: 110px;
-    -webkit-line-clamp: 5;
-  }
-
-  &__name {
-    @include t4;
+  .header {
     display: block;
     max-height: 40px;
     min-height: 40px;
@@ -64,79 +23,114 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  &__author {
     @include t4;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .author {
     display: flex;
     align-items: center;
     gap: 4px;
     color: $text1;
+    @include t4;
 
     img {
-      width: 24px;
-      height: 24px;
+      @include icon_size_24;
       border-radius: 50%;
     }
   }
 
-  &__block {
+  .block {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 0 16px;
   }
 
-  &__desc {
-    @include b3;
+  .desc {
     color: $text2;
-    max-height: 44px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-height: 88px;
+    @include b3;
+    @include hide_text;
+    -webkit-line-clamp: 4;
   }
 
-  &__dateAndVersion {
+  .dateAndVersion {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  &__date {
-    @include b3;
+  .date {
     display: flex;
     align-items: center;
     gap: 4px;
     color: $text2;
+    @include b3;
 
     svg {
-      width: 24px;
-      height: 24px;
+      @include icon_size_24;
     }
   }
 
-  &__resources {
+  .resources {
     padding: 0 16px;
   }
 
-  &__btns {
+  .btns {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 4px 16px 16px 16px;
     gap: 12px;
+    .container {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      flex-direction: row;
+    }
   }
 }
 
 .separator {
-  height: 1px;
-  width: 100%;
-  border-top: 1px dashed $text3;
+  @include separator;
 }
 
 .tooltips {
   @include tooltip;
   @include tooltip_for_description;
+}
+.your {
+  // min-width: 350px; //this style broke grid on 'yourbots' page
+  // max-width: 350px;
+  @include min_max_height;
+  .header {
+    background-color: $purple;
+    color: $text4;
+  }
+  .desc {
+    max-height: 110px;
+    height: 110px;
+    -webkit-line-clamp: 4;
+  }
+  .block {
+    gap: 8px;
+  }
+}
+.small {
+  min-width: 280px;
+  max-width: 280px;
+  @include min_max_height;
+  .desc {
+    max-height: 110px;
+    -webkit-line-clamp: 5;
+  }
+}
+.big {
+  max-width: 344px;
+  @include min_max_height;
 }

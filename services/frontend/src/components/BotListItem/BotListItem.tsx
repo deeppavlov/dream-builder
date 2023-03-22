@@ -1,129 +1,143 @@
-import { Link } from 'react-router-dom'
-import ReactTooltip from 'react-tooltip'
+import { FC, useId } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
-import { CheckBox } from '../../ui/Checkbox/Checkbox'
-import { SmallTag } from '../SmallTag/SmallTag'
-import s from './BotListItem.module.scss'
-import { BotInfoInterface } from '../../types/types'
+import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
-import { useAuth } from '../../Router/AuthProvider'
+import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { Kebab } from '../../ui/Kebab/Kebab'
+import Button from '../../ui/Button/Button'
+import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { timeToUTC } from '../../utils/timeToUTC'
+import s from './BotListItem.module.scss'
 
-interface BotListItemProps extends BotInfoInterface {
-  checkbox?: boolean
-  time?: string
-  disabledMsg?: string
-  routingName: string
+interface BotListItemProps {
+  type: BotAvailabilityType
+  bot: BotInfoInterface
+  disabled?: boolean
 }
 
-export const BotListItem = ({
-  checkbox,
-  name,
-  routingName,
-  author,
-  desc,
-  dateCreated,
-  time,
-  version,
-  ram,
-  gpu,
-  space,
-  disabledMsg,
-}: BotListItemProps) => {
-  const bot = {
-    name,
-    routingName,
-    author,
-    desc,
-    dateCreated,
-    time,
-    version,
-    ram,
-    gpu,
-    space,
-  }
-  const auth = useAuth()
+export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
+  const navigate = useNavigate()
+  const tooltipId = useId()
+  const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const time = timeToUTC(new Date(bot?.date_created))
+
   const handleBotListItemClick = () => {
-    trigger('BotInfoSidePanel', bot)
+    trigger(BASE_SP_EVENT, {
+      children: (
+        <BotInfoSidePanel
+          type={type}
+          key={bot?.name}
+          bot={bot}
+          disabled={disabled}
+        />
+      ),
+    })
   }
 
-  const handleCloneBtnClick = (e: any) => {
+  const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    trigger('CreateAssistantModal', bot)
+
+    if (!disabled) {
+      trigger('AssistantModal', { action: 'clone', bot: bot })
+      return
+    }
+
+    trigger('SignInModal', {})
+  }
+
+  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: true,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
+    })
+  }
+
+  const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: false,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
+    })
   }
 
   return (
     <tr className={s.tr} onClick={handleBotListItemClick}>
-      {checkbox && (
-        <td className={s.checkboxArea}>
-          <CheckBox />
-        </td>
-      )}
       <td className={s.td}>
         <div className={s.name}>
-          <p className={s.botName}>{name || 'Name of The Bot'}</p>
-          <span className={s.params}>
-            {`RAM ${ram} | GPU ${gpu} | DS ${space}`}
-          </span>
+          <p className={s.botName}>{bot?.display_name || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          {author === 'DeepPavlov' ? (
-            <Logo />
-          ) : (
-            <img src={auth?.user?.picture} referrerPolicy='no-referrer' />
-          )}
-          <p>{author}</p>
+          <Logo />
+          <p>{bot?.author}</p>
         </div>
       </td>
       <td className={s.td}>
         <div
           className={s.description}
-          data-for='descriptionTooltip'
-          data-tip={desc}>
-          <ReactTooltip
-            id='descriptionTooltip'
-            effect='solid'
-            className={s.tooltips}
-            delayShow={500}
+          data-tooltip-id={'botTableDesc' + tooltipId}>
+          {bot?.description}
+          <BaseToolTip
+            id={'botTableDesc' + tooltipId}
+            content={bot?.description}
+            place='bottom'
+            theme='description'
           />
-          {desc ||
-            'Our fouray into building consumer-friendly virtual assistants. Clone to...'}
         </div>
       </td>
       <td className={s.td}>
-        <SmallTag theme='version'>v{version || '0.3.4'}</SmallTag>
-      </td>
-      <td className={s.td}>
         <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated || 'Dec 12, 2022'}</p>
-          <p className={s.time}>{time || '5:21 PM '}</p>
+          <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
+          <p className={s.time}>{time || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>
-          <div data-tip data-for='bot-clone-interact'>
-            <button
-              className={s.area}
-              disabled={disabledMsg !== undefined}
-              onClick={handleCloneBtnClick}>
-              <Clone />
-            </button>
-          </div>
+          <Button
+            theme='primary'
+            small
+            withIcon
+            props={{
+              onClick: type === 'public' ? handleCloneClick : handlEditClick,
+            }}>
+            {type === 'public' ? <Clone /> : <Edit />}
+          </Button>
+
+          {type === 'your' ? (
+            <>
+              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <BotCardToolTip
+                tooltipId={'ctxMenu' + tooltipId}
+                bot={bot}
+                type={type}
+              />
+            </>
+          ) : (
+            <Button
+              theme='secondary'
+              small
+              withIcon
+              props={{ onClick: handlePreviewClick }}>
+              <PreviewIcon />
+            </Button>
+          )}
         </div>
       </td>
-      {disabledMsg && (
-        <ReactTooltip
-          place='bottom'
-          effect='solid'
-          className='tooltips'
-          arrowColor='#8d96b5'
-          delayShow={1000}
-          id='bot-clone-interact'>
-          {disabledMsg}
-        </ReactTooltip>
-      )}
     </tr>
   )
 }

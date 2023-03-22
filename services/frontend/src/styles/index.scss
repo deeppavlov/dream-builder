@@ -16,10 +16,13 @@
 html,
 body {
   overflow: auto;
+  width: 100vw;
+  height: 100vh;
 }
 
 a {
   text-decoration: none;
+  color: #3300ff;
 }
 body {
   color: $text1;
@@ -42,25 +45,4 @@ p {
 .app {
   height: 100vh;
   width: 100vw;
-}
-.__react_component_tooltip {
-  border: none !important;
-}
-
-:global {
-  .tooltips {
-    height: 45px;
-    background: #8d96b5 !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    padding: 4px 12px !important;
-    gap: 10px !important;
-    border-radius: 8px !important;
-    z-index: 3;
-    offset: 30%;
-    font-size: 18px;
-    line-height: 160%;
-    color: #ffffff;
-  }
 }

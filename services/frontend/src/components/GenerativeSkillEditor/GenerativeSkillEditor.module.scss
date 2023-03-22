@@ -1,0 +1,55 @@
+.generativeSkillEditor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.choose-model {
+  padding: 0 24px 8px 24px;
+}
+
+.prompt-block {
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.link {
+  @include b2;
+  text-decoration: underline;
+}
+
+.label {
+  @include b3;
+  color: $text2;
+}
+
+.prompt {
+  @include b4;
+  color: $text2;
+  background-color: $bcgrnd2;
+  padding: 8px 40px 8px 16px;
+  display: flex;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  white-space: pre-line;
+}
+
+.edit-pencil {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+}
+
+.btns {
+  width: 100%;
+  margin-top: 16px;
+  padding: 0 24px 24px 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

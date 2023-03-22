@@ -11,7 +11,6 @@ export const Filter = () => {
   }
   const handleClick = (event: any) => {
     event?.stopPropagation()
-    console.log('clicked!')
   }
   return (
     <div ref={ref} className={s.dropdown} onClick={handleOpen}>

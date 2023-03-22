@@ -1,0 +1,123 @@
+.properties {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 24px 24px 24px;
+  gap: 8px;
+}
+
+.annotator-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.name {
+  @include t3;
+}
+
+.edit-pencil {
+  height: 24px;
+  width: 24px;
+
+  path {
+    stroke: $text2;
+  }
+
+  &[data-disabled] {
+    opacity: 0.3;
+  }
+}
+
+.author {
+  @include b3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  img {
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+  }
+}
+
+.table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.table-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-name {
+  @include t4;
+}
+
+.table-value {
+  @include b3;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  img {
+    @include icon_size_24;
+  }
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.desc {
+  @include b3;
+  margin-top: 4px;
+}
+
+.btns {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.dictionary {
+  color: $orange;
+
+  svg path {
+    fill: $orange;
+  }
+}
+
+.external {
+  color: $salad;
+
+  svg path {
+    fill: $salad;
+  }
+}
+
+.ml {
+  color: $pink;
+
+  svg path {
+    fill: $pink;
+  }
+}
+
+.nn_based {
+  color: $purple;
+}
+
+.neural {
+  color: $primary1;
+
+  svg path {
+    fill: $primary1;
+  }
+}

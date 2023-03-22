@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as TrashIcon } from '@assets/icons/trash_icon.svg'
 import { ReactComponent as IntentErrorCircle } from '@assets/icons/intent_error_circle.svg'
@@ -11,6 +11,7 @@ import Button from '../../ui/Button/Button'
 import ExpandableDropdownn from '../ExpandableDropdown/ExpandableDropdown'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './IntentCatcherModal.module.scss'
+import { SmallTag } from '../SmallTag/SmallTag'
 
 interface Props {
   /* If have intent in props, then we Edit him.
@@ -45,7 +46,10 @@ const IntentCatcherModal = ({ intent }: Props) => {
   const update = () => {} // Update exist intent
   const create = () => {} // Add new intent
 
-  const updateIntentName = (value: string) => setName(value)
+  const updateIntentName = (value: string | null) => {
+    if (!value) return
+    setName(value)
+  }
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     isIntent ? update() : create()
@@ -53,12 +57,16 @@ const IntentCatcherModal = ({ intent }: Props) => {
 
   const handleTabClick = (index: number) => setTabIndex(index)
 
-  const addListItem = (value: string) => {
+  const addListItem = (value: string | null) => {
+    if (!value) return
+
     tabIndex === 0
       ? setExamples([value].concat(examples))
       : setRegexes([value].concat(regexes))
   }
-  const updateListItem = (index: number, value: string) => {
+  const updateListItem = (index: number, value: string | null) => {
+    if (!value) return
+
     if (tabIndex === 0) {
       setExamples(
         examples.map((v, i) => {
@@ -80,8 +88,6 @@ const IntentCatcherModal = ({ intent }: Props) => {
         })
       )
     }
-
-    console.log(examples, regexes)
   }
 
   const removeListItem = (index: number) => {
@@ -117,7 +123,12 @@ const IntentCatcherModal = ({ intent }: Props) => {
       onRequestClose={closeModal}
       // contentLabel='Intet Modal'
       className={s.intentModal}
-      style={{ overlay: { zIndex: 5 } }}>
+      style={{
+        overlay: {
+          zIndex: 5,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        },
+      }}>
       <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
         <div className={s.intentModal__header}>
           <span className={s.intentModal__name}>
@@ -127,7 +138,7 @@ const IntentCatcherModal = ({ intent }: Props) => {
             onSubmit={updateIntentName}
             props={{
               placeholder: 'Name of intent',
-              value: name,
+              value: name ?? undefined,
             }}
           />
 
@@ -167,7 +178,31 @@ const IntentCatcherModal = ({ intent }: Props) => {
             />
           </div>
           <div className={s.intentModal__dropdown}>
-            <ExpandableDropdownn title='Instruction (click to expand)' />
+            <ExpandableDropdownn
+              placeholder='Instruction (click to expand)'
+              title='Instruction'>
+              <ul>
+                <li>raw texts regular</li>
+                <li>
+                  expressions (which will be preprocessed to separate examples
+                  before training) using the following features: () to determine
+                  the considered sequence, (bla|blabla) - vertical line to
+                  determine or symbol {'(){(0, 1)}'} to determine either
+                  precesence or absence of the given in the brackets.
+                </li>
+              </ul>
+              <p>
+                For example, from the regular expression{' '}
+                <SmallTag>{'(hi! |hello! ){0,1}how are you?'}</SmallTag> two
+                examples will be generated:{' '}
+                <SmallTag>hi! how are you?</SmallTag> and{' '}
+                <SmallTag>hello! how are you?</SmallTag>
+              </p>
+              <p>
+                You also may insert several examples (both texts or regular
+                expressions) at once splitting them by a new line.
+              </p>
+            </ExpandableDropdownn>
           </div>
 
           <span className={s['intentModal__block-name']}>
@@ -195,8 +230,10 @@ const IntentCatcherModal = ({ intent }: Props) => {
 
           <div className={s.intentModal__desc}>
             <ExpandableDropdownn
-              title='Add Description'
-              big></ExpandableDropdownn>
+              placeholder='Add Description'
+              title='Title'
+              big
+            />
           </div>
         </div>
 

@@ -1,12 +1,19 @@
+import { FC } from 'react'
 import ResponseAnnotatorsLogo from '../../assets/icons/response_annotators.svg'
-import { Kebab } from '../../ui/Kebab/Kebab'
+import { Component } from '../../types/types'
+import { AnnotatorElement } from '../Stack/AnnotatorElement'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { Accordion } from '../../ui/Accordion/Accordion'
-import { Element } from './Element'
+import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
+import { usePreview } from '../../context/PreviewProvider'
 import s from './ResponseAnnotators.module.scss'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
 
-export const ResponseAnnotators = ({ responseAnnotators }: any) => {
+interface Props {
+  responseAnnotators: Component[]
+}
+
+export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
+  const { isPreview } = usePreview()
   return (
     <>
       {responseAnnotators && (
@@ -17,22 +24,37 @@ export const ResponseAnnotators = ({ responseAnnotators }: any) => {
                 <img src={ResponseAnnotatorsLogo} className={s.icon} />
                 <p className={s.type}>Response Annotators</p>
               </div>
-              <Kebab disabled dataFor='response_annotators' />
             </div>
-            <div className={s.bottom}>
-              <p className={s.data}>
-                {responseAnnotators?.recources ||
-                  '0.00 GB RAM | 0.00 GB GPU'}
-              </p>
-            </div>
+            <div className={s.bottom}></div>
           </div>
           <div className={s.body}></div>
-          <AddButtonStack disabled={true} text='Add Candidate Annotators' />
+          <AddButtonStack disabled={true} text='Add Response Annotators' />
           <div className={s.elements}>
-            <Accordion title='Customizable'></Accordion>
+            <Accordion closed title='Customizable'>
+              <WaitForNextRelease />
+              {responseAnnotators?.map((annotator, i) => {
+                if (annotator.is_customizable) {
+                  return (
+                    <AnnotatorElement
+                      key={annotator.name + i}
+                      annotator={annotator}
+                      isPreview={isPreview}
+                    />
+                  )
+                }
+              })}
+            </Accordion>
             <Accordion title='Non-customizable'>
-              {responseAnnotators?.map((item: string, i: number) => {
-                return <Element key={i} title={capitalizeTitle(item.display_name)} item={item} />
+              {responseAnnotators?.map((annotator, i) => {
+                if (!annotator.is_customizable) {
+                  return (
+                    <AnnotatorElement
+                      key={annotator.name + i}
+                      annotator={annotator}
+                      isPreview={isPreview}
+                    />
+                  )
+                }
               })}
             </Accordion>
           </div>

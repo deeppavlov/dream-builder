@@ -47,6 +47,17 @@
     padding: 8px 24px;
     border: 1px solid $bcgrnd3;
     background-color: inherit;
+    gap: 16px;
+    align-items: center;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   &__textarea {

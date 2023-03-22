@@ -1,0 +1,50 @@
+.element {
+  @include stack_element_behavior;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  height: 50px;
+  background-color: $bcgrnd1;
+  .left {
+    cursor: pointer;
+    display: flex;
+    gap: 4px;
+    .top {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 210px;
+      .icon {
+        cursor: pointer;
+        @include icon_size_24;
+      }
+      .name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        @include t3;
+      }
+    }
+  }
+  .right {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+  }
+  .data {
+    cursor: pointer;
+    padding-left: 32px;
+    color: rgba(0, 0, 0, 0.7);
+    @include b4;
+  }
+}
+.disabled {
+  @include disabled;
+  background: #f0f0f3;
+}

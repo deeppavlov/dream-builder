@@ -1,23 +1,31 @@
-import React, { useState } from 'react'
+import React, { FC } from 'react'
 import Modal from 'react-modal'
+import classNames from 'classnames/bind'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import s from './BaseModal.module.scss'
 
 export interface BaseModalInterface {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
+  handleClose?: () => void
   customStyles?: Modal.Styles
   children?: React.ReactNode
+  skillsListModal?: boolean
 }
 
-const BaseModal = ({
+const BaseModal: FC<BaseModalInterface> = ({
   isOpen,
   setIsOpen,
+  handleClose,
   customStyles,
   children,
-}: BaseModalInterface) => {
-  const closeModal = () => setIsOpen(false)
-
+  skillsListModal,
+}) => {
+  const closeModal = () => {
+    setIsOpen(false)
+    handleClose && handleClose()
+  }
+  const cx = classNames.bind(s)
   return isOpen ? (
     <Modal
       style={{
@@ -50,9 +58,9 @@ const BaseModal = ({
       }}
       isOpen={isOpen}
       onRequestClose={closeModal}>
-      <div className={s.baseModal}>
+      <div className={cx('baseModal', skillsListModal && 'skillsListModal')}>
         <button onClick={closeModal}>
-          <CloseIcon className={s.baseModal__close} />
+          <CloseIcon className={s.close} />
         </button>
         {children}
       </div>

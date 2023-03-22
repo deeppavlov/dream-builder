@@ -1,4 +1,4 @@
-.add_btn {
+.add {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -19,4 +19,7 @@
     color: rgba(0, 0, 0, 0.7);
     @include lnks_n_btns3;
   }
+}
+.disabled {
+  @include disabled;
 }

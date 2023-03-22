@@ -1,99 +1,103 @@
-import React, { FC, useState } from 'react'
-import { nanoid } from 'nanoid'
+import React, { FC, useId, useState } from 'react'
+import classNames from 'classnames/bind'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
-import s from './TextArea.module.scss'
 import Button from '../Button/Button'
+import s from './TextArea.module.scss'
 
 interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
-  errorMessage?: string | JSX.Element | null
+  error?: Partial<{ type: any; message: any }>
+  maxLenght?: number | string
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
-  onSubmit?: (value: string) => void
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  withCounter?: boolean
+  withEnterButton?: boolean
 }
 
 export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
-  errorMessage,
+  error,
+  maxLenght,
   props,
-  onSubmit,
-  onChange,
+  withCounter,
+  withEnterButton,
 }) => {
-  const [value, setValue] = useState(props?.value)
-  const [isActive, setIsActive] = useState(false)
-  const [errorMsg, setErrorMsg] = useState(errorMessage)
-  const textAreaId = nanoid(8)
-
-  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (onChange) onChange(e)
-
-    const targetValue = e.target.value
-    const valueIsEmpty = targetValue.length === 0
-
-    setValue(targetValue)
-
-    if (valueIsEmpty) {
-      setIsActive(false)
-      return
-    }
-
-    setIsActive(true)
-  }
+  const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
+  const [isChanged, setIsChanged] = useState(false) // for displaying Enter button
+  const [value, setValue] = useState(props?.defaultValue || '')
+  const textAreaId = props?.id ?? useId()
+  let cx = classNames.bind(s)
 
   const handleEnterBtnClick = () => {
     setIsActive(false)
-    setValue('')
+    setIsChanged(false)
+  }
 
-    if (onSubmit && value !== undefined && value !== '') {
-      onSubmit(value.toString())
+  /** On Enter press set focused state for textarea */
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter') handleEnterBtnClick()
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (props?.onBlur) props.onBlur(e)
+    setIsActive(false)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (props?.onChange) props.onChange(e)
+
+    setValue(e.target.value)
+
+    if (!e.target.value) {
+      handleEnterBtnClick()
+      return
     }
   }
 
   return (
-    <div className={s.textArea}>
-      {label && (
-        <label htmlFor={textAreaId} className={s.textArea__label}>
-          {label}
+    <div
+      className={s.textArea}
+      data-active={isActive}
+      data-error={error !== undefined}>
+      {(label || withCounter) && (
+        <label htmlFor={textAreaId} className={s.label}>
+          {label && <span className={s.title}>{label}</span>}
+          {withCounter && (
+            <span className={s.counter}>
+              {value?.toString()?.length ?? 0}/{maxLenght}
+            </span>
+          )}
         </label>
       )}
-      <div className={`${s.textArea__container} ${s.resizer}`}>
-        <TextAreaLogo
-          className={`${s['textArea-resizer']} ${s.textArea__resizer}`}
-        />
-
+      <div className={cx('container', 'resizer-container')}>
+        <TextAreaLogo className={s.resizer} />
         <textarea
-          {...props}
-          id={textAreaId}
-          value={value}
           rows={2}
           cols={20}
-          onChange={handleTextAreaChange}
-          className={`${s.textArea__field} ${
-            isActive ? s.textArea__field_active : ''
-          } ${errorMsg ? s.textArea__field_error : ''}`}
+          {...props}
+          id={textAreaId}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          className={s.field}
         />
 
-        {onSubmit && (
-          <div className={s.textArea__submit}>
+        {withEnterButton && (
+          <div className={cx('submit', isChanged && 'submit-active')}>
             <Button
               theme='tertiary'
               small
-              props={{ onClick: handleEnterBtnClick }}>
+              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
               Enter
             </Button>
           </div>
         )}
       </div>
 
-      {(about || errorMsg) && (
-        <label
-          htmlFor={textAreaId}
-          className={`${s.textArea__label} ${
-            errorMsg ? s['textArea__error-msg'] : ''
-          }`}>
-          {errorMsg ?? about}
+      {(about || error) && (
+        <label htmlFor={textAreaId} className={cx('label', 'about')}>
+          {error ? error.message : about}
         </label>
       )}
     </div>

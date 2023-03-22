@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react'
 import classNames from 'classnames/bind'
 import Modal from 'react-modal'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { dist_list, SkillInfoInterface } from '../../types/types'
+import { SkillInfoInterface } from '../../types/types'
 import { subscribe, unsubscribe } from '../../utils/events'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { Table } from '../../ui/Table/Table'
 import { BotListItem } from '../BotListItem/BotListItem'
 import { dateToUTC } from '../../utils/dateToUTC'
-import DeepPavlovLogo from '@assets/icons/pavlovInCard.svg'
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { timeToUTC } from '../../utils/timeToUTC'
 import { useQuery } from 'react-query'
-import { getAssistantDists } from '../../services/getAssistantDists'
+import { getPublicDists } from '../../services/getPublicDists'
 import s from './ChooseBotModal.module.scss'
 
 const ChooseBotModal = () => {
   let cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState(false)
-  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
+  const [skill, setSkill] = useState<ISkill | null>(null)
 
   const closeModal = () => {
     setIsOpen(false)
@@ -27,7 +27,7 @@ const ChooseBotModal = () => {
   /**
    * Set modal is open and getting skill info
    */
-  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
+  const handleEventUpdate = (data: { detail: ISkill }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
     setIsOpen(!isOpen)
@@ -37,7 +37,7 @@ const ChooseBotModal = () => {
     isLoading: isAssistantsLoading,
     error: assistantsError,
     data: assistantsData,
-  } = useQuery('assistant_dists', getAssistantDists)
+  } = useQuery('publicDists', getPublicDists)
 
   useEffect(() => {
     subscribe('ChooseBotModal', handleEventUpdate)
@@ -93,8 +93,8 @@ const ChooseBotModal = () => {
                   disk_usage,
                   date_created,
                 } = dist
-                const dateCreated = dateToUTC(new Date())
-                const time = timeToUTC(new Date())
+                const dateCreated = dateToUTC(new Date(date_created))
+                const time = timeToUTC(new Date(date_created))
                 return (
                   <BotListItem
                     key={i}

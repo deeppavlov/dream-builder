@@ -6,6 +6,8 @@ import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
 import s from './FAQSidePanel.module.scss'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem from '../IntentListItem/IntentListItem'
+import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import { SkillInfoInterface } from '../../types/types'
 
 interface FAQItem {
   question: string
@@ -35,33 +37,47 @@ const faqMock: FAQItem[] = [
   },
 ]
 
-const FAQSidePanel = ({ isOpen, setIsOpen, position }: SidePanelProps) => {
+interface Props {
+  skill: SkillInfoInterface
+  activeTab?: 'Properties' | 'Editor'
+  disabled?: boolean
+}
+
+const FAQSidePanel = ({ skill, activeTab, disabled }: Props) => {
   return (
-    <BaseSidePanel
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      position={position}
-      name='FAQ'>
+    <SkillSidePanel skill={skill} activeTab={activeTab}>
       <div className={s.faqSidePanel}>
+        <div className={s.name}>FAQ</div>
         <div>
-          <Button theme='secondary' long>
-            <PlusIcon />
-            FAQ
+          <Button theme='secondary' small long>
+            <UploadIcon className={s.upload} />
+            Upload
           </Button>
           <button className={s['faqSidePanel__upload-btn']}>
             Upload your own .csv file <UploadIcon />
           </button>
         </div>
         <IntentList>
+          <div className={s['add-faq']}>
+            <Button theme='secondary' long>
+              <PlusIcon />
+              FAQ
+            </Button>
+          </div>
           {faqMock.map(({ question, answer }, i) => (
-            <IntentListItem key={question + i} name={question} about={answer} />
+            <IntentListItem
+              key={question + i}
+              id={question + i}
+              name={question}
+              about={answer}
+            />
           ))}
         </IntentList>
         <div className={s.faqSidePanel__btns}>
           <Button theme='primary'>Train</Button>
         </div>
       </div>
-    </BaseSidePanel>
+    </SkillSidePanel>
   )
 }
 

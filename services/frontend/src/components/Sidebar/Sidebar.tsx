@@ -1,4 +1,4 @@
-import ReactTooltip from 'react-tooltip'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { SettingsTab } from './components/SettingsTab'
 import s from './Sidebar.module.scss'
 

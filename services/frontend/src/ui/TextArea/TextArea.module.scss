@@ -5,127 +5,158 @@
   width: 100%;
   border-radius: 12px;
   gap: 2px;
+  position: relative;
+  padding: 24px 0px;
 
-  &__container {
-    position: relative;
-    display: flex;
-    max-width: 100%;
-    // width: fit-content;
-  }
-
-  &__label {
-    @include b3;
-    color: $text2;
-  }
-
-  &__field {
-    width: 100%;
-    min-height: 80px;
-    border: 1px solid $text3;
-    border-radius: 12px;
-    padding: 8px 24px;
-    outline: none;
-    background-color: $bcgrnd1;
-    @include b2;
-
-    &::placeholder {
-      color: $text3;
-      opacity: 0.4;
-    }
-
-    &:hover {
-      border-color: $primary1;
-    }
-
-    &:focus {
-      box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
-      border-color: $primary1;
-      color: $text1;
-    }
-
-    &:disabled {
-      background-color: $bcgrnd3;
-      color: $text3;
-      border-color: $text3;
-      resize: none;
-
-      &::placeholder {
-        color: $text3;
-      }
-    }
-
-    &:invalid,
-    &_error {
-      border-color: $red !important;
-    }
-
-    &_active {
+  &[data-active='true'] {
+    .field {
       box-shadow: none !important;
       color: $text1;
       padding-right: 69px;
     }
 
-    &::-webkit-resizer {
+    .resizer {
       display: none;
     }
+  }
 
-    &::-webkit-scrollbar-corner {
-      background: transparent;
+  &[data-error='true'] {
+    .field {
+      // &:invalid,
+      border-color: $red !important;
+      background-color: $bcgrnd1;
+    }
+
+    .label {
+      color: $red;
+    }
+
+    .resizer path {
+      stroke: $red;
     }
   }
 
-  &__resizer path {
-    stroke: $text3;
-  }
-
-  &:hover &__resizer path {
+  &:hover .resizer path {
     stroke: $primary1;
   }
 
-  &:has(&__field_error) &__resizer path {
-    stroke: $red;
-  }
-
-  &:has(&__field_active) &__resizer,
-  &:has(&__field:disabled) &__resizer {
-    display: none;
-  }
-
-  &__submit {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    display: none;
-
-    svg {
-      display: none;
+  &:has(.field:disabled) {
+    .label {
+      color: $text3;
+      opacity: 0.3;
     }
-  }
-
-  &__field_active ~ &__submit {
-    display: block;
-  }
-
-  &:has(&__field:disabled) {
-    opacity: 0.3;
-    color: $text3 !important;
-  }
-
-  &__error-msg {
-    color: $red;
+    .resizer {
+      display: none !important;
+    }
   }
 }
 
-.resizer {
+.container {
+  position: relative;
+  display: flex;
+  max-width: 100%;
+}
+
+.label {
+  @include b3;
+  color: $text2;
+  display: flex;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.about {
+  top: 100%;
+  transform: translateY(-100%);
+}
+
+.title {
+  color: $text2;
+}
+
+.counter {
+  margin-left: auto;
+}
+
+.field {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  padding: 8px 24px;
+  outline: none;
+  background-color: $bcgrnd2;
+  @include b2;
+
+  &::placeholder {
+    color: $text3;
+    opacity: 0.4;
+  }
+
+  &:hover {
+    border-color: $primary1;
+    background-color: $bcgrnd1;
+  }
+
+  &:focus {
+    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+    border-color: $primary1;
+    color: $text1;
+    background-color: $bcgrnd1;
+  }
+
+  &:disabled {
+    background-color: $bcgrnd3;
+    color: $text3;
+    border-color: $text3;
+    resize: none;
+    opacity: 0.3;
+
+    &::placeholder {
+      color: $text3;
+    }
+  }
+
+  &::-webkit-resizer {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+.submit {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: none;
+
+  svg {
+    display: none;
+  }
+}
+
+.submit-active {
+  display: block;
+}
+
+.resizer-container {
   position: relative;
   display: inline-flex;
 }
 
-.textArea-resizer {
+.resizer {
   position: absolute;
   width: 12px;
   height: 12px;
   bottom: 8px;
   right: 8px;
   pointer-events: none;
+
+  path {
+    stroke: $text3;
+  }
 }

@@ -8,9 +8,26 @@
   height: 24px;
   padding: 0;
 }
+.stack {
+  button {
+    background-color: none;
+  }
+}
 .dots {
   width: 3px;
   height: 3px;
   border-radius: 50%;
   background-color: #000;
+}
+.disabled {
+  .svg {
+    @include disabled;
+  }
+  @include disabled;
+}
+.row {
+  flex-direction: row;
+}
+.column {
+  flex-direction: column;
 }

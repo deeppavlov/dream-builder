@@ -1,0 +1,32 @@
+.container {
+  width: 100%;
+  color: $text2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @include b5;
+
+  &:hover, &:focus-within {
+    color: $primary1;
+
+    .smallInput {
+      border-color: $primary1;
+    }
+  }
+
+  &:has(.smallInput:disabled) {
+    opacity: 0.3;
+  }
+}
+
+.smallInput {
+  width: 48px;
+  height: 23px;
+  padding: 2px 4px;
+  background-color: $bcgrnd1;
+  color: $text2;
+  border: 1px solid $text3;
+  border-radius: 4px;
+  text-align: center;
+  outline: none;
+}

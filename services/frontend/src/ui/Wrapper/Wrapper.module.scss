@@ -6,6 +6,7 @@
   justify-content: start;
   width: 100%;
   border-radius: 20px;
+  border: 2px solid $text3;
   padding: 24px;
   gap: 16px;
   background-color: $bcgrnd3;
@@ -13,7 +14,7 @@
     height: 100%;
   }
   &.fitScreen {
-    min-height: 380px;
+    min-height: 392px;
     height: 500px;
     flex: 1 1 auto;
   }
@@ -21,14 +22,19 @@
     max-height: 550px; //нужно найти другой способ
     flex: 0 0 auto;
   }
-
+  &.primary {
+    border-color: $purple;
+  }
+  &.skills {
+    border-color: $orange;
+  }
   .close {
     position: absolute;
     right: 12px;
     top: 12px;
     svg {
       cursor: pointer;
-      stroke: #8d96b5;
+      stroke: #1f35ff4d;
       @include icon_size_24;
       @include btn_close_behavior;
     }

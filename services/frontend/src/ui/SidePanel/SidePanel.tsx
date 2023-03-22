@@ -2,7 +2,7 @@ import React from 'react'
 import Modal from 'react-modal'
 import s from './SidePanel.module.scss'
 
-export interface SidePanelProps extends React.PropsWithChildren {
+export interface SidePanelProps {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
   position?: Partial<{
@@ -11,20 +11,24 @@ export interface SidePanelProps extends React.PropsWithChildren {
     right: number
     bottom: number
   }>
-  disabled?: boolean
+  children?: React.ReactNode
 }
 
 const SidePanel = ({
   isOpen,
   setIsOpen,
   position,
-  disabled,
   children,
 }: SidePanelProps) => {
+  const closeTimeoutMS = 300
   const customStyles = {
     overlay: {
+      top: 64,
+      left: position?.left ?? 'auto',
+      right: position?.right ?? 0,
+      bottom: position?.bottom ?? 0,
       background: 'transparent',
-      zIndex: 4,
+      zIndex: 1,
     },
     content: {
       top: position?.top ?? 0,
@@ -38,15 +42,18 @@ const SidePanel = ({
       padding: 'none',
     },
   }
-  const closeModal = () => setIsOpen(false)
+
+  const handleCloseModal = () => setIsOpen(false)
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={closeModal}
+      onRequestClose={handleCloseModal}
       style={customStyles}
       contentLabel='SidePanel'
-      closeTimeoutMS={300}>
+      closeTimeoutMS={closeTimeoutMS}
+      shouldCloseOnOverlayClick={false}
+      preventScroll={true}>
       <div className={s.sidePanel} data-modal-type='side-panel'>
         {children}
       </div>

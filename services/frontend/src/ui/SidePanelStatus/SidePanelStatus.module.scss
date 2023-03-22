@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  display: flex;
+}
+
+.sidePanelStatus {
+  width: 100%;
+  margin-top: auto;
+  padding: 24px;
+  border-radius: 12px 12px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  background-color: $bcgrnd1;
+  gap: 24px;
+  @include b3;
+  z-index: 4;
+
+  &__title {
+    display: flex;
+    gap: 4px;
+    font-weight: $bold;
+    color: $primary1;
+  }
+
+  &_success &__title {
+    color: $salad;
+  }
+
+  &_error &__title {
+    color: $red;
+  }
+
+  &__desc {
+    @include b3;
+  }
+
+  &__btns {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+}
+
+.mute {
+  content: '';
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.4);
+}

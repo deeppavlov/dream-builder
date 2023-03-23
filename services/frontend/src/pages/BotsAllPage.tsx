@@ -13,23 +13,24 @@ import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 export const BotsAllPage = () => {
-  const [listView, setListView] = useState<boolean>(false)
   const { data, error, isLoading } = useQuery('publicDists', getPublicDists)
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
+
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper
           title='Public Virtual Assistants & Chatbots'
           amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />
-          {listView ? (
+          {isTableView ? (
             <Table>
               <DistList view='table' dists={data} type='public' />
             </Table>

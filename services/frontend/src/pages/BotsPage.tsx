@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { RoutesList } from '../router/RoutesList'
@@ -22,14 +22,14 @@ import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
 
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
 
   const {
     data: publicDists,
@@ -47,7 +47,7 @@ export const BotsPage = () => {
 
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper
           title='Public Virtual Assistants & Chatbots'
@@ -58,7 +58,7 @@ export const BotsPage = () => {
         >
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
-          {listView ? (
+          {isTableView ? (
             <Table>
               <DistList view='table' dists={publicDists} type='public' />
             </Table>
@@ -74,7 +74,7 @@ export const BotsPage = () => {
           title='Your Virtual Assistants & Chatbots'
           amount={auth?.user && privateDists?.length}
           linkTo={RoutesList.yourBots}>
-          {listView ? (
+          {isTableView ? (
             <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>

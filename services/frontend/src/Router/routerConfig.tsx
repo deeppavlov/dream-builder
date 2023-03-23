@@ -1,3 +1,4 @@
+import Root from '../pages/Root'
 import { BotsAllPage } from '../pages/BotsAllPage'
 import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
@@ -11,43 +12,49 @@ import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
 
-export const routeConfig: CustomRouteConfig[] = [
+export const RouterConfig: CustomRouteConfig[] = [
   {
-    path: RoutesList.start,
-    element: <BotsPage />,
-  },
-  {
-    path: RoutesList.botsAll,
-    element: <BotsAllPage />,
-    handle: 'Public Virtual Assistants & Chatbots',
-  },
-  {
-    path: RoutesList.draft,
-    element: <DraftPage />,
-    handle: 'Its For Crumbs',
-  },
-  {
-    path: RoutesList.profile,
-    element: (
-      <PrivateRoute>
-        <StartPage />
-      </PrivateRoute>
-    ),
-    handle: 'Connected Services',
-  },
-  {
-    path: RoutesList.yourBots,
-    element: (
-      <PrivateRoute>
-        <UsersBotsPage />
-      </PrivateRoute>
-    ),
-    handle: 'Your Virtual Assistants & Chatbots',
-  },
-  {
-    path: ':name',
-    element: <EditorPage />,
-    handle: <CrumbForEditor />,
+    path: '/',
+    element: <Root />,
+    children: [
+      {
+        path: RoutesList.start,
+        element: <BotsPage />,
+      },
+      {
+        path: RoutesList.botsAll,
+        element: <BotsAllPage />,
+        handle: 'Public Virtual Assistants & Chatbots',
+      },
+      {
+        path: RoutesList.draft,
+        element: <DraftPage />,
+        handle: 'Its For Crumbs',
+      },
+      {
+        path: RoutesList.profile,
+        element: (
+          <PrivateRoute>
+            <StartPage />
+          </PrivateRoute>
+        ),
+        handle: 'Connected Services',
+      },
+      {
+        path: RoutesList.yourBots,
+        element: (
+          <PrivateRoute>
+            <UsersBotsPage />
+          </PrivateRoute>
+        ),
+        handle: 'Your Virtual Assistants & Chatbots',
+      },
+      {
+        path: ':name',
+        element: <EditorPage />,
+        handle: <CrumbForEditor />,
+      },
+    ],
   },
   {
     path: RoutesList.test,

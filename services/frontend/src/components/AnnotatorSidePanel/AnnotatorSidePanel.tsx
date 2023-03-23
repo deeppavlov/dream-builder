@@ -7,7 +7,7 @@ import { trigger } from '../../utils/events'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { IStackElement } from '../../types/types'
-import { modelTypeMap } from '../../Mapping/modelTypeMap'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import s from './AnnotatorSidePanel.module.scss'
 
 interface Props {

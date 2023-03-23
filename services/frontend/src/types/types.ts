@@ -199,3 +199,5 @@ export type StackType =
   | 'skills'
 
 export type BotVisabilityType = 'public' | 'unlisted'
+
+export type TTopbar = 'main' | 'editor'

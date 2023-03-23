@@ -1,15 +1,18 @@
-import { FC } from 'react'
-import { Link, useMatches } from 'react-router-dom'
+import React from 'react'
+import { Link, matchPath, useMatches } from 'react-router-dom'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import s from './Breadcrumbs.module.scss'
 
-interface Props {
-  tab?: string
-  path?: string[]
-}
-
-export const Breadcrumbs: FC<Props> = ({ path, tab }) => {
+export const Breadcrumbs = () => {
   const matches = useMatches()
+  const { options, dispatch } = useDisplay()
+  const contextPath = options.get(consts.BREADCRUMBS_PATH)
+  const match = contextPath?.location
+    ? matchPath({ path: contextPath?.location || '' }, location.pathname)
+    : null
+
   return (
     <>
       <div data-tip data-tooltip-id='home' className={s.breadcrumbs}>
@@ -28,15 +31,13 @@ export const Breadcrumbs: FC<Props> = ({ path, tab }) => {
             )
           )
         })}
-        {path?.map(name => (
-          <>
-            <span className={s.slash} />
-            {name}
-          </>
-        ))}
-
-        {tab && <span className={s.slash} />}
-        {tab}
+        {match &&
+          contextPath?.path?.map((name: string, i: number) => (
+            <React.Fragment key={name + i}>
+              <span className={s.slash} />
+              <span>{name ?? '...'}</span>
+            </React.Fragment>
+          ))}
       </div>
     </>
   )

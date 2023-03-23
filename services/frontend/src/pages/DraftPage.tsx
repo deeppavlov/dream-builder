@@ -13,7 +13,7 @@ export const DraftPage = () => {
 
   return (
     <>
-      <Topbar />
+      {/* <Topbar /> */}
       <Main>
         <form onSubmit={onFormSubmit}>
           <input type='text' />

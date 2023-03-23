@@ -6,7 +6,6 @@ import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import { usePreview } from '../../context/PreviewProvider'
 import { IStackElement } from '../../types/types'
 import { Skill } from './Skill'
-import { ISkillSelector } from '../../types/types'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import s from './SkillSelector.module.scss'
 
@@ -60,7 +59,7 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
                 value='All Skills'
                 name='skill_selector'
                 htmlFor='All Skills'
-                checked={true}
+                defaultChecked
                 disabled={isPreview}>
                 <Skill
                   skill={{
@@ -81,17 +80,15 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
               </RadioButton>
             ) : (
               nonCustomizable?.map((skill, i) => (
-                <>
-                  <RadioButton
-                    key={skill.name + i}
-                    id={skill.name}
-                    value={skill.name}
-                    name='skill_selector'
-                    checked
-                    htmlFor={skill.name}>
-                    <Skill skill={skill} isPreview={isPreview} />
-                  </RadioButton>
-                </>
+                <RadioButton
+                  key={skill.name + i}
+                  id={skill.name}
+                  value={skill.name}
+                  name='skill_selector'
+                  defaultChecked={nonCustomizable?.length === 1}
+                  htmlFor={skill.name}>
+                  <Skill skill={skill} isPreview={isPreview} />
+                </RadioButton>
               ))
             )}
           </div>

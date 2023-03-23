@@ -9,7 +9,6 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
 import { Sidebar } from '../components/Sidebar/Sidebar'
 import { BotTab } from '../components/Sidebar/components/BotTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
@@ -40,44 +39,21 @@ import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 import HelperDialogSidePanel from '../components/HelperDialogSidePanel/HelperDialogSidePanel'
 import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 export const EditorPage = () => {
-  const [listView, setListView] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState<number>(0)
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const [activeTab, setActiveTab] = useState<number>(
+    history.state?.activeTab ?? 0
+  )
   const auth = useAuth()
   const { state } = useLocation()
   const location = useLocation()
   const nameFromURL = location?.pathname?.substring(1)
   const { isPreview, setIsPreview } = usePreview()
-
-  useEffect(() => {
-    setIsPreview(state?.preview == undefined ? false : state?.preview)
-  }, [state])
-  //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
-
-  // const dialogHandler = () => {
-  //   setActiveTab(2)
-  //   trigger('SkillPromptModal', { action: 'edit' })
-  // }
-
-  const handleTabSelect = (index: number) => {
-    // const previousTabIsHelper = activeTab === 2 && index !== 2
-    // const selectedHelperTab = activeTab !== 2 && index === 2
-
-    // if (previousTabIsHelper) {
-    //   trigger('SkillPromptModal', { isOpen: false })
-    // }
-
-    // if (selectedHelperTab) {
-    //   dialogHandler()
-    //   return
-    // }
-
-    setActiveTab(index)
-  }
+  const tabsNames = ['Skills', 'Architecture']
 
   const {
     isLoading: isComponentsLoading,
@@ -98,9 +74,51 @@ export const EditorPage = () => {
   const responseSelectors = components?.response_selectors
   const responseAnnotators = components?.response_annotators
 
+  useEffect(() => {
+    // Setting mode to Preview by default
+    setIsPreview(state?.preview ?? true)
+  }, [state])
+
+  useEffect(() => {
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.BREADCRUMBS_PATH,
+        value: {
+          location: location.pathname,
+          path: [dist?.display_name, tabsNames[activeTab]],
+        },
+      },
+    })
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.EDITOR_ACTIVE_TAB,
+        value: tabsNames[activeTab],
+      },
+    })
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT,
+        value: dist,
+      },
+    })
+
+    history.replaceState(
+      Object.assign({}, history.state, {
+        [consts.EDITOR_ACTIVE_TAB]: tabsNames[activeTab],
+      }),
+      '',
+      location.pathname
+    )
+  }, [dist, activeTab])
+
   return (
     <>
-      <Tabs selectedIndex={activeTab} onSelect={handleTabSelect}>
+      <Tabs selectedIndex={activeTab} onSelect={setActiveTab}>
         <Sidebar>
           <TabList>
             <Container layoutForTabs>
@@ -132,20 +150,11 @@ export const EditorPage = () => {
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Topbar
-            dist={dist}
-            viewChanger
-            type='editor'
-            viewHandler={viewHandler}
-            tab='Skills'
-            title={state?.displayName || displayName}
-            name={state?.distName || nameFromURL}
-          />
           <Main sidebar editor>
             <Wrapper title='Skills' skills>
               <Loader isLoading={isComponentsLoading} />
               <ErrorHandler error={componentsError} />
-              {listView && (
+              {isTableView && (
                 <Table
                   second='Type'
                   addButton={
@@ -161,7 +170,7 @@ export const EditorPage = () => {
                   <SkillList skills={skills} view='table' type='your' />
                 </Table>
               )}
-              {!listView && (
+              {!isTableView && (
                 <Container gridForCards heightAuto>
                   {!isPreview && (
                     <AddButton disabled={isPreview} forGrid forSkills />
@@ -173,13 +182,6 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Topbar
-            dist={dist}
-            tab='Architecture'
-            type='editor'
-            viewHandler={viewHandler}
-            title={state?.displayName || displayName}
-          />
           <Main sidebar editor draggable>
             <Loader isLoading={isComponentsLoading} />
             <Annotators annotators={annotators} />
@@ -193,11 +195,7 @@ export const EditorPage = () => {
       </Tabs>
 
       <AreYouSureModal />
-      <SkillPromptModal
-        handleClose={() => setActiveTab(0)}
-        dist={dist}
-        distName={state?.distName!}
-      />
+      <SkillPromptModal dist={dist} distName={state?.distName!} />
       <HelperDialogSidePanel />
       <Toaster />
       <SkillsListModal />

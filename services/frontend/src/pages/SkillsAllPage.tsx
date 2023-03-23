@@ -15,6 +15,8 @@ import { SkillModal } from '../components/SkillModal/SkillModal'
 import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 interface skill_list {
   assistant_dist: string
@@ -35,10 +37,8 @@ interface skill_list {
 
 export const SkillsAllPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
   const {
     isLoading: isSkillsLoading,
     error: skillsError,
@@ -48,9 +48,9 @@ export const SkillsAllPage = () => {
   skillsError && <> {'An error has occurred: '} + skillsError</>
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
-        {!listView ? (
+        {!isTableView ? (
           <Wrapper title='Public Skills' amount={skillsData?.length}>
             <Container
               display='grid'

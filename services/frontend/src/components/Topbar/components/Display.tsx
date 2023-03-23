@@ -1,21 +1,30 @@
 import { useState } from 'react'
 import { ReactComponent as CardsView } from '../../../assets/icons/display.svg'
 import { ReactComponent as ListView } from '../../../assets/icons/list-view.svg'
+import { useDisplay } from '../../../context/DisplayContext'
+import { consts } from '../../../utils/consts'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import s from './Display.module.scss'
 
 export const Display = ({ viewHandler }: any) => {
-  const [view, setView] = useState(false)
-  const changeView = () => {
-    setView(view => !view)
-    viewHandler()
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
+
+  const changeView = () =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.IS_TABLE_VIEW,
+        value: !isTableView,
+      },
+    })
+
   return (
     <button
       data-tooltip-id='viewType'
       onClick={changeView}
       className={s.display}>
-      {!view ? <CardsView /> : <ListView />}
+      {isTableView ? <ListView /> : <CardsView />}
       <BaseToolTip id='viewType' content='Change View Type' />
     </button>
   )

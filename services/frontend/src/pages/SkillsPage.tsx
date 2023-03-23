@@ -26,6 +26,8 @@ import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkill
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 interface skill_list {
   assistant_dist: string
@@ -46,15 +48,12 @@ interface skill_list {
 
 export const SkillsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
-  const viewHandler = () => {
-    setListView(listView => !listView)
-    setSkills([])
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
   const [skills, setSkills] = useState<JSX.Element[]>([])
   const addBot = () => {
     trigger('SkillModal', {})
-    !listView
+    !isTableView
       ? setSkills(
           skills.concat([
             <SkillCard
@@ -110,9 +109,9 @@ export const SkillsPage = () => {
   skillsError && <>{'An error has occurred:' + { skillsError }}</>
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
-        {!listView ? (
+        {!isTableView ? (
           <>
             <Wrapper
               title='Public Skills'

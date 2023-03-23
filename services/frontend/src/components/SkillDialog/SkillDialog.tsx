@@ -39,7 +39,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
     }
   )
 
-  const handleSend = data => {
+  const handleSend = (data: any) => {
     const id = session?.id!
     const message = data?.message!
     setMessage(message)
@@ -104,14 +104,6 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
       </SidePanelHeader>
 
       <div className={s.container}>
-        <SkillDropboxSearch
-          label='Choose skill:'
-          list={[]}
-          props={{
-            placeholder: 'Choose skill',
-          }}
-          fullWidth
-        />
         <ul className={s.chat}>
           {history &&
             history?.map(

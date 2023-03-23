@@ -18,6 +18,8 @@ import SkillDialog from '../SkillDialog/SkillDialog'
 import { postPrompt } from '../../services/postPrompt'
 import { changeLMservice } from '../../services/changeLMservice'
 import { servicesList } from '../../mocks/database/servicesList'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import s from './SkillPromptModal.module.scss'
 
 export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
@@ -34,22 +36,19 @@ interface Props {
   withLeftPadding?: boolean
 }
 
-const SkillPromptModal: FC<Props> = ({
-  dist,
-  distName,
-  withLeftPadding = false,
-}) => {
+const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const queryClient = useQueryClient()
   const cx = classNames.bind(s)
 
-  const [withSidePanel, setWithSidePanel] = useState(withLeftPadding)
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 3000
 
   // queries
+  const { options, dispatch } = useDisplay()
+  const dist = options.get(consts.ACTIVE_ASSISTANT)
 
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
@@ -127,7 +126,7 @@ const SkillPromptModal: FC<Props> = ({
     setAction(null)
     setSkill(null)
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
-    history.pushState(
+    history.replaceState(
       Object.assign({}, history.state, { dialogSkillName: null }),
       '',
       location.pathname
@@ -140,7 +139,7 @@ const SkillPromptModal: FC<Props> = ({
    * Set modal is open and getting skill info
    */
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill, action, dist } = data.detail
+    const { skill, action } = data.detail
 
     if (data.detail.isOpen !== undefined && !data.detail.isOpen) {
       closeModal()
@@ -148,13 +147,14 @@ const SkillPromptModal: FC<Props> = ({
     }
 
     // Push skill name for breadcrumbs bar
-    history.pushState(
+    history.replaceState(
       Object.assign({}, history.state, {
         dialogSkillName: skill?.display_name,
       }),
       '',
       location.pathname
     )
+
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: true })
 
     setAction(action ?? 'create')
@@ -239,13 +239,29 @@ const SkillPromptModal: FC<Props> = ({
     return () => {
       unsubscribe('SkillPromptModal', handleEventUpdate)
       unsubscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
-      history.pushState(
-        Object.assign({}, history.state, { dialogSkillName: null }),
-        '',
-        location.pathname
-      )
+      // history.replaceState(
+      //   Object.assign({}, history.state, { dialogSkillName: null }),
+      //   '',
+      //   location.pathname
+      // )
     }
   }, [])
+
+  useEffect(() => {
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.BREADCRUMBS_PATH,
+        value: {
+          location: location.pathname,
+          path: isOpen
+            ? [dist?.display_name, 'Skills', skill?.display_name]
+            : [dist?.display_name, 'Skills'],
+        },
+      },
+    })
+  }, [isOpen])
+  
   return (
     <Modal
       isOpen={isOpen}

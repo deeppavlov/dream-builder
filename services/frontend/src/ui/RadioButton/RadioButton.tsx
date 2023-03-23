@@ -29,8 +29,7 @@ export const RadioButton: FC<RadioButtonProps> = ({
         name={name}
         type='radio'
         disabled={disabled}
-        defaultChecked={checked}
-        checked={checked}
+        defaultChecked={defaultChecked}
         value={value}
         className={s.radio}
         {...props}

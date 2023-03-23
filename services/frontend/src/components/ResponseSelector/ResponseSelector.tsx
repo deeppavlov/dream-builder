@@ -65,7 +65,7 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
                   id={skill.name}
                   value={skill.name}
                   name='response_selector'
-                  checked={nonCustomizable?.length === 1}
+                  defaultChecked={nonCustomizable?.length === 1}
                   htmlFor={skill.name}>
                   <Skill skill={skill} isPreview={isPreview} />
                 </RadioButton>

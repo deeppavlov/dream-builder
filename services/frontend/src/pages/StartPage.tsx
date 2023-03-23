@@ -10,12 +10,9 @@ export const StartPage = () => {
   const user = auth?.user
 
   return (
-    <>
-      <Topbar />
-      <Main>
-        {user && <Banner name={user?.name} />}
-        <AccessTokensBanner />
-      </Main>
-    </>
+    <Main>
+      {user && <Banner name={user?.name} />}
+      <AccessTokensBanner />
+    </Main>
   )
 }

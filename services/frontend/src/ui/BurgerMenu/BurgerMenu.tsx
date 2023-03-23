@@ -1,15 +1,16 @@
 import Logo from '../../assets/icons/logo.png'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
-import s from './Menu.module.scss'
 import MenuToolTip from '../../components/MenuToolTip/MenuToolTip'
-
-export type TMenu = 'main' | 'editor' | 'bots'
+import { BotInfoInterface, TTopbar } from '../../types/types'
+import s from './BurgerMenu.module.scss'
 
 interface Props {
-  type: TMenu
+  type: TTopbar
+  dist?: BotInfoInterface
 }
 
-export const Menu = ({ type }: Props) => {
+export const BurgerMenu = ({ type, dist }: Props) => {
+  
   return (
     <>
       <div className={s.menu} data-tip data-tooltip-id={type}>

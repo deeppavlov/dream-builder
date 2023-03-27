@@ -1,4 +1,4 @@
-import { FC, useId, useState } from 'react'
+import { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { trigger } from '../../utils/events'
@@ -11,20 +11,26 @@ import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import { usePreview } from '../../context/PreviewProvider'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
-import { ISkill } from '../../types/types'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
 import toast from 'react-hot-toast'
 import s from './SkillListItem.module.scss'
+import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 
 interface SkillListItemProps {
   skill: ISkill
+  type: SkillAvailabilityType
   forModal?: boolean
 }
 
-export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
+export const SkillListItem: FC<SkillListItemProps> = ({
+  skill,
+  forModal,
+  type,
+}) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
   const [disabled, setDisabled] = useState<boolean>(false)
@@ -32,6 +38,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
   const { isPreview } = usePreview()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
+  const skillListItemRef = useRef(null)
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -39,10 +46,11 @@ export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
     setDisabled(disabled => !disabled)
   }
   const handleSkillListItemClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    trigger(BASE_SP_EVENT, {
-      children: <SkillSidePanel key={skill?.name} skill={skill} />,
+    triggerSkillSidePanel({
+      parent: skillListItemRef,
+      skill,
+      type,
+      activeTab: 'Properties',
     })
   }
   const handleAddClick = (e: React.MouseEvent) => {
@@ -61,7 +69,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({ skill, forModal }) => {
   return (
     <tr
       className={cx('tr', disabled && 'disabled')}
-      onClick={handleSkillListItemClick}>
+      onClick={handleSkillListItemClick} ref={skillListItemRef}>
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.skillName}>{skill?.display_name || '------'}</p>

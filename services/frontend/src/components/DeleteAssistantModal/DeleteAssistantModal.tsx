@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useMutation, useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import { useObserver } from '../../hooks/useObserver'
+import { RoutesList } from '../../router/RoutesList'
 import { deleteAssistantDist } from '../../services/deleteAssistantDist'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
@@ -50,10 +53,7 @@ export const DeleteAssistantModal = () => {
     handleClose()
   }
 
-  useEffect(() => {
-    subscribe('DeleteAssistantModal', handleEventUpdate)
-    return () => unsubscribe('DeleteAssistantModal', handleEventUpdate)
-  }, [])
+  useObserver('DeleteAssistantModal', handleEventUpdate)
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>

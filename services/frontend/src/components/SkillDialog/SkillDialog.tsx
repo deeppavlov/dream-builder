@@ -18,6 +18,7 @@ import { sendMessage } from '../../services/sendMessage'
 import { subscribe, unsubscribe } from '../../utils/events'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 export const DEBUG_DIST = 'universal_prompted_assistant'
 
@@ -75,17 +76,18 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
       handleSubmit(handleSend)()
     }
   }
+
+  useObserver('RenewChat', handleRenewClick)
+
+  useEffect(() => {
+    renew.mutateAsync(dist?.name)
+  }, [])
+
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
   }, [history])
-
-  useEffect(() => {
-    renew.mutateAsync(dist?.name)
-    subscribe('RenewChat', handleRenewClick)
-    return () => unsubscribe('RenewChat', handleRenewClick)
-  }, [])
 
   return (
     <form

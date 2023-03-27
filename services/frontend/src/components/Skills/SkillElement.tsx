@@ -1,4 +1,4 @@
-import { FC, useId, useState } from 'react'
+import { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
 import { ISkill } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -15,6 +15,7 @@ interface SkillProps {
 
 export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
   const [disabled, setDisabled] = useState<boolean>(false)
+  const skillRef = useRef(null)
   let tooltipId = useId()
   const cx = classNames.bind(s)
 
@@ -22,7 +23,7 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
     setDisabled(disabled => !disabled)
 
   return (
-    <div className={cx('element', disabled && 'disabled')}>
+    <div className={cx('element', disabled && 'disabled')} ref={skillRef}>
       <div className={s.left}>
         <div className={s.top}>
           <img
@@ -40,6 +41,7 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
           skill={skill}
           isCustomizable={skill?.is_customizable}
           isPreview={isPreview}
+          skillRef={skillRef}
         />
       </div>
     </div>

@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
 import s from './SkillDropboxSearch.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 interface Props {
   isOpen?: boolean
@@ -57,15 +58,17 @@ const SkillDropboxSearch = ({
     onSelect && onSelect(v)
   }
 
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [])
+  useObserver('click', handleClickOutside)
 
   return (
     <div
       ref={dropboxRef}
-      className={cx('skillDropboxSearch', isOpen && 'open', error && 'error', fullWidth && 'fullWidth')}
+      className={cx(
+        'skillDropboxSearch',
+        isOpen && 'open',
+        error && 'error',
+        fullWidth && 'fullWidth'
+      )}
       onFocus={() => setIsOpen(true)}>
       {label && <span className={s.label}>{label}</span>}
 

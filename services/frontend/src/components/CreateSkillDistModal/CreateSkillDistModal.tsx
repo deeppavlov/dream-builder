@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
+import { useObserver } from '../../hooks/useObserver'
 import { SkillInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -36,10 +37,7 @@ const CreateSkillDistModal = () => {
     setIsOpen(!isOpen)
   }
 
-  useEffect(() => {
-    subscribe('CreateSkillDistModal', handleEventUpdate)
-    return () => unsubscribe('CreateSkillDistModal', handleEventUpdate)
-  }, [])
+  useObserver('CreateSkillDistModal', handleEventUpdate)
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

@@ -4,7 +4,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 const Root = () => {
   return (
     <>
-      <Topbar type='main' />
+      <Topbar />
       <Outlet />
     </>
   )

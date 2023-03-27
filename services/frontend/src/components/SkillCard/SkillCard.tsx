@@ -1,4 +1,4 @@
-import React, { FC, useId, useState } from 'react'
+import React, { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
 import Calendar from '@assets/icons/calendar.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
@@ -35,6 +35,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
+  const skillCardRef = useRef(null)
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -43,7 +44,12 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleSkillCardClick = (e: React.MouseEvent) =>
-    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
+    triggerSkillSidePanel({
+      parent: skillCardRef,
+      skill,
+      type,
+      activeTab: 'Properties',
+    })
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
     trigger('CreateSkillDistModal', { skill })
@@ -72,7 +78,8 @@ export const SkillCard: FC<SkillCardProps> = ({
         forGrid && 'forGrid',
         disabled && 'disabled'
       )}
-      onClick={handleSkillCardClick}>
+      onClick={handleSkillCardClick}
+      ref={skillCardRef}>
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
         {type == 'your' && (

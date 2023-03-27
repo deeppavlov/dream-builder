@@ -73,7 +73,7 @@ export const TextArea: FC<TextAreaProps> = ({
           )}
         </label>
       )}
-      <div className={cx('container', resizable && 'resizer-container')}>
+      <div className={cx('container', resizable && 'resize-container')}>
         {resizable && <TextAreaLogo className={s.resizer} />}
         <textarea
           rows={2}
@@ -82,7 +82,7 @@ export const TextArea: FC<TextAreaProps> = ({
           id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
-          className={cx('field', resizable && 'resizable')}
+          className={s.field}
         />
 
         {withEnterButton && (

@@ -7,6 +7,7 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import toast from 'react-hot-toast'
 import s from './PublishAssistantModal.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 interface IPublishBot extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
 interface IPublishAssistantModal {
@@ -49,10 +50,7 @@ export const PublishAssistantModal = () => {
     //     }),
   })
 
-  useEffect(() => {
-    subscribe('PublishAssistantModal', handleEventUpdate)
-    return () => unsubscribe('PublishAssistantModal', handleEventUpdate)
-  }, [])
+  useObserver('PublishAssistantModal', handleEventUpdate)
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

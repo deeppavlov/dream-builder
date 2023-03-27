@@ -1,4 +1,4 @@
-import { FC, useId } from 'react'
+import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
@@ -27,9 +27,11 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
+  const botListItemRef = useRef(null)
 
   const handleBotListItemClick = () => {
     trigger(BASE_SP_EVENT, {
+      parent: botListItemRef,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -75,7 +77,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   }
 
   return (
-    <tr className={s.tr} onClick={handleBotListItemClick}>
+    <tr className={s.tr} onClick={handleBotListItemClick} ref={botListItemRef}>
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.botName}>{bot?.display_name || '------'}</p>

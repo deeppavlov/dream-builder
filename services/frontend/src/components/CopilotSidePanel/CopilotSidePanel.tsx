@@ -21,6 +21,8 @@ import toast from 'react-hot-toast'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import { useObserver } from '../../hooks/useObserver'
 import s from './CopilotSidePanel.module.scss'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 
 export const COPILOT_SP_TRIGGER = 'COPILOT_SP_TRIGGER'
 
@@ -54,6 +56,7 @@ const CopilotSidePanel = () => {
     () => getHistory(dialogSession?.id!),
     { enabled: !!message }
   )
+  const { dispatch } = useDisplay()
   const cx = classNames.bind(s)
 
   const handleMessageClick = () => {
@@ -124,6 +127,16 @@ const CopilotSidePanel = () => {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
   }, [history])
+
+  useEffect(() => {
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.LEFT_SIDEPANEL_IS_ACTIVE,
+        value: isOpen,
+      },
+    })
+  }, [isOpen])
 
   return (
     <SidePanel

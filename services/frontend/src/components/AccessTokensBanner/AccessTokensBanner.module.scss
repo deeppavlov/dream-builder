@@ -38,6 +38,12 @@
   color: $text1;
 }
 
+.tokenName {
+  @include hide_text;
+  width: 100%;
+  -webkit-line-clamp: 1;
+}
+
 .icon {
   min-width: 24px;
   min-height: 24px;

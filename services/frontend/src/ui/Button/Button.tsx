@@ -12,6 +12,7 @@ interface Props extends React.PropsWithChildren {
     | 'tertiary-round'
     | 'ghost'
     | 'error'
+    | 'stack'
   small?: boolean
   long?: boolean
   withIcon?: boolean

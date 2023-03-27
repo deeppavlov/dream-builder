@@ -18,6 +18,7 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { BotInfoInterface } from '../../types/types'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -129,10 +130,7 @@ const DialogSidePanel: FC<Props> = ({
     }
   }, [history])
 
-  useEffect(() => {
-    subscribe('RenewChat', handleRenewClick)
-    return () => unsubscribe('RenewChat', handleRenewClick)
-  }, [])
+  useObserver('RenewChat', handleRenewClick)
 
   return (
     <div className={s.container}>

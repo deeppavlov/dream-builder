@@ -36,15 +36,16 @@ import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteA
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
 import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
-import HelperDialogSidePanel from '../components/HelperDialogSidePanel/HelperDialogSidePanel'
 import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
 import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
+import CopilotSidePanel from '../components/CopilotSidePanel/CopilotSidePanel'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const skillEditorIsActive = options.get(consts.SKILL_EDITOR_IS_ACTIVE)
   const [activeTab, setActiveTab] = useState<number>(
     history.state?.activeTab ?? 0
   )
@@ -80,16 +81,18 @@ export const EditorPage = () => {
   }, [state])
 
   useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.BREADCRUMBS_PATH,
-        value: {
-          location: location.pathname,
-          path: [dist?.display_name, tabsNames[activeTab]],
+    if (!skillEditorIsActive) {
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.BREADCRUMBS_PATH,
+          value: {
+            location: location.pathname,
+            path: [dist?.display_name, tabsNames[activeTab]],
+          },
         },
-      },
-    })
+      })
+    }
 
     dispatch({
       type: 'set',
@@ -106,14 +109,6 @@ export const EditorPage = () => {
         value: dist,
       },
     })
-
-    history.replaceState(
-      Object.assign({}, history.state, {
-        [consts.EDITOR_ACTIVE_TAB]: tabsNames[activeTab],
-      }),
-      '',
-      location.pathname
-    )
   }, [dist, activeTab])
 
   return (
@@ -195,8 +190,8 @@ export const EditorPage = () => {
       </Tabs>
 
       <AreYouSureModal />
-      <SkillPromptModal dist={dist} distName={state?.distName!} />
-      <HelperDialogSidePanel />
+      <SkillPromptModal />
+      <CopilotSidePanel />
       <Toaster />
       <SkillsListModal />
 

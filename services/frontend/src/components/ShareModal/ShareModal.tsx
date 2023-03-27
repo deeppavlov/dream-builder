@@ -10,6 +10,7 @@ import { ToastCopySucces } from '../Toasts/Toasts'
 import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
 import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
 import s from './ShareModal.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 export const ShareModal = () => {
   const [bot, setBot] = useState<string>('not yet')
@@ -34,10 +35,7 @@ export const ShareModal = () => {
     })
   }
 
-  useEffect(() => {
-    subscribe('ShareModal', handleEventUpdate)
-    return () => unsubscribe('ShareModal', handleEventUpdate)
-  }, [])
+  useObserver('ShareModal', handleEventUpdate)
 
   useEffect(() => {
     reset({

@@ -22,16 +22,18 @@ export const Kebab: FC<KebabProps> = ({
   const handleKebabBtnClick = (e: React.MouseEvent) => e.stopPropagation()
 
   return (
-    <div data-tip data-tooltip-id={tooltipId}>
-      <Button
-        theme={theme === 'card' ? 'secondary' : undefined}
-        small
-        withIcon
-        props={{ disabled, onClick: handleKebabBtnClick }}>
-        <div className={cx('kebab', type, disabled && 'disabled')}>
-          <KebabLogo />
-        </div>
-      </Button>
-    </div>
+    <Button
+      theme={theme === 'card' ? 'secondary' : 'stack'}
+      small
+      withIcon
+      props={{
+        disabled,
+        onClick: handleKebabBtnClick,
+        'data-tooltip-id': tooltipId,
+      }}>
+      <div className={cx('kebab', type, disabled && 'disabled')}>
+        <KebabLogo />
+      </div>
+    </Button>
   )
 }

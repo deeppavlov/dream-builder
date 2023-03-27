@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { matchPath, useParams } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
 import { useAuth } from '../../context/AuthProvider'
@@ -13,14 +13,13 @@ import { consts } from '../../utils/consts'
 import { Test } from './components/Test'
 import s from './Topbar.module.scss'
 
-
 export const Topbar = () => {
   const auth = useAuth()
   const user = auth?.user
   const { name } = useParams()
-  const type: TTopbar = name ? 'editor' : 'main'
-  const isEditor = type === 'editor'
   const { options } = useDisplay()
+  const type: TTopbar = name !== undefined ? 'editor' : 'main'
+  const isEditor = type === 'editor'
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const isTableViewSwitcher =
     location.pathname !== '/profile' && editorActiveTab !== 'Architecture'

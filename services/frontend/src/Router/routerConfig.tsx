@@ -4,7 +4,7 @@ import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
 import { EditorPage } from '../pages/EditorPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
-import { StartPage } from '../pages/StartPage'
+import { ProfilePage } from '../pages/ProfilePage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
@@ -35,7 +35,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         path: RoutesList.profile,
         element: (
           <PrivateRoute>
-            <StartPage />
+            <ProfilePage />
           </PrivateRoute>
         ),
         handle: 'Connected Services',
@@ -50,7 +50,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         handle: 'Your Virtual Assistants & Chatbots',
       },
       {
-        path: ':name',
+        path: RoutesList.editor,
         element: <EditorPage />,
         handle: <CrumbForEditor />,
       },

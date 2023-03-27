@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import SidePanel from '../../ui/SidePanel/SidePanel'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { useObserver } from '../../hooks/useObserver'
 import s from './BaseSidePanel.module.scss'
 
 export const BASE_SP_EVENT = 'BaseSidePanel'
@@ -15,6 +15,7 @@ interface BaseSidePanel {
     bottom: number | 'auto'
   }>
   children?: React.ReactNode
+  parent?: React.MutableRefObject<any>
   isClosable?: boolean
   transition?: 'left' | 'right' | 'none'
 }
@@ -27,23 +28,32 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
   isClosable: propsIsClosable = true,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
-  // const [withTransition, setWithTransition] =
-  //   useState<boolean>(propWithTransition)
   const [isClosable, setIsClosable] = useState<boolean>(propsIsClosable)
   const [content, setContent] = useState<React.ReactNode>(children)
+  const [parent, setParent] = useState<HTMLElement>()
+
+  const setParentFocus = (isFocused: boolean, el?: HTMLElement) => {
+    if (!isFocused) {
+      parent?.removeAttribute('data-active')
+      return
+    }
+
+    setParent(prev => {
+      prev?.removeAttribute('data-active')
+      el?.setAttribute('data-active', 'true')
+      return el
+    })
+  }
 
   const handleClose = () => {
     setIsOpen(false)
+    setParentFocus(false)
   }
 
   /**
    * Update BaseSidePanel content, when it's triggered
    */
   const updateState = (data: BaseSidePanel) => {
-    // if (data.withTransition !== undefined) {
-    //   setWithTransition(data.withTransition)
-    // } else setWithTransition(true)
-
     if (data.isClosable !== undefined) {
       setIsClosable(data.isClosable)
     } else setIsClosable(true)
@@ -59,19 +69,19 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
     // Open BaseSidePanel, if it's not already open
     if (!isOpen) setIsOpen(true)
   }
+
   const handleTrigger = (data: { detail: BaseSidePanel }) => {
     updateState(data.detail)
+    setParentFocus(true, data.detail.parent?.current)
   }
 
-  useEffect(() => {
-    subscribe(BASE_SP_EVENT, handleTrigger)
-    return () => unsubscribe(BASE_SP_EVENT, handleTrigger)
-  }, [])
+  useObserver(BASE_SP_EVENT, handleTrigger)
 
   return (
     <SidePanel
       isOpen={isOpen}
       setIsOpen={setIsOpen}
+      handleClose={handleClose}
       position={position}
       transition={transition}>
       <div className={s.baseSidePanel}>

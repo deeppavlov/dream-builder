@@ -9,6 +9,10 @@
   gap: 10px;
   background-color: $bcgrnd1;
   @include stack_element_behavior;
+
+  &:focus-within {
+    background-color: $bcgrnd1;
+  }
   .left {
     cursor: pointer;
     display: flex;

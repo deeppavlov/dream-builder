@@ -61,7 +61,8 @@ const SidePanel = ({
       contentLabel='SidePanel'
       closeTimeoutMS={closeTimeoutMS}
       shouldCloseOnOverlayClick={false}
-      preventScroll={true}>
+      preventScroll={true}
+      shouldFocusAfterRender={false}>
       <div
         className={s.sidePanel}
         data-modal-type='side-panel'

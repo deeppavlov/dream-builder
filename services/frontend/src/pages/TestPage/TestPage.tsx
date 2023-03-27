@@ -50,8 +50,8 @@ import {
 } from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
-import HelperDialogSidePanel from '../../components/HelperDialogSidePanel/HelperDialogSidePanel'
 import s from './TestPage.module.scss'
+import CopilotSidePanel from '../../components/CopilotSidePanel/CopilotSidePanel'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -1153,7 +1153,7 @@ export const TestPage = () => {
 
       {/* Sidepanels */}
       <BaseSidePanel />
-      <HelperDialogSidePanel />
+      <CopilotSidePanel />
 
       {/* Modals */}
       <AssistantModal />

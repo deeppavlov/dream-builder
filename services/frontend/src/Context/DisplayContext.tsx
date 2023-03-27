@@ -32,7 +32,7 @@ const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.RIGHT_SIDEPANEL_IS_ACTIVE, false],
   [consts.BREADCRUMBS_PATH, {}],
   [consts.EDITOR_ACTIVE_TAB, 'Skills'],
-  [consts.ACTIVE_ASSISTANT, {}]
+  [consts.ACTIVE_ASSISTANT, {}],
 ])
 
 const DisplayContext = createContext({})
@@ -62,6 +62,7 @@ const displayReducer = (options: TOptionsMap, action: IAction): TOptionsMap => {
 
 export const DisplayProvider = ({ children }: Props) => {
   const [options, dispatch] = useReducer(displayReducer, initialOptions)
+  const computed = {}
   const value = useMemo(() => ({ options, dispatch }), [options])
 
   return (

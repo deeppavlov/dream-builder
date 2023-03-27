@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import classNames from 'classnames/bind'
 import { useNavigate } from 'react-router-dom'
 import { trigger } from '../../utils/events'
@@ -32,9 +32,11 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   const tooltipId = useId()
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const botCardRef = useRef(null)
 
   const handleBotCardClick = () => {
     trigger(BASE_SP_EVENT, {
+      parent: botCardRef,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -81,7 +83,8 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   return (
     <div
       className={cx('botCard', `${type}`, size)}
-      onClick={handleBotCardClick}>
+      onClick={handleBotCardClick}
+      ref={botCardRef}>
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>
         <div className={s.block}>

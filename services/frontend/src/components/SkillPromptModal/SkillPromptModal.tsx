@@ -13,13 +13,13 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import { HELPER_SIDEPANEL_TRIGGER } from '../HelperDialogSidePanel/HelperDialogSidePanel'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import { postPrompt } from '../../services/postPrompt'
 import { changeLMservice } from '../../services/changeLMservice'
 import { servicesList } from '../../mocks/database/servicesList'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
+import { useObserver } from '../../hooks/useObserver'
 import s from './SkillPromptModal.module.scss'
 
 export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
@@ -41,14 +41,15 @@ const SkillPromptModal = () => {
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const queryClient = useQueryClient()
-  const cx = classNames.bind(s)
-
   const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
   const promptWordsMaxLenght = 3000
+  const cx = classNames.bind(s)
 
   // queries
   const { options, dispatch } = useDisplay()
   const dist = options.get(consts.ACTIVE_ASSISTANT)
+  const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
+  const leftSidePanelIsActive = options.get(consts.LEFT_SIDEPANEL_IS_ACTIVE)
 
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
@@ -81,7 +82,7 @@ const SkillPromptModal = () => {
 
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
-    () => getLMservice(distName || dist?.name),
+    () => getLMservice(dist?.name),
     {
       enabled: dist?.name?.length > 0,
       onSuccess: data => {
@@ -92,7 +93,7 @@ const SkillPromptModal = () => {
   )
   const { data: prompt } = useQuery(
     ['prompt', dist?.name!],
-    () => getPrompt(distName || dist?.name),
+    () => getPrompt(dist?.name),
     {
       onSuccess: data => {
         const prompt = data?.text
@@ -100,8 +101,6 @@ const SkillPromptModal = () => {
       },
     }
   )
-
-  //
 
   const {
     handleSubmit,
@@ -116,7 +115,7 @@ const SkillPromptModal = () => {
       PROMPT_ID: prompt?.text,
     },
   })
-  const model = getValues()[MODEL_ID] as string
+  const model = getValues().MODEL_ID as string
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.link
   const skillModelName = servicesList.get(model)?.name
@@ -126,11 +125,6 @@ const SkillPromptModal = () => {
     setAction(null)
     setSkill(null)
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
-    history.replaceState(
-      Object.assign({}, history.state, { dialogSkillName: null }),
-      '',
-      location.pathname
-    )
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -145,15 +139,6 @@ const SkillPromptModal = () => {
       closeModal()
       return
     }
-
-    // Push skill name for breadcrumbs bar
-    history.replaceState(
-      Object.assign({}, history.state, {
-        dialogSkillName: skill?.display_name,
-      }),
-      '',
-      location.pathname
-    )
 
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: true })
 
@@ -181,7 +166,7 @@ const SkillPromptModal = () => {
     trigger('CreateSkillDistModal', newSkill)
   }
 
-  const onFormSubmit = (data: any, afterClose?: boolean) => {
+  const onFormSubmit = (data: any) => {
     if (action === 'create') {
       handleCreate(data)
       return
@@ -219,11 +204,6 @@ const SkillPromptModal = () => {
       })
   }
 
-  const handleLeftSidePanelTrigger = (data: {
-    detail: { isOpen: boolean }
-  }) => {
-    setWithSidePanel(data.detail?.isOpen ?? false)
-  }
   useEffect(() => {
     reset({
       MODEL_ID: service?.display_name,
@@ -231,21 +211,7 @@ const SkillPromptModal = () => {
     })
   }, [service, prompt])
 
-  useEffect(() => {
-    subscribe('SkillPromptModal', handleEventUpdate)
-    // Handle Deepy Helper opening
-    subscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
-
-    return () => {
-      unsubscribe('SkillPromptModal', handleEventUpdate)
-      unsubscribe(HELPER_SIDEPANEL_TRIGGER, handleLeftSidePanelTrigger)
-      // history.replaceState(
-      //   Object.assign({}, history.state, { dialogSkillName: null }),
-      //   '',
-      //   location.pathname
-      // )
-    }
-  }, [])
+  useObserver('SkillPromptModal', handleEventUpdate)
 
   useEffect(() => {
     dispatch({
@@ -256,12 +222,22 @@ const SkillPromptModal = () => {
           location: location.pathname,
           path: isOpen
             ? [dist?.display_name, 'Skills', skill?.display_name]
-            : [dist?.display_name, 'Skills'],
+            : [dist?.display_name, editorActiveTab],
         },
       },
     })
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.SKILL_EDITOR_IS_ACTIVE,
+        value: isOpen,
+      },
+    })
+
+    console.log(options)
   }, [isOpen])
-  
+
   return (
     <Modal
       isOpen={isOpen}
@@ -291,7 +267,7 @@ const SkillPromptModal = () => {
       <div className={s.skillPromptModal}>
         <form
           onSubmit={handleSubmit(data => onFormSubmit(data))}
-          className={cx('editor', withSidePanel && 'withSidePanel')}>
+          className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}>
           <div className={s.header}>
             {skill?.display_name ?? 'Current Skill'}: Editor
           </div>
@@ -301,15 +277,15 @@ const SkillPromptModal = () => {
                 label='Generative model:'
                 list={
                   services &&
-                  services?.map(service => {
+                  services?.map((service: any) => {
                     return service?.display_name
                   })
                 }
                 activeItem={service?.display_name}
-                error={errors[MODEL_ID]}
+                error={errors.MODEL_ID}
                 props={{
                   placeholder: 'Choose model',
-                  ...register(MODEL_ID, { required: true }),
+                  ...register('MODEL_ID', { required: true }),
                 }}
                 onSelect={handleModelSelect}
                 fullWidth
@@ -328,15 +304,14 @@ const SkillPromptModal = () => {
                 </p>
               )}
             </div>
-
             <TextArea
               label='Enter prompt:'
               withCounter
-              error={errors[PROMPT_ID]}
+              error={errors.PROMPT_ID}
               maxLenght={promptWordsMaxLenght}
               props={{
                 defaultValue: prompt?.text,
-                ...register(PROMPT_ID, {
+                ...register('PROMPT_ID', {
                   required: 'This field can’t be empty',
                   maxLength: {
                     value: promptWordsMaxLenght,

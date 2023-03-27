@@ -10,29 +10,13 @@ import { usePreview } from '../../context/PreviewProvider'
 import { trigger } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
-import s from './GenerativeSkillEditor.module.scss'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { useQuery } from 'react-query'
 import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
-
-const mockPrompt = `Imagine that you are a bot that is goal-aware, that is, you have
-your own goals, but you also need to help user achieve their
-goals. These goals as “low-level”. However, user’s goals can also
-be more abstract, e.g., “comfort me” or “listen to me”. You can
-call these goals as “high-level”, Users usually are good with
-recognizing low-level goals but rarely can acknowledge thei
-high-lvel goals.
-
-You have three laws you shall follow:
-
-1. You shall never let user down/upset.
-2. You shall recognize user’s goals and help user to achieve them
-unless that violates the first law.
-3. You shall have own goals based on your interests and strive to
-chieve them unless they violate the first or the seconf laws`
-
-const mockSkillModels = ['ChatGPT', 'GPT-3', 'GPT-J', 'BLOOM']
+import s from './GenerativeSkillEditor.module.scss'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 
 interface Props {
   skill: ISkill
@@ -47,23 +31,23 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
     [editor, { name: 'Details', disabled: isPreview }],
   ])
   const promptWordsMaxLenght = 1500
+  const {options} = useDisplay()
+  const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
+  const { data: service } = useQuery(['lm_service', activeAssistant?.name], () =>
+    getLMservice(activeAssistant?.name)
+  )
+  const { data: prompt } = useQuery(['prompt', activeAssistant?.name], () =>
+    getPrompt(activeAssistant?.name)
+  )
+  let cx = classNames.bind(s)
+
   const getPromptWordsLenght = (prompt: string) =>
     prompt?.match(/\S+/g)?.length || 0
-  let cx = classNames.bind(s)
 
   const triggerEditModal = () => {
     trigger('SkillPromptModal', { skill, action: 'edit' })
     trigger(BASE_SP_EVENT, { isOpen: false })
   }
-
-  const { state } = useLocation()
-
-  const { data: service } = useQuery(['lm_service', state?.distName], () =>
-    getLMservice(state?.distName)
-  )
-  const { data: prompt } = useQuery(['prompt', state?.distName], () =>
-    getPrompt(state?.distName)
-  )
 
   return (
     <SkillSidePanel skill={skill} tabs={tabs} activeTab={activeTab}>

@@ -40,7 +40,6 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
   )
 
   const handleSend = data => {
-    
     const id = session?.id!
     const message = data?.message!
     setMessage(message)
@@ -89,7 +88,10 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
   }, [])
 
   return (
-    <form onSubmit={handleSubmit(handleSend)} onKeyDown={handleTextAreaKeyDown } className={s.dialog}>
+    <form
+      onSubmit={handleSubmit(handleSend)}
+      onKeyDown={handleTextAreaKeyDown}
+      className={s.dialog}>
       <SidePanelHeader>
         <ul role='tablist'>
           <li role='tab' key='Current  Skill' aria-selected>
@@ -112,13 +114,15 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
         />
         <ul className={s.chat}>
           {history &&
-            history?.map((block, i: number) => (
-              <li
-                key={`${block?.author == 'bot'}${i}`}
-                className={cx('msg', block?.author == 'bot' && 'bot')}>
-                {block?.text}
-              </li>
-            ))}
+            history?.map(
+              (block: { author: string; text: string }, i: number) => (
+                <li
+                  key={`${block?.author == 'bot'}${i}`}
+                  className={cx('msg', block?.author == 'bot' && 'bot')}>
+                  {block?.text}
+                </li>
+              )
+            )}
           {send?.isLoading && (
             <>
               <li className={s.msg}>{message}</li>

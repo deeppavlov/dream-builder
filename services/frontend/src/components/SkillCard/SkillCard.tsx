@@ -8,14 +8,15 @@ import { trigger } from '../../utils/events'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { usePreview } from '../../context/PreviewProvider'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../Mapping//componentTypeMap'
+import { componentTypeMap } from '../../mapping//componentTypeMap'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { srcForIcons } from '../../utils/srcForIcons'
-import s from './SkillCard.module.scss'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import Woman from '../../assets/icons/woman.png'
+import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
   skill: ISkill
@@ -87,8 +88,13 @@ export const SkillCard: FC<SkillCardProps> = ({
             </p>
           </div>
           <div className={s.name}>
-            <img className={s.companyLogo} src={DeepPavlovLogo} />
-            <p className={s.companyName}>{skill?.author ?? 'Empty'}</p>
+            <img className={s.companyLogo} src={Woman} />
+            <p className={s.companyName}>
+              
+              {skill?.author == 'DeepPavlov'
+                ? 'Dr. Xandra Smith'
+                : skill?.author}
+            </p>
           </div>
           <div
             className={s.description}

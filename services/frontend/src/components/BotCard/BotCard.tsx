@@ -11,6 +11,7 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import Button from '../../ui/Button/Button'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import Woman from '../../assets/icons/woman.png'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
@@ -77,6 +78,7 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
     })
     e.stopPropagation()
   }
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -86,8 +88,12 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
         <div className={s.block}>
           {type === 'public' && (
             <div className={s.author}>
-              <img referrerPolicy='no-referrer' src={DeepPavlovLogo} />
-              <span>{bot?.author.fullname}</span>
+              <img referrerPolicy='no-referrer' src={Woman} />
+              <span>
+                {bot?.author?.fullname! == 'Deepy Pavlova'
+                  ? 'Dr. Xandra Smith'
+                  : bot?.author?.fullname!}
+              </span>
             </div>
           )}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>

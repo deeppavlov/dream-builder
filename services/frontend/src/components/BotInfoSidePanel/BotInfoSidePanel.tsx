@@ -17,14 +17,15 @@ import { Accordion } from '../../ui/Accordion/Accordion'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../Mapping/componentTypeMap'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
-import { modelTypeMap } from '../../Mapping/modelTypeMap'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { Loader } from '../Loader/Loader'
 import s from './BotInfoSidePanel.module.scss'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { SmallTag } from '../SmallTag/SmallTag'
+import Woman from '../../assets/icons/woman.png'
 
 interface Props {
   bot: BotInfoInterface
@@ -99,8 +100,17 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
         </div>
         <div className={s.topContainer}>
           <div className={s.author}>
-            <img src={DeepPavlovLogo} alt='Author' />
-            <span>{bot?.author.fullname}</span>
+            {bot?.author?.fullname == 'Deepy Pavlova' ? (
+              <img src={Woman} alt='Author' />
+            ) : (
+              <img src={bot?.author?.picture} />
+            )}
+            <span>
+              {bot?.author?.fullname! == 'Deepy Pavlova'
+                ? 'Dr. Xandra Smith'
+                : bot?.author?.fullname!}
+              {/* {bot?.author.fullname} */}
+            </span>
           </div>
           <span className={s.separator} />
           <div className={s.dateAndVersion}>

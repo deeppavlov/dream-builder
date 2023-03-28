@@ -14,7 +14,6 @@ import { getHistory } from '../../services/getHistory'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
 import classNames from 'classnames/bind'
-import { useOnKey } from '../../hooks/useOnKey'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { BotInfoInterface } from '../../types/types'
 import TextLoader from '../TextLoader/TextLoader'
@@ -51,8 +50,6 @@ const DialogSidePanel: FC<Props> = ({
   distName,
   service,
   prompt,
-  setP,
-  setS,
 }) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [isError, setIsError] = useState(error ?? false)
@@ -62,24 +59,19 @@ const DialogSidePanel: FC<Props> = ({
   const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
     null
   )
+  const cx = classNames.bind(s)
   const queryClient = useQueryClient()
   const chatRef = useRef<HTMLDivElement>(null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
-  const isVoiceChat = chatType === VOICE_CHAT_TYPE
+  // const isVoiceChat = chatType === VOICE_CHAT_TYPE
   const startPanel = isFirstTest && !isError
   const chatPanel = !isFirstTest && !isError
 
-  const {
-    data: history,
-    isLoading: isHistoryLoading,
-    isError: historyError,
-  } = useQuery(
+  const { data: history } = useQuery(
     ['history', dialogSession?.id],
     () => getHistory(dialogSession?.id!),
     { enabled: !!message }
   )
-
-  const cx = classNames.bind(s)
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
 

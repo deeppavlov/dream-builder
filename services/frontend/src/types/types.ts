@@ -139,7 +139,7 @@ export interface IStackElement {
 export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
-  lm_service:string
+  lm_service: string
 }
 
 export interface SessionConfig {
@@ -152,12 +152,9 @@ export interface SessionConfig {
 export interface SkillDialogProps {
   error?: boolean
   start?: boolean
+  debug: boolean
   chatWith: ChatPanelType
   dist: BotInfoInterface
-  debug: boolean
-  distName: string
-  service: string
-  prompt: string
 }
 // export type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 export type Message = { message: string }

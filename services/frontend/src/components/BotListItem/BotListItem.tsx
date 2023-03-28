@@ -15,7 +15,7 @@ import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
 import s from './BotListItem.module.scss'
-
+import Woman from '../../assets/icons/woman.png'
 interface BotListItemProps {
   type: BotAvailabilityType
   bot: BotInfoInterface
@@ -83,8 +83,16 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          <Logo />
-          <p>{bot?.author.fullname}</p>
+          {bot?.author?.fullname == 'Deepy Pavlova' ? (
+            <img src={Woman} alt='Author' />
+          ) : (
+            <img src={bot?.author?.picture} />
+          )}
+          <p>
+            {bot?.author?.fullname! == 'Deepy Pavlova'
+              ? 'Dr. Xandra Smith'
+              : bot?.author?.fullname!}
+          </p>
         </div>
       </td>
       <td className={s.td}>

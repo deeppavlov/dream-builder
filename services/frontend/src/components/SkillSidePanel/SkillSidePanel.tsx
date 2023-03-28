@@ -14,7 +14,7 @@ import { modelTypeMap } from '../../Mapping//modelTypeMap'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { useAuth } from '../../context/AuthProvider'
 import s from './SkillSidePanel.module.scss'
-
+import Woman from '../../assets/icons/woman.png'
 interface Props {
   skill: ISkill
   activeTab?: 'Properties' | 'Editor'
@@ -72,8 +72,17 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
             <EditPencilIcon className={s.icon} data-disabled />
           </div>
           <div className={s.author}>
-            <Logo />
-            <span>{skill?.author}</span>
+            {skill?.author == 'DeepPavlov' ? (
+              <img src={Woman} alt='Author' />
+            ) : (
+              <img src={skill?.author?.picture} />
+            )}
+            <span>
+              {' '}
+              {skill?.author == 'DeepPavlov'
+                ? 'Dr. Xandra Smith'
+                : skill?.author}
+            </span>
           </div>
           <ul className={s.table}>
             <li className={s.item}>

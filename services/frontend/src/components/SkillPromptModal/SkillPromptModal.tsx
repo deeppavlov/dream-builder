@@ -121,7 +121,7 @@ const SkillPromptModal: FC<Props> = ({
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.link
   const skillModelName = servicesList.get(model)?.name
-  
+
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
@@ -247,7 +247,31 @@ const SkillPromptModal: FC<Props> = ({
     }
   }, [])
   return (
-    <Modal isOpen={isOpen} onRequestClose={closeModal} style={SkillPromptModal}>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={closeModal}
+      style={{
+        overlay: {
+          top: 64,
+          right: 0,
+          left: 80,
+          position: 'fixed',
+          zIndex: 1,
+        },
+        content: {
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 0,
+          transform: 'none',
+          height: '100%',
+          width: '100%',
+          border: 'none',
+          background: 'none',
+          borderRadius: 0,
+          padding: 0,
+        },
+      }}>
       <div className={s.skillPromptModal}>
         <form
           onSubmit={handleSubmit(data => onFormSubmit(data))}

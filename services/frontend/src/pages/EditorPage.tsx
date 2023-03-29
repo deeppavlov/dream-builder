@@ -57,6 +57,17 @@ export const EditorPage = () => {
   const tabsNames = ['Skills', 'Architecture']
 
   const {
+    isLoading: isDistLoading,
+    error: distError,
+    data: dist,
+  } = useQuery(
+    ['dist', state?.distName],
+    () => getDist(state?.distName! || nameFromURL),
+    {
+      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
+    }
+  )
+  const {
     isLoading: isComponentsLoading,
     error: componentsError,
     data: components,
@@ -189,17 +200,21 @@ export const EditorPage = () => {
         </TabPanel>
       </Tabs>
 
+      <BaseSidePanel />
+      <BaseSidePanel id='BASE_SP_LEFT' transition='left' />
+
       <AreYouSureModal />
       <SkillPromptModal />
       <CopilotSidePanel />
       <Toaster />
       <SkillsListModal />
-
-      <BaseSidePanel />
+      <PublishAssistantModal />
+      <DeleteAssistantModal />
       <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />
       <SignInModal />
+      <ShareModal />
     </>
   )
 }

@@ -50,8 +50,8 @@ import {
 } from '../../types/types'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
-import s from './TestPage.module.scss'
 import CopilotSidePanel from '../../components/CopilotSidePanel/CopilotSidePanel'
+import s from './TestPage.module.scss'
 
 const notificMock: NotificationCardProps[] = [
   {

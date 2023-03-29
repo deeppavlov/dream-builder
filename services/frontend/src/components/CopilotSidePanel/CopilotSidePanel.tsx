@@ -70,7 +70,6 @@ const CopilotSidePanel = () => {
 
   const handleClose = () => {
     setIsOpen(false)
-    trigger(COPILOT_SP_TRIGGER, { isOpen: false })
   }
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)

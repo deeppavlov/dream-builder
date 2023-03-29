@@ -7,6 +7,7 @@ import s from './BaseSidePanel.module.scss'
 export const BASE_SP_EVENT = 'BaseSidePanel'
 
 interface BaseSidePanel {
+  id?: string
   isOpen?: boolean
   position?: Partial<{
     top: number | 'auto'
@@ -21,6 +22,7 @@ interface BaseSidePanel {
 }
 
 export const BaseSidePanel: FC<BaseSidePanel> = ({
+  id = BASE_SP_EVENT,
   isOpen: propIsOpen,
   position,
   children,
@@ -75,7 +77,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
     setParentFocus(true, data.detail.parent?.current)
   }
 
-  useObserver(BASE_SP_EVENT, handleTrigger)
+  useObserver(id, handleTrigger)
 
   return (
     <SidePanel
@@ -83,7 +85,8 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
       setIsOpen={setIsOpen}
       handleClose={handleClose}
       position={position}
-      transition={transition}>
+      transition={transition}
+      key={id}>
       <div className={s.baseSidePanel}>
         {isClosable && (
           <button className={s.close} onClick={handleClose}>

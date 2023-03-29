@@ -7,10 +7,10 @@ interface RadioButtonProps {
   id: string | undefined // ???
   htmlFor: string
   value: string
-  checked?: boolean
   disabled?: boolean
+  defaultChecked?: boolean
+  tooltipId?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  value: string
 }
 export const RadioButton: FC<RadioButtonProps> = ({
   children,
@@ -18,12 +18,13 @@ export const RadioButton: FC<RadioButtonProps> = ({
   id,
   htmlFor,
   value,
-  checked,
+  tooltipId,
   disabled,
+  defaultChecked,
   props,
 }) => {
   return (
-    <label htmlFor={htmlFor} className={s.label}>
+    <label htmlFor={htmlFor} className={s.label} data-tooltip-id={tooltipId}>
       <input
         id={id}
         name={name}

@@ -6,6 +6,10 @@ URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
 
 
+class AppSettings(BaseModel):
+    add_cors_middleware: Optional[bool] = False
+
+
 class UrlSettings(BaseModel):
     frontend: str
     auth_api: str
@@ -37,6 +41,7 @@ class SmtpSettings(BaseModel):
 
 
 class Settings(BaseSettings):
+    app: AppSettings
     url: UrlSettings
     db: DatabaseSettings
     auth: AuthSettings

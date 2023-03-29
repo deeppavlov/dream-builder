@@ -205,6 +205,9 @@ export const EditorPage = () => {
       <BaseSidePanel />
       <BaseSidePanel transition='left' />
 
+      <BaseSidePanel />
+      <BaseSidePanel id='BASE_SP_LEFT' transition='left' />
+
       <AreYouSureModal />
       <SkillPromptModal />
       <Toaster />

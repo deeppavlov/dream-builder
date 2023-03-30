@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { stopPropagation } from '../../utils/stopPropagation'
 import s from './ContextMenuButton.module.scss'
 
 type TMenuItem =
@@ -33,21 +34,22 @@ const ContextMenuButton = ({
 }: Props) => {
   let cx = classNames.bind(s)
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    handleClick && handleClick(e)
     e.stopPropagation()
+    handleClick && handleClick(e)
   }
 
   return (
     <button className={s.item} disabled={disabled} onClick={handleBtnClick}>
       {type && (
         <img
+          onClick={stopPropagation}
           className={cx('icon', type === 'about' && 'dreambuilder')}
           src={`./src/assets/icons/${
             type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
           }.svg`}
         />
       )}
-      <span>{children || name}</span>
+      <span onClick={stopPropagation}>{children || name}</span>
     </button>
   )
 }

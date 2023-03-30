@@ -15,6 +15,7 @@ interface TextAreaProps {
   withCounter?: boolean
   withEnterButton?: boolean
   resizable?: boolean
+  fullHeight?: boolean
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -27,6 +28,7 @@ export const TextArea: FC<TextAreaProps> = ({
   withCounter,
   withEnterButton,
   resizable = true,
+  fullHeight,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
@@ -60,7 +62,7 @@ export const TextArea: FC<TextAreaProps> = ({
 
   return (
     <div
-      className={s.textArea}
+      className={cx('textArea', fullHeight && 'fullHeight')}
       data-active={isActive}
       data-error={error !== undefined}>
       {(label || withCounter) && (

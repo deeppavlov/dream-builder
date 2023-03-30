@@ -61,6 +61,10 @@
   }
 }
 
+.fullHeight {
+  max-height: 100%;
+}
+
 .resize-container {
   resize: both;
   overflow: hidden;

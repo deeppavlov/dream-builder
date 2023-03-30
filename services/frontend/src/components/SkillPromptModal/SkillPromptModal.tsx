@@ -291,6 +291,7 @@ const SkillPromptModal = () => {
               )}
             </div>
             <TextArea
+              fullHeight
               label='Enter prompt:'
               withCounter
               resizable={false}
@@ -309,6 +310,7 @@ const SkillPromptModal = () => {
                 }),
               }}
             />
+          </div>
             <div className={s.bottom}>
               <span className={s['tip-bold']}>
                 Click "Save & Test" to test your new prompt
@@ -346,7 +348,6 @@ const SkillPromptModal = () => {
                 )}
               </div>
             </div>
-          </div>
         </form>
         <SkillDialog debug chatWith={'skill'} dist={dist} />
       </div>

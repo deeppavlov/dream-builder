@@ -49,9 +49,7 @@ export const BotsPage = () => {
           title='Public Virtual Assistants & Chatbots'
           showAll
           amount={publicDists?.length}
-          linkTo={RoutesList.botsAll}
-          // fitScreen={!!listView}
-        >
+          linkTo={RoutesList.botsAll}>
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
           {isTableView ? (
@@ -68,7 +66,9 @@ export const BotsPage = () => {
           primary
           showAll
           title='Your Virtual Assistants & Chatbots'
-          amount={auth?.user && privateDists?.length}
+          amount={
+            auth?.user && privateDists?.length > 0 && privateDists?.length
+          }
           linkTo={RoutesList.yourBots}>
           {isTableView ? (
             <Table addButton={<AddButton forTable disabled={!auth?.user} />}>

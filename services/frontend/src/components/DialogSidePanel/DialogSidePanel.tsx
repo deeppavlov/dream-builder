@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { trigger } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
@@ -17,8 +17,8 @@ import classNames from 'classnames/bind'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { BotInfoInterface } from '../../types/types'
 import TextLoader from '../TextLoader/TextLoader'
-import s from './DialogSidePanel.module.scss'
 import { useObserver } from '../../hooks/useObserver'
+import s from './DialogSidePanel.module.scss'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
@@ -48,15 +48,12 @@ const DialogSidePanel: FC<Props> = ({
   chatWith,
   dist,
   debug,
-  distName,
-  service,
-  prompt,
 }) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start)
   const [message, setMessage] = useState<string>('')
-  const { handleSubmit, register, reset } = useForm()
+  const { handleSubmit, register, reset } = useForm<Message>()
   const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
     null
   )
@@ -67,12 +64,6 @@ const DialogSidePanel: FC<Props> = ({
   // const isVoiceChat = chatType === VOICE_CHAT_TYPE
   const startPanel = isFirstTest && !isError
   const chatPanel = !isFirstTest && !isError
-
-  const { data: history } = useQuery(
-    ['history', dialogSession?.id],
-    () => getHistory(dialogSession?.id!),
-    { enabled: !!message }
-  )
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
 
@@ -102,6 +93,12 @@ const DialogSidePanel: FC<Props> = ({
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
   })
+  
+  const { data: history } = useQuery(
+    ['history', dialogSession?.id],
+    () => getHistory(dialogSession?.id!),
+    { enabled: send.isLoading }
+  )
 
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
@@ -189,22 +186,24 @@ const DialogSidePanel: FC<Props> = ({
           <>
             <div className={s.chat}>
               {history &&
-                history?.map((block, i: number) => (
-                  <div
-                    key={`${block?.author == 'bot'}${i}`}
-                    className={cx(
-                      'chat__container',
-                      block?.author == 'bot' && 'chat__container_bot'
-                    )}>
-                    <span
+                history?.map(
+                  (block: { author: string; text: string }, i: number) => (
+                    <div
+                      key={`${block?.author == 'bot'}${i}`}
                       className={cx(
-                        'chat__message',
-                        block?.author == 'bot' && 'chat__message_bot'
+                        'chat__container',
+                        block?.author == 'bot' && 'chat__container_bot'
                       )}>
-                      {block?.text}
-                    </span>
-                  </div>
-                ))}
+                      <span
+                        className={cx(
+                          'chat__message',
+                          block?.author == 'bot' && 'chat__message_bot'
+                        )}>
+                        {block?.text}
+                      </span>
+                    </div>
+                  )
+                )}
               {send?.isLoading && (
                 <>
                   <div className={`${s.chat__container}`}>

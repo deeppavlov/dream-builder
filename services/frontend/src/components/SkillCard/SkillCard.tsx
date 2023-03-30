@@ -47,13 +47,15 @@ export const SkillCard: FC<SkillCardProps> = ({
     setDisabled(disabled => !disabled)
   }
 
-  const handleSkillCardClick = (e: React.MouseEvent) =>
+  const handleSkillCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
     triggerSkillSidePanel({
       parent: skillCardRef,
       skill,
       type,
       activeTab: 'Properties',
     })
+  }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
     trigger('CreateSkillDistModal', { skill })
@@ -137,7 +139,7 @@ export const SkillCard: FC<SkillCardProps> = ({
                 small
                 long
                 props={{
-                  disabled: disabledMsg !== undefined,
+                  disabled: disabled || disabledMsg !== undefined,
                   onClick: handleAddSkillBtnClick,
                 }}>
                 Add
@@ -156,12 +158,16 @@ export const SkillCard: FC<SkillCardProps> = ({
                   small
                   props={{
                     onClick: handleEditBtnClick,
-                    disabled: isPreview || !skill?.is_customizable,
+                    disabled: disabled || isPreview || !skill?.is_customizable,
                   }}>
                   Edit
                 </Button>
               </div>
-              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <Kebab
+                disabled={disabled}
+                tooltipId={'ctxMenu' + tooltipId}
+                theme='card'
+              />
               <SkillCardToolTip
                 skill={skill}
                 tooltipId={'ctxMenu' + tooltipId}

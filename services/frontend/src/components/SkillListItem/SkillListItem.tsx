@@ -1,9 +1,8 @@
 import { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
+import toast from 'react-hot-toast'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { trigger } from '../../utils/events'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { srcForIcons } from '../../utils/srcForIcons'
 import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
@@ -16,7 +15,6 @@ import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import Button from '../../ui/Button/Button'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
-import toast from 'react-hot-toast'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
@@ -129,10 +127,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
             </>
           ) : (
             <>
-              <ToggleButton
-                handleToggle={!isPreview && handleToggle}
-                disabled={isPreview}
-              />
+              <ToggleButton handleToggle={handleToggle} disabled={isPreview} />
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

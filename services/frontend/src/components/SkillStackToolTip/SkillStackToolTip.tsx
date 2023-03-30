@@ -1,12 +1,12 @@
 import React from 'react'
-import { IContextMenu, IStackElement } from '../../types/types'
+import { IContextMenu, ISkill } from '../../types/types'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  skill: IStackElement
+  skill: ISkill
   skillRef?: React.MutableRefObject<any>
 }
 

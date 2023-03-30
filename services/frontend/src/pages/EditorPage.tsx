@@ -64,6 +64,7 @@ export const EditorPage = () => {
     ['dist', state?.distName],
     () => getDist(state?.distName! || nameFromURL),
     {
+      refetchOnWindowFocus: false,
       enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
     }
   )
@@ -75,6 +76,7 @@ export const EditorPage = () => {
     ['components', state?.distName],
     () => getComponents(state?.distName! || nameFromURL),
     {
+      refetchOnWindowFocus: false,
       enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
     }
   )

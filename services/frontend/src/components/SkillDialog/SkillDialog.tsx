@@ -1,3 +1,6 @@
+import { useState, useRef, useEffect, FC } from 'react'
+import { useForm } from 'react-hook-form'
+import { useQueryClient, useQuery, useMutation } from 'react-query'
 import classNames from 'classnames/bind'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
@@ -7,38 +10,24 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import DialogButton from '../DialogButton/DialogButton'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { SessionConfig, SkillDialogProps } from '../../types/types'
-import { useState, useRef, useEffect, FC } from 'react'
-import { useForm } from 'react-hook-form'
-import { useQueryClient, useQuery, useMutation } from 'react-query'
 import { getHistory } from '../../services/getHistory'
 import { renewDialog } from '../../services/renewDialog'
 import { sendMessage } from '../../services/sendMessage'
-import { subscribe, unsubscribe } from '../../utils/events'
 import TextLoader from '../TextLoader/TextLoader'
-import s from './SkillDialog.module.scss'
 import { useObserver } from '../../hooks/useObserver'
+import s from './SkillDialog.module.scss'
 
 export const DEBUG_DIST = 'universal_prompted_assistant'
 
 const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
   const [isError, setIsError] = useState(error ?? false)
-  const [isFirstTest, setIsFirstTest] = useState(start)
   const [message, setMessage] = useState<string>('')
   const { handleSubmit, register, reset } = useForm()
   const [session, setSession] = useState<SessionConfig | null>(null)
   const queryClient = useQueryClient()
-  const chatRef = useRef<HTMLDivElement>(null)
+  const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-
-  const { data: history } = useQuery(
-    ['history', session?.id],
-    () => getHistory(session?.id!),
-    {
-      enabled: !!message,
-    }
-  )
 
   const handleSend = (data: any) => {
     const id = session?.id!
@@ -52,11 +41,19 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
     mutationFn: (variables: { id: number; message: string }) => {
       return sendMessage(variables?.id, variables?.message)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({ queryKey: 'history' }),
   })
+
+  const { data: history } = useQuery(
+    ['history', session?.id],
+    () => getHistory(session?.id!),
+    { refetchOnWindowFocus: false, enabled: message?.length > 0 }
+  )
 
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    setMessage('')
   }
   const renew = useMutation({
     mutationFn: (data: string) => {
@@ -73,7 +70,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
   const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleSend)()
+      !send?.isLoading && handleSubmit(handleSend)()
     }
   }
 
@@ -84,10 +81,10 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
   }, [])
 
   useEffect(() => {
-    if (chatRef.current) {
+    if (chatRef?.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
-  }, [history])
+  }, [history, message])
 
   return (
     <form
@@ -106,18 +103,17 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
       </SidePanelHeader>
 
       <div className={s.container}>
-        <ul className={s.chat}>
-          {history &&
-            history?.map(
-              (block: { author: string; text: string }, i: number) => (
-                <li
-                  key={`${block?.author == 'bot'}${i}`}
-                  className={cx('msg', block?.author == 'bot' && 'bot')}>
-                  {block?.text}
-                </li>
-              )
-            )}
-          {send?.isLoading && (
+        <ul ref={chatRef} className={s.chat}>
+          {history?.map(
+            (block: { author: string; text: string }, i: number) => (
+              <li
+                key={`${block?.author == 'bot'}${i}`}
+                className={cx('msg', block?.author == 'bot' && 'bot')}>
+                {block?.text}
+              </li>
+            )
+          )}
+          {send.isLoading && (
             <>
               <li className={s.msg}>{message}</li>
               <li className={cx('bot', 'msg')}>
@@ -157,7 +153,6 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
       </div>
       <div className={cx('textarea-container')}>
         <textarea
-          onKeyDown={handleTextAreaKeyDown}
           className={s.textarea}
           rows={4}
           placeholder='Type...'
@@ -165,7 +160,9 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
         />
       </div>
       <SidePanelButtons>
-        <Button theme='secondary' props={{ type: 'submit' }}>
+        <Button
+          theme='secondary'
+          props={{ disabled: send?.isLoading, type: 'submit' }}>
           Send
         </Button>
       </SidePanelButtons>

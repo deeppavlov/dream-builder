@@ -122,7 +122,7 @@ const DialogSidePanel: FC<Props> = ({
   const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleSend)
+      handleSubmit(handleSend)()
     }
   }
   useEffect(() => {

@@ -36,6 +36,10 @@ interface FormValues {
   MODEL_ID: string
   PROMPT_ID: string
 }
+interface FormValues {
+  model: string
+  prompt: string
+}
 
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -75,15 +79,18 @@ const SkillPromptModal = () => {
     },
   })
 
-  const { data: services } = useQuery('lm_services', getAllLMservices)
+  const { data: services } = useQuery('lm_services', getAllLMservices, {
+    refetchOnWindowFocus: false,
+  })
 
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
     () => getLMservice(dist?.name),
     {
+      refetchOnWindowFocus: false,
       enabled: dist?.name?.length > 0,
       onSuccess: data => {
-        const service = data?.service
+        const service = data?.name
         setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
       },
     }
@@ -93,6 +100,8 @@ const SkillPromptModal = () => {
     ['prompt', dist?.name!],
     () => getPrompt(dist?.name),
     {
+      refetchOnWindowFocus: false,
+      enabled: dist?.name?.length > 0,
       onSuccess: data => {
         const prompt = data?.text
         setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
@@ -109,8 +118,8 @@ const SkillPromptModal = () => {
   } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
-      MODEL_ID: service?.displayName,
-      PROMPT_ID: prompt?.text,
+      model: service?.displayName,
+      prompt: prompt?.text,
     },
   })
   const model = getValues().MODEL_ID
@@ -126,9 +135,6 @@ const SkillPromptModal = () => {
 
   const handleBackBtnClick = () => closeModal()
 
-  /**
-   * Set modal is open and getting skill info
-   */
   const handleEventUpdate = (data: { detail: Props }) => {
     const { skill, action } = data.detail
 
@@ -190,8 +196,8 @@ const SkillPromptModal = () => {
 
   useEffect(() => {
     reset({
-      MODEL_ID: service?.display_name,
-      PROMPT_ID: prompt?.text,
+      model: service?.display_name,
+      prompt: prompt?.text,
     })
   }, [service, prompt])
 
@@ -262,10 +268,10 @@ const SkillPromptModal = () => {
                   })
                 }
                 activeItem={service?.display_name}
-                error={errors.MODEL_ID}
+                error={errors.model}
                 props={{
                   placeholder: 'Choose model',
-                  ...register('MODEL_ID', { required: true }),
+                  ...register('model', { required: true }),
                 }}
                 onSelect={handleModelSelect}
                 fullWidth
@@ -288,13 +294,13 @@ const SkillPromptModal = () => {
               label='Enter prompt:'
               withCounter
               resizable={false}
-              error={errors.PROMPT_ID}
+              error={errors.MODEL_ID}
               maxLenght={promptWordsMaxLenght}
               props={{
                 placeholder:
                   "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
                 defaultValue: prompt?.text,
-                ...register('PROMPT_ID', {
+                ...register('prompt', {
                   required: 'This field can’t be empty',
                   maxLength: {
                     value: promptWordsMaxLenght,

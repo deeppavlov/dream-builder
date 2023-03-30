@@ -5,6 +5,6 @@ export async function getUserId() {
     const { data } = await privateApi.get('users/self')
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

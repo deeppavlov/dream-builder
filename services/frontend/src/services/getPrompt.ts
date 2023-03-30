@@ -5,7 +5,6 @@ export async function getPrompt(dist: string) {
     const { data } = await privateApi.get(`assistant_dists/${dist}/prompt`)
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

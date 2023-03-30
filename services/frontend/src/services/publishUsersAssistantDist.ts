@@ -13,7 +13,6 @@ export async function publishAssistantDist(
     )
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

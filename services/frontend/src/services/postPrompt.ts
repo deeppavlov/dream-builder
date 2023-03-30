@@ -1,7 +1,6 @@
 import { privateApi } from './axiosConfig'
 
 export async function postPrompt(dist: string, message: string) {
-  
   try {
     const { data } = await privateApi.post(`assistant_dists/${dist}/prompt`, {
       text: message,
@@ -9,7 +8,6 @@ export async function postPrompt(dist: string, message: string) {
 
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

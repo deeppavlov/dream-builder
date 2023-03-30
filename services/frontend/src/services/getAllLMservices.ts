@@ -5,7 +5,6 @@ export async function getAllLMservices() {
     const { data } = await api.get(`deployments/lm_services`)
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

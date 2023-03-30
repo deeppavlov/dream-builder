@@ -8,7 +8,6 @@ export async function sendMessage(id: number, message: string) {
 
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

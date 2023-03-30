@@ -5,6 +5,6 @@ export async function getTokens() {
     const { data } = await privateApi.get('api_tokens/')
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

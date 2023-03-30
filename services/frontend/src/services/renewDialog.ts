@@ -6,7 +6,6 @@ export async function renewDialog(name: string) {
     const { data } = await privateApi.post('dialog_sessions/', { ...pl })
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

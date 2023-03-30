@@ -5,6 +5,6 @@ export async function getSkillListByDistName(distName: string) {
     const { data } = await privateApi.get(`skills/${distName}`)
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

@@ -14,7 +14,6 @@ export async function cloneAssistantDist(
     )
     return data
   } catch (e) {
-    console.log(e)
     throw e
   }
 }

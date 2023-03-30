@@ -7,6 +7,6 @@ export async function getComponents(distName: string) {
     )
     return data
   } catch (e) {
-    console.log(e)
+    throw(e)
   }
 }

@@ -37,19 +37,21 @@ const ContextMenuButton = ({
     e.stopPropagation()
     handleClick && handleClick(e)
   }
-
+  const handleChildClick = (e: React.MouseEvent) => {
+    disabled && stopPropagation(e)
+  }
   return (
     <button className={s.item} disabled={disabled} onClick={handleBtnClick}>
       {type && (
         <img
-          onClick={stopPropagation}
+          onClick={handleChildClick}
           className={cx('icon', type === 'about' && 'dreambuilder')}
           src={`./src/assets/icons/${
             type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
           }.svg`}
         />
       )}
-      <span onClick={stopPropagation}>{children || name}</span>
+      <span onClick={handleChildClick}>{children || name}</span>
     </button>
   )
 }

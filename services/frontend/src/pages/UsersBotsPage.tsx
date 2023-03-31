@@ -31,7 +31,6 @@ export const UsersBotsPage = () => {
 
   return (
     <>
-      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper
           title='Your Virtual Assistants & Chatbots'

@@ -23,11 +23,11 @@ import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { Loader } from '../Loader/Loader'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
+import { consts } from '../../utils/consts'
 import { SmallTag } from '../SmallTag/SmallTag'
 import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
 import s from './BotInfoSidePanel.module.scss'
-import { consts } from '../../utils/consts'
 
 interface Props {
   bot: BotInfoInterface

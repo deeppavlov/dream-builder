@@ -169,8 +169,7 @@ export const AssistantModal = () => {
             )}
             {action === 'create' && (
               <div>
-                You are creating a new Virtual Assistant from{' '}
-                <mark>scratch</mark>
+                You are creating a new Virtual Assistant from <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (
@@ -196,7 +195,7 @@ export const AssistantModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID as keyof FormValues]}
-            maxLenght={1000}
+            maxLenght={500}
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
@@ -205,7 +204,7 @@ export const AssistantModal = () => {
               ...register(DESC_ID as keyof FormValues, {
                 required: 'This field can’t be empty',
                 maxLength: {
-                  value: 1000,
+                  value: 500,
                   message: 'Limit text description to 500 characters',
                 },
                 // validate: {isEmpty:},

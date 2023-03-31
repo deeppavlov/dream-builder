@@ -1,7 +1,8 @@
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
-import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
+import { ReactComponent as Logo } from '@assets/icons/dp.svg'
+import Woman from '@assets/icons/woman.png'
+import { ReactComponent as Clone } from '@assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
@@ -14,10 +15,10 @@ import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
-import Woman from '../../assets/icons/woman.png'
+import { consts } from '../../utils/consts'
 import { useDisplay } from '../../context/DisplayContext'
 import s from './BotListItem.module.scss'
-import { consts } from '../../utils/consts'
+
 
 interface BotListItemProps {
   type: BotAvailabilityType

@@ -45,11 +45,11 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
           : [[properties, { name: properties }]]
       ),
   })
-  let cx = classNames.bind(s)
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const nameForModelType = modelTypeMap[skill?.model_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const srcForModelType = srcForIcons(nameForModelType)
+  let cx = classNames.bind(s)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
 

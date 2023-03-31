@@ -199,6 +199,8 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
       </Tabs>
+      <Toaster />
+      <SkillsListModal />
 
       <BaseSidePanel />
       <BaseSidePanel transition='left' />

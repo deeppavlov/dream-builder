@@ -17,10 +17,11 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { dateToUTC } from '../../utils/dateToUTC'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
+import { dateToUTC } from '../../utils/dateToUTC'
 import s from './BotCard.module.scss'
+
 
 interface BotCardProps {
   type: BotAvailabilityType

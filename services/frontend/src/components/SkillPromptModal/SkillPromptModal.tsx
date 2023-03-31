@@ -291,6 +291,8 @@ const SkillPromptModal = () => {
               error={errors.PROMPT_ID}
               maxLenght={promptWordsMaxLenght}
               props={{
+                placeholder:
+                  "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
                 defaultValue: prompt?.text,
                 ...register('PROMPT_ID', {
                   required: 'This field can’t be empty',

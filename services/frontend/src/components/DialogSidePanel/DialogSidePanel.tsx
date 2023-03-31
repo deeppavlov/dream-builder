@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
@@ -15,17 +15,18 @@ import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
 import classNames from 'classnames/bind'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import { BotInfoInterface } from '../../types/types'
+import { BotInfoInterface, ChatForm } from '../../types/types'
 import TextLoader from '../TextLoader/TextLoader'
 import { useObserver } from '../../hooks/useObserver'
 import s from './DialogSidePanel.module.scss'
+import { submitOnEnter } from '../../utils/submitOnEnter'
+import { useChatScroll } from '../../hooks/useChatScroll'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
 export const DEBUG_DIST = 'universal_prompted_assistant'
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 type ChatPanelType = 'bot' | 'skill'
-type Message = { message: string }
 interface Props {
   error?: boolean
   start?: boolean
@@ -53,20 +54,16 @@ const DialogSidePanel: FC<Props> = ({
   const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start)
   const [message, setMessage] = useState<string>('')
-  const { handleSubmit, register, reset } = useForm<Message>()
-  const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
-    null
-  )
-  const cx = classNames.bind(s)
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const [session, setSession] = useState<SessionConfig | null>(null)
   const queryClient = useQueryClient()
   const chatRef = useRef<HTMLDivElement>(null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
-  // const isVoiceChat = chatType === VOICE_CHAT_TYPE
   const startPanel = isFirstTest && !isError
   const chatPanel = !isFirstTest && !isError
-
+  const cx = classNames.bind(s)
+  // handlers
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
-
   const handleDownloadBtnClick = () => {}
 
   const handleGoBackBtnClick = () =>
@@ -77,58 +74,48 @@ const DialogSidePanel: FC<Props> = ({
       setIsFirstTest(false)
     })
   }
-
-  const handleSend = (data: Message) => {
-    const id = dialogSession?.id!
+  const handleSend = (data: ChatForm) => {
+    const id = session?.id!
     const message = data?.message!
     setMessage(message)
 
     send.mutate({ id, message })
     reset()
   }
-
-  const send = useMutation({
-    mutationFn: (variables: { id: number; message: string }) => {
-      return sendMessage(variables?.id, variables?.message)
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
-  })
-  
-  const { data: history } = useQuery(
-    ['history', dialogSession?.id],
-    () => getHistory(dialogSession?.id!),
-    { enabled: send.isLoading }
-  )
-
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    setMessage('')
   }
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
+  }
+  // queries
   const renew = useMutation({
     mutationFn: (data: string) => {
       return renewDialog(data)
     },
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: 'history' }),
-        setDialogueSession(data)
+        setSession(data)
     },
     onError: () => {
       setIsError(true)
     },
   })
-
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(handleSend)()
-    }
-  }
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight
-    }
-  }, [history])
-
+  const send = useMutation({
+    mutationFn: (variables: { id: number; message: string }) => {
+      return sendMessage(variables?.id, variables?.message)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
+  })
+  const { data: history } = useQuery(
+    ['history', session?.id],
+    () => getHistory(session?.id!),
+    { refetchOnWindowFocus: false, enabled: send?.isLoading }
+  )
+  // hooks
   useObserver('RenewChat', handleRenewClick)
+  useChatScroll(chatRef, [history, message])
 
   return (
     <div className={s.container}>
@@ -242,16 +229,17 @@ const DialogSidePanel: FC<Props> = ({
                 </Button>
               </div>
             </div>
-            <form onSubmit={handleSubmit(handleSend)}>
+            <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
-                onKeyDown={handleTextAreaKeyDown}
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
                 {...register('message')}
               />
               <input type='submit' hidden />
               <SidePanelButtons>
-                <Button theme='primary' props={{ type: 'submit' }}>
+                <Button
+                  theme='primary'
+                  props={{ disabled: send?.isLoading, type: 'submit' }}>
                   Send
                 </Button>
               </SidePanelButtons>

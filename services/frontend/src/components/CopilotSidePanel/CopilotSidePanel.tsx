@@ -12,42 +12,37 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import { sendMessage } from '../../services/sendMessage'
 import { renewDialog } from '../../services/renewDialog'
 import { getHistory } from '../../services/getHistory'
+import { ToastCopySucces } from '../Toasts/Toasts'
+import { SessionConfig } from '../DialogSidePanel/DialogSidePanel'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
-import { ToastCopySucces } from '../Toasts/Toasts'
-import DialogButton from '../DialogButton/DialogButton'
-import TextLoader from '../TextLoader/TextLoader'
-import { SessionConfig } from '../DialogSidePanel/DialogSidePanel'
+import { ChatForm } from '../../types/types'
+import { useChatScroll } from '../../hooks/useChatScroll'
+import { submitOnEnter } from '../../utils/submitOnEnter'
+import { useOnlyOnMount } from '../../hooks/useOnlyOnMount'
 import s from './CopilotSidePanel.module.scss'
+import TextLoader from '../TextLoader/TextLoader'
+import DialogButton from '../DialogButton/DialogButton'
 
-export const TRIGGER_COPILOT_SP_EVENT = 'TRIGGER_COPILOT_SP_EVENT'
-
+export const DEEPY_ASSISTANT = 'deepy_assistant'
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
 
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 
-type FromForm = { message: string }
 const CopilotSidePanel = () => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [message, setMessage] = useState<string>('')
-  const [dialogSession, setDialogueSession] = useState<SessionConfig | null>(
-    null
-  )
+  const [session, setSession] = useState<SessionConfig | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
-  const { dispatch } = useDisplay()
+  const messageRef = useRef<HTMLSpanElement>(null)
   const queryClient = useQueryClient()
-  const { handleSubmit, register, reset } = useForm<FromForm>()
-  const ref = useRef<HTMLSpanElement>(null)
-  const { data: history } = useQuery(
-    ['history', dialogSession?.id],
-    () => getHistory(dialogSession?.id!),
-    { enabled: !!message }
-  )
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const { dispatch } = useDisplay()
   const cx = classNames.bind(s)
-
+  // handlers
   const handleMessageClick = () => {
-    navigator.clipboard.writeText(ref?.current?.textContent!)
+    navigator.clipboard.writeText(messageRef?.current?.textContent!)
     toast.custom(<ToastCopySucces />, {
       position: 'top-center',
       id: 'copySucces',
@@ -57,47 +52,41 @@ const CopilotSidePanel = () => {
 
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
 
-  const renew = useMutation({
-    mutationFn: (data: string) => {
-      return renewDialog(data)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: 'history' }),
-        setDialogueSession(data)
-    },
-  })
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
+  }
 
-  const handleSend = (data: FromForm) => {
-    const id = dialogSession?.id!
+  const handleSend = (data: ChatForm) => {
+    const id = session?.id!
     const message = data?.message!
     setMessage(message)
     send.mutate({ id, message })
     reset()
   }
-
+  // queries
+  const renew = useMutation({
+    mutationFn: (data: string) => {
+      return renewDialog(data)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: 'history' }), setSession(data)
+    },
+  })
   const send = useMutation({
     mutationFn: (variables: { id: number; message: string }) => {
       return sendMessage(variables?.id, variables?.message)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({ queryKey: 'history' }),
   })
-
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(handleSend)()
-    }
-  }
-
-  useEffect(() => {
-    renew.mutateAsync('deepy_assistant')
-  }, [])
-
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight
-    }
-  }, [history])
+  const { data: history } = useQuery(
+    ['history', session?.id],
+    () => getHistory(session?.id!),
+    { refetchOnWindowFocus: false, enabled: send?.isLoading }
+  )
+  // hooks
+  useOnlyOnMount(() => renew.mutateAsync(DEEPY_ASSISTANT))
+  useChatScroll(chatRef, [history, message])
 
   const dispatchTrigger = (isOpen: boolean) =>
     dispatch({
@@ -133,11 +122,11 @@ const CopilotSidePanel = () => {
                     block?.author == 'bot' && 'chat__container_bot'
                   )}>
                   <span
-                    ref={ref}
+                    ref={messageRef}
                     onClick={handleMessageClick}
                     className={cx(
-                      'chat__message',
-                      block?.author == 'bot' && 'chat__message_bot'
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
                     )}>
                     {block?.text}
                   </span>
@@ -175,7 +164,7 @@ const CopilotSidePanel = () => {
         </div>
         <form onSubmit={handleSubmit(handleSend)}>
           <textarea
-            onKeyDown={handleTextAreaKeyDown}
+            onKeyDown={handleKeyDown}
             className={s.dialogSidePanel__textarea}
             placeholder='Type...'
             {...register('message')}

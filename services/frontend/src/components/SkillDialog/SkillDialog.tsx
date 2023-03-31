@@ -10,51 +10,43 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import DialogButton from '../DialogButton/DialogButton'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import { SessionConfig, SkillDialogProps } from '../../types/types'
+import { ChatForm, SessionConfig, SkillDialogProps } from '../../types/types'
 import { getHistory } from '../../services/getHistory'
 import { renewDialog } from '../../services/renewDialog'
 import { sendMessage } from '../../services/sendMessage'
 import TextLoader from '../TextLoader/TextLoader'
 import { useObserver } from '../../hooks/useObserver'
+import { useChatScroll } from '../../hooks/useChatScroll'
+import { submitOnEnter } from '../../utils/submitOnEnter'
+import { useOnlyOnMount } from '../../hooks/useOnlyOnMount'
 import s from './SkillDialog.module.scss'
 
 export const DEBUG_DIST = 'universal_prompted_assistant'
 
-const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
+const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
   const [isError, setIsError] = useState(error ?? false)
   const [message, setMessage] = useState<string>('')
-  const { handleSubmit, register, reset } = useForm()
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
   const [session, setSession] = useState<SessionConfig | null>(null)
   const queryClient = useQueryClient()
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-
-  const handleSend = (data: any) => {
+  // handlers
+  const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
     setMessage(message)
     send.mutate({ id, message })
     reset()
   }
-
-  const send = useMutation({
-    mutationFn: (variables: { id: number; message: string }) => {
-      return sendMessage(variables?.id, variables?.message)
-    },
-    onSuccess: async () =>
-      await queryClient.invalidateQueries({ queryKey: 'history' }),
-  })
-
-  const { data: history } = useQuery(
-    ['history', session?.id],
-    () => getHistory(session?.id!),
-    { refetchOnWindowFocus: false, enabled: message?.length > 0 }
-  )
-
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
+  }
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
     setMessage('')
   }
+  // queries
   const renew = useMutation({
     mutationFn: (data: string) => {
       return renewDialog(data)
@@ -66,30 +58,27 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, start, dist, debug }) => {
       setIsError(true)
     },
   })
-
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      !send?.isLoading && handleSubmit(handleSend)()
-    }
-  }
-
+  const send = useMutation({
+    mutationFn: (variables: { id: number; message: string }) => {
+      return sendMessage(variables?.id, variables?.message)
+    },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({ queryKey: 'history' }),
+  })
+  const { data: history } = useQuery(
+    ['history', session?.id],
+    () => getHistory(session?.id!),
+    { refetchOnWindowFocus: false, enabled: send?.isLoading }
+  )
+  // hooks
+  useOnlyOnMount(() => renew.mutateAsync(dist?.name))
   useObserver('RenewChat', handleRenewClick)
-
-  useEffect(() => {
-    renew.mutateAsync(dist?.name)
-  }, [])
-
-  useEffect(() => {
-    if (chatRef?.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight
-    }
-  }, [history, message])
+  useChatScroll(chatRef, [history, message])
 
   return (
     <form
       onSubmit={handleSubmit(handleSend)}
-      onKeyDown={handleTextAreaKeyDown}
+      onKeyDown={handleKeyDown}
       className={s.dialog}>
       <SidePanelHeader>
         <ul role='tablist'>

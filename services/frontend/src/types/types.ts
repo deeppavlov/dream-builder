@@ -151,12 +151,11 @@ export interface SessionConfig {
 
 export interface SkillDialogProps {
   error?: boolean
-  start?: boolean
   debug: boolean
   chatWith: ChatPanelType
   dist: BotInfoInterface
 }
-// export type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
+
 export type Message = { message: string }
 export type ChatPanelType = 'bot' | 'skill'
 export type SkillCardSize = BotCardSize
@@ -176,6 +175,8 @@ export type ViewType = 'cards' | 'table'
 export type BotCardSize = 'big' | 'small'
 
 export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+
+export type ChatForm = { message: string }
 
 export type PostDistParams = {
   display_name: string

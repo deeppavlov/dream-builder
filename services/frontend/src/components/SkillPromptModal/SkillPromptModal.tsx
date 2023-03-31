@@ -33,10 +33,6 @@ interface Props {
 }
 
 interface FormValues {
-  MODEL_ID: string
-  PROMPT_ID: string
-}
-interface FormValues {
   model: string
   prompt: string
 }
@@ -122,7 +118,7 @@ const SkillPromptModal = () => {
       prompt: prompt?.text,
     },
   })
-  const model = getValues().MODEL_ID
+  const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.link
 
@@ -147,19 +143,16 @@ const SkillPromptModal = () => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
     reset({
-      MODEL_ID: skill?.model,
-      PROMPT_ID: skill?.prompt,
+      model: skill?.model,
+      prompt: skill?.prompt,
     })
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => reset({ MODEL_ID: model })
+  const handleModelSelect = (model: string) => reset({ model })
 
-  const handleCreate = (data: FormValues) => {
-    trigger('CreateSkillDistModal', {
-      ...skill,
-      ...{ model: data.MODEL_ID, prompt: data.PROMPT_ID },
-    })
+  const handleCreate = ({ model, prompt }: FormValues) => {
+    trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
   }
 
   const onFormSubmit = (data: FormValues) => {
@@ -175,8 +168,8 @@ const SkillPromptModal = () => {
   }
 
   async function handleSaveAndTest(data: FormValues) {
-    const service = data.MODEL_ID
-    const prompt = data.PROMPT_ID
+    const service = data.model
+    const prompt = data.prompt
     const distName = dist?.name
 
     setPromptForDist.mutateAsync({ distName, prompt })
@@ -249,11 +242,13 @@ const SkillPromptModal = () => {
           borderRadius: 0,
           padding: 0,
         },
-      }}>
+      }}
+    >
       <div className={s.skillPromptModal}>
         <form
           onSubmit={handleSubmit(data => onFormSubmit(data))}
-          className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}>
+          className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}
+        >
           <div className={s.header}>
             {skill?.display_name ?? 'Current Skill'}: Editor
           </div>
@@ -283,7 +278,8 @@ const SkillPromptModal = () => {
                   <a
                     href={skillModelLink}
                     target='_blank'
-                    rel='noopener noreferrer'>
+                    rel='noopener noreferrer'
+                  >
                     {skillModelLink}
                   </a>
                   <br />
@@ -295,7 +291,7 @@ const SkillPromptModal = () => {
               label='Enter prompt:'
               withCounter
               resizable={false}
-              error={errors.MODEL_ID}
+              error={errors.model}
               maxLenght={promptWordsMaxLenght}
               props={{
                 placeholder:
@@ -311,43 +307,45 @@ const SkillPromptModal = () => {
               }}
             />
           </div>
-            <div className={s.bottom}>
-              <span className={s['tip-bold']}>
-                Click "Save & Test" to test your new prompt
-              </span>
-              <div className={s.btns}>
-                {action === 'create' && (
-                  <>
-                    <Button
-                      theme='secondary'
-                      props={{ onClick: handleBackBtnClick }}>
-                      Back
+          <div className={s.bottom}>
+            <span className={s['tip-bold']}>
+              Click "Save & Test" to test your new prompt
+            </span>
+            <div className={s.btns}>
+              {action === 'create' && (
+                <>
+                  <Button
+                    theme='secondary'
+                    props={{ onClick: handleBackBtnClick }}
+                  >
+                    Back
+                  </Button>
+                  <Button theme='primary' props={{ type: 'submit' }}>
+                    Save
+                  </Button>
+                </>
+              )}
+              {action === 'edit' && (
+                <>
+                  <div className={s.history}>
+                    <Button theme='tertiary-round'>
+                      <HistoryIcon />
+                      History
                     </Button>
-                    <Button theme='primary' props={{ type: 'submit' }}>
-                      Save
-                    </Button>
-                  </>
-                )}
-                {action === 'edit' && (
-                  <>
-                    <div className={s.history}>
-                      <Button theme='tertiary-round'>
-                        <HistoryIcon />
-                        History
-                      </Button>
-                    </div>
-                    <Button theme='secondary-dark' props={{ type: 'submit' }}>
-                      Save & Test
-                    </Button>
-                    <Button
-                      theme='primary'
-                      props={{ onClick: handleSaveAndClose }}>
-                      Save & Close
-                    </Button>
-                  </>
-                )}
-              </div>
+                  </div>
+                  <Button theme='secondary-dark' props={{ type: 'submit' }}>
+                    Save & Test
+                  </Button>
+                  <Button
+                    theme='primary'
+                    props={{ onClick: handleSaveAndClose }}
+                  >
+                    Save & Close
+                  </Button>
+                </>
+              )}
             </div>
+          </div>
         </form>
         <SkillDialog debug chatWith={'skill'} dist={dist} />
       </div>

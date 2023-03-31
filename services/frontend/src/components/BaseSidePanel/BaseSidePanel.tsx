@@ -12,7 +12,6 @@ export const TRIGGER_LEFT_SP_EVENT = 'TRIGGER_LEFT_SP_EVENT'
 type TTransition = 'left' | 'right'
 
 interface BaseSidePanel {
-  id?: string
   isOpen?: boolean
   position?: Partial<{
     top: number | 'auto'

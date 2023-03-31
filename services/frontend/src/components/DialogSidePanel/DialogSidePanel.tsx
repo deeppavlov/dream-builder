@@ -171,7 +171,7 @@ const DialogSidePanel: FC<Props> = ({
         )}
         {chatPanel && (
           <>
-            <div className={s.chat}>
+            <div className={s.chat} ref={chatRef}>
               {history &&
                 history?.map(
                   (block: { author: string; text: string }, i: number) => (

@@ -60,7 +60,7 @@ const BaseModal: FC<BaseModalInterface> = ({
     setIsOpen(false)
     handleClose && handleClose()
   }
-  const cx = classNames.bind(s)
+
   return isOpen ? (
     <Modal style={styles} isOpen={isOpen} onRequestClose={closeModal}>
       <div className={cx('baseModal', skillsListModal && 'skillsListModal')}>

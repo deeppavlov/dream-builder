@@ -15,14 +15,14 @@ import { getHistory } from '../../services/getHistory'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import { SessionConfig } from '../DialogSidePanel/DialogSidePanel'
 import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
-import { ChatForm } from '../../types/types'
 import { useChatScroll } from '../../hooks/useChatScroll'
+import { useOnlyOnMount } from '../../hooks/useOnMount'
+import { ChatForm } from '../../types/types'
+import { consts } from '../../utils/consts'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import { useOnlyOnMount } from '../../hooks/useOnlyOnMount'
-import s from './CopilotSidePanel.module.scss'
-import TextLoader from '../TextLoader/TextLoader'
 import DialogButton from '../DialogButton/DialogButton'
+import TextLoader from '../TextLoader/TextLoader'
+import s from './CopilotSidePanel.module.scss'
 
 export const DEEPY_ASSISTANT = 'deepy_assistant'
 const TEXT_CHAT_TYPE = 'text'
@@ -111,7 +111,7 @@ const CopilotSidePanel = () => {
             Deepy
           </span>
         </SidePanelHeader>
-        <div className={s.chat}>
+        <div className={s.chat} ref={chatRef}>
           {history &&
             history?.map(
               (block: { author: string; text: string }, i: number) => (
@@ -120,14 +120,16 @@ const CopilotSidePanel = () => {
                   className={cx(
                     'chat__container',
                     block?.author == 'bot' && 'chat__container_bot'
-                  )}>
+                  )}
+                >
                   <span
                     ref={messageRef}
                     onClick={handleMessageClick}
                     className={cx(
-                      'chat__container',
-                      block?.author == 'bot' && 'chat__container_bot'
-                    )}>
+                      'chat__message',
+                      block?.author == 'bot' && 'chat__message_bot'
+                    )}
+                  >
                     {block?.text}
                   </span>
                 </div>
@@ -135,17 +137,19 @@ const CopilotSidePanel = () => {
             )}
           {send?.isLoading && (
             <>
-              <div className={`${s.chat__container}`}>
+              <div className={cx('chat__container')}>
                 <span
                   onClick={handleMessageClick}
-                  className={`${s.chat__message} `}>
+                  className={cx('chat__message')}
+                >
                   {message}
                 </span>
               </div>
-              <div className={cx('chat__container_bot', 'chat__container')}>
+              <div className={cx('chat__container', 'chat__container_bot')}>
                 <span
                   onClick={handleMessageClick}
-                  className={cx('chat__message', 'chat__message_bot')}>
+                  className={cx('chat__message', 'chat__message_bot')}
+                >
                   <TextLoader />
                 </span>
               </div>
@@ -155,7 +159,8 @@ const CopilotSidePanel = () => {
         <div className={s.dialogSidePanel__controls}>
           <DialogButton
             active={chatType === 'text'}
-            onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}>
+            onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
+          >
             <DialogTextIcon />
           </DialogButton>
           <DialogButton active={chatType === 'voice'}>

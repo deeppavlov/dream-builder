@@ -1,24 +1,24 @@
-import { useState, useRef, useEffect, FC } from 'react'
-import { useForm } from 'react-hook-form'
-import { useQueryClient, useQuery, useMutation } from 'react-query'
-import classNames from 'classnames/bind'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
-import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
 import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
+import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
+import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
-import Button from '../../ui/Button/Button'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import DialogButton from '../DialogButton/DialogButton'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import { ChatForm, SessionConfig, SkillDialogProps } from '../../types/types'
+import classNames from 'classnames/bind'
+import { FC, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useChatScroll } from '../../hooks/useChatScroll'
+import { useObserver } from '../../hooks/useObserver'
+import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { getHistory } from '../../services/getHistory'
 import { renewDialog } from '../../services/renewDialog'
 import { sendMessage } from '../../services/sendMessage'
-import TextLoader from '../TextLoader/TextLoader'
-import { useObserver } from '../../hooks/useObserver'
-import { useChatScroll } from '../../hooks/useChatScroll'
+import { ChatForm, SessionConfig, SkillDialogProps } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import { useOnlyOnMount } from '../../hooks/useOnlyOnMount'
+import DialogButton from '../DialogButton/DialogButton'
+import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
 export const DEBUG_DIST = 'universal_prompted_assistant'
@@ -79,7 +79,8 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={s.dialog}>
+      className={s.dialog}
+    >
       <SidePanelHeader>
         <ul role='tablist'>
           <li role='tab' key='Current  Skill' aria-selected>
@@ -97,7 +98,8 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
             (block: { author: string; text: string }, i: number) => (
               <li
                 key={`${block?.author == 'bot'}${i}`}
-                className={cx('msg', block?.author == 'bot' && 'bot')}>
+                className={cx('msg', block?.author == 'bot' && 'bot')}
+              >
                 {block?.text}
               </li>
             )
@@ -133,7 +135,8 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
             withIcon
             props={{
               onClick: handleRenewClick,
-            }}>
+            }}
+          >
             <div className={s['right-container']} data-tooltip-id='renew'>
               <Renew />
             </div>
@@ -151,7 +154,8 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
       <SidePanelButtons>
         <Button
           theme='secondary'
-          props={{ disabled: send?.isLoading, type: 'submit' }}>
+          props={{ disabled: send?.isLoading, type: 'submit' }}
+        >
           Send
         </Button>
       </SidePanelButtons>

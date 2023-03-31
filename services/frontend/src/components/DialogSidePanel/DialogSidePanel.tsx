@@ -6,7 +6,7 @@ import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_downl
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import DialogButton from '../DialogButton/DialogButton'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import Button from '../../ui/Button/Button'
@@ -78,7 +78,8 @@ const DialogSidePanel: FC<Props> = ({
 
   const handleDownloadBtnClick = () => {}
 
-  const handleGoBackBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleGoBackBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   const handleStartBtnClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!).then(() => {

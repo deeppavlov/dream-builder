@@ -2,7 +2,7 @@ import Play from '../../../assets/icons/test.svg'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
-import { BASE_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import DialogSidePanel from '../../DialogSidePanel/DialogSidePanel'
 import s from './Test.module.scss'
@@ -12,7 +12,7 @@ export const Test = () => {
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
 
   const handleBtnClick = () => {
-    trigger(BASE_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <DialogSidePanel
           debug={false}

@@ -1,4 +1,4 @@
-import { BASE_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
@@ -21,7 +21,7 @@ const triggerSkillSidePanel = ({
   const triggerByName = (displayName: string) => {
     switch (displayName) {
       case 'Dff Intent Responder Skill':
-        trigger(BASE_SP_EVENT, {
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
           parent,
           children: (
             <IntentResponderSidePanel
@@ -34,7 +34,7 @@ const triggerSkillSidePanel = ({
         break
 
       default:
-        trigger(BASE_SP_EVENT, {
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
           parent,
           children: (
             <SkillSidePanel
@@ -55,7 +55,7 @@ const triggerSkillSidePanel = ({
 
   switch (skill?.name?.includes('prompted')) {
     case true:
-      trigger(BASE_SP_EVENT, {
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
         parent,
         children: (
           <GenerativeSkillEditor

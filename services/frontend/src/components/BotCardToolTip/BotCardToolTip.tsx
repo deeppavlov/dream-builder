@@ -2,7 +2,7 @@ import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
@@ -16,7 +16,7 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
   const auth = useAuth()
 
   const handlePropertiesBtnClick = () =>
-    trigger(BASE_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <BotInfoSidePanel
           key={bot.name}

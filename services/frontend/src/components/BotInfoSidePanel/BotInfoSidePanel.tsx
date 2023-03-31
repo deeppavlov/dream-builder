@@ -1,4 +1,4 @@
-import { FC, useId, useState } from 'react'
+import { FC, useEffect, useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import {
@@ -21,11 +21,13 @@ import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { isAnnotator } from '../../utils/isAnnotator'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { Loader } from '../Loader/Loader'
-import s from './BotInfoSidePanel.module.scss'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { SmallTag } from '../SmallTag/SmallTag'
 import Woman from '../../assets/icons/woman.png'
+import { useDisplay } from '../../context/DisplayContext'
+import s from './BotInfoSidePanel.module.scss'
+import { consts } from '../../utils/consts'
 
 interface Props {
   bot: BotInfoInterface
@@ -41,6 +43,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
+  const { dispatch } = useDisplay()
   const {
     isLoading: isComponentsLoading,
     error: componentsError,
@@ -77,6 +80,20 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     })
     e.stopPropagation()
   }
+
+  const dispatchTrigger = (isOpen: boolean) =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT_SP_ID,
+        value: isOpen ? bot.name : null,
+      },
+    })
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
 
   return (
     <>

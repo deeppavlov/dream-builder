@@ -28,11 +28,13 @@ interface Props {
 const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.IS_PREVIEW_MODE, true],
   [consts.IS_TABLE_VIEW, false],
-  [consts.LEFT_SIDEPANEL_IS_ACTIVE, false],
-  [consts.RIGHT_SIDEPANEL_IS_ACTIVE, false],
+  [consts.LEFT_SP_IS_ACTIVE, false],
+  [consts.RIGHT_SP_IS_ACTIVE, false],
   [consts.BREADCRUMBS_PATH, {}],
   [consts.EDITOR_ACTIVE_TAB, 'Skills'],
   [consts.ACTIVE_ASSISTANT, {}],
+  [consts.COPILOT_SP_IS_ACTIVE, false],
+  [consts.ACTIVE_ASSISTANT_SP_ID, null],
 ])
 
 const DisplayContext = createContext({})

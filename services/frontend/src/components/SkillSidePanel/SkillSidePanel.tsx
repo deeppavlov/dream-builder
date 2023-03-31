@@ -1,4 +1,4 @@
-import { FC, useId } from 'react'
+import { FC, useEffect, useId } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import { srcForIcons } from '../../utils/srcForIcons'
@@ -13,8 +13,11 @@ import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { useAuth } from '../../context/AuthProvider'
-import s from './SkillSidePanel.module.scss'
 import Woman from '../../assets/icons/woman.png'
+import { consts } from '../../utils/consts'
+import { useDisplay } from '../../context/DisplayContext'
+import s from './SkillSidePanel.module.scss'
+
 interface Props {
   skill: ISkill
   activeTab?: 'Properties' | 'Editor'
@@ -27,7 +30,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
   const isEditor = children !== undefined
   const auth = useAuth()
   const { isPreview } = usePreview()
-  let cx = classNames.bind(s)
+  const { dispatch } = useDisplay()
   const tooltipId = useId()
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: isEditor ? activeTab ?? properties : properties,
@@ -42,12 +45,27 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
           : [[properties, { name: properties }]]
       ),
   })
+  let cx = classNames.bind(s)
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const nameForModelType = modelTypeMap[skill?.model_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const srcForModelType = srcForIcons(nameForModelType)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+
+  const dispatchTrigger = (isOpen: boolean) =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_SKILL_SP_ID,
+        value: isOpen ? skill.name : null,
+      },
+    })
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
 
   return (
     <>

@@ -2,7 +2,7 @@ import { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { trigger } from '../../utils/events'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { srcForIcons } from '../../utils/srcForIcons'
@@ -17,8 +17,10 @@ import Button from '../../ui/Button/Button'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
 import toast from 'react-hot-toast'
-import s from './SkillListItem.module.scss'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
+import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
   skill: ISkill
@@ -39,6 +41,8 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
   const skillListItemRef = useRef(null)
+  const { options } = useDisplay()
+  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -69,7 +73,9 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   return (
     <tr
       className={cx('tr', disabled && 'disabled')}
-      onClick={handleSkillListItemClick} ref={skillListItemRef}>
+      onClick={handleSkillListItemClick}
+      ref={skillListItemRef}
+      data-active={skill.name === activeSKillId}>
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.skillName}>{skill?.display_name || '------'}</p>

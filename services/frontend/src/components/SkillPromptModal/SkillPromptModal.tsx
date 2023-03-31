@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import classNames from 'classnames/bind'
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
-import { BotInfoInterface, ISkill } from '../../types/types'
+import { ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { trigger } from '../../utils/events'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -27,13 +27,14 @@ export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
 type TAction = 'create' | 'edit'
 
 interface Props {
-  dist: BotInfoInterface
   action?: TAction
   skill?: ISkill
   isOpen?: boolean
-  distName: string
-  dialogHandler?: () => void
-  withLeftPadding?: boolean
+}
+
+interface FormValues {
+  MODEL_ID: string
+  PROMPT_ID: string
 }
 
 const SkillPromptModal = () => {
@@ -41,37 +42,33 @@ const SkillPromptModal = () => {
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const queryClient = useQueryClient()
-  const [MODEL_ID, PROMPT_ID] = ['model', 'prompt']
-  const promptWordsMaxLenght = 3000
-  const cx = classNames.bind(s)
-
-  // queries
   const { options, dispatch } = useDisplay()
   const dist = options.get(consts.ACTIVE_ASSISTANT)
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
-  const leftSidePanelIsActive = options.get(consts.LEFT_SIDEPANEL_IS_ACTIVE)
+  const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
+  const promptWordsMaxLenght = 3000
+  const cx = classNames.bind(s)
 
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
       return postPrompt(variables?.distName, variables?.prompt)
     },
-    onSuccess: data => {
-      queryClient.invalidateQueries('prompt')
-    },
+    onSuccess: () => queryClient.invalidateQueries('prompt'),
   })
+
   const setServiceForDist = useMutation({
     mutationFn: (variables: { distName: string; service: string }) => {
       return changeLMservice(variables?.distName, variables?.service)
     },
-    onSuccess: data => {
-      queryClient.invalidateQueries('lm_service')
-    },
+    onSuccess: () => queryClient.invalidateQueries('lm_service'),
   })
+
   const setPromptForDebugDist = useMutation({
     mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
       return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
     },
   })
+
   const setServiceForDebugDist = useMutation({
     mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
       return changeLMservice(variables?.DEBUG_DIST, variables?.service)
@@ -91,6 +88,7 @@ const SkillPromptModal = () => {
       },
     }
   )
+
   const { data: prompt } = useQuery(
     ['prompt', dist?.name!],
     () => getPrompt(dist?.name),
@@ -108,17 +106,16 @@ const SkillPromptModal = () => {
     reset,
     getValues,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
       MODEL_ID: service?.displayName,
       PROMPT_ID: prompt?.text,
     },
   })
-  const model = getValues().MODEL_ID as string
+  const model = getValues().MODEL_ID
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.link
-  const skillModelName = servicesList.get(model)?.name
 
   const closeModal = () => {
     setIsOpen(false)
@@ -141,32 +138,25 @@ const SkillPromptModal = () => {
     }
 
     trigger(SKILL_EDITOR_TRIGGER, { isOpen: true })
-
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-
     reset({
-      [MODEL_ID]: skill?.model,
-      [PROMPT_ID]: skill?.prompt,
+      MODEL_ID: skill?.model,
+      PROMPT_ID: skill?.prompt,
     })
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => {
-    reset({
-      [MODEL_ID]: model,
+  const handleModelSelect = (model: string) => reset({ MODEL_ID: model })
+
+  const handleCreate = (data: FormValues) => {
+    trigger('CreateSkillDistModal', {
+      ...skill,
+      ...{ model: data.MODEL_ID, prompt: data.PROMPT_ID },
     })
   }
 
-  const handleCreate = (data: any) => {
-    const newSkill = {
-      ...skill,
-      ...{ model: data[MODEL_ID], prompt: data[PROMPT_ID] },
-    }
-    trigger('CreateSkillDistModal', newSkill)
-  }
-
-  const onFormSubmit = (data: any) => {
+  const onFormSubmit = (data: FormValues) => {
     if (action === 'create') {
       handleCreate(data)
       return
@@ -178,9 +168,9 @@ const SkillPromptModal = () => {
     }
   }
 
-  async function handleSaveAndTest(data: { prompt: string }) {
-    const service = servicesList.get(model)?.name!
-    const prompt = data?.prompt
+  async function handleSaveAndTest(data: FormValues) {
+    const service = data.MODEL_ID
+    const prompt = data.PROMPT_ID
     const distName = dist?.name
 
     setPromptForDist.mutateAsync({ distName, prompt })
@@ -193,16 +183,10 @@ const SkillPromptModal = () => {
     trigger('RenewChat', {})
   }
 
-  const handleSaveAndClose = () => {
-    handleSubmit(handleSaveAndTest)()
-      .then(() => {
-        closeModal()
-      })
-      .catch(e => {
-        console.log(`e = `, e)
-        closeModal()
-      })
-  }
+  const handleSaveAndClose = () =>
+    handleSubmit(handleSaveAndTest)().finally(() => closeModal())
+
+  useObserver('SkillPromptModal', handleEventUpdate)
 
   useEffect(() => {
     reset({
@@ -210,8 +194,6 @@ const SkillPromptModal = () => {
       PROMPT_ID: prompt?.text,
     })
   }, [service, prompt])
-
-  useObserver('SkillPromptModal', handleEventUpdate)
 
   useEffect(() => {
     dispatch({
@@ -234,8 +216,6 @@ const SkillPromptModal = () => {
         value: isOpen,
       },
     })
-
-    console.log(options)
   }, [isOpen])
 
   return (
@@ -248,7 +228,7 @@ const SkillPromptModal = () => {
           right: 0,
           left: 80,
           position: 'fixed',
-          zIndex: 1,
+          zIndex: 0,
         },
         content: {
           top: 0,
@@ -290,7 +270,7 @@ const SkillPromptModal = () => {
                 onSelect={handleModelSelect}
                 fullWidth
               />
-              {model?.length > 0 && (
+              {service?.display_name && (
                 <p className={s.tip}>
                   <span className={s['tip-bold']}>Details:</span>
                   <span>{skillModelTip}</span>
@@ -307,6 +287,7 @@ const SkillPromptModal = () => {
             <TextArea
               label='Enter prompt:'
               withCounter
+              resizable={false}
               error={errors.PROMPT_ID}
               maxLenght={promptWordsMaxLenght}
               props={{

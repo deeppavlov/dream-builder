@@ -10,7 +10,7 @@ import { usePreview } from '../../context/PreviewProvider'
 import { trigger } from '../../utils/events'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
 import IntentList from '../IntentList/IntentList'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { useQuery } from 'react-query'
 import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
@@ -31,10 +31,11 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
     [editor, { name: 'Details', disabled: isPreview }],
   ])
   const promptWordsMaxLenght = 1500
-  const {options} = useDisplay()
+  const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
-  const { data: service } = useQuery(['lm_service', activeAssistant?.name], () =>
-    getLMservice(activeAssistant?.name)
+  const { data: service } = useQuery(
+    ['lm_service', activeAssistant?.name],
+    () => getLMservice(activeAssistant?.name)
   )
   const { data: prompt } = useQuery(['prompt', activeAssistant?.name], () =>
     getPrompt(activeAssistant?.name)
@@ -46,7 +47,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
 
   const triggerEditModal = () => {
     trigger('SkillPromptModal', { skill, action: 'edit' })
-    trigger(BASE_SP_EVENT, { isOpen: false })
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   return (

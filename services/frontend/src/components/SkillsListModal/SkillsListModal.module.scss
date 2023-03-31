@@ -9,8 +9,6 @@
     justify-content: flex-end;
   }
   .header {
-    p {
-      @include t1;
-    }
+    @include t1;
   }
 }

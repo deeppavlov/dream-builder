@@ -13,7 +13,7 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import { useOnKey } from '../../hooks/useOnKey'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { useObserver } from '../../hooks/useObserver'
 import s from './AssistantModal.module.scss'
 
@@ -109,7 +109,7 @@ export const AssistantModal = () => {
         })
         .then(() => {
           isTopbarButton && closeModal()
-          trigger(BASE_SP_EVENT, { isOpen: false })
+          trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
         }),
   })
 
@@ -169,7 +169,8 @@ export const AssistantModal = () => {
             )}
             {action === 'create' && (
               <div>
-                You are creating a new Virtual Assistant from <mark>scratch</mark>
+                You are creating a new Virtual Assistant from{' '}
+                <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (
@@ -190,26 +191,28 @@ export const AssistantModal = () => {
             }),
           }}
         />
-        <TextArea
-          label='Description'
-          withCounter
-          error={errors[DESC_ID as keyof FormValues]}
-          maxLenght={1000}
-          props={{
-            placeholder:
-              'Describe your Virtual Assistant ability, where you can use it and for what purpose',
-            defaultValue: getValues().description,
-            rows: 3,
-            ...register(DESC_ID as keyof FormValues, {
-              required: 'This field can’t be empty',
-              maxLength: {
-                value: 1000,
-                message: 'Limit text description to 500 characters',
-              },
-              // validate: {isEmpty:},
-            }),
-          }}
-        />
+        <div className={s.textarea}>
+          <TextArea
+            label='Description'
+            withCounter
+            error={errors[DESC_ID as keyof FormValues]}
+            maxLenght={1000}
+            props={{
+              placeholder:
+                'Describe your Virtual Assistant ability, where you can use it and for what purpose',
+              defaultValue: getValues().description,
+              rows: 3,
+              ...register(DESC_ID as keyof FormValues, {
+                required: 'This field can’t be empty',
+                maxLength: {
+                  value: 1000,
+                  message: 'Limit text description to 500 characters',
+                },
+                // validate: {isEmpty:},
+              }),
+            }}
+          />
+        </div>
 
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: closeModal }}>

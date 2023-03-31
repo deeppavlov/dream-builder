@@ -1,5 +1,5 @@
 import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
-import { BASE_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import { Annotator } from '../types/types'
 import { trigger } from './events'
@@ -12,7 +12,7 @@ interface Props {
 const getAnnotatorSidePanel = ({ annotator, activeTab }: Props): void => {
   switch (annotator.display_name) {
     case 'Intent Catcher':
-      trigger(BASE_SP_EVENT, {
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
         children: (
           <IntentCatcherSidePanel
             key={annotator.name + activeTab}
@@ -24,7 +24,7 @@ const getAnnotatorSidePanel = ({ annotator, activeTab }: Props): void => {
       })
       break
     default:
-      trigger(BASE_SP_EVENT, {
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
         children: (
           <AnnotatorSidePanel
             key={annotator.name + activeTab}

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel, { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseSidePanel, {
+  TRIGGER_RIGHT_SP_EVENT,
+} from '../BaseSidePanel/BaseSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
 import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import { TotalResourcesInterface } from '../../types/types'
@@ -16,7 +18,8 @@ interface Props {
 const ResourcesSidePanel = ({ resources }: Props) => {
   const [res, setRes] = useState<TotalResourcesInterface>(resources)
 
-  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleCloseBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   return (
     <>

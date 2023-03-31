@@ -1,13 +1,17 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import { useObserver } from '../../hooks/useObserver'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import s from './BaseSidePanel.module.scss'
 
-export const BASE_SP_EVENT = 'BaseSidePanel'
+export const TRIGGER_RIGHT_SP_EVENT = 'TRIGGER_RIGHT_SP_EVENT'
+export const TRIGGER_LEFT_SP_EVENT = 'TRIGGER_LEFT_SP_EVENT'
+
+type TTransition = 'left' | 'right'
 
 interface BaseSidePanel {
-  id?: string
   isOpen?: boolean
   position?: Partial<{
     top: number | 'auto'
@@ -18,21 +22,26 @@ interface BaseSidePanel {
   children?: React.ReactNode
   parent?: React.MutableRefObject<any>
   isClosable?: boolean
-  transition?: 'left' | 'right' | 'none'
+  transition?: TTransition | 'none'
 }
 
+/**
+ * On the one page could be have a few BaseSidePanel components,
+ * but with different opening sides, such as `left` or `right`.
+ * Use param `transition` to adjust openning side.
+ */
 export const BaseSidePanel: FC<BaseSidePanel> = ({
-  id = BASE_SP_EVENT,
   isOpen: propIsOpen,
   position,
   children,
-  transition,
+  transition = 'right',
   isClosable: propsIsClosable = true,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
   const [isClosable, setIsClosable] = useState<boolean>(propsIsClosable)
   const [content, setContent] = useState<React.ReactNode>(children)
   const [parent, setParent] = useState<HTMLElement>()
+  const { dispatch } = useDisplay()
 
   const setParentFocus = (isFocused: boolean, el?: HTMLElement) => {
     if (!isFocused) {
@@ -77,7 +86,22 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
     setParentFocus(true, data.detail.parent?.current)
   }
 
-  useObserver(id, handleTrigger)
+  useObserver(
+    transition === 'left' ? TRIGGER_LEFT_SP_EVENT : TRIGGER_RIGHT_SP_EVENT,
+    handleTrigger
+  )
+
+  useEffect(() => {
+    const side = transition === 'left' ? 'LEFT' : 'RIGHT'
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts[`${side}_SP_IS_ACTIVE`],
+        value: isOpen,
+      },
+    })
+  }, [isOpen])
 
   return (
     <SidePanel
@@ -86,7 +110,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
       handleClose={handleClose}
       position={position}
       transition={transition}
-      key={id}>
+      key={transition}>
       <div className={s.baseSidePanel}>
         {isClosable && (
           <button className={s.close} onClick={handleClose}>

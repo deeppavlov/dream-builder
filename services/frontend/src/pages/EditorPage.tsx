@@ -201,11 +201,10 @@ export const EditorPage = () => {
       </Tabs>
 
       <BaseSidePanel />
-      <BaseSidePanel id='BASE_SP_LEFT' transition='left' />
+      <BaseSidePanel transition='left' />
 
       <AreYouSureModal />
       <SkillPromptModal />
-      <CopilotSidePanel />
       <Toaster />
       <SkillsListModal />
       <PublishAssistantModal />

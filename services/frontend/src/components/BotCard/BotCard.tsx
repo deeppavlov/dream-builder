@@ -13,11 +13,13 @@ import Button from '../../ui/Button/Button'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import Woman from '../../assets/icons/woman.png'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import s from './BotCard.module.scss'
 
 interface BotCardProps {
@@ -33,9 +35,11 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const botCardRef = useRef(null)
+  const { options } = useDisplay()
+  const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleBotCardClick = () => {
-    trigger(BASE_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
       parent: botCardRef,
       children: (
         <BotInfoSidePanel
@@ -84,7 +88,8 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
-      ref={botCardRef}>
+      ref={botCardRef}
+      data-active={bot.name === activeAssistantId}>
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>
         <div className={s.block}>

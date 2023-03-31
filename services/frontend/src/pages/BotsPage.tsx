@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { RoutesList } from '../router/RoutesList'
@@ -11,7 +10,6 @@ import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Slider } from '../ui/Slider/Slider'
 import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
@@ -27,9 +25,8 @@ import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const { options, dispatch } = useDisplay()
+  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-
 
   const {
     data: publicDists,
@@ -47,7 +44,6 @@ export const BotsPage = () => {
 
   return (
     <>
-      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper
           title='Public Virtual Assistants & Chatbots'

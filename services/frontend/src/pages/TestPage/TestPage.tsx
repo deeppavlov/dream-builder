@@ -3,7 +3,7 @@ import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSid
 import BaseLink from '../../components/BaseLink/BaseLink'
 import {
   BaseSidePanel,
-  BASE_SP_EVENT,
+  TRIGGER_RIGHT_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
@@ -592,7 +592,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, { children: <>Test</> })
+                trigger(TRIGGER_RIGHT_SP_EVENT, { children: <>Test</> })
               },
             }}>
             BaseSidePanel
@@ -604,7 +604,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <AnnotatorSidePanel key={0} annotator={mockAnnotator} />
                   ),
@@ -617,7 +617,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <AnnotatorSidePanel
                       key={1}
@@ -638,7 +638,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <IntentCatcherSidePanel key={0} annotator={mockAnnotator} />
                   ),
@@ -654,7 +654,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <SkillSidePanel skill={mockSkill} />,
                 })
               },
@@ -668,7 +668,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <GenerativeSkillEditor
                       activeTab='Editor'
@@ -687,7 +687,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <IntentResponderSidePanel skill={mockSkill} />,
                 })
               },
@@ -701,7 +701,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <FAQSidePanel skill={mockSkill} />,
                 })
               },
@@ -715,7 +715,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <DialogSidePanel key={0} start />,
                 })
               },
@@ -726,7 +726,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <DialogSidePanel key={1} />,
                 })
               },
@@ -737,7 +737,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <DialogSidePanel key={2} error />,
                 })
               },
@@ -751,7 +751,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <BotInfoSidePanel bot={mockBot} disabled={false} />,
                 })
               },
@@ -765,7 +765,9 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, { children: <NotificationsSidePanel /> })
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
+                  children: <NotificationsSidePanel />,
+                })
               },
             }}>
             NotificationsSidePanel
@@ -777,7 +779,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: <ResourcesSidePanel resources={mockTotalRes} />,
                 })
               },
@@ -791,7 +793,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
                       key='Response Selector'
@@ -808,7 +810,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
                       key='Rule-based Skill Selector'
@@ -825,7 +827,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
                       key='Single Skill Selector'
@@ -841,7 +843,7 @@ export const TestPage = () => {
             theme='primary'
             props={{
               onClick: () => {
-                trigger(BASE_SP_EVENT, {
+                trigger(TRIGGER_RIGHT_SP_EVENT, {
                   children: (
                     <SelectorSettingsSidePanel
                       key='Multiple Skill Selector'

@@ -29,15 +29,15 @@ const SidePanel = ({
     overlay: {
       top: 64,
       left: 'auto',
-      right: position?.right ?? 0,
+      right: transition === 'left' ? 'auto' : position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       background: 'transparent',
       zIndex: 1,
     },
     content: {
       top: position?.top ?? 0,
-      left: position?.left ?? 'auto',
-      right: position?.right ?? 0,
+      left: transition === 'left' ? 80 : position?.left ?? 'auto',
+      right: transition === 'left' ? 'auto' : position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       overflow: 'visible',
       background: 'none',

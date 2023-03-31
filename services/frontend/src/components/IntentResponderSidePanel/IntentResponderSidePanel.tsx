@@ -5,7 +5,7 @@ import Button from '../../ui/Button/Button'
 import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 import { trigger } from '../../utils/events'
 import { ISkill } from '../../types/types'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
@@ -65,7 +65,8 @@ interface Props {
 }
 
 const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
-  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleCloseBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   const handleAddIntentBtnClick = () => {
     trigger('IntentResponderModal', {})

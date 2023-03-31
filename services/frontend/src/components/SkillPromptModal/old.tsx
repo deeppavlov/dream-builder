@@ -8,7 +8,7 @@
 // import { TextArea } from '../../ui/TextArea/TextArea'
 // import { subscribe, trigger, unsubscribe } from '../../utils/events'
 // import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-// import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+// import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 // import DialogSidePanel, { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
 // import { useMutation, useQuery, useQueryClient } from 'react-query'
 // import { getLMservice } from '../../services/getLMservice'
@@ -203,7 +203,7 @@
 
 //     // if (dialogHandler) dialogHandler()
 
-//     // trigger(BASE_SP_EVENT, {
+//     // trigger(TRIGGER_RIGHT_SP_EVENT, {
 //     //   children: (
 //     //     <DialogSidePanel
 //     //       setP={setPromptForDebugDist}
@@ -410,7 +410,5 @@
 //                           </Button>
 //                       </>
 //                   )}
-  
-
 
 // export default SkillPromptModal

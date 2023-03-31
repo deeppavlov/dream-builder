@@ -14,8 +14,10 @@ import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { srcForIcons } from '../../utils/srcForIcons'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import Woman from '../../assets/icons/woman.png'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
@@ -36,6 +38,8 @@ export const SkillCard: FC<SkillCardProps> = ({
   const { isPreview } = usePreview()
   const tooltipId = useId()
   const skillCardRef = useRef(null)
+  const { options } = useDisplay()
+  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -59,7 +63,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const handleEditBtnClick = (e: React.MouseEvent) => {
     if (skill.component_type === 'Generative') {
       trigger('SkillPromptModal', { skill, action: 'edit' })
-      trigger(BASE_SP_EVENT, { isOpen: false })
+      trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       e.stopPropagation()
       return
     }
@@ -79,7 +83,8 @@ export const SkillCard: FC<SkillCardProps> = ({
         disabled && 'disabled'
       )}
       onClick={handleSkillCardClick}
-      ref={skillCardRef}>
+      ref={skillCardRef}
+      data-active={skill.name === activeSKillId}>
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
         {type == 'your' && (
@@ -97,7 +102,6 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div className={s.name}>
             <img className={s.companyLogo} src={Woman} />
             <p className={s.companyName}>
-              
               {skill?.author == 'DeepPavlov'
                 ? 'Dr. Xandra Smith'
                 : skill?.author}

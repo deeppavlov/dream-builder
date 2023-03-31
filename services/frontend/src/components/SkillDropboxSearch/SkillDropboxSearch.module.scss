@@ -13,7 +13,7 @@ $animation-delay: 300ms;
     }
 
     .arrowDown {
-      transform: rotate(0deg);
+      transform: rotate(180deg);
     }
 
     .list {
@@ -68,7 +68,6 @@ $animation-delay: 300ms;
 
 .arrowDown {
   fill: $text3;
-  transform: rotate(180deg);
   transition: transform $animation-delay ease;
 }
 

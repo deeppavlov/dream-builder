@@ -151,7 +151,6 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                     key={id}
                     title={capitalizeTitle(group)}
                     group={group as StackType}
-                    closed
                     rounded>
                     {group == 'skill_selectors' &&
                       components?.skill_selectors?.length == 0 && (

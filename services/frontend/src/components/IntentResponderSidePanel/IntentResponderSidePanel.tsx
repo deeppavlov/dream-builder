@@ -81,12 +81,13 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
         <Button
           theme='secondary'
           long
-          props={{ onClick: handleAddIntentBtnClick }}>
+          props={{ onClick: handleAddIntentBtnClick }}
+        >
           <PlusIcon />
           Add Intent Responder
         </Button>
         <IntentList>
-          <Accordion title='User-customized' small>
+          <Accordion isActive title='User-customized' small>
             {intentsMock.map(({ id, name, about, status }) => (
               <IntentListItem
                 key={id}
@@ -97,7 +98,7 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
               />
             ))}
           </Accordion>
-          <Accordion title='Prebuilt' small>
+          <Accordion isActive title='Prebuilt' small>
             {intentsMock.map(({ id, name, about }) => (
               <IntentListItem
                 key={id}
@@ -128,7 +129,8 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
         <SidePanelStatus
           status='default'
           title='Sorry, training is not yet available.'
-          desc='Stay tuned for the upcoming updates!'>
+          desc='Stay tuned for the upcoming updates!'
+        >
           <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>
             Close
           </Button>

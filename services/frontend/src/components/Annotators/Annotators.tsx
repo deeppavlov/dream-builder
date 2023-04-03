@@ -10,6 +10,7 @@ import s from './Annotators.module.scss'
 
 interface Props {
   annotators: Component[]
+
 }
 
 export const Annotators: FC<Props> = ({ annotators }) => {
@@ -27,7 +28,7 @@ export const Annotators: FC<Props> = ({ annotators }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Annotators' />
       <div className={s.elements}>
-        <Accordion closed title='Customizable'>
+        <Accordion title='Customizable'>
           <WaitForNextRelease />
           {annotators?.map((annotator, i) => {
             if (annotator?.is_customizable) {
@@ -36,12 +37,13 @@ export const Annotators: FC<Props> = ({ annotators }) => {
                   key={annotator.name + i}
                   annotator={annotator}
                   isPreview={isPreview}
+                  name='annotators'
                 />
               )
             }
           })}
         </Accordion>
-        <Accordion title='Non-customizable'>
+        <Accordion isActive title='Non-customizable'>
           {annotators?.map((annotator, i) => {
             if (!annotator.is_customizable) {
               return (
@@ -49,6 +51,7 @@ export const Annotators: FC<Props> = ({ annotators }) => {
                   key={i}
                   annotator={annotator}
                   isPreview={isPreview}
+                  name='annotators'
                 />
               )
             }

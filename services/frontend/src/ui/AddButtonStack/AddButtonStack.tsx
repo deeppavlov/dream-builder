@@ -18,7 +18,8 @@ export const AddButtonStack = ({
     <button
       className={cx('add', disabled && 'disabled')}
       disabled={disabled}
-      onClick={onClick}>
+      onClick={onClick}
+    >
       <PlusLogo />
       <p>{text}</p>
     </button>

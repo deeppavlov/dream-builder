@@ -35,18 +35,19 @@ const DropboxSearch = ({
       <div
         className={`${s.dropboxSearch__list} ${
           isOpen ? s.dropboxSearch__list_open : ''
-        }`}>
+        }`}
+      >
         <IntentList>
           {/* <div className={s.dropboxSearch__search}>
             <Input props={{ placeholder: 'Search intents' }} />
           </div> */}
           <Search />
-          <Accordion title='Custom' small>
+          <Accordion isActive title='Custom' small>
             {intents?.map(({ id, name, status }) => (
               <IntentListItem key={id} id={id} name={name} status={status} />
             ))}
           </Accordion>
-          <Accordion title='Prebuilt' small>
+          <Accordion isActive title='Prebuilt' small>
             {intents?.map(({ id, name }) => (
               <IntentListItem key={id} id={id} name={name} status={'default'} />
             ))}

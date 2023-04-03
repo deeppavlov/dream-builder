@@ -1,10 +1,8 @@
-import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
 import { FC } from 'react'
+import ResponseSelectorLogo from '../../assets/icons/response_selectors.svg'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { Skill } from '../SkillSelector/Skill'
-import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import { usePreview } from '../../context/PreviewProvider'
+import { RadioSkill } from '../SkillSelector/RadioSkill'
 import { WaitForNextRelease } from '../Stack/WaitForNextRelease'
 import { IStackElement } from '../../types/types'
 import s from './ResponseSelector.module.scss'
@@ -16,7 +14,6 @@ interface ResponseSelectorProps {
 export const ResponseSelector: FC<ResponseSelectorProps> = ({
   responseSelectors,
 }) => {
-  const { isPreview } = usePreview()
   const customizable = responseSelectors?.filter(skill => skill.is_customizable)
   const nonCustomizable = responseSelectors?.filter(
     skill => !skill.is_customizable
@@ -38,40 +35,41 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
       </div>
       <AddButtonStack disabled={true} text='Add Response Selector' />
       <form onSubmit={submitHandler}>
-        <Accordion closed title='Customizable'>
-          <WaitForNextRelease />
-          <div className={s.element}>
-            {customizable?.map((skill, i) => {
-              return (
-                <RadioButton
-                  key={skill.name + i}
-                  id={skill.name}
-                  value={skill.name}
-                  name='response_selector'
-                  // checked={responseSelectors?.length === 1}
-                  htmlFor={skill.name}>
-                  <Skill skill={skill} isPreview={isPreview} />
-                </RadioButton>
-              )
-            })}
-          </div>
+        <Accordion title='Customizable'>
+          {customizable.length > 0 ? (
+            <>
+              {customizable?.map((skill, i) => {
+                return (
+                  <RadioSkill
+                    key={skill.name + i}
+                    id={skill.name}
+                    value={skill.name}
+                    name='response_selector'
+                    // checked={responseSelectors?.length === 1}
+                    htmlFor={skill.name}
+                    skill={skill}
+                  />
+                )
+              })}
+            </>
+          ) : (
+            <WaitForNextRelease />
+          )}
         </Accordion>
-        <Accordion title='Non-customizable'>
-          <div className={s.element}>
-            {nonCustomizable?.map((skill, i) => {
-              return (
-                <RadioButton
-                  key={skill.name + i}
-                  id={skill.name}
-                  value={skill.name}
-                  name='response_selector'
-                  defaultChecked={nonCustomizable?.length === 1}
-                  htmlFor={skill.name}>
-                  <Skill skill={skill} isPreview={isPreview} />
-                </RadioButton>
-              )
-            })}
-          </div>
+        <Accordion isActive title='Non-customizable'>
+          {nonCustomizable?.map((skill, i) => {
+            return (
+              <RadioSkill
+                key={skill.name + i}
+                id={skill.name}
+                value={skill.name}
+                name='response_selector'
+                defaultChecked={nonCustomizable?.length === 1}
+                htmlFor={skill.name}
+                skill={skill}
+              />
+            )
+          })}
         </Accordion>
       </form>
     </div>

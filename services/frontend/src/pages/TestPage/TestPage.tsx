@@ -1002,7 +1002,7 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>Accordion</span>
         <div className={s.testPage__component}>
           <span>default</span>
-          <Accordion title='Lorem ipsum is placeholder text commonly'>
+          <Accordion isActive title='Lorem ipsum is placeholder text commonly'>
             <p>
               Lorem ipsum is placeholder text commonly used in the graphic,
               print, and publishing industries for previewing layouts and visual

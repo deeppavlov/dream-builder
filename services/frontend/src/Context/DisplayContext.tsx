@@ -35,6 +35,8 @@ const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.ACTIVE_ASSISTANT, {}],
   [consts.COPILOT_SP_IS_ACTIVE, false],
   [consts.ACTIVE_ASSISTANT_SP_ID, null],
+  [consts.ACTIVE_SKILL_SP_ID, null],
+  [consts.ACTIVE_ANNOTATOR_SP_ID, null],
 ])
 
 const DisplayContext = createContext({})

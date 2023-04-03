@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
 import s from './RadioButton.module.scss'
 
-interface RadioButtonProps {
+export interface RadioButtonProps {
   children: React.ReactNode
   name: string
   id: string | undefined // ???

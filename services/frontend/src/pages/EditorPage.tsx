@@ -40,7 +40,6 @@ import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
 import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
-import CopilotSidePanel from '../components/CopilotSidePanel/CopilotSidePanel'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
@@ -56,11 +55,7 @@ export const EditorPage = () => {
   const { isPreview, setIsPreview } = usePreview()
   const tabsNames = ['Skills', 'Architecture']
 
-  const {
-    isLoading: isDistLoading,
-    error: distError,
-    data: dist,
-  } = useQuery(
+  const { data: dist } = useQuery(
     ['dist', state?.distName],
     () => getDist(state?.distName! || nameFromURL),
     {
@@ -150,7 +145,8 @@ export const EditorPage = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
-                }}>
+                }}
+              >
                 <DeepyHelperTab />
                 <SettingsTab />
               </div>
@@ -174,7 +170,8 @@ export const EditorPage = () => {
                         text='Add Skill'
                       />
                     ) : undefined
-                  }>
+                  }
+                >
                   <SkillList skills={skills} view='table' type='your' />
                 </Table>
               )}

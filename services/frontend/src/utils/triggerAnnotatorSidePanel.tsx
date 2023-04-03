@@ -1,15 +1,16 @@
 import AnnotatorSidePanel from '../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import IntentCatcherSidePanel from '../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
-import { Annotator } from '../types/types'
+import { IStackElement } from '../types/types'
 import { trigger } from './events'
 
 interface Props {
-  annotator: Annotator
+  annotator: IStackElement
   activeTab: 'Properties' | 'Editor'
+  name?: string
 }
 
-const getAnnotatorSidePanel = ({ annotator, activeTab }: Props): void => {
+const getAnnotatorSidePanel = ({ annotator, activeTab, name }: Props): void => {
   switch (annotator.display_name) {
     case 'Intent Catcher':
       trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -30,6 +31,7 @@ const getAnnotatorSidePanel = ({ annotator, activeTab }: Props): void => {
             key={annotator.name + activeTab}
             annotator={annotator}
             activeTab={activeTab}
+            name={name}
           />
         ),
       })

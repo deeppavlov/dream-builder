@@ -36,24 +36,21 @@
   &.rounded {
     border-radius: 8px;
   }
-  &.closed {
-    svg {
-      transition: ease 0.2s;
-      transform: rotate(0deg);
-    }
+  &.active svg {
+    transform: rotate(180deg);
   }
 
   svg {
     fill: rgba(0, 0, 0, 0.7);
     transition: ease 0.2s;
+    transform: rotate(0deg);
     cursor: pointer;
     @include icon_size_24;
-    transform: rotate(180deg);
   }
 }
 
 .elements {
   overflow: hidden;
-  transition: height ease 0.2s;
   max-width: 440px;
+  transition: height ease 0.2s;
 }

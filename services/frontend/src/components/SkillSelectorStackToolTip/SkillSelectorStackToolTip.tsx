@@ -5,20 +5,15 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 import SelectorSettingsSidePanel from '../SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 
-interface Props extends IContextMenu {
+interface Props {
   tooltipId: string
   skill: IStackElement
 }
 
-const SkillSelectorStackToolTip = ({ tooltipId, skill, isPreview }: Props) => {
+const SkillSelectorStackToolTip = ({ tooltipId, skill }: Props) => {
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      children: (
-        <SelectorSettingsSidePanel
-          name={skill.display_name}
-          desc={skill.description}
-        />
-      ),
+      children: <SelectorSettingsSidePanel skill={skill} />,
     })
 
   return (

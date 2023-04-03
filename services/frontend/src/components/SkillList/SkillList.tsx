@@ -9,6 +9,7 @@ export const SkillList: FC<SkillListProps> = ({
   type,
   forGrid,
   forModal,
+  withoutDate
 }) => {
   return (
     <>
@@ -19,6 +20,7 @@ export const SkillList: FC<SkillListProps> = ({
             key={i}
             skill={skill}
             type={type!}
+            withoutDate={withoutDate}
           />
         ) : (
           <SkillCard key={i} skill={skill} type={type!} forGrid={forGrid} />

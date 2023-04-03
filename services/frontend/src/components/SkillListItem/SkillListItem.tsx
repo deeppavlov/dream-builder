@@ -1,35 +1,37 @@
-import { FC, useId, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
+import { FC, useId, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { Kebab } from '../../ui/Kebab/Kebab'
-import { trigger } from '../../utils/events'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { srcForIcons } from '../../utils/srcForIcons'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
-import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
-import { usePreview } from '../../context/PreviewProvider'
-import { dateToUTC } from '../../utils/dateToUTC'
-import { timeToUTC } from '../../utils/timeToUTC'
-import { ISkill, SkillAvailabilityType } from '../../types/types'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import Button from '../../ui/Button/Button'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
-import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import { useDisplay } from '../../context/DisplayContext'
+import { usePreview } from '../../context/PreviewProvider'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import { Kebab } from '../../ui/Kebab/Kebab'
+import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { consts } from '../../utils/consts'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
+import { srcForIcons } from '../../utils/srcForIcons'
+import { timeToUTC } from '../../utils/timeToUTC'
+import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
   skill: ISkill
   type: SkillAvailabilityType
   forModal?: boolean
+  withoutDate?: boolean
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
   skill,
   forModal,
   type,
+  withoutDate,
 }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
@@ -73,25 +75,29 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       className={cx('tr', disabled && 'disabled')}
       onClick={handleSkillListItemClick}
       ref={skillListItemRef}
-      data-active={skill.name === activeSKillId}>
+      data-active={skill.name === activeSKillId}
+    >
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.skillName}>{skill?.display_name || '------'}</p>
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.type}>
-          <img className={s.typeLogo} src={srcForComponentType} />
-          <p className={cx('typeText', nameForComponentType)}>
-            {skill?.component_type || '------'}
-          </p>
-        </div>
+        {skill?.component_type && (
+          <div className={s.type}>
+            <img className={s.typeLogo} src={srcForComponentType} />
+            <p className={cx('typeText', nameForComponentType)}>
+              {skill?.component_type || '------'}
+            </p>
+          </div>
+        )}
       </td>
       <td className={s.td}>
         <div
           className={s.description}
           data-tip
-          data-tooltip-id={'skillTableDesc' + tooltipId}>
+          data-tooltip-id={'skillTableDesc' + tooltipId}
+        >
           {skill?.description}
           <BaseToolTip
             id={'skillTableDesc' + tooltipId}
@@ -100,12 +106,14 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           />
         </div>
       </td>
-      <td className={s.td}>
-        <div className={s.date}>
-          <p className={s.ddmmyyyy}>{date || 'Empty'}</p>
-          <p className={s.time}>{time || 'Empty'}</p>
-        </div>
-      </td>
+      {!withoutDate && (
+        <td className={s.td}>
+          <div className={s.date}>
+            <p className={s.ddmmyyyy}>{date || 'Empty'}</p>
+            <p className={s.time}>{time || 'Empty'}</p>
+          </div>
+        </td>
+      )}
       <td className={s.td}>
         <div className={s.btns_area}>
           {forModal ? (
@@ -114,14 +122,16 @@ export const SkillListItem: FC<SkillListItemProps> = ({
                 theme='primary'
                 small
                 withIcon
-                props={{ onClick: handleAddClick }}>
+                props={{ onClick: handleAddClick }}
+              >
                 <Add />
               </Button>
               <Button
                 theme='secondary'
                 small
                 withIcon
-                props={{ onClick: handleSkillListItemClick }}>
+                props={{ onClick: handleSkillListItemClick }}
+              >
                 <Properties />
               </Button>
             </>

@@ -110,6 +110,7 @@ export interface SkillListProps {
   size?: SkillCardSize
   forGrid?: boolean
   forModal?: boolean
+  withoutDate?:boolean
 }
 export interface SettingKey {
   name: string

@@ -58,7 +58,6 @@
   display: flex;
   align-items: start;
   max-height: 64px;
-  min-width: 460px;
   color: rgba(0, 0, 0, 0.7);
   @include hide_text;
   @include b3;
@@ -139,6 +138,16 @@
     cursor: pointer;
     svg {
       stroke: #fff;
+    }
+  }
+}
+@media (max-width: 1440px) {
+  .description {
+    min-width: 100px;
+  }
+  .type {
+    .typeText {
+      font-size: 0;
     }
   }
 }

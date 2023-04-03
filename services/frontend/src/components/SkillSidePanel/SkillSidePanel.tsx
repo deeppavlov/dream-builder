@@ -1,21 +1,20 @@
-import { FC, useEffect, useId } from 'react'
-import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
-import { srcForIcons } from '../../utils/srcForIcons'
-import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
-import { trigger } from '../../utils/events'
-import { ISkill } from '../../types/types'
-import useTabsManager, { TabList } from '../../hooks/useTabsManager'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import Button from '../../ui/Button/Button'
+import classNames from 'classnames/bind'
+import { FC, useEffect, useId } from 'react'
+import Woman from '../../assets/icons/woman.png'
+import { useAuth } from '../../context/AuthProvider'
+import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import useTabsManager, { TabList } from '../../hooks/useTabsManager'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { useAuth } from '../../context/AuthProvider'
-import Woman from '../../assets/icons/woman.png'
+import { ISkill } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
-import { useDisplay } from '../../context/DisplayContext'
+import { trigger } from '../../utils/events'
+import { srcForIcons } from '../../utils/srcForIcons'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -66,7 +65,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  console.log(`modelType = `, nameForModelType)
   return (
     <>
       <SidePanelHeader>
@@ -77,7 +76,8 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}>
+              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}
+            >
               {tab.name}
             </li>
           ))}
@@ -90,36 +90,40 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
             <EditPencilIcon className={s.icon} data-disabled />
           </div>
           <div className={s.author}>
-            {skill?.author == 'DeepPavlov' ? (
+            {skill?.author.fullname == 'DeepPavlov' ? (
               <img src={Woman} alt='Author' />
             ) : (
               <img src={skill?.author?.picture} />
             )}
             <span>
               {' '}
-              {skill?.author == 'DeepPavlov'
+              {skill?.author.fullname == 'DeepPavlov'
                 ? 'Dr. Xandra Smith'
-                : skill?.author}
+                : skill?.author.fullname}
             </span>
           </div>
           <ul className={s.table}>
             <li className={s.item}>
               <span className={cx('table-name')}>Original author:</span>
-              <span className={s.value}>{skill?.author}</span>
+              <span className={s.value}>{skill?.author?.fullname}</span>
             </li>
 
-            <li className={s.item}>
-              <span className={cx('table-name')}>Component Type:</span>
-              <span className={cx('value', nameForComponentType)}>
-                <img className={s.logo} src={srcForComponentType} />
-                <span>{skill?.component_type}</span>
-              </span>
-            </li>
+            {skill?.component_type && (
+              <li className={s.item}>
+                <span className={cx('table-name')}>Component Type:</span>
+                <span className={cx('value', nameForComponentType)}>
+                  <img className={s.logo} src={srcForComponentType} />
+                  <span>{skill?.component_type}</span>
+                </span>
+              </li>
+            )}
             <li className={s.item}>
               <span className={cx('table-name')}>Model Type:</span>
               <span className={cx('value', nameForModelType)}>
                 <img className={s.logo} src={srcForModelType} />
-                <span>{skill?.model_type}</span>
+                <span className={cx(nameForModelType)}>
+                  {skill?.model_type}
+                </span>
               </span>
             </li>
             <br />
@@ -140,7 +144,8 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
                 props={{
                   disabled: isPreview,
                   onClick: handleAddSkillBtnClick,
-                }}>
+                }}
+              >
                 Add to ...
               </Button>
             </div>

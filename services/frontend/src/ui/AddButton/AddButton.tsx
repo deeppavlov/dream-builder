@@ -4,7 +4,6 @@ import Add from '../../assets/icons/+.svg'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { trigger } from '../../utils/events'
-import { mockSkills } from '../../mocks/database/mockSkills'
 import s from './AddButton.module.scss'
 
 interface Props {
@@ -38,7 +37,7 @@ export const AddButton: FC<Props> = ({
       trigger('AssistantModal', { action: 'create' })
     }
 
-    if (forSkills && !isPreview) trigger('SkillsListModal', { mockSkills })
+    if (forSkills && !isPreview) trigger('SkillsListModal', {})
     fromScratch && trigger('SkillModal', { action: 'create' })
     if (!forSkills && !fromScratch) addBot()
   }

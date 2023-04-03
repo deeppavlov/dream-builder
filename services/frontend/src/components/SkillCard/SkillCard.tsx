@@ -62,7 +62,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    if (skill.component_type === 'generative') {
+    if (skill.component_type === 'Generative') {
       trigger('SkillPromptModal', { skill, action: 'edit' })
       trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       e.stopPropagation()

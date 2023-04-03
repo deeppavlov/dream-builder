@@ -152,25 +152,35 @@ def create_virtual_assistant(
 def delete_virtual_assistant_by_name(db: Session, name: str):
     virtual_assistant = get_virtual_assistant_by_name(db, name)
     deployments = db.scalars(
-        select(models.Deployment)
-        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
+        select(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
     )
     for deployment in deployments:
-        db.execute(
-            delete(models.DialogSession)
-            .where(models.DialogSession.deployment_id == deployment.id)
-        )
+        db.execute(delete(models.DialogSession).where(models.DialogSession.deployment_id == deployment.id))
 
-    db.execute(
-        delete(models.Deployment)
-        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
-    )
+    db.execute(delete(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id))
 
-    db.execute(
-        delete(models.VirtualAssistant)
-        .where(models.VirtualAssistant.name == name)
-    )
+    db.execute(delete(models.VirtualAssistant).where(models.VirtualAssistant.name == name))
     db.commit()
+
+
+def get_component(db: Session, component_id: int):
+    return db.get(models.Component, component_id)
+
+
+def get_all_components(db: Session):
+    return db.scalars(select(models.Component)).all()
+
+
+def get_components_by_group_name(db: Session, group: str):
+    return db.scalars(select(models.Component).filter_by(group=group)).all()
+
+
+def get_virtual_assistant_components(db: Session, virtual_assistant_name: str):
+    virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
+
+    return db.scalars(
+        select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)
+    ).all()
 
 
 def get_dialog_session(db: Session, dialog_session_id: int):
@@ -242,8 +252,7 @@ def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str):
 
 def create_deployment_from_copy(db: Session, original_virtual_assistant_id: int, new_virtual_assistant_id: int):
     original_deployment = db.scalar(
-        select(models.Deployment)
-        .where(models.Deployment.virtual_assistant_id == original_virtual_assistant_id)
+        select(models.Deployment).where(models.Deployment.virtual_assistant_id == original_virtual_assistant_id)
     )
 
     deployment = db.scalar(

@@ -54,6 +54,7 @@ class GoogleUser(Base):
     role = relationship("Role")
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author")
+    components = relationship("Component", back_populates="author")
     dialog_sessions = relationship("DialogSession", back_populates="user")
 
 
@@ -167,7 +168,10 @@ class Component(Base):
     component_type = Column(String, nullable=True)
     model_type = Column(String, nullable=True)
     is_customizable = Column(Boolean, nullable=False)
-    author = Column(String, nullable=False)
+
+    author_id = Column(Integer, ForeignKey("google_user.id"), nullable=False)
+    author = relationship(GoogleUser, back_populates="components")
+
     description = Column(String, nullable=True)
 
     ram_usage = Column(String, nullable=False)
@@ -217,7 +221,7 @@ def _pre_populate_from_tsv(
     connection,
     map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None,
 ):
-    logging.error(f"Pre-populating {target.name} from {path}")
+    logging.warning(f"Pre-populating {target.name} from {path}")
 
     for row in utils.iter_tsv_rows(path, map_value_types):
         connection.execute(target.insert(), row)
@@ -275,4 +279,14 @@ def pre_populate_component(target, connection, **kw):
         target,
         connection,
         map_value_types={"is_customizable": lambda x: bool(int(x)), "build_args": json.loads},
+    )
+
+
+@listens_for(VirtualAssistantComponent.__table__, "after_create")
+def pre_populate_virtual_assistant_component(target, connection, **kw):
+    _pre_populate_from_tsv(
+        "database/initial_data/virtual_assistant_component.tsv",
+        target,
+        connection,
+        map_value_types={"is_enabled": lambda x: bool(int(x))},
     )

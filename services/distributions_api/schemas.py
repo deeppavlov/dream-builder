@@ -118,14 +118,15 @@ class AssistantDistConfigsImport(BaseModel):
     data: dict[str, AnyConfig]
 
 
-class ComponentShort(BaseModel):
+class ComponentShort(BaseOrmModel):
+    id: int
     name: str
     display_name: str
     component_type: Optional[COMPONENT_TYPES]
-    model_type: MODEL_TYPES
+    model_type: Optional[MODEL_TYPES]
     is_customizable: bool
-    author: str
-    description: str
+    author: User
+    description: Optional[str]
     ram_usage: str
     gpu_usage: Optional[str]
     lm_service: Optional[str]

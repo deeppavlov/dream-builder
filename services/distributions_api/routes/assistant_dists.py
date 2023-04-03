@@ -389,13 +389,22 @@ async def clone_dist(
 
 
 @assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
-async def get_dist_components(dist_name: str):
-    try:
-        dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{DREAM_ROOT_PATH}/{dist_name}' not found")
+async def get_dist_components(dist_name: str, db: Session = Depends(get_db)):
+    # try:
+    #     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+    # except FileNotFoundError:
+    #     raise HTTPException(status_code=404, detail=f"Virtual assistant '{DREAM_ROOT_PATH}/{dist_name}' not found")
+    #
+    # return _pipeline_to_dist_component_response(dist.pipeline)
 
-    return _pipeline_to_dist_component_response(dist.pipeline)
+    grouped_components = {}
+    for va_component in crud.get_virtual_assistant_components(db, dist_name):
+        if va_component.component.group not in grouped_components:
+            grouped_components[va_component.component.group] = []
+
+        grouped_components[va_component.component.group].append(ComponentShort.from_orm(va_component.component))
+
+    return schemas.DistComponentsResponse(**grouped_components)
 
 
 @assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)

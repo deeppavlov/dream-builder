@@ -125,12 +125,12 @@ def get_all_private_virtual_assistants(db: Session, user_id: int):
 
 def create_virtual_assistant(
     db: Session,
-    cloned_from_id: int,
     author_id: int,
     source: str,
     name: str,
     display_name: str,
     description: str,
+    cloned_from_id: Optional[int] = None,
 ):
     new_virtual_assistant = db.scalar(
         insert(models.VirtualAssistant)
@@ -144,6 +144,18 @@ def create_virtual_assistant(
         )
         .returning(models.VirtualAssistant)
     )
+
+    if cloned_from_id:
+        for va_component in get_virtual_assistant_components(db, cloned_from_id):
+            db.scalar(
+                insert(models.VirtualAssistantComponent)
+                .values(
+                    virtual_assistant_id=new_virtual_assistant.id,
+                    component_id=va_component.component_id,
+                    is_enabled=va_component.is_enabled
+                )
+            )
+
     db.commit()
 
     return new_virtual_assistant
@@ -175,7 +187,13 @@ def get_components_by_group_name(db: Session, group: str):
     return db.scalars(select(models.Component).filter_by(group=group)).all()
 
 
-def get_virtual_assistant_components(db: Session, virtual_assistant_name: str):
+def get_virtual_assistant_components(db: Session, virtual_assistant_id: int):
+    return db.scalars(
+        select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
+    ).all()
+
+
+def get_virtual_assistant_components_by_name(db: Session, virtual_assistant_name: str):
     virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
 
     return db.scalars(

@@ -151,7 +151,9 @@ def _pipeline_to_dist_component_response(pipeline: Pipeline) -> DistComponentsRe
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDistModelShort:
+async def create_distribution(
+    payload: CreateAssistantDistModel, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+) -> schemas.VirtualAssistant:
     """
     Creates new distribution from base template
 
@@ -167,7 +169,16 @@ async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDis
     new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
     new_dist.save()
 
-    return _dist_to_dist_model_short(new_dist)
+    new_dist_db_row = crud.create_virtual_assistant(
+        db,
+        user.id,
+        str(new_dist.dist_path),
+        new_dist.name,
+        payload.display_name,
+        payload.description,
+    )
+
+    return schemas.VirtualAssistant.from_orm(new_dist_db_row)
 
 
 @assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
@@ -326,12 +337,12 @@ async def clone_dist(
     original_dist_db_row = crud.get_virtual_assistant_by_name(db, dist_name)
     new_dist_db_row = crud.create_virtual_assistant(
         db,
-        original_dist_db_row.id,
         user.id,
         str(new_dist.dist_path),
         new_dist.name,
         payload.display_name,
         payload.description,
+        cloned_from_id=original_dist_db_row.id,
     )
     crud.create_deployment_from_copy(db, original_dist_db_row.id, new_dist_db_row.id)
 
@@ -398,7 +409,7 @@ async def get_dist_components(dist_name: str, db: Session = Depends(get_db)):
     # return _pipeline_to_dist_component_response(dist.pipeline)
 
     grouped_components = {}
-    for va_component in crud.get_virtual_assistant_components(db, dist_name):
+    for va_component in crud.get_virtual_assistant_components_by_name(db, dist_name):
         if va_component.component.group not in grouped_components:
             grouped_components[va_component.component.group] = []
 

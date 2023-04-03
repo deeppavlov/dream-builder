@@ -1,13 +1,19 @@
+import secrets
 from typing import Optional
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel, BaseSettings, Field
 
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
 
 
+def _default_agent_user_id_prefix():
+    return secrets.token_urlsafe(8)
+
+
 class AppSettings(BaseModel):
     add_cors_middleware: Optional[bool] = False
+    agent_user_id_prefix: Optional[str] = Field(default_factory=_default_agent_user_id_prefix)
 
 
 class UrlSettings(BaseModel):

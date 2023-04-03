@@ -125,9 +125,9 @@ export interface IContextMenu {
 export interface IStackElement {
   name: string // Routing name
   display_name: string
-  author: string
-  component_type: string | null
-  model_type: string | null
+  author: IAuthor
+  component_type: ComponentType | null
+  model_type: ModelType | null
   date_created: string | Date
   description: string
   is_customizable: boolean
@@ -140,6 +140,7 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
   lm_service: string
+  
 }
 
 export interface SessionConfig {

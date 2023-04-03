@@ -36,7 +36,7 @@ export const ResponseSelector: FC<ResponseSelectorProps> = ({
       <AddButtonStack disabled={true} text='Add Response Selector' />
       <form onSubmit={submitHandler}>
         <Accordion title='Customizable'>
-          {customizable.length > 0 ? (
+          {customizable?.length > 0 ? (
             <>
               {customizable?.map((skill, i) => {
                 return (

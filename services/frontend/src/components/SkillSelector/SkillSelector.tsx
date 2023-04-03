@@ -32,7 +32,7 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
       </div>
       <AddButtonStack disabled={true} text='Add Skill Selector' />
       <form onSubmit={formSubmitHandler}>
-        <Accordion isActive={customizable.length > 0} title='Customizable'>
+        <Accordion isActive={customizable?.length > 0} title='Customizable'>
           <WaitForNextRelease />
           {customizable?.map((skill, i) => (
             <RadioSkill
@@ -47,7 +47,7 @@ export const SkillSelector: FC<Props> = ({ skillSelectors }) => {
           ))}
         </Accordion>
         <Accordion
-          isActive={nonCustomizable.length > 0}
+          isActive={nonCustomizable?.length > 0}
           title='Non-customizable'
         >
           {!nonCustomizable?.length ? (

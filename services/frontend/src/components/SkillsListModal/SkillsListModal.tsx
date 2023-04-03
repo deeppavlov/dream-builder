@@ -30,7 +30,9 @@ export const SkillsListModal = () => {
       right: rightSidepanelIsActive ? '368px' : 0,
       transition: 'all 0.3s linear',
     },
-    content: { width: '95%',height:'95%' },
+    content: {
+      width: '95%',
+    },
   }
   const handleEventUpdate = () => {
     setIsOpen(!isOpen)

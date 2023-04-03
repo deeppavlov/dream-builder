@@ -1,4 +1,4 @@
-import { matchPath, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import classNames from 'classnames/bind'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
 import { useAuth } from '../../context/AuthProvider'
@@ -21,8 +21,9 @@ export const Topbar = () => {
   const type: TTopbar = name !== undefined ? 'editor' : 'main'
   const isEditor = type === 'editor'
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
-  const isTableViewSwitcher =
-    location.pathname !== '/profile' && editorActiveTab !== 'Architecture'
+  const isTableViewSwitcher = isEditor
+    ? editorActiveTab !== 'Architecture'
+    : location.pathname !== '/profile'
   let cx = classNames.bind(s)
 
   return (
@@ -33,7 +34,7 @@ export const Topbar = () => {
       </div>
       {isEditor && <AssistantCloneButton />}
       <div className={s.btns_area}>
-        {isTableViewSwitcher && history.state?.activeTab !== 1 && <Display />}
+        {isTableViewSwitcher && <Display />}
         {isEditor && <Test />}
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
       </div>

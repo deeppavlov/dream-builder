@@ -40,20 +40,21 @@ import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
 import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
+import { SkillModal } from '../components/SkillModal/SkillModal'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
   const skillEditorIsActive = options.get(consts.SKILL_EDITOR_IS_ACTIVE)
+  const tabsNames = ['Skills', 'Architecture']
   const [activeTab, setActiveTab] = useState<number>(
-    history.state?.activeTab ?? 0
+    tabsNames.findIndex(v => v === options.get(consts.EDITOR_ACTIVE_TAB)) ?? 0
   )
   const auth = useAuth()
   const { state } = useLocation()
   const location = useLocation()
   const nameFromURL = location?.pathname?.substring(1)
   const { isPreview, setIsPreview } = usePreview()
-  const tabsNames = ['Skills', 'Architecture']
 
   const { data: dist } = useQuery(
     ['dist', state?.distName],
@@ -96,7 +97,10 @@ export const EditorPage = () => {
           id: consts.BREADCRUMBS_PATH,
           value: {
             location: location.pathname,
-            path: [dist?.display_name, tabsNames[activeTab]],
+            path: [
+              <a href={`/${dist?.name}`}>{dist?.display_name}</a>,
+              tabsNames[activeTab],
+            ],
           },
         },
       })
@@ -199,7 +203,6 @@ export const EditorPage = () => {
         </TabPanel>
       </Tabs>
       <Toaster />
-      <SkillsListModal />
 
       <BaseSidePanel />
       <BaseSidePanel transition='left' />
@@ -208,6 +211,7 @@ export const EditorPage = () => {
       <SkillPromptModal />
       <Toaster />
       <SkillsListModal />
+      <SkillModal />
       <PublishAssistantModal />
       <DeleteAssistantModal />
       <AssistantModal />

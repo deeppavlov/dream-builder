@@ -39,7 +39,7 @@ export const AddButton: FC<Props> = ({
     }
 
     if (forSkills && !isPreview) trigger('SkillsListModal', { mockSkills })
-    fromScratch && alert('this for create skills from scratch')
+    fromScratch && trigger('SkillModal', { action: 'create' })
     if (!forSkills && !fromScratch) addBot()
   }
 
@@ -51,7 +51,8 @@ export const AddButton: FC<Props> = ({
         forGrid && 'forGrid',
         forSkills && 'forSkills'
         // disabled && 'disabled'
-      )}>
+      )}
+    >
       <img src={Add} />
     </button>
   ) : (

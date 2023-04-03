@@ -8,9 +8,6 @@
   position: relative;
   padding: 24px 0px;
   height: 100%;
-  // Note: Custom TextArea component have a problem with max-height
-  // The faster way to fix it -> overflow: hidden; for .textArea selector.
-  // But then outline box-shadow would be cropped
 
   &[data-active='true'] {
     .container {
@@ -148,7 +145,6 @@
   @include b2;
   border: none;
   background-color: transparent;
-  overflow: hidden;
 
   &::placeholder {
     color: $text3;

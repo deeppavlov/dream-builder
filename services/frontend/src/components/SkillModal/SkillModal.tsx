@@ -65,13 +65,13 @@ export const SkillModal = () => {
   }
 
   const handleCreate = (data: any) => {
-    trigger('SkillPromptModal', {
-      action: 'create',
-      skill: {
-        ...skill,
-        ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
-      },
-    })
+    // trigger('SkillPromptModal', {
+    //   action: 'create',
+    //   skill: {
+    //     ...skill,
+    //     ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
+    //   },
+    // })
     closeModal()
   }
 

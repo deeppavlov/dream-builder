@@ -1,3 +1,4 @@
+import classNames from 'classnames/bind'
 import React from 'react'
 import { Link, matchPath, useMatches } from 'react-router-dom'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
@@ -12,6 +13,7 @@ export const Breadcrumbs = () => {
   const match = contextPath?.location
     ? matchPath({ path: contextPath?.location || '' }, location.pathname)
     : null
+  let cx = classNames.bind(s)
 
   return (
     <>
@@ -27,7 +29,12 @@ export const Breadcrumbs = () => {
         {matches.map((crumb, i) => {
           return (
             crumb.pathname !== '/' && (
-              <span key={i}>{crumb?.handle as string}</span>
+              <span
+                key={i}
+                className={cx('route', !match && 'active')}
+              >
+                {crumb?.handle as string}
+              </span>
             )
           )
         })}
@@ -35,7 +42,14 @@ export const Breadcrumbs = () => {
           contextPath?.path?.map((name: string, i: number) => (
             <React.Fragment key={name + i}>
               <span className={s.slash} />
-              <span>{name ?? '...'}</span>
+              <span
+                className={cx(
+                  'route',
+                  contextPath?.path?.length - 1 === i && 'active'
+                )}
+              >
+                {name ?? '...'}
+              </span>
             </React.Fragment>
           ))}
       </div>

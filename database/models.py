@@ -1,10 +1,12 @@
+import json
 import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, JSON, TypeDecorator, VARCHAR
+from sqlalchemy.dialects.postgresql import insert, JSONB
 from sqlalchemy.event import listens_for
+from sqlalchemy.ext import mutable
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import expression
@@ -142,7 +144,9 @@ class PublishRequest(Base):
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
-    virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id")
+    virtual_assistant = relationship(
+        "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
+    )
 
     user_id = Column(Integer, ForeignKey("google_user.id"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
@@ -156,10 +160,28 @@ class Component(Base):
     __tablename__ = "component"
 
     id = Column(Integer, index=True, primary_key=True)
-    group = Column(String, nullable=False)
     source = Column(String, nullable=False)
-    container = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    display_name = Column(String, nullable=False)
+    container_name = Column(String, nullable=False)
+    component_type = Column(String, nullable=True)
+    model_type = Column(String, nullable=True)
+    is_customizable = Column(Boolean, nullable=False)
+    author = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+
+    ram_usage = Column(String, nullable=False)
+    gpu_usage = Column(String, nullable=True)
+
+    port = Column(Integer, nullable=False)
+    group = Column(String, nullable=False)
     endpoint = Column(String, nullable=False)
+
+    # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
+    # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
+    build_args = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
 
 class VirtualAssistantComponent(Base):
@@ -244,3 +266,13 @@ def pre_populate_lm_service(target, connection, **kw):
 @listens_for(Deployment.__table__, "after_create")
 def pre_populate_deployment(target, connection, **kw):
     _pre_populate_from_tsv("database/initial_data/deployment.tsv", target, connection)
+
+
+@listens_for(Component.__table__, "after_create")
+def pre_populate_component(target, connection, **kw):
+    _pre_populate_from_tsv(
+        "database/initial_data/component.tsv",
+        target,
+        connection,
+        map_value_types={"is_customizable": lambda x: bool(int(x)), "build_args": json.loads},
+    )

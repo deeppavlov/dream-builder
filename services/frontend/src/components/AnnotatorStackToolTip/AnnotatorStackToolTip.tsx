@@ -1,19 +1,25 @@
-import { Component, IContextMenu } from '../../types/types'
+import { IContextMenu, IStackElement } from '../../types/types'
 import getAnnotatorSidePanel from '../../utils/triggerAnnotatorSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  annotator: Component
+  annotator: IStackElement
+  name?: string
 }
 
-const AnnotatorStackToolTip = ({ tooltipId, annotator, isPreview }: Props) => {
+const AnnotatorStackToolTip = ({
+  tooltipId,
+  annotator,
+  isPreview,
+  name,
+}: Props) => {
   const handleEditBtnClick = () =>
-    getAnnotatorSidePanel({ annotator, activeTab: 'Editor' })
+    getAnnotatorSidePanel({ annotator, activeTab: 'Editor', name })
 
   const handlePropertiesBtnClick = () =>
-    getAnnotatorSidePanel({ annotator, activeTab: 'Properties' })
+    getAnnotatorSidePanel({ annotator, activeTab: 'Properties', name })
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>

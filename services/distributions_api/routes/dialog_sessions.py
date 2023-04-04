@@ -102,7 +102,7 @@ async def send_dialog_session_message(
     if virtual_assistant.publish_request is not None:
         chat_url = dialog_session.deployment.chat_url
     else:
-        chat_url = "http://54.234.141.146:4249"
+        chat_url = crud.get_debug_assistant_chat_url(db)
 
     lm_service = None
     if dialog_session.deployment.lm_service:

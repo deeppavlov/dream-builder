@@ -10,6 +10,7 @@ import s from './IntentResponderModal.module.scss'
 import DropboxSearch from '../DropboxSearch/DropboxSearch'
 import { intentsMock } from '../IntentResponderSidePanel/IntentResponderSidePanel'
 import { subscribe, unsubscribe } from '../../utils/events'
+import { useObserver } from '../../hooks/useObserver'
 
 export interface IntentInterface {
   id: string
@@ -79,10 +80,7 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
     setIsOpen(!isOpen)
   }
 
-  useEffect(() => {
-    subscribe('IntentResponderModal', handleEventUpdate)
-    return () => unsubscribe('IntentResponderModal', handleEventUpdate)
-  }, [])
+  useObserver('IntentResponderModal', handleEventUpdate)
 
   return (
     <>

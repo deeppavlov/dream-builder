@@ -5,6 +5,7 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import { subscribe, unsubscribe } from '../../utils/events'
 import { login } from '../../context/AuthProvider'
 import s from './SignInModal.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 type MessageType = JSX.Element | string
 
@@ -24,10 +25,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
 
   const handleSignInBtnClick = () => login()
 
-  useEffect(() => {
-    subscribe('SignInModal', handleEventUpdate)
-    return () => unsubscribe('SignInModal', handleEventUpdate)
-  }, [])
+  useObserver('SignInModal', handleEventUpdate)
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

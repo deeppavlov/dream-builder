@@ -1,7 +1,7 @@
 import { useEffect, useId } from 'react'
 import { useForm } from 'react-hook-form'
 import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
-import { SettingKey } from '../../types/types'
+import { ISkill, IStackElement, SettingKey } from '../../types/types'
 import useTabsManager from '../../hooks/useTabsManager'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
@@ -9,20 +9,19 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
 import { SettingsList } from '../SettingsList/SettingsList'
 import s from './SelectorSettingsSidePanel.module.scss'
-
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 
 export interface SelectorSettings {
-  name: string
+  skill: IStackElement
   settings?: SettingKey[]
-  desc?: string
   activeTab?: 'Properties' | 'Editor'
   isDisabledEditor?: boolean
   withSelectAll?: boolean
 }
 
 const SelectorSettingsSidePanel = ({
-  name,
-  desc,
+  skill,
   settings,
   activeTab,
   isDisabledEditor,
@@ -38,6 +37,7 @@ const SelectorSettingsSidePanel = ({
         ])
       : new Map([[properties, { name: properties }]]),
   })
+  const { dispatch } = useDisplay()
   const settingsId = useId()
   const {
     register,
@@ -56,6 +56,20 @@ const SelectorSettingsSidePanel = ({
     reset() // Remove old settings state
   }, [settings])
 
+  const dispatchTrigger = (isOpen: boolean) =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_SKILL_SP_ID,
+        value: isOpen ? skill.name : null,
+      },
+    })
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
+
   return (
     <>
       <SidePanelHeader>
@@ -66,7 +80,8 @@ const SelectorSettingsSidePanel = ({
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              onClick={() => tabsInfo.handleTabSelect(id)}
+            >
               {tab.name}
             </li>
           ))}
@@ -74,17 +89,17 @@ const SelectorSettingsSidePanel = ({
       </SidePanelHeader>
       <div className={s.selectorSettingsSidePanel}>
         <form onSubmit={handleSubmit(onSubmit)} role='tabpanel'>
-          <SidePanelName>{name}</SidePanelName>
+          <SidePanelName>{skill.display_name}</SidePanelName>
           {tabsInfo.activeTabId === properties && (
             <p className={s.desc}>
-              {desc ||
+              {skill.description ||
                 'Some inormation about this annotator. So me inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator. Some inormation about this annotator.'}
             </p>
           )}
           {settings && tabsInfo.activeTabId === editor && (
             <>
               <SettingsList
-                key={name}
+                key={skill.name}
                 id={settingsId}
                 settings={settings}
                 withSelectAll={withSelectAll}
@@ -98,12 +113,14 @@ const SelectorSettingsSidePanel = ({
                 </span>
                 <Button
                   theme='secondary'
-                  props={{ onClick: handleCancelBtnClick }}>
+                  props={{ onClick: handleCancelBtnClick }}
+                >
                   Cancel
                 </Button>
                 <Button
                   theme='primary'
-                  props={{ type: 'submit', value: 'Submit' }}>
+                  props={{ type: 'submit', value: 'Submit' }}
+                >
                   Save
                 </Button>
               </SidePanelButtons>

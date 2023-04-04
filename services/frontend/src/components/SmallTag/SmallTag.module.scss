@@ -84,6 +84,41 @@
   padding: 0px 6px;
 }
 
+.public,
+.your {
+  @extend .text-capitalize;
+  font-size: 10px;
+  padding: 4px 8px 4px 4px;
+  font-weight: 600;
+
+  .icon {
+    min-width: 16px;
+    max-width: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    margin-right: 4px;
+  }
+}
+
+.public {
+  @extend .success;
+  color: #009973;
+
+  .icon path {
+    stroke: #009973;
+  }
+}
+
+.your {
+  background: #8d96b51a;
+  border-color: $text3;
+  color: $text3;
+
+  .icon path {
+    fill: $text3;
+  }
+}
+
 .loading {
   // Dots animation
   &::after {

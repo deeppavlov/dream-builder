@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import classNames from 'classnames/bind'
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import { trigger } from '../../utils/events'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import useTabsManager from '../../hooks/useTabsManager'
 import { IStackElement } from '../../types/types'
@@ -14,9 +14,15 @@ interface Props {
   annotator: IStackElement
   activeTab?: 'Properties' | 'Editor'
   children?: React.ReactNode // Editor Tab element
+  name?: string
 }
 
-const AnnotatorSidePanel = ({ annotator, children, activeTab }: Props) => {
+const AnnotatorSidePanel = ({
+  annotator,
+  children,
+  activeTab,
+  name,
+}: Props) => {
   const { display_name, author, description, model_type } = annotator
   const isEditor = children !== undefined
   const [properties, editor] = ['Properties', 'Editor']
@@ -32,7 +38,22 @@ const AnnotatorSidePanel = ({ annotator, children, activeTab }: Props) => {
     ),
   })
   const nameForModelType = modelTypeMap[model_type ?? '']
+  const { dispatch } = useDisplay()
   let cx = classNames.bind(s)
+
+  const dispatchTrigger = (isOpen: boolean) =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ANNOTATOR_SP_ID,
+        value: isOpen ? name + annotator.name : null,
+      },
+    })
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
 
   return (
     <>
@@ -44,7 +65,8 @@ const AnnotatorSidePanel = ({ annotator, children, activeTab }: Props) => {
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              onClick={() => tabsInfo.handleTabSelect(id)}
+            >
               {tab.name}
             </li>
           ))}

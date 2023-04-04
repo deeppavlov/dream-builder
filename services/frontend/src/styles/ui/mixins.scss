@@ -108,7 +108,9 @@
   // }
 }
 @mixin bot-card_behavior {
-  &:hover {
+  &:hover,
+  &:focus-within,
+  &[data-active='true'] {
     border: 1px solid #3300ff;
     box-shadow: 0px 0px 20px rgba(100, 99, 99, 0.15);
   }
@@ -199,8 +201,12 @@
       color: $primary1;
     }
   }
-  &:active {
+  &:active,
+  &[data-active='true'],
+  &:focus-within {
     color: #190080;
+    background: rgba(51, 0, 255, 0.1);
+
     .data {
       color: #190080;
     }
@@ -233,7 +239,8 @@
 }
 
 @mixin tr_behavior {
-  &:hover {
+  &:hover,
+  &[data-active='true'] {
     * {
       cursor: pointer;
     }
@@ -246,6 +253,13 @@
       .time {
         color: #3300ff;
       }
+    }
+  }
+
+  &:active,
+  &[data-active='true'] {
+    td {
+      background-color: rgba(51, 0, 255, 0.1);
     }
   }
 

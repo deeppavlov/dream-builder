@@ -5,6 +5,6 @@ export async function getPrivateDists() {
     const { data } = await privateApi.get('/assistant_dists/private')
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

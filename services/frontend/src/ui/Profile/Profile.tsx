@@ -5,6 +5,7 @@ import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
 import { logout } from '../../context/AuthProvider'
 import { UserContext } from '../../types/types'
+import { RoutesList } from '../../router/RoutesList'
 import s from './Profile.module.scss'
 
 interface ProfileProps {

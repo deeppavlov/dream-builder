@@ -1,6 +1,7 @@
 .container {
   &.tooltip {
     @include tooltip;
+    white-space: pre-wrap;
   }
 
   &.small {

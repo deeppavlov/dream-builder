@@ -1,11 +1,12 @@
-import { FC, useId } from 'react'
+import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReactComponent as Logo } from '../../assets/icons/dp.svg'
-import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
+import { ReactComponent as Logo } from '@assets/icons/dp.svg'
+import Woman from '@assets/icons/woman.png'
+import { ReactComponent as Clone } from '@assets/icons/clone.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import Button from '../../ui/Button/Button'
@@ -14,7 +15,10 @@ import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { timeToUTC } from '../../utils/timeToUTC'
+import { consts } from '../../utils/consts'
+import { useDisplay } from '../../context/DisplayContext'
 import s from './BotListItem.module.scss'
+
 
 interface BotListItemProps {
   type: BotAvailabilityType
@@ -27,9 +31,13 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
+  const botListItemRef = useRef(null)
+  const { options } = useDisplay()
+  const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleBotListItemClick = () => {
-    trigger(BASE_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
+      parent: botListItemRef,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -75,7 +83,11 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   }
 
   return (
-    <tr className={s.tr} onClick={handleBotListItemClick}>
+    <tr
+      className={s.tr}
+      onClick={handleBotListItemClick}
+      ref={botListItemRef}
+      data-active={bot.name === activeAssistantId}>
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.botName}>{bot?.display_name || '------'}</p>
@@ -83,8 +95,16 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          <Logo />
-          <p>{bot?.author}</p>
+          {bot?.author?.fullname == 'Deepy Pavlova' ? (
+            <img src={Woman} alt='Author' />
+          ) : (
+            <img src={bot?.author?.picture} />
+          )}
+          <p>
+            {bot?.author?.fullname! == 'Deepy Pavlova'
+              ? 'Dr. Xandra Smith'
+              : bot?.author?.fullname!}
+          </p>
         </div>
       </td>
       <td className={s.td}>

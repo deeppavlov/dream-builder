@@ -1,13 +1,14 @@
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { Modal } from '../components/Modal/Modal'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 
 export const DraftPage = () => {
   return (
     <>
-      <Topbar />
-      <Main>{}</Main>
-      <Modal />
+      <Main>
+        <Wrapper skills></Wrapper>
+      </Main>
+      <AssistantModal />
     </>
   )
 }

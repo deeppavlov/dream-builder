@@ -3,7 +3,8 @@
   align-items: center;
   gap: 9px;
   cursor: pointer;
-  @include b3;
+  @include t4;
+
   color: $text2;
 
   //&:focus-within,
@@ -64,4 +65,35 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.secondary {
+  &:hover {
+    color: $text3;
+
+    .checkbox {
+      border-color: $text3;
+    }
+
+    .checkmark {
+      stroke: $text3;
+    }
+  }
+
+  &:has(input:checked) {
+    color: $text3;
+
+    .checkbox {
+      border-color: $text3;
+      background-color: $text3;
+    }
+    .checkmark {
+      display: block;
+      stroke: $text4;
+    }
+  }
+
+  &:has(input:disabled) {
+    opacity: 0.3;
+  }
 }

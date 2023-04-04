@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { trigger } from '../../utils/events'
 import s from './AddButton.module.scss'
-import { mockSkills } from '../../mocks/database/mockSkills'
 
 interface Props {
   text?: string
@@ -38,8 +37,8 @@ export const AddButton: FC<Props> = ({
       trigger('AssistantModal', { action: 'create' })
     }
 
-    if (forSkills && !isPreview) trigger('SkillsListModal', { mockSkills })
-    fromScratch && alert('this for create skills from scratch')
+    if (forSkills && !isPreview) trigger('SkillsListModal', {})
+    fromScratch && trigger('SkillModal', { action: 'create' })
     if (!forSkills && !fromScratch) addBot()
   }
 
@@ -48,19 +47,23 @@ export const AddButton: FC<Props> = ({
       onClick={handleClick}
       className={cx(
         'forCard',
-        forGrid && 'forGrid'
+        forGrid && 'forGrid',
+        forSkills && 'forSkills'
         // disabled && 'disabled'
-      )}>
+      )}
+    >
       <img src={Add} />
     </button>
   ) : (
-    <tr className={cx('tr', disabled && 'disabled')}>
-      <td colSpan={5} className={s.td}>
-        <button className={s.forTable} onClick={handleClick}>
-          <img src={Add} />
-          <p>{text || 'Create From Scratch'}</p>
-        </button>
-      </td>
-    </tr>
+    <tbody>
+      <tr className={cx('tr')}>
+        <td colSpan={5} className={s.td}>
+          <button className={s.forTable} onClick={handleClick}>
+            <img src={Add} />
+            <p>{text || 'Create From Scratch'}</p>
+          </button>
+        </td>
+      </tr>
+    </tbody>
   )
 }

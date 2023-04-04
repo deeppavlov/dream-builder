@@ -36,7 +36,7 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
         onClick={handleAddClick}
       />
       <div className={s.elements}>
-        <Accordion title='Customizable'>
+        <Accordion isActive title='Customizable'>
           {customizable?.map((skill, i) => {
             return (
               <SkillElement
@@ -47,7 +47,7 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
             )
           })}
         </Accordion>
-        <Accordion title='Non-Customizable'>
+        <Accordion isActive title='Non-Customizable'>
           {nonCustomizable?.map((skill, i) => {
             return (
               <SkillElement

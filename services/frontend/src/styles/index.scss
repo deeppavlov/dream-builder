@@ -18,8 +18,9 @@ body {
   overflow: auto;
   width: 100vw;
   height: 100vh;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
 }
-
 a {
   text-decoration: none;
   color: #3300ff;

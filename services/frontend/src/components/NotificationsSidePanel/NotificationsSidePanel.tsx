@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ReactComponent as Close } from '@assets/icons/close.svg'
 import Button from '../../ui/Button/Button'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import NotificationCard, {
   NotificationCardProps,
 } from '../NotificationCard/NotificationCard'
@@ -39,7 +39,8 @@ const notificMock: NotificationCardProps[] = [
 
 const NotificationsSidePanel = () => {
   const [noteIsOpen, setNoteIsOpen] = useState(true)
-  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleCloseBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   return (
     <>

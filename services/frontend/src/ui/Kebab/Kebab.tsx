@@ -2,6 +2,7 @@ import { FC } from 'react'
 import classNames from 'classnames/bind'
 import Button from '../Button/Button'
 import { ReactComponent as KebabLogo } from '../../assets/icons/kebab.svg'
+import { stopPropagation } from '../../utils/stopPropagation'
 import s from './Kebab.module.scss'
 
 interface KebabProps {
@@ -19,19 +20,21 @@ export const Kebab: FC<KebabProps> = ({
 }) => {
   const cx = classNames.bind(s)
 
-  const handleKebabBtnClick = (e: React.MouseEvent) => e.stopPropagation()
-
   return (
-    <div data-tip data-tooltip-id={tooltipId}>
-      <Button
-        theme={theme === 'card' ? 'secondary' : undefined}
-        small
-        withIcon
-        props={{ disabled, onClick: handleKebabBtnClick }}>
-        <div className={cx('kebab', type, disabled && 'disabled')}>
-          <KebabLogo />
-        </div>
-      </Button>
-    </div>
+    <Button
+      theme={theme === 'card' ? 'secondary' : 'stack'}
+      small
+      withIcon
+      props={{
+        disabled,
+        onClick: stopPropagation,
+        'data-tooltip-id': tooltipId,
+      }}>
+      <div
+        onClick={stopPropagation}
+        className={cx('kebab', type, disabled && 'disabled')}>
+        <KebabLogo />
+      </div>
+    </Button>
   )
 }

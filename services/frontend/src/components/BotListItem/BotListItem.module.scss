@@ -4,6 +4,7 @@
   height: 64px;
   padding: 12px;
   @include tr_behavior;
+
   .td {
     &:nth-child(2) {
       padding-left: 0;

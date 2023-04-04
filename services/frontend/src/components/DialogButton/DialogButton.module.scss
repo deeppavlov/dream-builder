@@ -2,13 +2,13 @@
   width: 32px;
   height: 32px;
   background-color: $bcgrnd1;
-  border: 1px solid $bcgrnd3;
+  border: 1px solid $text3;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  svg {
+  svg path {
     stroke: $text3;
   }
 
@@ -16,16 +16,15 @@
   &:active {
     background-color: $bcgrnd3;
 
-    svg {
+    svg path {
       stroke: $text1;
     }
   }
 
   &_active {
-    border-color: $text3;
-    background-color: $bcgrnd3;
+    background-color: #3300ff1a;
 
-    svg {
+    svg path {
       stroke: $text1;
     }
   }

@@ -205,6 +205,12 @@ def get_dialog_session(db: Session, dialog_session_id: int):
     return db.get(models.DialogSession, dialog_session_id)
 
 
+def get_debug_assistant_chat_url(db: Session):
+    debug_assistant = get_virtual_assistant_by_name(db, "universal_prompted_assistant")
+
+    return debug_assistant.deployment.chat_url
+
+
 def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str):
     virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
 

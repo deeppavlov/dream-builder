@@ -40,4 +40,9 @@
   padding: 0px 12px;
   display: flex;
   height: 50px;
+
+  &:active,
+  &:has([data-active='true']) {
+    background: rgba(51, 0, 255, 0.1);
+  }
 }

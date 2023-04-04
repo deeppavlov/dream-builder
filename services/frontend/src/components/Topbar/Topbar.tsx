@@ -29,9 +29,7 @@ export const Topbar = () => {
   return (
     <div className={cx('topbar', isEditor && 'editor')}>
       <BurgerMenu type={type} />
-      <div className={s.logo_area}>
-        <Breadcrumbs />
-      </div>
+      <Breadcrumbs />
       {isEditor && <AssistantCloneButton />}
       <div className={s.btns_area}>
         {isTableViewSwitcher && <Display />}

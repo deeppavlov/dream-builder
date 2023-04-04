@@ -1,58 +1,44 @@
 import classNames from 'classnames/bind'
 import React from 'react'
-import { Link, matchPath, useMatches } from 'react-router-dom'
+import { useMatches } from 'react-router-dom'
+import { ReactComponent as HomeIcon } from '@assets/icons/home.svg'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
-import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
+import TopbarButton from '../../components/TopbarButton/TopbarButton'
 import s from './Breadcrumbs.module.scss'
+import { useDisplay } from '../../context/DisplayContext'
+
+interface IHandle {
+  crumb?: (routingName: string, options?: any) => any[]
+}
 
 export const Breadcrumbs = () => {
   const matches = useMatches()
-  const { options, dispatch } = useDisplay()
-  const contextPath = options.get(consts.BREADCRUMBS_PATH)
-  const match = contextPath?.location
-    ? matchPath({ path: contextPath?.location || '' }, location.pathname)
-    : null
+  const { options } = useDisplay()
+  let crumbs = matches
+    // Filter routes with crumbs
+    .filter(match => Boolean((match.handle as IHandle)?.crumb))
+    // Setting data to route crumbs
+    .map(({ handle, data: paramsData }) => {
+      const { crumb } = handle as IHandle
+      return crumb!(paramsData as string, options as any)
+    })
+    .flat()
   let cx = classNames.bind(s)
 
   return (
-    <>
-      <div data-tip data-tooltip-id='home' className={s.breadcrumbs}>
-        <Link to='/'>
-          <button className={s.home} />
-        </Link>
-        <BaseToolTip id='home' content='Go to home page' />
-      </div>
-
-      <div className={s.routes}>
-        {matches.at(-1)?.pathname !== '/' && <span className={s.slash} />}
-        {matches.map((crumb, i) => {
-          return (
-            crumb.pathname !== '/' && (
-              <span
-                key={i}
-                className={cx('route', !match && 'active')}
-              >
-                {crumb?.handle as string}
-              </span>
-            )
-          )
-        })}
-        {match &&
-          contextPath?.path?.map((name: string, i: number) => (
-            <React.Fragment key={name + i}>
-              <span className={s.slash} />
-              <span
-                className={cx(
-                  'route',
-                  contextPath?.path?.length - 1 === i && 'active'
-                )}
-              >
-                {name ?? '...'}
-              </span>
-            </React.Fragment>
-          ))}
-      </div>
-    </>
+    <div className={s.routes}>
+      <TopbarButton to='/' dataTooltipId='home'>
+        <HomeIcon />
+      </TopbarButton>
+      {crumbs?.map((item, i) => (
+        <React.Fragment key={i}>
+          <span className={s.slash} />
+          <span className={cx('route', crumbs.length - 1 === i && 'active')}>
+            {item ?? '...'}
+          </span>
+        </React.Fragment>
+      ))}
+      <BaseToolTip id='home' content='Go to home page' />
+    </div>
   )
 }

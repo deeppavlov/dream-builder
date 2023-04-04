@@ -211,11 +211,11 @@ const SkillPromptModal = () => {
     dispatch({
       type: 'set',
       option: {
-        id: consts.SKILL_EDITOR_IS_ACTIVE,
-        value: isOpen,
+        id: consts.EDITOR_ACTIVE_SKILL,
+        value: skill,
       },
     })
-  }, [isOpen])
+  }, [isOpen, skill])
 
   return (
     <Modal

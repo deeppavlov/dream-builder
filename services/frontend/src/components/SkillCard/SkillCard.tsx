@@ -19,6 +19,8 @@ import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
 import s from './SkillCard.module.scss'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { RoutesList } from '../../router/RoutesList'
 
 export interface SkillCardProps {
   skill: ISkill
@@ -39,7 +41,9 @@ export const SkillCard: FC<SkillCardProps> = ({
   const tooltipId = useId()
   const skillCardRef = useRef(null)
   const { options } = useDisplay()
+  const { name: distRoutingName } = useParams()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const nav = useNavigate()
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -64,8 +68,15 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
     if (skill.component_type === 'Generative') {
-      trigger('SkillPromptModal', { skill, action: 'edit' })
-      trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      // trigger('SkillPromptModal', { skill, action: 'edit' })
+
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name: distRoutingName as string,
+          skillId: skill.name,
+        } as any)
+      )
+      // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       e.stopPropagation()
       return
     }
@@ -86,7 +97,8 @@ export const SkillCard: FC<SkillCardProps> = ({
       )}
       onClick={handleSkillCardClick}
       ref={skillCardRef}
-      data-active={skill.name === activeSKillId}>
+      data-active={skill.name === activeSKillId}
+    >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
         {type == 'your' && (
@@ -112,7 +124,8 @@ export const SkillCard: FC<SkillCardProps> = ({
           <div
             className={s.description}
             data-tip
-            data-tooltip-id={'skillCardDesc' + tooltipId}>
+            data-tooltip-id={'skillCardDesc' + tooltipId}
+          >
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
@@ -141,7 +154,8 @@ export const SkillCard: FC<SkillCardProps> = ({
                 props={{
                   disabled: disabled || disabledMsg !== undefined,
                   onClick: handleAddSkillBtnClick,
-                }}>
+                }}
+              >
                 Add
               </Button>
             </div>
@@ -151,7 +165,8 @@ export const SkillCard: FC<SkillCardProps> = ({
                 className={s.btns}
                 data-tip
                 data-tooltip-id={'editSkill' + tooltipId}
-                style={{ width: '100%' }}>
+                style={{ width: '100%' }}
+              >
                 <Button
                   theme='primary'
                   long
@@ -159,7 +174,8 @@ export const SkillCard: FC<SkillCardProps> = ({
                   props={{
                     onClick: handleEditBtnClick,
                     disabled: disabled || isPreview || !skill?.is_customizable,
-                  }}>
+                  }}
+                >
                   Edit
                 </Button>
               </div>

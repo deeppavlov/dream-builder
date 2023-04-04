@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
@@ -14,7 +15,7 @@ dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_
 async def send_chat_request_to_deployed_agent(agent_url: str, session_id: int, text: str, prompt: str, lm_service: str):
     """ """
     data = {
-        "user_id": f"dream_builder_user_{session_id}",
+        "user_id": f"{settings.app.agent_user_id_prefix}_{session_id}",
         "payload": text,
         "prompt": prompt,
         "lm_service": lm_service,
@@ -101,7 +102,7 @@ async def send_dialog_session_message(
     if virtual_assistant.publish_request is not None:
         chat_url = dialog_session.deployment.chat_url
     else:
-        chat_url = "http://54.234.141.146:4249"
+        chat_url = crud.get_debug_assistant_chat_url(db)
 
     lm_service = None
     if dialog_session.deployment.lm_service:

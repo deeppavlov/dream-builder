@@ -65,7 +65,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  console.log(`modelType = `, nameForModelType)
+  
   return (
     <>
       <SidePanelHeader>

@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react'
+import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
+import classNames from 'classnames/bind'
+import { useEffect,useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
-import classNames from 'classnames/bind'
-import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
+import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { useDisplay } from '../../context/DisplayContext'
+import { useObserver } from '../../hooks/useObserver'
+import { servicesList } from '../../mocks/database/servicesList'
+import { changeLMservice } from '../../services/changeLMservice'
+import { getAllLMservices } from '../../services/getAllLMservices'
+import { getLMservice } from '../../services/getLMservice'
+import { getPrompt } from '../../services/getPrompt'
+import { postPrompt } from '../../services/postPrompt'
 import { ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { trigger } from '../../utils/events'
-import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-import { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { getLMservice } from '../../services/getLMservice'
-import { getPrompt } from '../../services/getPrompt'
-import { getAllLMservices } from '../../services/getAllLMservices'
-import SkillDialog from '../SkillDialog/SkillDialog'
-import { postPrompt } from '../../services/postPrompt'
-import { changeLMservice } from '../../services/changeLMservice'
-import { servicesList } from '../../mocks/database/servicesList'
-import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
-import { useObserver } from '../../hooks/useObserver'
+import { trigger } from '../../utils/events'
+import { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
+import SkillDialog from '../SkillDialog/SkillDialog'
+import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
 export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
@@ -166,12 +166,12 @@ const SkillPromptModal = () => {
       handleSaveAndTest(data)
     }
   }
-
+  
   async function handleSaveAndTest(data: FormValues) {
-    const service = data.model
+    const service = servicesList.get(data.model)?.name!
     const prompt = data.prompt
     const distName = dist?.name
-
+    
     setPromptForDist.mutateAsync({ distName, prompt })
     setServiceForDist.mutateAsync({ distName, service })
 

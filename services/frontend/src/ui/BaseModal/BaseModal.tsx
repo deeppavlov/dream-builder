@@ -21,43 +21,48 @@ const BaseModal: FC<BaseModalInterface> = ({
   children,
   skillsListModal,
 }) => {
+  const styles: Modal.Styles = {
+    overlay: Object.assign(
+      {},
+      {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 10,
+      },
+      customStyles?.overlay
+    ),
+    content: Object.assign(
+      {},
+      {
+        width: 'fit-content',
+        height: 'fit-content',
+        top: '50%',
+        left: '50%',
+        right: 0,
+        bottom: 0,
+        overflow: 'visible',
+        background: 'none',
+        border: 'none',
+        borderRadius: 'none',
+        padding: 'none',
+        transform: 'translate(-50%, -50%)',
+      },
+      customStyles?.content
+    ),
+  }
+  const cx = classNames.bind(s)
+
   const closeModal = () => {
     setIsOpen(false)
     handleClose && handleClose()
   }
-  const cx = classNames.bind(s)
+
   return isOpen ? (
-    <Modal
-      style={{
-        ...{
-          overlay: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 10,
-          },
-          content: {
-            width: 'fit-content',
-            height: 'fit-content',
-            top: '50%',
-            left: '50%',
-            right: 0,
-            bottom: 0,
-            overflow: 'visible',
-            background: 'none',
-            border: 'none',
-            borderRadius: 'none',
-            padding: 'none',
-            transform: 'translate(-50%, -50%)',
-          },
-        },
-        ...customStyles,
-      }}
-      isOpen={isOpen}
-      onRequestClose={closeModal}>
+    <Modal style={styles} isOpen={isOpen} onRequestClose={closeModal}>
       <div className={cx('baseModal', skillsListModal && 'skillsListModal')}>
         <button onClick={closeModal}>
           <CloseIcon className={s.close} />

@@ -30,7 +30,7 @@ export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
           <div className={s.body}></div>
           <AddButtonStack disabled={true} text='Add Response Annotators' />
           <div className={s.elements}>
-            <Accordion closed title='Customizable'>
+            <Accordion title='Customizable'>
               <WaitForNextRelease />
               {responseAnnotators?.map((annotator, i) => {
                 if (annotator.is_customizable) {
@@ -44,7 +44,7 @@ export const ResponseAnnotators: FC<Props> = ({ responseAnnotators }) => {
                 }
               })}
             </Accordion>
-            <Accordion title='Non-customizable'>
+            <Accordion isActive title='Non-customizable'>
               {responseAnnotators?.map((annotator, i) => {
                 if (!annotator.is_customizable) {
                   return (

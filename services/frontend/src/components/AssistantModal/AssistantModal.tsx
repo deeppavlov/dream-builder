@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient, useMutation } from 'react-query'
+import toast from 'react-hot-toast'
 import { postAssistantDist } from '../../services/postAssistanDist'
 import { renameAssistantDist } from '../../services/renameAssistantDist'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { trigger } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import toast from 'react-hot-toast'
+import { useOnKey } from '../../hooks/useOnKey'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { useObserver } from '../../hooks/useObserver'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -106,6 +109,7 @@ export const AssistantModal = () => {
         })
         .then(() => {
           isTopbarButton && closeModal()
+          trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
         }),
   })
 
@@ -146,17 +150,17 @@ export const AssistantModal = () => {
       })
   }
 
-  useEffect(() => {
-    subscribe('AssistantModal', handleEventUpdate)
-    return () => unsubscribe('AssistantModal', handleEventUpdate)
-  }, [])
+  useOnKey(handleSubmit(onFormSubmit), 'Enter')
+
+  useObserver('AssistantModal', handleEventUpdate)
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
-      <div className={s.assistantModal}>
+      <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div>
-          {action === 'create' && <h4>Create a new virtual assistant</h4>}
-          {action === 'clone' && <h4>Create clone of a virtual assistant</h4>}
-          {action === 'edit' && <h4>Edit virtual assistant</h4>}
+          {action === 'create' && <h4>Create a new Virtual Assistant</h4>}
+          {action === 'clone' && <h4>Create a clone of a Virtual Assistant</h4>}
+          {action === 'edit' && <h4>Edit Virtual Assistant</h4>}
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>
@@ -175,18 +179,18 @@ export const AssistantModal = () => {
             )}
           </div>
         </div>
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-          <Input
-            label='Name'
-            error={errors[NAME_ID as keyof FormValues]}
-            props={{
-              placeholder: 'A short name describing your Virtual Assistant',
-              defaultValue: getValues().display_name,
-              ...register(NAME_ID as keyof FormValues, {
-                required: 'This field can’t be empty',
-              }),
-            }}
-          />
+        <Input
+          label='Name'
+          error={errors[NAME_ID as keyof FormValues]}
+          props={{
+            placeholder: 'A short name describing your Virtual Assistant',
+            defaultValue: getValues().display_name,
+            ...register(NAME_ID as keyof FormValues, {
+              required: 'This field can’t be empty',
+            }),
+          }}
+        />
+        <div className={s.textarea}>
           <TextArea
             label='Description'
             withCounter
@@ -203,30 +207,32 @@ export const AssistantModal = () => {
                   value: 500,
                   message: 'Limit text description to 500 characters',
                 },
+                // validate: {isEmpty:},
               }),
             }}
           />
-          <div className={s.btns}>
-            <Button theme='secondary' props={{ onClick: closeModal }}>
-              Cancel
-            </Button>
-            <Button
-              theme='primary'
-              props={{
-                type: 'submit',
-                onClick: () => {
-                  if (action == 'create') handleCreateBtnClick()
-                  if (action == 'clone') handleCloneBtnClick()
-                  if (action == 'edit') handleSaveBtnClick()
-                },
-              }}>
-              {action === 'create' && 'Create'}
-              {action === 'clone' && 'Clone'}
-              {action === 'edit' && 'Save'}
-            </Button>
-          </div>
-        </form>
-      </div>
+        </div>
+
+        <div className={s.btns}>
+          <Button theme='secondary' props={{ onClick: closeModal }}>
+            Cancel
+          </Button>
+          <Button
+            theme='primary'
+            props={{
+              type: 'submit',
+              onClick: () => {
+                if (action == 'create') handleCreateBtnClick()
+                if (action == 'clone') handleCloneBtnClick()
+                if (action == 'edit') handleSaveBtnClick()
+              },
+            }}>
+            {action === 'create' && 'Create'}
+            {action === 'clone' && 'Clone'}
+            {action === 'edit' && 'Save'}
+          </Button>
+        </div>
+      </form>
     </BaseModal>
   )
 }

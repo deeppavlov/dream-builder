@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { routeConfig } from './routerConfig'
+import { RouterConfig } from './RouterConfig'
 
-
-export const router = createBrowserRouter(routeConfig)
+export const router = createBrowserRouter(RouterConfig)

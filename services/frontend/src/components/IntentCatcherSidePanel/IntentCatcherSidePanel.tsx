@@ -8,7 +8,7 @@ import IntentListItem, {
 } from '../IntentListItem/IntentListItem'
 import IntentList from '../IntentList/IntentList'
 import BaseLink from '../BaseLink/BaseLink'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
 import { Annotator } from '../../types/types'
@@ -134,7 +134,8 @@ const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
     status: 'success' | 'error'
   } | null>(null)
 
-  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleCloseBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   const handleAddIntentBtnClick = () => trigger('IntentCatcherModal', {})
 

@@ -15,15 +15,38 @@ export interface ITokens {
   token: string
 }
 
+export interface IAPIToken {
+  id: number
+  name: string
+  description: string
+  base_url: string
+}
+
+export interface IPostUserToken {
+  user_id: number
+  api_token_id: number
+  token_value: string
+}
+
 export interface IPreviewContext {
   isPreview: boolean
   setIsPreview: (isPreview: boolean) => void
 }
 
+export interface IAuthor {
+  email: string
+  family_name: string
+  fullname: string
+  given_name: string
+  id: number
+  picture: string
+  sub: string
+}
+
 export interface BotInfoInterface {
   name: string
   display_name: string
-  author: string
+  author: IAuthor
   description: string
   date_created: string
   ram_usage: string
@@ -87,6 +110,7 @@ export interface SkillListProps {
   size?: SkillCardSize
   forGrid?: boolean
   forModal?: boolean
+  withoutDate?:boolean
 }
 export interface SettingKey {
   name: string
@@ -102,9 +126,9 @@ export interface IContextMenu {
 export interface IStackElement {
   name: string // Routing name
   display_name: string
-  author: string
-  component_type: string | null
-  model_type: string | null
+  author: IAuthor
+  component_type: ComponentType | null
+  model_type: ModelType | null
   date_created: string | Date
   description: string
   is_customizable: boolean
@@ -116,8 +140,26 @@ export interface IStackElement {
 export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
+  lm_service: string
+  
 }
 
+export interface SessionConfig {
+  id: number
+  is_active: boolean
+  user_id: boolean
+  virtual_assistant_id: number
+}
+
+export interface SkillDialogProps {
+  error?: boolean
+  debug: boolean
+  chatWith: ChatPanelType
+  dist: BotInfoInterface
+}
+
+export type Message = { message: string }
+export type ChatPanelType = 'bot' | 'skill'
 export type SkillCardSize = BotCardSize
 
 export type CustomRouteConfig = RouteObject & { crumb?: string }
@@ -135,6 +177,8 @@ export type ViewType = 'cards' | 'table'
 export type BotCardSize = 'big' | 'small'
 
 export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
+
+export type ChatForm = { message: string }
 
 export type PostDistParams = {
   display_name: string
@@ -156,3 +200,7 @@ export type StackType =
   | 'response_selectors'
   | 'skill_selectors'
   | 'skills'
+
+export type BotVisabilityType = 'public' | 'unlisted'
+
+export type TTopbar = 'main' | 'editor'

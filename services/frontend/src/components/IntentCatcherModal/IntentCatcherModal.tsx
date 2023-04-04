@@ -12,6 +12,7 @@ import ExpandableDropdownn from '../ExpandableDropdown/ExpandableDropdown'
 import { subscribe, unsubscribe } from '../../utils/events'
 import s from './IntentCatcherModal.module.scss'
 import { SmallTag } from '../SmallTag/SmallTag'
+import { useObserver } from '../../hooks/useObserver'
 
 interface Props {
   /* If have intent in props, then we Edit him.
@@ -112,10 +113,7 @@ const IntentCatcherModal = ({ intent }: Props) => {
     setIsOpen(!isOpen)
   }
 
-  useEffect(() => {
-    subscribe('IntentCatcherModal', handleEventUpdate)
-    return () => unsubscribe('IntentCatcherModal', handleEventUpdate)
-  }, [])
+  useObserver('IntentCatcherModal', handleEventUpdate)
 
   return (
     <Modal

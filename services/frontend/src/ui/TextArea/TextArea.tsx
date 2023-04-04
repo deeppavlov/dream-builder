@@ -1,4 +1,5 @@
-import React, { FC, useId, useState } from 'react'
+import React, { FC, useEffect, useId, useState } from 'react'
+import { FormState } from 'react-hook-form'
 import classNames from 'classnames/bind'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import Button from '../Button/Button'
@@ -8,36 +9,32 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   error?: Partial<{ type: any; message: any }>
+  formState?: FormState<any>
   maxLenght?: number | string
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
+  resizable?: boolean
+  fullHeight?: boolean
 }
 
 export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
   error,
+  formState,
   maxLenght,
   props,
   withCounter,
   withEnterButton,
+  resizable = true,
+  fullHeight,
 }) => {
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
-  const [isChanged, setIsChanged] = useState(false) // for displaying Enter button
+  const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const [value, setValue] = useState(props?.defaultValue || '')
   const textAreaId = props?.id ?? useId()
   let cx = classNames.bind(s)
-
-  const handleEnterBtnClick = () => {
-    setIsActive(false)
-    setIsChanged(false)
-  }
-
-  /** On Enter press set focused state for textarea */
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter') handleEnterBtnClick()
-  }
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (props?.onBlur) props.onBlur(e)
@@ -46,18 +43,26 @@ export const TextArea: FC<TextAreaProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (props?.onChange) props.onChange(e)
-
     setValue(e.target.value)
-
-    if (!e.target.value) {
-      handleEnterBtnClick()
-      return
-    }
+    setIsActive(true)
+    setIsEnter(true)
   }
+
+  // Hide Enter button everytime, when form submitted successfully
+  const handleFormSubmit = () => {
+    const isSubmitted = formState?.isSubmitted === true
+    const isSubmitSuccessful = formState?.isSubmitSuccessful === true
+
+    setIsEnter(isSubmitted && !isSubmitSuccessful)
+  }
+
+  useEffect(() => {
+    if (withEnterButton && formState) handleFormSubmit()
+  }, [withEnterButton && formState?.isSubmitSuccessful])
 
   return (
     <div
-      className={s.textArea}
+      className={cx('textArea', fullHeight && 'fullHeight')}
       data-active={isActive}
       data-error={error !== undefined}>
       {(label || withCounter) && (
@@ -70,8 +75,8 @@ export const TextArea: FC<TextAreaProps> = ({
           )}
         </label>
       )}
-      <div className={cx('container', 'resizer-container')}>
-        <TextAreaLogo className={s.resizer} />
+      <div className={cx('container', resizable && 'resize-container')}>
+        {resizable && <TextAreaLogo className={s.resizer} />}
         <textarea
           rows={2}
           cols={20}
@@ -79,16 +84,12 @@ export const TextArea: FC<TextAreaProps> = ({
           id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           className={s.field}
         />
 
         {withEnterButton && (
-          <div className={cx('submit', isChanged && 'submit-active')}>
-            <Button
-              theme='tertiary'
-              small
-              props={{ type: 'submit', onClick: handleEnterBtnClick }}>
+          <div className={cx('submit', isEnter && 'submit-active')}>
+            <Button theme='tertiary' small props={{ type: 'submit' }}>
               Enter
             </Button>
           </div>

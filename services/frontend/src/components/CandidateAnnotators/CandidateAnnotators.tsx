@@ -28,7 +28,7 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
       <div className={s.body} />
       <AddButtonStack disabled={true} text='Add Candidate Annotators' />
       <div className={s.elements}>
-        <Accordion closed title='Customizable'>
+        <Accordion title='Customizable'>
           <WaitForNextRelease />
           {candidateAnnotators?.map((annotator, i) => {
             if (annotator.is_customizable) {
@@ -37,12 +37,13 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
                   key={annotator.name + i}
                   annotator={annotator}
                   isPreview={isPreview}
+                  name='candidate_annotators'
                 />
               )
             }
           })}
         </Accordion>
-        <Accordion title='Non-customizable'>
+        <Accordion isActive title='Non-customizable'>
           {candidateAnnotators?.map((annotator, i) => {
             if (!annotator.is_customizable) {
               return (
@@ -50,6 +51,7 @@ export const CandidateAnnotators: FC<Props> = ({ candidateAnnotators }) => {
                   key={annotator.name + i}
                   annotator={annotator}
                   isPreview={isPreview}
+                  name='candidate_annotators'
                 />
               )
             }

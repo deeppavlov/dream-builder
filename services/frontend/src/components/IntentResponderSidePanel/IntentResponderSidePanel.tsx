@@ -5,7 +5,7 @@ import Button from '../../ui/Button/Button'
 import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 import { trigger } from '../../utils/events'
 import { ISkill } from '../../types/types'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
@@ -65,7 +65,8 @@ interface Props {
 }
 
 const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
-  const handleCloseBtnClick = () => trigger(BASE_SP_EVENT, { isOpen: false })
+  const handleCloseBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
   const handleAddIntentBtnClick = () => {
     trigger('IntentResponderModal', {})
@@ -80,12 +81,13 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
         <Button
           theme='secondary'
           long
-          props={{ onClick: handleAddIntentBtnClick }}>
+          props={{ onClick: handleAddIntentBtnClick }}
+        >
           <PlusIcon />
           Add Intent Responder
         </Button>
         <IntentList>
-          <Accordion title='User-customized' small>
+          <Accordion isActive title='User-customized' small>
             {intentsMock.map(({ id, name, about, status }) => (
               <IntentListItem
                 key={id}
@@ -96,7 +98,7 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
               />
             ))}
           </Accordion>
-          <Accordion title='Prebuilt' small>
+          <Accordion isActive title='Prebuilt' small>
             {intentsMock.map(({ id, name, about }) => (
               <IntentListItem
                 key={id}
@@ -127,7 +129,8 @@ const IntentResponderSidePanel = ({ skill, activeTab, disabled }: Props) => {
         <SidePanelStatus
           status='default'
           title='Sorry, training is not yet available.'
-          desc='Stay tuned for the upcoming updates!'>
+          desc='Stay tuned for the upcoming updates!'
+        >
           <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>
             Close
           </Button>

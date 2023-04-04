@@ -24,7 +24,18 @@ const BaseContextMenu: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const [domReady, setDomReady] = React.useState(false)
-  const container = document.body
+  const [parent, setParent] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const newParent = document.body.querySelector(
+      `[data-tooltip-id="${tooltipId}"]`
+    ) as HTMLElement
+
+    setParent(prev => {
+      if (!isOpen) prev?.blur()
+      return newParent ?? null
+    })
+  }, [isOpen])
 
   useEffect(() => {
     setDomReady(true)
@@ -45,7 +56,7 @@ const BaseContextMenu: React.FC<Props> = ({
           place={place}>
           <div ref={ref}>{children}</div>
         </ReactTooltip>,
-        container
+        document.body
       )
     : null
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 type ActiveTabId = string
-type TabList = Map<string, { name: string; disabled?: boolean }>
+export type TabList = Map<string, { name: string; disabled?: boolean }>
 
 interface TabsInfo {
   activeTabId?: ActiveTabId

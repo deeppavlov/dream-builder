@@ -1,19 +1,26 @@
-import { IContextMenu, IStackElement } from '../../types/types'
+import React from 'react'
+import { IContextMenu, ISkill } from '../../types/types'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 
 interface Props extends IContextMenu {
   tooltipId: string
-  skill: IStackElement
+  skill: ISkill
+  skillRef?: React.MutableRefObject<any>
 }
 
-const SkillStackToolTip = ({ tooltipId, skill, isPreview }: Props) => {
+const SkillStackToolTip = ({
+  tooltipId,
+  skill,
+  isPreview,
+  skillRef,
+}: Props) => {
   const handleEditBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Editor' })
+    triggerSkillSidePanel({ skill, activeTab: 'Editor', parent: skillRef })
 
   const handlePropertiesBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Properties' })
+    triggerSkillSidePanel({ skill, activeTab: 'Properties', parent: skillRef })
 
   const handleDeleteBtnClick = () => {}
 

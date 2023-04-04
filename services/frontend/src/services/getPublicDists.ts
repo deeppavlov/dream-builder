@@ -5,6 +5,6 @@ export async function getPublicDists() {
     const { data } = await api.get('assistant_dists/public')
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

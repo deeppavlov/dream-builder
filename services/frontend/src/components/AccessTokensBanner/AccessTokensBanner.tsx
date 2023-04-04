@@ -1,75 +1,98 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { nanoid } from 'nanoid'
+import toast from 'react-hot-toast'
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import { SmallTag } from '../SmallTag/SmallTag'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { getUserId } from '../../services/getUserId'
+import { getTokens } from '../../services/getTokens'
+import { postUserTokens } from '../../services/postUserTokens'
 import s from './AccessTokensBanner.module.scss'
 
 type TTokenState = 'not-valid' | 'validating' | 'valid'
 
 interface IToken {
-  id: string
+  base_url: string
+  description: string
+  id: number
   name: string
   state?: TTokenState
 }
 
-export const AccessTokensBanner = () => {
-  const {
-    handleSubmit,
-    register,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm({ mode: 'onSubmit' })
-  const [TOKEN_ID, MODEL_ID] = ['token', 'model']
-  const mockServices = ['Open AI']
-  const mockTokens: IToken[] = [
-    { id: '0', name: 'Open AI', state: 'not-valid' },
-    { id: '1', name: 'GNews API' },
-    { id: '2', name: 'GNews API', state: 'validating' },
-    { id: '3', name: 'GNews API', state: 'valid' },
-  ]
-  const [tokens, setTokens] = useState<IToken[] | null>(mockTokens)
+interface IPostToken {
+  id: number
+  user_id: number
+  api_token_id: number
+  token_value: string
+}
 
-  const setTokenState = (id: string, state: TTokenState) => {
+interface FormValues {
+  tokenValue: string
+  tokenService: string
+}
+
+export const AccessTokensBanner = () => {
+  const { handleSubmit, register, reset, setValue, formState } =
+    useForm<FormValues>({ mode: 'onSubmit' })
+  const mockServices = ['OpenAI']
+  const [tokens, setTokens] = useState<IToken[]>([])
+  const { errors } = formState
+  const queryClient = useQueryClient()
+  const { data: user } = useQuery(['user'], () => getUserId())
+  const { data: api_tokens } = useQuery(['api_tokens'], () => getTokens(), {
+    onSuccess: setTokens,
+  })
+
+  const setTokenState = (id: number, state: TTokenState) => {
     setTokens(prev =>
-      prev
-        ? prev.map(token => {
-            if (token.id === id) {
-              return { ...token, ...{ state } }
-            }
-            return token
-          })
-        : null
+      prev.map(token => {
+        if (token.id === id) {
+          return { ...token, ...{ state } }
+        }
+        return token
+      })
     )
   }
 
-  const handleValidateBtnClick = (id: string) => {
+  // Mock Validating timeout
+  const handleValidateBtnClick = (id: number) => {
     setTokenState(id, 'validating')
-
-    // Mock Validating timeout
     setTimeout(() => {
-      const validationState: TTokenState = ['valid', 'not-valid'][
-        Math.floor(Math.random() * 2)
-      ] as TTokenState
-
-      setTokenState(id, validationState)
+      setTokenState(id, 'valid')
     }, 600)
   }
 
-  const handleRemoveBtnClick = (id: string) => {
-    setTokens(prev => (prev ? prev.filter(token => token.id !== id) : null))
-  }
+  // Mock Remove
+  const handleRemoveBtnClick = (id: number) =>
+    setTokens(prev => prev.filter(token => token.id !== id))
 
-  const onSubmit = (data: any) => {
-    tokens?.unshift({ id: nanoid(4), name: data.model })
+  const createUserToken = useMutation({
+    mutationFn: ({ tokenService, tokenValue }: FormValues) => {
+      return postUserTokens({
+        user_id: user?.id,
+        api_token_id: 1,
+        token_value: tokenValue,
+      })
+    },
+    onSuccess: (data: IPostToken) =>
+      queryClient.invalidateQueries({ queryKey: 'api_tokens' }).then(() => {
+        setTokens(prev => [
+          ...[{ id: data?.api_token_id, name: data?.token_value } as IToken],
+          ...prev,
+        ])
+      }),
+  })
 
-    reset({
-      [TOKEN_ID]: '',
+  const onSubmit = (data: FormValues) => {
+    toast.promise(createUserToken.mutateAsync(data), {
+      loading: 'Creating...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
     })
+    reset({ tokenValue: '' })
   }
 
   return (
@@ -95,29 +118,30 @@ export const AccessTokensBanner = () => {
         <Input
           label='Add a new personal access token:'
           withEnterButton
-          error={errors[TOKEN_ID]}
+          formState={formState}
+          error={errors.tokenValue}
           props={{
             placeholder: 'Assistive text',
-            ...register(TOKEN_ID, { required: true }),
+            ...register('tokenValue', { required: true }),
           }}
         />
         <SkillDropboxSearch
           label='Choose service:'
           list={mockServices}
-          error={errors[MODEL_ID]}
-          onSelect={v => setValue(MODEL_ID, v)}
+          error={errors.tokenService}
+          onSelect={v => setValue('tokenService', v)}
           props={{
-            placeholder: 'Choose model',
-            ...register(MODEL_ID, { required: true }),
+            placeholder: 'Choose service',
+            ...register('tokenService', { required: true }),
           }}
         />
       </form>
       {tokens && (
         <ul className={s.tokens}>
-          {tokens.map(({ id, name, state }) => (
-            <li className={s.token} key={id}>
+          {tokens.map(({ id, name, state }, i) => (
+            <li className={s.token} key={id + name + i}>
               <TokenKeyIcon className={s.icon} />
-              <div>{name}</div>
+              <div className={s.tokenName}>{name}</div>
               <div className={s.right}>
                 {state && (
                   <SmallTag theme={state}>{state.replace(/-/g, ' ')}</SmallTag>

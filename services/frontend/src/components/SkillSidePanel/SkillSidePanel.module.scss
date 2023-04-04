@@ -40,6 +40,11 @@
     height: 32px;
     width: 32px;
   }
+  img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+  }
 }
 
 .table {
@@ -75,6 +80,7 @@
   svg {
     @include icon_size_24;
   }
+  @include modelType;
 }
 
 .desc {

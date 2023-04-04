@@ -5,6 +5,6 @@ export async function deleteAssistantDist(dist_name: string) {
     const { data } = await privateApi.delete(`/assistant_dists/${dist_name}`)
     return data
   } catch (e) {
-    console.log(e)
+    throw e
   }
 }

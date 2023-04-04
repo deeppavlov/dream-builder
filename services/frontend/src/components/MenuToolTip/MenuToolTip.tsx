@@ -1,13 +1,40 @@
-import { TMenu } from '../../ui/Menu/Menu'
+import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
+import { mockSkills } from '../../mocks/database/mockSkills'
+import { BotInfoInterface, TTopbar } from '../../types/types'
+import { usePreview } from '../../context/PreviewProvider'
+import { useNavigate } from 'react-router-dom'
+import { RoutesList } from '../../router/RoutesList'
 
 interface Props {
   tooltipId: string
-  type: TMenu
+  type: TTopbar
+  bot: BotInfoInterface
 }
 
-const MenuToolTip = ({ tooltipId, type }: Props) => {
+const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
+  const { isPreview } = usePreview()
+  const navigate = useNavigate()
+
+  const handleWelcomeClick = () => {
+    navigate(RoutesList.profile)
+  }
+  const handleRenameClick = () => {
+    trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
+  }
+  const handleAddSkillsClick = () => {
+    trigger('SkillsListModal', { mockSkills })
+  }
+  const handlePublishClick = () => {
+    trigger('PublishAssistantModal', { bot, from: 'editor' })
+  }
+  const handleDeleteClick = () => {
+    trigger('DeleteAssistantModal', { bot, from: 'editor' })
+  }
+  const handleShareClick = () =>
+    trigger('ShareModal', { bot, smthElse: '1234' })
+
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       {type === 'main' && (
@@ -24,16 +51,44 @@ const MenuToolTip = ({ tooltipId, type }: Props) => {
               Information about DB
             </a>
           </ContextMenuButton>
-          <ContextMenuButton name='Welcome guide' type='properties' />
+          <ContextMenuButton
+            name='Welcome guide'
+            type='properties'
+            handleClick={handleWelcomeClick}
+          />
           <hr />
-          <ContextMenuButton name='Save' type='save' />
-          <ContextMenuButton name='Rename' type='edit' />
+          <ContextMenuButton
+            disabled={isPreview}
+            name='Rename'
+            type='edit'
+            handleClick={handleRenameClick}
+          />
           <hr />
-          <ContextMenuButton name='Add Skills' type='add' />
+          <ContextMenuButton
+            disabled={isPreview}
+            name='Add Skills'
+            type='add'
+            handleClick={handleAddSkillsClick}
+          />
           <hr />
-          <ContextMenuButton name='Publish' type='publish' />
+          <ContextMenuButton
+            disabled={isPreview}
+            name='Publish'
+            type='publish'
+            handleClick={handlePublishClick}
+          />
+          <ContextMenuButton
+            name='Share'
+            type='share'
+            handleClick={handleShareClick}
+          />
           <hr />
-          <ContextMenuButton name='Delete' type='delete' />
+          <ContextMenuButton
+            disabled={isPreview}
+            name='Delete'
+            type='delete'
+            handleClick={handleDeleteClick}
+          />
         </>
       )}
     </BaseContextMenu>

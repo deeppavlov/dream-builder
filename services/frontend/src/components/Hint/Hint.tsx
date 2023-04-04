@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useObserver } from '../../hooks/useObserver'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 interface Props {
@@ -17,12 +18,7 @@ const Hint = ({ id, handleClose }: Props) => {
     handleClose()
   }
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClick)
-    return () => {
-      document.removeEventListener('mousedown', handleClick)
-    }
-  }, [])
+  useObserver('mousedown', handleClick)
 
   return (
     <BaseToolTip

@@ -1,5 +1,7 @@
 .baseModal {
   min-width: 624px;
+  max-width: 100rem;
+  max-height: 50rem;
   width: fit-content;
   background-color: $bcgrnd1;
   border-radius: 24px;
@@ -41,4 +43,5 @@
 .baseModal.skillsListModal {
   background-color: #f0f0f3;
   padding: 24px;
+  max-width: 100%;
 }

@@ -20,25 +20,24 @@ import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
 import { AddButton } from '../ui/AddButton/AddButton'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
   const { data, error, isLoading } = useQuery('privateDists', getPrivateDists)
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
       <Main>
         <Wrapper
           title='Your Virtual Assistants & Chatbots'
           amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />
-          {listView ? (
+          {isTableView ? (
             <Table
               addButton={
                 <AddButton

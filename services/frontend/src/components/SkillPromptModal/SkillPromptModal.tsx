@@ -1,9 +1,10 @@
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
-import { useEffect,useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
-import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
 import { servicesList } from '../../mocks/database/servicesList'
@@ -17,7 +18,6 @@ import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
@@ -166,12 +166,12 @@ const SkillPromptModal = () => {
       handleSaveAndTest(data)
     }
   }
-  
+
   async function handleSaveAndTest(data: FormValues) {
     const service = servicesList.get(data.model)?.name!
     const prompt = data.prompt
     const distName = dist?.name
-    
+
     setPromptForDist.mutateAsync({ distName, prompt })
     setServiceForDist.mutateAsync({ distName, service })
 

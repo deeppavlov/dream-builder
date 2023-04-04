@@ -3,16 +3,14 @@ import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_mic
 import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef, useState } from 'react'
+import { FC, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { DEBUG_DIST } from '../../constants/constants'
+import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
-import { getHistory } from '../../services/getHistory'
-import { renewDialog } from '../../services/renewDialog'
-import { sendMessage } from '../../services/sendMessage'
-import { ChatForm, SessionConfig, SkillDialogProps } from '../../types/types'
+import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
@@ -21,21 +19,18 @@ import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-export const DEBUG_DIST = 'universal_prompted_assistant'
+export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
-const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
-  const [isError, setIsError] = useState(error ?? false)
-  const [message, setMessage] = useState<string>('')
+const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
+  const { send, renew, session, message, history, error } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const [session, setSession] = useState<SessionConfig | null>(null)
-  const queryClient = useQueryClient()
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
+
   // handlers
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    setMessage(message)
     send.mutate({ id, message })
     reset()
   }
@@ -44,34 +39,10 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
   }
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
-    setMessage('')
   }
-  // queries
-  const renew = useMutation({
-    mutationFn: (data: string) => {
-      return renewDialog(data)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: 'history' }), setSession(data)
-    },
-    onError: () => {
-      setIsError(true)
-    },
-  })
-  const send = useMutation({
-    mutationFn: (variables: { id: number; message: string }) => {
-      return sendMessage(variables?.id, variables?.message)
-    },
-    onSuccess: async () =>
-      await queryClient.invalidateQueries({ queryKey: 'history' }),
-  })
-  const { data: history } = useQuery(
-    ['history', session?.id],
-    () => getHistory(session?.id!),
-    { refetchOnWindowFocus: false, enabled: send?.isLoading }
-  )
+
   // hooks
-  useOnlyOnMount(() => renew.mutateAsync(dist?.name))
+  useOnlyOnMount(() => renew.mutateAsync(debug ? DEBUG_DIST : dist?.name))
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
 
@@ -106,7 +77,6 @@ const SkillDialog: FC<SkillDialogProps> = ({ error, dist, debug }) => {
           )}
           {send.isLoading && (
             <>
-              <li className={s.msg}>{message}</li>
               <li className={cx('bot', 'msg')}>
                 <TextLoader />
               </li>

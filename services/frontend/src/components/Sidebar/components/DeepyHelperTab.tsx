@@ -1,11 +1,11 @@
-import classNames from 'classnames/bind'
 import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
-import { trigger } from '../../../utils/events'
-import BaseToolTip from '../../BaseToolTip/BaseToolTip'
-import CopilotSidePanel from '../../CopilotSidePanel/CopilotSidePanel'
+import classNames from 'classnames/bind'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
+import { trigger } from '../../../utils/events'
 import { TRIGGER_LEFT_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../../BaseToolTip/BaseToolTip'
+import { CopilotSidePanel } from '../../CopilotSidePanel/CopilotSidePanel'
 import s from './DeepyHelperTab.module.scss'
 
 export const DeepyHelperTab = () => {
@@ -24,7 +24,8 @@ export const DeepyHelperTab = () => {
       data-tip
       data-tooltip-id='helperTab'
       className={cx('icon', copilotIsActive && 'active')}
-      onClick={handleBtnClick}>
+      onClick={handleBtnClick}
+    >
       <img src={DeepyHelperIcon} alt='Deepy' />
       <BaseToolTip id='helperTab' content='Deepy' place='right' />
     </button>

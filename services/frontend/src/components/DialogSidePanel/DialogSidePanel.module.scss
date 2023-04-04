@@ -1,7 +1,7 @@
 .dialogSidePanel {
   position: relative;
   width: 368px;
-  height: 100%;
+  height: calc(100% - $topbar-height);
   display: flex;
   flex-direction: column;
 
@@ -88,7 +88,7 @@
   padding: 24px 24px;
   flex-direction: column;
   gap: 24px;
-  overflow: auto;
+  overflow-y: scroll;
   background-color: $bcgrnd2;
 
   &__message {

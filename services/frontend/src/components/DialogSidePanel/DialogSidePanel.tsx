@@ -1,32 +1,31 @@
+import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
+import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
+import { ReactComponent as Renew } from '@assets/icons/renew.svg'
+import classNames from 'classnames/bind'
 import { FC, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as Renew } from '@assets/icons/renew.svg'
+import { DEBUG_DIST } from '../../constants/constants'
+import { useChat } from '../../hooks/useChat'
+import { useChatScroll } from '../../hooks/useChatScroll'
+import { useObserver } from '../../hooks/useObserver'
+import { BotInfoInterface, ChatForm } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { trigger } from '../../utils/events'
-import DialogButton from '../DialogButton/DialogButton'
+import { submitOnEnter } from '../../utils/submitOnEnter'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import Button from '../../ui/Button/Button'
-import { getHistory } from '../../services/getHistory'
-import { sendMessage } from '../../services/sendMessage'
-import { renewDialog } from '../../services/renewDialog'
-import classNames from 'classnames/bind'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import { BotInfoInterface, ChatForm } from '../../types/types'
+import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
-import { useObserver } from '../../hooks/useObserver'
 import s from './DialogSidePanel.module.scss'
-import { submitOnEnter } from '../../utils/submitOnEnter'
-import { useChatScroll } from '../../hooks/useChatScroll'
 
 const TEXT_CHAT_TYPE = 'text'
 const VOICE_CHAT_TYPE = 'voice'
-export const DEBUG_DIST = 'universal_prompted_assistant'
+
 type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 type ChatPanelType = 'bot' | 'skill'
+
 interface Props {
   error?: boolean
   start?: boolean
@@ -37,38 +36,24 @@ interface Props {
   service: string
   prompt: string
 }
-export interface SessionConfig {
-  id: number
-  is_active: boolean
-  user_id: boolean
-  virtual_assistant_id: number
-}
-const DialogSidePanel: FC<Props> = ({
-  error,
-  start,
-  chatWith,
-  dist,
-  debug,
-}) => {
+
+const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
-  const [isError, setIsError] = useState(error ?? false)
   const [isFirstTest, setIsFirstTest] = useState(start)
-  const [message, setMessage] = useState<string>('')
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const [session, setSession] = useState<SessionConfig | null>(null)
-  const queryClient = useQueryClient()
+  const { send, renew, session, message, history, error } = useChat()
   const chatRef = useRef<HTMLDivElement>(null)
   const isTextChat = chatType === TEXT_CHAT_TYPE
-  const startPanel = isFirstTest && !isError
-  const chatPanel = !isFirstTest && !isError
+  const startPanel = isFirstTest && !error
+  const chatPanel = !isFirstTest && !error
   const cx = classNames.bind(s)
+  
   // handlers
   const handleTypeBtnClick = (type: ChatType) => setChatType(type)
   const handleDownloadBtnClick = () => {}
-
-  const handleGoBackBtnClick = () =>
+  const handleGoBackBtnClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-
+  }
   const handleStartBtnClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!).then(() => {
       setIsFirstTest(false)
@@ -77,42 +62,16 @@ const DialogSidePanel: FC<Props> = ({
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    setMessage(message)
-
     send.mutate({ id, message })
     reset()
   }
   const handleRenewClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
-    setMessage('')
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
-  // queries
-  const renew = useMutation({
-    mutationFn: (data: string) => {
-      return renewDialog(data)
-    },
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: 'history' }),
-        setSession(data)
-    },
-    onError: () => {
-      setIsError(true)
-    },
-  })
-  const send = useMutation({
-    mutationFn: (variables: { id: number; message: string }) => {
-      return sendMessage(variables?.id, variables?.message)
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
-  })
-  const { data: history } = useQuery(
-    ['history', session?.id],
-    () => getHistory(session?.id!),
-    { refetchOnWindowFocus: false, enabled: send?.isLoading }
-  )
+
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
@@ -146,9 +105,10 @@ const DialogSidePanel: FC<Props> = ({
         className={cx(
           'dialogSidePanel',
           startPanel && 'start',
-          isError && 'error'
-        )}>
-        {isError && (
+          error && 'error'
+        )}
+      >
+        {error && (
           <>
             <span className={s.alerName}>Alert!</span>
             <p className={s.alertDesc}>
@@ -172,30 +132,28 @@ const DialogSidePanel: FC<Props> = ({
         {chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
-              {history &&
-                history?.map(
-                  (block: { author: string; text: string }, i: number) => (
-                    <div
-                      key={`${block?.author == 'bot'}${i}`}
+              {history?.map(
+                (block: { author: string; text: string }, i: number) => (
+                  <div
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx(
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
+                    )}
+                  >
+                    <span
                       className={cx(
-                        'chat__container',
-                        block?.author == 'bot' && 'chat__container_bot'
-                      )}>
-                      <span
-                        className={cx(
-                          'chat__message',
-                          block?.author == 'bot' && 'chat__message_bot'
-                        )}>
-                        {block?.text}
-                      </span>
-                    </div>
-                  )
-                )}
+                        'chat__message',
+                        block?.author == 'bot' && 'chat__message_bot'
+                      )}
+                    >
+                      {block?.text}
+                    </span>
+                  </div>
+                )
+              )}
               {send?.isLoading && (
                 <>
-                  <div className={`${s.chat__container}`}>
-                    <span className={`${s.chat__message} `}>{message}</span>
-                  </div>
                   <div className={cx('chat__container_bot', 'chat__container')}>
                     <span className={cx('chat__message', 'chat__message_bot')}>
                       <TextLoader />
@@ -208,12 +166,14 @@ const DialogSidePanel: FC<Props> = ({
               <div className={s.left}>
                 <DialogButton
                   active={isTextChat}
-                  onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}>
+                  onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
+                >
                   <DialogTextIcon />
                 </DialogButton>
                 <button
                   className={s.dialogSidePanel__control}
-                  onClick={handleDownloadBtnClick}>
+                  onClick={handleDownloadBtnClick}
+                >
                   <DownloadDialogIcon />
                 </button>
               </div>
@@ -222,7 +182,8 @@ const DialogSidePanel: FC<Props> = ({
                   small
                   theme='secondary'
                   withIcon
-                  props={{ onClick: handleRenewClick }}>
+                  props={{ onClick: handleRenewClick }}
+                >
                   <div className={s['right-container']} data-tooltip-id='renew'>
                     <Renew />
                   </div>
@@ -239,7 +200,8 @@ const DialogSidePanel: FC<Props> = ({
               <SidePanelButtons>
                 <Button
                   theme='primary'
-                  props={{ disabled: send?.isLoading, type: 'submit' }}>
+                  props={{ disabled: send?.isLoading, type: 'submit' }}
+                >
                   Send
                 </Button>
               </SidePanelButtons>

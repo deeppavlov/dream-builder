@@ -97,6 +97,22 @@
         stroke: $text4;
       }
     }
+    &_secondary-light {
+      background-color: $bcgrnd3;
+      color: $text1;
+
+      &:hover {
+        box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+      }
+
+      &:active {
+        background:  $bcgrnd3;;
+      }
+
+      > svg path {
+        stroke: $text4;
+      }
+    }
 
     &_stack {
       background-color: transparent;

@@ -8,6 +8,7 @@ interface Props extends React.PropsWithChildren {
     | 'primary'
     | 'secondary'
     | 'secondary-dark'
+    | 'secondary-light'
     | 'tertiary'
     | 'tertiary-round'
     | 'ghost'

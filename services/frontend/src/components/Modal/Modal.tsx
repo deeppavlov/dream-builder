@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { subscribe, unsubscribe } from '../../utils/events'
+import { useState } from 'react'
 import BaseModal from '../../ui/BaseModal/BaseModal'
+import { useObserver } from '../../hooks/useObserver'
 import s from './Modal.module.scss'
 
 export const Modal = () => {
@@ -10,14 +10,10 @@ export const Modal = () => {
     setIsOpen(false)
   }
 
-  const handleEventUpdate = () => {
-    setIsOpen(!isOpen)
-  }
+  const handleEventUpdate = () => setIsOpen(!isOpen)
 
-  useEffect(() => {
-    subscribe('Modal', handleEventUpdate)
-    return () => unsubscribe('Modal', handleEventUpdate)
-  }, [])
+  useObserver('Modal', handleEventUpdate)
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.modal}>🎉🎉🎉</div>

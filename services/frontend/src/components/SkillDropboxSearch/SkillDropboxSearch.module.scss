@@ -4,6 +4,7 @@ $animation-delay: 300ms;
   position: relative;
   min-width: 310px;
   max-width: 310px;
+  height: fit-content;
 
   &.open {
     .search {
@@ -12,7 +13,7 @@ $animation-delay: 300ms;
     }
 
     .arrowDown {
-      transform: rotate(0deg);
+      transform: rotate(180deg);
     }
 
     .list {
@@ -26,6 +27,10 @@ $animation-delay: 300ms;
     .list {
       border-color: $red;
     }
+  }
+
+  &.fullWidth {
+    max-width: 100%;
   }
 }
 
@@ -63,7 +68,6 @@ $animation-delay: 300ms;
 
 .arrowDown {
   fill: $text3;
-  transform: rotate(180deg);
   transition: transform $animation-delay ease;
 }
 

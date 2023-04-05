@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import classNames from 'classnames/bind'
 import { useNavigate } from 'react-router-dom'
 import { trigger } from '../../utils/events'
@@ -11,13 +11,17 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import Button from '../../ui/Button/Button'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import Woman from '../../assets/icons/woman.png'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { BASE_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { useDisplay } from '../../context/DisplayContext'
+import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import s from './BotCard.module.scss'
+
 
 interface BotCardProps {
   type: BotAvailabilityType
@@ -31,9 +35,13 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   const tooltipId = useId()
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const botCardRef = useRef(null)
+  const { options } = useDisplay()
+  const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleBotCardClick = () => {
-    trigger(BASE_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
+      parent: botCardRef,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -80,14 +88,20 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   return (
     <div
       className={cx('botCard', `${type}`, size)}
-      onClick={handleBotCardClick}>
+      onClick={handleBotCardClick}
+      ref={botCardRef}
+      data-active={bot.name === activeAssistantId}>
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>
         <div className={s.block}>
           {type === 'public' && (
             <div className={s.author}>
-              <img referrerPolicy='no-referrer' src={DeepPavlovLogo} />
-              <span>{bot?.author}</span>
+              <img referrerPolicy='no-referrer' src={Woman} />
+              <span>
+                {bot?.author?.fullname! == 'Deepy Pavlova'
+                  ? 'Dr. Xandra Smith'
+                  : bot?.author?.fullname!}
+              </span>
             </div>
           )}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>

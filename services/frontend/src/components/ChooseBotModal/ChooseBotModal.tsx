@@ -13,6 +13,7 @@ import { timeToUTC } from '../../utils/timeToUTC'
 import { useQuery } from 'react-query'
 import { getPublicDists } from '../../services/getPublicDists'
 import s from './ChooseBotModal.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 const ChooseBotModal = () => {
   let cx = classNames.bind(s)
@@ -39,10 +40,7 @@ const ChooseBotModal = () => {
     data: assistantsData,
   } = useQuery('publicDists', getPublicDists)
 
-  useEffect(() => {
-    subscribe('ChooseBotModal', handleEventUpdate)
-    return () => unsubscribe('ChooseBotModal', handleEventUpdate)
-  }, [])
+  useObserver('ChooseBotModal', handleEventUpdate)
 
   return (
     <Modal

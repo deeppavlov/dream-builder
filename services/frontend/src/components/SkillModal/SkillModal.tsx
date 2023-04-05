@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useObserver } from '../../hooks/useObserver'
 import { SkillInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -64,13 +65,13 @@ export const SkillModal = () => {
   }
 
   const handleCreate = (data: any) => {
-    trigger('SkillPromptModal', {
-      action: 'create',
-      skill: {
-        ...skill,
-        ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
-      },
-    })
+    // trigger('SkillPromptModal', {
+    //   action: 'create',
+    //   skill: {
+    //     ...skill,
+    //     ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
+    //   },
+    // })
     closeModal()
   }
 
@@ -85,10 +86,7 @@ export const SkillModal = () => {
     }
   }
 
-  useEffect(() => {
-    subscribe('SkillModal', handleEventUpdate)
-    return () => unsubscribe('SkillModal', handleEventUpdate)
-  }, [])
+  useObserver('SkillModal', handleEventUpdate)
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>

@@ -1,4 +1,4 @@
-import { BASE_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
 import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
@@ -9,13 +9,20 @@ interface Props {
   skill: ISkill
   activeTab: 'Properties' | 'Editor'
   type?: SkillAvailabilityType
+  parent?: React.MutableRefObject<any>
 }
 
-const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
+const triggerSkillSidePanel = ({
+  skill,
+  type,
+  activeTab,
+  parent,
+}: Props): void => {
   const triggerByName = (displayName: string) => {
     switch (displayName) {
       case 'Dff Intent Responder Skill':
-        trigger(BASE_SP_EVENT, {
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
+          parent,
           children: (
             <IntentResponderSidePanel
               key={displayName + activeTab}
@@ -27,7 +34,8 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
         break
 
       default:
-        trigger(BASE_SP_EVENT, {
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
+          parent,
           children: (
             <SkillSidePanel
               key={displayName + activeTab}
@@ -45,9 +53,10 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
     return
   }
 
-  switch (skill.name.includes('prompted')) {
+  switch (skill?.name?.includes('prompted')) {
     case true:
-      trigger(BASE_SP_EVENT, {
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
+        parent,
         children: (
           <GenerativeSkillEditor
             key={skill.display_name + activeTab}

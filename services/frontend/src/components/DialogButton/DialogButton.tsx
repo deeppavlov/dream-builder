@@ -14,7 +14,8 @@ const DialogButton = ({ children, active, onClick }: Props) => {
     <button
       ref={ref}
       className={`${s.dialogButton} ${active && s['dialogButton_active']}`}
-      onClick={onClick}>
+      onClick={onClick}
+      type='button'>
       {children}
     </button>
   )

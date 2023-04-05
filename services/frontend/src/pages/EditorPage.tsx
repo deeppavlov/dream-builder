@@ -1,66 +1,68 @@
 import { useEffect, useState } from 'react'
-import { Tabs, Tab, TabPanel, TabList } from 'react-tabs'
-import { useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { useQuery } from 'react-query'
-import { useAuth } from '../context/AuthProvider'
-import { getComponents } from '../services/getComponents'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { AddButton } from '../ui/AddButton/AddButton'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { Sidebar } from '../components/Sidebar/Sidebar'
-import { BotTab } from '../components/Sidebar/components/BotTab'
-import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
-import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
-import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
+import { useLocation } from 'react-router-dom'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import { Annotators } from '../components/Annotators/Annotators'
+import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
+import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
-import { Annotators } from '../components/Annotators/Annotators'
-import { SkillSelector } from '../components/SkillSelector/SkillSelector'
-import { Skills } from '../components/Skills/Skills'
-import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { usePreview } from '../context/PreviewProvider'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Main } from '../components/Main/Main'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
+import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import { BotTab } from '../components/Sidebar/components/BotTab'
+import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
+import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
+import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
+import { Sidebar } from '../components/Sidebar/Sidebar'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 import { SkillList } from '../components/SkillList/SkillList'
-import { Toaster } from 'react-hot-toast'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
+import { Skills } from '../components/Skills/Skills'
+import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { SkillsListModal } from '../components/SkillsListModal/SkillsListModal'
+import { useAuth } from '../context/AuthProvider'
+import { useDisplay } from '../context/DisplayContext'
+import { usePreview } from '../context/PreviewProvider'
+import { getComponents } from '../services/getComponents'
+import { getDist } from '../services/getDist'
+import { AddButton } from '../ui/AddButton/AddButton'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
+import { consts } from '../utils/consts'
 
 export const EditorPage = () => {
-  const [listView, setListView] = useState<boolean>(false)
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const skillEditorIsActive = options.get(consts.SKILL_EDITOR_IS_ACTIVE)
+  const tabsNames = ['Skills', 'Architecture']
+  const [activeTab, setActiveTab] = useState<number>(
+    tabsNames.findIndex(v => v === options.get(consts.EDITOR_ACTIVE_TAB)) ?? 0
+  )
   const auth = useAuth()
   const { state } = useLocation()
   const location = useLocation()
   const nameFromURL = location?.pathname?.substring(1)
-
-  const makeDisplayName = (name: string) => {
-    const splitted = name.split('_')
-    splitted.length = splitted.length - 2
-    return splitted
-      .map((word: string) => {
-        return word[0].toUpperCase() + word.slice(1)
-      })
-      .join(' ')
-  }
-  const displayName = makeDisplayName(nameFromURL)
-
   const { isPreview, setIsPreview } = usePreview()
 
-  useEffect(() => {
-    setIsPreview(state?.preview == undefined ? true : state?.preview)
-  }, [state])
-  //вынести в отдельный хук обновление режима превью на основе стэйта роутера?
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
-
+  const { data: dist } = useQuery(
+    ['dist', state?.distName],
+    () => getDist(state?.distName! || nameFromURL),
+    {
+      refetchOnWindowFocus: false,
+      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
+    }
+  )
   const {
     isLoading: isComponentsLoading,
     error: componentsError,
@@ -69,6 +71,7 @@ export const EditorPage = () => {
     ['components', state?.distName],
     () => getComponents(state?.distName! || nameFromURL),
     {
+      refetchOnWindowFocus: false,
       enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
     }
   )
@@ -80,9 +83,48 @@ export const EditorPage = () => {
   const responseSelectors = components?.response_selectors
   const responseAnnotators = components?.response_annotators
 
+  useEffect(() => {
+    // Setting mode to Preview by default
+    setIsPreview(state?.preview ?? true)
+  }, [state])
+
+  useEffect(() => {
+    if (!skillEditorIsActive) {
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.BREADCRUMBS_PATH,
+          value: {
+            location: location.pathname,
+            path: [
+              <a href={`/${dist?.name}`}>{dist?.display_name}</a>,
+              tabsNames[activeTab],
+            ],
+          },
+        },
+      })
+    }
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.EDITOR_ACTIVE_TAB,
+        value: tabsNames[activeTab],
+      },
+    })
+
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT,
+        value: dist,
+      },
+    })
+  }, [dist, activeTab])
+
   return (
     <>
-      <Tabs>
+      <Tabs selectedIndex={activeTab} onSelect={setActiveTab}>
         <Sidebar>
           <TabList>
             <Container layoutForTabs>
@@ -97,39 +139,46 @@ export const EditorPage = () => {
               <Tab>
                 <BotTab />
               </Tab>
+              <div style={{ height: '100%' }}></div>
+              <div
+                style={{
+                  width: '100%',
+                  borderTop: '1px solid #F0F0F3',
+                  paddingTop: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <DeepyHelperTab />
+                <SettingsTab />
+              </div>
             </Container>
           </TabList>
         </Sidebar>
         <TabPanel>
-          <Topbar
-            viewChanger
-            type='editor'
-            viewHandler={viewHandler}
-            tab='Skills'
-            title={state?.displayName || displayName}
-            name={state?.distName || nameFromURL}
-          />
           <Main sidebar editor>
             <Wrapper title='Skills' skills>
               <Loader isLoading={isComponentsLoading} />
               <ErrorHandler error={componentsError} />
-              {listView && (
+              {isTableView && (
                 <Table
                   second='Type'
                   addButton={
-                    !isPreview && (
+                    !isPreview ? (
                       <AddButton
                         forTable
                         forSkills
                         disabled={!auth?.user && isPreview}
                         text='Add Skill'
                       />
-                    )
-                  }>
+                    ) : undefined
+                  }
+                >
                   <SkillList skills={skills} view='table' type='your' />
                 </Table>
               )}
-              {!listView && (
+              {!isTableView && (
                 <Container gridForCards heightAuto>
                   {!isPreview && (
                     <AddButton disabled={isPreview} forGrid forSkills />
@@ -141,12 +190,6 @@ export const EditorPage = () => {
           </Main>
         </TabPanel>
         <TabPanel>
-          <Topbar
-            tab='Architecture'
-            type='editor'
-            viewHandler={viewHandler}
-            title={state?.displayName || displayName}
-          />
           <Main sidebar editor draggable>
             <Loader isLoading={isComponentsLoading} />
             <Annotators annotators={annotators} />
@@ -160,13 +203,18 @@ export const EditorPage = () => {
       </Tabs>
       <Toaster />
       <SkillsListModal />
-
       <BaseSidePanel />
+      <BaseSidePanel transition='left' />
+      <AreYouSureModal />
+      <SkillPromptModal />
+      <Toaster />
+      <PublishAssistantModal />
+      <DeleteAssistantModal />
       <AssistantModal />
       <IntentCatcherModal />
       <IntentResponderModal />
-      <SkillPromptModal />
       <SignInModal />
+      <ShareModal />
     </>
   )
 }

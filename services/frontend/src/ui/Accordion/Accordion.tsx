@@ -9,7 +9,7 @@ interface AccordionProps extends React.PropsWithChildren {
   small?: boolean
   rounded?: boolean
   group?: StackType
-  closed?: boolean
+  isActive?: boolean
 }
 
 export const Accordion = ({
@@ -18,17 +18,13 @@ export const Accordion = ({
   small,
   rounded,
   group,
-  closed,
+  isActive: propIsActive,
 }: AccordionProps) => {
-  const [close, setClose] = useState<boolean>(false)
+  const [isActive, setIsActive] = useState<boolean>(propIsActive ?? false)
   const contentEl = useRef<HTMLDivElement>(null)
   let cx = classNames.bind(s)
 
-  useEffect(() => {
-    closed && setClose(true)
-  }, [])
-
-  const handleToggle = () => setClose(close => !close)
+  const handleAccordionClick = () => setIsActive(prev => !prev)
 
   return (
     <>
@@ -36,18 +32,20 @@ export const Accordion = ({
         className={cx(
           'accordion',
           group,
-          close && 'closed',
+          isActive && 'active',
           small && 'small',
           rounded && 'rounded'
         )}
-        onClick={handleToggle}>
+        onClick={handleAccordionClick}
+      >
         {title}
         <Arrow />
       </button>
       <div
         ref={contentEl}
-        className={cx('elements', close && 'closed')}
-        style={{ height: close ? '0px' : contentEl.current?.scrollHeight }}>
+        className={s.elements}
+        style={{ height: isActive ? contentEl.current?.scrollHeight + 'px' : '0px' }}
+      >
         {children}
       </div>
     </>

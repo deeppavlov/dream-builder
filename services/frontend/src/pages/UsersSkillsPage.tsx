@@ -14,6 +14,8 @@ import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillModal } from '../components/SkillModal/SkillModal'
 import { useAuth } from '../context/AuthProvider'
 import { SkillType } from '../types/types'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 interface skill_list {
   assistant_dist: string
@@ -34,16 +36,14 @@ interface skill_list {
 
 export const UsersSkillsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
+  const { options, dispatch } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
+      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
-        {!listView ? (
+        {!isTableView ? (
           <Wrapper title='Your Skills' amount={42}>
             <Container
               display='grid'

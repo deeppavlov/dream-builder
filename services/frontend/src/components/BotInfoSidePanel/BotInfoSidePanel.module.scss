@@ -4,7 +4,8 @@
   flex-direction: column;
   padding: 16px 0;
   gap: 12px;
-  overflow-y: scroll;
+  overflow: hidden;
+
   .header {
     display: flex;
     align-items: center;
@@ -15,38 +16,62 @@
     color: $text1;
     @include t3;
   }
-  .topContainer {
-    .main {
-      width: 100%;
-      display: flex;
-      gap: 16px;
+
+  .separator {
+    @include separator;
+  }
+
+  .dateAndVersion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $text2;
+    @include b3;
+
+    svg {
+      @include icon_size_24;
     }
+  }
+
+  .topContainer {
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 4px;
     padding: 0 20px 0 24px;
     margin-right: 4px;
     width: 100%;
   }
+  .scroll {
+    overflow: hidden;
+    overflow-y: overlay;
+    margin-right: 4px;
+
+    // &::-webkit-scrollbar {
+    //   width: 8px;
+    //   border-radius: 4px;
+    //   background: transparent;
+    // }
+
+    // &::-webkit-scrollbar-thumb {
+    //   background: $bcgrnd5;
+    //   border-radius: 4px;
+    // }
+  }
+
   .container {
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     padding: 0 20px 0 24px;
-    margin-right: 4px;
     width: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
-    .scroll {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: $bcgrnd5;
-    }
   }
 
   .table {
@@ -90,7 +115,7 @@
   .accordions {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     .accordionItem {
       display: flex;
       align-items: center;
@@ -102,6 +127,10 @@
       }
       svg {
         @include icon_size_24;
+      }
+
+      &:not(:has(.icon)) {
+        padding-left: 32px;
       }
     }
   }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { RoutesList } from '../router/RoutesList'
@@ -11,7 +10,6 @@ import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { Slider } from '../ui/Slider/Slider'
 import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
@@ -22,14 +20,13 @@ import { Loader } from '../components/Loader/Loader'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { DistList } from '../components/DistList/DistList'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import { useDisplay } from '../context/DisplayContext'
+import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
   const auth = useAuth()
-  const [listView, setListView] = useState<boolean>(false)
-
-  const viewHandler = () => {
-    setListView(listView => !listView)
-  }
+  const { options } = useDisplay()
+  const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   const {
     data: publicDists,
@@ -47,17 +44,15 @@ export const BotsPage = () => {
 
   return (
     <>
-      <Topbar viewHandler={viewHandler} type='main' />
       <Main>
         <Wrapper
           title='Public Virtual Assistants & Chatbots'
           showAll
           amount={publicDists?.length}
-          linkTo={RoutesList.botsAll}
-          fitScreen={listView}>
+          linkTo={RoutesList.botsAll}>
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
-          {listView ? (
+          {isTableView ? (
             <Table>
               <DistList view='table' dists={publicDists} type='public' />
             </Table>
@@ -71,9 +66,11 @@ export const BotsPage = () => {
           primary
           showAll
           title='Your Virtual Assistants & Chatbots'
-          amount={auth?.user && privateDists?.length}
+          amount={
+            auth?.user && privateDists?.length > 0 && privateDists?.length
+          }
           linkTo={RoutesList.yourBots}>
-          {listView ? (
+          {isTableView ? (
             <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>

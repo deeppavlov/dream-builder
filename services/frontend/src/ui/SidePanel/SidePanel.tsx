@@ -5,35 +5,39 @@ import s from './SidePanel.module.scss'
 export interface SidePanelProps {
   isOpen: boolean
   setIsOpen: (state: boolean) => void
+  handleClose?: () => void
   position?: Partial<{
-    top: number
-    left: number
-    right: number
-    bottom: number
+    top: number | 'auto'
+    left: number | 'auto'
+    right: number | 'auto'
+    bottom: number | 'auto'
   }>
   children?: React.ReactNode
+  transition?: 'left' | 'right' | 'none'
 }
 
 const SidePanel = ({
   isOpen,
   setIsOpen,
+  handleClose,
   position,
   children,
+  transition = 'right',
 }: SidePanelProps) => {
-  const closeTimeoutMS = 300
+  const closeTimeoutMS = transition === 'none' ? 0 : 300
   const customStyles = {
     overlay: {
       top: 64,
-      left: position?.left ?? 'auto',
-      right: position?.right ?? 0,
+      left: 'auto',
+      right: transition === 'left' ? 'auto' : position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       background: 'transparent',
       zIndex: 1,
     },
     content: {
       top: position?.top ?? 0,
-      left: position?.left ?? 'auto',
-      right: position?.right ?? 0,
+      left: transition === 'left' ? 80 : position?.left ?? 'auto',
+      right: transition === 'left' ? 'auto' : position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       overflow: 'visible',
       background: 'none',
@@ -43,18 +47,26 @@ const SidePanel = ({
     },
   }
 
-  const handleCloseModal = () => setIsOpen(false)
+  const handleCloseModal = () => {
+    setIsOpen(false)
+    handleClose && handleClose()
+  }
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={handleCloseModal}
+      shouldCloseOnEsc={false}
       style={customStyles}
       contentLabel='SidePanel'
       closeTimeoutMS={closeTimeoutMS}
       shouldCloseOnOverlayClick={false}
-      preventScroll={true}>
-      <div className={s.sidePanel} data-modal-type='side-panel'>
+      preventScroll={true}
+      shouldFocusAfterRender={false}>
+      <div
+        className={s.sidePanel}
+        data-modal-type='side-panel'
+        data-transition={transition}>
         {children}
       </div>
     </Modal>

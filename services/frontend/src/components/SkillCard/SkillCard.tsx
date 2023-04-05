@@ -1,21 +1,22 @@
-import React, { FC, useId, useState } from 'react'
-import classNames from 'classnames/bind'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import Calendar from '@assets/icons/calendar.svg'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import Button from '../../ui/Button/Button'
-import { ISkill, SkillAvailabilityType } from '../../types/types'
-import { trigger } from '../../utils/events'
-import ResourcesTable from '../ResourcesTable/ResourcesTable'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
+import classNames from 'classnames/bind'
+import React, { FC, useId, useRef, useState } from 'react'
+import Woman from '../../assets/icons/woman.png'
+import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
+import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { componentTypeMap } from '../../mapping//componentTypeMap'
-import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
-import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
+import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
+import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
@@ -35,6 +36,9 @@ export const SkillCard: FC<SkillCardProps> = ({
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
+  const skillCardRef = useRef(null)
+  const { options } = useDisplay()
+  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -42,21 +46,35 @@ export const SkillCard: FC<SkillCardProps> = ({
     setDisabled(disabled => !disabled)
   }
 
-  const handleSkillCardClick = (e: React.MouseEvent) =>
-    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
+  const handleSkillCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    triggerSkillSidePanel({
+      parent: skillCardRef,
+      skill,
+      type,
+      activeTab: 'Properties',
+    })
+  }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
-    trigger('CreateSkillDistModal', skill)
+    trigger('CreateSkillDistModal', { skill })
     e.stopPropagation()
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
+    if (skill.component_type === 'Generative') {
+      trigger('SkillPromptModal', { skill, action: 'edit' })
+      trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      e.stopPropagation()
+      return
+    }
+
     triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
-
+  
   return (
     <div
       className={cx(
@@ -65,7 +83,10 @@ export const SkillCard: FC<SkillCardProps> = ({
         forGrid && 'forGrid',
         disabled && 'disabled'
       )}
-      onClick={handleSkillCardClick}>
+      onClick={handleSkillCardClick}
+      ref={skillCardRef}
+      data-active={skill.name === activeSKillId}
+    >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
         {type == 'your' && (
@@ -81,13 +102,18 @@ export const SkillCard: FC<SkillCardProps> = ({
             </p>
           </div>
           <div className={s.name}>
-            <img className={s.companyLogo} src={DeepPavlovLogo} />
-            <p className={s.companyName}>{skill?.author ?? 'Empty'}</p>
+            <img className={s.companyLogo} src={Woman} />
+            <p className={s.companyName}>
+              {skill?.author.fullname == 'DeepPavlov'
+                ? 'Dr. Xandra Smith'
+                : skill?.author.fullname}
+            </p>
           </div>
           <div
             className={s.description}
             data-tip
-            data-tooltip-id={'skillCardDesc' + tooltipId}>
+            data-tooltip-id={'skillCardDesc' + tooltipId}
+          >
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
@@ -114,9 +140,10 @@ export const SkillCard: FC<SkillCardProps> = ({
                 small
                 long
                 props={{
-                  disabled: disabledMsg !== undefined,
+                  disabled: disabled || disabledMsg !== undefined,
                   onClick: handleAddSkillBtnClick,
-                }}>
+                }}
+              >
                 Add
               </Button>
             </div>
@@ -126,19 +153,25 @@ export const SkillCard: FC<SkillCardProps> = ({
                 className={s.btns}
                 data-tip
                 data-tooltip-id={'editSkill' + tooltipId}
-                style={{ width: '100%' }}>
+                style={{ width: '100%' }}
+              >
                 <Button
                   theme='primary'
                   long
                   small
                   props={{
                     onClick: handleEditBtnClick,
-                    disabled: isPreview || !skill?.is_customizable,
-                  }}>
+                    disabled: disabled || isPreview || !skill?.is_customizable,
+                  }}
+                >
                   Edit
                 </Button>
               </div>
-              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <Kebab
+                disabled={disabled}
+                tooltipId={'ctxMenu' + tooltipId}
+                theme='card'
+              />
               <SkillCardToolTip
                 skill={skill}
                 tooltipId={'ctxMenu' + tooltipId}

@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useId, useState } from 'react'
-import { FormState } from 'react-hook-form'
 import classNames from 'classnames/bind'
+import React,{ FC,useEffect,useId,useState } from 'react'
+import { FormState } from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
@@ -13,6 +13,7 @@ interface TextAreaProps {
   maxLenght?: number | string
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
+  withWordCounter?: boolean
   withEnterButton?: boolean
   resizable?: boolean
   fullHeight?: boolean
@@ -26,6 +27,7 @@ export const TextArea: FC<TextAreaProps> = ({
   maxLenght,
   props,
   withCounter,
+  withWordCounter,
   withEnterButton,
   resizable = true,
   fullHeight,
@@ -73,6 +75,12 @@ export const TextArea: FC<TextAreaProps> = ({
               {value?.toString()?.length ?? 0}/{maxLenght}
             </span>
           )}
+          {withWordCounter && (
+            <span className={s.counter}>
+              {value?.split(' ')?.length ?? 0}/{maxLenght} words
+            </span>
+          )}
+          
         </label>
       )}
       <div className={cx('container', resizable && 'resize-container')}>

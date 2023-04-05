@@ -195,7 +195,7 @@ export const AssistantModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID as keyof FormValues]}
-            maxLenght={500}
+            maxLenght={1000}
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
@@ -204,7 +204,7 @@ export const AssistantModal = () => {
               ...register(DESC_ID as keyof FormValues, {
                 required: 'This field can’t be empty',
                 maxLength: {
-                  value: 500,
+                  value: 1000,
                   message: 'Limit text description to 500 characters',
                 },
                 // validate: {isEmpty:},

@@ -1,4 +1,5 @@
 import secrets
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseModel, BaseSettings, Field
@@ -28,7 +29,8 @@ class DatabaseSettings(BaseModel):
     host: str
     port: int
     name: str
-    dream_root_path: Optional[str]
+    initial_data_dir: Path
+    dream_root_path: Optional[Path]
 
 
 class AuthSettings(BaseModel):

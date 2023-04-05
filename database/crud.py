@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select, update, and_, or_, delete
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -7,13 +9,18 @@ from database import models
 from database.models import GoogleUser, UserValid, ApiToken, UserApiToken
 
 
+# USER
+def get_all_users(db: Session) -> [models.GoogleUser]:
+    return db.scalars(select(GoogleUser)).all()
+
+
 def check_user_exists(db: Session, email) -> bool:
     if db.query(GoogleUser).filter(GoogleUser.email == email).first():
         return True
     return False
 
 
-def add_google_user(db: Session, user) -> GoogleUser:
+def add_google_user(db: Session, user) -> models.GoogleUser:
     db_user = GoogleUser(
         email=user.email,
         sub=user.sub,
@@ -29,18 +36,23 @@ def add_google_user(db: Session, user) -> GoogleUser:
     return db_user
 
 
-def get_user_by_id(db: Session, user_id: int):
+def get_user(db: Session, user_id: int) -> Optional[models.GoogleUser]:
     return db.get(GoogleUser, user_id)
 
 
-def get_user_by_sub(db: Session, sub: str):
+def get_user_by_sub(db: Session, sub: str) -> models.GoogleUser:
     return db.scalar(select(GoogleUser).filter_by(sub=sub))
 
 
-def get_user_by_email(db: Session, email: str) -> GoogleUser:
+def get_user_by_email(db: Session, email: str) -> models.GoogleUser:
     return db.scalar(select(GoogleUser).filter_by(email=email))
 
 
+def get_users_by_role(db: Session, role_id: int) -> [models.GoogleUser]:
+    return db.scalars(select(models.GoogleUser).filter_by(role_id=role_id)).all()
+
+
+# USER VALID
 def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:
     db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
     db.add(db_user)
@@ -81,11 +93,8 @@ def update_users_refresh_token(db: Session, user, email: str):
     db.commit()
 
 
-def get_all_users(db: Session):
-    return db.scalars(select(GoogleUser)).all()
-
-
-def get_all_api_tokens(db: Session):
+# API TOKEN
+def get_all_api_tokens(db: Session) -> [models.UserApiToken]:
     return db.scalars(select(ApiToken)).all()
 
 
@@ -103,23 +112,33 @@ def create_or_update_user_api_token(
     return user_api_token
 
 
-def get_virtual_assistant(db: Session, id: int):
+def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
+    return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
+
+
+# VIRTUAL ASSISTANT
+def get_virtual_assistant(db: Session, id: int) -> Optional[models.VirtualAssistant]:
     return db.get(models.VirtualAssistant, id)
 
 
-def get_all_virtual_assistants(db: Session):
+def get_all_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(select(models.VirtualAssistant)).all()
 
 
-def get_all_public_virtual_assistants(db: Session):
+def get_all_public_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(
         select(models.VirtualAssistant).where(models.VirtualAssistant.publish_request.has(is_confirmed=True))
     ).all()
 
 
-def get_all_private_virtual_assistants(db: Session, user_id: int):
+def get_all_private_virtual_assistants(db: Session, user_id: int) -> [models.VirtualAssistant]:
     return db.scalars(
-        select(models.VirtualAssistant).where(~models.VirtualAssistant.publish_request.has(is_confirmed=True))
+        select(models.VirtualAssistant).where(
+            and_(
+                models.VirtualAssistant.author_id == user_id,
+                ~models.VirtualAssistant.publish_request.has(is_confirmed=True),
+            )
+        )
     ).all()
 
 
@@ -131,7 +150,7 @@ def create_virtual_assistant(
     display_name: str,
     description: str,
     cloned_from_id: Optional[int] = None,
-):
+) -> models.VirtualAssistant:
     new_virtual_assistant = db.scalar(
         insert(models.VirtualAssistant)
         .values(
@@ -148,20 +167,28 @@ def create_virtual_assistant(
     if cloned_from_id:
         for va_component in get_virtual_assistant_components(db, cloned_from_id):
             db.scalar(
-                insert(models.VirtualAssistantComponent)
-                .values(
+                insert(models.VirtualAssistantComponent).values(
                     virtual_assistant_id=new_virtual_assistant.id,
                     component_id=va_component.component_id,
-                    is_enabled=va_component.is_enabled
+                    is_enabled=va_component.is_enabled,
                 )
             )
-
-    db.commit()
 
     return new_virtual_assistant
 
 
-def delete_virtual_assistant_by_name(db: Session, name: str):
+def update_virtual_assistant_metadata_by_name(db: Session, name: str, **kwargs) -> models.VirtualAssistant:
+    values = {k: v for k, v in kwargs.items() if v is not None}
+
+    return db.scalar(
+        update(models.VirtualAssistant)
+        .where(models.VirtualAssistant.name == name)
+        .values(**values)
+        .returning(models.VirtualAssistant)
+    )
+
+
+def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
     deployments = db.scalars(
         select(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
@@ -172,28 +199,29 @@ def delete_virtual_assistant_by_name(db: Session, name: str):
     db.execute(delete(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id))
 
     db.execute(delete(models.VirtualAssistant).where(models.VirtualAssistant.name == name))
-    db.commit()
 
 
-def get_component(db: Session, component_id: int):
+def get_component(db: Session, component_id: int) -> Optional[models.Component]:
     return db.get(models.Component, component_id)
 
 
-def get_all_components(db: Session):
+def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str):
+def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
     return db.scalars(select(models.Component).filter_by(group=group)).all()
 
 
-def get_virtual_assistant_components(db: Session, virtual_assistant_id: int):
+def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> [models.VirtualAssistantComponent]:
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
     ).all()
 
 
-def get_virtual_assistant_components_by_name(db: Session, virtual_assistant_name: str):
+def get_virtual_assistant_components_by_name(
+    db: Session, virtual_assistant_name: str
+) -> [models.VirtualAssistantComponent]:
     virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
 
     return db.scalars(
@@ -201,17 +229,30 @@ def get_virtual_assistant_components_by_name(db: Session, virtual_assistant_name
     ).all()
 
 
-def get_dialog_session(db: Session, dialog_session_id: int):
+# PUBLISH REQUEST
+def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str):
+    return db.scalar(
+        insert(models.PublishRequest)
+        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug)
+        .on_conflict_do_update(
+            index_elements=[models.PublishRequest.slug],
+            set_=dict(date_created=datetime.utcnow(), is_confirmed=False, confirmed_by_user_id=None),
+        )
+        .returning(models.PublishRequest)
+    )
+
+
+def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.DialogSession]:
     return db.get(models.DialogSession, dialog_session_id)
 
 
-def get_debug_assistant_chat_url(db: Session):
+def get_debug_assistant_chat_url(db: Session) -> str:
     debug_assistant = get_virtual_assistant_by_name(db, "universal_prompted_assistant")
 
     return debug_assistant.deployment.chat_url
 
 
-def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str):
+def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str) -> models.DialogSession:
     virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
 
     db.scalar(
@@ -235,29 +276,30 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
     return dialog_session
 
 
-def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: str):
-    db.scalar(
+def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: str) -> models.DialogSession:
+    dialog_session = db.scalar(
         update(models.DialogSession)
         .where(models.DialogSession.id == dialog_session_id)
         .values(agent_dialog_id=agent_dialog_id)
         .returning(models.DialogSession)
     )
     db.commit()
+    return dialog_session
 
 
-def get_all_lm_services(db: Session):
+def get_all_lm_services(db: Session) -> [models.LmService]:
     return db.scalars(select(models.LmService)).all()
 
 
-def get_lm_service_by_name(db: Session, name: str):
+def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]:
     return db.scalar(select(models.LmService).filter_by(name=name))
 
 
-def get_virtual_assistant_by_name(db: Session, name: str):
+def get_virtual_assistant_by_name(db: Session, name: str) -> Optional[models.VirtualAssistant]:
     return db.scalar(select(models.VirtualAssistant).filter_by(name=name))
 
 
-def get_deployment_by_virtual_assistant_name(db: Session, name: str):
+def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
 
     try:
@@ -268,33 +310,43 @@ def get_deployment_by_virtual_assistant_name(db: Session, name: str):
     return deployment
 
 
-def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str):
-    deployment = get_deployment_by_virtual_assistant_name(db, name)
-
-    return deployment.prompt
-
-
-def create_deployment_from_copy(db: Session, original_virtual_assistant_id: int, new_virtual_assistant_id: int):
-    original_deployment = db.scalar(
-        select(models.Deployment).where(models.Deployment.virtual_assistant_id == original_virtual_assistant_id)
-    )
-
+def create_deployment(
+    db: Session, virtual_assistant_id: int, chat_url: str, prompt: str, lm_service_id: int
+) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
         .values(
-            virtual_assistant_id=new_virtual_assistant_id,
-            chat_url=original_deployment.chat_url,
-            prompt=original_deployment.prompt,
-            lm_service_id=original_deployment.lm_service_id,
+            virtual_assistant_id=virtual_assistant_id,
+            chat_url=chat_url,
+            prompt=prompt,
+            lm_service_id=lm_service_id,
         )
         .returning(models.Deployment)
     )
-    db.commit()
 
     return deployment
 
 
-def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs):
+def create_deployment_from_copy(
+    db: Session, original_virtual_assistant_id: int, new_virtual_assistant_id: int
+) -> models.Deployment:
+    original_deployment = db.scalar(
+        select(models.Deployment).where(models.Deployment.virtual_assistant_id == original_virtual_assistant_id)
+    )
+
+    if not original_deployment:
+        raise ValueError(f"No deployments for virtual assistant with id {original_virtual_assistant_id}")
+
+    return create_deployment(
+        db,
+        new_virtual_assistant_id,
+        original_deployment.chat_url,
+        original_deployment.prompt,
+        original_deployment.lm_service_id,
+    )
+
+
+def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
     deployment = db.scalar(
         update(models.Deployment)
@@ -307,13 +359,19 @@ def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs
     return deployment
 
 
+def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str) -> str:
+    deployment = get_deployment_by_virtual_assistant_name(db, name)
+
+    return deployment.prompt
+
+
 def set_deployment_prompt_by_virtual_assistant_name(db: Session, name: str, prompt: str) -> models.Deployment:
     deployment = update_deployment_by_virtual_assistant_name(db, name, prompt=prompt)
 
     return deployment
 
 
-def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str):
+def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str) -> str:
     deployment = get_deployment_by_virtual_assistant_name(db, name)
 
     return deployment.lm_service

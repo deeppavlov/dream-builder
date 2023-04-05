@@ -12,5 +12,6 @@ tokens_router = APIRouter(prefix="/api/api_tokens", tags=["api_tokens"])
 
 @tokens_router.get("/", status_code=status.HTTP_200_OK)
 async def get_all_api_tokens(user: str = Depends(verify_token), db: Session = Depends(get_db)):
-    tokens = crud.get_all_api_tokens(db)
-    return [schemas.ApiToken.from_orm(t) for t in tokens]
+    api_tokens = crud.get_all_api_tokens(db)
+
+    return [schemas.ApiToken.from_orm(t) for t in api_tokens]

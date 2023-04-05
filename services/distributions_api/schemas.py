@@ -58,16 +58,6 @@ class CreateAssistantDistModel(BaseModel):
     description: str
 
 
-class CloneAssistantDistModel(CreateAssistantDistModel):
-    annotators: Optional[List[str]]
-    response_annotators: Optional[List[str]]
-    # response_annotator_selectors: Optional[bool]
-    candidate_annotators: Optional[List[str]]
-    skill_selectors: Optional[List[str]]
-    skills: Optional[List[str]]
-    response_selectors: Optional[List[str]]
-
-
 class AssistantDistModelMetadata(BaseModel):
     display_name: str
     author: str

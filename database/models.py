@@ -12,6 +12,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import expression
 from sqlalchemy.types import DateTime
 
+from apiconfig.config import settings
 from database import utils
 from database.core import Base
 
@@ -28,8 +29,6 @@ def pg_utcnow(element, compiler, **kwargs):
 
 # https://stackoverflow.com/a/46016930
 # how do we set up roles?
-
-
 class Role(Base):
     __tablename__ = "role"
 
@@ -141,10 +140,8 @@ class PublishRequest(Base):
     __tablename__ = "publish_request"
 
     id = Column(Integer, index=True, primary_key=True)
-    slug = Column(String, unique=True)
-    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False, unique=True)
     virtual_assistant = relationship(
         "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
     )
@@ -152,7 +149,9 @@ class PublishRequest(Base):
     user_id = Column(Integer, ForeignKey("google_user.id"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
-    is_confirmed = Column(Boolean)
+    slug = Column(String, nullable=False, unique=True)
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+    is_confirmed = Column(Boolean, nullable=False)
     confirmed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
     confirmed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.confirmed_by_user_id")
 
@@ -230,7 +229,7 @@ def _pre_populate_from_tsv(
 @listens_for(Role.__table__, "after_create")
 def pre_populate_role(target, connection, **kw):
     _pre_populate_from_tsv(
-        "database/initial_data/role.tsv",
+        settings.db.initial_data_dir / "role.tsv",
         target,
         connection,
         map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
@@ -239,23 +238,23 @@ def pre_populate_role(target, connection, **kw):
 
 @listens_for(GoogleUser.__table__, "after_create")
 def pre_populate_google_user(target, connection, **kw):
-    _pre_populate_from_tsv("database/initial_data/google_user.tsv", target, connection)
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
 
 
 @listens_for(ApiToken.__table__, "after_create")
 def pre_populate_api_token(target, connection, **kw):
-    _pre_populate_from_tsv("database/initial_data/api_token.tsv", target, connection)
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_token.tsv", target, connection)
 
 
 @listens_for(VirtualAssistant.__table__, "after_create")
 def pre_populate_virtual_assistant(target, connection, **kw):
-    _pre_populate_from_tsv("database/initial_data/virtual_assistant.tsv", target, connection)
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "virtual_assistant.tsv", target, connection)
 
 
 @listens_for(PublishRequest.__table__, "after_create")
 def pre_populate_publish_request(target, connection, **kw):
     _pre_populate_from_tsv(
-        "database/initial_data/publish_request.tsv",
+        settings.db.initial_data_dir / "publish_request.tsv",
         target,
         connection,
         map_value_types={"is_confirmed": lambda x: bool(int(x))},
@@ -264,18 +263,18 @@ def pre_populate_publish_request(target, connection, **kw):
 
 @listens_for(LmService.__table__, "after_create")
 def pre_populate_lm_service(target, connection, **kw):
-    _pre_populate_from_tsv("database/initial_data/lm_service.tsv", target, connection)
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "lm_service.tsv", target, connection)
 
 
 @listens_for(Deployment.__table__, "after_create")
 def pre_populate_deployment(target, connection, **kw):
-    _pre_populate_from_tsv("database/initial_data/deployment.tsv", target, connection)
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "deployment.tsv", target, connection)
 
 
 @listens_for(Component.__table__, "after_create")
 def pre_populate_component(target, connection, **kw):
     _pre_populate_from_tsv(
-        "database/initial_data/component.tsv",
+        settings.db.initial_data_dir / "component.tsv",
         target,
         connection,
         map_value_types={"is_customizable": lambda x: bool(int(x)), "build_args": json.loads},
@@ -285,7 +284,7 @@ def pre_populate_component(target, connection, **kw):
 @listens_for(VirtualAssistantComponent.__table__, "after_create")
 def pre_populate_virtual_assistant_component(target, connection, **kw):
     _pre_populate_from_tsv(
-        "database/initial_data/virtual_assistant_component.tsv",
+        settings.db.initial_data_dir / "virtual_assistant_component.tsv",
         target,
         connection,
         map_value_types={"is_enabled": lambda x: bool(int(x))},

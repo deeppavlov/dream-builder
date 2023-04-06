@@ -363,7 +363,7 @@ async def get_dist_components(dist_name: str, db: Session = Depends(get_db)):
 
 
 @assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)
-async def publish_dist(dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
+async def publish_dist(dist_name: str, payload: schemas.CreatePublishRequest, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(virtual_assistant.source)

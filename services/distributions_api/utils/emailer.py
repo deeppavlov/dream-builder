@@ -23,6 +23,7 @@ class Emailer:
         self._server = smtplib.SMTP(self.server_name, self.port)
 
         self._server.starttls(context=self.context)
+        self._server.ehlo()
         self._server.login(self.user, self.password)
 
     def _send_message(self, msg, **kwargs):
@@ -31,11 +32,13 @@ class Emailer:
         except smtplib.SMTPServerDisconnected:
             logging.warning("SMTP server disconnected, retrying login...")
             self._server.connect(self.server_name, self.port)
+            self._server.ehlo()
             self._server.login(self.user, self.password)
             logging.warning("SMTP login ok")
             self._server.send_message(msg, **kwargs)
         except Exception as e:
             logging.error(f"Failed to send message! {type(e)}: {e}")
+            raise e
 
     def send_publish_request_to_moderators(
         self, moderator_address: str, owner_address: str, name: str, display_name: str

@@ -199,6 +199,11 @@ class Deployment(BaseOrmModel):
     lm_service: Optional[LmService]
 
 
+class CreatePublishRequest(BaseOrmModel):
+    is_prompt_visible: bool
+    is_publicly_listed: bool
+
+
 class Prompt(BaseModel):
     text: str
 

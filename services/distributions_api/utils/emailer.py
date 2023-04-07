@@ -31,7 +31,7 @@ class Emailer:
             self._server.send_message(msg, **kwargs)
         except smtplib.SMTPServerDisconnected:
             logging.warning("SMTP server disconnected, retrying login...")
-            self._server.connect(self.server_name, self.port)
+            self._server.starttls(context=self.context)
             self._server.ehlo()
             self._server.login(self.user, self.password)
             logging.warning("SMTP login ok")

@@ -52,16 +52,17 @@ class GoogleUser(Base):
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
-    virtual_assistants = relationship("VirtualAssistant", back_populates="author")
-    components = relationship("Component", back_populates="author")
-    dialog_sessions = relationship("DialogSession", back_populates="user")
+    virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
+    components = relationship("Component", back_populates="author", passive_deletes=True)
+    dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
+    api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
 
 
 class UserValid(Base):
     __tablename__ = "user_valid"
 
     id = Column(Integer, index=True, primary_key=True)
-    user_id = Column(Integer, ForeignKey("google_user.id"))
+    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
     refresh_token = Column(String, unique=True)
     is_valid = Column(Boolean, nullable=False)
     expire_date = Column(DateTime, nullable=False)
@@ -81,7 +82,7 @@ class UserApiToken(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("google_user.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
     user = relationship("GoogleUser")
 
     api_token_id = Column(Integer, ForeignKey("api_token.id"), unique=True, nullable=False)
@@ -98,7 +99,7 @@ class VirtualAssistant(Base):
     cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id"))
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
-    author_id = Column(Integer, ForeignKey("google_user.id"), nullable=False)
+    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
     author = relationship(GoogleUser, back_populates="virtual_assistants")
 
     source = Column(String, nullable=False)
@@ -107,8 +108,10 @@ class VirtualAssistant(Base):
     description = Column(String, nullable=False)
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
-    publish_request = relationship("PublishRequest", uselist=False, back_populates="virtual_assistant")
-    deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant")
+    publish_request = relationship(
+        "PublishRequest", uselist=False, back_populates="virtual_assistant", passive_deletes=True
+    )
+    deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant", passive_deletes=True)
 
 
 class LmService(Base):
@@ -127,7 +130,7 @@ class Deployment(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False, unique=True)
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True)
     virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
     chat_url = Column(String, nullable=False)
@@ -141,17 +144,18 @@ class PublishRequest(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False, unique=True)
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True)
     virtual_assistant = relationship(
         "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
     )
 
-    user_id = Column(Integer, ForeignKey("google_user.id"))
+    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-    is_confirmed = Column(Boolean, nullable=False)
+    is_confirmed = Column(Boolean)
+
     confirmed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
     confirmed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.confirmed_by_user_id")
 
@@ -168,8 +172,8 @@ class Component(Base):
     model_type = Column(String, nullable=True)
     is_customizable = Column(Boolean, nullable=False)
 
-    author_id = Column(Integer, ForeignKey("google_user.id"), nullable=False)
-    author = relationship(GoogleUser, back_populates="components")
+    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship("GoogleUser", back_populates="components")
 
     description = Column(String, nullable=True)
 
@@ -191,10 +195,13 @@ class VirtualAssistantComponent(Base):
     __tablename__ = "virtual_assistant_component"
 
     id = Column(Integer, index=True, primary_key=True)
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id"), nullable=False)
+
+    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False)
     virtual_assistant = relationship("VirtualAssistant")
-    component_id = Column(Integer, ForeignKey("component.id"), nullable=False)
+
+    component_id = Column(Integer, ForeignKey("component.id", ondelete="CASCADE"), nullable=False)
     component = relationship("Component")
+
     is_enabled = Column(Boolean, nullable=False)
 
 
@@ -203,10 +210,10 @@ class DialogSession(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("google_user.id"))
+    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
     user = relationship("GoogleUser", uselist=False, foreign_keys="DialogSession.user_id")
 
-    deployment_id = Column(Integer, ForeignKey("deployment.id"), nullable=False)
+    deployment_id = Column(Integer, ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
     deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")
 
     agent_dialog_id = Column(String)

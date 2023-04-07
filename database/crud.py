@@ -189,15 +189,6 @@ def update_virtual_assistant_metadata_by_name(db: Session, name: str, **kwargs) 
 
 
 def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
-    virtual_assistant = get_virtual_assistant_by_name(db, name)
-    deployments = db.scalars(
-        select(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
-    )
-    for deployment in deployments:
-        db.execute(delete(models.DialogSession).where(models.DialogSession.deployment_id == deployment.id))
-
-    db.execute(delete(models.Deployment).where(models.Deployment.virtual_assistant_id == virtual_assistant.id))
-
     db.execute(delete(models.VirtualAssistant).where(models.VirtualAssistant.name == name))
 
 

@@ -1,13 +1,10 @@
-import json
 from typing import List
 
-from deeppavlov_dreamtools import list_components, AssistantDist
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
 from database import crud
 from services.distributions_api import schemas
-from services.distributions_api.const import DREAM_ROOT_PATH
 from services.distributions_api.database_maker import get_db
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])

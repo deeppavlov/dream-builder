@@ -128,13 +128,23 @@ class ComponentShort(BaseOrmModel):
         return v
 
 
+class CreateVirtualAssistantComponentRequest(BaseModel):
+    component_id: int
+
+
+class VirtualAssistantComponentShort(BaseOrmModel):
+    id: int
+    component: ComponentShort
+    is_enabled: bool
+
+
 class DistComponentsResponse(BaseModel):
-    annotators: List[ComponentShort]
-    skill_selectors: List[ComponentShort]
-    skills: List[ComponentShort]
-    candidate_annotators: List[ComponentShort]
-    response_selectors: List[ComponentShort]
-    response_annotators: List[ComponentShort]
+    annotators: List[VirtualAssistantComponentShort]
+    skill_selectors: List[VirtualAssistantComponentShort]
+    skills: List[VirtualAssistantComponentShort]
+    candidate_annotators: List[VirtualAssistantComponentShort]
+    response_selectors: List[VirtualAssistantComponentShort]
+    response_annotators: List[VirtualAssistantComponentShort]
 
 
 class CreateDialogSessionRequest(BaseModel):
@@ -164,7 +174,7 @@ class ApiToken(BaseOrmModel):
 class UserApiToken(BaseOrmModel):
     id: int
     user_id: int
-    api_token_id: int
+    api_token: ApiToken
     token_value: str
 
 

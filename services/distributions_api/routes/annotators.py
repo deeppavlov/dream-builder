@@ -1,9 +1,4 @@
-import json
-
-from deeppavlov_dreamtools import list_components, AssistantDist
-from fastapi import APIRouter, status
-
-from services.distributions_api.const import DREAM_ROOT_PATH
+from fastapi import APIRouter
 
 annotators_router = APIRouter(prefix="/api/annotators")
 

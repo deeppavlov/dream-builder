@@ -165,14 +165,8 @@ def create_virtual_assistant(
     )
 
     if cloned_from_id:
-        for va_component in get_virtual_assistant_components(db, cloned_from_id):
-            db.scalar(
-                insert(models.VirtualAssistantComponent).values(
-                    virtual_assistant_id=new_virtual_assistant.id,
-                    component_id=va_component.component_id,
-                    is_enabled=va_component.is_enabled,
-                )
-            )
+        original_components = get_virtual_assistant_components(db, cloned_from_id)
+        create_virtual_assistant_components(db, new_virtual_assistant.id, original_components)
 
     return new_virtual_assistant
 
@@ -218,6 +212,36 @@ def get_virtual_assistant_components_by_name(
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)
     ).all()
+
+
+def create_virtual_assistant_component(
+    db: Session, virtual_assistant_id: int, component_id: int, is_enabled: bool = True
+):
+    return db.scalar(
+        insert(models.VirtualAssistantComponent)
+        .values(
+            virtual_assistant_id=virtual_assistant_id,
+            component_id=component_id,
+            is_enabled=is_enabled,
+        )
+        .returning(models.VirtualAssistantComponent)
+    )
+
+
+def create_virtual_assistant_components(
+    db: Session, virtual_assistant_id: int, components: [models.VirtualAssistantComponent]
+):
+    new_components = []
+
+    for component in components:
+        new_component = create_virtual_assistant_component(db, virtual_assistant_id, component.id, component.is_enabled)
+        new_components.append(new_component)
+
+    return new_components
+
+
+def delete_virtual_assistant_component(db: Session, id: int):
+    db.scalar(delete(models.VirtualAssistantComponent).where(id=id))
 
 
 # PUBLISH REQUEST

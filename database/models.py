@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, JSON, TypeDecorator, VARCHAR
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, JSON, TypeDecorator, VARCHAR, UniqueConstraint
 from sqlalchemy.dialects.postgresql import insert, JSONB
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext import mutable
@@ -79,6 +79,9 @@ class ApiToken(Base):
 
 class UserApiToken(Base):
     __tablename__ = "user_api_token"
+    __table_args__ = (
+        UniqueConstraint('user_id', 'api_token_id', name='unique_user_api_token'),
+    )
 
     id = Column(Integer, index=True, primary_key=True)
 

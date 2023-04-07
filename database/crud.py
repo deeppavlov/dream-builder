@@ -102,12 +102,13 @@ def create_or_update_user_api_token(
     db: Session, user_id: int, api_token_id: int, token_value: str
 ) -> models.UserApiToken:
     user_api_token = db.scalar(
-        insert(UserApiToken)
+        insert(models.UserApiToken)
         .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
-        .on_conflict_do_update(index_elements=[UserApiToken.api_token_id], set_=dict(token_value=token_value))
-        .returning(UserApiToken)
+        .on_conflict_do_update(
+            constraint="unique_user_api_token", set_=dict(token_value=token_value)
+        )
+        .returning(models.UserApiToken)
     )
-    db.commit()
 
     return user_api_token
 

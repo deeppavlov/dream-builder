@@ -33,7 +33,7 @@ async def get_user_by_id(user_id: int, user: schemas.User = Depends(verify_token
 
 
 @users_router.get("/{user_id}/settings/api_tokens/", status_code=status.HTTP_200_OK)
-async def create_or_update_user_api_token(
+async def get_user_api_tokens(
     user_id: int,
     user: schemas.User = Depends(verify_token),
     db: Session = Depends(get_db),
@@ -50,6 +50,7 @@ async def create_or_update_user_api_token(
     user: schemas.User = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.UserApiToken:
-    user_api_token = crud.create_or_update_user_api_token(db, user_id, payload.api_token_id, payload.token_value)
+    with db.begin():
+        user_api_token = crud.create_or_update_user_api_token(db, user_id, payload.api_token_id, payload.token_value)
 
     return schemas.UserApiToken.from_orm(user_api_token)

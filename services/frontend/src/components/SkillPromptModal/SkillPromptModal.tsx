@@ -327,12 +327,12 @@ const SkillPromptModal = () => {
               )}
               {action === 'edit' && (
                 <>
-                  <div className={s.history}>
+                  {/* <div className={s.history}>
                     <Button theme='tertiary-round'>
                       <HistoryIcon />
                       History
                     </Button>
-                  </div>
+                  </div> */}
                   <Button theme='secondary-dark' props={{ type: 'submit' }}>
                     Save & Test
                   </Button>

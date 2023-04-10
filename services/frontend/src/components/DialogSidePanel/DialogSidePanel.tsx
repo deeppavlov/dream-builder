@@ -164,7 +164,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
             </div>
             <div className={s.dialogSidePanel__controls}>
               <div className={s.left}>
-                <DialogButton
+                {/* <DialogButton
                   active={isTextChat}
                   onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
                 >
@@ -175,7 +175,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                   onClick={handleDownloadBtnClick}
                 >
                   <DownloadDialogIcon />
-                </button>
+                </button> */}
               </div>
               <div className={s.right}>
                 <Button

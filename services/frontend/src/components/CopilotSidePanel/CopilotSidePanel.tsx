@@ -114,14 +114,14 @@ export const CopilotSidePanel = () => {
             </>
           )}
         </div>
-        <div className={s.dialogSidePanel__controls}>
+        {/* <div className={s.dialogSidePanel__controls}>
           <DialogButton active={true}>
             <DialogTextIcon />
           </DialogButton>
           <DialogButton active={false}>
             <DialogMicrophoneIcon />
           </DialogButton>
-        </div>
+        </div> */}
         <form onSubmit={handleSubmit(handleSend)}>
           <textarea
             onKeyDown={handleKeyDown}

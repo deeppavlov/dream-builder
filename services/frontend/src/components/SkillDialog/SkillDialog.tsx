@@ -86,7 +86,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
       </div>
       <div className={s.controls}>
         <div className={s.left}>
-          <DialogButton active>
+          {/* <DialogButton active>
             <DialogTextIcon />
           </DialogButton>
           <DialogButton>
@@ -96,7 +96,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
             <DialogButton>
               <DownloadDialogIcon />
             </DialogButton>
-          </div>
+          </div> */}
         </div>
         <div className={s.right}>
           <Button

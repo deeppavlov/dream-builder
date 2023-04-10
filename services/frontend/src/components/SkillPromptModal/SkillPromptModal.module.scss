@@ -65,6 +65,7 @@
 .tip-bold {
   @include t4;
   color: $text3;
+  align-self: flex-end;
 }
 
 .btns {

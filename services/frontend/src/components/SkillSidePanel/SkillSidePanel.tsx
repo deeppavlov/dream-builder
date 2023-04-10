@@ -139,7 +139,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
           <p className={s.desc}>{skill?.description}</p>
           <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
-              <Button
+              {/* <Button
                 theme='primary'
                 props={{
                   disabled: isPreview,
@@ -147,7 +147,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
                 }}
               >
                 Add to ...
-              </Button>
+              </Button> */}
             </div>
           </div>
 

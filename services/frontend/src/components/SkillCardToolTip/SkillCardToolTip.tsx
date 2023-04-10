@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -10,8 +11,8 @@ interface Props {
   isPreview?: boolean
 }
 
-const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
-  const handleEditBtnClick = (e: React.MouseEvent) => {
+const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
+  const handleEditBtnClick = () => {
     if (skill.component_type === 'Generative') {
       trigger('SkillPromptModal', { skill, action: 'edit' })
       return
@@ -23,9 +24,11 @@ const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })
 
-  const handleDisableBtnClick = () => {}
+  // const handleDisableBtnClick = () => {}
 
-  const handleDeleteBtnClick = () => {}
+  const handleDeleteBtnClick = () => {
+    trigger('DeleteSkillModal', { skill })
+  }
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
@@ -42,11 +45,11 @@ const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
-      <ContextMenuButton
+      {/* <ContextMenuButton
         name='Disable Skill'
         type='disable'
         disabled={isPreview}
-      />
+      /> */}
       <hr />
       <ContextMenuButton
         name='Delete'

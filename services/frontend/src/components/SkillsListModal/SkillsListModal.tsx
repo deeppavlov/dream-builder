@@ -1,7 +1,9 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useQuery } from 'react-query'
 import { useDisplay } from '../../context/DisplayContext'
+import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
 import { getComponentsGroup } from '../../services/getComponentsGroup'
 import { AddButton } from '../../ui/AddButton/AddButton'
@@ -15,6 +17,8 @@ import s from './SkillsListModal.module.scss'
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
+  const { addSkill } = useComponent()
+  const cx = classNames.bind(s)
   const { data: skillsList } = useQuery(
     'skills',
     () => getComponentsGroup('skills'),
@@ -39,9 +43,15 @@ export const SkillsListModal = () => {
   }
 
   const okHandler = () => setIsOpen(!isOpen)
+  const handleAdd = (distName: string, id: number) => {
+    toast.promise(addSkill.mutateAsync({ distName, id }), {
+      loading: 'Adding...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
+  }
 
   useObserver('SkillsListModal', handleEventUpdate)
-  const cx = classNames.bind(s)
   return (
     <>
       {skillsList && (
@@ -64,6 +74,7 @@ export const SkillsListModal = () => {
               addButton={<AddButton forTable fromScratch />}
             >
               <SkillList
+                addFunc={handleAdd}
                 skills={skillsList}
                 view={'table'}
                 forModal

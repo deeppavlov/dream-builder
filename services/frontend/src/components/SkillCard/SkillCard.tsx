@@ -8,7 +8,6 @@ import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
@@ -74,7 +73,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
-  
+
   return (
     <div
       className={cx(
@@ -89,9 +88,9 @@ export const SkillCard: FC<SkillCardProps> = ({
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
-        {type == 'your' && (
+        {/* {type == 'your' && (
           <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-        )}
+        )} */}
       </div>
       <div className={s.body}>
         <div className={s.top}>

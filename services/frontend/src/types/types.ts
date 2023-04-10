@@ -110,7 +110,8 @@ export interface SkillListProps {
   size?: SkillCardSize
   forGrid?: boolean
   forModal?: boolean
-  withoutDate?:boolean
+  withoutDate?: boolean
+  addFunc?: (distName: string, id: number) => void
 }
 export interface SettingKey {
   name: string
@@ -141,7 +142,8 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
   lm_service: string
-  
+  id?: number
+  component_id?: number
 }
 
 export interface SessionConfig {

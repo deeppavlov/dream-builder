@@ -1,5 +1,6 @@
 import React from 'react'
 import { IContextMenu, ISkill } from '../../types/types'
+import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
@@ -8,6 +9,7 @@ interface Props extends IContextMenu {
   tooltipId: string
   skill: ISkill
   skillRef?: React.MutableRefObject<any>
+  deleteFunc: () => void
 }
 
 const SkillStackToolTip = ({
@@ -22,7 +24,9 @@ const SkillStackToolTip = ({
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties', parent: skillRef })
 
-  const handleDeleteBtnClick = () => {}
+  const handleDeleteBtnClick = () => {
+    trigger('DeleteSkillModal', { skill })
+  }
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
@@ -39,11 +43,11 @@ const SkillStackToolTip = ({
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
-      <ContextMenuButton
+      {/* <ContextMenuButton
         name='Disable Skill'
         type='disable'
         disabled={isPreview}
-      />
+      /> */}
       <hr />
       <ContextMenuButton
         name='Delete'

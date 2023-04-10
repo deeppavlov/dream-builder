@@ -10,6 +10,7 @@ import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DeleteSkillModal } from '../components/DeleteSkillModal/DeleteSkillModal'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import IntentCatcherModal from '../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../components/IntentResponderModal/IntentResponderModal'
@@ -26,6 +27,7 @@ import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
 import { Sidebar } from '../components/Sidebar/Sidebar'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import { SkillList } from '../components/SkillList/SkillList'
+import { SkillModal } from '../components/SkillModal/SkillModal'
 import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import { Skills } from '../components/Skills/Skills'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
@@ -215,6 +217,8 @@ export const EditorPage = () => {
       <IntentResponderModal />
       <SignInModal />
       <ShareModal />
+      <DeleteSkillModal />
+      <SkillModal />
     </>
   )
 }

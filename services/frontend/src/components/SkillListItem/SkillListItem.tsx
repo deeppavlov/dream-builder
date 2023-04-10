@@ -1,15 +1,15 @@
 import classNames from 'classnames/bind'
 import { FC, useId, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
+import { useLocation } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useComponent } from '../../hooks/useComponent'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
@@ -25,6 +25,7 @@ interface SkillListItemProps {
   type: SkillAvailabilityType
   forModal?: boolean
   withoutDate?: boolean
+  addFunc: (distName: string, id: number) => void | undefined
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
@@ -32,6 +33,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   forModal,
   type,
   withoutDate,
+  addFunc,
 }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
@@ -43,6 +45,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const skillListItemRef = useRef(null)
   const { options } = useDisplay()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const { state } = useLocation()
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -60,7 +63,8 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    toast.success('Successfully Added!', { id: 'addSkill' })
+
+    addFunc(state?.distName, skill?.id!)
   }
   const handleAddBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -137,7 +141,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
             </>
           ) : (
             <>
-              <ToggleButton handleToggle={handleToggle} disabled={isPreview} />
+              {/* <ToggleButton handleToggle={handleToggle} disabled={isPreview} /> */}
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

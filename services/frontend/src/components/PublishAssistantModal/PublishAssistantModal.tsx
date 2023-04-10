@@ -7,7 +7,6 @@ import { publishAssistantDist } from '../../services/publishUsersAssistantDist'
 import { BotInfoInterface, BotVisabilityType } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
@@ -81,38 +80,65 @@ export const PublishAssistantModal = () => {
             <div className={s.radio}>
               <RadioButton
                 props={{ ...register('visability') }}
-                tooltipId='Public'
+                // tooltipId='Public'
                 name='visibility'
                 id='Public'
                 htmlFor='Public'
                 value='Public'
-                defaultChecked={true}
+                defaultChecked={false}
+                disabled={true}
               >
-                Public
+                Public (Coming Soon)
               </RadioButton>
-              <p className={s.text}>or</p>
               <RadioButton
                 props={{ ...register('visability') }}
-                tooltipId='Unlisted'
+                // tooltipId='Public'
+                name='visibility'
+                id='Template'
+                htmlFor='Template'
+                value='Template'
+                defaultChecked={false}
+                
+              >
+                Public Template (Visible In Templates)
+              </RadioButton>
+              {/* <p className={s.text}>or</p> */}
+
+              <RadioButton
+                props={{ ...register('visability') }}
+                // tooltipId='Unlisted'
                 name='visibility'
                 id='Unlisted'
                 htmlFor='Unlisted'
                 value='Unlisted'
               >
-                Unlisted
+                Unlisted (Available Through Direct Link Only)
+              </RadioButton>
+              <RadioButton
+                props={{ ...register('visability') }}
+                // tooltipId='Private'
+                name='visibility'
+                id='Private'
+                htmlFor='Private'
+                value='Private'
+              >
+                Private
               </RadioButton>
             </div>
-            <div className={s.forCheckbox}>
+            {/* <div className={s.forCheckbox}>
               <Checkbox
                 props={{ ...register('hide') }}
                 defaultChecked={true}
                 theme='secondary'
                 label='Hide your prompt(s) so that others could not see them'
               />
-            </div>
+            </div> */}
           </div>
           <div className={s.btns}>
-            <Button theme='secondary-light' props={{ onClick: handleNoBtnClick }}>
+            <Button
+              theme='secondary'
+              props={{ onClick: handleNoBtnClick }}
+            >
               No
             </Button>
             <Button
@@ -126,14 +152,14 @@ export const PublishAssistantModal = () => {
           </div>
         </form>
       </div>
-      <BaseToolTip
+      {/* <BaseToolTip
         id='Public'
         content='Everyone can clone and talk to your VA'
       />
       <BaseToolTip
         id='Unlisted'
         content={`Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category`}
-      />
+      /> */}
     </BaseModal>
   )
 }

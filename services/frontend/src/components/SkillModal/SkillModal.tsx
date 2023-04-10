@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useMutation, useQueryClient } from 'react-query'
 import { useObserver } from '../../hooks/useObserver'
+import { createComponent } from '../../services/createComponent'
 import { SkillInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
@@ -28,6 +30,7 @@ export const SkillModal = () => {
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<Partial<ISkilltInfo> | null>(null)
   const [parent, setParent] = useState<IParentSkillInfo | null>(null)
+  const queryClient = useQueryClient()
   const {
     handleSubmit,
     register,
@@ -64,7 +67,22 @@ export const SkillModal = () => {
     setIsOpen(!isOpen)
   }
 
+  const create = useMutation({
+    mutationFn: (variables: {
+      data: { display_name: string; description: string }
+      name: string
+    }) => {
+      return createComponent(variables?.name, variables?.data)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'skills' }),
+  })
+
   const handleCreate = (data: any) => {
+    toast.promise(create.mutateAsync(data), {
+      loading: 'Creating...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
     // trigger('SkillPromptModal', {
     //   action: 'create',
     //   skill: {

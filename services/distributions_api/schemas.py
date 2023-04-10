@@ -134,8 +134,24 @@ class CreateVirtualAssistantComponentRequest(BaseModel):
 
 class VirtualAssistantComponentShort(BaseOrmModel):
     id: int
-    component: ComponentShort
+    component_id: int
+    name: str
+    display_name: str
+    component_type: Optional[COMPONENT_TYPES]
+    model_type: Optional[MODEL_TYPES]
+    is_customizable: bool
+    author: User
+    description: Optional[str]
+    ram_usage: str
+    gpu_usage: Optional[str]
+    # lm_service: Optional[str]
+    date_created: datetime = Field(default_factory=datetime.utcnow)
     is_enabled: bool
+
+    @validator("ram_usage", "gpu_usage")
+    def check_memory_format(cls, v):
+        check_memory_format(v)
+        return v
 
 
 class DistComponentsResponse(BaseModel):

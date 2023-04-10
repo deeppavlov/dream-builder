@@ -104,9 +104,7 @@ def create_or_update_user_api_token(
     user_api_token = db.scalar(
         insert(models.UserApiToken)
         .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
-        .on_conflict_do_update(
-            constraint="unique_user_api_token", set_=dict(token_value=token_value)
-        )
+        .on_conflict_do_update(constraint="unique_user_api_token", set_=dict(token_value=token_value))
         .returning(models.UserApiToken)
     )
 
@@ -235,14 +233,16 @@ def create_virtual_assistant_components(
     new_components = []
 
     for component in components:
-        new_component = create_virtual_assistant_component(db, virtual_assistant_id, component.id, component.is_enabled)
+        new_component = create_virtual_assistant_component(
+            db, virtual_assistant_id, component.component_id, component.is_enabled
+        )
         new_components.append(new_component)
 
     return new_components
 
 
 def delete_virtual_assistant_component(db: Session, id: int):
-    db.scalar(delete(models.VirtualAssistantComponent).where(id=id))
+    db.execute(delete(models.VirtualAssistantComponent).filter(models.VirtualAssistantComponent.id == id))
 
 
 # PUBLISH REQUEST

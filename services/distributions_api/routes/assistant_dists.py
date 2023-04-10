@@ -7,7 +7,7 @@ from fastapi.logger import logger
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud
+from database import crud, models
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -248,6 +248,25 @@ async def clone_dist(
     return schemas.VirtualAssistant.from_orm(new_virtual_assistant)
 
 
+def _virtual_assistant_component_model_to_schema(virtual_assistant_component: models.VirtualAssistantComponent):
+    return schemas.VirtualAssistantComponentShort(
+        id=virtual_assistant_component.id,
+        component_id=virtual_assistant_component.component_id,
+        name=virtual_assistant_component.component.name,
+        display_name=virtual_assistant_component.component.display_name,
+        component_type=virtual_assistant_component.component.component_type,
+        model_type=virtual_assistant_component.component.model_type,
+        is_customizable=virtual_assistant_component.component.is_customizable,
+        author=virtual_assistant_component.component.author,
+        description=virtual_assistant_component.component.description,
+        ram_usage=virtual_assistant_component.component.ram_usage,
+        gpu_usage=virtual_assistant_component.component.gpu_usage,
+        # lm_service=virtual_assistant_component.component.lm_service,
+        date_created=virtual_assistant_component.component.date_created,
+        is_enabled=virtual_assistant_component.is_enabled,
+    )
+
+
 @assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
 async def get_virtual_assistant_components(dist_name: str, db: Session = Depends(get_db)):
     grouped_components = {}
@@ -256,7 +275,7 @@ async def get_virtual_assistant_components(dist_name: str, db: Session = Depends
             grouped_components[va_component.component.group] = []
 
         grouped_components[va_component.component.group].append(
-            schemas.VirtualAssistantComponentShort.from_orm(va_component)
+            _virtual_assistant_component_model_to_schema(va_component)
         )
 
     return schemas.DistComponentsResponse(**grouped_components)
@@ -277,7 +296,7 @@ async def add_virtual_assistant_component(
             db, virtual_assistant.id, payload.component_id
         )
 
-    return schemas.VirtualAssistantComponentShort.from_orm(virtual_assistant_component)
+    return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
 
 @assistant_dists_router.patch(

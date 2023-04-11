@@ -128,6 +128,20 @@ class ComponentShort(BaseOrmModel):
         return v
 
 
+class ComponentCreate(BaseModel):
+    display_name: str
+    description: Optional[str]
+    # ram_usage: str
+    # gpu_usage: Optional[str]
+    lm_service_id: int
+    prompt: str
+
+    # @validator("ram_usage", "gpu_usage")
+    # def check_memory_format(cls, v):
+    #     check_memory_format(v)
+    #     return v
+
+
 class CreateVirtualAssistantComponentRequest(BaseModel):
     component_id: int
 

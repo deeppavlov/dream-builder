@@ -190,6 +190,9 @@ class Component(Base):
     # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
     # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
     build_args = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    compose_override = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    compose_dev = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    compose_proxy = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

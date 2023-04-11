@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import select, update, and_, or_, delete
+from sqlalchemy import select, update, and_, or_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 
 from database import models
 from database.models import GoogleUser, UserValid, ApiToken, UserApiToken
@@ -197,6 +197,64 @@ def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
     return db.scalars(select(models.Component).filter_by(group=group)).all()
 
 
+def create_component(
+    db: Session,
+    source: str,
+    name: str,
+    display_name: str,
+    container_name: str,
+    component_type: str,
+    is_customizable: bool,
+    author_id: int,
+    ram_usage: str,
+    port: int,
+    group: str,
+    endpoint: str,
+    model_type: Optional[str] = None,
+    gpu_usage: Optional[str] = None,
+    description: Optional[str] = None,
+    build_args: Optional[dict] = None,
+    compose_override: Optional[dict] = None,
+    compose_dev: Optional[dict] = None,
+    compose_proxy: Optional[dict] = None,
+) -> models.Component:
+    return db.scalar(
+        insert(models.Component)
+        .values(
+            source=source,
+            name=name,
+            display_name=display_name,
+            container_name=container_name,
+            component_type=component_type,
+            model_type=model_type,
+            is_customizable=is_customizable,
+            author_id=author_id,
+            description=description,
+            ram_usage=ram_usage,
+            gpu_usage=gpu_usage,
+            port=port,
+            group=group,
+            endpoint=endpoint,
+            build_args=build_args,
+            compose_override=compose_override,
+            compose_dev=compose_dev,
+            compose_proxy=compose_proxy,
+        )
+        .returning(models.Component)
+    )
+
+
+def delete_component(db: Session, id: int):
+    db.execute(delete(models.Component).filter(models.Component.id == id))
+
+
+def get_next_available_component_port(db: Session, range_min: int = 8000, range_max: int = 8199):
+    last_used_component_port = db.scalar(
+        select(func.max(models.Component.port)).where(models.Component.port.between(range_min, range_max))
+    )
+    return last_used_component_port + 1
+
+
 def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> [models.VirtualAssistantComponent]:
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
@@ -305,6 +363,10 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
 
 def get_all_lm_services(db: Session) -> [models.LmService]:
     return db.scalars(select(models.LmService)).all()
+
+
+def get_lm_service(db: Session, id: int) -> Optional[models.LmService]:
+    return db.get(models.LmService, id)
 
 
 def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]:

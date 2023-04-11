@@ -12,29 +12,13 @@ from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
+from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
 
 
 emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
-
-
-def _generate_name_from_display_name(display_name: str):
-    """Generates unique snake_case name from human-readable name
-
-    Args:
-        display_name: assistant dist display name
-
-    Returns:
-        assistant dist name in snake_case with unique identifier
-    """
-    normalized_name = "".join(
-        char for char in display_name.replace(" ", "_").lower() if char.isalnum() or char in ["_"]
-    )
-    random_id = secrets.token_hex(4)
-
-    return f"{normalized_name}_{random_id}"
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -54,7 +38,7 @@ async def create_virtual_assistant(
         minimal_template_virtual_assistant = crud.get_virtual_assistant_by_name(db, TEMPLATE_DIST_PROMPT_BASED)
         dream_dist = AssistantDist.from_dist(minimal_template_virtual_assistant.source)
 
-        new_name = _generate_name_from_display_name(payload.display_name)
+        new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
         new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
         new_dist.save()
 
@@ -226,7 +210,7 @@ async def clone_dist(
         original_virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(original_virtual_assistant.source)
 
-        new_name = _generate_name_from_display_name(payload.display_name)
+        new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
         new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
         new_dist.save(overwrite=False)
 

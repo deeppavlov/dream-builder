@@ -20,11 +20,11 @@ async def get_all_publish_requests(
     return [schemas.PublishRequestRead.from_orm(pr) for pr in crud.get_all_publish_requests(db)]
 
 
-@admin_router.get("/publish_request/unconfirmed", status_code=status.HTTP_200_OK)
-async def get_unconfirmed_publish_requests(
+@admin_router.get("/publish_request/unreviewed", status_code=status.HTTP_200_OK)
+async def get_unreviewed_publish_requests(
     user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
 ) -> [schemas.PublishRequestRead]:
-    return [schemas.PublishRequestRead.from_orm(pr) for pr in crud.get_unconfirmed_publish_requests(db)]
+    return [schemas.PublishRequestRead.from_orm(pr) for pr in crud.get_unreviewed_publish_requests(db)]
 
 
 @admin_router.post("/publish_request/{publish_request_id}/confirm", status_code=status.HTTP_200_OK)

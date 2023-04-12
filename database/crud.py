@@ -308,7 +308,7 @@ def get_all_publish_requests(db: Session):
     return db.scalars(select(models.PublishRequest)).all()
 
 
-def get_unconfirmed_publish_requests(db: Session):
+def get_unreviewed_publish_requests(db: Session):
     return db.scalars(
         select(models.PublishRequest).filter(
             models.PublishRequest.is_confirmed == None, models.PublishRequest.reviewed_by_user_id == None

@@ -124,6 +124,9 @@ class LmService(Base):
 
     name = Column(String, nullable=False)
     display_name = Column(String, nullable=False)
+    size = Column(String)
+    gpu_usage = Column(String)
+    max_tokens = Column(Integer)
     description = Column(String)
     project_url = Column(String)
 

@@ -223,6 +223,9 @@ class LmService(BaseOrmModel):
     id: int
     name: str
     display_name: str
+    size: str
+    gpu_usage: Optional[str]
+    max_tokens: int
     description: str
     project_url: str
 

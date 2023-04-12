@@ -243,7 +243,18 @@ class DeploymentCreate(BaseModel):
     virtual_assistant_id: int
 
 
-class CreatePublishRequest(BaseOrmModel):
+class PublishRequestRead(BaseOrmModel):
+    id: int
+    virtual_assistant: VirtualAssistant
+    user: User
+    slug: str
+    date_created: datetime
+    is_confirmed: Optional[bool]
+    reviewed_by_user: Optional[User]
+    date_reviewed: Optional[datetime]
+
+
+class PublishRequestCreate(BaseOrmModel):
     is_prompt_visible: bool
     is_publicly_listed: bool
 

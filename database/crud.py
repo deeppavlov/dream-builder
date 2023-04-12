@@ -304,13 +304,48 @@ def delete_virtual_assistant_component(db: Session, id: int):
 
 
 # PUBLISH REQUEST
+def get_all_publish_requests(db: Session):
+    return db.scalars(select(models.PublishRequest)).all()
+
+
+def get_unconfirmed_publish_requests(db: Session):
+    return db.scalars(
+        select(models.PublishRequest).filter(
+            models.PublishRequest.is_confirmed == None, models.PublishRequest.reviewed_by_user_id == None
+        )
+    ).all()
+
+
+def confirm_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+    return db.scalar(
+        update(models.PublishRequest)
+        .filter(models.PublishRequest.id == id)
+        .values(is_confirmed=True, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .returning(models.PublishRequest)
+    )
+
+
+def decline_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+    return db.scalar(
+        update(models.PublishRequest)
+        .filter(models.PublishRequest.id == id)
+        .values(is_confirmed=False, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .returning(models.PublishRequest)
+    )
+
+
 def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str):
     return db.scalar(
         insert(models.PublishRequest)
         .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug)
         .on_conflict_do_update(
             index_elements=[models.PublishRequest.slug],
-            set_=dict(date_created=datetime.utcnow(), is_confirmed=False, confirmed_by_user_id=None),
+            set_=dict(
+                date_created=datetime.utcnow(),
+                is_confirmed=None,
+                reviewed_by_user_id=None,
+                date_reviewed=None,
+            ),
         )
         .returning(models.PublishRequest)
     )

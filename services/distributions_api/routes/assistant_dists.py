@@ -13,12 +13,9 @@ from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 from services.distributions_api.utils import name_generator
-from services.distributions_api.utils.emailer import Emailer
+from services.distributions_api.utils.emailer import emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
-
-
-emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -311,7 +308,7 @@ async def delete_virtual_assistant_component(
 @assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)
 async def publish_dist(
     dist_name: str,
-    payload: schemas.CreatePublishRequest,
+    payload: schemas.PublishRequestCreate,
     user: schemas.User = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -323,10 +320,10 @@ async def publish_dist(
         moderators = crud.get_users_by_role(db, 2)
 
         for moderator in moderators:
-            emailer.send_publish_request_to_moderators(
+            emailer.send_publish_request_created_to_moderators(
                 moderator.email, user.email, virtual_assistant.name, virtual_assistant.display_name
             )
-        emailer.send_publish_request_to_owner(user.email, virtual_assistant.display_name)
+        emailer.send_publish_request_created_to_owner(user.email, virtual_assistant.display_name)
 
     logger.info(f"Sent publish request")
 

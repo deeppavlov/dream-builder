@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from apiconfig.config import settings
+from services.distributions_api.routes.admin import admin_router
 from services.distributions_api.routes.api_tokens import tokens_router
 from services.distributions_api.routes.assistant_dists import assistant_dists_router
 from services.distributions_api.routes.components import components_router
@@ -22,12 +23,10 @@ if settings.app.add_cors_middleware:
     )
 
 
-# app.include_router(annotators_router)
 app.include_router(assistant_dists_router)
 app.include_router(components_router)
-# app.include_router(configs_router)
-# app.include_router(skills_router)
 app.include_router(users_router)
 app.include_router(tokens_router)
 app.include_router(dialog_sessions_router)
 app.include_router(deployments_router)
+app.include_router(admin_router)

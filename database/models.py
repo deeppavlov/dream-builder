@@ -157,10 +157,13 @@ class PublishRequest(Base):
 
     slug = Column(String, nullable=False, unique=True)
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-    is_confirmed = Column(Boolean)
 
-    confirmed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
-    confirmed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.confirmed_by_user_id")
+    is_confirmed = Column(Boolean, nullable=True)
+
+    reviewed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
+    reviewed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
+
+    date_reviewed = Column(DateTime, nullable=True)
 
 
 class Component(Base):

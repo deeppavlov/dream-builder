@@ -17,7 +17,7 @@ deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
 @deployments_router.post("/")
 async def create_deployment(
-    payload: schemas.Deployment, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    payload: schemas.DeploymentCreate, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
@@ -25,6 +25,8 @@ async def create_deployment(
 
         # chat_url = deployer.deploy(dream_dist)
         # deployment = crud.create_deployment(db, virtual_assistant.id, chat_url)
+
+    # return schemas.Deployment.from_orm(deployment)
 
 
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)

@@ -239,6 +239,10 @@ class Deployment(BaseOrmModel):
     lm_service: Optional[LmService]
 
 
+class DeploymentCreate(BaseModel):
+    virtual_assistant_id: int
+
+
 class CreatePublishRequest(BaseOrmModel):
     is_prompt_visible: bool
     is_publicly_listed: bool

@@ -1,13 +1,30 @@
+from deeppavlov_dreamtools import AssistantDist
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
+from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
+
+
+# deployer = Deployer(settings.deployer.portainer_key)
+
+
+@deployments_router.post("/")
+async def create_deployment(
+    payload: schemas.Deployment, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+):
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
+        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+
+        # chat_url = deployer.deploy(dream_dist)
+        # deployment = crud.create_deployment(db, virtual_assistant.id, chat_url)
 
 
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)

@@ -389,7 +389,7 @@ def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.D
 
 
 def create_deployment(
-    db: Session, virtual_assistant_id: int, chat_url: str, prompt: str, lm_service_id: int
+    db: Session, virtual_assistant_id: int, chat_url: str, prompt: str = None, lm_service_id: int = None
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)

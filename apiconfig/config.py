@@ -48,12 +48,17 @@ class SmtpSettings(BaseModel):
     password: str
 
 
+class DeployerSettings(BaseModel):
+    portainer_key: str
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings
     db: DatabaseSettings
     auth: AuthSettings
     smtp: SmtpSettings
+    deployer: DeployerSettings
 
     class Config:
         env_file = ".env"

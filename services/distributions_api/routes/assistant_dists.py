@@ -2,7 +2,7 @@ import secrets
 from typing import List
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from fastapi.logger import logger
 from sqlalchemy.orm import Session
 
@@ -13,9 +13,21 @@ from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 from services.distributions_api.utils import name_generator
-from services.distributions_api.utils.emailer import emailer
+from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
+
+
+def send_publish_request_created_emails(
+    owner_email: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
+):
+    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+
+    for moderator_email in moderator_emails:
+        emailer.send_publish_request_created_to_moderators(
+            moderator_email, owner_email, virtual_assistant_name, virtual_assistant_display_name
+        )
+    emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
 
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -309,6 +321,7 @@ async def delete_virtual_assistant_component(
 async def publish_dist(
     dist_name: str,
     payload: schemas.PublishRequestCreate,
+    background_tasks: BackgroundTasks,
     user: schemas.User = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -319,11 +332,13 @@ async def publish_dist(
         crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name)
         moderators = crud.get_users_by_role(db, 2)
 
-        for moderator in moderators:
-            emailer.send_publish_request_created_to_moderators(
-                moderator.email, user.email, virtual_assistant.name, virtual_assistant.display_name
-            )
-        emailer.send_publish_request_created_to_owner(user.email, virtual_assistant.display_name)
+        background_tasks.add_task(
+            send_publish_request_created_emails,
+            owner_email=user.email,
+            moderator_emails=[m.email for m in moderators],
+            virtual_assistant_name=virtual_assistant.name,
+            virtual_assistant_display_name=virtual_assistant.display_name,
+        )
 
     logger.info(f"Sent publish request")
 

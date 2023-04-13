@@ -118,4 +118,4 @@ class Emailer:
         self._send_message(msg)
 
 
-emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+# emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)

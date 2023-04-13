@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
 import classNames from 'classnames/bind'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { subscribe, unsubscribe } from '../../utils/events'
-import BaseModal from '../../ui/BaseModal/BaseModal'
-import { Input } from '../../ui/Input/Input'
-import Button from '../../ui/Button/Button'
-import { ToastCopySucces } from '../Toasts/Toasts'
+import toast, { Toaster } from 'react-hot-toast'
 import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
 import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
-import s from './ShareModal.module.scss'
 import { useObserver } from '../../hooks/useObserver'
+import BaseModal from '../../ui/BaseModal/BaseModal'
+import Button from '../../ui/Button/Button'
+import { Input } from '../../ui/Input/Input'
+import { ToastCopySucces } from '../Toasts/Toasts'
+import s from './ShareModal.module.scss'
 
 export const ShareModal = () => {
   const [bot, setBot] = useState<string>('not yet')
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
-    setBot(data?.detail?.bot?.name)
+    console.log('data = ', data)
+    setBot(data?.detail?.bot?.name || data?.detail)
     setIsOpen(!isOpen)
   }
   const { register, getValues, reset } = useForm({

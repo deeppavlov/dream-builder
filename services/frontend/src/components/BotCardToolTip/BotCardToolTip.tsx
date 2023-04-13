@@ -32,8 +32,7 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
-  const handleShareBtnClick = () =>
-    trigger('ShareModal', { bot, smthElse: '1234' })
+  const handleShareBtnClick = () => trigger('ShareModal', { bot })
 
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 

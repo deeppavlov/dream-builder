@@ -101,7 +101,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             </p>
           </div>
           <div className={s.name}>
-            <img className={s.companyLogo} src={Woman} />
+            <img className={s.companyLogo} src={skill?.author?.picture} />
             <p className={s.companyName}>
               {skill?.author.fullname == 'DeepPavlov'
                 ? 'Dr. Xandra Smith'

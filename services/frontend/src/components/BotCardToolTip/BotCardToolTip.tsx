@@ -40,23 +40,23 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
-        name='Publish'
-        type='publish'
-        disabled={type === 'public'}
-        handleClick={handlePublishBtnClick}
-      />
-      <ContextMenuButton
         name='Share'
         type='share'
         disabled={type === 'public'}
         handleClick={handleShareBtnClick}
       />
-      <hr />
       <ContextMenuButton
         name='Rename'
         type='edit'
         disabled={type === 'public'}
         handleClick={handleRenameBtnClick}
+      />
+      <hr />
+      <ContextMenuButton
+        name='Visibility'
+        type='publish'
+        disabled={type === 'public'}
+        handleClick={handlePublishBtnClick}
       />
       <ContextMenuButton
         name='Properties'

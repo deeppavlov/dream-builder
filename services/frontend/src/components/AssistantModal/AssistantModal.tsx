@@ -1,20 +1,20 @@
 import { useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { useQueryClient, useMutation } from 'react-query'
+import { SubmitHandler,useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useMutation,useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import { useObserver } from '../../hooks/useObserver'
+import { useOnKey } from '../../hooks/useOnKey'
+import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import { postAssistantDist } from '../../services/postAssistanDist'
 import { renameAssistantDist } from '../../services/renameAssistantDist'
-import { trigger } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import { useOnKey } from '../../hooks/useOnKey'
+import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import { useObserver } from '../../hooks/useObserver'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -159,17 +159,22 @@ export const AssistantModal = () => {
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div>
           {action === 'create' && <h4>Create a new Virtual Assistant</h4>}
-          {action === 'clone' && <h4>Create a clone of a Virtual Assistant</h4>}
+          {action === 'clone' && (
+            <h4>
+              Use Template Of <mark>{bot?.display_name}</mark>
+            </h4>
+          )}
           {action === 'edit' && <h4>Edit Virtual Assistant</h4>}
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>
-                You are creating a copy of a <mark>{bot?.display_name}</mark>
+               Enter Name And Description For Your Virtual Assistant
               </div>
             )}
             {action === 'create' && (
               <div>
-                You are creating a new Virtual Assistant from <mark>scratch</mark>
+                You are creating a new Virtual Assistant from{' '}
+                <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (
@@ -226,9 +231,10 @@ export const AssistantModal = () => {
                 if (action == 'clone') handleCloneBtnClick()
                 if (action == 'edit') handleSaveBtnClick()
               },
-            }}>
+            }}
+          >
             {action === 'create' && 'Create'}
-            {action === 'clone' && 'Clone'}
+            {action === 'clone' && 'Use'}
             {action === 'edit' && 'Save'}
           </Button>
         </div>

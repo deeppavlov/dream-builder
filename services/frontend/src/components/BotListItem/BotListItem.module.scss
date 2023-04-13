@@ -32,7 +32,8 @@
   display: flex;
   align-items: start;
   max-height: 64px;
-  min-width: 460px;
+  width: 460px;
+  max-width: fit-content;
   color: rgba(0, 0, 0, 0.7);
   @include b3;
   .tooltips {
@@ -51,9 +52,10 @@
   flex-direction: row;
   align-items: center;
   gap: 4px;
+  min-width: 115px;
+  // width: fit-content;
   img {
-    width: 24px;
-    height: 24px;
+    @include icon_size_24;
     border-radius: 50%;
   }
   svg {
@@ -67,6 +69,7 @@
     align-items: center;
     color: #3300ff;
     @include b3;
+    width: 100%;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -78,6 +81,7 @@
   display: flex;
   flex-direction: column;
   white-space: nowrap;
+  width: 170px;
   max-width: 170px;
   .botName {
     color: rgba(0, 0, 0, 0.7);
@@ -112,4 +116,19 @@
   flex-direction: row;
   align-items: center;
   gap: 24px;
+}
+@media (min-width: 1440px) {
+  .description {
+    width: 500px;
+  }
+}
+@media (min-width: 1600px) {
+  .description {
+    width: 800px;
+  }
+}
+@media (min-width: 1920px) {
+  .description {
+    width: 1000px;
+  }
 }

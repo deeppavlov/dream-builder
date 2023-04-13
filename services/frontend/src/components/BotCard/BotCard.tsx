@@ -133,7 +133,7 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
                   small
                   long
                   props={{ onClick: handleCloneClick }}>
-                  Clone
+                  Use
                 </Button>
               </div>
               <Button

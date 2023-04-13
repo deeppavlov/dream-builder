@@ -195,7 +195,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                 Preview
               </Button>
               <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
-                Clone
+                Use
               </Button>
             </>
           )}

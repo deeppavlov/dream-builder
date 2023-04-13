@@ -65,3 +65,11 @@
     }
   }
 }
+.annotation {
+  @include b2;
+  color: $text3;
+}
+.header.annotationFlex {
+  justify-content: start;
+  gap: 16px;
+}

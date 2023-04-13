@@ -1,26 +1,22 @@
-import { useState } from 'react'
-import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { getPrivateDists } from '../services/getPrivateDists'
-import { dateToUTC } from '../utils/dateToUTC'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../context/AuthProvider'
+import { useQuery } from 'react-query'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DistList } from '../components/DistList/DistList'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Loader } from '../components/Loader/Loader'
+import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { DistList } from '../components/DistList/DistList'
-import { AddButton } from '../ui/AddButton/AddButton'
+import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
+import { getPrivateDists } from '../services/getPrivateDists'
+import { AddButton } from '../ui/AddButton/AddButton'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 export const UsersBotsPage = () => {
@@ -32,9 +28,7 @@ export const UsersBotsPage = () => {
   return (
     <>
       <Main>
-        <Wrapper
-          title='Your Virtual Assistants & Chatbots'
-          amount={data?.length}>
+        <Wrapper title='Your Virtual Assistants' amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />
           {isTableView ? (
@@ -45,7 +39,8 @@ export const UsersBotsPage = () => {
                   disabled={!auth?.user}
                   text='Create From Scratch'
                 />
-              }>
+              }
+            >
               <DistList view='table' dists={data} type='your' />
             </Table>
           ) : (

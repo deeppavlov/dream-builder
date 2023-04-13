@@ -47,7 +47,7 @@ export const BotsPage = () => {
     <>
       <Main>
         <Wrapper
-          title='Public Virtual Assistants & Chatbots'
+          title='Virtual Assistants Templates'
           showAll
           amount={publicDists?.length}
           linkTo={RoutesList.botsAll}
@@ -67,7 +67,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Virtual Assistants & Chatbots'
+          title='Your Virtual Assistants'
           amount={
             auth?.user && privateDists?.length > 0 && privateDists?.length
           }

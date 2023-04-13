@@ -1,6 +1,6 @@
+import classNames from 'classnames/bind'
 import { ReactNode, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import classNames from 'classnames/bind'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
 
@@ -17,6 +17,7 @@ interface WrapperProps {
   primary?: boolean
   skills?: boolean
   children?: ReactNode
+  annotation?: string
 }
 
 export const Wrapper = ({
@@ -32,6 +33,7 @@ export const Wrapper = ({
   limiter,
   primary,
   skills,
+  annotation,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   let cx = classNames.bind(s)
@@ -66,15 +68,17 @@ export const Wrapper = ({
             limiter && 'limiter',
             primary && 'primary',
             skills && 'skills'
-          )}>
+          )}
+        >
           {closable && (
             <button onClick={onClose} className={s.close}>
               <Close />
             </button>
           )}
           {(title || amount) && (
-            <div className={s.header}>
+            <div className={cx('header', annotation && 'annotationFlex')}>
               {title && <h5 className={s.title}>{title}</h5>}
+              {annotation && <p className={s.annotation}>{annotation}</p>}
               {amount && (
                 <div className={s.btns_area}>
                   {showAll && (

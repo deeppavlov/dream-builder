@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
+import React, { useEffect, useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
 import { StackType } from '../../types/types'
 import s from './Accordion.module.scss'
@@ -26,6 +26,18 @@ export const Accordion = ({
 
   const handleAccordionClick = () => setIsActive(prev => !prev)
 
+  useEffect(() => {
+    if (contentEl?.current) {
+      // Получаем высоту дочерних элементов и обновляем высоту контейнера
+      const container = contentEl.current
+      const height = Array.from(container.children).reduce(
+        (acc, child) => acc + child.offsetHeight,
+        0
+      )
+      container.style.height = isActive ? `${height}px` : '0px'
+    }
+  }, [children, isActive])
+
   return (
     <>
       <button
@@ -41,11 +53,7 @@ export const Accordion = ({
         {title}
         <Arrow />
       </button>
-      <div
-        ref={contentEl}
-        className={s.elements}
-        style={{ height: isActive ? contentEl.current?.scrollHeight + 'px' : '0px' }}
-      >
+      <div ref={contentEl} className={s.elements}>
         {children}
       </div>
     </>

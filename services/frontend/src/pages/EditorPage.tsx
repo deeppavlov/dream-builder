@@ -164,7 +164,7 @@ export const EditorPage = () => {
             <Wrapper
               title='Skills'
               skills
-              annotation='Generate Possible Responses to The User'
+              annotation='Generate possible responses to user'
             >
               <Loader isLoading={isComponentsLoading} />
               <ErrorHandler error={componentsError} />

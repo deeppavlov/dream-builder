@@ -1,3 +1,4 @@
+import { useQuery } from 'react-query'
 import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 import { DeleteSkillModal } from '../components/DeleteSkillModal/DeleteSkillModal'
 import { FreezeSkillModal } from '../components/FreezeSkillModal/FreezeSkillModal'
@@ -13,13 +14,15 @@ export const DraftPage = () => {
   const handleDSClick = () => {
     trigger('DeleteSkillModal', skill)
   }
+
+
   const handleAYSClick = () => {
     trigger('AreYouSureModal', {})
   }
   const handleFSClick = () => {
     trigger('FreezeSkillModal', skill)
   }
-
+ 
   return (
     <>
       <Main>

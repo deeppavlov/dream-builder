@@ -8,7 +8,6 @@ import { BotInfoInterface, BotVisabilityType } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
 interface IPublishBot extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
@@ -74,6 +73,14 @@ export const PublishAssistantModal = () => {
           <p className={s.text}>
             Choose the type of visibility for Virtual Assistant
           </p>
+          <p className={s.annotation}>
+            VAs utilizing OpenAI LLMs (GPT-3.5, ChatGPT, GPT-4 etc.) currently
+            cannot be published as Templates. If you want to publish your
+            OpenAI-based VA, change LLM used in it to one of the open-source
+            ones, like GPT-J or OpenAssistant, and let users know in the
+            description of your Template that it works better with a given
+            OpenAI model.
+          </p>
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
@@ -98,7 +105,6 @@ export const PublishAssistantModal = () => {
                 htmlFor='Template'
                 value='Template'
                 defaultChecked={false}
-                
               >
                 Public Template (Visible In Templates)
               </RadioButton>
@@ -135,10 +141,7 @@ export const PublishAssistantModal = () => {
             </div> */}
           </div>
           <div className={s.btns}>
-            <Button
-              theme='secondary'
-              props={{ onClick: handleNoBtnClick }}
-            >
+            <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
               No
             </Button>
             <Button

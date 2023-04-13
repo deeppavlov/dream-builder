@@ -8,7 +8,7 @@ interface BannerProps {
 export const Banner = ({ name }: BannerProps) => {
   return (
     <>
-      <Wrapper id='start-welcome-banner' closable>
+      <Wrapper id='start-welcome-banner'>
         <h5 className={s.title}>
           {!name && 'Welcome to'}
           {name && name.split(' ')[0] + ', welcome to'}

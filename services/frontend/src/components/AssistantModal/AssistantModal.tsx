@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { SubmitHandler,useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useMutation,useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnKey } from '../../hooks/useOnKey'
@@ -137,11 +137,15 @@ export const AssistantModal = () => {
         error: 'Something Went Wrong...',
       })
     action === 'clone' &&
-      toast.promise(clone.mutateAsync({ data, name }), {
-        loading: 'Cloning...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      })
+      toast
+        .promise(clone.mutateAsync({ data, name }), {
+          loading: 'Cloning...',
+          success: 'Success!',
+          error: 'Something Went Wrong...',
+        })
+        .then(() => {
+          closeModal()
+        })
     action === 'edit' &&
       toast.promise(rename.mutateAsync({ data, name }), {
         loading: 'Renaming...',
@@ -167,9 +171,7 @@ export const AssistantModal = () => {
           {action === 'edit' && <h4>Edit Virtual Assistant</h4>}
           <div className={s.distribution}>
             {action === 'clone' && (
-              <div>
-               Enter Name And Description For Your Virtual Assistant
-              </div>
+              <div>Enter Name And Description For Your Virtual Assistant</div>
             )}
             {action === 'create' && (
               <div>

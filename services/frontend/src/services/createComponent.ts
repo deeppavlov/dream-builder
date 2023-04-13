@@ -1,13 +1,15 @@
-import { PostDistParams } from '../types/types'
+import { PostDistParams } from './../types/types'
 import { privateApi } from './axiosConfig'
 
-export async function createComponent(
-  skillName: string,
-  newInfo: PostDistParams
-) {
+export interface InfoForNewComponent extends PostDistParams {
+  lm_service_id: number
+  prompt: string
+}
+
+export async function createComponent(info: InfoForNewComponent) {
   try {
-    const { data } = await privateApi.patch(`/assistant_dists/`, {
-      ...newInfo,
+    const { data } = await privateApi.post(`/components/`, {
+      ...info,
     })
     return data
   } catch (e) {

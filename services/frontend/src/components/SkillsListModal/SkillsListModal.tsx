@@ -39,7 +39,7 @@ export const SkillsListModal = () => {
     },
   }
   const handleEventUpdate = () => {
-    setIsOpen(!isOpen)
+    setIsOpen(isOpen => !isOpen)
   }
 
   const okHandler = () => setIsOpen(!isOpen)

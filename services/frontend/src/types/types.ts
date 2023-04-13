@@ -142,7 +142,7 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
   lm_service: string
-  id?: number
+  id: number
   component_id?: number
 }
 

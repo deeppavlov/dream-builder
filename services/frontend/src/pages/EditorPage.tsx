@@ -9,6 +9,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
+import { CreateGenerativeSkillModal } from '../components/CreateGenerativeSkillModal/CreateGenerativeSkillModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { DeleteSkillModal } from '../components/DeleteSkillModal/DeleteSkillModal'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
@@ -160,7 +161,11 @@ export const EditorPage = () => {
         </Sidebar>
         <TabPanel>
           <Main sidebar editor>
-            <Wrapper title='Skills' skills>
+            <Wrapper
+              title='Skills'
+              skills
+              annotation='Generate Possible Responses to The User'
+            >
               <Loader isLoading={isComponentsLoading} />
               <ErrorHandler error={componentsError} />
               {isTableView && (
@@ -219,6 +224,7 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
+      <CreateGenerativeSkillModal />
     </>
   )
 }

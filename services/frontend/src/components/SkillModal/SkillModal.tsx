@@ -1,23 +1,23 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useMutation, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
+import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
-import { createComponent } from '../../services/createComponent'
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { trigger } from '../../utils/events'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
 
 interface ISkilltInfo
-  extends Pick<SkillInfoInterface, 'display_name' | 'name' | 'desc'> {}
+  extends Pick<ISkill, 'display_name' | 'name' | 'description'> {}
 
-interface IParentSkillInfo
-  extends Pick<SkillInfoInterface, 'display_name' | 'name'> {}
+interface IParentSkillInfo extends Pick<ISkill, 'display_name' | 'name'> {}
 
 interface SkillModalProps {
   action: TSkillModalAction
@@ -62,40 +62,27 @@ export const SkillModal = () => {
     // Reset values and errors states
     reset({
       [NAME_ID]: skill?.display_name,
-      [DESC_ID]: skill?.desc,
+      [DESC_ID]: skill?.description,
     })
     setIsOpen(!isOpen)
   }
-
-  const create = useMutation({
-    mutationFn: (variables: {
-      data: { display_name: string; description: string }
-      name: string
-    }) => {
-      return createComponent(variables?.name, variables?.data)
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'skills' }),
-  })
+  const { create } = useComponent()
 
   const handleCreate = (data: any) => {
-    toast.promise(create.mutateAsync(data), {
-      loading: 'Creating...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
-    // trigger('SkillPromptModal', {
-    //   action: 'create',
-    //   skill: {
-    //     ...skill,
-    //     ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
-    //   },
-    // })
-    closeModal()
+    toast.promise(
+      create
+        .mutateAsync({ ...data, lm_service_id: 4, prompt: 'new prompt' })
+        .then(() => {
+          closeModal()
+          trigger('SkillsListModal', { isOpen: false })
+        }),
+      {
+        loading: 'Creating...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
-
-  const handleCopy = () => {}
-
-  const handleEdit = () => {}
 
   const onFormSubmit = (data: any) => {
     if (action === 'create') {
@@ -110,27 +97,12 @@ export const SkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
-          {action === 'create' && <h4>Create a new generative skill</h4>}
-          {action === 'copy' && <h4>Create a new copy of a skill</h4>}
-          {action === 'edit' && <h4>Edit skill</h4>}
+          <h4>Create a new generative skill</h4>
           <div className={s.distribution}>
-            {action === 'create' && (
-              <div>
-                You are creating a skill that uses{' '}
-                <mark>large language models</mark>
-              </div>
-            )}
-            {action === 'copy' && (
-              <div>
-                You are creating a copy of a skill from{' '}
-                <mark>{parent?.display_name}</mark>
-              </div>
-            )}
-            {action === 'edit' && (
-              <div>
-                You are editing <mark>{skill?.display_name}</mark> skill
-              </div>
-            )}
+            <div>
+              You are creating a skill that uses{' '}
+              <mark>large language models</mark>
+            </div>
           </div>
         </div>
         <form onSubmit={handleSubmit(onFormSubmit)}>
@@ -170,7 +142,7 @@ export const SkillModal = () => {
               Cancel
             </Button>
             <Button theme='primary' props={{ type: 'submit' }}>
-              {action === 'edit' ? 'Save' : 'Create'}
+              Create
             </Button>
           </div>
         </form>

@@ -111,6 +111,10 @@ def create_or_update_user_api_token(
     return user_api_token
 
 
+def get_user_api_token(db: Session, id: int):
+    return db.get(models.UserApiToken, id)
+
+
 def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
     return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
 

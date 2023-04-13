@@ -1,12 +1,13 @@
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
+import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { servicesList } from '../../mocks/database/servicesList'
 import { changeLMservice } from '../../services/changeLMservice'
 import { getAllLMservices } from '../../services/getAllLMservices'
@@ -18,6 +19,7 @@ import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
@@ -47,6 +49,7 @@ const SkillPromptModal = () => {
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const promptWordsMaxLenght = 3000
+  const modalRef = useRef(null)
   const cx = classNames.bind(s)
 
   const setPromptForDist = useMutation({
@@ -217,6 +220,13 @@ const SkillPromptModal = () => {
     })
   }, [isOpen])
 
+  useQuitConfirmation({
+    activeElement: modalRef,
+    availableSelectors: [`#${HELPER_TAB_ID}`],
+    isActive: isOpen,
+    quitHandler: () => trigger('SkillQuitModal', { handleQuit: closeModal }),
+  })
+
   return (
     <Modal
       isOpen={isOpen}
@@ -244,7 +254,7 @@ const SkillPromptModal = () => {
         },
       }}
     >
-      <div className={s.skillPromptModal}>
+      <div className={s.skillPromptModal} ref={modalRef}>
         <form
           onSubmit={handleSubmit(data => onFormSubmit(data))}
           className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}

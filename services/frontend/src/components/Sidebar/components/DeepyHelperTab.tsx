@@ -8,6 +8,8 @@ import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import { CopilotSidePanel } from '../../CopilotSidePanel/CopilotSidePanel'
 import s from './DeepyHelperTab.module.scss'
 
+export const HELPER_TAB_ID = 'helperTab'
+
 export const DeepyHelperTab = () => {
   const { options } = useDisplay()
   const copilotIsActive = options.get(consts.COPILOT_SP_IS_ACTIVE)
@@ -21,7 +23,7 @@ export const DeepyHelperTab = () => {
 
   return (
     <button
-      data-tip
+      id={HELPER_TAB_ID}
       data-tooltip-id='helperTab'
       className={cx('icon', copilotIsActive && 'active')}
       onClick={handleBtnClick}

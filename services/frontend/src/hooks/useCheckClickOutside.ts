@@ -1,10 +1,14 @@
 import { useEffect } from 'react'
 
-export const useCheckClickOutside = (open: any, ref: any, setOpen: any) => {
+export const useCheckClickOutside = (
+  open: any,
+  ref: any,
+  handleClick?: (e: MouseEvent) => void
+) => {
   useEffect(() => {
-    const checkIfClickedOutside = (e: any) => {
+    const checkIfClickedOutside = (e: MouseEvent) => {
       if (open && ref.current && !ref?.current.contains(e.target)) {
-        setOpen(false)
+        handleClick && handleClick(e)
       }
 
       document.removeEventListener('mousedown', checkIfClickedOutside)

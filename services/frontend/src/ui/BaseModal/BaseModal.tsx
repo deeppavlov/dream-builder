@@ -1,7 +1,7 @@
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
+import classNames from 'classnames/bind'
 import React, { FC } from 'react'
 import Modal from 'react-modal'
-import classNames from 'classnames/bind'
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import s from './BaseModal.module.scss'
 
 export interface BaseModalInterface {
@@ -11,6 +11,7 @@ export interface BaseModalInterface {
   customStyles?: Modal.Styles
   children?: React.ReactNode
   skillsListModal?: boolean
+  type?: string
 }
 
 const BaseModal: FC<BaseModalInterface> = ({
@@ -20,6 +21,7 @@ const BaseModal: FC<BaseModalInterface> = ({
   customStyles,
   children,
   skillsListModal,
+  type,
 }) => {
   const styles: Modal.Styles = {
     overlay: Object.assign(
@@ -63,7 +65,10 @@ const BaseModal: FC<BaseModalInterface> = ({
 
   return isOpen ? (
     <Modal style={styles} isOpen={isOpen} onRequestClose={closeModal}>
-      <div className={cx('baseModal', skillsListModal && 'skillsListModal')}>
+      <div
+        className={cx('baseModal', skillsListModal && 'skillsListModal')}
+        data-modal-type={type}
+      >
         <button onClick={closeModal}>
           <CloseIcon className={s.close} />
         </button>

@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
-import s from './Main.module.scss'
-import { useDrag } from '../../hooks/useDrag'
 import { useRef } from 'react'
+import { useDrag } from '../../hooks/useDrag'
+import s from './Main.module.scss'
 
 interface MainProps {
   children: React.ReactNode
@@ -16,8 +16,10 @@ export const Main = ({ children, sidebar, editor, draggable }: MainProps) => {
   draggable && useDrag(contentWrapper)
   return (
     <div
+      data-id='main'
       ref={contentWrapper}
-      className={cx('main', sidebar && 'sidebar', editor && 'editor')}>
+      className={cx('main', sidebar && 'sidebar', editor && 'editor')}
+    >
       {children}
     </div>
   )

@@ -40,6 +40,7 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { SkillQuitModal } from '../components/SkillQuitModal/SkillQuitModal'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
@@ -207,6 +208,7 @@ export const EditorPage = () => {
       <BaseSidePanel transition='left' />
       <AreYouSureModal />
       <SkillPromptModal />
+      <SkillQuitModal />
       <Toaster />
       <PublishAssistantModal />
       <DeleteAssistantModal />

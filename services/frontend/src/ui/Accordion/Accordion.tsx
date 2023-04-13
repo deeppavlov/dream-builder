@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames/bind'
+import React, { useRef, useState } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/arrow_down.svg'
 import { StackType } from '../../types/types'
 import s from './Accordion.module.scss'
@@ -10,6 +10,7 @@ interface AccordionProps extends React.PropsWithChildren {
   rounded?: boolean
   group?: StackType
   isActive?: boolean
+  type?: 'description'
 }
 
 export const Accordion = ({
@@ -19,6 +20,7 @@ export const Accordion = ({
   rounded,
   group,
   isActive: propIsActive,
+  type,
 }: AccordionProps) => {
   const [isActive, setIsActive] = useState<boolean>(propIsActive ?? false)
   const contentEl = useRef<HTMLDivElement>(null)
@@ -34,7 +36,8 @@ export const Accordion = ({
           group,
           isActive && 'active',
           small && 'small',
-          rounded && 'rounded'
+          rounded && 'rounded',
+          type
         )}
         onClick={handleAccordionClick}
       >
@@ -43,8 +46,10 @@ export const Accordion = ({
       </button>
       <div
         ref={contentEl}
-        className={s.elements}
-        style={{ height: isActive ? contentEl.current?.scrollHeight + 'px' : '0px' }}
+        className={cx('elements', type)}
+        style={{
+          height: isActive ? contentEl.current?.scrollHeight + 'px' : '0px',
+        }}
       >
         {children}
       </div>

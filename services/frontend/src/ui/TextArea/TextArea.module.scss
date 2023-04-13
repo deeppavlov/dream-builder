@@ -40,7 +40,6 @@
   &:hover {
     .container {
       border-color: $primary1;
-      background-color: $bcgrnd1;
     }
     .resizer path {
       stroke: $primary1;
@@ -88,13 +87,12 @@
   border: 1px solid $text3;
   border-radius: 12px;
   padding: 8px 0;
-  background-color: $bcgrnd2;
+  background-color: $bcgrnd1;
 
   &:focus-within {
     box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
     border-color: $primary1;
     color: $text1;
-    background-color: $bcgrnd1;
   }
 
   &:has(.field:disabled) {

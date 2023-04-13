@@ -1,6 +1,6 @@
+import classNames from 'classnames/bind'
 import { ReactNode, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import classNames from 'classnames/bind'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
 
@@ -17,6 +17,7 @@ interface WrapperProps {
   primary?: boolean
   skills?: boolean
   children?: ReactNode
+  onClose?: () => void
 }
 
 export const Wrapper = ({
@@ -32,17 +33,19 @@ export const Wrapper = ({
   limiter,
   primary,
   skills,
+  onClose,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   let cx = classNames.bind(s)
 
-  const onClose = () => {
+  const handleClose = () => {
     // For store state in localStorage need to get `closable` & `id` props
     if (closable && id) {
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
     }
 
     setVisible(false)
+    onClose && onClose()
   }
 
   useEffect(() => {
@@ -66,9 +69,10 @@ export const Wrapper = ({
             limiter && 'limiter',
             primary && 'primary',
             skills && 'skills'
-          )}>
+          )}
+        >
           {closable && (
-            <button onClick={onClose} className={s.close}>
+            <button onClick={handleClose} className={s.close}>
               <Close />
             </button>
           )}

@@ -115,6 +115,10 @@ def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
     return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
 
 
+def delete_user_api_token(db: Session, user_api_token_id: int):
+    db.execute(delete(models.UserApiToken).filter(models.UserApiToken.id == user_api_token_id))
+
+
 # VIRTUAL ASSISTANT
 def get_virtual_assistant(db: Session, id: int) -> Optional[models.VirtualAssistant]:
     return db.get(models.VirtualAssistant, id)

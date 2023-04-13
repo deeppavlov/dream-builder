@@ -54,3 +54,14 @@ async def create_or_update_user_api_token(
         user_api_token = crud.create_or_update_user_api_token(db, user_id, payload.api_token_id, payload.token_value)
 
     return schemas.UserApiToken.from_orm(user_api_token)
+
+
+@users_router.delete("/{user_id}/settings/api_tokens/{user_api_token_id}", status_code=status.HTTP_201_CREATED)
+async def create_or_update_user_api_token(
+    user_id: int,
+    user_api_token_id: int,
+    user: schemas.User = Depends(verify_token),
+    db: Session = Depends(get_db),
+):
+    with db.begin():
+        crud.delete_user_api_token(db, user_api_token_id)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { IContextMenu, ISkill } from '../../types/types'
+import { IContextMenu,ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
@@ -52,7 +52,7 @@ const SkillStackToolTip = ({
       <ContextMenuButton
         name='Delete'
         type='delete'
-        disabled={isPreview}
+        disabled={isPreview || skill?.component_type !== 'Generative'}
         handleClick={handleDeleteBtnClick}
       />
     </BaseContextMenu>

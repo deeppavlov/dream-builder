@@ -1,6 +1,7 @@
+import { encode } from '@nem035/gpt-3-encoder'
+import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
 import { FormState } from 'react-hook-form'
-import classNames from 'classnames/bind'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
@@ -8,6 +9,7 @@ import s from './TextArea.module.scss'
 interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
+  countType?: 'tokenizer' | 'character'
   error?: Partial<{ type: any; message: any }>
   formState?: FormState<any>
   maxLenght?: number | string
@@ -21,6 +23,7 @@ interface TextAreaProps {
 export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
+  countType,
   error,
   formState,
   maxLenght,
@@ -34,6 +37,18 @@ export const TextArea: FC<TextAreaProps> = ({
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const [value, setValue] = useState(props?.defaultValue || '')
   const textAreaId = props?.id ?? useId()
+  const pr = new Intl.PluralRules('ar-EG')
+  const suffixes = new Map([
+    ['zero', 's'],
+    ['one', ''],
+    ['two', 's'],
+    ['few', 's'],
+    ['many', 's'],
+  ])
+  const length =
+    countType === 'tokenizer'
+      ? encode(value?.toString()).length
+      : value?.toString()?.length ?? 0
   let cx = classNames.bind(s)
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -64,13 +79,16 @@ export const TextArea: FC<TextAreaProps> = ({
     <div
       className={cx('textArea', fullHeight && 'fullHeight')}
       data-active={isActive}
-      data-error={error !== undefined}>
+      data-error={error !== undefined}
+    >
       {(label || withCounter) && (
         <label htmlFor={textAreaId} className={s.label}>
           {label && <span className={s.title}>{label}</span>}
-          {withCounter && (
+          {withCounter && maxLenght && (
             <span className={s.counter}>
-              {value?.toString()?.length ?? 0}/{maxLenght}
+              {length}/{maxLenght}
+              {countType === 'tokenizer' &&
+                ` token${suffixes.get(pr.select(length))}`}
             </span>
           )}
         </label>

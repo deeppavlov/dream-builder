@@ -1121,6 +1121,8 @@ export const TestPage = () => {
           <span>with counter</span>
           <TextArea
             withCounter
+            countType='tokenizer'
+            maxLenght={100}
             props={{
               placeholder: 'Assistive text',
               defaultValue:

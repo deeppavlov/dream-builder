@@ -50,7 +50,6 @@ const SkillPromptModal = () => {
   const dist = options.get(consts.ACTIVE_ASSISTANT)
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
-  const promptWordsMaxLenght = 3000
   const modalRef = useRef(null)
   const cx = classNames.bind(s)
 
@@ -154,7 +153,7 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => reset({ model })
+  const handleModelSelect = (item: any) => reset({ model: item.name })
 
   const handleCreate = ({ model, prompt }: FormValues) => {
     trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
@@ -273,46 +272,52 @@ const SkillPromptModal = () => {
                     label='Generative model:'
                     list={
                       services &&
-                      services?.map((service: any) => {
-                        return service?.display_name
-                      })
+                      services?.map((service: any) => ({
+                        name: service?.display_name,
+                      }))
                     }
-                    activeItem={service?.display_name}
+                    activeItem={{
+                      name: service?.display_name,
+                    }}
                     error={errors.model}
                     props={{
                       placeholder: 'Choose model',
+                      defaultValue: service?.display_name,
                       ...register('model', { required: true }),
                     }}
                     onSelect={handleModelSelect}
                     fullWidth
                   />
                   {skillModelTip && (
-                    <Accordion
-                      title='Model Details:'
-                      type='description'
-                      isActive
-                    >
-                      <p className={s.tip}>
-                        {/* <span className={s['tip-bold']}>Model Details:</span> */}
-                        <span>{skillModelTip}</span>
-                        <a
-                          href={skillModelLink}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        >
-                          {skillModelLink}
-                        </a>
-                      </p>
-                    </Accordion>
+                    <div>
+                      <Accordion
+                        title='Model Details:'
+                        type='description'
+                        isActive
+                      >
+                        <p className={s.tip}>
+                          {/* <span className={s['tip-bold']}>Model Details:</span> */}
+                          <span>{skillModelTip}</span>
+                          <a
+                            href={skillModelLink}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {skillModelLink}
+                          </a>
+                        </p>
+                      </Accordion>
+                    </div>
                   )}
                 </div>
                 <TextArea
                   fullHeight
                   label='Enter prompt:'
                   withCounter
+                  countType='tokenizer'
                   resizable={false}
                   error={errors.model}
-                  maxLenght={promptWordsMaxLenght}
+                  maxLenght={service?.max_tokens}
                   props={{
                     placeholder:
                       "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
@@ -320,8 +325,8 @@ const SkillPromptModal = () => {
                     ...register('prompt', {
                       required: 'This field can’t be empty',
                       maxLength: {
-                        value: promptWordsMaxLenght,
-                        message: `Limit prompt to ${promptWordsMaxLenght} words`,
+                        value: service?.max_tokens,
+                        message: `Limit prompt to ${service?.max_tokens} words`,
                       },
                     }),
                   }}

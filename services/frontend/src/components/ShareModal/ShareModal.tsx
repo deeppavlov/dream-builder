@@ -45,7 +45,7 @@ export const ShareModal = () => {
   }
 
   const url = getValues('link')
-  const title = 'Check out this chatbot I made with deepdream.builders! '
+  const title = 'Check out this Generative Assistant I made with deepdream.builders! '
 
   useObserver('ShareModal', handleEventUpdate)
   useEffect(() => {
@@ -62,7 +62,7 @@ export const ShareModal = () => {
           <div className={s.main}>
             <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
-              <FacebookShareButton title={title} children={<FB />} url={url} />
+              <FacebookShareButton quote={title} children={<FB />} url={url} />
               <TwitterShareButton title={title} children={<TW />} url={url} />
               <TelegramShareButton
                 title={title}

@@ -201,46 +201,46 @@ def _pre_populate_from_tsv(
         connection.execute(target.insert(), row)
 
 
-#@listens_for(Role.__table__, "after_create")
-#def pre_populate_role(target, connection, **kw):
-#    _pre_populate_from_tsv(
-#        "database/initial_data/role.tsv",
-#        target,
-#        connection,
-#        map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
-#    )
-#
-#
-#@listens_for(GoogleUser.__table__, "after_create")
-#def pre_populate_google_user(target, connection, **kw):
-#    _pre_populate_from_tsv("database/initial_data/google_user.tsv", target, connection)
-#
-#
-#@listens_for(ApiToken.__table__, "after_create")
-#def pre_populate_api_token(target, connection, **kw):
-#    _pre_populate_from_tsv("database/initial_data/api_token.tsv", target, connection)
-#
-#
-#@listens_for(VirtualAssistant.__table__, "after_create")
-#def pre_populate_virtual_assistant(target, connection, **kw):
-#    _pre_populate_from_tsv("database/initial_data/virtual_assistant.tsv", target, connection)
-#
-#
-#@listens_for(PublishRequest.__table__, "after_create")
-#def pre_populate_publish_request(target, connection, **kw):
-#    _pre_populate_from_tsv(
-#        "database/initial_data/publish_request.tsv",
-#        target,
-#        connection,
-#        map_value_types={"is_confirmed": lambda x: bool(int(x))},
-#    )
-#
-#
-#@listens_for(LmService.__table__, "after_create")
-#def pre_populate_lm_service(target, connection, **kw):
-#    _pre_populate_from_tsv("database/initial_data/lm_service.tsv", target, connection)
-#
-#
-#@listens_for(Deployment.__table__, "after_create")
-#def pre_populate_deployment(target, connection, **kw):
-#    _pre_populate_from_tsv("database/initial_data/deployment.tsv", target, connection)
+@listens_for(Role.__table__, "after_create")
+def pre_populate_role(target, connection, **kw):
+    _pre_populate_from_tsv(
+        "database/initial_data/role.tsv",
+        target,
+        connection,
+        map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
+    )
+
+
+@listens_for(GoogleUser.__table__, "after_create")
+def pre_populate_google_user(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/google_user.tsv", target, connection)
+
+
+@listens_for(ApiToken.__table__, "after_create")
+def pre_populate_api_token(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/api_token.tsv", target, connection)
+
+
+@listens_for(VirtualAssistant.__table__, "after_create")
+def pre_populate_virtual_assistant(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/virtual_assistant.tsv", target, connection)
+
+
+@listens_for(PublishRequest.__table__, "after_create")
+def pre_populate_publish_request(target, connection, **kw):
+    _pre_populate_from_tsv(
+        "database/initial_data/publish_request.tsv",
+        target,
+        connection,
+        map_value_types={"is_confirmed": lambda x: bool(int(x))},
+    )
+
+
+@listens_for(LmService.__table__, "after_create")
+def pre_populate_lm_service(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/lm_service.tsv", target, connection)
+
+
+@listens_for(Deployment.__table__, "after_create")
+def pre_populate_deployment(target, connection, **kw):
+    _pre_populate_from_tsv("database/initial_data/deployment.tsv", target, connection)

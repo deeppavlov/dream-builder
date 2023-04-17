@@ -46,7 +46,7 @@ const SkillPromptModal = () => {
   const dist = options.get(consts.ACTIVE_ASSISTANT)
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
-  const promptWordsMaxLenght = 1500
+  const promptWordsMaxLenght = 3000
   const cx = classNames.bind(s)
 
   const setPromptForDist = useMutation({

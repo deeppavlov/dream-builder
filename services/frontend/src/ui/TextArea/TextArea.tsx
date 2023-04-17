@@ -1,7 +1,7 @@
 import { encode } from '@nem035/gpt-3-encoder'
 import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
-import { FormState } from 'react-hook-form'
+import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
@@ -10,32 +10,54 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   countType?: 'tokenizer' | 'character'
-  error?: Partial<{ type: any; message: any }>
-  formState?: FormState<any>
-  maxLenght?: number | string
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
+  defaultValue?: string
   resizable?: boolean
   fullHeight?: boolean
+  control: Control<any>
+  name: string
+  rules?: RegisterOptions
 }
 
 export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
   countType,
-  error,
-  formState,
-  maxLenght,
   props,
   withCounter,
   withEnterButton,
+  defaultValue,
   resizable = true,
   fullHeight,
+  control,
+  name,
+  rules,
 }) => {
+  const maxLenght = rules?.maxLength as { value: number; message: string }
+  const getLength = (value: string) =>
+    countType === 'tokenizer'
+      ? encode(value?.toString()).length
+      : value?.toString()?.length ?? 0
+  const getRules = () => {
+    if (countType === 'tokenizer' && maxLenght) {
+      return Object.assign({}, rules, {
+        maxLength: undefined,
+        validate: (v: string) =>
+          getLength(v) > maxLenght.value ? maxLenght.message : undefined,
+      })
+    }
+    return rules
+  }
+  const { field, formState } = useController({
+    name,
+    control,
+    rules: getRules(),
+    defaultValue,
+  })
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
-  const [value, setValue] = useState(props?.defaultValue || '')
   const textAreaId = props?.id ?? useId()
   const pr = new Intl.PluralRules('ar-EG')
   const suffixes = new Map([
@@ -44,21 +66,18 @@ export const TextArea: FC<TextAreaProps> = ({
     ['two', 's'],
     ['few', 's'],
     ['many', 's'],
+    ['other', 's'],
   ])
-  const length =
-    countType === 'tokenizer'
-      ? encode(value?.toString()).length
-      : value?.toString()?.length ?? 0
+  const error = formState.errors[name]
   let cx = classNames.bind(s)
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    if (props?.onBlur) props.onBlur(e)
+    if (control) field.onBlur()
     setIsActive(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (props?.onChange) props.onChange(e)
-    setValue(e.target.value)
+    if (control) field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
   }
@@ -86,7 +105,7 @@ export const TextArea: FC<TextAreaProps> = ({
           {label && <span className={s.title}>{label}</span>}
           {withCounter && maxLenght && (
             <span className={s.counter}>
-              {length}/{maxLenght}
+              {getLength(field.value || '')}/{maxLenght.value}
               {countType === 'tokenizer' &&
                 ` token${suffixes.get(pr.select(length))}`}
             </span>
@@ -99,6 +118,7 @@ export const TextArea: FC<TextAreaProps> = ({
           rows={2}
           cols={20}
           {...props}
+          {...field}
           id={textAreaId}
           onBlur={handleBlur}
           onChange={handleChange}
@@ -116,7 +136,7 @@ export const TextArea: FC<TextAreaProps> = ({
 
       {(about || error) && (
         <label htmlFor={textAreaId} className={cx('label', 'about')}>
-          {error ? error.message : about}
+          {error ? <>{error.message}</> : about}
         </label>
       )}
     </div>

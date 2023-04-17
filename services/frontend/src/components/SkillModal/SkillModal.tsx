@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useObserver } from '../../hooks/useObserver'
 import { SkillInfoInterface } from '../../types/types'
@@ -6,7 +6,6 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
@@ -31,6 +30,7 @@ export const SkillModal = () => {
   const {
     handleSubmit,
     register,
+    control,
     reset,
     getValues,
     formState: { errors },
@@ -130,21 +130,21 @@ export const SkillModal = () => {
           />
 
           <TextArea
+            name={DESC_ID}
+            control={control}
             label='Description'
             withCounter
-            error={errors[DESC_ID]}
-            maxLenght={descriptionMaxLenght}
+            defaultValue={getValues()[DESC_ID]}
+            rules={{
+              required: 'This field can’t be empty',
+              maxLength: {
+                value: descriptionMaxLenght,
+                message: `Limit text description to ${descriptionMaxLenght} characters`,
+              },
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
-              defaultValue: getValues()[DESC_ID],
-              ...register(DESC_ID, {
-                required: 'This field can’t be empty',
-                maxLength: {
-                  value: descriptionMaxLenght,
-                  message: `Limit text description to ${descriptionMaxLenght} characters`,
-                },
-              }),
             }}
           />
           <div className={s.btns}>

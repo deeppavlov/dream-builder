@@ -109,19 +109,15 @@ const SkillPromptModal = () => {
     }
   )
 
-  const {
-    handleSubmit,
-    register,
-    reset,
-    getValues,
-    formState: { errors },
-  } = useForm<FormValues>({
-    mode: 'all',
-    defaultValues: {
-      model: service?.displayName,
-      prompt: prompt?.text,
-    },
-  })
+  const { handleSubmit, register, reset, getValues, control, formState } =
+    useForm<FormValues>({
+      mode: 'all',
+      defaultValues: {
+        model: service?.displayName,
+        prompt: prompt?.text,
+      },
+    })
+  const { errors } = formState
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.link
@@ -311,24 +307,24 @@ const SkillPromptModal = () => {
                   )}
                 </div>
                 <TextArea
-                  fullHeight
+                  name='prompt'
                   label='Enter prompt:'
-                  withCounter
                   countType='tokenizer'
+                  defaultValue={prompt?.text}
+                  withCounter
+                  fullHeight
                   resizable={false}
-                  error={errors.model}
-                  maxLenght={service?.max_tokens}
+                  control={control}
+                  rules={{
+                    required: 'This field can’t be empty',
+                    maxLength: {
+                      value: service?.max_tokens,
+                      message: `Limit prompt to ${service?.max_tokens} words`,
+                    },
+                  }}
                   props={{
                     placeholder:
                       "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-                    defaultValue: prompt?.text,
-                    ...register('prompt', {
-                      required: 'This field can’t be empty',
-                      maxLength: {
-                        value: service?.max_tokens,
-                        message: `Limit prompt to ${service?.max_tokens} words`,
-                      },
-                    }),
                   }}
                 />
               </div>

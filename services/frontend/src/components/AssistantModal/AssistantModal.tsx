@@ -1,20 +1,20 @@
 import { useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { useQueryClient, useMutation } from 'react-query'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useMutation, useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import { useObserver } from '../../hooks/useObserver'
+import { useOnKey } from '../../hooks/useOnKey'
+import { cloneAssistantDist } from '../../services/cloneAssistantDist'
 import { postAssistantDist } from '../../services/postAssistanDist'
 import { renameAssistantDist } from '../../services/renameAssistantDist'
-import { trigger } from '../../utils/events'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import { useOnKey } from '../../hooks/useOnKey'
+import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import { useObserver } from '../../hooks/useObserver'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -39,6 +39,7 @@ export const AssistantModal = () => {
   const {
     handleSubmit,
     register,
+    control,
     reset,
     getValues,
     formState: { errors, isValid },
@@ -169,7 +170,8 @@ export const AssistantModal = () => {
             )}
             {action === 'create' && (
               <div>
-                You are creating a new Virtual Assistant from <mark>scratch</mark>
+                You are creating a new Virtual Assistant from{' '}
+                <mark>scratch</mark>
               </div>
             )}
             {action === 'edit' && (
@@ -192,23 +194,22 @@ export const AssistantModal = () => {
         />
         <div className={s.textarea}>
           <TextArea
+            name={DESC_ID}
+            control={control}
+            defaultValue={getValues().description}
             label='Description'
             withCounter
-            error={errors[DESC_ID as keyof FormValues]}
-            maxLenght={500}
+            rules={{
+              required: 'This field can’t be empty',
+              maxLength: {
+                value: 500,
+                message: 'Limit text description to 500 characters',
+              },
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
-              defaultValue: getValues().description,
               rows: 3,
-              ...register(DESC_ID as keyof FormValues, {
-                required: 'This field can’t be empty',
-                maxLength: {
-                  value: 500,
-                  message: 'Limit text description to 500 characters',
-                },
-                // validate: {isEmpty:},
-              }),
             }}
           />
         </div>
@@ -226,7 +227,8 @@ export const AssistantModal = () => {
                 if (action == 'clone') handleCloneBtnClick()
                 if (action == 'edit') handleSaveBtnClick()
               },
-            }}>
+            }}
+          >
             {action === 'create' && 'Create'}
             {action === 'clone' && 'Clone'}
             {action === 'edit' && 'Save'}

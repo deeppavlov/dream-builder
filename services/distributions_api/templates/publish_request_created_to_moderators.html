@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}New Publish request from {{ owner_address }}{% endblock %}
+{% block content %}
+    <p class="important">
+        New assistant dist "{{ display_name }}" from {{ owner_address }} is waiting to be published. Review it now!
+        <br>
+        https://link_to_moderator_page.com/publish_request/{{ name }}
+    </p>
+{% endblock %}

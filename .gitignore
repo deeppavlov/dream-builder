@@ -316,4 +316,4 @@ src/.DS_Store
 *.sln
 *.sw?
 client_secret.json
-database/initial_data/*
+database/initial_data*

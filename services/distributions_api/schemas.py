@@ -58,16 +58,6 @@ class CreateAssistantDistModel(BaseModel):
     description: str
 
 
-class CloneAssistantDistModel(CreateAssistantDistModel):
-    annotators: Optional[List[str]]
-    response_annotators: Optional[List[str]]
-    # response_annotator_selectors: Optional[bool]
-    candidate_annotators: Optional[List[str]]
-    skill_selectors: Optional[List[str]]
-    skills: Optional[List[str]]
-    response_selectors: Optional[List[str]]
-
-
 class AssistantDistModelMetadata(BaseModel):
     display_name: str
     author: str
@@ -118,14 +108,15 @@ class AssistantDistConfigsImport(BaseModel):
     data: dict[str, AnyConfig]
 
 
-class ComponentShort(BaseModel):
+class ComponentShort(BaseOrmModel):
+    id: int
     name: str
     display_name: str
     component_type: Optional[COMPONENT_TYPES]
-    model_type: MODEL_TYPES
+    model_type: Optional[MODEL_TYPES]
     is_customizable: bool
-    author: str
-    description: str
+    author: User
+    description: Optional[str]
     ram_usage: str
     gpu_usage: Optional[str]
     lm_service: Optional[str]
@@ -137,13 +128,53 @@ class ComponentShort(BaseModel):
         return v
 
 
+class ComponentCreate(BaseModel):
+    display_name: str
+    description: Optional[str]
+    # ram_usage: str
+    # gpu_usage: Optional[str]
+    lm_service_id: int
+    prompt: str
+
+    # @validator("ram_usage", "gpu_usage")
+    # def check_memory_format(cls, v):
+    #     check_memory_format(v)
+    #     return v
+
+
+class CreateVirtualAssistantComponentRequest(BaseModel):
+    component_id: int
+
+
+class VirtualAssistantComponentShort(BaseOrmModel):
+    id: int
+    component_id: int
+    name: str
+    display_name: str
+    component_type: Optional[COMPONENT_TYPES]
+    model_type: Optional[MODEL_TYPES]
+    is_customizable: bool
+    author: User
+    description: Optional[str]
+    ram_usage: str
+    gpu_usage: Optional[str]
+    # lm_service: Optional[str]
+    date_created: datetime = Field(default_factory=datetime.utcnow)
+    is_enabled: bool
+
+    @validator("ram_usage", "gpu_usage")
+    def check_memory_format(cls, v):
+        check_memory_format(v)
+        return v
+
+
 class DistComponentsResponse(BaseModel):
-    annotators: List[ComponentShort]
-    skill_selectors: List[ComponentShort]
-    skills: List[ComponentShort]
-    candidate_annotators: List[ComponentShort]
-    response_selectors: List[ComponentShort]
-    response_annotators: List[ComponentShort]
+    annotators: List[VirtualAssistantComponentShort]
+    skill_selectors: List[VirtualAssistantComponentShort]
+    skills: List[VirtualAssistantComponentShort]
+    candidate_annotators: List[VirtualAssistantComponentShort]
+    response_selectors: List[VirtualAssistantComponentShort]
+    response_annotators: List[VirtualAssistantComponentShort]
 
 
 class CreateDialogSessionRequest(BaseModel):
@@ -173,7 +204,7 @@ class ApiToken(BaseOrmModel):
 class UserApiToken(BaseOrmModel):
     id: int
     user_id: int
-    api_token_id: int
+    api_token: ApiToken
     token_value: str
 
 
@@ -192,6 +223,9 @@ class LmService(BaseOrmModel):
     id: int
     name: str
     display_name: str
+    size: str
+    gpu_usage: Optional[str]
+    max_tokens: int
     description: str
     project_url: str
 
@@ -206,6 +240,26 @@ class Deployment(BaseOrmModel):
     chat_url: str
     prompt: Optional[str]
     lm_service: Optional[LmService]
+
+
+class DeploymentCreate(BaseModel):
+    virtual_assistant_id: int
+
+
+class PublishRequestRead(BaseOrmModel):
+    id: int
+    virtual_assistant: VirtualAssistant
+    user: User
+    slug: str
+    date_created: datetime
+    is_confirmed: Optional[bool]
+    reviewed_by_user: Optional[User]
+    date_reviewed: Optional[datetime]
+
+
+class PublishRequestCreate(BaseOrmModel):
+    is_prompt_visible: bool
+    is_publicly_listed: bool
 
 
 class Prompt(BaseModel):

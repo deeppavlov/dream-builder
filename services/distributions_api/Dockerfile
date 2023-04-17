@@ -9,7 +9,7 @@ ENV DREAM_ROOT_PATH=$DREAM_ROOT_PATH
 ENV PORT=$PORT
 
 RUN apt-get update && apt-get install -y --no-install-recommends git
-RUN git clone -b main https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
+RUN git clone -b fix/component-compose-definitions https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 
 COPY services/distributions_api/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt

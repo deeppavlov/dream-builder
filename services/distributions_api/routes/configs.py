@@ -1,17 +1,4 @@
-from typing import Union
-from fastapi import APIRouter, status, exceptions
-
-from deeppavlov_dreamtools.distconfigs.generics import AnyContainer, PipelineConfService
-from deeppavlov_dreamtools.distconfigs.assistant_dists import (
-    AnyConfig,
-    AnyConfigClass,
-)
-
-from services.distributions_api.const import (
-    CONFIGNAME_DREAMOBJECT,
-    DREAM_ROOT_PATH,
-    CONFIGNAME_CONFIGOBJECT,
-)
+from fastapi import APIRouter
 
 configs_router = APIRouter(prefix="/api/configs")
 

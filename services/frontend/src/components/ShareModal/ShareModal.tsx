@@ -2,6 +2,16 @@ import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
+import {
+  FacebookShareButton,
+  LinkedinIcon,
+  LinkedinShareButton,
+  RedditIcon,
+  RedditShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterShareButton,
+} from 'react-share'
 import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
 import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
 import { useObserver } from '../../hooks/useObserver'
@@ -16,7 +26,6 @@ export const ShareModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
-    console.log('data = ', data)
     setBot(data?.detail?.bot?.name || data?.detail)
     setIsOpen(!isOpen)
   }
@@ -35,8 +44,10 @@ export const ShareModal = () => {
     })
   }
 
-  useObserver('ShareModal', handleEventUpdate)
+  const url = getValues('link')
+  const title = 'Check out this chatbot I made with deepdream.builders! '
 
+  useObserver('ShareModal', handleEventUpdate)
   useEffect(() => {
     reset({
       link: 'https://assistants.deepdream.builders/?assistant=' + bot,
@@ -51,8 +62,23 @@ export const ShareModal = () => {
           <div className={s.main}>
             <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
-              <FB />
-              <TW />
+              <FacebookShareButton title={title} children={<FB />} url={url} />
+              <TwitterShareButton title={title} children={<TW />} url={url} />
+              <TelegramShareButton
+                title={title}
+                children={<TelegramIcon />}
+                url={url}
+              />
+              <LinkedinShareButton
+                title={title}
+                children={<LinkedinIcon />}
+                url={url}
+              />
+              <RedditShareButton
+                title={title}
+                children={<RedditIcon />}
+                url={url}
+              />
             </div>
           </div>
           <p className={cx('text', 'lines')}>or copy link</p>

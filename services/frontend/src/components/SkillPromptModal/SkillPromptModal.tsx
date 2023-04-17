@@ -1,4 +1,3 @@
-import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -7,7 +6,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
-import { servicesList } from '../../mocks/database/servicesList'
 import { changeLMservice } from '../../services/changeLMservice'
 import { getAllLMservices } from '../../services/getAllLMservices'
 import { getLMservice } from '../../services/getLMservice'
@@ -25,7 +23,15 @@ import s from './SkillPromptModal.module.scss'
 export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
 
 type TAction = 'create' | 'edit'
-
+interface LM {
+  name: string
+  display_name: string
+  description: string
+  max_tokens: number
+  size: string
+  project_url: string
+  id: number
+}
 interface Props {
   action?: TAction
   skill?: ISkill
@@ -79,6 +85,17 @@ const SkillPromptModal = () => {
     refetchOnWindowFocus: false,
   })
 
+  const createMap = (array:LM[]) => {
+    const map = new Map<string, LM>()
+    array?.forEach((object:LM) => {
+      const { display_name } = object
+      map.set(display_name, { ...object })
+    })
+    return map
+  }
+
+  const servicesList = createMap(services)
+
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
     () => getLMservice(dist?.name),
@@ -120,7 +137,7 @@ const SkillPromptModal = () => {
   })
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
-  const skillModelLink = servicesList.get(model)?.link
+  const skillModelLink = servicesList.get(model)?.project_url
 
   const closeModal = () => {
     setIsOpen(false)
@@ -169,6 +186,7 @@ const SkillPromptModal = () => {
 
   async function handleSaveAndTest(data: FormValues) {
     const service = servicesList.get(data.model)?.name!
+    console.log('service = ', service)
     const prompt = data.prompt
     const distName = dist?.name
 

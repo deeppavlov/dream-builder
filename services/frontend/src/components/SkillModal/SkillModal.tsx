@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useQueryClient } from 'react-query'
 import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
 import { ISkill } from '../../types/types'
@@ -24,13 +23,15 @@ interface SkillModalProps {
   skill?: Partial<ISkilltInfo>
   parent?: IParentSkillInfo // The skill that we copy
 }
-
+interface FormValues {
+  name: string
+  description: string
+}
 export const SkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<Partial<ISkilltInfo> | null>(null)
   const [parent, setParent] = useState<IParentSkillInfo | null>(null)
-  const queryClient = useQueryClient()
   const {
     handleSubmit,
     register,
@@ -66,7 +67,7 @@ export const SkillModal = () => {
     })
     setIsOpen(!isOpen)
   }
-  const { create } = useComponent()
+  const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
     toast.promise(
@@ -83,12 +84,10 @@ export const SkillModal = () => {
       }
     )
   }
-
+  const handleEdit = (data: FormValues) => {}
   const onFormSubmit = (data: any) => {
-    if (action === 'create') {
-      handleCreate(data)
-      return
-    }
+    action === 'create' && handleCreate(data)
+    action === 'edit' && handleEdit(data)
   }
 
   useObserver('SkillModal', handleEventUpdate)
@@ -97,12 +96,20 @@ export const SkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
-          <h4>Create a new generative skill</h4>
+          {action == 'create' && <h4>Create a new generative skill</h4>}
+          {action == 'edit' && <h4>Edit skill</h4>}
           <div className={s.distribution}>
-            <div>
-              You are creating a skill that uses{' '}
-              <mark>large language models</mark>
-            </div>
+            {action == 'create' && (
+              <div>
+                You are creating a skill that uses{' '}
+                <mark>large language models</mark>
+              </div>
+            )}
+            {action == 'edit' && (
+              <div>
+                You are editing <mark>{skill?.display_name}</mark>
+              </div>
+            )}
           </div>
         </div>
         <form onSubmit={handleSubmit(onFormSubmit)}>
@@ -142,7 +149,8 @@ export const SkillModal = () => {
               Cancel
             </Button>
             <Button theme='primary' props={{ type: 'submit' }}>
-              Create
+              {action == 'create' && 'Create'}
+              {action == 'edit' && 'Save'}
             </Button>
           </div>
         </form>

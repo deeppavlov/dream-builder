@@ -24,11 +24,15 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })
 
-  // const handleDisableBtnClick = () => {}
+  const handleRenameBtnClick = () => {
+    trigger('SkillModal', { action: 'edit', skill })
+  }
 
   const handleDeleteBtnClick = () => {
     trigger('DeleteSkillModal', { skill })
   }
+
+  // const handleDisableBtnClick = () => {}
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
@@ -38,6 +42,14 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
           type='edit'
           disabled={isPreview}
           handleClick={handleEditBtnClick}
+        />
+      )}
+      {skill.is_customizable && (
+        <ContextMenuButton
+          name='Rename Skill'
+          type='edit'
+          disabled={isPreview}
+          handleClick={handleRenameBtnClick}
         />
       )}
       <ContextMenuButton

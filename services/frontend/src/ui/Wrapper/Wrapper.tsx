@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
@@ -17,7 +17,7 @@ interface WrapperProps {
   primary?: boolean
   skills?: boolean
   children?: ReactNode
-  onClose?: () => void
+  onClose?: (e: MouseEvent) => void
 }
 
 export const Wrapper = ({
@@ -36,6 +36,7 @@ export const Wrapper = ({
   onClose,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
+  const closeRef = useRef<HTMLButtonElement>(null)
   let cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -43,9 +44,7 @@ export const Wrapper = ({
     if (closable && id) {
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
     }
-
     setVisible(false)
-    onClose && onClose()
   }
 
   useEffect(() => {
@@ -55,6 +54,11 @@ export const Wrapper = ({
       if (state !== null) {
         setVisible(state === 'true')
       }
+    }
+
+    if (onClose && closable) {
+      // Need addition listener for work e.stopImmediatePropagation()
+      closeRef.current?.addEventListener('click', onClose)
     }
   }, [])
 
@@ -72,7 +76,7 @@ export const Wrapper = ({
           )}
         >
           {closable && (
-            <button onClick={handleClose} className={s.close}>
+            <button ref={closeRef} onClick={handleClose} className={s.close}>
               <Close />
             </button>
           )}

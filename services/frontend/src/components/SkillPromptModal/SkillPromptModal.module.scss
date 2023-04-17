@@ -3,6 +3,7 @@
   height: 100%;
   padding: 40px;
   background-color: transparent;
+  transition: margin 0.3s linear;
 }
 
 .container {
@@ -24,11 +25,10 @@
   height: 100%;
   width: 100%;
   flex-direction: column;
-  transition: padding 0.3s linear;
 }
 
 .withSidePanel {
-  padding-left: 368px;
+  margin-left: 368px;
 }
 
 .editor-container {

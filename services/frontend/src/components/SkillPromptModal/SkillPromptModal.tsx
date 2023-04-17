@@ -123,10 +123,14 @@ const SkillPromptModal = () => {
   const skillModelLink = servicesList.get(model)?.link
 
   const closeModal = () => {
-    setIsOpen(false)
-    setAction(null)
-    setSkill(null)
-    trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+    trigger('SkillQuitModal', {
+      handleQuit: () => {
+        setIsOpen(false)
+        setAction(null)
+        setSkill(null)
+        trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+      },
+    })
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -219,9 +223,9 @@ const SkillPromptModal = () => {
 
   useQuitConfirmation({
     activeElement: modalRef,
-    availableSelectors: [`#${HELPER_TAB_ID}`],
+    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
     isActive: isOpen,
-    quitHandler: () => trigger('SkillQuitModal', { handleQuit: closeModal }),
+    quitHandler: closeModal,
   })
 
   return (
@@ -252,12 +256,24 @@ const SkillPromptModal = () => {
         },
       }}
     >
-      <div className={s.skillPromptModal} ref={modalRef}>
-        <Wrapper closable onClose={closeModal}>
+      <div
+        className={cx(
+          'skillPromptModal',
+          leftSidePanelIsActive && 'withSidePanel'
+        )}
+        ref={modalRef}
+      >
+        <Wrapper
+          closable
+          onClose={e => {
+            e.stopImmediatePropagation()
+            closeModal()
+          }}
+        >
           <div className={s.container}>
             <form
               onSubmit={handleSubmit(data => onFormSubmit(data))}
-              className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}
+              className={cx('editor')}
             >
               <div className={s.header}>
                 {skill?.display_name ?? 'Current Skill'}: Editor

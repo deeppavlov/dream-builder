@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { deleteUserToken } from '../../services/deleteUserToken'
 import { getTokens } from '../../services/getTokens'
 import { getUserId } from '../../services/getUserId'
 import { getUserTokens } from '../../services/getUserTokens'
@@ -59,7 +60,23 @@ export const AccessTokensBanner = () => {
     }, 600)
   }
 
-  const handleRemoveBtnClick = (id: number) => {}
+  const deleteToken = useMutation({
+    mutationFn: (token_id: string) => {
+      return deleteUserToken(user?.id, token_id)
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: 'user_tokens',
+      }),
+  })
+
+  const handleRemoveBtnClick = (token_id: number) => {
+    toast.promise(deleteToken.mutateAsync(token_id.toString()), {
+      loading: 'Deleting...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
+  }
 
   const createUserToken = useMutation({
     mutationFn: ({ token }: FormValues) => {
@@ -135,12 +152,12 @@ export const AccessTokensBanner = () => {
                 {/* {state && (
                   <SmallTag theme={state}>{state.replace(/-/g, ' ')}</SmallTag>
                 )} */}
-                <button
+                {/* <button
                   className={s.validate}
                   onClick={() => handleValidateBtnClick(id)}
                 >
                   Validate
-                </button>
+                </button> */}
                 <button
                   className={s.remove}
                   onClick={() => handleRemoveBtnClick(id)}

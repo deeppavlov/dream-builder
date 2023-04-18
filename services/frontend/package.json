@@ -11,14 +11,11 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@nem035/gpt-3-encoder": "^1.1.7",
-    "@react-oauth/google": "^0.5.1",
-    "@types/google.accounts": "^0.0.2",
+    "@dqbd/tiktoken": "^1.0.6",
     "axios": "^1.2.1",
     "classnames": "^2.3.2",
     "esbuild": "^0.17.11",
     "fecha": "^4.2.3",
-    "google-auth-library": "^8.7.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "nanoid": "^4.0.0",
@@ -33,7 +30,8 @@
     "react-tooltip": "^5.10.0",
     "sort-by": "^1.2.0",
     "url": "^0.11.0",
-    "vite-plugin-svgr": "^2.2.2"
+    "vite-plugin-svgr": "^2.2.2",
+    "vite-plugin-wasm": "^3.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

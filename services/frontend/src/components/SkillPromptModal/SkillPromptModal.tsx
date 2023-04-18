@@ -326,6 +326,7 @@ const SkillPromptModal = () => {
                   name='prompt'
                   label='Enter prompt:'
                   countType='tokenizer'
+                  tokenizerModel={service?.display_name}
                   defaultValue={prompt?.text}
                   withCounter
                   fullHeight

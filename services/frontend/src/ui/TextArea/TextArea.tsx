@@ -1,8 +1,9 @@
-import { encode } from '@nem035/gpt-3-encoder'
 import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
 import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
+import { LanguageModel } from '../../types/types'
+import getTokensLength from '../../utils/getTokensLength'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
 
@@ -10,6 +11,7 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   countType?: 'tokenizer' | 'character'
+  tokenizerModel?: LanguageModel
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
   withEnterButton?: boolean
@@ -25,6 +27,7 @@ export const TextArea: FC<TextAreaProps> = ({
   label,
   about,
   countType,
+  tokenizerModel,
   props,
   withCounter,
   withEnterButton,
@@ -38,8 +41,8 @@ export const TextArea: FC<TextAreaProps> = ({
   const maxLenght = rules?.maxLength as { value: number; message: string }
   const getLength = (value: string) =>
     countType === 'tokenizer'
-      ? encode(value?.toString()).length
-      : value?.toString()?.length ?? 0
+      ? getTokensLength(tokenizerModel, value)
+      : value?.length ?? 0
   const getRules = () => {
     if (countType === 'tokenizer' && maxLenght) {
       return Object.assign({}, rules, {
@@ -105,7 +108,7 @@ export const TextArea: FC<TextAreaProps> = ({
           {label && <span className={s.title}>{label}</span>}
           {withCounter && maxLenght && (
             <span className={s.counter}>
-              {getLength(field.value || '')}/{maxLenght.value}
+              {getLength(field.value)}/{maxLenght.value}
               {countType === 'tokenizer' &&
                 ` token${suffixes.get(pr.select(length))}`}
             </span>

@@ -110,7 +110,7 @@ export interface SkillListProps {
   size?: SkillCardSize
   forGrid?: boolean
   forModal?: boolean
-  withoutDate?:boolean
+  withoutDate?: boolean
 }
 export interface SettingKey {
   name: string
@@ -141,7 +141,6 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
   lm_service: string
-  
 }
 
 export interface SessionConfig {
@@ -204,3 +203,9 @@ export type StackType =
 export type BotVisabilityType = 'public' | 'unlisted'
 
 export type TTopbar = 'main' | 'editor'
+
+export type LanguageModel =
+  | 'ChatGPT'
+  | 'GPT-3.5'
+  | 'Open-Assistant SFT-1 12B'
+  | 'GPT-J 6B'

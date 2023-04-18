@@ -17,12 +17,11 @@ import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsAllPage = () => {
   const { data, error, isLoading } = useQuery('publicDists', getPublicDists)
-  const { options, dispatch } = useDisplay()
+  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <>
-      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper title='Virtual Assistants Templates' amount={data?.length}>
           <Loader isLoading={isLoading} />

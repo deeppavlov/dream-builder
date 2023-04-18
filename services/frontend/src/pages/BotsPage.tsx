@@ -22,7 +22,6 @@ import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
-import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsPage = () => {
   const auth = useAuth()
@@ -83,11 +82,7 @@ export const BotsPage = () => {
               <Slider>
                 <Loader isLoading={isPrivateDistsLoading} />
                 <ErrorHandler error={privateDistsError} />
-                <DistList
-                  view='cards'
-                  dists={sortDistsByISO8601(privateDists)}
-                  type='your'
-                />
+                <DistList view='cards' dists={privateDists} type='your' />
               </Slider>
             </Container>
           )}

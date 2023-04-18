@@ -46,7 +46,7 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
       )}
       {skill.is_customizable && (
         <ContextMenuButton
-          name='Rename Skill'
+          name='Rename'
           type='edit'
           disabled={isPreview}
           handleClick={handleRenameBtnClick}

@@ -13,6 +13,7 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsAllPage = () => {
   const { data, error, isLoading } = useQuery('publicDists', getPublicDists)
@@ -32,7 +33,12 @@ export const BotsAllPage = () => {
             </Table>
           ) : (
             <Container gridForCards>
-              <DistList view='cards' dists={data} type='public' size='big' />
+              <DistList
+                view='cards'
+                dists={sortDistsByISO8601(data)}
+                type='public'
+                size='big'
+              />
             </Container>
           )}
         </Wrapper>

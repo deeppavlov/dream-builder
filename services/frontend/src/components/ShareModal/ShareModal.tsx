@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
 import {
+  FacebookIcon,
   FacebookShareButton,
   LinkedinIcon,
   LinkedinShareButton,
@@ -10,10 +11,9 @@ import {
   RedditShareButton,
   TelegramIcon,
   TelegramShareButton,
+  TwitterIcon,
   TwitterShareButton,
 } from 'react-share'
-import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
-import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
 import { useObserver } from '../../hooks/useObserver'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -45,7 +45,8 @@ export const ShareModal = () => {
   }
 
   const url = getValues('link')
-  const title = 'Check out this Generative Assistant I made with deepdream.builders! '
+  const title =
+    'Check out this Generative Assistant I made with deepdream.builders! '
 
   useObserver('ShareModal', handleEventUpdate)
   useEffect(() => {
@@ -62,8 +63,16 @@ export const ShareModal = () => {
           <div className={s.main}>
             <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
-              <FacebookShareButton quote={title} children={<FB />} url={url} />
-              <TwitterShareButton title={title} children={<TW />} url={url} />
+              <FacebookShareButton
+                quote={title}
+                children={<FacebookIcon />}
+                url={url}
+              />
+              <TwitterShareButton
+                title={title}
+                children={<TwitterIcon />}
+                url={url}
+              />
               <TelegramShareButton
                 title={title}
                 children={<TelegramIcon />}

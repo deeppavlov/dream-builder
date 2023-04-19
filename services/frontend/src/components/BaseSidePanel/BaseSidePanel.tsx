@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useState } from 'react'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import SidePanel from '../../ui/SidePanel/SidePanel'
-import { useObserver } from '../../hooks/useObserver'
+import React, { FC, useEffect, useState } from 'react'
 import { useDisplay } from '../../context/DisplayContext'
+import { useObserver } from '../../hooks/useObserver'
+import SidePanel from '../../ui/SidePanel/SidePanel'
 import { consts } from '../../utils/consts'
 import s from './BaseSidePanel.module.scss'
 
@@ -110,8 +110,9 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
       handleClose={handleClose}
       position={position}
       transition={transition}
-      key={transition}>
-      <div className={s.baseSidePanel}>
+      key={transition}
+    >
+      <div className={s.baseSidePanel} id={`sp_${transition}`}>
         {isClosable && (
           <button className={s.close} onClick={handleClose}>
             <CloseIcon />

@@ -206,3 +206,9 @@ export type StackType =
 export type BotVisabilityType = 'Public' | 'Unlisted'
 
 export type TTopbar = 'main' | 'editor'
+
+export type LanguageModel =
+  | 'ChatGPT'
+  | 'GPT-3.5'
+  | 'Open-Assistant SFT-1 12B'
+  | 'GPT-J 6B'

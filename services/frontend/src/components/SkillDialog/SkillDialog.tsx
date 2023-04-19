@@ -1,6 +1,3 @@
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useRef } from 'react'
@@ -12,10 +9,7 @@ import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
@@ -52,7 +46,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
       onKeyDown={handleKeyDown}
       className={s.dialog}
     >
-      <SidePanelHeader>
+      {/* <SidePanelHeader>
         <ul role='tablist'>
           <li role='tab' key='Current  Skill' aria-selected>
             Current Skill
@@ -61,7 +55,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
             All Skills
           </li>
         </ul>
-      </SidePanelHeader>
+      </SidePanelHeader> */}
 
       <div className={s.container}>
         <ul ref={chatRef} className={s.chat}>
@@ -84,7 +78,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
           )}
         </ul>
       </div>
-      <div className={s.controls}>
+      {/* <div className={s.controls}>
         <div className={s.left}>
           {/* <DialogButton active>
             <DialogTextIcon />
@@ -112,23 +106,34 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
             </div>
           </Button>
         </div>
+      </div> */}
+      <div className={s.bottom}>
+        <div className={s['textarea-container']}>
+          <textarea
+            className={s.textarea}
+            rows={4}
+            placeholder='Type...'
+            {...register('message')}
+          />
+        </div>
+
+        <div className={s.btns}>
+          <Button
+            theme='secondary'
+            props={{
+              onClick: handleRenewClick,
+            }}
+          >
+            <Renew data-tooltip-id='renew' />
+          </Button>
+          <Button
+            theme='secondary'
+            props={{ disabled: send?.isLoading, type: 'submit' }}
+          >
+            Send
+          </Button>
+        </div>
       </div>
-      <div className={cx('textarea-container')}>
-        <textarea
-          className={s.textarea}
-          rows={4}
-          placeholder='Type...'
-          {...register('message')}
-        />
-      </div>
-      <SidePanelButtons>
-        <Button
-          theme='secondary'
-          props={{ disabled: send?.isLoading, type: 'submit' }}
-        >
-          Send
-        </Button>
-      </SidePanelButtons>
     </form>
   )
 }

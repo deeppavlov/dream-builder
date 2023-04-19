@@ -23,7 +23,7 @@ export const BotTab = () => {
         <CPU className='activeTab' />
 
         {hintIsVisited ? (
-          <BaseToolTip id='sidebarBotTab' content='Bot' place='right' />
+          <BaseToolTip id='sidebarBotTab' content='Architecture' place='right' />
         ) : (
           <Hint id='sidebarBotTab' handleClose={() => setHintIsVisited(true)} />
         )}

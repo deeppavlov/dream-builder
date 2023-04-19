@@ -35,6 +35,7 @@ export const SkillModal = () => {
   const {
     handleSubmit,
     register,
+    control,
     reset,
     getValues,
     formState: { errors },
@@ -127,21 +128,21 @@ export const SkillModal = () => {
           />
 
           <TextArea
+            name={DESC_ID}
+            control={control}
             label='Description'
             withCounter
-            error={errors[DESC_ID]}
-            maxLenght={descriptionMaxLenght}
+            defaultValue={getValues()[DESC_ID]}
+            rules={{
+              required: 'This field can’t be empty',
+              maxLength: {
+                value: descriptionMaxLenght,
+                message: `Limit text description to ${descriptionMaxLenght} characters`,
+              },
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
-              defaultValue: getValues()[DESC_ID],
-              ...register(DESC_ID, {
-                required: 'This field can’t be empty',
-                maxLength: {
-                  value: descriptionMaxLenght,
-                  message: `Limit text description to ${descriptionMaxLenght} characters`,
-                },
-              }),
             }}
           />
           <div className={s.btns}>

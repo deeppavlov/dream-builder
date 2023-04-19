@@ -352,6 +352,7 @@ const mockMultipleSkillSelector: SelectorSettings = {
 export const TestPage = () => {
   const {
     register,
+    control,
     formState: { errors },
   } = useForm({ mode: 'all' })
 
@@ -1099,19 +1100,22 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>default</span>
           <TextArea
-            props={{ placeholder: 'Assistive text' }}
+            name='textarea_default'
+            control={control}
             label='Label'
             about='Instructions'
+            props={{ placeholder: 'Assistive text' }}
           />
         </div>
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <TextArea
+            name='textarea_with_enter'
+            control={control}
+            defaultValue='Text input Text input Text input Text input Text input Text input Text input Text input'
             withEnterButton
             props={{
               placeholder: 'Assistive text',
-              defaultValue:
-                'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
             about='Instructions'
@@ -1120,11 +1124,18 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with counter</span>
           <TextArea
+            name='textarea_with_counter'
+            control={control}
             withCounter
+            defaultValue='Text input Text input Text input Text input Text input Text input Text input Text input'
+            rules={{
+              maxLength: {
+                value: 100,
+                message: '',
+              },
+            }}
             props={{
               placeholder: 'Assistive text',
-              defaultValue:
-                'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
             about='Instructions'
@@ -1133,20 +1144,21 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>required (with error)</span>
           <TextArea
+            name='textarea_required'
+            control={control}
+            rules={{ required: 'Error message' }}
             props={{
               placeholder: 'Assistive text',
-              ...register('test_textarea_required', {
-                required: 'Error message',
-              }),
             }}
             label='Label'
             about='Instructions'
-            error={errors['test_textarea_required']}
           />
         </div>
         <div className={s.testPage__component}>
           <span>disabled</span>
           <TextArea
+            name='textarea_disabled'
+            control={control}
             props={{
               placeholder: 'Assistive text',
               disabled: true,

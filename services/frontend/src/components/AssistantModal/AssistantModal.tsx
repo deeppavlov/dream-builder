@@ -39,6 +39,7 @@ export const AssistantModal = () => {
   const {
     handleSubmit,
     register,
+    control,
     reset,
     getValues,
     formState: { errors, isValid },
@@ -199,23 +200,22 @@ export const AssistantModal = () => {
         />
         <div className={s.textarea}>
           <TextArea
+            name={DESC_ID}
+            control={control}
+            defaultValue={getValues().description}
             label='Description'
             withCounter
-            error={errors[DESC_ID as keyof FormValues]}
-            maxLenght={1000}
+            rules={{
+              required: 'This field can’t be empty',
+              maxLength: {
+                value: 1000,
+                message: 'Limit text description to 1000 characters',
+              },
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
-              defaultValue: getValues().description,
               rows: 3,
-              ...register(DESC_ID as keyof FormValues, {
-                required: 'This field can’t be empty',
-                maxLength: {
-                  value: 1000,
-                  message: 'Limit text description to 500 characters',
-                },
-                // validate: {isEmpty:},
-              }),
             }}
           />
         </div>

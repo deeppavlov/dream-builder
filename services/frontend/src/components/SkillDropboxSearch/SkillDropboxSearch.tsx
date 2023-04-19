@@ -1,18 +1,23 @@
 import classNames from 'classnames/bind'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
-import s from './SkillDropboxSearch.module.scss'
 import { useObserver } from '../../hooks/useObserver'
+import s from './SkillDropboxSearch.module.scss'
+
+interface Item {
+  name: string
+  data?: any
+}
 
 interface Props {
   isOpen?: boolean
-  list: string[]
-  activeItem?: string
+  list: Item[]
+  activeItem?: Item
   label?: string
   error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onSelect?: (value: string) => void
+  onSelect?: (item: Item) => void
   fullWidth?: boolean
 }
 
@@ -27,7 +32,7 @@ const SkillDropboxSearch = ({
   onSelect,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
-  const [activeItem, setActiveItem] = useState<string | null>(
+  const [activeItem, setActiveItem] = useState<Item | null>(
     propActiveItem ?? null
   )
   const dropboxRef = useRef<HTMLDivElement | null>(null)
@@ -47,15 +52,15 @@ const SkillDropboxSearch = ({
     if (!targetIsInput) setIsOpen(!isOpen)
   }
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props?.onChange && props.onChange(e)
-    setActiveItem(e.target.value)
-  }
+  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   props?.onChange && props.onChange(e)
+  //   setActiveItem(e.target.value)
+  // }
 
-  const handleItemClick = (v: string) => {
-    setActiveItem(v)
+  const handleItemClick = (item: Item) => {
+    setActiveItem(item)
     setIsOpen(false)
-    onSelect && onSelect(v)
+    onSelect && onSelect(item)
   }
 
   useObserver('click', handleClickOutside)
@@ -69,7 +74,8 @@ const SkillDropboxSearch = ({
         error && 'error',
         fullWidth && 'fullWidth'
       )}
-      onFocus={() => setIsOpen(true)}>
+      onFocus={() => setIsOpen(true)}
+    >
       {label && <span className={s.label}>{label}</span>}
 
       <div className={s.search} onClick={handleSearchClick}>
@@ -77,19 +83,22 @@ const SkillDropboxSearch = ({
         <input
           {...props}
           className={s.input}
-          value={activeItem || ''}
-          onChange={handleSearchChange}
+          // onChange={handleSearchChange}
         />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />
       </div>
 
       <ul className={s.list}>
-        {list.map((v, i) => (
+        {list.map((item, i) => (
           <li
             key={i}
-            className={cx('item', v === activeItem && 'activeItem')}
-            onClick={() => handleItemClick(v)}>
-            {v}
+            className={cx(
+              'item',
+              item.name === activeItem?.name && 'activeItem'
+            )}
+            onClick={() => handleItemClick(item)}
+          >
+            {item.name}
           </li>
         ))}
       </ul>

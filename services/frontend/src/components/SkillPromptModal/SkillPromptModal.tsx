@@ -1,21 +1,25 @@
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
+import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { changeLMservice } from '../../services/changeLMservice'
 import { getAllLMservices } from '../../services/getAllLMservices'
 import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
 import { postPrompt } from '../../services/postPrompt'
 import { ISkill } from '../../types/types'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
@@ -52,7 +56,7 @@ const SkillPromptModal = () => {
   const dist = options.get(consts.ACTIVE_ASSISTANT)
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
-  const promptWordsMaxLenght = 3000
+  const modalRef = useRef(null)
   const cx = classNames.bind(s)
 
   const setPromptForDist = useMutation({
@@ -126,8 +130,10 @@ const SkillPromptModal = () => {
     handleSubmit,
     register,
     reset,
+    setError,
     getValues,
-    formState: { errors },
+    control,
+    formState,
   } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
@@ -135,15 +141,20 @@ const SkillPromptModal = () => {
       prompt: prompt?.text,
     },
   })
+  const { errors } = formState
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
 
   const closeModal = () => {
-    setIsOpen(false)
-    setAction(null)
-    setSkill(null)
-    trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+    trigger('SkillQuitModal', {
+      handleQuit: () => {
+        setIsOpen(false)
+        setAction(null)
+        setSkill(null)
+        trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+      },
+    })
   }
 
   const handleBackBtnClick = () => closeModal()
@@ -166,7 +177,7 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (model: string) => reset({ model })
+  const handleModelSelect = (item: any) => reset({ model: item.name })
 
   const handleCreate = ({ model, prompt }: FormValues) => {
     trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
@@ -235,6 +246,13 @@ const SkillPromptModal = () => {
     })
   }, [isOpen])
 
+  useQuitConfirmation({
+    activeElement: modalRef,
+    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
+    isActive: isOpen,
+    quitHandler: closeModal,
+  })
+
   return (
     <Modal
       isOpen={isOpen}
@@ -245,6 +263,7 @@ const SkillPromptModal = () => {
           right: 0,
           left: 80,
           position: 'fixed',
+          background: 'transparent',
           zIndex: 0,
         },
         content: {
@@ -262,110 +281,131 @@ const SkillPromptModal = () => {
         },
       }}
     >
-      <div className={s.skillPromptModal}>
-        <form
-          onSubmit={handleSubmit(data => onFormSubmit(data))}
-          className={cx('editor', leftSidePanelIsActive && 'withSidePanel')}
+      <div
+        className={cx(
+          'skillPromptModal',
+          leftSidePanelIsActive && 'withSidePanel'
+        )}
+        ref={modalRef}
+      >
+        <Wrapper
+          closable
+          onClose={e => {
+            e.stopImmediatePropagation()
+            closeModal()
+          }}
         >
-          <div className={s.header}>
-            {skill?.display_name ?? 'Current Skill'}: Editor
-          </div>
-          <div className={s['editor-container']}>
-            <div className={s.top}>
-              <SkillDropboxSearch
-                label='Generative model:'
-                list={
-                  services &&
-                  services?.map((service: any) => {
-                    return service?.display_name
-                  })
-                }
-                activeItem={service?.display_name}
-                error={errors.model}
-                props={{
-                  placeholder: 'Choose model',
-                  ...register('model', { required: true }),
-                }}
-                onSelect={handleModelSelect}
-                fullWidth
-              />
-              {service?.display_name && (
-                <p className={s.tip}>
-                  <span className={s['tip-bold']}>Details:</span>
-                  <span>{skillModelTip}</span>
-                  <a
-                    href={skillModelLink}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    {skillModelLink}
-                  </a>
-                  <br />
-                </p>
-              )}
+          <div className={s.container}>
+            <form
+              onSubmit={handleSubmit(data => onFormSubmit(data))}
+              className={cx('editor')}
+            >
+              <div className={s.header}>
+                {skill?.display_name ?? 'Current Skill'}: Editor
+              </div>
+              <div className={s['editor-container']}>
+                <div className={s.top}>
+                  <SkillDropboxSearch
+                    label='Generative model:'
+                    list={
+                      services &&
+                      services?.map((service: any) => ({
+                        name: service?.display_name,
+                      }))
+                    }
+                    activeItem={{
+                      name: service?.display_name,
+                    }}
+                    error={errors.model}
+                    props={{
+                      placeholder: 'Choose model',
+                      defaultValue: service?.display_name,
+                      ...register('model', { required: true }),
+                    }}
+                    onSelect={handleModelSelect}
+                    fullWidth
+                  />
+                  {skillModelTip && (
+                    <div>
+                      <Accordion
+                        title='Model Details:'
+                        type='description'
+                        isActive
+                      >
+                        <p className={s.tip}>
+                          {/* <span className={s['tip-bold']}>Model Details:</span> */}
+                          <span>{skillModelTip}</span>
+                          <a
+                            href={skillModelLink}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {skillModelLink}
+                          </a>
+                        </p>
+                      </Accordion>
+                    </div>
+                  )}
+                </div>
+                <TextArea
+                  name='prompt'
+                  label='Enter prompt:'
+                  countType='tokenizer'
+                  tokenizerModel={service?.display_name}
+                  defaultValue={prompt?.text}
+                  withCounter
+                  fullHeight
+                  resizable={false}
+                  control={control}
+                  rules={{
+                    required: 'This field can’t be empty',
+                    maxLength: {
+                      value: service?.max_tokens,
+                      message: `Limit prompt to ${service?.max_tokens} words`,
+                    },
+                  }}
+                  setError={setError}
+                  props={{
+                    placeholder:
+                      "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
+                  }}
+                />
+              </div>
+              <div className={s.bottom}>
+                <div className={s.btns}>
+                  {action === 'create' && (
+                    <>
+                      <Button
+                        theme='secondary'
+                        props={{ onClick: handleBackBtnClick }}
+                      >
+                        Back
+                      </Button>
+                      <Button theme='primary' props={{ type: 'submit' }}>
+                        Save
+                      </Button>
+                    </>
+                  )}
+                  {action === 'edit' && (
+                    <>
+                      <Button theme='tertiary-round' props={{ disabled: true }}>
+                        <HistoryIcon />
+                        History
+                      </Button>
+                      <Button theme='primary' props={{ type: 'submit' }}>
+                        Save
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </form>
+
+            <div className={s.dialog}>
+              <SkillDialog debug chatWith={'skill'} dist={dist} />
             </div>
-            <TextArea
-              fullHeight
-              label='Enter prompt:'
-              withWordCounter
-              resizable={false}
-              error={errors.model}
-              maxLenght={promptWordsMaxLenght}
-              props={{
-                placeholder:
-                  "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-                defaultValue: prompt?.text,
-                ...register('prompt', {
-                  required: 'This field can’t be empty',
-                  maxLength: {
-                    value: promptWordsMaxLenght,
-                    message: `Limit prompt to ${promptWordsMaxLenght} words`,
-                  },
-                }),
-              }}
-            />
           </div>
-          <div className={s.bottom}>
-            <span className={s['tip-bold']}>
-              Click "Save & Test" to test your new prompt
-            </span>
-            <div className={s.btns}>
-              {action === 'create' && (
-                <>
-                  <Button
-                    theme='secondary'
-                    props={{ onClick: handleBackBtnClick }}
-                  >
-                    Back
-                  </Button>
-                  <Button theme='primary' props={{ type: 'submit' }}>
-                    Save
-                  </Button>
-                </>
-              )}
-              {action === 'edit' && (
-                <>
-                  {/* <div className={s.history}>
-                    <Button theme='tertiary-round'>
-                      <HistoryIcon />
-                      History
-                    </Button>
-                  </div> */}
-                  <Button theme='secondary-dark' props={{ type: 'submit' }}>
-                    Save & Test
-                  </Button>
-                  <Button
-                    theme='primary'
-                    props={{ onClick: handleSaveAndClose }}
-                  >
-                    Save & Close
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </form>
-        <SkillDialog debug chatWith={'skill'} dist={dist} />
+        </Wrapper>
       </div>
     </Modal>
   )

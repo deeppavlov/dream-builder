@@ -41,7 +41,7 @@ const BaseContextMenu: React.FC<Props> = ({
     setDomReady(true)
   }, [])
 
-  useCheckClickOutside(isOpen, ref, setIsOpen)
+  useCheckClickOutside(isOpen, ref, () => setIsOpen(false))
   useCheckDocumentScroll(isOpen, setIsOpen)
 
   return domReady
@@ -53,7 +53,8 @@ const BaseContextMenu: React.FC<Props> = ({
           clickable
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          place={place}>
+          place={place}
+        >
           <div ref={ref}>{children}</div>
         </ReactTooltip>,
         document.body

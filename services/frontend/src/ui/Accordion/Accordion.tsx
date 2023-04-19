@@ -10,6 +10,7 @@ interface AccordionProps extends React.PropsWithChildren {
   rounded?: boolean
   group?: StackType
   isActive?: boolean
+  type?: 'description'
 }
 
 export const Accordion = ({
@@ -19,6 +20,7 @@ export const Accordion = ({
   rounded,
   group,
   isActive: propIsActive,
+  type,
 }: AccordionProps) => {
   const [isActive, setIsActive] = useState<boolean>(propIsActive ?? false)
   const contentEl = useRef<HTMLDivElement>(null)
@@ -46,7 +48,8 @@ export const Accordion = ({
           group,
           isActive && 'active',
           small && 'small',
-          rounded && 'rounded'
+          rounded && 'rounded',
+          type
         )}
         onClick={handleAccordionClick}
       >

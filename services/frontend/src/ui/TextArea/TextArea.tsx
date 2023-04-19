@@ -1,7 +1,13 @@
 import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
-import { Control, RegisterOptions, useController } from 'react-hook-form'
+import {
+  Control,
+  RegisterOptions,
+  useController,
+  UseFormSetError,
+} from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
+import useDebouncedValue from '../../hooks/useDebouncedValue'
 import { LanguageModel } from '../../types/types'
 import getTokensLength from '../../utils/getTokensLength'
 import Button from '../Button/Button'
@@ -21,6 +27,7 @@ interface TextAreaProps {
   control: Control<any>
   name: string
   rules?: RegisterOptions
+  setError?: UseFormSetError<any>
 }
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -37,28 +44,27 @@ export const TextArea: FC<TextAreaProps> = ({
   control,
   name,
   rules,
+  setError,
 }) => {
-  const maxLenght = rules?.maxLength as { value: number; message: string }
-  const getLength = (value: string) =>
-    countType === 'tokenizer'
-      ? getTokensLength(tokenizerModel, value)
-      : value?.length ?? 0
-  const getRules = () => {
-    if (countType === 'tokenizer' && maxLenght) {
-      return Object.assign({}, rules, {
-        maxLength: undefined,
-        validate: (v: string) =>
-          getLength(v) > maxLenght.value ? maxLenght.message : undefined,
-      })
-    }
-    return rules
-  }
-  const { field, formState } = useController({
+  const isTokenizer = countType === 'tokenizer'
+  const {
+    field,
+    formState,
+    fieldState: { error },
+  } = useController({
     name,
     control,
-    rules: getRules(),
+    rules: isTokenizer
+      ? Object.assign({}, rules, { maxLenght: undefined })
+      : rules,
     defaultValue,
   })
+  const maxLenght = rules?.maxLength as { value: number; message: string }
+  const value = isTokenizer
+    ? useDebouncedValue(field.value, 500)
+    : field.value || ''
+  const [length, setLength] = useState(0)
+  const [isTyping, setIsTyping] = useState(false)
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const textAreaId = props?.id ?? useId()
@@ -71,18 +77,19 @@ export const TextArea: FC<TextAreaProps> = ({
     ['many', 's'],
     ['other', 's'],
   ])
-  const error = formState.errors[name]
   let cx = classNames.bind(s)
 
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    if (control) field.onBlur()
+  const handleBlur = () => {
+    field.onBlur()
     setIsActive(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (control) field.onChange(e)
+    field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
+
+    if (isTokenizer) setIsTyping(true)
   }
 
   // Hide Enter button everytime, when form submitted successfully
@@ -97,6 +104,18 @@ export const TextArea: FC<TextAreaProps> = ({
     if (withEnterButton && formState) handleFormSubmit()
   }, [withEnterButton && formState?.isSubmitSuccessful])
 
+  // Calculate tokens length
+  useEffect(() => {
+    if (countType !== 'tokenizer') return setLength(value.length)
+
+    const length = getTokensLength(tokenizerModel, value)
+    const isMaxLength = maxLenght && setError && length > maxLenght.value
+
+    setLength(length)
+    setIsTyping(false)
+    if (isMaxLength) setError(name, maxLenght)
+  }, [value])
+
   return (
     <div
       className={cx('textArea', fullHeight && 'fullHeight')}
@@ -108,9 +127,9 @@ export const TextArea: FC<TextAreaProps> = ({
           {label && <span className={s.title}>{label}</span>}
           {withCounter && maxLenght && (
             <span className={s.counter}>
-              {getLength(field.value)}/{maxLenght.value}
-              {countType === 'tokenizer' &&
-                ` token${suffixes.get(pr.select(length))}`}
+              {length}
+              {isTokenizer && isTyping && '+ counting...'}/{maxLenght.value}
+              {isTokenizer && ` token${suffixes.get(pr.select(length))}`}
             </span>
           )}
         </label>

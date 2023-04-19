@@ -109,14 +109,21 @@ const SkillPromptModal = () => {
     }
   )
 
-  const { handleSubmit, register, reset, getValues, control, formState } =
-    useForm<FormValues>({
-      mode: 'all',
-      defaultValues: {
-        model: service?.displayName,
-        prompt: prompt?.text,
-      },
-    })
+  const {
+    handleSubmit,
+    register,
+    reset,
+    setError,
+    getValues,
+    control,
+    formState,
+  } = useForm<FormValues>({
+    mode: 'all',
+    defaultValues: {
+      model: service?.displayName,
+      prompt: prompt?.text,
+    },
+  })
   const { errors } = formState
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
@@ -339,6 +346,7 @@ const SkillPromptModal = () => {
                       message: `Limit prompt to ${service?.max_tokens} words`,
                     },
                   }}
+                  setError={setError}
                   props={{
                     placeholder:
                       "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",

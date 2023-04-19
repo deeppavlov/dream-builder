@@ -1,7 +1,7 @@
 <!-- @format -->
 
 {% extends "base.html" %} {% block title %}Publish request confirmed{%
-endblock%} {% header content %}
+endblock%} {% block header %}
 <header class="header approve">
 	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 80">
 		<circle cx="40" cy="40" r="40" fill="#fff" />
@@ -43,16 +43,16 @@ endblock%} {% header content %}
 </header>
 {% endblock %} {% block content %}
 <p>
-	Hello {{ %[FNAME|Customer]% }}
+	Hello {{ owner_name }}
 	<br />
 	<br />
 	We are delighted to have you on board.
 	<br />
 	<br />
-	We are happy to inform you that your {{ %[NAMEVA]% }} Virtual Assistant has
+	We are happy to inform you that your {{ dist_name }} Virtual Assistant has
 	been successfully published to our Public library. You can see your published
 	Virtual Assistant here:{' '}
-	<a href="{{%url%}}"> www.link_page_of_the_virtual_assistant.com </a>
+	<a href="{{ dist_url }}"> www.link_page_of_the_virtual_assistant.com </a>
 	<br />
 	<br />
 	We are glad you joined us on our path to something great. Thank you for

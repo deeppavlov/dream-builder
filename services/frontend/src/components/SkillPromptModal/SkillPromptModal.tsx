@@ -89,9 +89,9 @@ const SkillPromptModal = () => {
     refetchOnWindowFocus: false,
   })
 
-  const createMap = (array:LM[]) => {
+  const createMap = (array: LM[]) => {
     const map = new Map<string, LM>()
-    array?.forEach((object:LM) => {
+    array?.forEach((object: LM) => {
       const { display_name } = object
       map.set(display_name, { ...object })
     })
@@ -389,7 +389,7 @@ const SkillPromptModal = () => {
                   {action === 'edit' && (
                     <>
                       <Button theme='tertiary-round' props={{ disabled: true }}>
-                        <HistoryIcon />
+                        {/* <HistoryIcon /> */}
                         History
                       </Button>
                       <Button theme='primary' props={{ type: 'submit' }}>

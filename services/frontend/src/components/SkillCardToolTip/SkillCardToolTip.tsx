@@ -12,14 +12,14 @@ interface Props {
 }
 
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
-  const handleEditBtnClick = () => {
-    if (skill.component_type === 'Generative') {
-      trigger('SkillPromptModal', { skill, action: 'edit' })
-      return
-    }
+  // const handleEditBtnClick = () => {
+  //   if (skill.component_type === 'Generative') {
+  //     trigger('SkillPromptModal', { skill, action: 'edit' })
+  //     return
+  //   }
 
-    triggerSkillSidePanel({ skill, activeTab: 'Editor' })
-  }
+  //   triggerSkillSidePanel({ skill, activeTab: 'Editor' })
+  // }
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })
@@ -36,14 +36,14 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {skill.is_customizable && (
+      {/* {skill.is_customizable && (
         <ContextMenuButton
           name='Edit Skill'
           type='edit'
           disabled={isPreview}
           handleClick={handleEditBtnClick}
         />
-      )}
+      )} */}
       {skill.is_customizable && (
         <ContextMenuButton
           name='Rename'

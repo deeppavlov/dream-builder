@@ -1,7 +1,6 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import React, { FC, useId, useRef, useState } from 'react'
-import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
@@ -100,14 +99,14 @@ export const SkillCard: FC<SkillCardProps> = ({
               {skill?.component_type ?? '------'}
             </p>
           </div>
-          <div className={s.name}>
+          {/* <div className={s.name}>
             <img className={s.companyLogo} src={skill?.author?.picture} />
             <p className={s.companyName}>
               {skill?.author.fullname == 'DeepPavlov'
                 ? 'Dr. Xandra Smith'
                 : skill?.author.fullname}
             </p>
-          </div>
+          </div> */}
           <div
             className={s.description}
             data-tip

@@ -16,6 +16,7 @@ import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
@@ -85,9 +86,9 @@ const SkillPromptModal = () => {
     refetchOnWindowFocus: false,
   })
 
-  const createMap = (array:LM[]) => {
+  const createMap = (array: LM[]) => {
     const map = new Map<string, LM>()
-    array?.forEach((object:LM) => {
+    array?.forEach((object: LM) => {
       const { display_name } = object
       map.set(display_name, { ...object })
     })
@@ -317,6 +318,7 @@ const SkillPromptModal = () => {
                 defaultValue: prompt?.text,
                 ...register('prompt', {
                   required: 'This field can’t be empty',
+                  validate: checkIfEmptyString,
                   maxLength: {
                     value: promptWordsMaxLenght,
                     message: `Limit prompt to ${promptWordsMaxLenght} words`,

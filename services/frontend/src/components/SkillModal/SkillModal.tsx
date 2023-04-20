@@ -9,6 +9,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
+import { validationRules } from '../../utils/formValidate'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
@@ -72,7 +73,7 @@ export const SkillModal = () => {
   const handleCreate = (data: any) => {
     toast.promise(
       create
-        .mutateAsync({ ...data, lm_service_id: 4, prompt: 'new prompt' })
+        .mutateAsync({ ...data, lm_service_id: 0, prompt: 'new prompt' })
         .then(() => {
           closeModal()
           trigger('SkillsListModal', { isOpen: false })
@@ -122,6 +123,7 @@ export const SkillModal = () => {
               defaultValue: getValues()[NAME_ID],
               ...register(NAME_ID, {
                 required: 'This field can’t be empty',
+                validate: validationRules,
               }),
             }}
           />
@@ -130,13 +132,14 @@ export const SkillModal = () => {
             label='Description'
             withCounter
             error={errors[DESC_ID]}
-            maxLenght={descriptionMaxLenght}
+            maxLenght={descriptionMaxLenght} 
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
               defaultValue: getValues()[DESC_ID],
               ...register(DESC_ID, {
                 required: 'This field can’t be empty',
+                validate: validationRules,
                 maxLength: {
                   value: descriptionMaxLenght,
                   message: `Limit text description to ${descriptionMaxLenght} characters`,

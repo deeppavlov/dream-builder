@@ -1,6 +1,3 @@
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useRef } from 'react'
@@ -14,15 +11,15 @@ import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
 export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
 const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
-  const { send, renew, session, message, history, error } = useChat()
+  const { send, renew, session, message, history } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
@@ -118,7 +115,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
           className={s.textarea}
           rows={4}
           placeholder='Type...'
-          {...register('message')}
+          {...register('message', { validate: checkIfEmptyString })}
         />
       </div>
       <SidePanelButtons>

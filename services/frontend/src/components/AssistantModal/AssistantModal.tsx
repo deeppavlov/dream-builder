@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler,useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation,useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnKey } from '../../hooks/useOnKey'
@@ -14,6 +14,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
+import { validationRules } from '../../utils/formValidate'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantModal.module.scss'
 
@@ -194,6 +195,7 @@ export const AssistantModal = () => {
             defaultValue: getValues().display_name,
             ...register(NAME_ID as keyof FormValues, {
               required: 'This field can’t be empty',
+              validate: validationRules,
             }),
           }}
         />
@@ -214,7 +216,7 @@ export const AssistantModal = () => {
                   value: 1000,
                   message: 'Limit text description to 500 characters',
                 },
-                // validate: {isEmpty:},
+                validate: validationRules,
               }),
             }}
           />

@@ -1,24 +1,21 @@
+import { ReactComponent as Clone } from '@assets/icons/clone.svg'
+import Woman from '@assets/icons/woman.png'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReactComponent as Logo } from '@assets/icons/dp.svg'
-import Woman from '@assets/icons/woman.png'
-import { ReactComponent as Clone } from '@assets/icons/clone.svg'
-import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
-import { trigger } from '../../utils/events'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import { Kebab } from '../../ui/Kebab/Kebab'
-import Button from '../../ui/Button/Button'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { dateToUTC } from '../../utils/dateToUTC'
-import { timeToUTC } from '../../utils/timeToUTC'
-import { consts } from '../../utils/consts'
 import { useDisplay } from '../../context/DisplayContext'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import { Kebab } from '../../ui/Kebab/Kebab'
+import { consts } from '../../utils/consts'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
+import { timeToUTC } from '../../utils/timeToUTC'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
-
 
 interface BotListItemProps {
   type: BotAvailabilityType
@@ -87,7 +84,8 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       className={s.tr}
       onClick={handleBotListItemClick}
       ref={botListItemRef}
-      data-active={bot.name === activeAssistantId}>
+      data-active={bot.name === activeAssistantId}
+    >
       <td className={s.td}>
         <div className={s.name}>
           <p className={s.botName}>{bot?.display_name || '------'}</p>
@@ -110,7 +108,8 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       <td className={s.td}>
         <div
           className={s.description}
-          data-tooltip-id={'botTableDesc' + tooltipId}>
+          data-tooltip-id={'botTableDesc' + tooltipId}
+        >
           {bot?.description}
           <BaseToolTip
             id={'botTableDesc' + tooltipId}
@@ -134,7 +133,8 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
             withIcon
             props={{
               onClick: type === 'public' ? handleCloneClick : handlEditClick,
-            }}>
+            }}
+          >
             {type === 'public' ? <Clone /> : <Edit />}
           </Button>
 
@@ -148,13 +148,10 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
               />
             </>
           ) : (
-            <Button
-              theme='secondary'
-              small
-              withIcon
-              props={{ onClick: handlePreviewClick }}>
-              <PreviewIcon />
-            </Button>
+            <>
+              <Kebab tooltipId={tooltipId} theme='card' />
+              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+            </>
           )}
         </div>
       </td>

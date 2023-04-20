@@ -16,6 +16,8 @@ type TMenuItem =
   | 'share'
   | 'save'
   | 'about'
+  | 'architecture'
+  | 'chat'
 
 interface Props {
   name?: string

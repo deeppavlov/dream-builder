@@ -45,16 +45,6 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     trigger('SignInModal', {})
   }
 
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.name,
-      },
-    })
-  }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     navigate(`/${bot?.name}`, {
       state: {
@@ -177,10 +167,16 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <>
               <Button
                 theme='secondary'
-                props={{ onClick: handlePreviewBtnClick }}
+                props={{ 'data-tooltip-id': tooltipId }}
               >
-                Preview
+                More
               </Button>
+              <BotCardToolTip
+                tooltipId={tooltipId}
+                bot={bot}
+                type={type}
+                inSidePanel
+              />
               <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
                 Use
               </Button>

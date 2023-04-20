@@ -26,9 +26,6 @@ interface Props {
   chatWith: ChatPanelType
   dist: BotInfoInterface
   debug: boolean
-  distName: string
-  service: string
-  prompt: string
 }
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {

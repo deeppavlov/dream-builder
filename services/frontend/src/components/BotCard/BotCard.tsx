@@ -1,14 +1,9 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
 import classNames from 'classnames/bind'
-import { useId, useRef } from 'react'
+import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisplay } from '../../context/DisplayContext'
-import {
-  BotAvailabilityType,
-  BotCardSize,
-  BotInfoInterface,
-} from '../../types/types'
+import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -20,14 +15,7 @@ import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotCard.module.scss'
 
-interface BotCardProps {
-  type: BotAvailabilityType
-  bot: BotInfoInterface
-  size?: BotCardSize
-  disabled: boolean
-}
-
-export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
+export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const navigate = useNavigate()
   const tooltipId = useId()
   let cx = classNames.bind(s)
@@ -48,17 +36,6 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
         />
       ),
     })
-  }
-
-  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
-    e.stopPropagation()
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -136,14 +113,8 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
                   Use
                 </Button>
               </div>
-              <Button
-                theme='secondary'
-                small
-                withIcon
-                props={{ onClick: handlePreviewClick }}
-              >
-                <PreviewIcon />
-              </Button>
+              <Kebab tooltipId={tooltipId} theme='card' />
+              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>
           ) : (
             <>
@@ -155,7 +126,6 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
               >
                 Edit
               </Button>
-
               <Kebab tooltipId={tooltipId} theme='card' />
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>

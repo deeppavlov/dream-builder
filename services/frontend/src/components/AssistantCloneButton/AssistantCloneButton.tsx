@@ -13,7 +13,7 @@ export const AssistantCloneButton = () => {
   const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
 
-  const handleCloneBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCloneBtnClick = () => {
     if (!auth?.user) {
       trigger('SignInModal', {})
       return
@@ -37,8 +37,7 @@ export const AssistantCloneButton = () => {
       >
         <CloneIcon />
         <div className={s.container}>
-          <span>Clone</span>
-          {/* {<div className={cx('circle', isPreview ? 'preview' : 'edit')}></div>} */}
+          <span>Make&nbsp;Copy</span>
         </div>
       </Button>
     </div>

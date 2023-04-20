@@ -1,32 +1,17 @@
+import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { FC, useEffect, useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import {
-  BotAvailabilityType,
-  BotInfoInterface,
-  ISkill,
-  StackType,
-} from '../../types/types'
-import { trigger } from '../../utils/events'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { getComponents } from '../../services/getComponents'
-import Button from '../../ui/Button/Button'
-import { Accordion } from '../../ui/Accordion/Accordion'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import useTabsManager from '../../hooks/useTabsManager'
-import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { isAnnotator } from '../../utils/isAnnotator'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
-import { Loader } from '../Loader/Loader'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import { dateToUTC } from '../../utils/dateToUTC'
-import { consts } from '../../utils/consts'
-import { SmallTag } from '../SmallTag/SmallTag'
 import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
+import useTabsManager from '../../hooks/useTabsManager'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotInfoSidePanel.module.scss'
 
 interface Props {
@@ -44,11 +29,11 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     tabList: new Map([[properties, { name: properties }]]),
   })
   const { dispatch } = useDisplay()
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(['components', bot?.name], () => getComponents(bot?.name!))
+  // const {
+  //   isLoading: isComponentsLoading,
+  //   error: componentsError,
+  //   data: components,
+  // } = useQuery(['components', bot?.name], () => getComponents(bot?.name!))
   const tooltipId = useId()
 
   const handleCloneBtnClick = () => {
@@ -105,7 +90,8 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              onClick={() => tabsInfo.handleTabSelect(id)}
+            >
               {tab.name}
             </li>
           ))}
@@ -143,7 +129,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
         <div className={s.scroll}>
           <div className={s.container}>
             <p className={s.desc}>{bot?.description}</p>
-            <div className={s.accordions}>
+            {/* <div className={s.accordions}>
               <Loader isLoading={isComponentsLoading} />
               {components &&
                 Object.keys(components).map((group: string, id: number) => (
@@ -183,7 +169,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                     ))}
                   </Accordion>
                 ))}
-            </div>
+            </div> */}
           </div>
         </div>
         <div className={s.btns}>
@@ -191,7 +177,8 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <>
               <Button
                 theme='secondary'
-                props={{ onClick: handlePreviewBtnClick }}>
+                props={{ onClick: handlePreviewBtnClick }}
+              >
                 Preview
               </Button>
               <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
@@ -203,7 +190,8 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <>
               <Button
                 props={{ 'data-tooltip-id': tooltipId }}
-                theme='secondary'>
+                theme='secondary'
+              >
                 More
               </Button>
               <Button props={{ onClick: handlEditClick }} theme='primary'>

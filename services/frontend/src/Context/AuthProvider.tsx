@@ -4,6 +4,7 @@ import { getGoogleOAuthURL } from '../services/getGoogleOAuthUrl'
 import { ITokens, UserContext, UserInterface } from '../types/types'
 
 export const deleteLocalStorageUser = () => localStorage.removeItem('user')
+
 export const getRefreshToken = (): string | null => {
   return getLocalStorageUser()?.refresh_token ?? null
 }
@@ -28,11 +29,16 @@ const setLocalStorageUser = (user: UserInterface & ITokens) => {
 }
 
 const getClearUrl = (url: string) => {
-  var urlOject = new URL(location.origin)
+  var urlOject = new URL(url)
   urlOject.hash = ''
   urlOject.search = ''
   return urlOject.toString()
 }
+
+const savePreviousLocation = () =>
+  sessionStorage.setItem('db_redirect_to', location.href)
+
+const getPreviousLocation = () => sessionStorage.getItem('db_redirect_to')
 
 export const AuthContext = createContext<UserContext | null>(null)
 export const useAuth = () => useContext(AuthContext)
@@ -59,19 +65,12 @@ export const exchangeAuthCode = async (code: string) => {
       console.log('ExchangeAuthCode failed!')
     })
 
-  location.href = getClearUrl(location.origin)
+  location.href = getPreviousLocation() ?? getClearUrl(location.origin)
+  sessionStorage.clear()
 }
 
 export const login = () => {
-  /**
-   * TODO: Save URL from that user signed in,
-   * for user redirect to that page after.
-   *
-   * Notes: after login in to the app, user
-   * always will redirected to /code route
-   * for parsing auth_code
-   */
-
+  savePreviousLocation()
   location.href = getGoogleOAuthURL()
 }
 
@@ -91,7 +90,7 @@ export const logout = async () => {
   }
 
   localStorage.clear()
-  location.href = getClearUrl(location.origin)
+  location.reload()
 }
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {

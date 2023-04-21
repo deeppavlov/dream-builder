@@ -53,6 +53,7 @@ import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
 import s from './TestPage.module.scss'
+import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -1212,6 +1213,7 @@ export const TestPage = () => {
       <DeleteAssistantModal />
       <SkillModal />
       <SkillPromptModal />
+      <SkillQuitModal />
       <CreateSkillDistModal />
       <ChooseBotModal />
       <IntentCatcherModal />

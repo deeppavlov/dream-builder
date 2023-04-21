@@ -1,11 +1,10 @@
-import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { useNavigate } from 'react-router-dom'
-import { ReactComponent as You } from '@assets/icons/team.svg'
-import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
+import { ReactComponent as LogOut } from '@assets/icons/log_out.svg'
+import { ReactComponent as You } from '@assets/icons/team.svg'
+import { useNavigate } from 'react-router-dom'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { logout } from '../../context/AuthProvider'
 import { UserContext } from '../../types/types'
-import { RoutesList } from '../../router/RoutesList'
 import s from './Profile.module.scss'
 
 interface ProfileProps {
@@ -36,7 +35,7 @@ const TooltipMenu = ({ auth }: ProfileProps) => {
 
 export const Profile = ({ auth }: ProfileProps) => {
   return (
-    <div className={s.avatar} data-tip data-tooltip-id='menu'>
+    <div className={s.avatar} data-tooltip-id='menu'>
       <img
         src={auth?.user?.picture}
         referrerPolicy='no-referrer'
@@ -48,8 +47,9 @@ export const Profile = ({ auth }: ProfileProps) => {
         classNameArrow={s.tooltipArrow}
         id='menu'
         clickable
-        events={['click']}
-        place='bottom'>
+        openOnClick
+        place='bottom'
+      >
         <TooltipMenu auth={auth} />
       </ReactTooltip>
     </div>

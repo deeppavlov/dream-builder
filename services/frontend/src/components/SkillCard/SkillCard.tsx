@@ -74,120 +74,123 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
-  
-  return (
-    <div
-      className={cx(
-        'card',
-        `${type}Card`,
-        forGrid && 'forGrid',
-        disabled && 'disabled'
-      )}
-      onClick={handleSkillCardClick}
-      ref={skillCardRef}
-      data-active={skill.name === activeSKillId}
-    >
-      <div className={s.header}>
-        <p className={s.botName}>{skill?.display_name ?? '------'} </p>
-        {type == 'your' && (
-          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-        )}
-      </div>
-      <div className={s.body}>
-        <div className={s.top}>
-          <div className={s.type}>
-            <img className={s.typeLogo} src={srcForComponentType} />
-            <p className={cx('typeText', nameForComponentType)}>
-              {skill?.component_type ?? '------'}
-            </p>
-          </div>
-          <div className={s.name}>
-            <img className={s.companyLogo} src={Woman} />
-            <p className={s.companyName}>
-              {skill?.author.fullname == 'DeepPavlov'
-                ? 'Dr. Xandra Smith'
-                : skill?.author.fullname}
-            </p>
-          </div>
-          <div
-            className={s.description}
-            data-tip
-            data-tooltip-id={'skillCardDesc' + tooltipId}
-          >
-            <div className={s.descriptionText}>
-              {skill?.description ?? 'Empty'}
-            </div>
-            <BaseToolTip
-              id={'skillCardDesc' + tooltipId}
-              content={skill?.description}
-              theme='description'
-            />
-          </div>
 
-          <span className={s.separator} />
-          <div className={s.info}>
-            <div className={s.date}>
-              <img className={s.icon} src={Calendar} />
-              <p className={s.dateText}>{dateCreated ?? '------'}</p>
-            </div>
-          </div>
-        </div>
-        <div className={s.bottom}>
-          {type === 'public' ? (
-            <div className={s.btns} data-tip data-for='skill-add-interact'>
-              <Button
-                theme='primary'
-                small
-                long
-                props={{
-                  disabled: disabled || disabledMsg !== undefined,
-                  onClick: handleAddSkillBtnClick,
-                }}
-              >
-                Add
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div
-                className={s.btns}
-                data-tip
-                data-tooltip-id={'editSkill' + tooltipId}
-                style={{ width: '100%' }}
-              >
-                <Button
-                  theme='primary'
-                  long
-                  small
-                  props={{
-                    onClick: handleEditBtnClick,
-                    disabled: disabled || isPreview || !skill?.is_customizable,
-                  }}
-                >
-                  Edit
-                </Button>
-              </div>
-              <Kebab
-                disabled={disabled}
-                tooltipId={'ctxMenu' + tooltipId}
-                theme='card'
-              />
-              <SkillCardToolTip
-                skill={skill}
-                tooltipId={'ctxMenu' + tooltipId}
-                isPreview={isPreview}
-              />
-            </>
+  return (
+    <>
+      <div
+        className={cx(
+          'card',
+          `${type}Card`,
+          forGrid && 'forGrid',
+          disabled && 'disabled'
+        )}
+        onClick={handleSkillCardClick}
+        ref={skillCardRef}
+        data-active={skill.name === activeSKillId}
+      >
+        <div className={s.header}>
+          <p className={s.botName}>{skill?.display_name ?? '------'} </p>
+          {type == 'your' && (
+            <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
           )}
         </div>
+        <div className={s.body}>
+          <div className={s.top}>
+            <div className={s.type}>
+              <img className={s.typeLogo} src={srcForComponentType} />
+              <p className={cx('typeText', nameForComponentType)}>
+                {skill?.component_type ?? '------'}
+              </p>
+            </div>
+            <div className={s.name}>
+              <img className={s.companyLogo} src={Woman} />
+              <p className={s.companyName}>
+                {skill?.author.fullname == 'DeepPavlov'
+                  ? 'Dr. Xandra Smith'
+                  : skill?.author.fullname}
+              </p>
+            </div>
+            <div
+              className={s.description}
+              data-tip
+              data-tooltip-id={'skillCardDesc' + tooltipId}
+            >
+              <div className={s.descriptionText}>
+                {skill?.description ?? 'Empty'}
+              </div>
+              <BaseToolTip
+                id={'skillCardDesc' + tooltipId}
+                content={skill?.description}
+                theme='description'
+              />
+            </div>
+
+            <span className={s.separator} />
+            <div className={s.info}>
+              <div className={s.date}>
+                <img className={s.icon} src={Calendar} />
+                <p className={s.dateText}>{dateCreated ?? '------'}</p>
+              </div>
+            </div>
+          </div>
+          <div className={s.bottom}>
+            {type === 'public' ? (
+              <div className={s.btns} data-tip data-for='skill-add-interact'>
+                <Button
+                  theme='primary'
+                  small
+                  long
+                  props={{
+                    disabled: disabled || disabledMsg !== undefined,
+                    onClick: handleAddSkillBtnClick,
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div
+                  className={s.btns}
+                  data-tip
+                  data-tooltip-id={'editSkill' + tooltipId}
+                  style={{ width: '100%' }}
+                >
+                  <Button
+                    theme='primary'
+                    long
+                    small
+                    props={{
+                      onClick: handleEditBtnClick,
+                      disabled:
+                        disabled || isPreview || !skill?.is_customizable,
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </div>
+                <Kebab
+                  disabled={disabled}
+                  tooltipId={'ctxMenu' + tooltipId}
+                  theme='card'
+                />
+              </>
+            )}
+          </div>
+        </div>
+        {isPreview && (
+          <BaseToolTip
+            id={'editSkill' + tooltipId}
+            content='You need to clone the virtual assistant to edit'
+            theme='small'
+          />
+        )}
       </div>
-      {isPreview && (
-        <BaseToolTip
-          id={'editSkill' + tooltipId}
-          content='You need to clone the virtual assistant to edit'
-          theme='small'
-        />
-      )}
-    </div>
+      <SkillCardToolTip
+        skill={skill}
+        tooltipId={'ctxMenu' + tooltipId}
+        isPreview={isPreview}
+      />
+    </>
   )
 }

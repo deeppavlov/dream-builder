@@ -17,7 +17,8 @@
     background-color: $bcgrnd3;
   }
 
-  &:disabled {
+  &:disabled,
+  &.disabled {
     @include disabled;
   }
 }

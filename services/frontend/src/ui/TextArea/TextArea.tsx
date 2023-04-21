@@ -20,7 +20,6 @@ interface TextAreaProps {
   tokenizerModel?: LanguageModel
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
-  withWordCounter?: boolean
   withEnterButton?: boolean
   defaultValue?: string
   resizable?: boolean
@@ -38,7 +37,6 @@ export const TextArea: FC<TextAreaProps> = ({
   tokenizerModel,
   props,
   withCounter,
-  withWordCounter,
   withEnterButton,
   defaultValue,
   resizable = true,
@@ -63,7 +61,7 @@ export const TextArea: FC<TextAreaProps> = ({
   })
   const maxLenght = rules?.maxLength as { value: number; message: string }
   const value = isTokenizer
-    ? useDebouncedValue(field.value, 500)
+    ? useDebouncedValue(field.value || '', 500)
     : field.value || ''
   const [length, setLength] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
@@ -109,7 +107,6 @@ export const TextArea: FC<TextAreaProps> = ({
   // Calculate tokens length
   useEffect(() => {
     if (countType !== 'tokenizer') return setLength(value.length)
-
     const length = getTokensLength(tokenizerModel, value)
     const isMaxLength = maxLenght && setError && length > maxLenght.value
 
@@ -127,19 +124,13 @@ export const TextArea: FC<TextAreaProps> = ({
       {(label || withCounter) && (
         <label htmlFor={textAreaId} className={s.label}>
           {label && <span className={s.title}>{label}</span>}
-          {withCounter && maxLenght && (
+          {withCounter && maxLenght.value && (
             <span className={s.counter}>
               {length}
               {isTokenizer && isTyping && '+ counting...'}/{maxLenght.value}
               {isTokenizer && ` token${suffixes.get(pr.select(length))}`}
             </span>
           )}
-          {withWordCounter && (
-            <span className={s.counter}>
-              {value?.split(' ')?.length ?? 0}/{maxLenght} words
-            </span>
-          )}
-          
         </label>
       )}
       <div className={cx('container', resizable && 'resize-container')}>

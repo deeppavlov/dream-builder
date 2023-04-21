@@ -1,3 +1,4 @@
+import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -13,13 +14,15 @@ import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
 import { postPrompt } from '../../services/postPrompt'
 import { ISkill } from '../../types/types'
+import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { checkIfEmptyString } from '../../utils/formValidate'
+import { validationRules } from '../../utils/formValidate'
 import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
+import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
@@ -58,7 +61,7 @@ const SkillPromptModal = () => {
   const modalRef = useRef(null)
   const cx = classNames.bind(s)
   const promptWordsMaxLenght = 10000
-  
+
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
       return postPrompt(variables?.distName, variables?.prompt)
@@ -295,102 +298,114 @@ const SkillPromptModal = () => {
             closeModal()
           }}
         >
-          <div className={s.header}>
-            {skill?.display_name ?? 'Current Skill'}: Editor
-          </div>
-          <div className={s['editor-container']}>
-            <div className={s.top}>
-              <SkillDropboxSearch
-                label='Generative model:'
-                list={
-                  services &&
-                  services?.map((service: any) => {
-                    return service?.display_name
-                  })
-                }
-                activeItem={service?.display_name}
-                error={errors.model}
-                props={{
-                  placeholder: 'Choose model',
-                  ...register('model', { required: true }),
-                }}
-                onSelect={handleModelSelect}
-                fullWidth
-              />
-              {service?.display_name && (
-                <p className={s.tip}>
-                  <span className={s['tip-bold']}>Details:</span>
-                  <span>{skillModelTip}</span>
-                  <a
-                    href={skillModelLink}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    {skillModelLink}
-                  </a>
-                  <br />
-                </p>
-              )}
-            </div>
-            <TextArea
-              fullHeight
-              label='Enter prompt:'
-              withWordCounter
-              resizable={false}
-              error={errors.model}
-              maxLenght={promptWordsMaxLenght}
-              props={{
-                placeholder:
-                  "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-                defaultValue: prompt?.text,
-                ...register('prompt', {
-                  required: 'This field can’t be empty',
-                  validate: checkIfEmptyString,
-                  maxLength: {
-                    value: promptWordsMaxLenght,
-                    message: `Limit prompt to ${promptWordsMaxLenght} words`,
-                  },
-                }),
-              }}
-            />
-          </div>
-          <div className={s.bottom}>
-            <span className={s['tip-bold']}>
-              Click "Save & Test" to test your new prompt
-            </span>
-            <div className={s.btns}>
-              {action === 'create' && (
-                <>
-                  <Button
-                    theme='secondary'
-                    props={{ onClick: handleBackBtnClick }}
-                  >
-                    Back
-                  </Button>
-                  <Button theme='primary' props={{ type: 'submit' }}>
-                    Save
-                  </Button>
-                </>
-              )}
-              {action === 'edit' && (
-                <>
-                  {/* <div className={s.history}>
-                    <Button theme='tertiary-round'>
-                      <HistoryIcon />
-                      History
-                    </Button>
-                  </div> */}
-                  <Button theme='secondary-dark' props={{ type: 'submit' }}>
-                    Save & Test
-                  </Button>
-                  <Button
-                    theme='primary'
-                    props={{ onClick: handleSaveAndClose }}
-                  >
-                    Save & Close
-                  </Button>
-                </>
-              )}
+          <div className={s.container}>
+            <form
+              onSubmit={handleSubmit(data => onFormSubmit(data))}
+              className={cx('editor')}
+            >
+              <div className={s.header}>
+                {skill?.display_name ?? 'Current Skill'}: Editor
+              </div>
+              <div className={s['editor-container']}>
+                <div className={s.top}>
+                  <SkillDropboxSearch
+                    label='Generative model:'
+                    list={
+                      services &&
+                      services?.map((service: any) => ({
+                        name: service?.display_name,
+                      }))
+                    }
+                    activeItem={{
+                      name: service?.display_name,
+                    }}
+                    error={errors.model}
+                    props={{
+                      placeholder: 'Choose model',
+                      defaultValue: service?.display_name,
+                      ...register('model', { required: true }),
+                    }}
+                    onSelect={handleModelSelect}
+                    fullWidth
+                  />
+                  {service?.display_name && (
+                    <div>
+                      <Accordion
+                        title='Model Details:'
+                        type='description'
+                        isActive
+                      >
+                        <p className={s.tip}>
+                          <span>{skillModelTip}</span>
+                          <a
+                            href={skillModelLink}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {skillModelLink}
+                          </a>
+                        </p>
+                      </Accordion>
+                    </div>
+                  )}
+                </div>
+                <TextArea
+                  name='prompt'
+                  label='Enter prompt:'
+                  countType='tokenizer'
+                  tokenizerModel={service?.display_name}
+                  defaultValue={prompt?.text}
+                  withCounter
+                  fullHeight
+                  resizable={false}
+                  control={control}
+                  rules={{
+                    required: 'This field can’t be empty',
+                    maxLength: {
+                      value: service?.max_tokens,
+                      message: `Limit prompt to ${service?.max_tokens} words`,
+                    },
+                    validate: validationRules,
+                  }}
+                  setError={setError}
+                  props={{
+                    placeholder:
+                      "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
+                  }}
+                />
+              </div>
+              <div className={s.bottom}>
+                <div className={s.btns}>
+                  {action === 'create' && (
+                    <>
+                      <Button
+                        theme='secondary'
+                        props={{ onClick: handleBackBtnClick }}
+                      >
+                        Back
+                      </Button>
+                      <Button theme='primary' props={{ type: 'submit' }}>
+                        Save
+                      </Button>
+                    </>
+                  )}
+                  {action === 'edit' && (
+                    <>
+                      <Button theme='tertiary-round' props={{ disabled: true }}>
+                        <HistoryIcon />
+                        History
+                      </Button>
+                      <Button theme='primary' props={{ type: 'submit' }}>
+                        Save
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </form>
+
+            <div className={s.dialog}>
+              <SkillDialog debug chatWith={'skill'} dist={dist} />
             </div>
           </div>
         </Wrapper>

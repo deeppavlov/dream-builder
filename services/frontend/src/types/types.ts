@@ -54,6 +54,13 @@ export interface BotInfoInterface {
   disk_usage: string
 }
 
+export interface BotCardProps {
+  type: BotAvailabilityType
+  bot: BotInfoInterface
+  size?: BotCardSize
+  disabled: boolean
+}
+
 export interface Component {
   name: string
   display_name: string

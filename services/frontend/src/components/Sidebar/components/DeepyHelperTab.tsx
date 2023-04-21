@@ -1,5 +1,6 @@
 import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
 import classNames from 'classnames/bind'
+import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
@@ -29,7 +30,12 @@ export const DeepyHelperTab = () => {
       onClick={handleBtnClick}
     >
       <img src={DeepyHelperIcon} alt='Deepy' />
-      <BaseToolTip id='helperTab' content='Deepy' place='right' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='helperTab'
+        content='Deepy'
+        place='right'
+      />
     </button>
   )
 }

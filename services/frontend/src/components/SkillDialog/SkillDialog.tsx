@@ -9,6 +9,9 @@ import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
+import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
@@ -16,7 +19,7 @@ import s from './SkillDialog.module.scss'
 export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
 const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
-  const { send, renew, session, message, history, error } = useChat()
+  const { send, renew, session, message, history } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)

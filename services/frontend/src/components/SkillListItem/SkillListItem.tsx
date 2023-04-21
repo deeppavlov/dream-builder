@@ -3,9 +3,9 @@ import { FC, useId, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
-import { useComponent } from '../../hooks/useComponent'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -104,6 +104,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
         >
           {skill?.description}
           <BaseToolTip
+            delayShow={TOOLTIP_DELAY}
             id={'skillTableDesc' + tooltipId}
             content={skill?.description}
             theme='description'

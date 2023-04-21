@@ -34,6 +34,7 @@ import { SkillQuitModal } from '../components/SkillQuitModal/SkillQuitModal'
 import { Skills } from '../components/Skills/Skills'
 import { SkillSelector } from '../components/SkillSelector/SkillSelector'
 import { SkillsListModal } from '../components/SkillsListModal/SkillsListModal'
+import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
 import { usePreview } from '../context/PreviewProvider'
@@ -133,6 +134,7 @@ export const EditorPage = () => {
           <TabList>
             <Container layoutForTabs>
               <BaseToolTip
+                delayShow={TOOLTIP_DELAY}
                 id='sidebarSkillTab'
                 content='Skills'
                 place='right'

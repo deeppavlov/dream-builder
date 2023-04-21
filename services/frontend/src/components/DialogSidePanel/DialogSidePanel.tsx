@@ -1,10 +1,8 @@
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { DEBUG_DIST } from '../../constants/constants'
+import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
@@ -13,17 +11,13 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { trigger } from '../../utils/events'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
-const TEXT_CHAT_TYPE = 'text'
-const VOICE_CHAT_TYPE = 'voice'
-
-type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 type ChatPanelType = 'bot' | 'skill'
 
 interface Props {
@@ -32,25 +26,19 @@ interface Props {
   chatWith: ChatPanelType
   dist: BotInfoInterface
   debug: boolean
-  distName: string
-  service: string
-  prompt: string
 }
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
-  const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
   const [isFirstTest, setIsFirstTest] = useState(start)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
   const chatRef = useRef<HTMLDivElement>(null)
-  const isTextChat = chatType === TEXT_CHAT_TYPE
+
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
   const cx = classNames.bind(s)
-  
+
   // handlers
-  const handleTypeBtnClick = (type: ChatType) => setChatType(type)
-  const handleDownloadBtnClick = () => {}
   const handleGoBackBtnClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
@@ -194,7 +182,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               <textarea
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
-                {...register('message')}
+                {...register('message', { validate: checkIfEmptyString })}
               />
               <input type='submit' hidden />
               <SidePanelButtons>
@@ -209,7 +197,11 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           </>
         )}
       </div>
-      <BaseToolTip id='renew' content='Start a new dialog' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='renew'
+        content='Start a new dialog'
+      />
     </div>
   )
 }

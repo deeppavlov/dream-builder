@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { FC,useId,useRef,useState } from 'react'
+import { FC, useId, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 import { useDisplay } from '../../context/DisplayContext'
@@ -18,7 +18,7 @@ interface SkillProps {
 }
 
 export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
-  const [disabled, setDisabled] = useState<boolean>(false)
+  const [disabled] = useState<boolean>(false)
   const skillRef = useRef(null)
   const { options } = useDisplay()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
@@ -36,9 +36,6 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
     })
   }
 
-  // const handleToggle = (e: React.MouseEvent) =>
-  //   setDisabled(disabled => !disabled)
-
   return (
     <div
       className={cx('element', disabled && 'disabled')}
@@ -55,7 +52,6 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
         </div>
       </div>
       <div className={s.right}>
-        {/* <ToggleButton disabled={isPreview} handleToggle={handleToggle} /> */}
         <Kebab tooltipId={tooltipId} />
         <SkillStackToolTip
           deleteFunc={deleteSkill}

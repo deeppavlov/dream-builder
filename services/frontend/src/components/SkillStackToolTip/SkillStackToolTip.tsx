@@ -1,5 +1,5 @@
 import React from 'react'
-import { IContextMenu,ISkill } from '../../types/types'
+import { IContextMenu, ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
@@ -27,7 +27,9 @@ const SkillStackToolTip = ({
   const handleDeleteBtnClick = () => {
     trigger('DeleteSkillModal', { skill })
   }
-
+  const handleRenameBtnClick = () => {
+    trigger('SkillModal', { action: 'edit', skill })
+  }
   return (
     <BaseContextMenu tooltipId={tooltipId}>
       {skill.is_customizable && (
@@ -36,6 +38,14 @@ const SkillStackToolTip = ({
           type='edit'
           disabled={isPreview}
           handleClick={handleEditBtnClick}
+        />
+      )}
+      {skill.is_customizable && (
+        <ContextMenuButton
+          name='Rename'
+          type='edit'
+          disabled={isPreview}
+          handleClick={handleRenameBtnClick}
         />
       )}
       <ContextMenuButton

@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { ReactComponent as CardsView } from '../../../assets/icons/display.svg'
 import { ReactComponent as ListView } from '../../../assets/icons/list-view.svg'
+import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
@@ -23,9 +23,14 @@ export const Display = ({ viewHandler }: any) => {
     <button
       data-tooltip-id='viewType'
       onClick={changeView}
-      className={s.display}>
+      className={s.display}
+    >
       {isTableView ? <ListView /> : <CardsView />}
-      <BaseToolTip id='viewType' content='Change View Type' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='viewType'
+        content='Change View Type'
+      />
     </button>
   )
 }

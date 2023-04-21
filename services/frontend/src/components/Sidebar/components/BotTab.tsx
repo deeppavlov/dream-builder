@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ReactComponent as CPU } from '../../../assets/icons/cpu.svg'
+import { TOOLTIP_DELAY } from '../../../constants/constants'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import Hint from '../../Hint/Hint'
 import s from './BotTab.module.scss'
@@ -19,11 +20,17 @@ export const BotTab = () => {
       <button
         data-tooltip-id='sidebarBotTab'
         className={s.cpu}
-        onClick={handleBtnClick}>
+        onClick={handleBtnClick}
+      >
         <CPU className='activeTab' />
 
         {hintIsVisited ? (
-          <BaseToolTip id='sidebarBotTab' content='Architecture' place='right' />
+          <BaseToolTip
+            delayShow={TOOLTIP_DELAY}
+            id='sidebarBotTab'
+            content='Bot'
+            place='right'
+          />
         ) : (
           <Hint id='sidebarBotTab' handleClose={() => setHintIsVisited(true)} />
         )}

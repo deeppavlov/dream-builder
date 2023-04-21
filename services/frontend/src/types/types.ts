@@ -54,6 +54,13 @@ export interface BotInfoInterface {
   disk_usage: string
 }
 
+export interface BotCardProps {
+  type: BotAvailabilityType
+  bot: BotInfoInterface
+  size?: BotCardSize
+  disabled: boolean
+}
+
 export interface Component {
   name: string
   display_name: string
@@ -111,6 +118,7 @@ export interface SkillListProps {
   forGrid?: boolean
   forModal?: boolean
   withoutDate?: boolean
+  addFunc?: (distName: string, id: number) => void
 }
 export interface SettingKey {
   name: string
@@ -141,6 +149,8 @@ export interface ISkill extends IStackElement {
   model?: string
   prompt?: string
   lm_service: string
+  id: number
+  component_id?: number
 }
 
 export interface SessionConfig {
@@ -200,7 +210,7 @@ export type StackType =
   | 'skill_selectors'
   | 'skills'
 
-export type BotVisabilityType = 'public' | 'unlisted'
+export type BotVisabilityType = 'Public' | 'Unlisted'
 
 export type TTopbar = 'main' | 'editor'
 

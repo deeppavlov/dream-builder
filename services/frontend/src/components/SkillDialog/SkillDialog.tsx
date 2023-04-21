@@ -16,7 +16,7 @@ import s from './SkillDialog.module.scss'
 export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
 const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
-  const { send, renew, session, message, history, error } = useChat()
+  const { send, renew, session, message, history } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
@@ -46,17 +46,6 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
       onKeyDown={handleKeyDown}
       className={s.dialog}
     >
-      {/* <SidePanelHeader>
-        <ul role='tablist'>
-          <li role='tab' key='Current  Skill' aria-selected>
-            Current Skill
-          </li>
-          <li role='tab' key='All Skills'>
-            All Skills
-          </li>
-        </ul>
-      </SidePanelHeader> */}
-
       <div className={s.container}>
         <ul ref={chatRef} className={s.chat}>
           {history?.map(
@@ -78,6 +67,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
           )}
         </ul>
       </div>
+
       {/* <div className={s.controls}>
         <div className={s.left}>
           <DialogButton active>
@@ -107,6 +97,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
           </Button>
         </div>
       </div> */}
+
       <div className={s.bottom}>
         <div className={s['textarea-container']}>
           <textarea

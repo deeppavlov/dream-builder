@@ -124,7 +124,7 @@ export const TextArea: FC<TextAreaProps> = ({
       {(label || withCounter) && (
         <label htmlFor={textAreaId} className={s.label}>
           {label && <span className={s.title}>{label}</span>}
-          {withCounter && maxLenght && (
+          {withCounter && maxLenght.value && (
             <span className={s.counter}>
               {length}
               {isTokenizer && isTyping && '+ counting...'}/{maxLenght.value}

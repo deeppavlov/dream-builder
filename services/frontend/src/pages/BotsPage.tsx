@@ -1,26 +1,26 @@
-import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { RoutesList } from '../router/RoutesList'
+import { useQuery } from 'react-query'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DistList } from '../components/DistList/DistList'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Loader } from '../components/Loader/Loader'
+import { Main } from '../components/Main/Main'
+import { Modal } from '../components/Modal/Modal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 import { useAuth } from '../context/AuthProvider'
-import { getPublicDists } from '../services/getPublicDists'
+import { useDisplay } from '../context/DisplayContext'
+import { RoutesList } from '../router/RoutesList'
 import { getPrivateDists } from '../services/getPrivateDists'
+import { getPublicDists } from '../services/getPublicDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
+import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Slider } from '../ui/Slider/Slider'
-import { Main } from '../components/Main/Main'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { Modal } from '../components/Modal/Modal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { DistList } from '../components/DistList/DistList'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
@@ -46,10 +46,11 @@ export const BotsPage = () => {
     <>
       <Main>
         <Wrapper
-          title='Public Virtual Assistants & Chatbots'
+          title='Virtual Assistants Templates'
           showAll
           amount={publicDists?.length}
-          linkTo={RoutesList.botsAll}>
+          linkTo={RoutesList.botsAll}
+        >
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
           {isTableView ? (
@@ -65,11 +66,12 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Virtual Assistants & Chatbots'
+          title='Your Virtual Assistants'
           amount={
             auth?.user && privateDists?.length > 0 && privateDists?.length
           }
-          linkTo={RoutesList.yourBots}>
+          linkTo={RoutesList.yourBots}
+        >
           {isTableView ? (
             <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={privateDists} type='your' />

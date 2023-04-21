@@ -1,0 +1,23 @@
+.areYouSure {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  span {
+    margin-top: 32px;
+    color: $primary1;
+    @include b1;
+  }
+  .header {
+    @include t1;
+    color: $text1;
+  }
+  .footer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: end;
+    gap: 24px;
+  }
+}

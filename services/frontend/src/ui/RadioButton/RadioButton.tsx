@@ -1,4 +1,5 @@
-import { FC, ReactNode } from 'react'
+import classNames from 'classnames/bind'
+import { FC } from 'react'
 import s from './RadioButton.module.scss'
 
 export interface RadioButtonProps {
@@ -23,8 +24,13 @@ export const RadioButton: FC<RadioButtonProps> = ({
   defaultChecked,
   props,
 }) => {
+  const cx = classNames.bind(s)
   return (
-    <label htmlFor={htmlFor} className={s.label} data-tooltip-id={tooltipId}>
+    <label
+      htmlFor={htmlFor}
+      className={cx('label', disabled && 'disabled')}
+      data-tooltip-id={tooltipId}
+    >
       <input
         id={id}
         name={name}

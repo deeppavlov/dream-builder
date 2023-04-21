@@ -1,11 +1,11 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+import { usePreview } from '../../context/PreviewProvider'
+import { mockSkills } from '../../mocks/database/mockSkills'
+import { RoutesList } from '../../router/RoutesList'
+import { BotInfoInterface, TTopbar } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
-import { mockSkills } from '../../mocks/database/mockSkills'
-import { BotInfoInterface, TTopbar } from '../../types/types'
-import { usePreview } from '../../context/PreviewProvider'
-import { useNavigate } from 'react-router-dom'
-import { RoutesList } from '../../router/RoutesList'
 
 interface Props {
   tooltipId: string
@@ -16,6 +16,7 @@ interface Props {
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
+  const { state } = useLocation()
 
   const handleWelcomeClick = () => {
     navigate(RoutesList.profile)
@@ -32,8 +33,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const handleDeleteClick = () => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
-  const handleShareClick = () =>
-    trigger('ShareModal', { bot, smthElse: '1234' })
+  const handleShareClick = () => trigger('ShareModal', state?.distName)
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>

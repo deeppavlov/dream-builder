@@ -1,6 +1,4 @@
 import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
-import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import classNames from 'classnames/bind'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,9 +14,8 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { сopyToClipboard } from '../../utils/copyToClipboard'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-
-import DialogButton from '../DialogButton/DialogButton'
 import { ChatHistory } from '../SkillDialog/SkillDialog'
 import TextLoader from '../TextLoader/TextLoader'
 import { ToastCopySucces } from '../Toasts/Toasts'
@@ -26,7 +23,7 @@ import s from './CopilotSidePanel.module.scss'
 
 export const CopilotSidePanel = () => {
   const { send, renew, session, message, history } = useChat()
-  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const { handleSubmit, register, reset, getValues } = useForm<ChatForm>()
   const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
@@ -70,7 +67,7 @@ export const CopilotSidePanel = () => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  console.log(getValues('message'))
   return (
     <div className={s.container}>
       <div className={s.dialogSidePanel}>
@@ -127,11 +124,17 @@ export const CopilotSidePanel = () => {
             onKeyDown={handleKeyDown}
             className={s.dialogSidePanel__textarea}
             placeholder='Type...'
-            {...register('message')}
+            {...register('message', { validate: checkIfEmptyString })}
           />
           <input type='submit' hidden />
           <SidePanelButtons>
-            <Button theme='primary' props={{ type: 'submit' }}>
+            <Button
+              theme='primary'
+              props={{
+                disabled: send?.isLoading,
+                type: 'submit',
+              }}
+            >
               Send
             </Button>
           </SidePanelButtons>

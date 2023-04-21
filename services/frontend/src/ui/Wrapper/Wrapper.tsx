@@ -17,6 +17,7 @@ interface WrapperProps {
   primary?: boolean
   skills?: boolean
   children?: ReactNode
+  annotation?: string
   onClose?: (e: MouseEvent) => void
 }
 
@@ -33,6 +34,7 @@ export const Wrapper = ({
   limiter,
   primary,
   skills,
+  annotation,
   onClose,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
@@ -81,8 +83,9 @@ export const Wrapper = ({
             </button>
           )}
           {(title || amount) && (
-            <div className={s.header}>
+            <div className={cx('header', annotation && 'annotationFlex')}>
               {title && <h5 className={s.title}>{title}</h5>}
+              {annotation && <p className={s.annotation}>{annotation}</p>}
               {amount && (
                 <div className={s.btns_area}>
                   {showAll && (

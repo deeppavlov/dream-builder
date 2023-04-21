@@ -9,6 +9,7 @@
 .gridForCards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+  overflow: visible; // ???
 }
 .layoutForTabs {
   width: 100%;

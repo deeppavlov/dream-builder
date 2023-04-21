@@ -1,23 +1,32 @@
-import { useEffect, useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
 import classNames from 'classnames/bind'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { subscribe, unsubscribe } from '../../utils/events'
-import BaseModal from '../../ui/BaseModal/BaseModal'
-import { Input } from '../../ui/Input/Input'
-import Button from '../../ui/Button/Button'
-import { ToastCopySucces } from '../Toasts/Toasts'
-import { ReactComponent as FB } from '../../assets/icons/facebook.svg'
-import { ReactComponent as TW } from '../../assets/icons/twitter.svg'
-import s from './ShareModal.module.scss'
+import toast, { Toaster } from 'react-hot-toast'
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  LinkedinIcon,
+  LinkedinShareButton,
+  RedditIcon,
+  RedditShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+} from 'react-share'
 import { useObserver } from '../../hooks/useObserver'
+import BaseModal from '../../ui/BaseModal/BaseModal'
+import Button from '../../ui/Button/Button'
+import { Input } from '../../ui/Input/Input'
+import { ToastCopySucces } from '../Toasts/Toasts'
+import s from './ShareModal.module.scss'
 
 export const ShareModal = () => {
   const [bot, setBot] = useState<string>('not yet')
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
-    setBot(data?.detail?.bot?.name)
+    setBot(data?.detail?.bot?.name || data?.detail)
     setIsOpen(!isOpen)
   }
   const { register, getValues, reset } = useForm({
@@ -35,8 +44,11 @@ export const ShareModal = () => {
     })
   }
 
-  useObserver('ShareModal', handleEventUpdate)
+  const url = getValues('link')
+  const title =
+    'Check out this Generative Assistant I made with deepdream.builders! '
 
+  useObserver('ShareModal', handleEventUpdate)
   useEffect(() => {
     reset({
       link: 'https://assistants.deepdream.builders/?assistant=' + bot,
@@ -51,8 +63,31 @@ export const ShareModal = () => {
           <div className={s.main}>
             <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
-              <FB />
-              <TW />
+              <FacebookShareButton
+                quote={title}
+                children={<FacebookIcon />}
+                url={url}
+              />
+              <TwitterShareButton
+                title={title}
+                children={<TwitterIcon />}
+                url={url}
+              />
+              <TelegramShareButton
+                title={title}
+                children={<TelegramIcon />}
+                url={url}
+              />
+              <LinkedinShareButton
+                title={title}
+                children={<LinkedinIcon />}
+                url={url}
+              />
+              <RedditShareButton
+                title={title}
+                children={<RedditIcon />}
+                url={url}
+              />
             </div>
           </div>
           <p className={cx('text', 'lines')}>or copy link</p>

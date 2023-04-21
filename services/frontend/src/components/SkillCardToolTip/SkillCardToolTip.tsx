@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -10,31 +11,45 @@ interface Props {
   isPreview?: boolean
 }
 
-const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
-  const handleEditBtnClick = (e: React.MouseEvent) => {
-    if (skill.component_type === 'Generative') {
-      trigger('SkillPromptModal', { skill, action: 'edit' })
-      return
-    }
+const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
+  // const handleEditBtnClick = () => {
+  //   if (skill.component_type === 'Generative') {
+  //     trigger('SkillPromptModal', { skill, action: 'edit' })
+  //     return
+  //   }
 
-    triggerSkillSidePanel({ skill, activeTab: 'Editor' })
-  }
+  //   triggerSkillSidePanel({ skill, activeTab: 'Editor' })
+  // }
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({ skill, activeTab: 'Properties' })
 
-  const handleDisableBtnClick = () => {}
+  const handleRenameBtnClick = () => {
+    trigger('SkillModal', { action: 'edit', skill })
+  }
 
-  const handleDeleteBtnClick = () => {}
+  const handleDeleteBtnClick = () => {
+    trigger('DeleteSkillModal', { skill })
+  }
+
+  // const handleDisableBtnClick = () => {}
 
   return (
     <BaseContextMenu tooltipId={tooltipId}>
-      {skill.is_customizable && (
+      {/* {skill.is_customizable && (
         <ContextMenuButton
           name='Edit Skill'
           type='edit'
           disabled={isPreview}
           handleClick={handleEditBtnClick}
+        />
+      )} */}
+      {skill.is_customizable && (
+        <ContextMenuButton
+          name='Rename'
+          type='edit'
+          disabled={isPreview}
+          handleClick={handleRenameBtnClick}
         />
       )}
       <ContextMenuButton
@@ -42,16 +57,16 @@ const SkillCardToolTip = ({ tooltipId, skill, isPreview }: Props) => {
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
-      <ContextMenuButton
+      {/* <ContextMenuButton
         name='Disable Skill'
         type='disable'
         disabled={isPreview}
-      />
+      /> */}
       <hr />
       <ContextMenuButton
         name='Delete'
         type='delete'
-        disabled={isPreview}
+        disabled={isPreview || skill?.component_type !== 'Generative'}
         handleClick={handleDeleteBtnClick}
       />
     </BaseContextMenu>

@@ -46,7 +46,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
       children: (
         <DialogSidePanel
           debug={false}
-          key='chat_with_assistant'
+          key={bot?.name + 'chat_with_assistant'}
           chatWith='bot'
           start
           dist={bot}

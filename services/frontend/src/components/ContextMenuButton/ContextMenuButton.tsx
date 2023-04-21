@@ -37,6 +37,7 @@ const ContextMenuButton = ({
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled) return
     handleClick && handleClick(e)
+    e.stopPropagation()
   }
   return (
     <button

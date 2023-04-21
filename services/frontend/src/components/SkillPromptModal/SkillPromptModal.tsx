@@ -13,15 +13,13 @@ import { getLMservice } from '../../services/getLMservice'
 import { getPrompt } from '../../services/getPrompt'
 import { postPrompt } from '../../services/postPrompt'
 import { ISkill } from '../../types/types'
-import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import { checkIfEmptyString } from '../../utils/formValidate'
-import SkillDialog from '../SkillDialog/SkillDialog'
+import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
@@ -59,7 +57,8 @@ const SkillPromptModal = () => {
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const cx = classNames.bind(s)
-
+  const promptWordsMaxLenght = 10000
+  
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
       return postPrompt(variables?.distName, variables?.prompt)

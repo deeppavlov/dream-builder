@@ -2,6 +2,7 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -86,6 +87,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
               content={bot?.description}
               place='top'
               theme='description'
+              delayShow={TOOLTIP_DELAY}
             />
           </div>
           <span className={s.separator} />

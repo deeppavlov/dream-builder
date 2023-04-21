@@ -3,6 +3,7 @@ import Woman from '@assets/icons/woman.png'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -116,6 +117,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
             content={bot?.description}
             place='bottom'
             theme='description'
+            delayShow={TOOLTIP_DELAY}
           />
         </div>
       </td>

@@ -2,7 +2,7 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { DEBUG_DIST } from '../../constants/constants'
+import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
@@ -197,7 +197,11 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           </>
         )}
       </div>
-      <BaseToolTip id='renew' content='Start a new dialog' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='renew'
+        content='Start a new dialog'
+      />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import Play from '../../../assets/icons/test.svg'
+import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
@@ -33,7 +34,11 @@ export const Test = () => {
         className={s.test}
         onClick={handleBtnClick}
       />
-      <BaseToolTip id='chatWithBot' content='Chat with your bot' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='chatWithBot'
+        content='Chat with your bot'
+      />
     </button>
   )
 }

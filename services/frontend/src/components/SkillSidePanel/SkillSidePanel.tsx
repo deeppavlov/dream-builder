@@ -2,6 +2,7 @@ import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
 import { FC, useEffect, useId } from 'react'
 import Woman from '../../assets/icons/woman.png'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
@@ -9,7 +10,6 @@ import useTabsManager, { TabList } from '../../hooks/useTabsManager'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { ISkill } from '../../types/types'
-import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
@@ -65,7 +65,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  
+
   return (
     <>
       <SidePanelHeader>
@@ -153,6 +153,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
 
           {(isPreview || !auth?.user) && (
             <BaseToolTip
+              delayShow={TOOLTIP_DELAY}
               id={'skillAddTo' + tooltipId}
               content='You need to clone the virtual assistant to edit'
             />

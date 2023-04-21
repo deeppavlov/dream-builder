@@ -1,6 +1,7 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import React, { FC, useId, useRef, useState } from 'react'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
@@ -116,6 +117,7 @@ export const SkillCard: FC<SkillCardProps> = ({
               {skill?.description ?? 'Empty'}
             </div>
             <BaseToolTip
+              delayShow={TOOLTIP_DELAY}
               id={'skillCardDesc' + tooltipId}
               content={skill?.description}
               theme='description'
@@ -181,6 +183,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       </div>
       {isPreview && (
         <BaseToolTip
+          delayShow={TOOLTIP_DELAY}
           id={'editSkill' + tooltipId}
           content='You need to clone the virtual assistant to edit'
           theme='small'

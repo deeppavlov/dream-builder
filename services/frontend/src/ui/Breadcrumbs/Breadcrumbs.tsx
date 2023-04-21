@@ -2,6 +2,7 @@ import classNames from 'classnames/bind'
 import React from 'react'
 import { Link, matchPath, useMatches } from 'react-router-dom'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
 import s from './Breadcrumbs.module.scss'
@@ -21,7 +22,11 @@ export const Breadcrumbs = () => {
         <Link to='/'>
           <button className={s.home} />
         </Link>
-        <BaseToolTip id='home' content='Go to home page' />
+        <BaseToolTip
+          delayShow={TOOLTIP_DELAY}
+          id='home'
+          content='Go to home page'
+        />
       </div>
 
       <div className={s.routes}>
@@ -29,10 +34,7 @@ export const Breadcrumbs = () => {
         {matches.map((crumb, i) => {
           return (
             crumb.pathname !== '/' && (
-              <span
-                key={i}
-                className={cx('route', !match && 'active')}
-              >
+              <span key={i} className={cx('route', !match && 'active')}>
                 {crumb?.handle as string}
               </span>
             )

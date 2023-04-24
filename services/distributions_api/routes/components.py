@@ -66,19 +66,19 @@ async def create_component(
         return schemas.ComponentShort.from_orm(component)
 
 
+@components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
+async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentShort:
+    component = crud.get_component(db, component_id)
+
+    return schemas.ComponentShort.from_orm(component)
+
+
 @components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_component(
     component_id: int, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
         crud.delete_component(db, component_id)
-
-
-@components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
-async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentShort:
-    component = crud.get_component(db, component_id)
-
-    return schemas.ComponentShort.from_orm(component)
 
 
 @components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)

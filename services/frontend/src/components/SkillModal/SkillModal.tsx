@@ -9,7 +9,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
-import { validationRules } from '../../utils/formValidate'
+import { validationSchema } from '../../utils/validationSchema'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
@@ -123,8 +123,8 @@ export const SkillModal = () => {
                 'A short name describing your Virtual Assistant’s skill',
               defaultValue: getValues()[NAME_ID],
               ...register(NAME_ID, {
-                required: 'This field can’t be empty',
-                validate: validationRules,
+                required: validationSchema.global.required,
+                pattern: validationSchema.global.engSpeechRegExp,
               }),
             }}
           />
@@ -133,21 +133,17 @@ export const SkillModal = () => {
             name={DESC_ID}
             control={control}
             label='Description'
+            defaultValue={getValues()[DESC_ID]}
             withCounter
-            error={errors[DESC_ID]}
-            maxLenght={descriptionMaxLenght}
+            rules={{
+              required: validationSchema.global.required,
+              maxLength:
+                validationSchema.global.desc.maxLength(descriptionMaxLenght),
+              pattern: validationSchema.global.engSpeechRegExp,
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
-              defaultValue: getValues()[DESC_ID],
-              ...register(DESC_ID, {
-                required: 'This field can’t be empty',
-                validate: validationRules,
-                maxLength: {
-                  value: descriptionMaxLenght,
-                  message: `Limit text description to ${descriptionMaxLenght} characters`,
-                },
-              }),
             }}
           />
           <div className={s.btns}>

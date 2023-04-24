@@ -55,11 +55,11 @@ export const TextArea: FC<TextAreaProps> = ({
     name,
     control,
     rules: isTokenizer
-      ? Object.assign({}, rules, { maxLenght: undefined })
+      ? Object.assign({}, rules, { maxLength: undefined })
       : rules,
     defaultValue,
   })
-  const maxLenght = rules?.maxLength as { value: number; message: string }
+  const maxLength = rules?.maxLength as { value: number; message: string }
   const value = isTokenizer
     ? useDebouncedValue(field.value || '', 500)
     : field.value || ''
@@ -108,11 +108,11 @@ export const TextArea: FC<TextAreaProps> = ({
   useEffect(() => {
     if (countType !== 'tokenizer') return setLength(value.length)
     const length = getTokensLength(tokenizerModel, value)
-    const isMaxLength = maxLenght && setError && length > maxLenght?.value
+    const isMaxLength = maxLength && setError && length > maxLength?.value
 
     setLength(length)
     setIsTyping(false)
-    if (isMaxLength) setError(name, maxLenght)
+    if (isMaxLength) setError(name, maxLength)
   }, [value])
 
   return (
@@ -124,10 +124,10 @@ export const TextArea: FC<TextAreaProps> = ({
       {(label || withCounter) && (
         <label htmlFor={textAreaId} className={s.label}>
           {label && <span className={s.title}>{label}</span>}
-          {withCounter && maxLenght?.value && (
+          {withCounter && maxLength?.value && (
             <span className={s.counter}>
               {length}
-              {isTokenizer && isTyping && '+ counting...'}/{maxLenght?.value}
+              {isTokenizer && isTyping && '+ counting...'}/{maxLength?.value}
               {isTokenizer && ` token${suffixes.get(pr.select(length))}`}
             </span>
           )}

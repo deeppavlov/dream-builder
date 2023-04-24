@@ -11,8 +11,8 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { trigger } from '../../utils/events'
-import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
+import { validationSchema } from '../../utils/validationSchema'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
@@ -182,7 +182,9 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               <textarea
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
-                {...register('message', { validate: checkIfEmptyString })}
+                {...register('message', {
+                  required: validationSchema.global.required,
+                })}
               />
               <input type='submit' hidden />
               <SidePanelButtons>

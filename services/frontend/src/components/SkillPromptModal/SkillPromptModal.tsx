@@ -20,7 +20,7 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { validationRules } from '../../utils/formValidate'
+import { validationSchema } from '../../utils/validationSchema'
 import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
@@ -180,7 +180,9 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (item: any) => reset({ model: item.name })
+  const handleModelSelect = (item: any) => {
+    reset({ model: item.name })
+  }
 
   const handleCreate = ({ model, prompt }: FormValues) => {
     trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
@@ -360,12 +362,11 @@ const SkillPromptModal = () => {
                   resizable={false}
                   control={control}
                   rules={{
-                    required: 'This field can’t be empty',
-                    maxLength: {
-                      value: service?.max_tokens,
-                      message: `Limit prompt to ${service?.max_tokens} words`,
-                    },
-                    validate: validationRules,
+                    required: validationSchema.global.required,
+                    maxLength: validationSchema.skill.prompt.maxLength(
+                      service?.max_tokens
+                    ),
+                    pattern: validationSchema.global.engSpeechRegExp,
                   }}
                   setError={setError}
                   props={{

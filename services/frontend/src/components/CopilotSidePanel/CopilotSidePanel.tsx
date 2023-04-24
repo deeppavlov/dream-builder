@@ -14,8 +14,8 @@ import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { сopyToClipboard } from '../../utils/copyToClipboard'
-import { checkIfEmptyString } from '../../utils/formValidate'
 import { submitOnEnter } from '../../utils/submitOnEnter'
+import { validationSchema } from '../../utils/validationSchema'
 import { ChatHistory } from '../SkillDialog/SkillDialog'
 import TextLoader from '../TextLoader/TextLoader'
 import { ToastCopySucces } from '../Toasts/Toasts'
@@ -124,7 +124,9 @@ export const CopilotSidePanel = () => {
             onKeyDown={handleKeyDown}
             className={s.dialogSidePanel__textarea}
             placeholder='Type...'
-            {...register('message', { validate: checkIfEmptyString })}
+            {...register('message', {
+              required: validationSchema.global.required,
+            })}
           />
           <input type='submit' hidden />
           <SidePanelButtons>

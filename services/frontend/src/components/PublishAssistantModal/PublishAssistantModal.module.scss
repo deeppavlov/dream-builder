@@ -1,6 +1,5 @@
 .publishAssistantModal {
-  max-width: 496px;
-  width: 100%;
+  width: 532px;
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -9,8 +8,8 @@
     flex-direction: column;
     gap: 8px;
     .annotation {
-      @include b3;
       color: #8d96b5;
+      @include b3;
     }
   }
 }
@@ -34,7 +33,9 @@
       width: fit-content;
       justify-content: space-between;
       gap: 20px;
+
       label {
+        color: rgba(0, 0, 0, 0.7);
         @include t3;
       }
     }

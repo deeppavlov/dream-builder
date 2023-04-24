@@ -66,26 +66,23 @@ export const PublishAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
-          <h4>
+          <h4>Change who can see your Assistant?</h4>
+          {/* <h4>
             Do you want to publish <mark>{bot?.display_name}</mark> to Virtual
             Assistants Store?
-          </h4>
-          <p className={s.text}>
+          </h4> */}
+          {/* <p className={s.text}>
             Choose the type of visibility for Virtual Assistant
-          </p>
+          </p> */}
           <p className={s.annotation}>
-            VAs utilizing OpenAI LLMs (GPT-3.5, ChatGPT, GPT-4 etc.) currently
-            cannot be published as Templates. If you want to publish your
-            OpenAI-based VA, change LLM used in it to one of the open-source
-            ones, like GPT-J or OpenAssistant, and let users know in the
-            description of your Template that it works better with a given
-            OpenAI model.
+            Sharing Assistants with OpenAI models is temporarily disabled. In
+            the future, we hope to remove this limitation.
           </p>
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              <RadioButton
+              {/* <RadioButton
                 props={{ ...register('visability') }}
                 // tooltipId='Public'
                 name='visibility'
@@ -96,6 +93,26 @@ export const PublishAssistantModal = () => {
                 disabled={true}
               >
                 Public (Coming Soon)
+              </RadioButton> */}
+              <RadioButton
+                props={{ ...register('visability') }}
+                // tooltipId='Private'
+                name='visibility'
+                id='Private'
+                htmlFor='Private'
+                value='Private'
+              >
+                Private (only you can see it)
+              </RadioButton>
+              <RadioButton
+                props={{ ...register('visability') }}
+                // tooltipId='Unlisted'
+                name='visibility'
+                id='Unlisted'
+                htmlFor='Unlisted'
+                value='Unlisted'
+              >
+                Unlisted (only those you’ve shared the direct link can see it)
               </RadioButton>
               <RadioButton
                 props={{ ...register('visability') }}
@@ -106,30 +123,9 @@ export const PublishAssistantModal = () => {
                 value='Template'
                 defaultChecked={false}
               >
-                Public Template (Visible In Templates)
+                Public Template (everyone can see it and re-use it)
               </RadioButton>
               {/* <p className={s.text}>or</p> */}
-
-              <RadioButton
-                props={{ ...register('visability') }}
-                // tooltipId='Unlisted'
-                name='visibility'
-                id='Unlisted'
-                htmlFor='Unlisted'
-                value='Unlisted'
-              >
-                Unlisted (Available Through Direct Link Only)
-              </RadioButton>
-              <RadioButton
-                props={{ ...register('visability') }}
-                // tooltipId='Private'
-                name='visibility'
-                id='Private'
-                htmlFor='Private'
-                value='Private'
-              >
-                Private
-              </RadioButton>
             </div>
             {/* <div className={s.forCheckbox}>
               <Checkbox

@@ -44,6 +44,7 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
+        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

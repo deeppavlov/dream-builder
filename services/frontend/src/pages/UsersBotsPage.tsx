@@ -56,6 +56,7 @@ export const UsersBotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

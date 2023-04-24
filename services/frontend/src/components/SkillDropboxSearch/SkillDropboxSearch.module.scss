@@ -5,6 +5,7 @@ $animation-delay: 300ms;
   min-width: 310px;
   max-width: 310px;
   height: fit-content;
+  cursor: pointer;
 
   &.open {
     .search {
@@ -45,6 +46,7 @@ $animation-delay: 300ms;
   background: transparent;
   height: 100%;
   width: 100%;
+  cursor: pointer;
 }
 
 .search {

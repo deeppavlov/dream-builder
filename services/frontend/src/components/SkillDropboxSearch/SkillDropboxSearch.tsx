@@ -83,6 +83,7 @@ const SkillDropboxSearch = ({
         <input
           {...props}
           className={s.input}
+          disabled
           // onChange={handleSearchChange}
         />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />

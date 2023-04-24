@@ -11,7 +11,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     check_memory_format,
 )
 from deeppavlov_dreamtools.distconfigs.generics import (
-    PipelineConfModel,
+    PipelineConf,
     ComposeOverride,
     ComposeDev,
     ComposeProxy,
@@ -77,7 +77,7 @@ class AssistantDistModel(BaseModel):
     dist_path: str
     name: str
     dream_root: str
-    pipeline_conf: PipelineConfModel = None
+    pipeline_conf: PipelineConf = None
     compose_override: ComposeOverride = None
     compose_dev: ComposeDev = None
     compose_proxy: ComposeProxy = None

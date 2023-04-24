@@ -279,6 +279,21 @@ def get_virtual_assistant_components_by_name(
     ).all()
 
 
+def get_virtual_assistant_components_with_component_name_like(
+    db: Session, virtual_assistant_id: int, component_name_pattern: str
+):
+    return db.scalars(
+        select(models.VirtualAssistantComponent).filter(
+            and_(
+                models.VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
+                models.VirtualAssistantComponent.component.has(
+                    models.Component.name.like(f"%{component_name_pattern}")
+                ),
+            )
+        )
+    ).all()
+
+
 def create_virtual_assistant_component(
     db: Session, virtual_assistant_id: int, component_id: int, is_enabled: bool = True
 ):

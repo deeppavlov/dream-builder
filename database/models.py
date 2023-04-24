@@ -79,9 +79,7 @@ class ApiToken(Base):
 
 class UserApiToken(Base):
     __tablename__ = "user_api_token"
-    __table_args__ = (
-        UniqueConstraint('user_id', 'api_token_id', name='unique_user_api_token'),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "api_token_id", name="unique_user_api_token"),)
 
     id = Column(Integer, index=True, primary_key=True)
 
@@ -136,7 +134,9 @@ class Deployment(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True)
+    virtual_assistant_id = Column(
+        Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
     virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
     chat_url = Column(String, nullable=False)
@@ -150,7 +150,9 @@ class PublishRequest(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    virtual_assistant_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True)
+    virtual_assistant_id = Column(
+        Integer, ForeignKey("virtual_assistant.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
     virtual_assistant = relationship(
         "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
     )
@@ -169,6 +171,34 @@ class PublishRequest(Base):
     date_reviewed = Column(DateTime, nullable=True)
 
 
+class Service(Base):
+    __tablename__ = "service"
+
+    id = Column(Integer, index=True, primary_key=True)
+    source = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+
+    # # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
+    # # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
+    # build_args = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    # compose_override = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    # compose_dev = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    # compose_proxy = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    components = relationship("Component", back_populates="service", passive_deletes=True)
+
+    deployment = relationship("ServiceDeployment", uselist=False, back_populates="service", passive_deletes=True)
+
+
+class ServiceDeployment(Base):
+    __tablename__ = "service_deployment"
+
+    id = Column(Integer, index=True, primary_key=True)
+    service_id = Column(Integer, ForeignKey("service.id"))
+    service = relationship("Service", uselist=False, foreign_keys="ServiceDeployment.service_id")
+    port = Column(Integer, nullable=False)
+    state = Column(String)
+
+
 class Component(Base):
     __tablename__ = "component"
 
@@ -176,7 +206,6 @@ class Component(Base):
     source = Column(String, nullable=False)
     name = Column(String, nullable=False)
     display_name = Column(String, nullable=False)
-    container_name = Column(String, nullable=False)
     component_type = Column(String, nullable=True)
     model_type = Column(String, nullable=True)
     is_customizable = Column(Boolean, nullable=False)
@@ -186,19 +215,14 @@ class Component(Base):
 
     description = Column(String, nullable=True)
 
-    ram_usage = Column(String, nullable=False)
+    ram_usage = Column(String, nullable=True)
     gpu_usage = Column(String, nullable=True)
 
-    port = Column(Integer, nullable=False)
     group = Column(String, nullable=False)
-    endpoint = Column(String, nullable=False)
 
-    # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
-    # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
-    build_args = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
-    compose_override = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
-    compose_dev = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
-    compose_proxy = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+    service_id = Column(Integer, ForeignKey("service.id", ondelete="CASCADE"), nullable=False)
+    service = relationship("Service", back_populates="components")
+    endpoint = Column(String)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
@@ -290,13 +314,22 @@ def pre_populate_deployment(target, connection, **kw):
     _pre_populate_from_tsv(settings.db.initial_data_dir / "deployment.tsv", target, connection)
 
 
+@listens_for(Service.__table__, "after_create")
+def pre_populate_service(target, connection, **kw):
+    _pre_populate_from_tsv(
+        settings.db.initial_data_dir / "service.tsv",
+        target,
+        connection,
+    )
+
+
 @listens_for(Component.__table__, "after_create")
 def pre_populate_component(target, connection, **kw):
     _pre_populate_from_tsv(
         settings.db.initial_data_dir / "component.tsv",
         target,
         connection,
-        map_value_types={"is_customizable": lambda x: bool(int(x)), "build_args": json.loads},
+        map_value_types={"is_customizable": lambda x: bool(int(x))},
     )
 
 

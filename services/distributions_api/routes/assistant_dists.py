@@ -220,7 +220,12 @@ async def clone_dist(
         dream_dist = AssistantDist.from_dist(original_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
-        new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
+        original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
+            db, original_virtual_assistant.id, "_prompted_skill"
+        )[0].component.name
+        new_dist = dream_dist.clone(
+            new_name, payload.display_name, user.email, payload.description, original_prompted_skill_name
+        )
         new_dist.save(overwrite=False)
 
         new_virtual_assistant = crud.create_virtual_assistant(

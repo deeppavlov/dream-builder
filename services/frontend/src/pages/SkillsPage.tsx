@@ -1,33 +1,31 @@
+import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
+import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { getSkillList } from '../services/getSkillsList'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
+import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
+import { Main } from '../components/Main/Main'
+import { SkillCard } from '../components/SkillCard/SkillCard'
+import { SkillListItem } from '../components/SkillListItem/SkillListItem'
+import { SkillModal } from '../components/SkillModal/SkillModal'
+import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
 import { useAuth } from '../context/AuthProvider'
+import { useDisplay } from '../context/DisplayContext'
+import { RoutesList } from '../router/RoutesList'
+import { getSkillList } from '../services/getSkillsList'
+import { SkillType } from '../types/types'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Table } from '../ui/Table/Table'
-import { dateToUTC } from '../utils/dateToUTC'
-import { timeToUTC } from '../utils/timeToUTC'
-import { SkillCard } from '../components/SkillCard/SkillCard'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { RoutesList } from '../router/RoutesList'
 import { Slider } from '../ui/Slider/Slider'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { SkillType } from '../types/types'
-import { nanoid } from 'nanoid'
-import { SkillModal } from '../components/SkillModal/SkillModal'
-import { trigger } from '../utils/events'
-import SkillPromptModal from '../components/SkillPromptModal/SkillPromptModal'
-import CreateSkillDistModal from '../components/CreateSkillDistModal/CreateSkillDistModal'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import ChooseBotModal from '../components/ChooseBotModal/ChooseBotModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { useDisplay } from '../context/DisplayContext'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { dateToUTC } from '../utils/dateToUTC'
+import { trigger } from '../utils/events'
+import { timeToUTC } from '../utils/timeToUTC'
 
 interface skill_list {
   assistant_dist: string
@@ -110,14 +108,15 @@ export const SkillsPage = () => {
   return (
     <>
       {/* <Topbar viewHandler={viewHandler} type='main' /> */}
-      <Main>
+      <Main sidebar>
         {!isTableView ? (
           <>
             <Wrapper
               title='Public Skills'
               amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
-              showAll>
+              showAll
+            >
               <Container>
                 <Slider>
                   {skillsData?.map((skill: skill_list, i: number) => {
@@ -163,7 +162,8 @@ export const SkillsPage = () => {
               showAll
               amount={42}
               linkTo={RoutesList.yourSkills}
-              title='Your Skills'>
+              title='Your Skills'
+            >
               <Container>
                 <Container
                   position='sticky'
@@ -171,7 +171,8 @@ export const SkillsPage = () => {
                   top='0'
                   width='280px'
                   minWidth='280px'
-                  paddingBottom='22px'>
+                  paddingBottom='22px'
+                >
                   <div data-tip data-for='add-btn-new-bot'>
                     <AddButton
                       forTable
@@ -191,7 +192,8 @@ export const SkillsPage = () => {
               amount={skillsData?.length}
               linkTo={RoutesList.skillsAll}
               showAll
-              fitScreen>
+              fitScreen
+            >
               <Table second='Type'>
                 {skillsData?.map((skill: skill_list, i: number) => {
                   const {
@@ -251,7 +253,8 @@ export const SkillsPage = () => {
             className='tooltips'
             arrowColor='#8d96b5'
             delayShow={1000}
-            id='add-btn-new-bot'>
+            id='add-btn-new-bot'
+          >
             You must be signed in to create your own skill
           </ReactTooltip>
         )}

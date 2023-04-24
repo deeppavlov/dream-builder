@@ -44,7 +44,7 @@ export const BotsPage = () => {
 
   return (
     <>
-      <Main>
+      <Main sidebar>
         <Wrapper
           title='Virtual Assistants Templates'
           showAll
@@ -94,6 +94,7 @@ export const BotsPage = () => {
         <ShareModal />
         <Modal />
         <SignInModal />
+        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

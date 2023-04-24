@@ -165,7 +165,11 @@ export const EditorPage = () => {
         <TabPanel>
           <Main sidebar editor>
             {!skillEditorIsActive && (
-              <Wrapper title='Skills' skills>
+              <Wrapper
+                title='Skills'
+                skills
+                annotation='generate possible responses to the user'
+              >
                 <Loader isLoading={isComponentsLoading} />
                 <ErrorHandler error={componentsError} />
                 {isTableView && (

@@ -27,7 +27,7 @@ export const DraftPage = () => {
 
   return (
     <>
-      <Main>
+      <Main sidebar>
         <Wrapper skills>
           <Button theme='primary' props={{ onClick: handleAYSClick }}>
             Trigger AreYouSure Modal

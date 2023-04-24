@@ -27,7 +27,7 @@ export const UsersBotsPage = () => {
 
   return (
     <>
-      <Main>
+      <Main sidebar>
         <Wrapper title='Your Virtual Assistants' amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />

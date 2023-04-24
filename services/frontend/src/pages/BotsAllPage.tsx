@@ -22,7 +22,7 @@ export const BotsAllPage = () => {
 
   return (
     <>
-      <Main>
+      <Main sidebar>
         <Wrapper title='Virtual Assistants Templates' amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />

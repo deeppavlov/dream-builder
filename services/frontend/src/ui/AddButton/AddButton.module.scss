@@ -26,8 +26,8 @@
   }
 }
 .forSkills {
-  max-height: 275px;
   position: relative;
+  @include min_max_height_skill;
 }
 .tr {
   position: sticky;

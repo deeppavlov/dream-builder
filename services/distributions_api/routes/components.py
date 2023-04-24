@@ -49,17 +49,15 @@ async def create_component(
             source="skills/dff_template_prompted_skill",
             name=new_component.name,
             display_name=new_component.display_name,
-            container_name=new_component.container_name,
             component_type=new_component.component_type,
-            model_type=new_component.model_type,
             is_customizable=new_component.is_customizable,
             author_id=user.id,
-            description=new_component.description,
             ram_usage=new_component.ram_usage,
-            gpu_usage=new_component.gpu_usage,
-            port=new_component.port,
             group="skills",
             endpoint="respond",
+            model_type=new_component.model_type,
+            gpu_usage=new_component.gpu_usage,
+            description=new_component.description,
             build_args=new_component.build_args,
             compose_override=json.loads(new_component.compose_override.json(exclude_none=True)),
             compose_dev=json.loads(new_component.compose_dev.json(exclude_none=True)),
@@ -69,7 +67,9 @@ async def create_component(
 
 
 @components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_component(component_id: int, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
+async def delete_component(
+    component_id: int, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+):
     with db.begin():
         crud.delete_component(db, component_id)
 

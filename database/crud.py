@@ -205,34 +205,18 @@ def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
     return db.scalars(select(models.Component).filter_by(group=group)).all()
 
 
-def create_component(
-    db: Session,
-    source: str,
-    name: str,
-    display_name: str,
-    container_name: str,
-    component_type: str,
-    is_customizable: bool,
-    author_id: int,
-    ram_usage: str,
-    port: int,
-    group: str,
-    endpoint: str,
-    model_type: Optional[str] = None,
-    gpu_usage: Optional[str] = None,
-    description: Optional[str] = None,
-    build_args: Optional[dict] = None,
-    compose_override: Optional[dict] = None,
-    compose_dev: Optional[dict] = None,
-    compose_proxy: Optional[dict] = None,
-) -> models.Component:
+def create_component(db: Session, source: str, name: str, display_name: str, component_type: str, is_customizable: bool,
+                     author_id: int, ram_usage: str, group: str, endpoint: str, model_type: Optional[str] = None,
+                     gpu_usage: Optional[str] = None, description: Optional[str] = None,
+                     build_args: Optional[dict] = None, compose_override: Optional[dict] = None,
+                     compose_dev: Optional[dict] = None, compose_proxy: Optional[dict] = None) -> models.Component:
     return db.scalar(
         insert(models.Component)
         .values(
             source=source,
             name=name,
             display_name=display_name,
-            container_name=container_name,
+            # container_name=container_name,
             component_type=component_type,
             model_type=model_type,
             is_customizable=is_customizable,
@@ -240,7 +224,7 @@ def create_component(
             description=description,
             ram_usage=ram_usage,
             gpu_usage=gpu_usage,
-            port=port,
+            # port=port,
             group=group,
             endpoint=endpoint,
             build_args=build_args,

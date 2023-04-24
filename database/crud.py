@@ -205,11 +205,25 @@ def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
     return db.scalars(select(models.Component).filter_by(group=group)).all()
 
 
-def create_component(db: Session, source: str, name: str, display_name: str, component_type: str, is_customizable: bool,
-                     author_id: int, ram_usage: str, group: str, endpoint: str, model_type: Optional[str] = None,
-                     gpu_usage: Optional[str] = None, description: Optional[str] = None,
-                     build_args: Optional[dict] = None, compose_override: Optional[dict] = None,
-                     compose_dev: Optional[dict] = None, compose_proxy: Optional[dict] = None) -> models.Component:
+def create_component(
+    db: Session,
+    source: str,
+    name: str,
+    display_name: str,
+    component_type: str,
+    is_customizable: bool,
+    author_id: int,
+    ram_usage: str,
+    group: str,
+    endpoint: str,
+    model_type: Optional[str] = None,
+    gpu_usage: Optional[str] = None,
+    description: Optional[str] = None,
+    # build_args: Optional[dict] = None,
+    # compose_override: Optional[dict] = None,
+    # compose_dev: Optional[dict] = None,
+    # compose_proxy: Optional[dict] = None,
+) -> models.Component:
     return db.scalar(
         insert(models.Component)
         .values(
@@ -227,10 +241,10 @@ def create_component(db: Session, source: str, name: str, display_name: str, com
             # port=port,
             group=group,
             endpoint=endpoint,
-            build_args=build_args,
-            compose_override=compose_override,
-            compose_dev=compose_dev,
-            compose_proxy=compose_proxy,
+            # build_args=build_args,
+            # compose_override=compose_override,
+            # compose_dev=compose_dev,
+            # compose_proxy=compose_proxy,
         )
         .returning(models.Component)
     )

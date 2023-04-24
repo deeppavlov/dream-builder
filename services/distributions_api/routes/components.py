@@ -2,6 +2,7 @@ import json
 import secrets
 from typing import List
 
+from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
@@ -10,7 +11,8 @@ from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 
-from deeppavlov_dreamtools.distconfigs.components import ComponentRepository
+from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
+from deeppavlov_dreamtools.utils import generate_unique_name
 
 from services.distributions_api.security.auth import verify_token
 from services.distributions_api.utils import name_generator
@@ -27,41 +29,41 @@ async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.
 async def create_component(
     payload: schemas.ComponentCreate, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
 ) -> schemas.ComponentShort:
-    name_with_underscores, name_with_dashes = name_generator.names_from_display_name(payload.display_name)
-
     with db.begin():
         lm_service = crud.get_lm_service(db, payload.lm_service_id)
 
-        components_repo = ComponentRepository(settings.db.dream_root_path)
-        new_component = components_repo.add_generative_prompted_skill(
-            name=name_with_underscores,
-            display_name=payload.display_name,
-            container_name=name_with_dashes,
-            author=user.email,
-            description=payload.description,
-            ram_usage="150M",
-            port=crud.get_next_available_component_port(db),
-            lm_service=lm_service.name,
-            prompt=payload.prompt,
+        prompted_service_name = generate_unique_name()
+        prompted_service = create_generative_prompted_skill_service(
+            settings.db.dream_root_path,
+            f"skills/dff_template_prompted_skill/service_configs/{prompted_service_name}",
+            prompted_service_name,
+            "transformers-lm-oasst12b"
+        )
+
+        prompted_component_name = generate_unique_name()
+        prompted_component = create_generative_prompted_skill_component(
+            settings.db.dream_root_path,
+            prompted_service,
+            f"components/{prompted_component_name}.yml",
+            prompted_component_name,
+            f"Prompted Component {prompted_component_name}",
+            user.email,
+            "Copy of prompted service",
         )
         component = crud.create_component(
             db,
             source="skills/dff_template_prompted_skill",
-            name=new_component.name,
-            display_name=new_component.display_name,
-            component_type=new_component.component_type,
-            is_customizable=new_component.is_customizable,
+            name=prompted_component.name,
+            display_name=prompted_component.display_name,
+            component_type=prompted_component.component_type,
+            is_customizable=prompted_component.is_customizable,
             author_id=user.id,
-            ram_usage=new_component.ram_usage,
+            ram_usage=prompted_component.ram_usage,
             group="skills",
             endpoint="respond",
-            model_type=new_component.model_type,
-            gpu_usage=new_component.gpu_usage,
-            description=new_component.description,
-            build_args=new_component.build_args,
-            compose_override=json.loads(new_component.compose_override.json(exclude_none=True)),
-            compose_dev=json.loads(new_component.compose_dev.json(exclude_none=True)),
-            compose_proxy=json.loads(new_component.compose_proxy.json(exclude_none=True)),
+            model_type=prompted_component.model_type,
+            gpu_usage=prompted_component.gpu_usage,
+            description=prompted_component.description,
         )
         return schemas.ComponentShort.from_orm(component)
 

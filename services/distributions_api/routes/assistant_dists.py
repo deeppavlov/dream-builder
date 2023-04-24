@@ -116,10 +116,10 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
     """
     virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
 
-    try:
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
+    # try:
+    #     dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+    # except FileNotFoundError:
+    #     raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
 
     return schemas.VirtualAssistant.from_orm(virtual_assistant)
 

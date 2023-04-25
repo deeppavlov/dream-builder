@@ -53,17 +53,17 @@ async def create_component(
         component = crud.create_component(
             db,
             source="skills/dff_template_prompted_skill",
-            name=prompted_component.name,
-            display_name=prompted_component.display_name,
-            component_type=prompted_component.component_type,
-            is_customizable=prompted_component.is_customizable,
+            name=prompted_component.component.name,
+            display_name=prompted_component.component.display_name,
+            component_type=prompted_component.component.component_type,
+            is_customizable=prompted_component.component.is_customizable,
             author_id=user.id,
-            ram_usage=prompted_component.ram_usage,
+            ram_usage=prompted_component.component.ram_usage,
             group="skills",
             endpoint="respond",
-            model_type=prompted_component.model_type,
-            gpu_usage=prompted_component.gpu_usage,
-            description=prompted_component.description,
+            model_type=prompted_component.component.model_type,
+            gpu_usage=prompted_component.component.gpu_usage,
+            description=prompted_component.component.description,
         )
         return schemas.ComponentShort.from_orm(component)
 

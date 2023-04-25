@@ -48,7 +48,12 @@ async def create_virtual_assistant(
         dream_dist = AssistantDist.from_dist(minimal_template_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
-        new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
+        original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
+            db, minimal_template_virtual_assistant.id, "_prompted_skill"
+        )[0].component.name
+        new_dist = dream_dist.clone(
+            new_name, payload.display_name, user.email, payload.description, original_prompted_skill_name
+        )
         new_dist.save()
 
         new_virtual_assistant = crud.create_virtual_assistant(
@@ -111,10 +116,10 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
     """
     virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
 
-    try:
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
+    # try:
+    #     dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+    # except FileNotFoundError:
+    #     raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
 
     return schemas.VirtualAssistant.from_orm(virtual_assistant)
 
@@ -220,7 +225,12 @@ async def clone_dist(
         dream_dist = AssistantDist.from_dist(original_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
-        new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
+        original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
+            db, original_virtual_assistant.id, "_prompted_skill"
+        )[0].component.name
+        new_dist = dream_dist.clone(
+            new_name, payload.display_name, user.email, payload.description, original_prompted_skill_name
+        )
         new_dist.save(overwrite=False)
 
         new_virtual_assistant = crud.create_virtual_assistant(
@@ -260,7 +270,7 @@ def _virtual_assistant_component_model_to_schema(virtual_assistant_component: mo
     )
 
 
-@assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
+@assistant_dists_router.get("/{dist_name}/components", status_code=status.HTTP_200_OK)
 async def get_virtual_assistant_components(dist_name: str, db: Session = Depends(get_db)):
     grouped_components = {}
     for va_component in crud.get_virtual_assistant_components_by_name(db, dist_name):
@@ -274,7 +284,7 @@ async def get_virtual_assistant_components(dist_name: str, db: Session = Depends
     return schemas.DistComponentsResponse(**grouped_components)
 
 
-@assistant_dists_router.post("/{dist_name}/components/", status_code=status.HTTP_201_CREATED)
+@assistant_dists_router.post("/{dist_name}/components", status_code=status.HTTP_201_CREATED)
 async def add_virtual_assistant_component(
     dist_name: str, payload: schemas.CreateVirtualAssistantComponentRequest, db: Session = Depends(get_db)
 ):
@@ -317,7 +327,7 @@ async def delete_virtual_assistant_component(
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
 
-@assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)
+@assistant_dists_router.post("/{dist_name}/publish", status_code=status.HTTP_204_NO_CONTENT)
 async def publish_dist(
     dist_name: str,
     payload: schemas.PublishRequestCreate,

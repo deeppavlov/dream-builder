@@ -1,7 +1,58 @@
-{% extends "base.html" %}
-{% block title %}Publish request declined{% endblock %}
-{% block content %}
-    <p class="important">
-        Your assistant dist "{{ display_name }}" was declined
-    </p>
+<!-- @format -->
+
+{% extends "base.html" %} {% block title %}Publish request declined{% endblock
+%} {% block header %}
+<header class="header declined">
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 80">
+		<circle cx="40" cy="40" r="40" fill="#fff" />
+		<path
+			stroke="#F33"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-width="1.5"
+			d="M40 60c11 0 20-9 20-20s-9-20-20-20-20 9-20 20 9 20 20 20Zm-5.66-14.34 11.32-11.32m0 11.32L34.34 34.34"
+		/>
+	</svg>
+	<h1>Application was declined.</h1>
+</header>
+{% endblock %} {% block content %}
+<p>
+	Dear {{[User]}},
+	<br />
+	<br />
+	I regret to inform you that your application for publishing your Virtual
+	Assistant has been declined. Our team has reviewed your submission and
+	unfortunately, it did not meet our publication guidelines and standards.
+	<br />
+	<br />
+	Upon review, we found that there are a few reasons why we are unable to
+	approve your Virtual Assistant for publication: Incomplete or insufficient
+	information: If the submission does not include all the required information,
+	or the information provided is incomplete, the application may be declined.
+	Inappropriate or offensive content: If the submission contains any
+	inappropriate or offensive content, it will not be accepted for publication.
+	Copyright infringement: If the submission includes any copyrighted material
+	without proper permission or attribution, it will not be accepted for
+	publication. Technical issues: If the submission does not meet the technical
+	requirements for publication, such as file format or size, it may be declined.
+	Poor quality or functionality: If the Virtual Assistant does not meet our
+	quality standards or does not function properly, it may not be approved for
+	publication.
+	<br />
+	<br />
+	We understand that this news may be disappointing, but please do not hesitate
+	to make the necessary changes and resubmit your Virtual Assistant for
+	publication once it meets our guidelines. You can find the guidelines for
+	Virtual Assistant publication on our website.
+	<br />
+	<br />
+	If you have any questions or concerns, please do not hesitate to contact us.
+	We would be happy to provide you with any additional information that you may
+	need. Thank you for considering us for the publication of your Virtual
+	Assistant.
+	<br />
+	<br />
+
+	Best regards, Dream Builder Team
+</p>
 {% endblock %}

@@ -210,21 +210,19 @@ def create_component(
     source: str,
     name: str,
     display_name: str,
-    container_name: str,
     component_type: str,
     is_customizable: bool,
     author_id: int,
     ram_usage: str,
-    port: int,
     group: str,
     endpoint: str,
     model_type: Optional[str] = None,
     gpu_usage: Optional[str] = None,
     description: Optional[str] = None,
-    build_args: Optional[dict] = None,
-    compose_override: Optional[dict] = None,
-    compose_dev: Optional[dict] = None,
-    compose_proxy: Optional[dict] = None,
+    # build_args: Optional[dict] = None,
+    # compose_override: Optional[dict] = None,
+    # compose_dev: Optional[dict] = None,
+    # compose_proxy: Optional[dict] = None,
 ) -> models.Component:
     return db.scalar(
         insert(models.Component)
@@ -232,7 +230,7 @@ def create_component(
             source=source,
             name=name,
             display_name=display_name,
-            container_name=container_name,
+            # container_name=container_name,
             component_type=component_type,
             model_type=model_type,
             is_customizable=is_customizable,
@@ -240,13 +238,13 @@ def create_component(
             description=description,
             ram_usage=ram_usage,
             gpu_usage=gpu_usage,
-            port=port,
+            # port=port,
             group=group,
             endpoint=endpoint,
-            build_args=build_args,
-            compose_override=compose_override,
-            compose_dev=compose_dev,
-            compose_proxy=compose_proxy,
+            # build_args=build_args,
+            # compose_override=compose_override,
+            # compose_dev=compose_dev,
+            # compose_proxy=compose_proxy,
         )
         .returning(models.Component)
     )
@@ -276,6 +274,21 @@ def get_virtual_assistant_components_by_name(
 
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)
+    ).all()
+
+
+def get_virtual_assistant_components_with_component_name_like(
+    db: Session, virtual_assistant_id: int, component_name_pattern: str
+):
+    return db.scalars(
+        select(models.VirtualAssistantComponent).filter(
+            and_(
+                models.VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
+                models.VirtualAssistantComponent.component.has(
+                    models.Component.name.like(f"%{component_name_pattern}")
+                ),
+            )
+        )
     ).all()
 
 

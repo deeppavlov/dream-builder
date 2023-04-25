@@ -1,7 +1,64 @@
-{% extends "base.html" %}
-{% block title %}Publish request confirmed{% endblock %}
-{% block content %}
-    <p class="important">
-        Your assistant dist "{{ display_name }}" was confirmed
-    </p>
+<!-- @format -->
+
+{% extends "base.html" %} {% block title %}Publish request confirmed{%
+endblock%} {% block header %}
+<header class="header approve">
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none">
+		<circle cx="40" cy="40" r="40" fill="#fff" />
+		<path
+			stroke="#30F"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-width="1.8"
+			d="M40 60c11 0 20-9 20-20s-9-20-20-20-20 9-20 20 9 20 20 20Z"
+		/>
+		<path
+			stroke="#fff"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-opacity=".1"
+			stroke-width="1.8"
+			d="M40 60c11 0 20-9 20-20s-9-20-20-20-20 9-20 20 9 20 20 20Z"
+		/>
+		<path
+			stroke="#30F"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-width="1.8"
+			d="m31.5 40 5.66 5.66L48.5 34.34"
+		/>
+		<path
+			stroke="#fff"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-opacity=".1"
+			stroke-width="1.8"
+			d="m31.5 40 5.66 5.66L48.5 34.34"
+		/>
+	</svg>
+	<h1>
+		Thank you for publishing your Virtual Assistant to Dream Builder Virtual
+		Assistant Store!
+	</h1>
+</header>
+{% endblock %} {% block content %}
+<p>
+	Hello {{ [owner_name] }}
+	<br />
+	<br />
+	We are delighted to have you on board.
+	<br />
+	<br />
+	We are happy to inform you that your {{ [dist_name] }} Virtual Assistant has
+	been successfully published to our Public library. You can see your published
+	Virtual Assistant here:
+	<a href="{{ [dist_url] }}"> {{[dist_url]}} </a>
+	<br />
+	<br />
+	We are glad you joined us on our path to something great. Thank you for
+	working with us!
+	<br />
+	<br />
+	With love, Dream Builder Team
+</p>
 {% endblock %}

@@ -21,6 +21,9 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 )
 
 
+PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
+
+
 class BaseOrmModel(BaseModel):
     class Config:
         orm_mode = True
@@ -266,7 +269,7 @@ class PublishRequestRead(BaseOrmModel):
     virtual_assistant: VirtualAssistantRead
     user: User
     slug: str
-    visibility: Literal["unlisted", "public_template", "public"]
+    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
     date_created: datetime
     is_confirmed: Optional[bool]
     reviewed_by_user: Optional[User]
@@ -274,7 +277,7 @@ class PublishRequestRead(BaseOrmModel):
 
 
 class PublishRequestCreate(BaseOrmModel):
-    visibility: Literal["unlisted", "public_template", "public"]
+    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
 
 
 class Prompt(BaseModel):

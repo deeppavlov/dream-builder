@@ -339,18 +339,19 @@ async def publish_dist(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(virtual_assistant.source)
 
-        crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
-        moderators = crud.get_users_by_role(db, 2)
+        if payload.visibility == "private":
+            crud.delete_publish_request(db, virtual_assistant.id)
+        else:
+            crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
+            moderators = crud.get_users_by_role(db, 2)
 
-        background_tasks.add_task(
-            send_publish_request_created_emails,
-            owner_email=user.email,
-            moderator_emails=[m.email for m in moderators],
-            virtual_assistant_name=virtual_assistant.name,
-            virtual_assistant_display_name=virtual_assistant.display_name,
-        )
-
-    logger.info(f"Sent publish request")
+            background_tasks.add_task(
+                send_publish_request_created_emails,
+                owner_email=user.email,
+                moderator_emails=[m.email for m in moderators],
+                virtual_assistant_name=virtual_assistant.name,
+                virtual_assistant_display_name=virtual_assistant.display_name,
+            )
 
 
 @assistant_dists_router.get("/{dist_name}/prompt", status_code=status.HTTP_200_OK)

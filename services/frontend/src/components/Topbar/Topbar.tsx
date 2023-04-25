@@ -1,15 +1,15 @@
-import { useParams } from 'react-router-dom'
 import classNames from 'classnames/bind'
-import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
+import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
-import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
-import { Profile } from '../../ui/Profile/Profile'
-import { BurgerMenu } from '../../ui/BurgerMenu/BurgerMenu'
-import { Display } from './components/Display'
-import { AssistantCloneButton } from '../AssistantCloneButton/AssistantCloneButton'
-import { TTopbar } from '../../types/types'
 import { useDisplay } from '../../context/DisplayContext'
+import { TTopbar } from '../../types/types'
+import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
+import { BurgerMenu } from '../../ui/BurgerMenu/BurgerMenu'
+import { Profile } from '../../ui/Profile/Profile'
 import { consts } from '../../utils/consts'
+import { AssistantCloneButton } from '../AssistantCloneButton/AssistantCloneButton'
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
+import { Display } from './components/Display'
 import { Test } from './components/Test'
 import s from './Topbar.module.scss'
 
@@ -28,7 +28,7 @@ export const Topbar = () => {
 
   return (
     <div className={cx('topbar', isEditor && 'editor')}>
-      <BurgerMenu type={type} />
+      <BurgerMenu type={type} dist={options.get(consts.ACTIVE_ASSISTANT)} />
       <div className={s.logo_area}>
         <Breadcrumbs />
       </div>

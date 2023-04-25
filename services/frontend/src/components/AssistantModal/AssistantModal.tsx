@@ -31,14 +31,8 @@ export const AssistantModal = () => {
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
 
-  const {
-    handleSubmit,
-    register,
-    control,
-    reset,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm<AssistantFormValues>({ mode: 'all' })
+  const { handleSubmit, control, reset, getValues } =
+    useForm<AssistantFormValues>({ mode: 'all' })
 
   const { create, rename, clone } = useAssistants()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
@@ -64,23 +58,9 @@ export const AssistantModal = () => {
   // const isTopbarButton = bot && Object.keys(bot).length === 2
   const name = bot?.name!
 
-  const handleCreateBtnClick = () => {
-    handleSubmit(onFormSubmit)
-  }
-
-  const handleCloneBtnClick = () => {
-    handleSubmit(onFormSubmit)
-  }
-
   async function submit() {
     const succeed = await handleSubmit(onFormSubmit)()
     return succeed
-  }
-  const handleSaveBtnClick = () => {
-    if (!isValid) return
-    submit().then(() => {
-      closeModal()
-    })
   }
 
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
@@ -142,14 +122,15 @@ export const AssistantModal = () => {
         </div>
         <Input
           label='Name'
-          error={errors[NAME_ID as keyof AssistantFormValues]}
+          name={NAME_ID}
+          defaultValue={getValues().display_name}
+          control={control}
+          rules={{
+            required: validationSchema.global.required,
+            pattern: validationSchema.global.engSpeechRegExp,
+          }}
           props={{
             placeholder: 'A short name describing your Virtual Assistant',
-            defaultValue: getValues().display_name,
-            ...register(NAME_ID as keyof AssistantFormValues, {
-              required: validationSchema.global.required,
-              pattern: validationSchema.global.engSpeechRegExp,
-            }),
           }}
         />
         <div className={s.textarea}>
@@ -179,11 +160,7 @@ export const AssistantModal = () => {
           {action === 'create' && (
             <Button
               theme='primary'
-              props={{
-                type: 'submit',
-                onClick: handleCreateBtnClick,
-                disabled: create?.isLoading,
-              }}
+              props={{ type: 'submit', disabled: create?.isLoading }}
             >
               Create
             </Button>
@@ -191,11 +168,7 @@ export const AssistantModal = () => {
           {action === 'clone' && (
             <Button
               theme='primary'
-              props={{
-                type: 'submit',
-                onClick: handleCloneBtnClick,
-                disabled: clone?.isLoading,
-              }}
+              props={{ type: 'submit', disabled: clone?.isLoading }}
             >
               Use
             </Button>
@@ -203,11 +176,7 @@ export const AssistantModal = () => {
           {action === 'edit' && (
             <Button
               theme='primary'
-              props={{
-                type: 'submit',
-                onClick: handleSaveBtnClick,
-                disabled: rename?.isLoading,
-              }}
+              props={{ type: 'submit', disabled: rename?.isLoading }}
             >
               Save
             </Button>

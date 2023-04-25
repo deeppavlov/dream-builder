@@ -39,6 +39,7 @@ import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
+import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
 import {
@@ -52,8 +53,8 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
+import { validationSchema } from '../../utils/validationSchema'
 import s from './TestPage.module.scss'
-import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 
 const notificMock: NotificationCardProps[] = [
   {
@@ -1064,16 +1065,23 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>Input</span>
         <div className={s.testPage__component}>
           <span>default</span>
-          <Input props={{ placeholder: 'Assistive text' }} label='Label' />
+          <Input
+            name='input_default'
+            control={control}
+            props={{ placeholder: 'Assistive text' }}
+            label='Label'
+          />
         </div>
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <Input
             label='Label'
             withEnterButton
+            defaultValue='Text input Text input Text input Text input'
+            name='input_with_enter_btn'
+            control={control}
             props={{
               placeholder: 'Assistive text',
-              defaultValue: 'Text input Text input Text input Text input',
             }}
           />
         </div>
@@ -1081,16 +1089,21 @@ export const TestPage = () => {
           <span>required (with error)</span>
           <Input
             label='Label'
+            name='input_required'
+            control={control}
+            rules={{
+              required: validationSchema.global.required,
+            }}
             props={{
               placeholder: 'Assistive text',
-              ...register('test_input_required', { required: 'Error message' }),
             }}
-            error={errors['test_input_required']}
           />
         </div>
         <div className={s.testPage__component}>
           <span>disabled</span>
           <Input
+            name='input_disabled'
+            control={control}
             props={{ placeholder: 'Assistive text', disabled: true }}
             label='Label'
           />

@@ -9,6 +9,7 @@ import {
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import useDebouncedValue from '../../hooks/useDebouncedValue'
 import { LanguageModel } from '../../types/types'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import getTokensLength from '../../utils/getTokensLength'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
@@ -55,7 +56,12 @@ export const TextArea: FC<TextAreaProps> = ({
     name,
     control,
     rules: isTokenizer
-      ? Object.assign({}, rules, { maxLength: undefined })
+      ? Object.assign(
+          {},
+          rules,
+          { maxLength: undefined },
+          rules?.required ? { validate: checkIfEmptyString } : {}
+        )
       : rules,
     defaultValue,
   })
@@ -144,7 +150,9 @@ export const TextArea: FC<TextAreaProps> = ({
           onBlur={handleBlur}
           onChange={handleChange}
           className={s.field}
-        >{field.value}</textarea>
+        >
+          {field.value}
+        </textarea>
 
         {withEnterButton && (
           <div className={cx('submit', isEnter && 'submit-active')}>

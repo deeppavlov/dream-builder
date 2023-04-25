@@ -10,6 +10,7 @@ import { getUserTokens } from '../../services/getUserTokens'
 import { postUserTokens } from '../../services/postUserTokens'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
+import { validationSchema } from '../../utils/validationSchema'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './AccessTokensBanner.module.scss'
 
@@ -35,7 +36,7 @@ interface FormValues {
 }
 
 export const AccessTokensBanner = () => {
-  const { handleSubmit, register, reset, setValue, formState } =
+  const { handleSubmit, register, reset, setValue, formState, control } =
     useForm<FormValues>({ mode: 'onSubmit' })
   const { errors } = formState
   const [service, setService] = useState<IService | null>(null)
@@ -119,14 +120,12 @@ export const AccessTokensBanner = () => {
       </p>
       <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
         <Input
+          name='token'
           label='Add a new personal access token:'
+          control={control}
           withEnterButton
-          formState={formState}
-          error={errors.token}
-          props={{
-            placeholder: 'Assistive text',
-            ...register('token', { required: true }),
-          }}
+          rules={{ required: validationSchema.global.required }}
+          props={{ placeholder: 'Assistive text' }}
         />
         <SkillDropboxSearch
           label='Choose service:'

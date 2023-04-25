@@ -117,15 +117,16 @@ export const SkillModal = () => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Input
             label='Name'
-            error={errors[NAME_ID]}
+            name={NAME_ID}
+            defaultValue={getValues()[NAME_ID]}
+            control={control}
+            rules={{
+              required: validationSchema.global.required,
+              pattern: validationSchema.global.engSpeechRegExp,
+            }}
             props={{
               placeholder:
                 'A short name describing your Virtual Assistant’s skill',
-              defaultValue: getValues()[NAME_ID],
-              ...register(NAME_ID, {
-                required: validationSchema.global.required,
-                pattern: validationSchema.global.engSpeechRegExp,
-              }),
             }}
           />
 

@@ -29,7 +29,7 @@ export const ShareModal = () => {
     setBot(data?.detail?.bot?.name || data?.detail)
     setIsOpen(!isOpen)
   }
-  const { register, getValues, reset } = useForm({
+  const { control, getValues, reset } = useForm({
     defaultValues: {
       link: bot,
     },
@@ -92,7 +92,12 @@ export const ShareModal = () => {
           </div>
           <p className={cx('text', 'lines')}>or copy link</p>
           <div className={s.footer}>
-            <Input big props={{ ...register('link') }} />
+            <Input
+              name='link'
+              control={control}
+              big
+              props={{ readOnly: true }}
+            />
             <Button props={{ onClick: clickHandler }} theme={'primary'}>
               Copy
             </Button>

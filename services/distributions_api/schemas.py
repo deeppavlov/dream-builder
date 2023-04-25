@@ -256,6 +256,7 @@ class PublishRequestRead(BaseOrmModel):
     virtual_assistant: VirtualAssistant
     user: User
     slug: str
+    visibility: Literal["unlisted", "public_template", "public"]
     date_created: datetime
     is_confirmed: Optional[bool]
     reviewed_by_user: Optional[User]

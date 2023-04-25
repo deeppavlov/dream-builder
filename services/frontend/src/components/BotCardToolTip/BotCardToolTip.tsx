@@ -68,7 +68,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   }
 
   return (
-    <BaseContextMenu tooltipId={tooltipId} place='bottom'>
+    <BaseContextMenu tooltipId={tooltipId} place='right'>
       {type == 'your' && (
         <>
           <ContextMenuButton

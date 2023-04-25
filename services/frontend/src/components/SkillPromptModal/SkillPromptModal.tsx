@@ -367,9 +367,11 @@ const SkillPromptModal = () => {
                   control={control}
                   rules={{
                     required: validationSchema.global.required,
-                    maxLength: validationSchema.skill.prompt.maxLength(
-                      selectedService?.max_tokens || 0
-                    ),
+                    maxLength:
+                      selectedService?.max_tokens &&
+                      validationSchema.skill.prompt.maxLength(
+                        selectedService?.max_tokens
+                      ),
                     pattern: validationSchema.global.engSpeechRegExp,
                   }}
                   setError={setError}

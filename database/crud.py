@@ -250,6 +250,17 @@ def create_component(
     )
 
 
+def update_component(db: Session, id: int, **kwargs):
+    values = {k: v for k, v in kwargs.items() if v is not None}
+
+    return db.scalar(
+        update(models.Component)
+        .filter_by(id=id)
+        .values(**values)
+        .returning(models.Component)
+    )
+
+
 def delete_component(db: Session, id: int):
     db.execute(delete(models.Component).filter(models.Component.id == id))
 
@@ -279,7 +290,7 @@ def get_virtual_assistant_components_by_name(
 
 def get_virtual_assistant_components_with_component_name_like(
     db: Session, virtual_assistant_id: int, component_name_pattern: str
-):
+) -> [models.VirtualAssistantComponent]:
     return db.scalars(
         select(models.VirtualAssistantComponent).filter(
             and_(
@@ -355,13 +366,14 @@ def decline_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> m
     )
 
 
-def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str):
+def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str, visibility: str):
     return db.scalar(
         insert(models.PublishRequest)
-        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug)
+        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, visibility=visibility)
         .on_conflict_do_update(
             index_elements=[models.PublishRequest.slug],
             set_=dict(
+                visibility=visibility,
                 date_created=datetime.utcnow(),
                 is_confirmed=None,
                 reviewed_by_user_id=None,

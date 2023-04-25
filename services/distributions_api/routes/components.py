@@ -37,7 +37,7 @@ async def create_component(
             settings.db.dream_root_path,
             f"skills/dff_template_prompted_skill/service_configs/{prompted_service_name}",
             prompted_service_name,
-            "transformers-lm-oasst12b"
+            "transformers-lm-oasst12b",
         )
 
         prompted_component_name = generate_unique_name()
@@ -71,6 +71,17 @@ async def create_component(
 @components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
 async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentShort:
     component = crud.get_component(db, component_id)
+
+    return schemas.ComponentShort.from_orm(component)
+
+
+@components_router.patch("/{component_id}", status_code=status.HTTP_200_OK)
+async def patch_component(
+    component_id: int, payload: schemas.ComponentCreate, db: Session = Depends(get_db)
+) -> schemas.ComponentShort:
+    component = crud.update_component(
+        db, component_id, display_name=payload.display_name, description=payload.description
+    )
 
     return schemas.ComponentShort.from_orm(component)
 

@@ -339,7 +339,7 @@ async def publish_dist(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(virtual_assistant.source)
 
-        crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name)
+        crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
         moderators = crud.get_users_by_role(db, 2)
 
         background_tasks.add_task(

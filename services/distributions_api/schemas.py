@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 from pydantic import BaseModel, Field, validator, EmailStr
 
@@ -133,13 +133,18 @@ class ComponentCreate(BaseModel):
     description: Optional[str]
     # ram_usage: str
     # gpu_usage: Optional[str]
-    lm_service_id: int
-    prompt: str
+    lm_service_id: Optional[int]
+    prompt: Optional[str]
 
     # @validator("ram_usage", "gpu_usage")
     # def check_memory_format(cls, v):
     #     check_memory_format(v)
     #     return v
+
+
+class ComponentUpdate(BaseModel):
+    display_name: Optional[str]
+    description: Optional[str]
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):
@@ -258,8 +263,7 @@ class PublishRequestRead(BaseOrmModel):
 
 
 class PublishRequestCreate(BaseOrmModel):
-    is_prompt_visible: bool
-    is_publicly_listed: bool
+    visibility: Literal["unlisted", "public_template", "public"]
 
 
 class Prompt(BaseModel):

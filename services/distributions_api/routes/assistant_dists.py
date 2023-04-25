@@ -96,13 +96,13 @@ async def get_list_of_private_virtual_assistants(
 
     -``token``: auth token
     """
-    public_dists = []
+    private_dists = []
 
     for dist in crud.get_all_private_virtual_assistants(db, user.id):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistant.from_orm(dist))
+            private_dists.append(schemas.VirtualAssistant.from_orm(dist))
 
-    return public_dists
+    return private_dists
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
@@ -339,7 +339,7 @@ async def publish_dist(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(virtual_assistant.source)
 
-        crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name)
+        crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
         moderators = crud.get_users_by_role(db, 2)
 
         background_tasks.add_task(

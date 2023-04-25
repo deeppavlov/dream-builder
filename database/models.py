@@ -161,6 +161,7 @@ class PublishRequest(Base):
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
+    visibility = Column(String, nullable=False)  # unlisted, public_template, public
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     is_confirmed = Column(Boolean, nullable=True)

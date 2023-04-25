@@ -7,7 +7,7 @@ export async function publishAssistantDist(
 ) {
   try {
     const { data } = await privateApi.post(
-      `/assistant_dists/${dist_name}/publish/`,
+      `/assistant_dists/${dist_name}/publish`,
       { is_prompt_visible: isPromptVisible, is_publicly_listed: isPublic }
     )
     return data

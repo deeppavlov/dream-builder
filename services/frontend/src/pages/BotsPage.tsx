@@ -1,5 +1,4 @@
 import { Toaster } from 'react-hot-toast'
-import { useQuery } from 'react-query'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
@@ -13,9 +12,8 @@ import { ShareModal } from '../components/ShareModal/ShareModal'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
+import { useAssistants } from '../hooks/useAssistants'
 import { RoutesList } from '../router/RoutesList'
-import { getPrivateDists } from '../services/getPrivateDists'
-import { getPublicDists } from '../services/getPublicDists'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Slider } from '../ui/Slider/Slider'
@@ -24,23 +22,17 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
-  const auth = useAuth()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-
+  const auth = useAuth()
   const {
-    data: publicDists,
-    error: publicDistsError,
-    isLoading: isPublicDistsLoading,
-  } = useQuery('publicDists', getPublicDists)
-
-  const {
-    data: privateDists,
-    error: privateDistsError,
-    isLoading: isPrivateDistsLoading,
-  } = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user,
-  })
+    privateDists,
+    privateDistsError,
+    isPrivateDistsLoading,
+    publicDists,
+    publicDistsError,
+    isPublicDistsLoading,
+  } = useAssistants()
 
   return (
     <>

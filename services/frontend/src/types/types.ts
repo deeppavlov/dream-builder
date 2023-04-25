@@ -219,3 +219,4 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
+export type AssistantFormValues = { display_name: string; description: string }

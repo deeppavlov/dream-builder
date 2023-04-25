@@ -8,6 +8,7 @@ interface ContainerProps {
   heightAuto?: boolean
   layoutForTabs?: boolean
   overflowForAddButton?: boolean
+  flexRow?: boolean
 }
 
 export const Container = ({
@@ -16,6 +17,7 @@ export const Container = ({
   gridForCards,
   overflowForAddButton,
   layoutForTabs,
+  flexRow,
 }: ContainerProps) => {
   const cx = classNames.bind(s)
   return (
@@ -25,8 +27,10 @@ export const Container = ({
         heightAuto && 'heightAuto',
         gridForCards && 'gridForCards',
         layoutForTabs && 'layoutForTabs',
-        overflowForAddButton && 'overflowForAddButton'
-      )}>
+        overflowForAddButton && 'overflowForAddButton',
+        flexRow && 'flexRow'
+      )}
+    >
       {children}
     </div>
   )

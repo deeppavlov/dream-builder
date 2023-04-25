@@ -1,25 +1,19 @@
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useMutation, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnKey } from '../../hooks/useOnKey'
-import { cloneAssistantDist } from '../../services/cloneAssistantDist'
-import { postAssistantDist } from '../../services/postAssistanDist'
-import { renameAssistantDist } from '../../services/renameAssistantDist'
-import { BotInfoInterface } from '../../types/types'
+import { AssistantFormValues, BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { trigger } from '../../utils/events'
 import { validationSchema } from '../../utils/validationSchema'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
-type FormValues = { display_name: string; description: string }
+
 interface IAssistantInfo
   extends Pick<BotInfoInterface, 'name' | 'display_name' | 'description'> {}
 
@@ -36,7 +30,7 @@ export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
-  const [botDist, setBotDist] = useState<IAssistantDistInfo | null>(null)
+
   const {
     handleSubmit,
     register,
@@ -44,21 +38,22 @@ export const AssistantModal = () => {
     reset,
     getValues,
     formState: { errors, isValid },
-  } = useForm<FormValues>({ mode: 'all' })
+  } = useForm<AssistantFormValues>({ mode: 'all' })
+
+  const { create, rename, clone } = useAssistants()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
+
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
-    setBotDist(null)
+    // setBotDist(null)
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
-    setBotDist(data.detail?.distribution ?? null)
+    // setBotDist(data.detail?.distribution ?? null)
     // Reset values and errors states
     reset({
       [NAME_ID]: data?.detail?.bot?.display_name,
@@ -66,7 +61,7 @@ export const AssistantModal = () => {
     })
     setIsOpen(!isOpen)
   }
-  const isTopbarButton = bot && Object.keys(bot).length === 2
+  // const isTopbarButton = bot && Object.keys(bot).length === 2
   const name = bot?.name!
 
   const handleCreateBtnClick = () => {
@@ -76,6 +71,7 @@ export const AssistantModal = () => {
   const handleCloneBtnClick = () => {
     handleSubmit(onFormSubmit)
   }
+
   async function submit() {
     const succeed = await handleSubmit(onFormSubmit)()
     return succeed
@@ -86,54 +82,10 @@ export const AssistantModal = () => {
       closeModal()
     })
   }
-  const rename = useMutation({
-    mutationFn: (variables: { data: FormValues; name: string }) => {
-      return renameAssistantDist(variables?.name, variables?.data)
-    },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: 'privateDists' }),
-  })
-  const clone = useMutation({
-    mutationFn: (variables: { data: FormValues; name: string }) => {
-      return cloneAssistantDist(variables?.data, variables?.name)
-    },
-    onSuccess: data =>
-      queryClient
-        .invalidateQueries({ queryKey: 'privateDists' })
-        .then(() => {
-          navigate(`/${data?.name}`, {
-            state: {
-              preview: false,
-              distName: data?.name,
-              displayName: data?.display_name,
-            },
-          })
-        })
-        .then(() => {
-          isTopbarButton && closeModal()
-          trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-        }),
-  })
 
-  const mutation = useMutation({
-    mutationFn: (data: FormValues) => {
-      return postAssistantDist(data)
-    },
-    onSuccess: data =>
-      queryClient.invalidateQueries({ queryKey: 'privateDists' }).then(() => {
-        navigate(`/${data?.name}`, {
-          state: {
-            preview: false,
-            distName: data?.name,
-            displayName: data?.display_name,
-          },
-        })
-      }),
-  })
-
-  const onFormSubmit: SubmitHandler<FormValues> = data => {
+  const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     action === 'create' &&
-      toast.promise(mutation.mutateAsync(data), {
+      toast.promise(create.mutateAsync(data), {
         loading: 'Creating...',
         success: 'Success!',
         error: 'Something Went Wrong...',
@@ -190,11 +142,11 @@ export const AssistantModal = () => {
         </div>
         <Input
           label='Name'
-          error={errors[NAME_ID as keyof FormValues]}
+          error={errors[NAME_ID as keyof AssistantFormValues]}
           props={{
             placeholder: 'A short name describing your Virtual Assistant',
             defaultValue: getValues().display_name,
-            ...register(NAME_ID as keyof FormValues, {
+            ...register(NAME_ID as keyof AssistantFormValues, {
               required: validationSchema.global.required,
               pattern: validationSchema.global.engSpeechRegExp,
             }),
@@ -224,21 +176,42 @@ export const AssistantModal = () => {
           <Button theme='secondary' props={{ onClick: closeModal }}>
             Cancel
           </Button>
-          <Button
-            theme='primary'
-            props={{
-              type: 'submit',
-              onClick: () => {
-                if (action == 'create') handleCreateBtnClick()
-                if (action == 'clone') handleCloneBtnClick()
-                if (action == 'edit') handleSaveBtnClick()
-              },
-            }}
-          >
-            {action === 'create' && 'Create'}
-            {action === 'clone' && 'Use'}
-            {action === 'edit' && 'Save'}
-          </Button>
+          {action === 'create' && (
+            <Button
+              theme='primary'
+              props={{
+                type: 'submit',
+                onClick: handleCreateBtnClick,
+                disabled: create?.isLoading,
+              }}
+            >
+              Create
+            </Button>
+          )}
+          {action === 'clone' && (
+            <Button
+              theme='primary'
+              props={{
+                type: 'submit',
+                onClick: handleCloneBtnClick,
+                disabled: clone?.isLoading,
+              }}
+            >
+              Use
+            </Button>
+          )}
+          {action === 'edit' && (
+            <Button
+              theme='primary'
+              props={{
+                type: 'submit',
+                onClick: handleSaveBtnClick,
+                disabled: rename?.isLoading,
+              }}
+            >
+              Save
+            </Button>
+          )}
         </div>
       </form>
     </BaseModal>

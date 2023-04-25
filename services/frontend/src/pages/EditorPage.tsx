@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import { Annotators } from '../components/Annotators/Annotators'
@@ -38,8 +37,8 @@ import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
 import { usePreview } from '../context/PreviewProvider'
-import { getComponents } from '../services/getComponents'
-import { getDist } from '../services/getDist'
+import { useAssistants } from '../hooks/useAssistants'
+import { useComponent } from '../hooks/useComponent'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -57,29 +56,11 @@ export const EditorPage = () => {
   const auth = useAuth()
   const { state } = useLocation()
   const location = useLocation()
-  const nameFromURL = location?.pathname?.substring(1)
+
   const { isPreview, setIsPreview } = usePreview()
 
-  const { data: dist } = useQuery(
-    ['dist', state?.distName],
-    () => getDist(state?.distName! || nameFromURL),
-    {
-      refetchOnWindowFocus: false,
-      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
-    }
-  )
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(
-    ['components', state?.distName],
-    () => getComponents(state?.distName! || nameFromURL),
-    {
-      refetchOnWindowFocus: false,
-      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
-    }
-  )
+  const { dist } = useAssistants()
+  const { components, isComponentsLoading, componentsError } = useComponent()
 
   const annotators = components?.annotators
   const candidateAnnotators = components?.candidate_annotators
@@ -170,38 +151,40 @@ export const EditorPage = () => {
                 skills
                 annotation='generate possible responses to the user'
               >
-                <Loader isLoading={isComponentsLoading} />
-                <ErrorHandler error={componentsError} />
-                {isTableView && (
-                  <Table
-                    second='Type'
-                    addButton={
-                      !isPreview ? (
-                        <AddButton
-                          forTable
-                          forSkills
-                          disabled={!auth?.user && isPreview}
-                          text='Add Skill'
-                        />
-                      ) : undefined
-                    }
-                  >
-                    <SkillList skills={skills} view='table' type='your' />
-                  </Table>
-                )}
-                {!isTableView && (
-                  <Container gridForCards heightAuto>
-                    {!isPreview && (
-                      <AddButton disabled={isPreview} forGrid forSkills />
-                    )}
-                    <SkillList
-                      skills={skills}
-                      view='cards'
-                      type='your'
-                      forGrid
-                    />
-                  </Container>
-                )}
+                <Container flexRow>
+                  {isTableView && (
+                    <Table
+                      second='Type'
+                      addButton={
+                        !isPreview ? (
+                          <AddButton
+                            forTable
+                            forSkills
+                            disabled={!auth?.user && isPreview}
+                            text='Add Skill'
+                          />
+                        ) : undefined
+                      }
+                    >
+                      <SkillList skills={skills} view='table' type='your' />
+                    </Table>
+                  )}
+                  {!isTableView && (
+                    <Container gridForCards heightAuto>
+                      {!isPreview && (
+                        <AddButton disabled={isPreview} forGrid forSkills />
+                      )}
+                      <ErrorHandler error={componentsError} />
+                      <Loader isLoading={isComponentsLoading} />
+                      <SkillList
+                        skills={skills}
+                        view='cards'
+                        type='your'
+                        forGrid
+                      />
+                    </Container>
+                  )}
+                </Container>
               </Wrapper>
             )}
           </Main>

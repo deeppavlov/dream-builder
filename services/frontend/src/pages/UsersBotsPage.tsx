@@ -1,5 +1,4 @@
 import { Toaster } from 'react-hot-toast'
-import { useQuery } from 'react-query'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
@@ -12,7 +11,7 @@ import { PublishAssistantModal } from '../components/PublishAssistantModal/Publi
 import { ShareModal } from '../components/ShareModal/ShareModal'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
-import { getPrivateDists } from '../services/getPrivateDists'
+import { useAssistants } from '../hooks/useAssistants'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -21,16 +20,17 @@ import { consts } from '../utils/consts'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
-  const { data, error, isLoading } = useQuery('privateDists', getPrivateDists)
-  const { options, dispatch } = useDisplay()
+  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { privateDists, privateDistsError, isPrivateDistsLoading } =
+    useAssistants()
 
   return (
     <>
       <Main sidebar>
-        <Wrapper title='Your Virtual Assistants' amount={data?.length}>
-          <Loader isLoading={isLoading} />
-          <ErrorHandler error={error} />
+        <Wrapper title='Your Virtual Assistants' amount={privateDists?.length}>
+          <Loader isLoading={isPrivateDistsLoading} />
+          <ErrorHandler error={privateDistsError} />
           {isTableView ? (
             <Table
               addButton={
@@ -41,12 +41,17 @@ export const UsersBotsPage = () => {
                 />
               }
             >
-              <DistList view='table' dists={data} type='your' />
+              <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (
             <Container gridForCards>
               <AddButton forGrid />
-              <DistList view='cards' dists={data} type='your' size='big' />
+              <DistList
+                view='cards'
+                dists={privateDists}
+                type='your'
+                size='big'
+              />
             </Container>
           )}
         </Wrapper>

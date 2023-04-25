@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { addComponent } from '../services/addComponent'
 import {
@@ -6,12 +6,16 @@ import {
   InfoForNewComponent,
 } from '../services/createComponent'
 import { deleteComoponent } from '../services/deleteComponent'
-import { ISkill } from '../types/types'
 import { editComponent } from '../services/editComponent'
+import { getComponents } from '../services/getComponents'
+import { ISkill } from '../types/types'
 
 export const useComponent = () => {
   const { state } = useLocation()
   const queryClient = useQueryClient()
+  const location = useLocation()
+  const nameFromURL = location?.pathname?.substring(1)
+
   const addSkill = useMutation({
     mutationFn: (variables: { distName: string; id: number }) => {
       return addComponent(variables.distName, variables.id)
@@ -55,5 +59,25 @@ export const useComponent = () => {
     },
   })
 
-  return { addSkill, deleteComponent, create, edit }
+  const {
+    isLoading: isComponentsLoading,
+    error: componentsError,
+    data: components,
+  } = useQuery(
+    ['components', state?.distName],
+    () => getComponents(state?.distName! || nameFromURL),
+    {
+      refetchOnWindowFocus: false,
+      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
+    }
+  )
+  return {
+    components,
+    isComponentsLoading,
+    componentsError,
+    addSkill,
+    deleteComponent,
+    create,
+    edit,
+  }
 }

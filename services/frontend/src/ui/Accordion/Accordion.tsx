@@ -41,8 +41,8 @@ export const Accordion = ({
   }, [children, isActive])
 
   return (
-    <>
-      <button
+    <div>
+      <div
         className={cx(
           'accordion',
           group,
@@ -53,12 +53,12 @@ export const Accordion = ({
         )}
         onClick={handleAccordionClick}
       >
-        {title}
-        <Arrow />
-      </button>
-      <div ref={contentEl} className={s.elements}>
+        <span>{title}</span>
+        <Arrow className={cx('accordion-item__icon')} />
+      </div>
+      <div ref={contentEl} className={cx('elements', type)}>
         {children}
       </div>
-    </>
+    </div>
   )
 }

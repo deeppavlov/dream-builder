@@ -1,7 +1,7 @@
+import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
+import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import classNames from 'classnames/bind'
 import React, { useRef, useState } from 'react'
-import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
-import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
 import { useObserver } from '../../hooks/useObserver'
 import s from './SkillDropboxSearch.module.scss'
 
@@ -47,7 +47,6 @@ const SkillDropboxSearch = ({
   const handleSearchClick = (e: React.MouseEvent) => {
     const targetIsInput =
       (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
-
     if (!isOpen && targetIsInput) setIsOpen(true)
     if (!targetIsInput) setIsOpen(!isOpen)
   }
@@ -83,7 +82,7 @@ const SkillDropboxSearch = ({
         <input
           {...props}
           className={s.input}
-          disabled
+          readOnly
           // onChange={handleSearchChange}
         />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />

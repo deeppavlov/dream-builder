@@ -180,8 +180,8 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (item: any) => {
-    reset({ model: item.name })
+  const handleModelSelect = ({ name }: any) => {
+    reset({ model: name })
   }
 
   const handleCreate = ({ model, prompt }: FormValues) => {

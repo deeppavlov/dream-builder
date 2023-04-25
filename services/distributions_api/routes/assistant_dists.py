@@ -96,13 +96,13 @@ async def get_list_of_private_virtual_assistants(
 
     -``token``: auth token
     """
-    public_dists = []
+    private_dists = []
 
     for dist in crud.get_all_private_virtual_assistants(db, user.id):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistant.from_orm(dist))
+            private_dists.append(schemas.VirtualAssistant.from_orm(dist))
 
-    return public_dists
+    return private_dists
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)

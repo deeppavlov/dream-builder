@@ -1,4 +1,3 @@
-import { BotInfoInterface } from './../types/types'
 import { privateApi } from './axiosConfig'
 
 export async function getDist(dist_name: string) {

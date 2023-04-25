@@ -32,10 +32,7 @@ const BaseContextMenu: React.FC<Props> = ({
   const [domReady, setDomReady] = React.useState(false)
   const [parent, setParent] = useState<HTMLElement | null>(null)
 
-  const hideMenu = () => {
-    console.log('cl')
-    setIsOpen(false)
-  }
+  const hideMenu = () => setIsOpen(false)
 
   const getPosition = () => {
     const coords = parent?.getBoundingClientRect()

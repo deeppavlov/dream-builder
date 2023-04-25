@@ -45,6 +45,7 @@ $animation-delay: 300ms;
   background: transparent;
   height: 100%;
   width: 100%;
+  cursor: default;
 }
 
 .search {
@@ -56,7 +57,7 @@ $animation-delay: 300ms;
   border: 1px solid $text3;
   border-radius: 12px;
   padding: 11px 16px;
-  background-color: $bcgrnd2;
+  background-color: $bcgrnd1;
 }
 
 .icon {

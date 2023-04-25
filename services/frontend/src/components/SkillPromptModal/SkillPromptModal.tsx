@@ -20,7 +20,7 @@ import { TextArea } from '../../ui/TextArea/TextArea'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { validationRules } from '../../utils/formValidate'
+import { validationSchema } from '../../utils/validationSchema'
 import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
@@ -53,6 +53,7 @@ const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
+  const [selectedService, setSelectedService] = useState<LM | null>(null)
   const queryClient = useQueryClient()
   const { options, dispatch } = useDisplay()
   const dist = options.get(consts.ACTIVE_ASSISTANT)
@@ -60,7 +61,6 @@ const SkillPromptModal = () => {
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const cx = classNames.bind(s)
-  const promptWordsMaxLenght = 10000
 
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
@@ -111,6 +111,7 @@ const SkillPromptModal = () => {
       enabled: dist?.name?.length > 0,
       onSuccess: data => {
         const service = data?.name
+        setSelectedService(data)
         setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
       },
     }
@@ -133,6 +134,7 @@ const SkillPromptModal = () => {
     handleSubmit,
     register,
     reset,
+    setValue,
     setError,
     getValues,
     control,
@@ -180,7 +182,10 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = (item: any) => reset({ model: item.name })
+  const handleModelSelect = ({ name, data }: any) => {
+    setValue('model', name)
+    setSelectedService(services?.find((s: LM) => s?.name === data))
+  }
 
   const handleCreate = ({ model, prompt }: FormValues) => {
     trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
@@ -314,6 +319,7 @@ const SkillPromptModal = () => {
                       services &&
                       services?.map((service: any) => ({
                         name: service?.display_name,
+                        data: service?.name,
                       }))
                     }
                     activeItem={{
@@ -353,19 +359,20 @@ const SkillPromptModal = () => {
                   name='prompt'
                   label='Enter prompt:'
                   countType='tokenizer'
-                  tokenizerModel={service?.display_name}
+                  tokenizerModel={selectedService?.display_name as any}
                   defaultValue={prompt?.text}
                   withCounter
                   fullHeight
                   resizable={false}
                   control={control}
                   rules={{
-                    required: 'This field can’t be empty',
-                    maxLength: {
-                      value: service?.max_tokens,
-                      message: `Limit prompt to ${service?.max_tokens} words`,
-                    },
-                    validate: validationRules,
+                    required: validationSchema.global.required,
+                    maxLength:
+                      selectedService?.max_tokens &&
+                      validationSchema.skill.prompt.maxLength(
+                        selectedService?.max_tokens
+                      ),
+                    pattern: validationSchema.global.engSpeechRegExp,
                   }}
                   setError={setError}
                   props={{

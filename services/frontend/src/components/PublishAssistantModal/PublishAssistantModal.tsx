@@ -95,7 +95,7 @@ export const PublishAssistantModal = () => {
                 Public (Coming Soon)
               </RadioButton> */}
               <RadioButton
-                props={{ ...register('visability') }}
+                props={{ ...register('visability'), defaultChecked: true }}
                 // tooltipId='Private'
                 name='visibility'
                 id='Private'

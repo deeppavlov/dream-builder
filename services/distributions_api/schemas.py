@@ -36,7 +36,7 @@ class User(BaseOrmModel):
     family_name: Optional[str]
 
 
-class VirtualAssistant(BaseOrmModel):
+class VirtualAssistantRead(BaseOrmModel):
     id: int
     author: User
     source: str
@@ -44,8 +44,18 @@ class VirtualAssistant(BaseOrmModel):
     display_name: str
     description: str
     date_created: datetime
+    visibility: str
     cloned_from_id: Optional[int]
     # clones: List[VirtualAssistant]
+
+    @classmethod
+    def from_orm(cls, obj, *args, **kwargs):
+        try:
+            obj.visibility = obj.publish_request.visibility
+        except AttributeError:
+            obj.visibility = "private"
+
+        return super().from_orm(obj, *args, **kwargs)
 
 
 class EditAssistantDistModel(BaseModel):
@@ -253,7 +263,7 @@ class DeploymentCreate(BaseModel):
 
 class PublishRequestRead(BaseOrmModel):
     id: int
-    virtual_assistant: VirtualAssistant
+    virtual_assistant: VirtualAssistantRead
     user: User
     slug: str
     visibility: Literal["unlisted", "public_template", "public"]

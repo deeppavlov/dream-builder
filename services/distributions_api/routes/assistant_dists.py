@@ -33,7 +33,7 @@ def send_publish_request_created_emails(
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_virtual_assistant(
     payload: schemas.CreateAssistantDistModel, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-) -> schemas.VirtualAssistant:
+) -> schemas.VirtualAssistantRead:
     """
     Creates new distribution from base template
 
@@ -68,11 +68,11 @@ async def create_virtual_assistant(
         original_components = crud.get_virtual_assistant_components(db, minimal_template_virtual_assistant.id)
         crud.create_virtual_assistant_components(db, new_virtual_assistant.id, original_components)
 
-    return schemas.VirtualAssistant.from_orm(new_virtual_assistant)
+    return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
 
 @assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
-async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -> List[schemas.VirtualAssistant]:
+async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -> List[schemas.VirtualAssistantRead]:
     """
     Lists public Dream distributions
     """
@@ -80,7 +80,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
 
     for dist in crud.get_all_public_virtual_assistants(db):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistant.from_orm(dist))
+            public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
@@ -88,7 +88,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
 @assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
 async def get_list_of_private_virtual_assistants(
     user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-) -> List[schemas.VirtualAssistant]:
+) -> List[schemas.VirtualAssistantRead]:
     """
     Lists private Dream distributions
 
@@ -100,13 +100,13 @@ async def get_list_of_private_virtual_assistants(
 
     for dist in crud.get_all_private_virtual_assistants(db, user.id):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            private_dists.append(schemas.VirtualAssistant.from_orm(dist))
+            private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return private_dists
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
-async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(get_db)) -> schemas.VirtualAssistant:
+async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(get_db)) -> schemas.VirtualAssistantRead:
     """
     Returns existing dist with the given name
 
@@ -121,7 +121,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
     # except FileNotFoundError:
     #     raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
 
-    return schemas.VirtualAssistant.from_orm(virtual_assistant)
+    return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
 
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
@@ -130,7 +130,7 @@ async def patch_virtual_assistant_by_name(
     payload: schemas.EditAssistantDistModel,
     user: str = Depends(verify_token),
     db: Session = Depends(get_db),
-) -> schemas.VirtualAssistant:
+) -> schemas.VirtualAssistantRead:
     """
     Updates existing dist with edited name and/or description
 
@@ -166,7 +166,7 @@ async def patch_virtual_assistant_by_name(
 
         dream_dist.save(overwrite=True)
 
-    return schemas.VirtualAssistant.from_orm(virtual_assistant)
+    return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
@@ -202,7 +202,7 @@ async def clone_dist(
     payload: schemas.CreateAssistantDistModel,
     user: schemas.User = Depends(verify_token),
     db: Session = Depends(get_db),
-) -> schemas.VirtualAssistant:
+) -> schemas.VirtualAssistantRead:
     """
     Clones new distribution from an existing one
 
@@ -248,7 +248,7 @@ async def clone_dist(
         except ValueError:
             crud.create_deployment(db, new_virtual_assistant.id, "http://test-url", "test prompt", 1)
 
-    return schemas.VirtualAssistant.from_orm(new_virtual_assistant)
+    return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
 
 def _virtual_assistant_component_model_to_schema(virtual_assistant_component: models.VirtualAssistantComponent):

@@ -53,6 +53,7 @@ const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
+  const [selectedService, setSelectedService] = useState<LM | null>(null)
   const queryClient = useQueryClient()
   const { options, dispatch } = useDisplay()
   const dist = options.get(consts.ACTIVE_ASSISTANT)
@@ -60,7 +61,6 @@ const SkillPromptModal = () => {
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const cx = classNames.bind(s)
-  const promptWordsMaxLenght = 10000
 
   const setPromptForDist = useMutation({
     mutationFn: (variables: { distName: string; prompt: string }) => {
@@ -111,6 +111,7 @@ const SkillPromptModal = () => {
       enabled: dist?.name?.length > 0,
       onSuccess: data => {
         const service = data?.name
+        setSelectedService(data)
         setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
       },
     }
@@ -133,6 +134,7 @@ const SkillPromptModal = () => {
     handleSubmit,
     register,
     reset,
+    setValue,
     setError,
     getValues,
     control,
@@ -180,8 +182,9 @@ const SkillPromptModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleModelSelect = ({ name }: any) => {
-    reset({ model: name })
+  const handleModelSelect = ({ name, data }: any) => {
+    setValue('model', name)
+    setSelectedService(services?.find((s: LM) => s?.name === data))
   }
 
   const handleCreate = ({ model, prompt }: FormValues) => {
@@ -316,6 +319,7 @@ const SkillPromptModal = () => {
                       services &&
                       services?.map((service: any) => ({
                         name: service?.display_name,
+                        data: service?.name,
                       }))
                     }
                     activeItem={{
@@ -355,7 +359,7 @@ const SkillPromptModal = () => {
                   name='prompt'
                   label='Enter prompt:'
                   countType='tokenizer'
-                  tokenizerModel={service?.display_name}
+                  tokenizerModel={selectedService?.display_name as any}
                   defaultValue={prompt?.text}
                   withCounter
                   fullHeight
@@ -364,7 +368,7 @@ const SkillPromptModal = () => {
                   rules={{
                     required: validationSchema.global.required,
                     maxLength: validationSchema.skill.prompt.maxLength(
-                      service?.max_tokens
+                      selectedService?.max_tokens || 0
                     ),
                     pattern: validationSchema.global.engSpeechRegExp,
                   }}

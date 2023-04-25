@@ -113,7 +113,7 @@ export const TextArea: FC<TextAreaProps> = ({
     setLength(length)
     setIsTyping(false)
     if (isMaxLength) setError(name, maxLength)
-  }, [value])
+  }, [value, tokenizerModel])
 
   return (
     <div
@@ -144,7 +144,7 @@ export const TextArea: FC<TextAreaProps> = ({
           onBlur={handleBlur}
           onChange={handleChange}
           className={s.field}
-        />
+        >{field.value}</textarea>
 
         {withEnterButton && (
           <div className={cx('submit', isEnter && 'submit-active')}>

@@ -17,6 +17,8 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { RoutesList } from '../../router/RoutesList'
 
 export interface SkillCardProps {
   skill: ISkill

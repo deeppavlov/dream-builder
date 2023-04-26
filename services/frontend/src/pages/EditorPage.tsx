@@ -48,7 +48,7 @@ import { consts } from '../utils/consts'
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const skillEditorIsActive = options.get(consts.SKILL_EDITOR_IS_ACTIVE)
+  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const tabsNames = ['Skills', 'Architecture']
   const [activeTab, setActiveTab] = useState<number>(
     tabsNames.findIndex(v => v === options.get(consts.EDITOR_ACTIVE_TAB)) ?? 0

@@ -20,6 +20,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import s from './ShareModal.module.scss'
+import { useObserver } from '../../hooks/useObserver'
 
 export const ShareModal = () => {
   const [bot, setBot] = useState<string>('not yet')

@@ -17,7 +17,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
 }
 
 .chat {
@@ -28,7 +27,6 @@
   flex-direction: column;
   gap: 24px;
   overflow: auto;
-
   /* Hide scrollbar for IE, Edge and Firefox */
   &::-webkit-scrollbar {
     display: none;

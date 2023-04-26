@@ -98,6 +98,14 @@ export const PublishAssistantModal = () => {
           </div>
         </form>
       </div>
+      <BaseToolTip
+        id='Public'
+        content='Everyone can clone and talk to your VA'
+      />
+      <BaseToolTip
+        id='Unlisted'
+        content={`Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category`}
+      />
     </BaseModal>
   )
 }

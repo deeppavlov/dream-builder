@@ -18,6 +18,7 @@ import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
 
+
 interface BotListItemProps {
   type: BotAvailabilityType
   bot: BotInfoInterface

@@ -17,6 +17,8 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
+import { submitOnEnter } from '../../utils/submitOnEnter'
+import { useChatScroll } from '../../hooks/useChatScroll'
 
 type ChatPanelType = 'bot' | 'skill'
 
@@ -60,6 +62,57 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
 
+  // hooks
+  useObserver('RenewChat', handleRenewClick)
+  useChatScroll(chatRef, [history, message])
+
+  const handleGoBackBtnClick = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+
+  const handleStartBtnClick = () => {
+    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!).then(() => {
+      setIsFirstTest(false)
+    })
+  }
+  const handleSend = (data: ChatForm) => {
+    const id = session?.id!
+    const message = data?.message!
+    setMessage(message)
+
+    send.mutate({ id, message })
+    reset()
+  }
+  const handleRenewClick = () => {
+    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    setMessage('')
+  }
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
+  }
+  // queries
+  const renew = useMutation({
+    mutationFn: (data: string) => {
+      return renewDialog(data)
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: 'history' }),
+        setSession(data)
+    },
+    onError: () => {
+      setIsError(true)
+    },
+  })
+  const send = useMutation({
+    mutationFn: (variables: { id: number; message: string }) => {
+      return sendMessage(variables?.id, variables?.message)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'history' }),
+  })
+  const { data: history } = useQuery(
+    ['history', session?.id],
+    () => getHistory(session?.id!),
+    { refetchOnWindowFocus: false, enabled: send?.isLoading }
+  )
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])

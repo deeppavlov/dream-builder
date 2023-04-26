@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Gear } from '../../../assets/icons/gear.svg'
+import { trigger } from '../../../utils/events'
 import s from './SettingsTab.module.scss'
 
 export const SettingsTab = () => {

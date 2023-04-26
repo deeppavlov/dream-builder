@@ -6,6 +6,11 @@ import { BotInfoInterface, TTopbar } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
+import { mockSkills } from '../../mocks/database/mockSkills'
+import { BotInfoInterface, TTopbar } from '../../types/types'
+import { usePreview } from '../../context/PreviewProvider'
+import { useNavigate } from 'react-router-dom'
+import { RoutesList } from '../../router/RoutesList'
 
 interface Props {
   tooltipId: string

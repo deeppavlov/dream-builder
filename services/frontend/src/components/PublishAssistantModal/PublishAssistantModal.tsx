@@ -40,7 +40,7 @@ export const PublishAssistantModal = () => {
   }
 
   useObserver('PublishAssistantModal', handleEventUpdate)
-
+  const visibility = ['public_template', 'private', 'unlisted']
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
@@ -54,6 +54,10 @@ export const PublishAssistantModal = () => {
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
+              {visibility.map(type => {
+                console.log('type = ', type)
+                return <>{type} </>
+              })}
               <RadioButton
                 props={{ ...register('visibility'), defaultChecked: true }}
                 name='visibility'

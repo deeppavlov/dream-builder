@@ -39,9 +39,8 @@ export const DeleteSkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.areYouSure}>
         <div className={s.header}>
-          Do You Really Want to delete
-          <mark> {skill?.display_name} </mark>
-          Skill?
+          Do you really want to delete this component:
+          <mark> {skill?.display_name} </mark>?
         </div>
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>

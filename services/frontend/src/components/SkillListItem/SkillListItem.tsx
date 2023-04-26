@@ -103,12 +103,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           data-tooltip-id={'skillTableDesc' + tooltipId}
         >
           {skill?.description}
-          <BaseToolTip
+          {/* <BaseToolTip
             delayShow={TOOLTIP_DELAY}
             id={'skillTableDesc' + tooltipId}
             content={skill?.description}
             theme='description'
-          />
+          /> */}
         </div>
       </td>
       {!withoutDate && (

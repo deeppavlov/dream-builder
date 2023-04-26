@@ -118,12 +118,12 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
-            <BaseToolTip
+            {/* <BaseToolTip
               delayShow={TOOLTIP_DELAY}
               id={'skillCardDesc' + tooltipId}
               content={skill?.description}
               theme='description'
-            />
+            /> */}
           </div>
 
           <span className={s.separator} />

@@ -21,7 +21,7 @@ export const SkillsListModal = () => {
   const cx = classNames.bind(s)
   const { data: skillsList } = useQuery(
     'skills',
-    () => getComponentsGroup('skills'),
+    () => getComponentsGroup('skills?component_type=Generative'),
     {
       enabled: isOpen,
     }

@@ -25,7 +25,7 @@
 .overflowForAddButton {
   overflow: visible;
 }
-.flexRow {
-  display: flex;
-  flex-direction: row;
+.scroll {overflow: scroll;
+  // display: flex;
+  // flex-direction: row; 
 }

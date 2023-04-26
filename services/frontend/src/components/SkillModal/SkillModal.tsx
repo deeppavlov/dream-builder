@@ -66,12 +66,10 @@ export const SkillModal = () => {
 
   const handleCreate = (data: any) => {
     toast.promise(
-      create
-        .mutateAsync({ ...data, lm_service_id: 0, prompt: 'new prompt' })
-        .then(() => {
-          closeModal()
-          trigger('SkillsListModal', { isOpen: false })
-        }),
+      create.mutateAsync({ ...data }).then(() => {
+        closeModal()
+        trigger('SkillsListModal', { isOpen: false })
+      }),
       {
         loading: 'Creating...',
         success: 'Success!',

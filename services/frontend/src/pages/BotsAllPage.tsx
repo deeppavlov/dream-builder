@@ -24,7 +24,7 @@ export const BotsAllPage = () => {
     <>
       <Main sidebar>
         <Wrapper
-          title='Virtual Assistants Templates'
+          title='Assistant Templates'
           amount={publicDists?.length}
         >
           <Loader isLoading={isPublicDistsLoading} />

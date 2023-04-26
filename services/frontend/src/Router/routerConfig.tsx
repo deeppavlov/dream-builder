@@ -1,18 +1,18 @@
-import { Link, generatePath } from 'react-router-dom'
-import { consts } from '../utils/consts'
-import Root from '../pages/Root'
+import { generatePath, Link } from 'react-router-dom'
 import { BotsAllPage } from '../pages/BotsAllPage'
 import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
+import ArchitecturePage from '../pages/Editor/ArchitecturePage'
 import { EditorPage } from '../pages/Editor/EditorPage'
+import SkillsPage from '../pages/Editor/SkillsPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { ProfilePage } from '../pages/ProfilePage'
+import Root from '../pages/Root'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
 import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
-import ArchitecturePage from '../pages/Editor/ArchitecturePage'
-import SkillsPage from '../pages/Editor/SkillsPage'
+import { consts } from '../utils/consts'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
 
@@ -30,9 +30,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         element: <BotsAllPage />,
         handle: {
           crumb: () => [
-            <Link to={RoutesList.botsAll}>
-              Assistant Templates
-            </Link>,
+            <Link to={RoutesList.botsAll}>Assistant Templates</Link>,
           ],
         },
       },
@@ -44,11 +42,7 @@ export const RouterConfig: CustomRouteConfig[] = [
           </PrivateRoute>
         ),
         handle: {
-          crumb: () => [
-            <Link to={RoutesList.yourBots}>
-              Your Assistants
-            </Link>,
-          ],
+          crumb: () => [<Link to={RoutesList.yourBots}>Your Assistants</Link>],
         },
       },
       {

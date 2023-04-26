@@ -1,0 +1,88 @@
+.skeleton,
+.skeleton .header,
+.skeleton .desc,
+.skeleton .btn {
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60%
+    )
+    #dcdcdfa8;
+  background-size: 200% 100%;
+  background-position-x: 180%;
+  animation: 3s loading ease-in-out infinite;
+}
+
+.skeleton .small-btn {
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60%
+    )
+    #dcdcdfa8;
+  background-size: 800% 100%;
+  background-position-x: 100%;
+
+  animation: small-loading 3s ease-in-out 0.8s infinite;
+}
+
+.card {
+  width: 280px;
+  width: 280px;
+  height: 266px;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #8D96B5;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  gap: 8px;
+}
+
+.header {
+  height: 38px;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.desc {
+  height: 66px;
+  border-radius: 4px;
+}
+
+.btns {
+  margin-top: 4px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  width: 195px;
+  height: 36px;
+  border-radius: 4px;
+}
+
+.small-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+}
+
+@keyframes loading {
+  to {
+    background-position-x: -20%;
+  }
+}
+
+@keyframes small-loading {
+  to {
+    background-position-x: -20%;
+  }
+}

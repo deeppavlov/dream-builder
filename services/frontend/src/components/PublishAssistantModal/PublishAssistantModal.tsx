@@ -7,6 +7,7 @@ import { BotInfoInterface, BotVisabilityType } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
 interface FormValues {

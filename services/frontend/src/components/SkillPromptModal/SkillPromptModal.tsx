@@ -24,18 +24,6 @@ import { validationSchema } from '../../utils/validationSchema'
 import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
-import { DEBUG_DIST } from '../DialogSidePanel/DialogSidePanel'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { getLMservice } from '../../services/getLMservice'
-import { getPrompt } from '../../services/getPrompt'
-import { getAllLMservices } from '../../services/getAllLMservices'
-import SkillDialog from '../SkillDialog/SkillDialog'
-import { postPrompt } from '../../services/postPrompt'
-import { changeLMservice } from '../../services/changeLMservice'
-import { servicesList } from '../../mocks/database/servicesList'
-import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
-import { useObserver } from '../../hooks/useObserver'
 import s from './SkillPromptModal.module.scss'
 
 export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
@@ -247,21 +235,8 @@ const SkillPromptModal = () => {
     dispatch({
       type: 'set',
       option: {
-        id: consts.BREADCRUMBS_PATH,
-        value: {
-          location: location.pathname,
-          path: isOpen
-            ? [dist?.display_name, 'Skills', skill?.display_name]
-            : [dist?.display_name, editorActiveTab],
-        },
-      },
-    })
-
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.SKILL_EDITOR_IS_ACTIVE,
-        value: isOpen,
+        id: consts.EDITOR_ACTIVE_SKILL,
+        value: skill,
       },
     })
   }, [isOpen])

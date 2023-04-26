@@ -1,13 +1,13 @@
 import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
 import { Annotators } from '../../components/Annotators/Annotators'
 import { CandidateAnnotators } from '../../components/CandidateAnnotators/CandidateAnnotators'
 import { Loader } from '../../components/Loader/Loader'
 import { Main } from '../../components/Main/Main'
 import { ResponseAnnotators } from '../../components/ResponseAnnotators/ResponseAnnotators'
 import { ResponseSelector } from '../../components/ResponseSelector/ResponseSelector'
-import { SkillSelector } from '../../components/SkillSelector/SkillSelector'
 import { Skills } from '../../components/Skills/Skills'
-import { useParams } from 'react-router-dom'
+import { SkillSelector } from '../../components/SkillSelector/SkillSelector'
 import { getComponents } from '../../services/getComponents'
 
 const ArchitecturePage = () => {

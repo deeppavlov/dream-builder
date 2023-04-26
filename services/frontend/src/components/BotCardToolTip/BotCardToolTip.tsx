@@ -83,6 +83,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
+            disabled={bot?.visibility =='public_template'}
             name='Rename'
             type='edit'
             handleClick={handleRenameBtnClick}

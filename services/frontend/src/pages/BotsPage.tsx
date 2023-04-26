@@ -68,7 +68,7 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table>
+            <Table fourth='Visibility'>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (

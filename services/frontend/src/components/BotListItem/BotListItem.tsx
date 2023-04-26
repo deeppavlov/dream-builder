@@ -1,10 +1,10 @@
 import { ReactComponent as Clone } from '@assets/icons/clone.svg'
 import Woman from '@assets/icons/woman.png'
-import { FC, useId, useRef } from 'react'
+import { FC,useId,useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { useDisplay } from '../../context/DisplayContext'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -14,6 +14,7 @@ import { timeToUTC } from '../../utils/timeToUTC'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 
 interface BotListItemProps {
@@ -119,6 +120,27 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
           /> */}
         </div>
       </td>
+      {/* <td className={s.td}>
+        <div className={s.visibility}>
+          {type == 'your' && (
+            <SmallTag
+              theme={
+                bot?.publish_state === 'in_progress'
+                  ? 'validating'
+                  : bot?.visibility
+              }
+            >
+              {!bot?.publish_state
+                ? type === 'your' && bot?.visibility
+                : bot?.publish_state == 'in_progress'
+                ? 'On moderation'
+                : bot?.visibility === 'public_template'
+                ? 'Public'
+                : bot?.visibility}
+            </SmallTag>
+          )}
+        </div>
+      </td> */}
       <td className={s.td}>
         <div className={s.date}>
           <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>

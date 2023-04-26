@@ -111,9 +111,23 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               <CalendarIcon />
               {dateToUTC(bot?.date_created)}
             </div>
-            <SmallTag theme={type}>
-              {type === 'your' ? 'Private' : type}
-            </SmallTag>
+            {type == 'your' && (
+              <SmallTag
+                theme={
+                  bot?.publish_state === 'in_progress'
+                    ? 'validating'
+                    : bot?.visibility
+                }
+              >
+                {!bot?.publish_state
+                  ? type === 'your' && bot?.visibility
+                  : bot?.publish_state == 'in_progress'
+                  ? 'On moderation'
+                  : bot?.visibility === 'public_template'
+                  ? 'Public'
+                  : bot?.visibility}
+              </SmallTag>
+            )}
           </div>
         </div>
         <div className={s.scroll}>

@@ -21,7 +21,7 @@ async def create_deployment(
 ):
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         # chat_url = deployer.deploy(dream_dist)
         # deployment = crud.create_deployment(db, virtual_assistant.id, chat_url)

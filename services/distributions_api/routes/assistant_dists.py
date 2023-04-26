@@ -45,7 +45,7 @@ async def create_virtual_assistant(
     """
     with db.begin():
         minimal_template_virtual_assistant = crud.get_virtual_assistant_by_name(db, TEMPLATE_DIST_PROMPT_BASED)
-        dream_dist = AssistantDist.from_dist(minimal_template_virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / minimal_template_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
         original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
@@ -123,7 +123,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
     virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
 
     try:
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
 
@@ -156,7 +156,7 @@ async def patch_virtual_assistant_by_name(
     """
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         if payload.display_name:
             dream_dist.pipeline_conf.display_name = payload.display_name
@@ -194,7 +194,7 @@ async def delete_virtual_assistant_by_name(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
 
         try:
-            dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+            dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
             dream_dist.delete()
         except FileNotFoundError:
             pass
@@ -228,7 +228,7 @@ async def clone_dist(
     """
     with db.begin():
         original_virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-        dream_dist = AssistantDist.from_dist(original_virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / original_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
         original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
@@ -303,7 +303,7 @@ async def add_virtual_assistant_component(
     """"""
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         # TODO add dream_dist.add_component(...)
 
@@ -332,7 +332,7 @@ async def delete_virtual_assistant_component(
     """"""
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-        dream_dist = AssistantDist.from_dist(virtual_assistant.source)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         # TODO add dream_dist.remove_component(...)
 
@@ -349,7 +349,7 @@ async def publish_dist(
 ):
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-        dist = AssistantDist.from_dist(virtual_assistant.source)
+        dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         if payload.visibility == "private":
             crud.delete_publish_request(db, virtual_assistant.id)

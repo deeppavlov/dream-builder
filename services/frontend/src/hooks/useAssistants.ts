@@ -90,6 +90,9 @@ export const useAssistants = () => {
     mutationFn: (variables: { distName: string; visibility: string }) => {
       return publishAssistantDist(variables.distName, variables.visibility)
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries('privateDists')
+    },
   })
   return {
     privateDists,

@@ -137,6 +137,9 @@
 }
 .start,
 .error {
+  display: flex;
+  font-display: column;
+  gap: 16px;
   padding: 52px;
   align-items: center;
   justify-content: center;
@@ -149,7 +152,12 @@
     @include btn_primary_behavior;
   }
 }
-
+.alertName {
+  @include t2;
+}
+.runTest {
+  margin-top: 24px;
+}
 .error {
   color: #ff3b30;
   button {

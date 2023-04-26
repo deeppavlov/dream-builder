@@ -43,8 +43,6 @@ export const BotsPage = () => {
           amount={publicDists?.length}
           linkTo={RoutesList.botsAll}
         >
-          <Loader isLoading={isPublicDistsLoading} />
-          <ErrorHandler error={publicDistsError} />
           {isTableView ? (
             <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={publicDists} type='public' />
@@ -53,6 +51,8 @@ export const BotsPage = () => {
             <Container overflowForAddButton>
               <AddButton disabled={!auth?.user} />
               <Slider>
+                <Loader isLoading={isPublicDistsLoading} />
+                <ErrorHandler error={publicDistsError} />
                 <DistList view='cards' dists={publicDists} type='public' />
               </Slider>
             </Container>

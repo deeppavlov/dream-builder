@@ -82,11 +82,12 @@ async def get_component(component_id: int, db: Session = Depends(get_db)) -> sch
 
 @components_router.patch("/{component_id}", status_code=status.HTTP_200_OK)
 async def patch_component(
-    component_id: int, payload: schemas.ComponentCreate, db: Session = Depends(get_db)
+    component_id: int, payload: schemas.ComponentUpdate, db: Session = Depends(get_db)
 ) -> schemas.ComponentShort:
-    component = crud.update_component(
-        db, component_id, display_name=payload.display_name, description=payload.description
-    )
+    with db.begin():
+        component = crud.update_component(
+            db, component_id, display_name=payload.display_name, description=payload.description
+        )
 
     return schemas.ComponentShort.from_orm(component)
 

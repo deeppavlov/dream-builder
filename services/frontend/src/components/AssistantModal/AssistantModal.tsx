@@ -41,27 +41,25 @@ export const AssistantModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
-    // setBotDist(null)
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
-    // setBotDist(data.detail?.distribution ?? null)
-    // Reset values and errors states
+
     reset({
       [NAME_ID]: data?.detail?.bot?.display_name,
       [DESC_ID]: data?.detail?.bot?.description,
     })
     setIsOpen(!isOpen)
   }
-  // const isTopbarButton = bot && Object.keys(bot).length === 2
+
   const name = bot?.name!
 
-  async function submit() {
-    const succeed = await handleSubmit(onFormSubmit)()
-    return succeed
-  }
+  // async function submit() {
+  //   const succeed = await handleSubmit(onFormSubmit)()
+  //   return succeed
+  // }
 
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     action === 'create' &&
@@ -81,11 +79,15 @@ export const AssistantModal = () => {
           closeModal()
         })
     action === 'edit' &&
-      toast.promise(rename.mutateAsync({ data, name }), {
-        loading: 'Renaming...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      })
+      toast
+        .promise(rename.mutateAsync({ data, name }), {
+          loading: 'Renaming...',
+          success: 'Success!',
+          error: 'Something Went Wrong...',
+        })
+        .then(() => {
+          closeModal()
+        })
   }
 
   useOnKey(handleSubmit(onFormSubmit), 'Enter')

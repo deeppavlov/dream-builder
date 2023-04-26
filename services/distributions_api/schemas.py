@@ -154,15 +154,8 @@ class ComponentShort(BaseOrmModel):
 class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
-    # ram_usage: str
-    # gpu_usage: Optional[str]
     lm_service_id: Optional[int]
     prompt: Optional[str]
-
-    # @validator("ram_usage", "gpu_usage")
-    # def check_memory_format(cls, v):
-    #     check_memory_format(v)
-    #     return v
 
 
 class ComponentUpdate(BaseModel):

@@ -45,13 +45,18 @@ async def create_component(
             settings.db.dream_root_path,
             prompted_service,
             f"components/{prompted_component_name}.yml",
+            "this-url-does-not-work:123",
             prompted_component_name,
-            f"Prompted Component {prompted_component_name}",
+            payload.display_name,
             user.email,
-            "Copy of prompted service",
+            payload.description,
         )
+
+        service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
+
         component = crud.create_component(
             db,
+            service_id=service.id,
             source="skills/dff_template_prompted_skill",
             name=prompted_component.component.name,
             display_name=prompted_component.component.display_name,
@@ -95,5 +100,9 @@ async def delete_component(
 
 
 @components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)
-async def get_list_of_group_components(group_name: str, db: Session = Depends(get_db)) -> List[schemas.ComponentShort]:
-    return [schemas.ComponentShort.from_orm(c) for c in crud.get_components_by_group_name(db, group_name)]
+async def get_list_of_group_components(
+    group_name: str, component_type: str = None, db: Session = Depends(get_db)
+) -> List[schemas.ComponentShort]:
+    return [
+        schemas.ComponentShort.from_orm(c) for c in crud.get_components_by_group_name(db, group_name, component_type)
+    ]

@@ -191,6 +191,10 @@ def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
     db.execute(delete(models.VirtualAssistant).where(models.VirtualAssistant.name == name))
 
 
+def create_service(db: Session, name: str, source: str):
+    return db.scalar(insert(models.Service).values(name=name, source=source).returning(models.Service))
+
+
 def get_component(db: Session, component_id: int) -> Optional[models.Component]:
     return db.get(models.Component, component_id)
 
@@ -199,12 +203,17 @@ def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
-    return db.scalars(select(models.Component).filter_by(group=group)).all()
+def get_components_by_group_name(db: Session, group: str, component_type: str = None) -> [models.Component]:
+    filters = {"group": group}
+    if component_type:
+        filters["component_type"] = component_type
+
+    return db.scalars(select(models.Component).filter_by(**filters)).all()
 
 
 def create_component(
     db: Session,
+    service_id: int,
     source: str,
     name: str,
     display_name: str,
@@ -225,6 +234,7 @@ def create_component(
     return db.scalar(
         insert(models.Component)
         .values(
+            service_id=service_id,
             source=source,
             name=name,
             display_name=display_name,

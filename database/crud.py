@@ -132,21 +132,19 @@ def get_all_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(select(models.VirtualAssistant)).all()
 
 
-def get_all_public_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
-    return db.scalars(
-        select(models.VirtualAssistant).where(models.VirtualAssistant.publish_request.has(is_confirmed=True))
-    ).all()
-
-
-def get_all_private_virtual_assistants(db: Session, user_id: int) -> [models.VirtualAssistant]:
+def get_all_public_templates_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(
         select(models.VirtualAssistant).where(
             and_(
-                models.VirtualAssistant.author_id == user_id,
-                ~models.VirtualAssistant.publish_request.has(is_confirmed=True),
+                models.VirtualAssistant.publish_request.has(visibility="public_template"),
+                models.VirtualAssistant.publish_request.has(is_confirmed=True),
             )
         )
     ).all()
+
+
+def get_all_user_virtual_assistants(db: Session, user_id: int) -> [models.VirtualAssistant]:
+    return db.scalars(select(models.VirtualAssistant).where(models.VirtualAssistant.author_id == user_id)).all()
 
 
 def create_virtual_assistant(
@@ -253,12 +251,7 @@ def create_component(
 def update_component(db: Session, id: int, **kwargs):
     values = {k: v for k, v in kwargs.items() if v is not None}
 
-    return db.scalar(
-        update(models.Component)
-        .filter_by(id=id)
-        .values(**values)
-        .returning(models.Component)
-    )
+    return db.scalar(update(models.Component).filter_by(id=id).values(**values).returning(models.Component))
 
 
 def delete_component(db: Session, id: int):

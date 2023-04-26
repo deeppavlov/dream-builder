@@ -47,18 +47,28 @@ class VirtualAssistantRead(BaseOrmModel):
     display_name: str
     description: str
     date_created: datetime
-    visibility: str
+    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
     cloned_from_id: Optional[int]
     # clones: List[VirtualAssistant]
 
     @classmethod
-    def from_orm(cls, obj, *args, **kwargs):
+    def from_orm(cls, obj):
         try:
-            obj.visibility = obj.publish_request.visibility
+            if obj.publish_request.is_confirmed is None:
+                obj.visibility = "private"
+                obj.publish_state = "in_progress"
+            elif obj.publish_request.is_confirmed:
+                obj.visibility = obj.publish_request.visibility
+                obj.publish_state = "confirmed"
+            else:
+                obj.visibility = "private"
+                obj.publish_state = "rejected"
         except AttributeError:
             obj.visibility = "private"
+            obj.publish_state = None
 
-        return super().from_orm(obj, *args, **kwargs)
+        return super().from_orm(obj)
 
 
 class EditAssistantDistModel(BaseModel):

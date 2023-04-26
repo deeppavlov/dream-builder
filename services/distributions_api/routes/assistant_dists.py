@@ -77,21 +77,21 @@ async def create_virtual_assistant(
     return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
 
-@assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
+@assistant_dists_router.get("/public_templates", status_code=status.HTTP_200_OK)
 async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -> List[schemas.VirtualAssistantRead]:
     """
     Lists public Dream distributions
     """
     public_dists = []
 
-    for dist in crud.get_all_public_virtual_assistants(db):
+    for dist in crud.get_all_public_templates_virtual_assistants(db):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
             public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
 
-@assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
+@assistant_dists_router.get("/user_owned", status_code=status.HTTP_200_OK)
 async def get_list_of_private_virtual_assistants(
     user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
 ) -> List[schemas.VirtualAssistantRead]:
@@ -104,7 +104,7 @@ async def get_list_of_private_virtual_assistants(
     """
     private_dists = []
 
-    for dist in crud.get_all_private_virtual_assistants(db, user.id):
+    for dist in crud.get_all_user_virtual_assistants(db, user.id):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
             private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 

@@ -93,7 +93,7 @@ export const PublishAssistantModal = () => {
                 type: 'submit',
               }}
             >
-              Publish
+              Save
             </Button>
           </div>
         </form>

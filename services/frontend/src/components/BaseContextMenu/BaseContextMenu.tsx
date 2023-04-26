@@ -5,6 +5,7 @@ import 'react-tooltip/dist/react-tooltip.css'
 import { useCheckClickOutside } from '../../hooks/useCheckClickOutside'
 import { useCheckDocumentScroll } from '../../hooks/useCheckDocumentScroll'
 import s from './BaseContextMenu.module.scss'
+import { subscribe, unsubscribe } from '../../utils/events'
 
 type TPlace = 'top' | 'right' | 'bottom' | 'left'
 
@@ -44,11 +45,14 @@ const BaseContextMenu: React.FC<Props> = ({
       if (!isOpen) prev?.blur()
       return newParent ?? null
     })
+
+    subscribe('CtxMenuBtnClick', hideMenu)
+    return () => unsubscribe('CtxMenuBtnClick', hideMenu)
   }, [isOpen])
 
   useEffect(() => setDomReady(true), [])
   useCheckDocumentScroll(isOpen, setIsOpen)
-  useCheckClickOutside(isOpen, ref, hideMenu, true)
+  useCheckClickOutside(isOpen, ref, hideMenu)
 
   return domReady
     ? createPortal(

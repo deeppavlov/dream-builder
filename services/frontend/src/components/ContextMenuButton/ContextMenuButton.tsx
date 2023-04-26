@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { trigger } from '../../utils/events'
 import s from './ContextMenuButton.module.scss'
 
 type TMenuItem =
@@ -38,6 +39,7 @@ const ContextMenuButton = ({
     if (disabled) return
     e.stopPropagation()
     handleClick && handleClick(e)
+    trigger('CtxMenuBtnClick', {})
   }
 
   return (

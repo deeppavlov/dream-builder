@@ -26,7 +26,7 @@ export const BotsAllPage = () => {
       {/* <Topbar viewHandler={viewHandler} type='main' /> */}
       <Main>
         <Wrapper
-          title='Public Virtual Assistants & Chatbots'
+          title='Assistant Templates'
           amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />

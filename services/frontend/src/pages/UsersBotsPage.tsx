@@ -33,7 +33,7 @@ export const UsersBotsPage = () => {
     <>
       <Main>
         <Wrapper
-          title='Your Virtual Assistants & Chatbots'
+          title='Your Assistants'
           amount={data?.length}>
           <Loader isLoading={isLoading} />
           <ErrorHandler error={error} />

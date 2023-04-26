@@ -31,7 +31,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         handle: {
           crumb: () => [
             <Link to={RoutesList.botsAll}>
-              Public Virtual Assistants & Chatbots
+              Assistant Templates
             </Link>,
           ],
         },
@@ -46,7 +46,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         handle: {
           crumb: () => [
             <Link to={RoutesList.yourBots}>
-              Your Virtual Assistants & Chatbots
+              Your Assistants
             </Link>,
           ],
         },

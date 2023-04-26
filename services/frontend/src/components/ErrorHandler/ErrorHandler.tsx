@@ -5,5 +5,5 @@ interface Props {
 }
 
 export const ErrorHandler: FC<Props> = ({ error }) => {
-  return <>{error && 'Loading...' + error}</>
+  return <>{error && 'Oops, something went wrong... Please try again later'}</>
 }

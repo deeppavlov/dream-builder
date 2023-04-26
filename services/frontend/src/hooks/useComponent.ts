@@ -6,7 +6,7 @@ import {
   InfoForNewComponent,
 } from '../services/createComponent'
 import { deleteComoponent } from '../services/deleteComponent'
-import { editComponent } from '../services/editComponent'
+import { ComponentData, editComponent } from '../services/editComponent'
 import { getComponents } from '../services/getComponents'
 import { ISkill } from '../types/types'
 
@@ -47,15 +47,11 @@ export const useComponent = () => {
     },
   })
   const edit = useMutation({
-    mutationFn: () => {
-      return editComponent()
+    mutationFn: (variables: { data: ComponentData; id: number }) => {
+      return editComponent(variables?.data, variables?.id)
     },
-    onSuccess: (data: ISkill) => {
-      const distName = state?.distName
-      const id = data?.id
-      addSkill.mutateAsync({ distName, id }).then(() => {
-        queryClient.invalidateQueries('components')
-      })
+    onSuccess: () => {
+      queryClient.invalidateQueries('components')
     },
   })
 

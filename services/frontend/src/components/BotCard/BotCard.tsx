@@ -23,20 +23,22 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const botCardRef = useRef(null)
   const { options } = useDisplay()
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
-  
-console.log('14:25 = ', options.get( consts.RIGHT_SP_IS_ACTIVE ))
+  const panelIsOpen = options.get(consts.RIGHT_SP_IS_ACTIVE)
+  console.log('14:25 = ', options.get(consts.RIGHT_SP_IS_ACTIVE))
   const handleBotCardClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, {
-      parent: botCardRef,
-      children: (
-        <BotInfoSidePanel
-          type={type}
-          key={bot?.name}
-          bot={bot}
-          disabled={disabled}
-        />
-      ),
-    })
+    !panelIsOpen
+      ? trigger(TRIGGER_RIGHT_SP_EVENT, {
+          parent: botCardRef,
+          children: (
+            <BotInfoSidePanel
+              type={type}
+              key={bot?.name}
+              bot={bot}
+              disabled={disabled}
+            />
+          ),
+        })
+      : trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {

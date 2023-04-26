@@ -1,13 +1,12 @@
 import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
 import classNames from 'classnames/bind'
-import React, { useEffect, useRef } from 'react'
+import React,{ useEffect,useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { DEEPY_ASSISTANT } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
-import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { ChatForm } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
@@ -22,9 +21,19 @@ import { ToastCopySucces } from '../Toasts/Toasts'
 import s from './CopilotSidePanel.module.scss'
 
 export const CopilotSidePanel = () => {
-  const { send, renew, session, message, history } = useChat()
-  const { handleSubmit, register, reset, getValues } = useForm<ChatForm>()
-  const { dispatch } = useDisplay()
+  const {
+    remoteHistory,
+    send,
+    renew,
+    isDeepy,
+    session,
+    message,
+    history,
+    deepySession,
+  } = useChat()
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const { dispatch, options } = useDisplay()
+  const isOpen = options.get('COPILOT_SP_IS_ACTIVE')
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
   const cx = classNames.bind(s)
@@ -43,15 +52,21 @@ export const CopilotSidePanel = () => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
 
+  console.log('remotehistory = ', remoteHistory)
+  
   const handleSend = (data: ChatForm) => {
-    const id = session?.id!
+    const id = deepySession?.id! || session?.id
     const message = data?.message
     send.mutate({ id, message })
     reset()
   }
 
   // hooks
-  useOnlyOnMount(() => renew.mutateAsync(DEEPY_ASSISTANT))
+  useEffect(() => {
+    console.log('isDeepy = ', isDeepy)
+    !isDeepy && renew.mutateAsync(DEEPY_ASSISTANT)
+  }, [])
+
   useChatScroll(chatRef, [history, message])
 
   const dispatchTrigger = (isOpen: boolean) =>
@@ -67,7 +82,7 @@ export const CopilotSidePanel = () => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  console.log(getValues('message'))
+
   return (
     <div className={s.container}>
       <div className={s.dialogSidePanel}>

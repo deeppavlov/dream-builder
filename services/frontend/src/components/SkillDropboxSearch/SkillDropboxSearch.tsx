@@ -2,39 +2,43 @@ import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
 import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import classNames from 'classnames/bind'
 import React, { useRef, useState } from 'react'
+import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { useObserver } from '../../hooks/useObserver'
 import s from './SkillDropboxSearch.module.scss'
 
 interface Item {
+  id: string
   name: string
-  data?: any
 }
 
 interface Props {
-  isOpen?: boolean
   list: Item[]
-  activeItem?: Item
+  name: string
+  control: Control<any>
+  defaultValue?: string
+  rules?: RegisterOptions
+  isOpen?: boolean
   label?: string
-  error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onSelect?: (item: Item) => void
   fullWidth?: boolean
 }
 
 const SkillDropboxSearch = ({
+  name,
+  control,
+  defaultValue,
+  rules,
   isOpen: propIsOpen,
   list,
-  activeItem: propActiveItem,
   label,
-  error,
   props,
   fullWidth,
-  onSelect,
 }: Props) => {
+  const {
+    field,
+    fieldState: { error },
+  } = useController({ name, control, rules, defaultValue })
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
-  const [activeItem, setActiveItem] = useState<Item | null>(
-    propActiveItem ?? null
-  )
   const dropboxRef = useRef<HTMLDivElement | null>(null)
   let cx = classNames.bind(s)
 
@@ -51,15 +55,9 @@ const SkillDropboxSearch = ({
     if (!targetIsInput) setIsOpen(!isOpen)
   }
 
-  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   props?.onChange && props.onChange(e)
-  //   setActiveItem(e.target.value)
-  // }
-
   const handleItemClick = (item: Item) => {
-    setActiveItem(item)
+    field.onChange(item.name)
     setIsOpen(false)
-    onSelect && onSelect(item)
   }
 
   useObserver('click', handleClickOutside)
@@ -81,9 +79,10 @@ const SkillDropboxSearch = ({
         <LoupeIcon className={s.icon} />
         <input
           {...props}
+          {...field}
+          value={field.value || ''}
           className={s.input}
           readOnly
-          // onChange={handleSearchChange}
         />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />
       </div>
@@ -92,10 +91,7 @@ const SkillDropboxSearch = ({
         {list.map((item, i) => (
           <li
             key={i}
-            className={cx(
-              'item',
-              item.name === activeItem?.name && 'activeItem'
-            )}
+            className={cx('item', item.name === field.value && 'activeItem')}
             onClick={() => handleItemClick(item)}
           >
             {item.name}

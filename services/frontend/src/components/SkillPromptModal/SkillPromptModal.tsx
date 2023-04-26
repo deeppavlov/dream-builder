@@ -2,9 +2,10 @@ import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router'
+import { generatePath, useNavigate, useParams } from 'react-router'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
@@ -23,12 +24,11 @@ import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import { validationSchema } from '../../utils/validationSchema'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
-
-export const SKILL_EDITOR_TRIGGER = 'SKILL_EDITOR_TRIGGER'
 
 type TAction = 'create' | 'edit'
 interface LM {
@@ -59,7 +59,7 @@ const SkillPromptModal = () => {
   const queryClient = useQueryClient()
   const { options, dispatch } = useDisplay()
   const dist = options.get(consts.ACTIVE_ASSISTANT)
-  const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
+  const { name: distName } = useParams()
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const nav = useNavigate()
@@ -135,13 +135,12 @@ const SkillPromptModal = () => {
 
   const {
     handleSubmit,
-    register,
     reset,
-    setValue,
     setError,
     getValues,
     control,
-    formState,
+    watch,
+    formState: { isDirty },
   } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
@@ -149,7 +148,6 @@ const SkillPromptModal = () => {
       prompt: prompt?.text,
     },
   })
-  const { errors } = formState
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
@@ -160,8 +158,7 @@ const SkillPromptModal = () => {
         setIsOpen(false)
         setAction(null)
         setSkill(null)
-        trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
-        nav(generatePath(RoutesList.editor.default, { name: dist?.name }))
+        nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
       },
     })
   }
@@ -170,25 +167,15 @@ const SkillPromptModal = () => {
 
   const handleEventUpdate = (data: { detail: Props }) => {
     const { skill, action } = data.detail
+    const isClose = data.detail.isOpen !== undefined && !data.detail.isOpen
 
-    if (data.detail.isOpen !== undefined && !data.detail.isOpen) {
-      closeModal()
-      return
-    }
+    if (isClose) return closeModal()
 
-    trigger(SKILL_EDITOR_TRIGGER, { isOpen: true })
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    reset({
-      model: skill?.model,
-      prompt: skill?.prompt,
-    })
+    reset({ model: skill?.model, prompt: skill?.prompt })
     setIsOpen(!isOpen)
-  }
-
-  const handleModelSelect = ({ name, data }: any) => {
-    setValue('model', name)
-    setSelectedService(services?.find((s: LM) => s?.name === data))
   }
 
   const handleCreate = ({ model, prompt }: FormValues) => {
@@ -207,32 +194,45 @@ const SkillPromptModal = () => {
     }
   }
 
-  async function handleSaveAndTest(data: FormValues) {
-    const service = servicesList.get(data.model)?.name!
-    console.log('service = ', service)
-    const prompt = data.prompt
+  const postServiceAndPrompt = async (data: FormValues) => {
     const distName = dist?.name
+    const prompt = data.prompt
+    const service = servicesList.get(data.model)?.name!
 
-    setPromptForDist.mutateAsync({ distName, prompt })
-    setServiceForDist.mutateAsync({ distName, service })
+    await setPromptForDist.mutateAsync({ distName, prompt })
+    await setServiceForDist.mutateAsync({ distName, service })
+    await setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
+    await setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
+  }
 
-    setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
-    setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
+  const update = useMutation({
+    mutationFn: (data: FormValues) => postServiceAndPrompt(data),
+  })
 
-    reset()
+  async function handleSaveAndTest(data: FormValues) {
+    toast.promise(update.mutateAsync(data), {
+      loading: 'Saving...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
     trigger('RenewChat', {})
   }
 
-  const handleSaveAndClose = () =>
-    handleSubmit(handleSaveAndTest)().finally(() => closeModal())
-
   useObserver('SkillPromptModal', handleEventUpdate)
 
+  // Update selected LM for TextArea tokenizer
   useEffect(() => {
-    reset({
-      model: service?.display_name,
-      prompt: prompt?.text,
-    })
+    setSelectedService(services?.find((s: LM) => s?.display_name === model))
+  }, [watch(['model'])])
+
+  useEffect(() => {
+    reset(
+      {
+        model: service?.display_name,
+        prompt: prompt?.text,
+      },
+      { keepDirty: false }
+    )
   }, [service, prompt])
 
   useEffect(() => {
@@ -305,6 +305,10 @@ const SkillPromptModal = () => {
               <div className={s['editor-container']}>
                 <div className={s.top}>
                   <SkillDropboxSearch
+                    name='model'
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue={service?.display_name}
                     label='Generative model:'
                     list={
                       services &&
@@ -313,16 +317,7 @@ const SkillPromptModal = () => {
                         data: service?.name,
                       }))
                     }
-                    activeItem={{
-                      name: service?.display_name,
-                    }}
-                    error={errors.model}
-                    props={{
-                      placeholder: 'Choose model',
-                      defaultValue: service?.display_name,
-                      ...register('model', { required: true }),
-                    }}
-                    onSelect={handleModelSelect}
+                    props={{ placeholder: 'Choose model' }}
                     fullWidth
                   />
                   {service?.display_name && (
@@ -393,7 +388,13 @@ const SkillPromptModal = () => {
                         <HistoryIcon />
                         History
                       </Button>
-                      <Button theme='primary' props={{ type: 'submit' }}>
+                      <Button
+                        theme='primary'
+                        props={{
+                          type: 'submit',
+                          disabled: update.isLoading || !isDirty,
+                        }}
+                      >
                         Save
                       </Button>
                     </>

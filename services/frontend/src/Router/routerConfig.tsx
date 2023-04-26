@@ -2,7 +2,6 @@ import { generatePath, Link } from 'react-router-dom'
 import { BotsAllPage } from '../pages/BotsAllPage'
 import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
-import ArchitecturePage from '../pages/Editor/ArchitecturePage'
 import { EditorPage } from '../pages/Editor/EditorPage'
 import SkillsPage from '../pages/Editor/SkillsPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
@@ -61,18 +60,18 @@ export const RouterConfig: CustomRouteConfig[] = [
           },
         },
         children: [
-          {
-            path: RoutesList.editor.architecture,
-            element: <ArchitecturePage />,
-            loader: ({ params }) => params,
-            handle: {
-              crumb: (params: any) => [
-                <Link to={generatePath(RoutesList.editor.architecture, params)}>
-                  Arhitecture
-                </Link>,
-              ],
-            },
-          },
+          // {
+          //   path: RoutesList.editor.architecture,
+          //   element: <ArchitecturePage />,
+          //   loader: ({ params }) => params,
+          //   handle: {
+          //     crumb: (params: any) => [
+          //       <Link to={generatePath(RoutesList.editor.architecture, params)}>
+          //         Arhitecture
+          //       </Link>,
+          //     ],
+          //   },
+          // },
           {
             path: RoutesList.editor.skills,
             element: <SkillsPage />,

@@ -61,7 +61,9 @@ const SkillsPage = () => {
               {!isPreview && (
                 <AddButton disabled={isPreview} forGrid forSkills />
               )}
-              {isComponentsLoading && <CardsLoader cardsCount={2} type='skill' />}
+              {isComponentsLoading && (
+                <CardsLoader cardsCount={3} type='skill' />
+              )}
               <ErrorHandler error={componentsError} />
               <SkillList skills={skills} view='cards' type='your' forGrid />
             </Container>

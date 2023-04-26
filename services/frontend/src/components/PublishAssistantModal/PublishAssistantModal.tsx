@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -54,9 +54,9 @@ export const PublishAssistantModal = () => {
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              {visibility.map(type => {
+              {visibility.map((type, i) => {
                 // console.log('type = ', type)
-                return <>{type} </>
+                return <React.Fragment key={i}>{type} </React.Fragment>
               })}
               <RadioButton
                 props={{ ...register('visibility'), defaultChecked: true }}

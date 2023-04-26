@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
+import CardsLoader from '../../components/CardsLoader/CardsLoader'
 import { ErrorHandler } from '../../components/ErrorHandler/ErrorHandler'
-import { Loader } from '../../components/Loader/Loader'
 import { Main } from '../../components/Main/Main'
 import { SkillList } from '../../components/SkillList/SkillList'
 import { useAuth } from '../../context/AuthProvider'
@@ -61,8 +61,8 @@ const SkillsPage = () => {
               {!isPreview && (
                 <AddButton disabled={isPreview} forGrid forSkills />
               )}
+              {isComponentsLoading && <CardsLoader cardsCount={2} type='skill' />}
               <ErrorHandler error={componentsError} />
-              <Loader isLoading={isComponentsLoading} />
               <SkillList skills={skills} view='cards' type='your' forGrid />
             </Container>
           )}

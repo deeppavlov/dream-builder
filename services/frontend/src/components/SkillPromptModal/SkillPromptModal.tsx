@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { generatePath, useNavigate } from 'react-router'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
+import { RoutesList } from '../../router/RoutesList'
 import { changeLMservice } from '../../services/changeLMservice'
 import { getAllLMservices } from '../../services/getAllLMservices'
 import { getLMservice } from '../../services/getLMservice'
@@ -60,6 +62,7 @@ const SkillPromptModal = () => {
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
+  const nav = useNavigate()
   const cx = classNames.bind(s)
 
   const setPromptForDist = useMutation({
@@ -158,6 +161,7 @@ const SkillPromptModal = () => {
         setAction(null)
         setSkill(null)
         trigger(SKILL_EDITOR_TRIGGER, { isOpen: false })
+        nav(generatePath(RoutesList.editor.default, { name: dist?.name }))
       },
     })
   }

@@ -3,16 +3,17 @@ import s from './CardsLoader.module.scss'
 
 interface Props {
   cardsCount: number
+  type?: 'bot' | 'skill'
 }
 
-const CardsLoader = ({ cardsCount }: Props) => {
+const CardsLoader = ({ cardsCount, type }: Props) => {
   let cx = classNames.bind(s)
   const getSkeletons = (count: number) => {
     let array = []
 
     for (let i = 0; i < count; i++) {
       array.push(
-        <div className={cx('card', 'skeleton')}>
+        <div key={i} className={cx('card', type && type, 'skeleton')}>
           <div className={cx('header')}></div>
           <div className={s.body}>
             <div className={cx('desc')}></div>

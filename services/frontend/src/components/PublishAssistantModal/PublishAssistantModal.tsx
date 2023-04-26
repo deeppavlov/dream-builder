@@ -55,7 +55,7 @@ export const PublishAssistantModal = () => {
           <div className={s.body}>
             <div className={s.radio}>
               {visibility.map(type => {
-                console.log('type = ', type)
+                // console.log('type = ', type)
                 return <>{type} </>
               })}
               <RadioButton

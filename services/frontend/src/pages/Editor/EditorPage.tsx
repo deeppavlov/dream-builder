@@ -38,7 +38,7 @@ export const EditorPage = () => {
   const { name: nameFromURL, skillId } = useParams()
   const { state } = useLocation()
 
-  const { setIsPreview } = usePreview()
+  const { isPreview, setIsPreview } = usePreview()
 
   const { data: dist } = useQuery(
     ['dist', nameFromURL],
@@ -61,8 +61,11 @@ export const EditorPage = () => {
 
   useEffect(() => {
     // Setting mode to Preview by default
-    setIsPreview(state?.preview ?? true)
-  }, [state])
+    if (dist !== undefined && dist !== null) {
+      setIsPreview(dist?.visibility === 'public_template')
+    }
+    return () => setIsPreview(true)
+  }, [dist])
 
   // TODO: FIX
   useEffect(() => {
@@ -101,7 +104,7 @@ export const EditorPage = () => {
             content='Skills'
             place='right'
           />
-          <SkillsTab />
+          <SkillsTab isActive={true} />
           {/* <BotTab /> */}
           <div style={{ height: '100%' }}></div>
           <div

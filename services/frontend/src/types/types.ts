@@ -52,6 +52,7 @@ export interface BotInfoInterface {
   ram_usage: string
   gpu_usage: string
   disk_usage: string
+  visibility: 'unlisted' | 'private' | 'public_template'
 }
 
 export interface BotCardProps {

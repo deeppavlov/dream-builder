@@ -14,6 +14,7 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotCard.module.scss'
 
 export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
@@ -96,6 +97,12 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
               <CalendarIcon />
               {dateCreated}
             </div>
+
+            {type == 'your' && (
+              <SmallTag theme={type}>
+                {type === 'your' ? 'Private' : type}
+              </SmallTag>
+            )}
           </div>
         </div>
         <div className={s.btns}>

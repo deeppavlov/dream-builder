@@ -51,7 +51,7 @@ export const BotsPage = () => {
             <Container overflowForAddButton>
               <AddButton disabled={!auth?.user} />
               <Slider>
-                {isPublicDistsLoading && <CardsLoader cardsCount={5} />}
+                {isPublicDistsLoading && <CardsLoader cardsCount={4} />}
                 <ErrorHandler error={publicDistsError} />
                 <DistList view='cards' dists={publicDists} type='public' />
               </Slider>

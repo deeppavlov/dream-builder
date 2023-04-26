@@ -40,7 +40,6 @@ const ContextMenuButton = ({
     if (disabled) return
     e.stopPropagation()
     handleClick && handleClick(e)
-    trigger('CtxMenuBtnClick', {})
   }
 
   return (

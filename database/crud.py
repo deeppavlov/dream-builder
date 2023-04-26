@@ -384,6 +384,10 @@ def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int,
     )
 
 
+def delete_publish_request(db: Session, virtual_assistant_id: int):
+    db.execute(delete(models.PublishRequest).filter_by(virtual_assistant_id=virtual_assistant_id))
+
+
 def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.DialogSession]:
     return db.get(models.DialogSession, dialog_session_id)
 

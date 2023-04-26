@@ -46,13 +46,16 @@ export const BotsPage = () => {
           <Loader isLoading={isPublicDistsLoading} />
           <ErrorHandler error={publicDistsError} />
           {isTableView ? (
-            <Table>
+            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={publicDists} type='public' />
             </Table>
           ) : (
-            <Slider>
-              <DistList view='cards' dists={publicDists} type='public' />
-            </Slider>
+            <Container overflowForAddButton>
+              <AddButton disabled={!auth?.user} />
+              <Slider>
+                <DistList view='cards' dists={publicDists} type='public' />
+              </Slider>
+            </Container>
           )}
         </Wrapper>
         <Wrapper
@@ -65,18 +68,15 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
+            <Table>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (
-            <Container overflowForAddButton>
-              <AddButton disabled={!auth?.user} />
-              <Slider>
-                <Loader isLoading={isPrivateDistsLoading} />
-                <ErrorHandler error={privateDistsError} />
-                <DistList view='cards' dists={privateDists} type='your' />
-              </Slider>
-            </Container>
+            <Slider>
+              <Loader isLoading={isPrivateDistsLoading} />
+              <ErrorHandler error={privateDistsError} />
+              <DistList view='cards' dists={privateDists} type='your' />
+            </Slider>
           )}
         </Wrapper>
         <BaseSidePanel />

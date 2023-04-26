@@ -124,7 +124,7 @@ export const EditorPage = () => {
                 <SkillsTab />
               </Tab>
               <Tab>
-                <BotTab />
+                {/* <BotTab /> */}
               </Tab>
               <div style={{ height: '100%' }}></div>
               <div

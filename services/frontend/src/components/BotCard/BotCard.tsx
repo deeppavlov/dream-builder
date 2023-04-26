@@ -2,7 +2,6 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -11,7 +10,6 @@ import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
@@ -25,7 +23,8 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const botCardRef = useRef(null)
   const { options } = useDisplay()
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
-
+  
+console.log('14:25 = ', options.get( consts.RIGHT_SP_IS_ACTIVE ))
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       parent: botCardRef,
@@ -83,13 +82,13 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
           )} */}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>
             {bot?.description}
-            <BaseToolTip
+            {/* <BaseToolTip
               id={'botCardDesc' + bot?.name}
               content={bot?.description}
               place='top'
               theme='description'
               delayShow={TOOLTIP_DELAY}
-            />
+            /> */}
           </div>
           <span className={s.separator} />
           <div className={s.dateAndVersion}>

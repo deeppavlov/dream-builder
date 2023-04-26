@@ -3,7 +3,6 @@ import Woman from '@assets/icons/woman.png'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
-import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -13,7 +12,6 @@ import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { timeToUTC } from '../../utils/timeToUTC'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
@@ -112,13 +110,13 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
           data-tooltip-id={'botTableDesc' + tooltipId}
         >
           {bot?.description}
-          <BaseToolTip
+          {/* <BaseToolTip
             id={'botTableDesc' + tooltipId}
             content={bot?.description}
             place='bottom'
             theme='description'
             delayShow={TOOLTIP_DELAY}
-          />
+          /> */}
         </div>
       </td>
       <td className={s.td}>

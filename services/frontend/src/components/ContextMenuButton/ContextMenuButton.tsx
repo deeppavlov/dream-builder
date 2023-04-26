@@ -36,6 +36,7 @@ const ContextMenuButton = ({
 }: Props) => {
   let cx = classNames.bind(s)
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    trigger('CtxMenuBtnClick', {})
     if (disabled) return
     e.stopPropagation()
     handleClick && handleClick(e)

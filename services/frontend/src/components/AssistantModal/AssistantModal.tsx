@@ -51,7 +51,7 @@ export const AssistantModal = () => {
       [NAME_ID]: data?.detail?.bot?.display_name,
       [DESC_ID]: data?.detail?.bot?.description,
     })
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   const name = bot?.name!

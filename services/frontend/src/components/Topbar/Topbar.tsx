@@ -21,8 +21,9 @@ export const Topbar = () => {
   const type: TTopbar = name !== undefined ? 'editor' : 'main'
   const isEditor = type === 'editor'
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
+  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const isTableViewSwitcher = isEditor
-    ? editorActiveTab !== 'Architecture'
+    ? editorActiveTab !== 'Architecture' && !skillEditorIsActive
     : location.pathname !== '/profile'
   let cx = classNames.bind(s)
 

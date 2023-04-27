@@ -14,7 +14,7 @@ export const AreYouSureModal = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleEventUpdate = ({ detail: { handleQuit } }: Props) => {
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
     handleQuit && handleQuit()
   }
 

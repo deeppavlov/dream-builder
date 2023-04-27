@@ -28,7 +28,7 @@ export const UsersBotsPage = () => {
   return (
     <>
       <Main sidebar>
-        <Wrapper title='Your Assistants' amount={privateDists?.length}>
+        <Wrapper primary title='Your Assistants' amount={privateDists?.length}>
           <Loader isLoading={isPrivateDistsLoading} />
           <ErrorHandler error={privateDistsError} />
           {isTableView ? (

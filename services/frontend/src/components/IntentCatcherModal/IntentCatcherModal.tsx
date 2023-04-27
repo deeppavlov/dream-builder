@@ -110,7 +110,7 @@ const IntentCatcherModal = ({ intent }: Props) => {
       if (intent.examples) setExamples(intent.examples)
     }
 
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   useObserver('IntentCatcherModal', handleEventUpdate)

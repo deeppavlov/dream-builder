@@ -27,7 +27,7 @@ export const ShareModal = () => {
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
     setBot(data?.detail?.bot?.name || data?.detail)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
   const { control, getValues, reset } = useForm({
     defaultValues: {

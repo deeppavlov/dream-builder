@@ -22,7 +22,7 @@ export const PublishAssistantModal = () => {
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data.detail.bot)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
   const { visibilityType } = useAssistants()
   const handleNoBtnClick = () => setIsOpen(false)

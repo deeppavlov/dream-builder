@@ -2,6 +2,7 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -10,6 +11,7 @@ import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
@@ -23,7 +25,6 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const botCardRef = useRef(null)
   const { options } = useDisplay()
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
-  const panelIsOpen = options.get(consts.RIGHT_SP_IS_ACTIVE)
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -61,7 +62,8 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
         })
     e.stopPropagation()
   }
-
+  const onModeration = bot?.publish_state === 'in_progress'
+  console.log('onModeration = ', onModeration)
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -93,9 +95,9 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 {!bot?.publish_state
                   ? type === 'your' && bot?.visibility
                   : bot?.publish_state == 'in_progress'
-                  ? 'On moderation'
+                  ? 'On Moderation'
                   : bot?.visibility === 'public_template'
-                  ? 'Public'
+                  ? 'Public Template'
                   : bot?.visibility}
               </SmallTag>
             )}
@@ -127,10 +129,25 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 theme='primary'
                 small
                 long
-                props={{ onClick: handlEditClick }}
+                props={{
+                  'data-tooltip-id': 'youcant' + tooltipId,
+                  onClick: handlEditClick,
+                  disabled: onModeration,
+                }}
               >
                 Edit
               </Button>
+              {onModeration && (
+                <BaseToolTip
+                  id={'youcant' + tooltipId}
+                  content={
+                    'You cannot edit the ASSISTANT while its under moderation.'
+                  }
+                  place='bottom'
+                  theme='description'
+                  delayShow={TOOLTIP_DELAY}
+                />
+              )}
               <Kebab tooltipId={tooltipId} theme='card' />
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>

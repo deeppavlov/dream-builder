@@ -105,7 +105,7 @@ const SkillPromptModal = () => {
   }
 
   const servicesList = createMap(services)
-
+  console.log('servicesList = ', servicesList)
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
     () => getLMservice(dist?.name),

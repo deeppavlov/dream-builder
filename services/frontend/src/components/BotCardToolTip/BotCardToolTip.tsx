@@ -85,13 +85,14 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
-            // disabled={bot?.visibility == 'public_template'}
+            disabled={bot?.publish_state == 'in_progress'}
             name='Rename'
             type='edit'
             handleClick={handleRenameBtnClick}
           />
           <hr />
           <ContextMenuButton
+            // disabled={bot?.publish_state === 'in_progress'}
             name='Visibility'
             type='publish'
             handleClick={handlePublishBtnClick}
@@ -130,7 +131,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             </>
           )}
           <ContextMenuButton
-            name='Check Architecture'
+            name='Check Skills'
             type='architecture'
             handleClick={handleCheckArchitectureClick}
           />

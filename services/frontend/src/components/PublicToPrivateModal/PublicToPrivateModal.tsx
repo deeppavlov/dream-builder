@@ -7,7 +7,9 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { trigger } from '../../utils/events'
 import s from './PublicToPrivateModal.module.scss'
+
 type ActionTypes = 'edit' | 'rename'
+
 export const PublicToPrivateModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
@@ -19,7 +21,7 @@ export const PublicToPrivateModal = () => {
     setAction(detail?.action)
     setIsOpen(!isOpen)
   }
-  console.log('action = ', action)
+
   const { visibilityType } = useAssistants()
   const handleCancelClick = () => setIsOpen(false)
 
@@ -48,7 +50,7 @@ export const PublicToPrivateModal = () => {
           setIsOpen(false)
         })
         .then(() => {
-          trigger('AssistantModal', { bot })
+          trigger('AssistantModal', { bot, action: 'edit' })
         })
   }
 

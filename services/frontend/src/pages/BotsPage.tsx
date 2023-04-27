@@ -52,7 +52,7 @@ export const BotsPage = () => {
             <Container overflowForAddButton>
               <AddButton disabled={!auth?.user} />
               <Slider>
-                {isPublicDistsLoading && <CardsLoader cardsCount={4} />}
+                {isPublicDistsLoading && <CardsLoader cardsCount={6} />}
                 <ErrorHandler error={publicDistsError} />
                 <DistList view='cards' dists={publicDists} type='public' />
               </Slider>
@@ -74,10 +74,10 @@ export const BotsPage = () => {
             </Table>
           ) : (
             <Container overflowForAddButton>
-              {/* <AddButton disabled={!auth?.user} /> */}
+              
               <Slider>
                 {auth?.user && isPrivateDistsLoading && (
-                  <CardsLoader cardsCount={2} />
+                  <CardsLoader cardsCount={6} />
                 )}
                 <ErrorHandler error={privateDistsError} />
                 <DistList view='cards' dists={privateDists} type='your' />

@@ -11,6 +11,10 @@
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   overflow: visible; // ???
 }
+.gridForRequests{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
 .layoutForTabs {
   width: 100%;
   align-items: center;
@@ -25,7 +29,7 @@
 .overflowForAddButton {
   overflow: visible;
 }
-.flexRow {
-  display: flex;
-  flex-direction: row;
+.scroll {overflow: scroll;
+  // display: flex;
+  // flex-direction: row; 
 }

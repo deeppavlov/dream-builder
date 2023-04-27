@@ -5,8 +5,8 @@ import { RoutesList } from '../../router/RoutesList'
 export const CrumbForEditor = () => {
   const { isPreview } = usePreview()
   return (
-    <Link to={RoutesList.start}>
-      {isPreview ? 'Public ' : 'Your '}Virtual Assistants & Chatbots
+    <Link to={isPreview ? RoutesList.botsAll : RoutesList.yourBots}>
+      {isPreview ? 'Assistant Templates' : 'Your Assistants'}
     </Link>
   )
 }

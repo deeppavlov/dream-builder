@@ -1,10 +1,12 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import React, { FC, useId, useRef, useState } from 'react'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { RoutesList } from '../../router/RoutesList'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -13,7 +15,6 @@ import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
@@ -37,7 +38,9 @@ export const SkillCard: FC<SkillCardProps> = ({
   const tooltipId = useId()
   const skillCardRef = useRef(null)
   const { options } = useDisplay()
+  const { name: distRoutingName } = useParams()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const nav = useNavigate()
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -62,8 +65,14 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
     if (skill.component_type === 'Generative') {
-      trigger('SkillPromptModal', { skill, action: 'edit' })
-      trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      // trigger('SkillPromptModal', { skill, action: 'edit' })
+      // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name: distRoutingName as string,
+          skillId: skill.name,
+        } as any)
+      )
       e.stopPropagation()
       return
     }
@@ -116,12 +125,12 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
-            <BaseToolTip
+            {/* <BaseToolTip
               delayShow={TOOLTIP_DELAY}
               id={'skillCardDesc' + tooltipId}
               content={skill?.description}
               theme='description'
-            />
+            /> */}
           </div>
 
           <span className={s.separator} />

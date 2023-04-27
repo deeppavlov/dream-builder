@@ -112,7 +112,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               Start a test to interact with your bot using text, voice or
               buttons
             </p>
-            <button onClick={handleStartBtnClick}>
+            <button className={s.runTest} onClick={handleStartBtnClick}>
               {renew.isLoading ? <TextLoader /> : 'Run Test'}
             </button>
           </>

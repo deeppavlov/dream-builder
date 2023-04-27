@@ -15,53 +15,46 @@ import s from './SkillModal.module.scss'
 type TSkillModalAction = 'create' | 'copy' | 'edit'
 
 interface ISkilltInfo
-  extends Pick<ISkill, 'display_name' | 'name' | 'description'> {}
+  extends Pick<
+    ISkill,
+    'display_name' | 'name' | 'description' | 'component_id'
+  > {}
 
 interface IParentSkillInfo extends Pick<ISkill, 'display_name' | 'name'> {}
 
 interface SkillModalProps {
   action: TSkillModalAction
-  skill?: Partial<ISkilltInfo>
+  skill?: ISkilltInfo
   parent?: IParentSkillInfo // The skill that we copy
 }
-interface FormValues {
-  name: string
-  description: string
-}
+
 export const SkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
-  const [skill, setSkill] = useState<Partial<ISkilltInfo> | null>(null)
-  const [parent, setParent] = useState<IParentSkillInfo | null>(null)
-  const {
-    handleSubmit,
-    register,
-    control,
-    reset,
-    getValues,
-    formState: { errors },
-  } = useForm({ mode: 'all' })
+  const [skill, setSkill] = useState<ISkilltInfo | null>(null)
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
+
+  const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
+
   const descriptionMaxLenght = 500
 
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setSkill(null)
-    setParent(null)
   }
 
   /**
    * Set modal is open and getting skill info
    */
   const handleEventUpdate = ({
-    detail: { action, skill, parent },
+    detail: { action, skill },
   }: {
     detail: SkillModalProps
   }) => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    setParent(parent ?? null)
+
     // Reset values and errors states
     reset({
       [NAME_ID]: skill?.display_name,
@@ -73,12 +66,10 @@ export const SkillModal = () => {
 
   const handleCreate = (data: any) => {
     toast.promise(
-      create
-        .mutateAsync({ ...data, lm_service_id: 0, prompt: 'new prompt' })
-        .then(() => {
-          closeModal()
-          trigger('SkillsListModal', { isOpen: false })
-        }),
+      create.mutateAsync({ ...data }).then(() => {
+        closeModal()
+        trigger('SkillsListModal', { isOpen: false })
+      }),
       {
         loading: 'Creating...',
         success: 'Success!',
@@ -86,7 +77,19 @@ export const SkillModal = () => {
       }
     )
   }
-  const handleEdit = (data: FormValues) => {}
+  const handleEdit = (data: { display_name: string; description: string }) => {
+    const id = skill?.component_id
+    toast
+      .promise(
+        edit.mutateAsync({ data, id }).then(() => {}),
+        {
+          loading: 'Creating...',
+          success: 'Success!',
+          error: 'Something Went Wrong...',
+        }
+      )
+      .then(() => closeModal())
+  }
   const onFormSubmit = (data: any) => {
     action === 'create' && handleCreate(data)
     action === 'edit' && handleEdit(data)

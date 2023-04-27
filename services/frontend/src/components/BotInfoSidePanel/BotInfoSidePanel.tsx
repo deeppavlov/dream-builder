@@ -69,7 +69,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  const onModeration = bot?.publish_state === 'in_progress'
   return (
     <>
       <SidePanelHeader>
@@ -111,9 +111,23 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               <CalendarIcon />
               {dateToUTC(bot?.date_created)}
             </div>
-            <SmallTag theme={type}>
-              {type === 'your' ? 'Private' : type}
-            </SmallTag>
+            {type == 'your' && (
+              <SmallTag
+                theme={
+                  bot?.publish_state === 'in_progress'
+                    ? 'validating'
+                    : bot?.visibility
+                }
+              >
+                {!bot?.publish_state
+                  ? type === 'your' && bot?.visibility
+                  : bot?.publish_state == 'in_progress'
+                  ? 'On moderation'
+                  : bot?.visibility === 'public_template'
+                  ? 'Public'
+                  : bot?.visibility}
+              </SmallTag>
+            )}
           </div>
         </div>
         <div className={s.scroll}>
@@ -190,7 +204,10 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               >
                 More
               </Button>
-              <Button props={{ onClick: handlEditClick }} theme='primary'>
+              <Button
+                props={{ onClick: handlEditClick, disabled: onModeration }}
+                theme='primary'
+              >
                 Edit
               </Button>
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />

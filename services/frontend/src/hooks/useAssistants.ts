@@ -7,6 +7,7 @@ import { getDist } from '../services/getDist'
 import { getPrivateDists } from '../services/getPrivateDists'
 import { getPublicDists } from '../services/getPublicDists'
 import { postAssistantDist } from '../services/postAssistanDist'
+import { publishAssistantDist } from '../services/publishUsersAssistantDist'
 import { renameAssistantDist } from '../services/renameAssistantDist'
 import { AssistantFormValues } from '../types/types'
 import { trigger } from '../utils/events'
@@ -23,14 +24,14 @@ export const useAssistants = () => {
     data: publicDists,
     error: publicDistsError,
     isLoading: isPublicDistsLoading,
-  } = useQuery('publicDists', getPublicDists)
+  } = useQuery('publicDists', getPublicDists, { enabled: !Boolean(name) })
 
   const {
     data: privateDists,
     error: privateDistsError,
     isLoading: isPrivateDistsLoading,
   } = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user,
+    enabled: !!auth?.user && !Boolean(name),
   })
   const { data: dist } = useQuery(
     ['dist', state?.distName],
@@ -85,6 +86,23 @@ export const useAssistants = () => {
         })
       }),
   })
+  const visibilityType = useMutation({
+    mutationFn: (variables: { distName: string; visibility: string }) => {
+      return publishAssistantDist(variables.distName, variables.visibility)
+    },
+    onSuccess: (_, variables) => {
+      console.log('variables?.visibility = ', variables?.visibility)
+      variables.visibility == 'public_template' &&
+        queryClient.invalidateQueries({ queryKey: 'privateDists' })
+      variables.visibility == 'private' &&
+        queryClient.invalidateQueries({ queryKey: 'publicDists' })
+      queryClient.invalidateQueries({
+        queryKey: 'privateDists',
+      })
+      variables.visibility == 'unlisted' &&
+        queryClient.invalidateQueries({ queryKey: 'privateDists' })
+    },
+  })
   return {
     privateDists,
     privateDistsError,
@@ -92,6 +110,7 @@ export const useAssistants = () => {
     publicDists,
     publicDistsError,
     isPublicDistsLoading,
+    visibilityType,
     dist,
     rename,
     create,

@@ -57,7 +57,6 @@ privateApi.interceptors.response.use(
 
     if (!accessTokenIsValid && !prevRequest?.sent) {
       prevRequest.sent = true // Avoid unnecessary repeat on one request
-
       try {
         const { data } = await updateAccessToken()
         setAccessToken(data.token)

@@ -14,6 +14,7 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotCard.module.scss'
 
 export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
@@ -50,15 +51,18 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: false,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
+    bot?.visibility === 'public_template'
+      ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
+      : navigate(`/${bot?.name}`, {
+          state: {
+            preview: false,
+            distName: bot?.name,
+            displayName: bot?.display_name,
+          },
+        })
     e.stopPropagation()
   }
+  const onModeration = bot?.publish_state === 'in_progress'
 
   return (
     <div
@@ -70,25 +74,8 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>
         <div className={s.block}>
-          {/* {type === 'public' && (
-            <div className={s.author}>
-              <img referrerPolicy='no-referrer' src={Woman} />
-              <span>
-                {bot?.author?.fullname! == 'Deepy Pavlova'
-                  ? 'Dr. Xandra Smith'
-                  : bot?.author?.fullname!}
-              </span>
-            </div>
-          )} */}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>
             {bot?.description}
-            <BaseToolTip
-              id={'botCardDesc' + bot?.name}
-              content={bot?.description}
-              place='top'
-              theme='description'
-              delayShow={TOOLTIP_DELAY}
-            />
           </div>
           <span className={s.separator} />
           <div className={s.dateAndVersion}>
@@ -96,6 +83,24 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
               <CalendarIcon />
               {dateCreated}
             </div>
+
+            {type == 'your' && (
+              <SmallTag
+                theme={
+                  bot?.publish_state === 'in_progress'
+                    ? 'validating'
+                    : bot?.visibility
+                }
+              >
+                {!bot?.publish_state
+                  ? type === 'your' && bot?.visibility
+                  : bot?.publish_state == 'in_progress'
+                  ? 'On Moderation'
+                  : bot?.visibility === 'public_template'
+                  ? 'Public Template'
+                  : bot?.visibility}
+              </SmallTag>
+            )}
           </div>
         </div>
         <div className={s.btns}>
@@ -124,10 +129,25 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 theme='primary'
                 small
                 long
-                props={{ onClick: handlEditClick }}
+                props={{
+                  'data-tooltip-id': 'youcant' + tooltipId,
+                  onClick: handlEditClick,
+                  disabled: onModeration,
+                }}
               >
                 Edit
               </Button>
+              {onModeration && (
+                <BaseToolTip
+                  id={'youcant' + tooltipId}
+                  content={
+                    'You cannot edit the ASSISTANT while its under moderation.'
+                  }
+                  place='bottom'
+                  theme='description'
+                  delayShow={TOOLTIP_DELAY}
+                />
+              )}
               <Kebab tooltipId={tooltipId} theme='card' />
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>

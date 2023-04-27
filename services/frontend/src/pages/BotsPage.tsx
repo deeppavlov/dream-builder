@@ -1,12 +1,13 @@
 import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Loader } from '../components/Loader/Loader'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
+import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
 import { SignInModal } from '../components/SignInModal/SignInModal'
@@ -38,41 +39,46 @@ export const BotsPage = () => {
     <>
       <Main sidebar>
         <Wrapper
-          title='Virtual Assistants Templates'
+          title='Assistant Templates'
           showAll
           amount={publicDists?.length}
           linkTo={RoutesList.botsAll}
         >
-          <Loader isLoading={isPublicDistsLoading} />
-          <ErrorHandler error={publicDistsError} />
           {isTableView ? (
-            <Table>
+            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
               <DistList view='table' dists={publicDists} type='public' />
             </Table>
           ) : (
-            <Slider>
-              <DistList view='cards' dists={publicDists} type='public' />
-            </Slider>
+            <Container overflowForAddButton>
+              <AddButton disabled={!auth?.user} />
+              <Slider>
+                {isPublicDistsLoading && <CardsLoader cardsCount={6} />}
+                <ErrorHandler error={publicDistsError} />
+                <DistList view='cards' dists={publicDists} type='public' />
+              </Slider>
+            </Container>
           )}
         </Wrapper>
         <Wrapper
           primary
           showAll
-          title='Your Virtual Assistants'
+          title='Your Assistants'
           amount={
             auth?.user && privateDists?.length > 0 && privateDists?.length
           }
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
+            <Table fourth='Visibility'>
               <DistList view='table' dists={privateDists} type='your' />
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <AddButton disabled={!auth?.user} />
+              
               <Slider>
-                <Loader isLoading={isPrivateDistsLoading} />
+                {auth?.user && isPrivateDistsLoading && (
+                  <CardsLoader cardsCount={6} />
+                )}
                 <ErrorHandler error={privateDistsError} />
                 <DistList view='cards' dists={privateDists} type='your' />
               </Slider>
@@ -84,6 +90,7 @@ export const BotsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareModal />
+        <PublicToPrivateModal />
         <Modal />
         <SignInModal />
         <BaseSidePanel transition='left' />

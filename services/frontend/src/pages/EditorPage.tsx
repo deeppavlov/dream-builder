@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect,useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import { Tab,TabList,TabPanel,Tabs } from 'react-tabs'
 import { Annotators } from '../components/Annotators/Annotators'
 import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
@@ -20,7 +20,6 @@ import { PublishAssistantModal } from '../components/PublishAssistantModal/Publi
 import { ResponseAnnotators } from '../components/ResponseAnnotators/ResponseAnnotators'
 import { ResponseSelector } from '../components/ResponseSelector/ResponseSelector'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import { BotTab } from '../components/Sidebar/components/BotTab'
 import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
 import { SkillsTab } from '../components/Sidebar/components/SkillsTab'
@@ -48,7 +47,7 @@ import { consts } from '../utils/consts'
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const skillEditorIsActive = options.get(consts.SKILL_EDITOR_IS_ACTIVE)
+  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const tabsNames = ['Skills', 'Architecture']
   const [activeTab, setActiveTab] = useState<number>(
     tabsNames.findIndex(v => v === options.get(consts.EDITOR_ACTIVE_TAB)) ?? 0
@@ -123,9 +122,7 @@ export const EditorPage = () => {
               <Tab>
                 <SkillsTab />
               </Tab>
-              <Tab>
-                <BotTab />
-              </Tab>
+              <Tab>{/* <BotTab /> */}</Tab>
               <div style={{ height: '100%' }}></div>
               <div
                 style={{
@@ -151,40 +148,38 @@ export const EditorPage = () => {
                 skills
                 annotation='generate possible responses to the user'
               >
-                <Container flexRow>
-                  {isTableView && (
-                    <Table
-                      second='Type'
-                      addButton={
-                        !isPreview ? (
-                          <AddButton
-                            forTable
-                            forSkills
-                            disabled={!auth?.user && isPreview}
-                            text='Add Skill'
-                          />
-                        ) : undefined
-                      }
-                    >
-                      <SkillList skills={skills} view='table' type='your' />
-                    </Table>
-                  )}
-                  {!isTableView && (
-                    <Container gridForCards heightAuto>
-                      {!isPreview && (
-                        <AddButton disabled={isPreview} forGrid forSkills />
-                      )}
-                      <ErrorHandler error={componentsError} />
-                      <Loader isLoading={isComponentsLoading} />
-                      <SkillList
-                        skills={skills}
-                        view='cards'
-                        type='your'
-                        forGrid
-                      />
-                    </Container>
-                  )}
-                </Container>
+                {isTableView && (
+                  <Table
+                    second='Type'
+                    addButton={
+                      !isPreview ? (
+                        <AddButton
+                          forTable
+                          forSkills
+                          disabled={!auth?.user && isPreview}
+                          text='Add Skill'
+                        />
+                      ) : undefined
+                    }
+                  >
+                    <SkillList skills={skills} view='table' type='your' />
+                  </Table>
+                )}
+                {!isTableView && (
+                  <Container scroll gridForCards heightAuto>
+                    {!isPreview && (
+                      <AddButton disabled={isPreview} forGrid forSkills />
+                    )}
+                    <ErrorHandler error={componentsError} />
+                    <Loader isLoading={isComponentsLoading} />
+                    <SkillList
+                      skills={skills}
+                      view='cards'
+                      type='your'
+                      forGrid
+                    />
+                  </Container>
+                )}
               </Wrapper>
             )}
           </Main>

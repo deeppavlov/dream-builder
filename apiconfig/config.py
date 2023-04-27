@@ -49,7 +49,10 @@ class SmtpSettings(BaseModel):
 
 
 class DeployerSettings(BaseModel):
+    registry_url: str
+    portainer_url: str
     portainer_key: str
+    default_prefix: str
 
 
 class Settings(BaseSettings):

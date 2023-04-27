@@ -139,8 +139,12 @@ const Request: FC<RequestProps> = ({
             <b>date_created: </b>
             <mark>{dateToUTC(r?.date_created)}</mark>
           </span>
-          <span>
+          <span style={{display:'flex',}}>
             <b>author: </b>
+            <img
+            style={{ height: '20px', borderRadius: '50%' }}
+              src={r?.virtual_assistant?.author?.picture}
+            />
             <mark>{r?.virtual_assistant?.author?.fullname}</mark>
           </span>
           <span>

@@ -69,7 +69,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  const onModeration = bot?.publish_state === 'in_progress'
   return (
     <>
       <SidePanelHeader>
@@ -204,7 +204,10 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               >
                 More
               </Button>
-              <Button props={{ onClick: handlEditClick }} theme='primary'>
+              <Button
+                props={{ onClick: handlEditClick, disabled: onModeration }}
+                theme='primary'
+              >
                 Edit
               </Button>
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />

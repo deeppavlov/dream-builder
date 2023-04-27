@@ -63,7 +63,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     e.stopPropagation()
   }
   const onModeration = bot?.publish_state === 'in_progress'
-  console.log('onModeration = ', onModeration)
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}

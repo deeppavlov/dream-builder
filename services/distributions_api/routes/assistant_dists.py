@@ -52,6 +52,7 @@ async def create_virtual_assistant(
             db, minimal_template_virtual_assistant.id, "_prompted_skill"
         )[0].component.name
         original_connector_url = dream_dist.pipeline.skills[original_prompted_skill_name].component.connector.url
+        original_command = dream_dist.pipeline.skills[original_prompted_skill_name].service.service.compose.command
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
@@ -59,6 +60,7 @@ async def create_virtual_assistant(
             payload.description,
             original_prompted_skill_name,
             original_connector_url,
+            original_command,
         )
         new_dist.save()
 
@@ -235,6 +237,7 @@ async def clone_dist(
             db, original_virtual_assistant.id, "_prompted_skill"
         )[0].component.name
         original_connector_url = dream_dist.pipeline.skills[original_prompted_skill_name].component.connector.url
+        original_command = dream_dist.pipeline.skills[original_prompted_skill_name].service.service.compose.command
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
@@ -242,6 +245,7 @@ async def clone_dist(
             payload.description,
             original_prompted_skill_name,
             original_connector_url,
+            original_command,
         )
         new_dist.save(overwrite=False)
 

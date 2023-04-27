@@ -1,5 +1,5 @@
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -36,9 +36,8 @@ interface FormValues {
 }
 
 export const AccessTokensBanner = () => {
-  const { handleSubmit, register, reset, setValue, formState, control } =
+  const { handleSubmit, reset, getValues, control, watch } =
     useForm<FormValues>({ mode: 'onSubmit' })
-  const { errors } = formState
   const [service, setService] = useState<IService | null>(null)
   const queryClient = useQueryClient()
   const { data: user } = useQuery(['user'], () => getUserId())
@@ -50,16 +49,6 @@ export const AccessTokensBanner = () => {
     () => getUserTokens(user?.id),
     { enabled: !!user?.id }
   )
-
-  const setTokenState = (id: number, state: TTokenState) => {}
-
-  // Mock Validating timeout
-  const handleValidateBtnClick = (id: number) => {
-    setTokenState(id, 'validating')
-    setTimeout(() => {
-      setTokenState(id, 'valid')
-    }, 600)
-  }
 
   const deleteToken = useMutation({
     mutationFn: (token_id: string) => {
@@ -99,6 +88,12 @@ export const AccessTokensBanner = () => {
     reset()
   }
 
+  useEffect(() => {
+    setService(
+      api_services?.find(({ name }) => name === getValues().service) ?? null
+    )
+  }, [watch(['service'])])
+
   return (
     <Wrapper>
       <h5 className={s.title}>Personal access tokens</h5>
@@ -128,17 +123,15 @@ export const AccessTokensBanner = () => {
           props={{ placeholder: 'Assistive text' }}
         />
         <SkillDropboxSearch
+          name='service'
           label='Choose service:'
-          list={api_services?.map(s => ({ name: s.name, data: s })) || []}
-          error={errors.service}
-          onSelect={item => {
-            setValue('service', item.name)
-            setService(item.data)
-          }}
-          props={{
-            placeholder: 'Choose service',
-            ...register('service', { required: true }),
-          }}
+          list={
+            api_services?.map(s => ({ id: s.id.toString(), name: s.name })) ||
+            []
+          }
+          control={control}
+          rules={{ required: true }}
+          props={{ placeholder: 'Choose service' }}
         />
       </form>
       {user_tokens && (

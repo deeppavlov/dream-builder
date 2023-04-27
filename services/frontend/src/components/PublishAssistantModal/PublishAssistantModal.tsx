@@ -10,15 +10,15 @@ import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
+type Visibility = 'public_template' | 'private' | 'unlisted' | null
 interface FormValues {
   hide: boolean
-  visibility: 'public_template' | 'private' | 'unlisted' | null
+  visibility: Visibility
 }
-
 export const PublishAssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
-
+  const [newValue, setNewValue] = useState<Visibility>()
 
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
@@ -54,7 +54,8 @@ export const PublishAssistantModal = () => {
   const closeModal = () => {
     reset({ visibility: null })
     setIsOpen(prev => !prev)
-    setBot(prev => null)
+    setBot(() => null)
+    setNewValue(() => null)
   }
   useObserver('PublishAssistantModal', handleEventUpdate)
   const visibility = [
@@ -95,11 +96,10 @@ export const PublishAssistantModal = () => {
                     props={{
                       ...register('visibility'),
                       defaultChecked: type?.response === bot?.visibility,
-                      disabled:
-                        type.id !== 'Private' &&
-                        bot?.publish_state === 'in_progress',
+                      onChange: e => {
+                        setNewValue(e.currentTarget.value)
+                      },
                     }}
-                    // defaultChecked={bot?.visibility === type.response}
                     key={id}
                     name={type.response}
                     id={type.id}
@@ -120,9 +120,10 @@ export const PublishAssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
+                disabled: visibilityType?.isLoading,
               }}
             >
-              Save
+              {newValue === 'public_template' ? 'Publish' : ' Save'}
             </Button>
           </div>
         </form>

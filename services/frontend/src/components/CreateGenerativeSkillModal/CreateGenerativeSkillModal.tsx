@@ -33,7 +33,7 @@ export const CreateGenerativeSkillModal = () => {
 
   const handleEventUpdate = (data: any) => {
     setInfo(data?.detail)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   useObserver('CreateGenerativeSkillModal', handleEventUpdate)

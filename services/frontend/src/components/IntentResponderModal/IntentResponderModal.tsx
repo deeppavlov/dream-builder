@@ -77,7 +77,7 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
       if (newIntent?.responses) setResponses(newIntent.responses)
     }
 
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   useObserver('IntentResponderModal', handleEventUpdate)

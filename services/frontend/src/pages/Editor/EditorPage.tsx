@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useQuery } from 'react-query'
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -32,13 +32,13 @@ import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 
 export const EditorPage = () => {
-  const { dispatch } = useDisplay()
+  const { options, dispatch } = useDisplay()
   const tabsNames = ['Skills', 'Architecture']
+  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const [activeTab, setActiveTab] = useState<number>(0)
   const { name: nameFromURL, skillId } = useParams()
-  const { state } = useLocation()
 
-  const { isPreview, setIsPreview } = usePreview()
+  const { setIsPreview } = usePreview()
 
   const { data: dist } = useQuery(
     ['dist', nameFromURL],
@@ -69,11 +69,14 @@ export const EditorPage = () => {
 
   // TODO: FIX
   useEffect(() => {
-    if (skillId && skills)
-      trigger('SkillPromptModal', {
+    if (skillId && skills) {
+      return trigger('SkillPromptModal', {
         action: 'edit',
         skill: skills?.find((s: any) => s?.name === skillId),
       })
+    }
+
+    if (skillEditorIsActive) trigger('SkillPromptModal', { isOpen: false })
   }, [skillId, skills])
 
   useEffect(() => {
@@ -98,12 +101,7 @@ export const EditorPage = () => {
     <>
       <Sidebar>
         <Container layoutForTabs>
-          <BaseToolTip
-            delayShow={TOOLTIP_DELAY}
-            id='sidebarSkillTab'
-            content='Skills'
-            place='right'
-          />
+          
           <SkillsTab isActive={true} />
           {/* <BotTab /> */}
           <div style={{ height: '100%' }}></div>

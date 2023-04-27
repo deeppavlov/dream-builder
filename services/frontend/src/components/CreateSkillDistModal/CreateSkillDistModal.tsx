@@ -34,7 +34,7 @@ const CreateSkillDistModal = () => {
   const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   useObserver('CreateSkillDistModal', handleEventUpdate)

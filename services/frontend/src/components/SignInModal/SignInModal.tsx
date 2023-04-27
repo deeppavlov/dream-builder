@@ -20,7 +20,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
 
   const handleEventUpdate = (data: { detail: Props | null }) => {
     if (data.detail?.msg) setMsg(data.detail.msg)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   const handleSignInBtnClick = () => login()

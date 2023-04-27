@@ -10,7 +10,7 @@ export const FreezeSkillModal = () => {
   const [skill, setSkill] = useState<ISkill>()
   const handleEventUpdate = ({ detail }) => {
     setSkill(detail)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
     return skill
   }
 

@@ -60,7 +60,7 @@ export const SkillModal = () => {
       [NAME_ID]: skill?.display_name,
       [DESC_ID]: skill?.description,
     })
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
   const { create, edit } = useComponent()
 

@@ -48,8 +48,6 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         return <PublicIcon className={s.icon} />
       case 'private':
         return <PrivateIcon className={s.icon} />
-      case 'validating':
-        return <LoaderIcon className={s.icon} />
       default:
         break
     }

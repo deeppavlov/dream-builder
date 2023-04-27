@@ -15,7 +15,7 @@ export const DeleteSkillModal = () => {
   const { deleteComponent } = useComponent()
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
   const deleteSkill = async () => {
     const distName = state?.distName!

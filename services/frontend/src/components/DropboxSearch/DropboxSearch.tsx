@@ -25,7 +25,7 @@ const DropboxSearch = ({
     intents?.find(({ id }) => id === activeIntentId) ?? null
   )
 
-  const handleDropdownClick = () => setIsOpen(!isOpen)
+  const handleDropdownClick = () => setIsOpen(prev => !prev)
 
   return (
     <div className={s.dropboxSearch}>

@@ -21,8 +21,9 @@ export const useQuitConfirmation = ({
       ?.flat()
     const availableElements = availableSelectors
       ?.map(s => {
-        const elements = document.querySelector(s)?.querySelectorAll('*')
-        return elements ? [...elements] : null
+        const el = document.querySelector(s)
+        const elChilds = el?.querySelectorAll('*')
+        return elChilds ? [el, ...elChilds] : el ?? null
       })
       .filter(el => el !== null)
       .flat()

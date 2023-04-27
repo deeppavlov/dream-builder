@@ -52,7 +52,7 @@ const SkillDropboxSearch = ({
     const targetIsInput =
       (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
     if (!isOpen && targetIsInput) setIsOpen(true)
-    if (!targetIsInput) setIsOpen(!isOpen)
+    if (!targetIsInput) setIsOpen(prev => !prev)
   }
 
   const handleItemClick = (item: Item) => {

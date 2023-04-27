@@ -42,7 +42,7 @@ export const SkillsListModal = () => {
     setIsOpen(isOpen => !isOpen)
   }
 
-  const okHandler = () => setIsOpen(!isOpen)
+  const okHandler = () => setIsOpen(prev => !prev)
   const handleAdd = (distName: string, id: number) => {
     toast.promise(addSkill.mutateAsync({ distName, id }), {
       loading: 'Adding...',

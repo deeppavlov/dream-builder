@@ -105,7 +105,7 @@ const SkillPromptModal = () => {
   }
 
   const servicesList = createMap(services)
-  console.log('servicesList = ', servicesList)
+  // console.log('servicesList = ', servicesList)
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
     () => getLMservice(dist?.name),
@@ -133,25 +133,17 @@ const SkillPromptModal = () => {
     }
   )
 
-  const {
-    handleSubmit,
-    reset,
-    setError,
-    getValues,
-    control,
-    watch,
-    formState: { dirtyFields },
-  } = useForm<FormValues>({
-    mode: 'all',
-    defaultValues: {
-      model: service?.displayName,
-      prompt: prompt?.text,
-    },
-  })
+  const { handleSubmit, reset, setError, getValues, control, watch } =
+    useForm<FormValues>({
+      mode: 'all',
+      defaultValues: {
+        model: service?.displayName,
+        prompt: prompt?.text,
+      },
+    })
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
-  const isDirty = Object.keys(dirtyFields).length > 0
 
   const closeModal = () => {
     const clearStates = () => {
@@ -161,28 +153,30 @@ const SkillPromptModal = () => {
       nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
     }
 
-    if (isDirty) return trigger('SkillQuitModal', { handleQuit: clearStates })
-    clearStates()
+    trigger('SkillQuitModal', { handleQuit: clearStates })
   }
 
   const handleBackBtnClick = () => closeModal()
 
   const handleEventUpdate = (data: { detail: Props }) => {
     const { skill, action } = data.detail
-    const isClose = data.detail.isOpen !== undefined && !data.detail.isOpen
+    const isRequestToClose =
+      data.detail.isOpen !== undefined && !data.detail.isOpen
 
-    if (isClose) return closeModal()
+    if (isRequestToClose) {
+      setIsOpen(false)
+      setAction(null)
+      setSkill(null)
+      return
+    }
 
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    reset(
-      {
-        model: skill?.model,
-        prompt: skill?.prompt,
-      },
-      { keepDirty: false }
-    )
+    reset({
+      model: skill?.model,
+      prompt: skill?.prompt,
+    })
     setIsOpen(prev => !prev)
   }
 
@@ -234,13 +228,10 @@ const SkillPromptModal = () => {
   }, [watch(['model'])])
 
   useEffect(() => {
-    reset(
-      {
-        model: service?.display_name,
-        prompt: prompt?.text,
-      },
-      { keepDirty: false }
-    )
+    reset({
+      model: service?.display_name,
+      prompt: prompt?.text,
+    })
   }, [service, prompt])
 
   useEffect(() => {
@@ -257,7 +248,7 @@ const SkillPromptModal = () => {
   useQuitConfirmation({
     activeElement: modalRef,
     availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
-    isActive: isOpen && isDirty,
+    isActive: isOpen,
     quitHandler: closeModal,
   })
 
@@ -406,7 +397,7 @@ const SkillPromptModal = () => {
                             theme='primary'
                             props={{
                               type: 'submit',
-                              disabled: update.isLoading || !isDirty,
+                              disabled: update.isLoading,
                             }}
                           >
                             Save

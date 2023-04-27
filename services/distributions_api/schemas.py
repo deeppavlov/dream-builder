@@ -265,6 +265,7 @@ class Deployment(BaseOrmModel):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_id: int
+    assistant_port: int
 
 
 class PublishRequestRead(BaseOrmModel):

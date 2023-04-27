@@ -26,16 +26,21 @@ export const PublishAssistantModal = () => {
   }
   const { visibilityType } = useAssistants()
   const handleNoBtnClick = () => setIsOpen(false)
+  const currentVisibilityStatus = bot?.visibility
 
   const handlePublish = (data: FormValues) => {
     const visibility = data?.visibility
     const distName = bot?.name!
-    toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
-      loading: 'Loading...',
-      success:
-        visibility === 'public_template' ? 'Submitted For Review!' : 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    visibility !== currentVisibilityStatus
+      ? toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
+          loading: 'Loading...',
+          success:
+            visibility === 'public_template'
+              ? 'Submitted For Review!'
+              : 'Success!',
+          error: 'Something Went Wrong...',
+        })
+      : setIsOpen(false)
 
     setIsOpen(false)
   }
@@ -80,10 +85,12 @@ export const PublishAssistantModal = () => {
                       ...register('visibility'),
                       defaultChecked: bot?.visibility === type.response,
                       disabled:
+                        // currentStatus === type?.response ||
                         type.id !== 'Private' &&
                         bot?.publish_state === 'in_progress',
                     }}
                     disabled={
+                      // currentStatus === type?.response ||
                       type.id !== 'Private' &&
                       bot?.publish_state === 'in_progress'
                     }

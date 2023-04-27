@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface, BotVisabilityType } from '../../types/types'
+import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
@@ -12,7 +12,7 @@ import s from './PublishAssistantModal.module.scss'
 
 interface FormValues {
   hide: boolean
-  visibility: BotVisabilityType
+  visibility: 'public_template' | 'private' | 'unlisted'
 }
 
 export const PublishAssistantModal = () => {
@@ -32,7 +32,8 @@ export const PublishAssistantModal = () => {
     const distName = bot?.name!
     toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
       loading: 'Loading...',
-      success: 'Submitted For Review! ',
+      success:
+        visibility === 'public_template' ? 'Submitted For Review!' : 'Success!',
       error: 'Something Went Wrong...',
     })
 
@@ -40,7 +41,26 @@ export const PublishAssistantModal = () => {
   }
 
   useObserver('PublishAssistantModal', handleEventUpdate)
-  const visibility = ['public_template', 'private', 'unlisted']
+  const visibility = [
+    {
+      id: 'Public',
+      response: 'public_template',
+      description: 'Public Template (everyone can see it and re-use it)',
+    },
+    {
+      id: 'Private',
+      response: 'private',
+      description: '(only you can see it)',
+    },
+    {
+      id: 'unlisted',
+      response: 'unlisted',
+      description:
+        'Unlisted (only those you’ve shared the direct link can see it)',
+    },
+  ]
+  const vMap = new Map(visibility)
+  // console.log('vMap = ', vMap)
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
@@ -54,10 +74,10 @@ export const PublishAssistantModal = () => {
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              {visibility.map((type, i) => {
-                // console.log('type = ', type)
-                return <React.Fragment key={i}>{type} </React.Fragment>
-              })}
+              {/* {visibility.map(type => {
+                console.log('type = ', type)
+                return <>{type} </>
+              })} */}
               <RadioButton
                 props={{ ...register('visibility'), defaultChecked: true }}
                 name='visibility'

@@ -33,7 +33,9 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
     })
 
   const handleRenameBtnClick = () =>
-    trigger('AssistantModal', { action: 'edit', bot })
+    bot?.visibility === 'public_template'
+      ? trigger('PublicToPrivateModal', { bot, action: 'rename' })
+      : trigger('AssistantModal', { action: 'edit', bot })
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
@@ -83,7 +85,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
-            disabled={bot?.visibility =='public_template'}
+            // disabled={bot?.visibility == 'public_template'}
             name='Rename'
             type='edit'
             handleClick={handleRenameBtnClick}

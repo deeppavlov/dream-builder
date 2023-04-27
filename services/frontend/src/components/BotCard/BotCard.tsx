@@ -50,13 +50,15 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: false,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
+    bot?.visibility === 'public_template'
+      ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
+      : navigate(`/${bot?.name}`, {
+          state: {
+            preview: false,
+            distName: bot?.name,
+            displayName: bot?.display_name,
+          },
+        })
     e.stopPropagation()
   }
 

@@ -73,3 +73,12 @@
   justify-content: start;
   gap: 16px;
 }
+.forCard {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  &:hover {
+    background-color: #fff;
+    cursor: pointer;
+  }
+}

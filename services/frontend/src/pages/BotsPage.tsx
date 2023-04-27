@@ -7,6 +7,7 @@ import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
+import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
 import { SignInModal } from '../components/SignInModal/SignInModal'
@@ -89,6 +90,7 @@ export const BotsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareModal />
+        <PublicToPrivateModal />
         <Modal />
         <SignInModal />
         <BaseSidePanel transition='left' />

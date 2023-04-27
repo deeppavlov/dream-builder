@@ -12,39 +12,50 @@ import s from './PublishAssistantModal.module.scss'
 
 interface FormValues {
   hide: boolean
-  visibility: 'public_template' | 'private' | 'unlisted'
+  visibility: 'public_template' | 'private' | 'unlisted' | null
 }
 
 export const PublishAssistantModal = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
-  const { register, handleSubmit } = useForm<FormValues>()
 
-  const handleEventUpdate = (data: { detail: any }) => {
-    setBot(data.detail.bot)
-    setIsOpen(prev => !prev)
-  }
+
+  const { register, handleSubmit, reset } = useForm<FormValues>()
+
   const { visibilityType } = useAssistants()
-  const handleNoBtnClick = () => setIsOpen(false)
   const currentVisibilityStatus = bot?.visibility
 
-  const handlePublish = (data: FormValues) => {
-    const visibility = data?.visibility
-    const distName = bot?.name!
-    visibility !== currentVisibilityStatus
-      ? toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
-          loading: 'Loading...',
-          success:
-            visibility === 'public_template'
-              ? 'Submitted For Review!'
-              : 'Success!',
-          error: 'Something Went Wrong...',
-        })
-      : setIsOpen(false)
-
-    setIsOpen(false)
+  const handleEventUpdate = (data: { detail: any }) => {
+    setBot(data?.detail.bot)
+    setIsOpen(prev => !prev)
   }
 
+  const handleNoBtnClick = () => closeModal()
+
+  const handlePublish = (data: FormValues) => {
+    const visibility = data?.visibility!
+    const distName = bot?.name!
+    visibility !== currentVisibilityStatus
+      ? toast
+          .promise(visibilityType.mutateAsync({ distName, visibility }), {
+            loading: 'Loading...',
+            success:
+              visibility === 'public_template'
+                ? 'Submitted For Review!'
+                : 'Success!',
+            error: 'Something Went Wrong...',
+          })
+          .then(() => {
+            closeModal()
+          })
+      : closeModal()
+  }
+  console.log('bot?.name, bot?.visibility = ', bot?.name, bot?.visibility)
+  const closeModal = () => {
+    reset({ visibility: null })
+    setIsOpen(prev => !prev)
+    setBot(prev => null)
+  }
   useObserver('PublishAssistantModal', handleEventUpdate)
   const visibility = [
     {
@@ -66,7 +77,7 @@ export const PublishAssistantModal = () => {
   ]
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
@@ -83,17 +94,12 @@ export const PublishAssistantModal = () => {
                   <RadioButton
                     props={{
                       ...register('visibility'),
-                      defaultChecked: bot?.visibility === type.response,
+                      defaultChecked: type?.response === bot?.visibility,
                       disabled:
-                        // currentStatus === type?.response ||
                         type.id !== 'Private' &&
                         bot?.publish_state === 'in_progress',
                     }}
-                    disabled={
-                      // currentStatus === type?.response ||
-                      type.id !== 'Private' &&
-                      bot?.publish_state === 'in_progress'
-                    }
+                    // defaultChecked={bot?.visibility === type.response}
                     key={id}
                     name={type.response}
                     id={type.id}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
+import store from 'store2'
 import { ChatHistory } from '../components/SkillDialog/SkillDialog'
 import { DEEPY_ASSISTANT } from '../constants/constants'
 import { getHistory } from '../services/getHistory'
@@ -12,19 +13,11 @@ export const useChat = () => {
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
   const [error, setError] = useState(false)
-  const [deepySession, setDeepySession] = useState(
-    JSON.parse(localStorage.getItem('deepyID'))
-  )
+  const [deepySession, setDeepySession] = useState(store('deepySession'))
   const [isDeepy, setIsDeepy] = useState<boolean>(Boolean(deepySession?.id))
-  const queryClient = useQueryClient()
-  const { data: remoteHistory } = useQuery('history', () =>
-    getHistory(isDeepy ? deepySession.id : session?.id)
-  )
 
-  isDeepy &&
-    session?.id &&
-    localStorage.setItem('deepyID', JSON.stringify(session))
-  console.log('isDeepy = ', isDeepy)
+  isDeepy && session?.id && store('deepyID', session)
+
   const renew = useMutation({
     onMutate: (data: string) => {
       setMessage('')
@@ -36,8 +29,7 @@ export const useChat = () => {
     },
     onSuccess: (data, variables) => {
       variables == DEEPY_ASSISTANT ? setDeepySession(data) : setSession(data)
-      variables == DEEPY_ASSISTANT &&
-        localStorage.setItem('deepySession', JSON.stringify(data))
+      variables == DEEPY_ASSISTANT && store('deepySession', data)
     },
   })
 
@@ -50,13 +42,24 @@ export const useChat = () => {
       return sendMessage(variables?.id, variables?.message)
     },
     onSuccess: data => {
-      queryClient.invalidateQueries('history')
+      // queryClient.invalidateQueries('history')
       setHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
     onError: () => {
       setError(true)
     },
   })
+
+  const remoteHistory = useQuery(
+    'history',
+    () => getHistory(isDeepy ? deepySession.id : session?.id),
+    {
+      enabled: Boolean(deepySession?.id),
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    }
+  )
   return {
     deepySession,
     isDeepy,

@@ -19,6 +19,7 @@ interface WrapperProps {
   children?: ReactNode
   annotation?: string
   onClose?: (e: MouseEvent) => void
+  forCard?: boolean
 }
 
 export const Wrapper = ({
@@ -36,6 +37,7 @@ export const Wrapper = ({
   skills,
   annotation,
   onClose,
+  forCard,
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -74,7 +76,8 @@ export const Wrapper = ({
             fitScreen && 'fitScreen',
             limiter && 'limiter',
             primary && 'primary',
-            skills && 'skills'
+            skills && 'skills',
+            forCard && 'forCard'
           )}
         >
           {closable && (

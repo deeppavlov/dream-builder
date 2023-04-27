@@ -90,8 +90,17 @@ export const useAssistants = () => {
     mutationFn: (variables: { distName: string; visibility: string }) => {
       return publishAssistantDist(variables.distName, variables.visibility)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries('privateDists')
+    onSuccess: (_, variables) => {
+      console.log('variables?.visibility = ', variables?.visibility)
+      variables.visibility == 'public_template' &&
+        queryClient.invalidateQueries({ queryKey: 'privateDists' })
+      variables.visibility == 'private' &&
+        queryClient.invalidateQueries({ queryKey: 'publicDists' })
+      queryClient.invalidateQueries({
+        queryKey: 'privateDists',
+      })
+      variables.visibility == 'unlisted' &&
+        queryClient.invalidateQueries({ queryKey: 'privateDists' })
     },
   })
   return {

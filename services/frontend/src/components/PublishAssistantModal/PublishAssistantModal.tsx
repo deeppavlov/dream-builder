@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface, BotVisabilityType } from '../../types/types'
+import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
@@ -12,7 +12,7 @@ import s from './PublishAssistantModal.module.scss'
 
 interface FormValues {
   hide: boolean
-  visibility: BotVisabilityType
+  visibility: 'public_template' | 'private' | 'unlisted'
 }
 
 export const PublishAssistantModal = () => {
@@ -32,7 +32,8 @@ export const PublishAssistantModal = () => {
     const distName = bot?.name!
     toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
       loading: 'Loading...',
-      success: 'Submitted For Review! ',
+      success:
+        visibility === 'public_template' ? 'Submitted For Review!' : 'Success!',
       error: 'Something Went Wrong...',
     })
 
@@ -40,7 +41,25 @@ export const PublishAssistantModal = () => {
   }
 
   useObserver('PublishAssistantModal', handleEventUpdate)
-  const visibility = ['public_template', 'private', 'unlisted']
+  const visibility = [
+    {
+      id: 'Private',
+      response: 'private',
+      description: 'Private (only you can see it)',
+    },
+    {
+      id: 'Unlisted',
+      response: 'unlisted',
+      description:
+        'Unlisted (only those you’ve shared the direct link can see it)',
+    },
+    {
+      id: 'Public',
+      response: 'public_template',
+      description: 'Public Template (everyone can see it and re-use it)',
+    },
+  ]
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publishAssistantModal}>
@@ -54,38 +73,30 @@ export const PublishAssistantModal = () => {
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              {visibility.map((type, i) => {
-                // console.log('type = ', type)
-                return <React.Fragment key={i}>{type} </React.Fragment>
+              {visibility.map((type, id) => {
+                return (
+                  <RadioButton
+                    props={{
+                      ...register('visibility'),
+                      defaultChecked: bot?.visibility === type.response,
+                      disabled:
+                        type.id !== 'Private' &&
+                        bot?.publish_state === 'in_progress',
+                    }}
+                    disabled={
+                      type.id !== 'Private' &&
+                      bot?.publish_state === 'in_progress'
+                    }
+                    key={id}
+                    name={type.response}
+                    id={type.id}
+                    htmlFor={type.id}
+                    value={type.response}
+                  >
+                    {type.description}
+                  </RadioButton>
+                )
               })}
-              <RadioButton
-                props={{ ...register('visibility'), defaultChecked: true }}
-                name='visibility'
-                id='Private'
-                htmlFor='Private'
-                value='private'
-              >
-                Private (only you can see it)
-              </RadioButton>
-              <RadioButton
-                props={{ ...register('visibility') }}
-                name='visibility'
-                id='Unlisted'
-                htmlFor='Unlisted'
-                value='unlisted'
-              >
-                Unlisted (only those you’ve shared the direct link can see it)
-              </RadioButton>
-              <RadioButton
-                props={{ ...register('visibility') }}
-                name='visibility'
-                id='Template'
-                htmlFor='Template'
-                value='public_template'
-                defaultChecked={false}
-              >
-                Public Template (everyone can see it and re-use it)
-              </RadioButton>
             </div>
           </div>
           <div className={s.btns}>

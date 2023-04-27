@@ -50,7 +50,7 @@ export const PublishAssistantModal = () => {
           })
       : closeModal()
   }
-  console.log('bot?.name, bot?.visibility = ', bot?.name, bot?.visibility)
+
   const closeModal = () => {
     reset({ visibility: null })
     setIsOpen(prev => !prev)
@@ -97,7 +97,7 @@ export const PublishAssistantModal = () => {
                       ...register('visibility'),
                       defaultChecked: type?.response === bot?.visibility,
                       onChange: e => {
-                        setNewValue(e.currentTarget.value)
+                        setNewValue(e?.currentTarget?.value)
                       },
                     }}
                     key={id}

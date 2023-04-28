@@ -3,10 +3,12 @@ import { useMutation, useQuery } from 'react-query'
 import store from 'store2'
 import { ChatHistory } from '../components/SkillDialog/SkillDialog'
 import { DEEPY_ASSISTANT } from '../constants/constants'
+import { useDisplay } from '../context/DisplayContext'
 import { getHistory } from '../services/getHistory'
 import { renewDialog } from '../services/renewDialog'
 import { sendMessage } from '../services/sendMessage'
 import { SessionConfig } from '../types/types'
+import { consts } from '../utils/consts'
 
 export const useChat = () => {
   const [session, setSession] = useState<SessionConfig | null>(null)
@@ -15,7 +17,7 @@ export const useChat = () => {
   const [error, setError] = useState(false)
   const [deepySession, setDeepySession] = useState(store('deepySession'))
   const [isDeepy, setIsDeepy] = useState<boolean>(Boolean(deepySession?.id))
-
+  const { options } = useDisplay()
   isDeepy && session?.id && store('deepyID', session)
 
   const renew = useMutation({
@@ -54,12 +56,14 @@ export const useChat = () => {
     'history',
     () => getHistory(isDeepy ? deepySession.id : session?.id),
     {
-      enabled: Boolean(deepySession?.id),
+      enabled:
+        Boolean(deepySession?.id) && options.get(consts.COPILOT_SP_IS_ACTIVE),
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       retry: 1,
     }
   )
+
   return {
     deepySession,
     isDeepy,

@@ -76,6 +76,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
       },
     })
   useEffect(() => {
+    !isFirstTest && renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+  }, [])
+
+  useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
@@ -166,21 +170,8 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                 </>
               )}
             </div>
-            <div className={s.dialogSidePanel__controls}>
-              <div className={s.left}>
-                {/* <DialogButton
-                  active={isTextChat}
-                  onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
-                >
-                  <DialogTextIcon />
-                </DialogButton>
-                <button
-                  className={s.dialogSidePanel__control}
-                  onClick={handleDownloadBtnClick}
-                >
-                  <DownloadDialogIcon />
-                </button> */}
-              </div>
+            {/* <div className={s.dialogSidePanel__controls}>
+              <div className={s.left}></div>
               <div className={s.right}>
                 <Button
                   small
@@ -193,7 +184,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                   </div>
                 </Button>
               </div>
-            </div>
+            </div> */}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 className={s.dialogSidePanel__textarea}
@@ -204,6 +195,14 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               />
               <input type='submit' hidden />
               <SidePanelButtons>
+                <Button
+                  theme='secondary'
+                  props={{
+                    onClick: handleRenewClick,
+                  }}
+                >
+                  <Renew data-tooltip-id='renew' />
+                </Button>
                 <Button
                   theme='primary'
                   props={{ disabled: send?.isLoading, type: 'submit' }}

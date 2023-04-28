@@ -80,6 +80,7 @@ export const CopilotSidePanel = () => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
+  
   const historyList = history?.map((block: ChatHistory, i: number) => (
     <div
       key={`${block?.author == 'bot'}${i}`}

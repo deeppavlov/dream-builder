@@ -3,6 +3,7 @@ import classNames from 'classnames/bind'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
+import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
@@ -10,6 +11,7 @@ import { BotInfoInterface, ChatForm } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
@@ -17,8 +19,6 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
-import { consts } from '../../utils/consts'
-import { useDisplay } from '../../context/DisplayContext'
 
 type ChatPanelType = 'bot' | 'skill'
 
@@ -67,7 +67,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
 
-  
+  useEffect(() => {
+    !isFirstTest && renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+  }, [])
+
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
       type: 'set',
@@ -102,7 +105,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           <>
             <ul role='tablist'>
               <li role='tab' key='Dialog' aria-selected>
-                Dialog
+                Chat with {dist?.display_name}
               </li>
             </ul>
           </>
@@ -169,21 +172,8 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                 </>
               )}
             </div>
-            <div className={s.dialogSidePanel__controls}>
-              <div className={s.left}>
-                {/* <DialogButton
-                  active={isTextChat}
-                  onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
-                >
-                  <DialogTextIcon />
-                </DialogButton>
-                <button
-                  className={s.dialogSidePanel__control}
-                  onClick={handleDownloadBtnClick}
-                >
-                  <DownloadDialogIcon />
-                </button> */}
-              </div>
+            {/* <div className={s.dialogSidePanel__controls}>
+              <div className={s.left}></div>
               <div className={s.right}>
                 <Button
                   small
@@ -196,7 +186,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                   </div>
                 </Button>
               </div>
-            </div>
+            </div> */}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 className={s.dialogSidePanel__textarea}
@@ -207,6 +197,14 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               />
               <input type='submit' hidden />
               <SidePanelButtons>
+                <Button
+                  theme='secondary'
+                  props={{
+                    onClick: handleRenewClick,
+                  }}
+                >
+                  <Renew data-tooltip-id='renew' />
+                </Button>
                 <Button
                   theme='primary'
                   props={{ disabled: send?.isLoading, type: 'submit' }}

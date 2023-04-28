@@ -111,7 +111,7 @@ export const EditorPage = () => {
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
-      <BaseSidePanel transition='left' />
+      
       <AreYouSureModal />
       <SkillPromptModal />
       <SkillQuitModal />

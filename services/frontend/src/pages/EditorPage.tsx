@@ -1,14 +1,13 @@
-import { useEffect,useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
-import { Tab,TabList,TabPanel,Tabs } from 'react-tabs'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import { Annotators } from '../components/Annotators/Annotators'
 import { AreYouSureModal } from '../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { CandidateAnnotators } from '../components/CandidateAnnotators/CandidateAnnotators'
-import { CreateGenerativeSkillModal } from '../components/CreateGenerativeSkillModal/CreateGenerativeSkillModal'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { DeleteSkillModal } from '../components/DeleteSkillModal/DeleteSkillModal'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
@@ -199,7 +198,6 @@ export const EditorPage = () => {
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
-      <BaseSidePanel transition='left' />
       <AreYouSureModal />
       <SkillPromptModal />
       <SkillQuitModal />
@@ -213,7 +211,6 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
-      {/* <CreateGenerativeSkillModal /> */}
     </>
   )
 }

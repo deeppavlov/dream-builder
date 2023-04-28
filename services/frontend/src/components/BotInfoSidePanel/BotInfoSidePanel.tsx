@@ -21,19 +21,15 @@ interface Props {
 }
 
 const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
-  const [bot, setBot] = useState<BotInfoInterface>(propBot)
+  const [bot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
   const navigate = useNavigate()
-  const [tabsInfo, setTabsInfo] = useTabsManager({
+  const [tabsInfo] = useTabsManager({
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
   const { dispatch } = useDisplay()
-  // const {
-  //   isLoading: isComponentsLoading,
-  //   error: componentsError,
-  //   data: components,
-  // } = useQuery(['components', bot?.name], () => getComponents(bot?.name!))
+
   const tooltipId = useId()
 
   const handleCloneBtnClick = () => {

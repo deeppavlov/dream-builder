@@ -50,7 +50,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
           debug={false}
           key={bot?.name + 'chat_with_assistant'}
           chatWith='bot'
-          start
+          // start
           dist={bot}
         />
       ),

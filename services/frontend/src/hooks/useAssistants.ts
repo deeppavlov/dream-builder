@@ -20,17 +20,11 @@ export const useAssistants = () => {
   const { state } = useLocation()
   const isTopbarButton = Boolean(name)
 
-  const {
-    data: publicDists,
-    error: publicDistsError,
-    isLoading: isPublicDistsLoading,
-  } = useQuery('publicDists', getPublicDists, { enabled: !Boolean(name) })
+  const publicDists = useQuery('publicDists', getPublicDists, {
+    enabled: !Boolean(name),
+  })
 
-  const {
-    data: privateDists,
-    error: privateDistsError,
-    isLoading: isPrivateDistsLoading,
-  } = useQuery('privateDists', getPrivateDists, {
+  const privateDists = useQuery('privateDists', getPrivateDists, {
     enabled: !!auth?.user && !Boolean(name),
   })
   const { data: dist } = useQuery(
@@ -105,11 +99,7 @@ export const useAssistants = () => {
   })
   return {
     privateDists,
-    privateDistsError,
-    isPrivateDistsLoading,
     publicDists,
-    publicDistsError,
-    isPublicDistsLoading,
     visibilityType,
     dist,
     rename,

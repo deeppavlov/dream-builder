@@ -26,14 +26,7 @@ export const BotsPage = () => {
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
   const auth = useAuth()
-  const {
-    privateDists,
-    privateDistsError,
-    isPrivateDistsLoading,
-    publicDists,
-    publicDistsError,
-    isPublicDistsLoading,
-  } = useAssistants()
+  const { privateDists, publicDists } = useAssistants()
 
   return (
     <>
@@ -41,25 +34,33 @@ export const BotsPage = () => {
         <Wrapper
           title='Assistant Templates'
           showAll
-          amount={publicDists?.length}
+          amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
         >
-          {publicDistsError ? (
-            <ErrorHandler error={publicDistsError} />
+          {publicDists?.error ? (
+            <ErrorHandler error={publicDists?.error} />
           ) : (
             <>
               {isTableView ? (
                 <Table
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
-                  <DistList view='table' dists={publicDists} type='public' />
+                  <DistList
+                    view='table'
+                    dists={publicDists?.data}
+                    type='public'
+                  />
                 </Table>
               ) : (
                 <Container overflowForAddButton>
                   <AddButton disabled={!auth?.user} />
                   <Slider>
-                    {isPublicDistsLoading && <CardsLoader cardsCount={6} />}
-                    <DistList view='cards' dists={publicDists} type='public' />
+                    {publicDists?.isLoading && <CardsLoader cardsCount={6} />}
+                    <DistList
+                      view='cards'
+                      dists={publicDists?.data}
+                      type='public'
+                    />
                   </Slider>
                 </Container>
               )}
@@ -71,24 +72,30 @@ export const BotsPage = () => {
           showAll
           title='Your Assistants'
           amount={
-            auth?.user && privateDists?.length > 0 && privateDists?.length
+            auth?.user &&
+            privateDists?.data?.length > 0 &&
+            privateDists?.data?.length
           }
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
             <Table fourth='Visibility'>
-              <DistList view='table' dists={privateDists} type='your' />
+              <DistList view='table' dists={privateDists?.data} type='your' />
             </Table>
           ) : (
             <Container overflowForAddButton>
               <Slider>
-                {auth?.user && isPrivateDistsLoading && (
+                {auth?.user && privateDists?.isLoading && (
                   <CardsLoader cardsCount={6} />
                 )}
-                {privateDistsError ? (
-                  <ErrorHandler error={privateDistsError} />
+                {privateDists?.error ? (
+                  <ErrorHandler error={privateDists?.error} />
                 ) : (
-                  <DistList view='cards' dists={privateDists} type='your' />
+                  <DistList
+                    view='cards'
+                    dists={privateDists?.data}
+                    type='your'
+                  />
                 )}
               </Slider>
             </Container>
@@ -102,7 +109,6 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
-        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

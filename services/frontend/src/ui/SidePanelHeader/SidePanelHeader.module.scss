@@ -23,6 +23,10 @@
     padding: 8px 0;
     color: $text3;
     cursor: pointer;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &[aria-selected='true'] {
       border-bottom: 2px solid $primary1;

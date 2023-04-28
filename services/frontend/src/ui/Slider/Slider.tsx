@@ -9,9 +9,14 @@ import s from './Slider.module.scss'
 type Props = {
   children?: React.ReactNode
   subWrapper?: boolean
+  privateAssistants?: boolean
 }
 
-export const Slider: FC<Props> = ({ children, subWrapper }) => {
+export const Slider: FC<Props> = ({
+  children,
+  subWrapper,
+  privateAssistants,
+}) => {
   const cx = classNames.bind(s)
   const contentWrapper = useRef<HTMLDivElement>(null)
   useDrag(contentWrapper)
@@ -21,7 +26,11 @@ export const Slider: FC<Props> = ({ children, subWrapper }) => {
         {children}
       </div>
       <button
-        className={cx('btnL', subWrapper && 'subWrapperL')}
+        className={cx(
+          'btnL',
+          subWrapper && 'subWrapperL',
+          privateAssistants && 'privateAssistants'
+        )}
         onClick={() => {
           sideScroll(contentWrapper.current!, 25, 300, -20)
         }}
@@ -29,7 +38,11 @@ export const Slider: FC<Props> = ({ children, subWrapper }) => {
         <LeftArrowIcon />
       </button>
       <button
-        className={cx('btnR', subWrapper && 'subWrapperR')}
+        className={cx(
+          'btnR',
+          subWrapper && 'subWrapperR',
+          privateAssistants && 'privateAssistants'
+        )}
         onClick={() => {
           sideScroll(contentWrapper.current!, 25, 300, 20)
         }}

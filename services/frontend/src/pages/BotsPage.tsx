@@ -86,7 +86,7 @@ export const BotsPage = () => {
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <Slider>
+              <Slider privateAssistants>
                 {auth?.user && privateDists?.isLoading && (
                   <CardsLoader cardsCount={6} />
                 )}

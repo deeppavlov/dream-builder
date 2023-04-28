@@ -361,6 +361,8 @@ async def publish_dist(
 
         if payload.visibility == "private":
             crud.delete_publish_request(db, virtual_assistant.id)
+        elif payload.visibility == "unlisted":
+            crud.create_publish_request_autoconfirm(db, virtual_assistant.id, user.id, virtual_assistant.name)
         else:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)

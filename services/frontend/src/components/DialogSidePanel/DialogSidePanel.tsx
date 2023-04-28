@@ -1,6 +1,6 @@
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
@@ -17,6 +17,8 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
+import { consts } from '../../utils/consts'
+import { useDisplay } from '../../context/DisplayContext'
 
 type ChatPanelType = 'bot' | 'skill'
 
@@ -32,6 +34,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const [isFirstTest, setIsFirstTest] = useState(start)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
+  const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
 
   const startPanel = isFirstTest && !error
@@ -63,6 +66,22 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
+
+  
+  const dispatchTrigger = (isOpen: boolean) => {
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT_SP_ID,
+        value: isOpen ? dist.id : null,
+      },
+    })
+  }
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
 
   return (
     <div className={s.container}>

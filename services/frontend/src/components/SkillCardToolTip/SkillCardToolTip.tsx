@@ -66,7 +66,7 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
       <ContextMenuButton
         name='Delete'
         type='delete'
-        disabled={isPreview || skill?.component_type !== 'Generative'}
+        disabled={isPreview || skill?.component_type !== ('Generative' as any)}
         handleClick={handleDeleteBtnClick}
       />
     </BaseContextMenu>

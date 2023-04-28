@@ -20,7 +20,6 @@ interface BaseSidePanel {
     bottom: number | 'auto'
   }>
   children?: React.ReactNode
-  parent?: React.MutableRefObject<any>
   isClosable?: boolean
   transition?: TTransition | 'none'
 }
@@ -40,56 +39,30 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
   const [isClosable, setIsClosable] = useState<boolean>(propsIsClosable)
   const [content, setContent] = useState<React.ReactNode>(children)
-  const [parent, setParent] = useState<HTMLElement>()
   const { dispatch } = useDisplay()
+  const observedEventName =
+    transition === 'left' ? TRIGGER_LEFT_SP_EVENT : TRIGGER_RIGHT_SP_EVENT
 
-  const setParentFocus = (isFocused: boolean, el?: HTMLElement) => {
-    if (!isFocused) {
-      parent?.removeAttribute('data-active')
-      return
-    }
-
-    setParent(prev => {
-      prev?.removeAttribute('data-active')
-      el?.setAttribute('data-active', 'true')
-      return el
-    })
-  }
-
-  const handleClose = () => {
-    setIsOpen(false)
-    setParentFocus(false)
-  }
+  const handleClose = () => setIsOpen(false)
 
   /**
    * Update BaseSidePanel content, when it's triggered
    */
-  const updateState = (data: BaseSidePanel) => {
-    if (data.isClosable !== undefined) {
-      setIsClosable(data.isClosable)
+  const updateState = (data: { detail: BaseSidePanel }) => {
+    const { isClosable, isOpen: detailsIsOpen, children } = data.detail
+
+    if (isClosable !== undefined) {
+      setIsClosable(isClosable)
     } else setIsClosable(true)
 
-    // Close BaseSidePanel, when isOpen === false
-    if (data.isOpen !== undefined && !data.isOpen) {
-      handleClose()
-      return
-    }
+    if (detailsIsOpen !== undefined && !detailsIsOpen) return handleClose()
 
-    setContent(data.children)
+    setContent(children)
 
-    // Open BaseSidePanel, if it's not already open
     if (!isOpen) setIsOpen(true)
   }
 
-  const handleTrigger = (data: { detail: BaseSidePanel }) => {
-    updateState(data.detail)
-    setParentFocus(true, data.detail.parent?.current)
-  }
-
-  useObserver(
-    transition === 'left' ? TRIGGER_LEFT_SP_EVENT : TRIGGER_RIGHT_SP_EVENT,
-    handleTrigger
-  )
+  useObserver(observedEventName, updateState)
 
   useEffect(() => {
     const side = transition === 'left' ? 'LEFT' : 'RIGHT'

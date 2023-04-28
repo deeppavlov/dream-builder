@@ -44,6 +44,7 @@ export interface IAuthor {
 }
 
 export interface BotInfoInterface {
+  id: number
   name: string
   display_name: string
   author: IAuthor
@@ -134,6 +135,7 @@ export interface IContextMenu {
 }
 
 export interface IStackElement {
+  id: number
   name: string // Routing name
   display_name: string
   author: IAuthor

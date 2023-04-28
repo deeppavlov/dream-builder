@@ -1,6 +1,6 @@
 import { ReactComponent as Clone } from '@assets/icons/clone.svg'
 import Woman from '@assets/icons/woman.png'
-import { FC, useId, useRef } from 'react'
+import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { useDisplay } from '../../context/DisplayContext'
@@ -27,17 +27,15 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
-  const botListItemRef = useRef(null)
   const { options } = useDisplay()
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleBotListItemClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      parent: botListItemRef,
       children: (
         <BotInfoSidePanel
           type={type}
-          key={bot?.name}
+          key={bot?.id}
           bot={bot}
           disabled={disabled}
         />
@@ -82,8 +80,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     <tr
       className={s.tr}
       onClick={handleBotListItemClick}
-      ref={botListItemRef}
-      data-active={bot.name === activeAssistantId}
+      data-active={bot.id === activeAssistantId}
     >
       <td className={s.td}>
         <div className={s.name}>

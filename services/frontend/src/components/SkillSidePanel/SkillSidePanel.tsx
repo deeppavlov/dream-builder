@@ -57,7 +57,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
       type: 'set',
       option: {
         id: consts.ACTIVE_SKILL_SP_ID,
-        value: isOpen ? skill.name : null,
+        value: isOpen ? skill.id : null,
       },
     })
 

@@ -1,9 +1,8 @@
 import classNames from 'classnames/bind'
-import { FC, useId, useRef, useState } from 'react'
+import { FC, useId, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
-import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
@@ -16,7 +15,6 @@ import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
 import { timeToUTC } from '../../utils/timeToUTC'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillListItem.module.scss'
 
@@ -42,7 +40,6 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { isPreview } = usePreview()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
-  const skillListItemRef = useRef(null)
   const { options } = useDisplay()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const { state } = useLocation()
@@ -53,12 +50,8 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     setDisabled(disabled => !disabled)
   }
   const handleSkillListItemClick = (e: React.MouseEvent) => {
-    triggerSkillSidePanel({
-      parent: skillListItemRef,
-      skill,
-      type,
-      activeTab: 'Properties',
-    })
+    console.log(activeSKillId)
+    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
   }
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -78,8 +71,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     <tr
       className={cx('tr', disabled && 'disabled')}
       onClick={handleSkillListItemClick}
-      ref={skillListItemRef}
-      data-active={skill.name === activeSKillId}
+      data-active={skill.id === activeSKillId}
     >
       <td className={s.td}>
         <div className={s.name}>

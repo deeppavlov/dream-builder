@@ -24,7 +24,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <BotInfoSidePanel
-          key={bot.name}
+          key={bot.id}
           bot={bot}
           disabled={!auth?.user}
           type={type}

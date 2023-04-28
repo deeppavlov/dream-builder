@@ -22,17 +22,15 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const tooltipId = useId()
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
-  const botCardRef = useRef(null)
   const { options } = useDisplay()
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      parent: botCardRef,
       children: (
         <BotInfoSidePanel
           type={type}
-          key={bot?.name}
+          key={bot?.id}
           bot={bot}
           disabled={disabled}
         />
@@ -68,8 +66,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
-      ref={botCardRef}
-      data-active={bot.name === activeAssistantId}
+      data-active={`${activeAssistantId === bot.id}`}
     >
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>

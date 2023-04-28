@@ -56,14 +56,15 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     e.stopPropagation()
   }
 
-  const dispatchTrigger = (isOpen: boolean) =>
+  const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
       type: 'set',
       option: {
         id: consts.ACTIVE_ASSISTANT_SP_ID,
-        value: isOpen ? bot.name : null,
+        value: isOpen ? bot.id : null,
       },
     })
+  }
 
   useEffect(() => {
     dispatchTrigger(true)

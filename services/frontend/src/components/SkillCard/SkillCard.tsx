@@ -1,6 +1,6 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import React, { FC, useId, useRef, useState } from 'react'
+import React, { FC, useId, useState } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -36,7 +36,6 @@ export const SkillCard: FC<SkillCardProps> = ({
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
-  const skillCardRef = useRef(null)
   const { options } = useDisplay()
   const { name: distRoutingName } = useParams()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
@@ -50,12 +49,7 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    triggerSkillSidePanel({
-      parent: skillCardRef,
-      skill,
-      type,
-      activeTab: 'Properties',
-    })
+    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
   }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
@@ -64,7 +58,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    if (skill.component_type === 'Generative') {
+    if (skill.component_type === ('Generative' as any)) {
       // trigger('SkillPromptModal', { skill, action: 'edit' })
       // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       nav(
@@ -92,8 +86,7 @@ export const SkillCard: FC<SkillCardProps> = ({
         disabled && 'disabled'
       )}
       onClick={handleSkillCardClick}
-      ref={skillCardRef}
-      data-active={skill.name === activeSKillId}
+      data-active={skill.id === activeSKillId}
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>

@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { logout } from '../../context/AuthProvider'
 import { UserContext } from '../../types/types'
-import { RoutesList } from '../../router/RoutesList'
 import s from './Profile.module.scss'
 
 interface ProfileProps {

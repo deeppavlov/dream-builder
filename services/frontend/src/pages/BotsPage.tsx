@@ -7,6 +7,7 @@ import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
+import { Placeholder } from '../components/PlaceHolder/Placeholder'
 import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
@@ -32,6 +33,7 @@ export const BotsPage = () => {
     <>
       <Main sidebar>
         <Wrapper
+          subWrapper
           title='Assistant Templates'
           showAll
           amount={publicDists?.data?.length}
@@ -54,7 +56,7 @@ export const BotsPage = () => {
               ) : (
                 <Container overflowForAddButton>
                   <AddButton disabled={!auth?.user} />
-                  <Slider>
+                  <Slider subWrapper>
                     {publicDists?.isLoading && <CardsLoader cardsCount={6} />}
                     <DistList
                       view='cards'
@@ -96,6 +98,9 @@ export const BotsPage = () => {
                     dists={privateDists?.data}
                     type='your'
                   />
+                )}
+                {privateDists?.data?.length === 0 && (
+                  <Placeholder>You assistants will appear here</Placeholder>
                 )}
               </Slider>
             </Container>

@@ -1,4 +1,5 @@
-import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
+// import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
+import DeepyHelperIcon from '../../../assets/icons/deeppavlov_logo_round.svg'
 import classNames from 'classnames/bind'
 import { useState } from 'react'
 import { TOOLTIP_DELAY } from '../../../constants/constants'

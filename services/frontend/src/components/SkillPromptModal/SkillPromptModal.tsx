@@ -105,6 +105,19 @@ const SkillPromptModal = () => {
   }
 
   const servicesList = createMap(services)
+  const dropboxArray =
+    services
+      ?.map((service: LM) => ({
+        id: service?.name,
+        name: service?.display_name,
+      }))
+      ?.concat([
+        {
+          id: 'rmt_with_2m_tokens',
+          name: 'Open-Assistant SFT-1 12B RMT (with 2M tokens)',
+          disabled: true,
+        },
+      ]) || []
   // console.log('servicesList = ', servicesList)
   const { data: service } = useQuery(
     ['lm_service', dist?.name],
@@ -316,13 +329,7 @@ const SkillPromptModal = () => {
                     rules={{ required: true }}
                     defaultValue={service?.display_name}
                     label='Generative model:'
-                    list={services?.map(
-                      (service: any) =>
-                        ({
-                          name: service?.display_name,
-                          data: service?.name,
-                        } || [])
-                    )}
+                    list={dropboxArray}
                     props={{ placeholder: 'Choose model' }}
                     fullWidth
                   />

@@ -9,6 +9,7 @@ import s from './SkillDropboxSearch.module.scss'
 interface Item {
   id: string
   name: string
+  disabled?: boolean
 }
 
 interface Props {
@@ -91,8 +92,12 @@ const SkillDropboxSearch = ({
         {list?.map((item, i) => (
           <li
             key={i}
-            className={cx('item', item.name === field.value && 'activeItem')}
-            onClick={() => handleItemClick(item)}
+            className={cx(
+              'item',
+              item.name === field.value && 'activeItem',
+              item?.disabled && 'disabled'
+            )}
+            onClick={() => !item?.disabled && handleItemClick(item)}
           >
             {item.name}
           </li>

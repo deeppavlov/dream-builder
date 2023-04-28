@@ -51,7 +51,7 @@ export const DeepyHelperTab = () => {
         <Hint
           tooltipId={HELPER_TAB_ID}
           name={HELPER_TAB_ID}
-          text={<>Click here if you need help with prompt</>}
+          text='Ask Deepy if you need help with building your assistant'
           handleClose={() => setHintIsVisited(true)}
         />
       )}

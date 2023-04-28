@@ -18,7 +18,7 @@ interface WrapperProps {
   skills?: boolean
   children?: ReactNode
   annotation?: string
-  onClose?: (e: MouseEvent) => void
+  onClose?: (e: React.MouseEvent) => void
   forCard?: boolean
 }
 
@@ -41,26 +41,23 @@ export const Wrapper = ({
 }: WrapperProps) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const isStorable = closable && id
+  const isCustomClose = onClose && closable
   let cx = classNames.bind(s)
 
-  const handleClose = e => {
-    // For store state in localStorage need to get `closable` & `id` props
-    if (closable && id) {
+  const handleClose = (e: React.MouseEvent) => {
+    if (isStorable)
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
-    }
 
-    if (onClose && closable) {
-      // Need addition listener for work e.stopImmediatePropagation()
-      return onClose(e)
-    }
+    // Return to prevent run is so important! TODO: fix it
+    if (isCustomClose) return onClose(e)
 
     setVisible(false)
   }
 
   useEffect(() => {
-    if (closable && id) {
+    if (isStorable) {
       const state = localStorage.getItem(`${id}_is_visible`.toUpperCase())
-
       if (state !== null) setVisible(state === 'true')
     }
   }, [])

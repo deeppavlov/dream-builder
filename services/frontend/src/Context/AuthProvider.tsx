@@ -54,8 +54,6 @@ export const exchangeAuthCode = async (code: string) => {
     },
   }
 
-  localStorage.clear()
-
   await authApi
     .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
     .then(({ data }) => {
@@ -89,7 +87,7 @@ export const logout = async () => {
     console.log('Logout failed!', error)
   }
 
-  localStorage.clear()
+  deleteLocalStorageUser()
   location.reload()
 }
 

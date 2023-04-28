@@ -266,7 +266,7 @@ async def clone_dist(
         try:
             crud.create_deployment_from_copy(db, original_virtual_assistant.id, new_virtual_assistant.id)
         except ValueError:
-            crud.create_deployment(db, new_virtual_assistant.id, "http://test-url", "test prompt", 1)
+            crud.create_deployment(db, new_virtual_assistant.id, "http://test-url", 4242)
 
     return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 

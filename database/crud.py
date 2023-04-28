@@ -468,8 +468,6 @@ def create_deployment(
     virtual_assistant_id: int,
     chat_host: str,
     chat_port: int,
-    prompt: str = None,
-    lm_service_id: int = None,
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
@@ -477,8 +475,6 @@ def create_deployment(
             virtual_assistant_id=virtual_assistant_id,
             chat_host=chat_host,
             chat_port=chat_port,
-            prompt=prompt,
-            lm_service_id=lm_service_id,
         )
         .returning(models.Deployment)
     )
@@ -501,8 +497,6 @@ def create_deployment_from_copy(
         new_virtual_assistant_id,
         original_deployment.chat_host,
         original_deployment.chat_port,
-        original_deployment.prompt,
-        original_deployment.lm_service_id,
     )
 
 

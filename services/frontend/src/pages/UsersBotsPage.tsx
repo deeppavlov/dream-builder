@@ -27,8 +27,12 @@ export const UsersBotsPage = () => {
 
   return (
     <>
-      <Main sidebar>
-        <Wrapper primary title='Your Assistants' amount={privateDists?.data?.length}>
+      <Main sidebar fullWidth>
+        <Wrapper
+          primary
+          title='Your Assistants'
+          amount={privateDists?.data?.length}
+        >
           {privateDists?.error ? (
             <ErrorHandler error={privateDists?.error} />
           ) : (
@@ -43,10 +47,14 @@ export const UsersBotsPage = () => {
                     />
                   }
                 >
-                  <DistList view='table' dists={privateDists?.data} type='your' />
+                  <DistList
+                    view='table'
+                    dists={privateDists?.data}
+                    type='your'
+                  />
                 </Table>
               ) : (
-                <Container gridForCards>
+                <Container gridForCards heightAuto>
                   <AddButton forGrid />
                   {privateDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />

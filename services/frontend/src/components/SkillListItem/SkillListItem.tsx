@@ -1,17 +1,23 @@
 import classNames from 'classnames/bind'
-import { FC, useId, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { FC, useId } from 'react'
+import {
+  generatePath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
+import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { RoutesList } from '../../router/RoutesList'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
-import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
 import { timeToUTC } from '../../utils/timeToUTC'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -35,7 +41,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
 }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
-  const [disabled, setDisabled] = useState<boolean>(false)
+  // const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
@@ -44,11 +50,9 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const { state } = useLocation()
   let cx = classNames.bind(s)
+  const nav = useNavigate()
+  const { name: distRoutingName } = useParams()
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDisabled(disabled => !disabled)
-  }
   const handleSkillListItemClick = (e: React.MouseEvent) => {
     console.log(activeSKillId)
     triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
@@ -59,17 +63,34 @@ export const SkillListItem: FC<SkillListItemProps> = ({
 
     addFunc(state?.distName, skill?.id!)
   }
-  const handleAddBtnClick = (e: React.MouseEvent) => {
+  const handleEditClick = (e: React.MouseEvent) => {
+    if (skill.component_type === ('Generative' as any)) {
+      // trigger('SkillPromptModal', { skill, action: 'edit' })
+      // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name: distRoutingName as string,
+          skillId: skill.name,
+        } as any)
+      )
+      e.stopPropagation()
+      return
+    }
+
+    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
     e.stopPropagation()
-    trigger('SkillModal', {
-      action: 'create',
-      parent: skill,
-    })
   }
+  // const handleAddBtnClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation()
+  //   trigger('SkillModal', {
+  //     action: 'create',
+  //     parent: skill,
+  //   })
+  // }
 
   return (
     <tr
-      className={cx('tr', disabled && 'disabled')}
+      className={s.tr}
       onClick={handleSkillListItemClick}
       data-active={skill.id === activeSKillId}
     >
@@ -135,6 +156,18 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           ) : (
             <>
               {/* <ToggleButton handleToggle={handleToggle} disabled={isPreview} /> */}
+              <Button
+                theme='primary'
+                small
+                  withIcon
+                  
+                  props={{
+                  disabled:!skill?.is_customizable,
+                  onClick: handleEditClick,
+                }}
+              >
+                <Edit />
+              </Button>
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

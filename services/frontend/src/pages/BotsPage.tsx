@@ -34,7 +34,7 @@ export const BotsPage = () => {
       <Main sidebar>
         <Wrapper
           subWrapper
-          title='Assistant Templates'
+          title='Create your Assistant '
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
@@ -72,7 +72,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Assistants'
+          title='Assistants'
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&

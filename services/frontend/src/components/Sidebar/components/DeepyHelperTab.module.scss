@@ -10,6 +10,9 @@
     height: 36px;
     width: 36px;
   }
+  &:hover {
+    @extend .active;
+  }
 }
 
 .active {
@@ -20,8 +23,13 @@
     left: 4px;
     width: 10px;
     height: 10px;
-    background-color: $orange;
+    background-color: $yellow;
     border-radius: 50%;
     transform: translateY(-50%);
+  }
+  &:hover {
+    &::before {
+      background-color: $text5;
+    }
   }
 }

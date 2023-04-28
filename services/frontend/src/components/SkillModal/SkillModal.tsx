@@ -78,7 +78,7 @@ export const SkillModal = () => {
     )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
-    const id = skill?.component_id
+    const id = skill?.component_id!
     toast
       .promise(
         edit.mutateAsync({ data, id }).then(() => {}),
@@ -102,7 +102,7 @@ export const SkillModal = () => {
       <div className={s.skillModal}>
         <div>
           {action == 'create' && <h4>Create a new generative skill</h4>}
-          {action == 'edit' && <h4>Edit skill</h4>}
+          {action == 'edit' && <h4>Rename skill</h4>}
           <div className={s.distribution}>
             {action == 'create' && (
               <div>
@@ -112,7 +112,7 @@ export const SkillModal = () => {
             )}
             {action == 'edit' && (
               <div>
-                You are editing <mark>{skill?.display_name}</mark>
+                You are renaming: <mark>{skill?.display_name}</mark>
               </div>
             )}
           </div>

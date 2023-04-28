@@ -1,7 +1,7 @@
-import { ReactComponent as Clone } from '@assets/icons/clone.svg'
 import Woman from '@assets/icons/woman.png'
 import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'

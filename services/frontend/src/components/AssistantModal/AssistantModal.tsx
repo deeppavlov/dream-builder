@@ -104,7 +104,7 @@ export const AssistantModal = () => {
               Use Template Of <mark>{bot?.display_name}</mark>
             </h4>
           )}
-          {action === 'edit' && <h4>Edit Virtual Assistant</h4>}
+          {action === 'edit' && <h4>Rename Assistant</h4>}
           <div className={s.distribution}>
             {action === 'clone' && (
               <div>Enter Name And Description For Your Virtual Assistant</div>
@@ -117,7 +117,7 @@ export const AssistantModal = () => {
             )}
             {action === 'edit' && (
               <div>
-                You are editing <mark>{bot?.display_name}</mark>
+                You are renaming: <mark>{bot?.display_name}</mark>
               </div>
             )}
           </div>

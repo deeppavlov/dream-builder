@@ -6,8 +6,10 @@
   align-items: center;
   justify-content: center;
   outline: none;
-  // @include sidebar_btn_height;
-  img{height:40px}
+  img {
+    height: 36px;
+    width: 36px;
+  }
 }
 
 .active {

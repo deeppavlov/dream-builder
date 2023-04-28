@@ -10,41 +10,54 @@ import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
+type Visibility = 'public_template' | 'private' | 'unlisted' | null
 interface FormValues {
   hide: boolean
-  visibility: 'public_template' | 'private' | 'unlisted'
+  visibility: Visibility
 }
-
 export const PublishAssistantModal = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
-  const { register, handleSubmit } = useForm<FormValues>()
+  const [newValue, setNewValue] = useState<Visibility>()
 
-  const handleEventUpdate = (data: { detail: any }) => {
-    setBot(data.detail.bot)
-    setIsOpen(prev => !prev)
-  }
+  const { register, handleSubmit, reset } = useForm<FormValues>()
+
   const { visibilityType } = useAssistants()
-  const handleNoBtnClick = () => setIsOpen(false)
   const currentVisibilityStatus = bot?.visibility
 
-  const handlePublish = (data: FormValues) => {
-    const visibility = data?.visibility
-    const distName = bot?.name!
-    visibility !== currentVisibilityStatus
-      ? toast.promise(visibilityType.mutateAsync({ distName, visibility }), {
-          loading: 'Loading...',
-          success:
-            visibility === 'public_template'
-              ? 'Submitted For Review!'
-              : 'Success!',
-          error: 'Something Went Wrong...',
-        })
-      : setIsOpen(false)
-
-    setIsOpen(false)
+  const handleEventUpdate = (data: { detail: any }) => {
+    setBot(data?.detail.bot)
+    setIsOpen(prev => !prev)
   }
 
+  const handleNoBtnClick = () => closeModal()
+
+  const handlePublish = (data: FormValues) => {
+    const visibility = data?.visibility!
+    const distName = bot?.name!
+    visibility !== currentVisibilityStatus ||
+    bot?.publish_state == 'in_progress'
+      ? toast
+          .promise(visibilityType.mutateAsync({ distName, visibility }), {
+            loading: 'Loading...',
+            success:
+              visibility === 'public_template'
+                ? 'Submitted For Review!'
+                : 'Success!',
+            error: 'Something Went Wrong...',
+          })
+          .then(() => {
+            closeModal()
+          })
+      : closeModal()
+  }
+
+  const closeModal = () => {
+    reset({ visibility: null })
+    setIsOpen(prev => !prev)
+    setBot(() => null)
+    setNewValue(() => null)
+  }
   useObserver('PublishAssistantModal', handleEventUpdate)
   const visibility = [
     {
@@ -66,7 +79,7 @@ export const PublishAssistantModal = () => {
   ]
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
@@ -83,17 +96,11 @@ export const PublishAssistantModal = () => {
                   <RadioButton
                     props={{
                       ...register('visibility'),
-                      defaultChecked: bot?.visibility === type.response,
-                      disabled:
-                        // currentStatus === type?.response ||
-                        type.id !== 'Private' &&
-                        bot?.publish_state === 'in_progress',
+                      defaultChecked: type?.response === bot?.visibility,
+                      onChange: e => {
+                        setNewValue(e?.currentTarget?.value)
+                      },
                     }}
-                    disabled={
-                      // currentStatus === type?.response ||
-                      type.id !== 'Private' &&
-                      bot?.publish_state === 'in_progress'
-                    }
                     key={id}
                     name={type.response}
                     id={type.id}
@@ -114,9 +121,10 @@ export const PublishAssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
+                disabled: visibilityType?.isLoading,
               }}
             >
-              Save
+              {newValue === 'public_template' ? 'Publish' : ' Save'}
             </Button>
           </div>
         </form>

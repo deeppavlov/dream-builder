@@ -123,7 +123,7 @@ const Request: FC<RequestProps> = ({
           </span>
           <span
             data-tooltip-id={'requestDesc' + tooltipId}
-            style={{ maxHeight: '22.5px', overflow: 'hidden' }}
+            style={{ maxHeight: '22px', overflow: 'hidden' }}
           >
             <b>description: </b>
             <mark>{r?.virtual_assistant?.description}</mark>

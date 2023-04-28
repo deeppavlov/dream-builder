@@ -42,6 +42,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const srcForComponentType = srcForIcons(nameForComponentType)
   const { options } = useDisplay()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const isActive = skill.id === activeSKillId
   const { state } = useLocation()
   let cx = classNames.bind(s)
 
@@ -50,8 +51,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     setDisabled(disabled => !disabled)
   }
   const handleSkillListItemClick = (e: React.MouseEvent) => {
-    console.log(activeSKillId)
-    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
+    triggerSkillSidePanel({
+      skill,
+      type,
+      activeTab: 'Properties',
+      isOpen: !isActive,
+    })
   }
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()

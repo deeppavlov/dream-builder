@@ -14,7 +14,7 @@ export const Banner:FC<BannerProps> = ({ name }) => {
           {name && name.split(' ')[0] + ', welcome to'}
           <span className={s.accent_text}> Dream Builder</span> Console!
         </h5>
-        <ul>
+        <ul className={s.body}>
           <p className={s.annotations}>
             You can now build and manage your own virtual assistants & chatbots!
           </p>

@@ -39,6 +39,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const { options } = useDisplay()
   const { name: distRoutingName } = useParams()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const isActive = skill.id === activeSKillId
   const nav = useNavigate()
   let cx = classNames.bind(s)
 
@@ -49,7 +50,7 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    triggerSkillSidePanel({ skill, type, activeTab: 'Properties' })
+    triggerSkillSidePanel({ skill, type, activeTab: 'Properties', isOpen: !isActive })
   }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
@@ -86,7 +87,7 @@ export const SkillCard: FC<SkillCardProps> = ({
         disabled && 'disabled'
       )}
       onClick={handleSkillCardClick}
-      data-active={skill.id === activeSKillId}
+      data-active={isActive}
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>

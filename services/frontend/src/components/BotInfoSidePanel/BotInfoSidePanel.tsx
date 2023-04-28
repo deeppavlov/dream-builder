@@ -57,7 +57,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
       type: 'set',
       option: {
         id: consts.ACTIVE_ASSISTANT_SP_ID,
-        value: isOpen ? bot.id : null,
+        value: isOpen ? `info_${bot.id}` : null,
       },
     })
   }

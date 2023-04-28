@@ -9,13 +9,20 @@ interface Props {
   skill: ISkill
   activeTab: 'Properties' | 'Editor'
   type?: SkillAvailabilityType
+  isOpen?: boolean
 }
 
-const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
+const triggerSkillSidePanel = ({
+  skill,
+  type,
+  activeTab,
+  isOpen,
+}: Props): void => {
   const triggerByName = (displayName: string) => {
     switch (displayName) {
       case 'Dff Intent Responder Skill':
         trigger(TRIGGER_RIGHT_SP_EVENT, {
+          isOpen,
           children: (
             <IntentResponderSidePanel
               key={skill.id + activeTab}
@@ -28,6 +35,7 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
 
       default:
         trigger(TRIGGER_RIGHT_SP_EVENT, {
+          isOpen,
           children: (
             <SkillSidePanel
               key={skill.id + activeTab}
@@ -45,6 +53,7 @@ const triggerSkillSidePanel = ({ skill, type, activeTab }: Props): void => {
   switch (skill?.name?.includes('prompted')) {
     case true:
       trigger(TRIGGER_RIGHT_SP_EVENT, {
+        isOpen,
         children: (
           <GenerativeSkillEditor
             key={skill.id + activeTab}

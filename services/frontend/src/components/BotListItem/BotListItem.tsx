@@ -28,10 +28,14 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
   const { options } = useDisplay()
+  const infoSPId = `info_${bot.id}`
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const isActive =
+    infoSPId === activeAssistantId || bot.id === activeAssistantId
 
   const handleBotListItemClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
+      isOpen: activeAssistantId !== infoSPId,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -80,7 +84,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     <tr
       className={s.tr}
       onClick={handleBotListItemClick}
-      data-active={bot.id === activeAssistantId}
+      data-active={isActive}
     >
       <td className={s.td}>
         <div className={s.name}>

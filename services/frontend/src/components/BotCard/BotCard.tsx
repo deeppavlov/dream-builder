@@ -1,6 +1,6 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC, useId, useRef } from 'react'
+import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -23,10 +23,14 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const { options } = useDisplay()
+  const infoSPId = `info_${bot.id}`
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const isActive =
+    infoSPId === activeAssistantId || bot.id === activeAssistantId
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
+      isOpen: activeAssistantId !== infoSPId,
       children: (
         <BotInfoSidePanel
           type={type}
@@ -66,7 +70,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
-      data-active={`${activeAssistantId === bot.id}`}
+      data-active={isActive}
     >
       <div className={s.header}>{bot?.display_name}</div>
       <div className={s.body}>

@@ -102,6 +102,9 @@ export const BotsPage = () => {
                 {privateDists?.data?.length === 0 && (
                   <Placeholder>You assistants will appear here</Placeholder>
                 )}
+                {!auth?.user && (
+                  <Placeholder>You assistants will appear here</Placeholder>
+                )}
               </Slider>
             </Container>
           )}

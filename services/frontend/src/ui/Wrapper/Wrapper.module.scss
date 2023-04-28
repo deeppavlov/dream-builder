@@ -69,7 +69,10 @@
   @include b2;
   color: $text3;
 }
-.annotation.subWrapper{@include t3;}
+.annotation.subWrapper {
+  @include t3;
+  padding: 0;
+}
 .header.annotationFlex {
   justify-content: start;
   gap: 16px;
@@ -86,6 +89,6 @@
 }
 .subWrapper {
   background-color: #fff;
-  padding: 16px 16px 0px;
+  padding: 16px 16px ;
   border: none;
 }

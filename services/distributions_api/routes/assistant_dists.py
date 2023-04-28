@@ -374,43 +374,6 @@ async def publish_dist(
             )
 
 
-@assistant_dists_router.get("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def get_dist_prompt(dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
-    prompt = crud.get_deployment_prompt_by_virtual_assistant_name(db, dist_name)
-    return schemas.Prompt(text=prompt)
-
-
-@assistant_dists_router.post("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def set_dist_prompt(
-    dist_name: str, payload: schemas.Prompt, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-):
-    deployment = crud.set_deployment_prompt_by_virtual_assistant_name(db, dist_name, payload.text)
-    return schemas.Deployment.from_orm(deployment)
-
-
-@assistant_dists_router.get("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def get_dist_lm_service(
-    dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-):
-    try:
-        lm_service = crud.get_deployment_lm_service_by_virtual_assistant_name(db, dist_name)
-    except ValueError:
-        raise HTTPException(status_code=404, detail=f"No deployments for virtual assistant {dist_name}")
-
-    return schemas.LmService.from_orm(lm_service)
-
-
-@assistant_dists_router.post("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def set_dist_lm_service(
-    dist_name: str,
-    payload: schemas.SetLmServiceRequest,
-    user: dict = Depends(verify_token),
-    db: Session = Depends(get_db),
-):
-    deployment = crud.set_deployment_lm_service_by_virtual_assistant_name(db, dist_name, payload.name)
-    return schemas.Deployment.from_orm(deployment)
-
-
 @assistant_dists_router.get("/templates/{template_file_path}")
 async def debug_template(template_file_path: str, owner_address: str, dist_name: str):
     from services.distributions_api.utils.emailer import env

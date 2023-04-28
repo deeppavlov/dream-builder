@@ -131,7 +131,7 @@ class AssistantDistConfigsImport(BaseModel):
     data: dict[str, AnyConfig]
 
 
-class ComponentShort(BaseOrmModel):
+class ComponentRead(BaseOrmModel):
     id: int
     name: str
     display_name: str
@@ -142,13 +142,20 @@ class ComponentShort(BaseOrmModel):
     description: Optional[str]
     ram_usage: str
     gpu_usage: Optional[str]
-    lm_service: Optional[str]
+    lm_service_id: Optional[int]
+    prompt: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
     def check_memory_format(cls, v):
         check_memory_format(v)
         return v
+
+
+class ComponentGenerativeRead(BaseOrmModel):
+    id: int
+    lm_service_id: Optional[int]
+    prompt: Optional[str]
 
 
 class ComponentCreate(BaseModel):
@@ -161,6 +168,8 @@ class ComponentCreate(BaseModel):
 class ComponentUpdate(BaseModel):
     display_name: Optional[str]
     description: Optional[str]
+    prompt: Optional[str]
+    lm_service_id: Optional[int]
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):

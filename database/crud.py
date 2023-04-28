@@ -226,6 +226,8 @@ def create_component(
     model_type: Optional[str] = None,
     gpu_usage: Optional[str] = None,
     description: Optional[str] = None,
+    prompt: Optional[str] = None,
+    lm_service_id: Optional[int] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
     # compose_dev: Optional[dict] = None,
@@ -249,6 +251,8 @@ def create_component(
             # port=port,
             group=group,
             endpoint=endpoint,
+            prompt=prompt,
+            lm_service_id=lm_service_id,
             # build_args=build_args,
             # compose_override=compose_override,
             # compose_dev=compose_dev,
@@ -531,10 +535,10 @@ def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str) 
     return deployment.lm_service
 
 
-def set_deployment_lm_service_by_virtual_assistant_name(
-    db: Session, name: str, lm_service_name: str
+def set_component_lm_service(
+    db: Session, id: int, lm_service_name: str
 ) -> models.Deployment:
     lm_service = get_lm_service_by_name(db, lm_service_name)
-    deployment = update_deployment_by_virtual_assistant_name(db, name, lm_service_id=lm_service.id)
+    deployment = update_component(db, id, lm_service_id=lm_service.id)
 
     return deployment

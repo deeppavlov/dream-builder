@@ -7,6 +7,7 @@ import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
+import { Placeholder } from '../components/PlaceHolder/Placeholder'
 import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
@@ -32,7 +33,8 @@ export const BotsPage = () => {
     <>
       <Main sidebar>
         <Wrapper
-          title='Assistant Templates'
+          subWrapper
+          title='Create your Assistant '
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
@@ -54,7 +56,7 @@ export const BotsPage = () => {
               ) : (
                 <Container overflowForAddButton>
                   <AddButton disabled={!auth?.user} />
-                  <Slider>
+                  <Slider subWrapper>
                     {publicDists?.isLoading && <CardsLoader cardsCount={6} />}
                     <DistList
                       view='cards'
@@ -70,7 +72,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Assistants'
+          title='Assistants'
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&
@@ -84,7 +86,7 @@ export const BotsPage = () => {
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <Slider>
+              <Slider privateAssistants>
                 {auth?.user && privateDists?.isLoading && (
                   <CardsLoader cardsCount={6} />
                 )}
@@ -96,6 +98,12 @@ export const BotsPage = () => {
                     dists={privateDists?.data}
                     type='your'
                   />
+                )}
+                {privateDists?.data?.length === 0 && (
+                  <Placeholder>You assistants will appear here</Placeholder>
+                )}
+                {!auth?.user && (
+                  <Placeholder>You assistants will appear here</Placeholder>
                 )}
               </Slider>
             </Container>

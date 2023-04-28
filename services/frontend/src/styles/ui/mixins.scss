@@ -275,17 +275,17 @@
   width: 32px;
   height: 32px;
   background: #ffffff;
-  border: 1px solid #8d96b5;
+  border: 2px solid #8d96b5;
   border-radius: 50%;
   cursor: pointer;
   &:hover {
-    border: 1px solid $primary1;
+    border: 2px solid $primary1;
     svg {
       stroke: $primary1;
     }
   }
   &:active {
-    border: 1px solid $primary4;
+    border: 2px solid $primary4;
     svg {
       stroke: $primary4;
     }

@@ -1,16 +1,23 @@
 import classNames from 'classnames/bind'
-import { useRef } from 'react'
+import { FC, ReactNode, useRef } from 'react'
 import { useDrag } from '../../hooks/useDrag'
 import s from './Main.module.scss'
 
-interface MainProps {
-  children: React.ReactNode
+interface Props {
+  children: ReactNode
   sidebar?: boolean
   editor?: boolean
   draggable?: boolean
+  fullWidth?: boolean
 }
 
-export const Main = ({ children, sidebar, editor, draggable }: MainProps) => {
+export const Main: FC<Props> = ({
+  children,
+  sidebar,
+  editor,
+  draggable,
+  fullWidth,
+}) => {
   let cx = classNames.bind(s)
   const contentWrapper = useRef<HTMLDivElement>(null)
   draggable && useDrag(contentWrapper)
@@ -18,7 +25,12 @@ export const Main = ({ children, sidebar, editor, draggable }: MainProps) => {
     <div
       data-id='main'
       ref={contentWrapper}
-      className={cx('main', sidebar && 'sidebar', editor && 'editor')}
+      className={cx(
+        'main',
+        sidebar && 'sidebar',
+        editor && 'editor',
+        fullWidth && 'fullWidth'
+      )}
     >
       {children}
     </div>

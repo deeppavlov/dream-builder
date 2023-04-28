@@ -1,10 +1,10 @@
 import classNames from 'classnames/bind'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import s from './Wrapper.module.scss'
 
-interface WrapperProps {
+interface Props {
   id?: string
   amount?: number | string
   linkTo?: string
@@ -20,9 +20,10 @@ interface WrapperProps {
   annotation?: string
   onClose?: (e: React.MouseEvent) => void
   forCard?: boolean
+  subWrapper?: boolean
 }
 
-export const Wrapper = ({
+export const Wrapper: FC<Props> = ({
   id,
   amount,
   children,
@@ -38,7 +39,8 @@ export const Wrapper = ({
   annotation,
   onClose,
   forCard,
-}: WrapperProps) => {
+  subWrapper,
+}) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
   const isStorable = closable && id
@@ -74,6 +76,7 @@ export const Wrapper = ({
             primary && 'primary',
             skills && 'skills',
             forCard && 'forCard'
+            // subWrapper && 'subWrapper'
           )}
         >
           {closable && (
@@ -85,19 +88,43 @@ export const Wrapper = ({
             <div className={cx('header', annotation && 'annotationFlex')}>
               {title && <h5 className={s.title}>{title}</h5>}
               {annotation && <p className={s.annotation}>{annotation}</p>}
-              {amount && (
-                <div className={s.btns_area}>
-                  {showAll && (
-                    <Link to={linkTo!}>
-                      <button className={s.ghost_btn}>Show&nbsp;All</button>
-                    </Link>
+              {!subWrapper && (
+                <>
+                  {amount && (
+                    <div className={s.btns_area}>
+                      {showAll && (
+                        <Link to={linkTo!}>
+                          <button className={s.ghost_btn}>Show&nbsp;All</button>
+                        </Link>
+                      )}
+                      <span className={s.amount}>{amount || '...'}</span>
+                    </div>
                   )}
-                  <span className={s.amount}>{amount || '...'}</span>
-                </div>
+                </>
               )}
             </div>
           )}
-          {children}
+          {!subWrapper && children}
+          {subWrapper && (
+            <div className={cx('wrapper', 'subWrapper')}>
+              <div className={s.header}>
+                <p className={cx('annotation', 'subWrapper')}>
+                  Recommended Templates
+                </p>
+                {amount && (
+                  <div className={s.btns_area}>
+                    {showAll && (
+                      <Link to={linkTo!}>
+                        <button className={s.ghost_btn}>Show&nbsp;All</button>
+                      </Link>
+                    )}
+                    <span className={s.amount}>{amount || '...'}</span>
+                  </div>
+                )}
+              </div>
+              {children}
+            </div>
+          )}
         </div>
       )}
     </>

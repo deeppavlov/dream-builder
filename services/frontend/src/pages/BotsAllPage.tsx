@@ -21,7 +21,7 @@ export const BotsAllPage = () => {
 
   return (
     <>
-      <Main sidebar>
+      <Main sidebar fullWidth>
         <Wrapper title='Assistant Templates' amount={publicDists?.data?.length}>
           {publicDists?.error ? (
             <ErrorHandler error={publicDists.error} />
@@ -36,7 +36,7 @@ export const BotsAllPage = () => {
                   />
                 </Table>
               ) : (
-                <Container gridForCards>
+                <Container gridForCards heightAuto>
                   {publicDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />
                   )}

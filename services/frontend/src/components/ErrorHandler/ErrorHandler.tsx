@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useQueryClient } from 'react-query'
 import Button from '../../ui/Button/Button'
 import s from './ErrorHandler.module.scss'
 
@@ -7,7 +8,8 @@ interface Props {
 }
 
 export const ErrorHandler: FC<Props> = ({ error }) => {
-  const handleRetryClick = () => location.reload()
+  const queryClient = useQueryClient()
+  const handleRetryClick = () => queryClient.invalidateQueries()
 
   return (
     <>

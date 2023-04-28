@@ -24,10 +24,20 @@
     color: $text3;
     cursor: pointer;
     max-width: 280px;
-    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    white-space: norap;
     overflow: hidden;
     text-overflow: ellipsis;
 
+    .botName {
+      :before {
+        content: ' ';
+      }
+      @include b1;
+    }
     &[aria-selected='true'] {
       border-bottom: 2px solid $primary1;
       margin-bottom: -1px;

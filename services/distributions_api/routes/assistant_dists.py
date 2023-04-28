@@ -272,7 +272,7 @@ async def clone_dist(
 
 
 def _virtual_assistant_component_model_to_schema(virtual_assistant_component: models.VirtualAssistantComponent):
-    return schemas.VirtualAssistantComponentShort(
+    return schemas.VirtualAssistantComponentRead(
         id=virtual_assistant_component.id,
         component_id=virtual_assistant_component.component_id,
         name=virtual_assistant_component.component.name,
@@ -301,7 +301,7 @@ async def get_virtual_assistant_components(dist_name: str, db: Session = Depends
             _virtual_assistant_component_model_to_schema(va_component)
         )
 
-    return schemas.DistComponentsResponse(**grouped_components)
+    return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 
 @assistant_dists_router.post("/{dist_name}/components", status_code=status.HTTP_201_CREATED)

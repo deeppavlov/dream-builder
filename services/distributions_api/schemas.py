@@ -113,7 +113,7 @@ class CreateVirtualAssistantComponentRequest(BaseModel):
     component_id: int
 
 
-class VirtualAssistantComponentShort(BaseOrmModel):
+class VirtualAssistantComponentRead(BaseOrmModel):
     id: int
     component_id: int
     name: str
@@ -135,30 +135,30 @@ class VirtualAssistantComponentShort(BaseOrmModel):
         return v
 
 
-class DistComponentsResponse(BaseModel):
-    annotators: List[VirtualAssistantComponentShort]
-    skill_selectors: List[VirtualAssistantComponentShort]
-    skills: List[VirtualAssistantComponentShort]
-    candidate_annotators: List[VirtualAssistantComponentShort]
-    response_selectors: List[VirtualAssistantComponentShort]
-    response_annotators: List[VirtualAssistantComponentShort]
+class VirtualAssistantComponentPipelineRead(BaseModel):
+    annotators: List[VirtualAssistantComponentRead]
+    skill_selectors: List[VirtualAssistantComponentRead]
+    skills: List[VirtualAssistantComponentRead]
+    candidate_annotators: List[VirtualAssistantComponentRead]
+    response_selectors: List[VirtualAssistantComponentRead]
+    response_annotators: List[VirtualAssistantComponentRead]
 
 
-class CreateDialogSessionRequest(BaseModel):
+class DialogSessionCreate(BaseModel):
     virtual_assistant_name: str
 
 
-class DialogChatMessageRequest(BaseModel):
+class DialogChatMessageCreate(BaseModel):
     text: str
     prompt: Optional[str]
     lm_service_id: Optional[int]
 
 
-class DialogChatMessageResponse(BaseModel):
+class DialogChatMessageRead(BaseModel):
     text: str
 
 
-class DialogUtterance(BaseModel):
+class DialogUtteranceRead(BaseModel):
     author: str
     text: str
 
@@ -188,7 +188,7 @@ class CreateTokenResponse(BaseModel):
     token_value: str
 
 
-class LmService(BaseOrmModel):
+class LmServiceRead(BaseOrmModel):
     id: int
     name: str
     display_name: str
@@ -199,11 +199,7 @@ class LmService(BaseOrmModel):
     project_url: str
 
 
-class SetLmServiceRequest(BaseModel):
-    name: str
-
-
-class Deployment(BaseOrmModel):
+class DeploymentRead(BaseOrmModel):
     id: int
     virtual_assistant_id: int
     chat_host: str
@@ -235,5 +231,5 @@ class PublishRequestCreate(BaseOrmModel):
 class DialogSessionRead(BaseOrmModel):
     id: int
     user_id: int
-    deployment: Deployment
+    deployment: DeploymentRead
     is_active: bool

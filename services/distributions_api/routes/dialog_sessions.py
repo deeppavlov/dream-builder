@@ -71,7 +71,7 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 
 @dialog_sessions_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
-    payload: schemas.CreateDialogSessionRequest,
+    payload: schemas.DialogSessionCreate,
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -96,37 +96,38 @@ async def get_dialog_session(
 @dialog_sessions_router.post("/{dialog_session_id}/chat", status_code=status.HTTP_201_CREATED)
 async def send_dialog_session_message(
     dialog_session_id: int,
-    payload: schemas.DialogChatMessageRequest,
+    payload: schemas.DialogChatMessageCreate,
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     """
     text
     """
-    dialog_session = crud.get_dialog_session(db, dialog_session_id)
-    virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
+    with db.begin():
+        dialog_session = crud.get_dialog_session(db, dialog_session_id)
+        virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
 
-    if virtual_assistant.publish_request is not None:
-        chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
-    else:
-        chat_url = crud.get_debug_assistant_chat_url(db)
+        if virtual_assistant.publish_request is not None:
+            chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
+        else:
+            chat_url = crud.get_debug_assistant_chat_url(db)
 
-    if payload.lm_service_id:
-        lm_service = crud.get_lm_service(db, payload.lm_service_id).display_name
-    else:
-        lm_service = None
+        if payload.lm_service_id:
+            lm_service = crud.get_lm_service(db, payload.lm_service_id).display_name
+        else:
+            lm_service = None
 
-    agent_dialog_id, bot_response = await send_chat_request_to_deployed_agent(
-        chat_url,
-        dialog_session.id,
-        payload.text,
-        payload.prompt,
-        lm_service,
-    )
+        agent_dialog_id, bot_response = await send_chat_request_to_deployed_agent(
+            chat_url,
+            dialog_session.id,
+            payload.text,
+            payload.prompt,
+            lm_service,
+        )
 
-    crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
+        crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
 
-    return schemas.DialogChatMessageResponse(text=bot_response)
+    return schemas.DialogChatMessageRead(text=bot_response)
 
 
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
@@ -157,4 +158,4 @@ async def get_dialog_session_history(
             dialog_session.agent_dialog_id,
         )
 
-    return [schemas.DialogUtterance(**utterance) for utterance in history]
+    return [schemas.DialogUtteranceRead(**utterance) for utterance in history]

@@ -461,7 +461,7 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
         .values(agent_dialog_id=agent_dialog_id)
         .returning(models.DialogSession)
     )
-    db.commit()
+
     return dialog_session
 
 

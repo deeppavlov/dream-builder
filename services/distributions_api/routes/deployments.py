@@ -56,7 +56,7 @@ async def create_deployment(
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
 async def get_all_lm_services(db: Session = Depends(get_db)):
     """ """
-    return [schemas.LmService.from_orm(name) for name in crud.get_all_lm_services(db)]
+    return [schemas.LmServiceRead.from_orm(name) for name in crud.get_all_lm_services(db)]
 
 
 # @deployments_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)

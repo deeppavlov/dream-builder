@@ -401,7 +401,15 @@ def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int,
 def create_publish_request_autoconfirm(db: Session, virtual_assistant_id: int, user_id: int, slug: str):
     return db.scalar(
         insert(models.PublishRequest)
-        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, visibility="unlisted")
+        .values(
+            virtual_assistant_id=virtual_assistant_id,
+            user_id=user_id,
+            slug=slug,
+            visibility="unlisted",
+            is_confirmed=True,
+            reviewed_by_user_id=1,
+            date_reviewed=datetime.utcnow(),
+        )
         .on_conflict_do_update(
             index_elements=[models.PublishRequest.slug],
             set_=dict(

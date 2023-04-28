@@ -39,7 +39,8 @@ async def create_deployment(
             user_services=get_user_services(dream_dist),
             deployment_dict={'services': {'agent': {'ports': [f'{payload.assistant_port}:4242']}}},
             portainer_url=settings.deployer.portainer_url,
-            portainer_key=settings.deployer.portainer_key
+            portainer_key=settings.deployer.portainer_key,
+            default_prefix=settings.deployer.default_prefix
         )
         deployer.deploy(dream_dist)
         hostname = urlparse(settings.deployer.portainer_url).hostname

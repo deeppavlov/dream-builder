@@ -139,10 +139,8 @@ class Deployment(Base):
     )
     virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
-    chat_url = Column(String, nullable=False)
-    prompt = Column(String)
-    lm_service_id = Column(Integer, ForeignKey("lm_service.id"))
-    lm_service = relationship("LmService", uselist=False, foreign_keys="Deployment.lm_service_id")
+    chat_host = Column(String, nullable=False)
+    chat_port = Column(Integer, nullable=False)
 
 
 class PublishRequest(Base):
@@ -224,6 +222,10 @@ class Component(Base):
     service_id = Column(Integer, ForeignKey("service.id", ondelete="CASCADE"), nullable=False)
     service = relationship("Service", back_populates="components")
     endpoint = Column(String)
+
+    prompt = Column(String, nullable=True)
+    lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
+    lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

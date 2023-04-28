@@ -15,31 +15,34 @@ import { consts } from '../utils/consts'
 import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsAllPage = () => {
-  const { publicDists, publicDistsError, isPublicDistsLoading } =
-    useAssistants()
+  const { publicDists } = useAssistants()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <>
       <Main sidebar>
-        <Wrapper title='Assistant Templates' amount={publicDists?.length}>
-          {publicDistsError ? (
-            <ErrorHandler error={publicDistsError} />
+        <Wrapper title='Assistant Templates' amount={publicDists?.data?.length}>
+          {publicDists?.error ? (
+            <ErrorHandler error={publicDists.error} />
           ) : (
             <>
               {isTableView ? (
                 <Table>
-                  <DistList view='table' dists={publicDists} type='public' />
+                  <DistList
+                    view='table'
+                    dists={publicDists?.data}
+                    type='public'
+                  />
                 </Table>
               ) : (
                 <Container gridForCards>
-                  {isPublicDistsLoading && (
+                  {publicDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />
                   )}
                   <DistList
                     view='cards'
-                    dists={sortDistsByISO8601(publicDists)}
+                    dists={sortDistsByISO8601(publicDists?.data)}
                     type='public'
                     size='big'
                   />
@@ -51,7 +54,6 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
-        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

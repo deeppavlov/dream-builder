@@ -20,6 +20,7 @@ export const DeepyHelperTab = () => {
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
       true
   )
+  // console.log('copilotIsActive = ', copilotIsActive)
   let cx = classNames.bind(s)
 
   const handleBtnClick = () => {

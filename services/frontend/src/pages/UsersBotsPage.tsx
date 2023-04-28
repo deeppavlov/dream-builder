@@ -22,15 +22,15 @@ export const UsersBotsPage = () => {
   const auth = useAuth()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const { privateDists, privateDistsError, isPrivateDistsLoading } =
+  const { privateDists } =
     useAssistants()
 
   return (
     <>
       <Main sidebar>
-        <Wrapper primary title='Your Assistants' amount={privateDists?.length}>
-          {privateDistsError ? (
-            <ErrorHandler error={privateDistsError} />
+        <Wrapper primary title='Your Assistants' amount={privateDists?.data?.length}>
+          {privateDists?.error ? (
+            <ErrorHandler error={privateDists?.error} />
           ) : (
             <>
               {isTableView ? (
@@ -43,17 +43,17 @@ export const UsersBotsPage = () => {
                     />
                   }
                 >
-                  <DistList view='table' dists={privateDists} type='your' />
+                  <DistList view='table' dists={privateDists?.data} type='your' />
                 </Table>
               ) : (
                 <Container gridForCards>
                   <AddButton forGrid />
-                  {isPrivateDistsLoading && (
+                  {privateDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />
                   )}
                   <DistList
                     view='cards'
-                    dists={privateDists}
+                    dists={privateDists?.data}
                     type='your'
                     size='big'
                   />
@@ -68,7 +68,6 @@ export const UsersBotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
-        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

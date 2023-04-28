@@ -1,4 +1,5 @@
 import { Outlet, useParams } from 'react-router-dom'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
 import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
 import { Sidebar } from '../components/Sidebar/Sidebar'
@@ -30,6 +31,7 @@ const Root = () => {
         </Sidebar>
       )}
       <Outlet />
+      <BaseSidePanel transition='left' />
     </>
   )
 }

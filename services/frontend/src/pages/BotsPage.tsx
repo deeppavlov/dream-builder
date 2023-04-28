@@ -109,7 +109,6 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
-        <BaseSidePanel transition='left' />
       </Main>
       <Toaster />
     </>

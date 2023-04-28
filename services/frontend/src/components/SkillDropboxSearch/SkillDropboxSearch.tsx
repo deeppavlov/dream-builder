@@ -88,7 +88,7 @@ const SkillDropboxSearch = ({
       </div>
 
       <ul className={s.list}>
-        {list.map((item, i) => (
+        {list?.map((item, i) => (
           <li
             key={i}
             className={cx('item', item.name === field.value && 'activeItem')}

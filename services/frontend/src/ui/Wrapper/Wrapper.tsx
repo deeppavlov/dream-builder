@@ -43,11 +43,17 @@ export const Wrapper = ({
   const closeRef = useRef<HTMLButtonElement>(null)
   let cx = classNames.bind(s)
 
-  const handleClose = () => {
+  const handleClose = e => {
     // For store state in localStorage need to get `closable` & `id` props
     if (closable && id) {
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
     }
+
+    if (onClose && closable) {
+      // Need addition listener for work e.stopImmediatePropagation()
+      return onClose(e)
+    }
+
     setVisible(false)
   }
 
@@ -55,14 +61,7 @@ export const Wrapper = ({
     if (closable && id) {
       const state = localStorage.getItem(`${id}_is_visible`.toUpperCase())
 
-      if (state !== null) {
-        setVisible(state === 'true')
-      }
-    }
-
-    if (onClose && closable) {
-      // Need addition listener for work e.stopImmediatePropagation()
-      closeRef.current?.addEventListener('click', onClose)
+      if (state !== null) setVisible(state === 'true')
     }
   }, [])
 

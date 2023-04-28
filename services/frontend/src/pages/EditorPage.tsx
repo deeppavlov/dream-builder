@@ -213,7 +213,7 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
-      <CreateGenerativeSkillModal />
+      {/* <CreateGenerativeSkillModal /> */}
     </>
   )
 }

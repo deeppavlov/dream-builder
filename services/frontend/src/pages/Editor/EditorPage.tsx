@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useQuery } from 'react-query'
 import { Outlet, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
-import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
-import { CreateGenerativeSkillModal } from '../../components/CreateGenerativeSkillModal/CreateGenerativeSkillModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 import { DeleteSkillModal } from '../../components/DeleteSkillModal/DeleteSkillModal'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
@@ -22,7 +20,6 @@ import { SkillModal } from '../../components/SkillModal/SkillModal'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
-import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { getComponents } from '../../services/getComponents'
@@ -35,9 +32,7 @@ export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
   const tabsNames = ['Skills', 'Architecture']
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
-  const [activeTab, setActiveTab] = useState<number>(0)
   const { name: nameFromURL, skillId } = useParams()
-
   const { setIsPreview } = usePreview()
 
   const { data: dist } = useQuery(
@@ -83,25 +78,16 @@ export const EditorPage = () => {
     dispatch({
       type: 'set',
       option: {
-        id: consts.EDITOR_ACTIVE_TAB,
-        value: tabsNames[activeTab],
-      },
-    })
-
-    dispatch({
-      type: 'set',
-      option: {
         id: consts.ACTIVE_ASSISTANT,
         value: dist,
       },
     })
-  }, [dist, activeTab])
+  }, [dist])
 
   return (
     <>
       <Sidebar>
         <Container layoutForTabs>
-          
           <SkillsTab isActive={true} />
           {/* <BotTab /> */}
           <div style={{ height: '100%' }}></div>
@@ -139,7 +125,7 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
-      <CreateGenerativeSkillModal />
+      {/* <CreateGenerativeSkillModal /> */}
     </>
   )
 }

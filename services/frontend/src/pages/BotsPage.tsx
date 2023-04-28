@@ -44,19 +44,26 @@ export const BotsPage = () => {
           amount={publicDists?.length}
           linkTo={RoutesList.botsAll}
         >
-          {isTableView ? (
-            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
-              <DistList view='table' dists={publicDists} type='public' />
-            </Table>
+          {publicDistsError ? (
+            <ErrorHandler error={publicDistsError} />
           ) : (
-            <Container overflowForAddButton>
-              <AddButton disabled={!auth?.user} />
-              <Slider>
-                {isPublicDistsLoading && <CardsLoader cardsCount={6} />}
-                <ErrorHandler error={publicDistsError} />
-                <DistList view='cards' dists={publicDists} type='public' />
-              </Slider>
-            </Container>
+            <>
+              {isTableView ? (
+                <Table
+                  addButton={<AddButton forTable disabled={!auth?.user} />}
+                >
+                  <DistList view='table' dists={publicDists} type='public' />
+                </Table>
+              ) : (
+                <Container overflowForAddButton>
+                  <AddButton disabled={!auth?.user} />
+                  <Slider>
+                    {isPublicDistsLoading && <CardsLoader cardsCount={6} />}
+                    <DistList view='cards' dists={publicDists} type='public' />
+                  </Slider>
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <Wrapper
@@ -74,13 +81,15 @@ export const BotsPage = () => {
             </Table>
           ) : (
             <Container overflowForAddButton>
-              
               <Slider>
                 {auth?.user && isPrivateDistsLoading && (
                   <CardsLoader cardsCount={6} />
                 )}
-                <ErrorHandler error={privateDistsError} />
-                <DistList view='cards' dists={privateDists} type='your' />
+                {privateDistsError ? (
+                  <ErrorHandler error={privateDistsError} />
+                ) : (
+                  <DistList view='cards' dists={privateDists} type='your' />
+                )}
               </Slider>
             </Container>
           )}

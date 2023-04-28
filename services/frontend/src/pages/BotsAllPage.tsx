@@ -1,9 +1,9 @@
 import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Loader } from '../components/Loader/Loader'
 import { Main } from '../components/Main/Main'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import { useDisplay } from '../context/DisplayContext'
@@ -23,25 +23,29 @@ export const BotsAllPage = () => {
   return (
     <>
       <Main sidebar>
-        <Wrapper
-          title='Assistant Templates'
-          amount={publicDists?.length}
-        >
-          <Loader isLoading={isPublicDistsLoading} />
-          <ErrorHandler error={publicDistsError} />
-          {isTableView ? (
-            <Table>
-              <DistList view='table' dists={publicDists} type='public' />
-            </Table>
+        <Wrapper title='Assistant Templates' amount={publicDists?.length}>
+          {publicDistsError ? (
+            <ErrorHandler error={publicDistsError} />
           ) : (
-            <Container gridForCards>
-              <DistList
-                view='cards'
-                dists={sortDistsByISO8601(publicDists)}
-                type='public'
-                size='big'
-              />
-            </Container>
+            <>
+              {isTableView ? (
+                <Table>
+                  <DistList view='table' dists={publicDists} type='public' />
+                </Table>
+              ) : (
+                <Container gridForCards>
+                  {isPublicDistsLoading && (
+                    <CardsLoader cardsCount={6} type='bot' />
+                  )}
+                  <DistList
+                    view='cards'
+                    dists={sortDistsByISO8601(publicDists)}
+                    type='public'
+                    size='big'
+                  />
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <BaseSidePanel />

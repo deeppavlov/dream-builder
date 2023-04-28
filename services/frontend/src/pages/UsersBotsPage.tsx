@@ -1,10 +1,10 @@
 import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Loader } from '../components/Loader/Loader'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
@@ -29,30 +29,37 @@ export const UsersBotsPage = () => {
     <>
       <Main sidebar>
         <Wrapper primary title='Your Assistants' amount={privateDists?.length}>
-          <Loader isLoading={isPrivateDistsLoading} />
-          <ErrorHandler error={privateDistsError} />
-          {isTableView ? (
-            <Table
-              addButton={
-                <AddButton
-                  forTable
-                  disabled={!auth?.user}
-                  text='Create From Scratch'
-                />
-              }
-            >
-              <DistList view='table' dists={privateDists} type='your' />
-            </Table>
+          {privateDistsError ? (
+            <ErrorHandler error={privateDistsError} />
           ) : (
-            <Container gridForCards>
-              <AddButton forGrid />
-              <DistList
-                view='cards'
-                dists={privateDists}
-                type='your'
-                size='big'
-              />
-            </Container>
+            <>
+              {isTableView ? (
+                <Table
+                  addButton={
+                    <AddButton
+                      forTable
+                      disabled={!auth?.user}
+                      text='Create From Scratch'
+                    />
+                  }
+                >
+                  <DistList view='table' dists={privateDists} type='your' />
+                </Table>
+              ) : (
+                <Container gridForCards>
+                  <AddButton forGrid />
+                  {isPrivateDistsLoading && (
+                    <CardsLoader cardsCount={6} type='bot' />
+                  )}
+                  <DistList
+                    view='cards'
+                    dists={privateDists}
+                    type='your'
+                    size='big'
+                  />
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <BaseSidePanel />

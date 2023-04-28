@@ -2,11 +2,12 @@
   position: relative;
   cursor: pointer;
   width: $sidebar-width;
-  @include sidebar_btn_height;
   display: flex;
   align-items: center;
   justify-content: center;
   outline: none;
+  // @include sidebar_btn_height;
+  img{height:40px}
 }
 
 .active {

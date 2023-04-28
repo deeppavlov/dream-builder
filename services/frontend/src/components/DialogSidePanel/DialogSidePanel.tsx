@@ -1,8 +1,9 @@
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
+import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
@@ -10,6 +11,7 @@ import { BotInfoInterface, ChatForm } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
@@ -63,6 +65,20 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
+  const { dispatch } = useDisplay()
+
+  const dispatchTrigger = (isOpen: boolean) =>
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT_SP_ID,
+        value: isOpen ? dist?.name : null,
+      },
+    })
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
 
   return (
     <div className={s.container}>
@@ -83,7 +99,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           <>
             <ul role='tablist'>
               <li role='tab' key='Dialog' aria-selected>
-                Dialog
+                Chat with {dist?.display_name}
               </li>
             </ul>
           </>

@@ -44,7 +44,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 
   const handleChatClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {bot,
       children: (
         <DialogSidePanel
           debug={false}

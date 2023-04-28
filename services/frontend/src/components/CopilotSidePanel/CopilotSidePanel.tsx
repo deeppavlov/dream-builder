@@ -1,4 +1,4 @@
-import DeepyHelperIcon from '@assets/icons/deepy_helper.png'
+import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
 import classNames from 'classnames/bind'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'

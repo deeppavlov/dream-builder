@@ -1,9 +1,7 @@
-import secrets
 from typing import List
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
-from fastapi.logger import logger
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -32,7 +30,9 @@ def send_publish_request_created_emails(
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_virtual_assistant(
-    payload: schemas.CreateAssistantDistModel, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
     Creates new distribution from base template
@@ -97,7 +97,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
 
 @assistant_dists_router.get("/user_owned", status_code=status.HTTP_200_OK)
 async def get_list_of_private_virtual_assistants(
-    user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ) -> List[schemas.VirtualAssistantRead]:
     """
     Lists private Dream distributions
@@ -137,7 +137,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
 async def patch_virtual_assistant_by_name(
     dist_name: str,
-    payload: schemas.EditAssistantDistModel,
+    payload: schemas.VirtualAssistantUpdate,
     user: str = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
@@ -181,7 +181,7 @@ async def patch_virtual_assistant_by_name(
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_virtual_assistant_by_name(
-    dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    dist_name: str, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     """
     Deletes existing dist
@@ -209,8 +209,8 @@ async def delete_virtual_assistant_by_name(
 @assistant_dists_router.post("/{dist_name}/clone", status_code=status.HTTP_201_CREATED)
 async def clone_dist(
     dist_name: str,
-    payload: schemas.CreateAssistantDistModel,
-    user: schemas.User = Depends(verify_token),
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
@@ -352,7 +352,7 @@ async def publish_dist(
     dist_name: str,
     payload: schemas.PublishRequestCreate,
     background_tasks: BackgroundTasks,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     with db.begin():

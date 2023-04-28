@@ -1,25 +1,12 @@
 from datetime import datetime
 from typing import Optional, List, Literal
 
-from pydantic import BaseModel, Field, validator, EmailStr
-
 from deeppavlov_dreamtools.distconfigs.generics import (
-    AnyConfig,
     COMPONENT_TYPES,
     MODEL_TYPES,
-    ComponentEndpoint,
     check_memory_format,
 )
-from deeppavlov_dreamtools.distconfigs.generics import (
-    PipelineConf,
-    ComposeOverride,
-    ComposeDev,
-    ComposeProxy,
-    ComposeLocal,
-    Component,
-    PipelineConfMetadata,
-)
-
+from pydantic import BaseModel, Field, validator, EmailStr
 
 PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
 
@@ -29,7 +16,7 @@ class BaseOrmModel(BaseModel):
         orm_mode = True
 
 
-class User(BaseOrmModel):
+class UserRead(BaseOrmModel):
     id: int
     email: EmailStr
     sub: str
@@ -41,7 +28,7 @@ class User(BaseOrmModel):
 
 class VirtualAssistantRead(BaseOrmModel):
     id: int
-    author: User
+    author: UserRead
     source: str
     name: str
     display_name: str
@@ -71,64 +58,14 @@ class VirtualAssistantRead(BaseOrmModel):
         return super().from_orm(obj)
 
 
-class EditAssistantDistModel(BaseModel):
+class VirtualAssistantCreate(BaseModel):
+    display_name: str
+    description: str
+
+
+class VirtualAssistantUpdate(BaseModel):
     display_name: Optional[str]
     description: Optional[str]
-
-
-class CreateAssistantDistModel(BaseModel):
-    display_name: str
-    description: str
-
-
-class AssistantDistModelMetadata(BaseModel):
-    display_name: str
-    author: str
-    description: str
-    version: str
-    date: datetime
-    ram_usage: str
-    gpu_usage: str
-    disk_usage: str
-
-
-class AssistantDistModelShort(PipelineConfMetadata):
-    name: str
-
-
-class AssistantDistModel(BaseModel):
-    dist_path: str
-    name: str
-    dream_root: str
-    pipeline_conf: PipelineConf = None
-    compose_override: ComposeOverride = None
-    compose_dev: ComposeDev = None
-    compose_proxy: ComposeProxy = None
-    compose_local: ComposeLocal = None
-
-
-class AssistantDistChatRequest(BaseModel):
-    text: str
-
-
-class AssistantDistChatResponse(BaseModel):
-    text: str
-
-
-class AssistantDistConfigsImport(BaseModel):
-    """
-    {
-    "name": "my_dream",
-    "data": {
-        "pipeline": {...},
-        "compose_override": {...},
-        "compose_dev": {...}
-        }
-    }
-    """
-
-    name: str
-    data: dict[str, AnyConfig]
 
 
 class ComponentRead(BaseOrmModel):
@@ -138,12 +75,12 @@ class ComponentRead(BaseOrmModel):
     component_type: Optional[COMPONENT_TYPES]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
-    author: User
+    author: UserRead
     description: Optional[str]
     ram_usage: str
     gpu_usage: Optional[str]
-    lm_service_id: Optional[int]
     prompt: Optional[str]
+    lm_service_id: Optional[int]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
@@ -154,15 +91,15 @@ class ComponentRead(BaseOrmModel):
 
 class ComponentGenerativeRead(BaseOrmModel):
     id: int
-    lm_service_id: Optional[int]
     prompt: Optional[str]
+    lm_service_id: Optional[int]
 
 
 class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
-    lm_service_id: Optional[int]
     prompt: Optional[str]
+    lm_service_id: Optional[int]
 
 
 class ComponentUpdate(BaseModel):
@@ -184,7 +121,7 @@ class VirtualAssistantComponentShort(BaseOrmModel):
     component_type: Optional[COMPONENT_TYPES]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
-    author: User
+    author: UserRead
     description: Optional[str]
     ram_usage: str
     gpu_usage: Optional[str]
@@ -213,6 +150,8 @@ class CreateDialogSessionRequest(BaseModel):
 
 class DialogChatMessageRequest(BaseModel):
     text: str
+    prompt: Optional[str]
+    lm_service_id: Optional[int]
 
 
 class DialogChatMessageResponse(BaseModel):
@@ -267,9 +206,9 @@ class SetLmServiceRequest(BaseModel):
 class Deployment(BaseOrmModel):
     id: int
     virtual_assistant_id: int
-    chat_url: str
+    chat_host: str
+    chat_port: int
     prompt: Optional[str]
-    lm_service: Optional[LmService]
 
 
 class DeploymentCreate(BaseModel):
@@ -280,12 +219,12 @@ class DeploymentCreate(BaseModel):
 class PublishRequestRead(BaseOrmModel):
     id: int
     virtual_assistant: VirtualAssistantRead
-    user: User
+    user: UserRead
     slug: str
     visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
     date_created: datetime
     is_confirmed: Optional[bool]
-    reviewed_by_user: Optional[User]
+    reviewed_by_user: Optional[UserRead]
     date_reviewed: Optional[datetime]
 
 
@@ -293,11 +232,7 @@ class PublishRequestCreate(BaseOrmModel):
     visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
 
 
-class Prompt(BaseModel):
-    text: str
-
-
-class DialogSession(BaseOrmModel):
+class DialogSessionRead(BaseOrmModel):
     id: int
     user_id: int
     deployment: Deployment

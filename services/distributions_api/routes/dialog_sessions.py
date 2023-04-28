@@ -12,14 +12,19 @@ from services.distributions_api.security.auth import verify_token
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
 
 
-async def send_chat_request_to_deployed_agent(agent_url: str, session_id: int, text: str, prompt: str, lm_service: str):
+async def send_chat_request_to_deployed_agent(
+    agent_url: str, session_id: int, text: str, prompt: str = None, lm_service: str = None
+):
     """ """
     data = {
         "user_id": f"{settings.app.agent_user_id_prefix}_{session_id}",
         "payload": text,
-        "prompt": prompt,
-        "lm_service": lm_service,
     }
+    if prompt:
+        data["prompt"] = prompt
+    if lm_service:
+        data["lm_service"] = lm_service
+
     async with aiohttp.ClientSession() as session:
         async with session.post(agent_url, json=data) as response:
             response_data = await response.json()
@@ -67,30 +72,32 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 @dialog_sessions_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
     payload: schemas.CreateDialogSessionRequest,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     """ """
-    dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
-    return schemas.DialogSession.from_orm(dialog_session)
+    with db.begin():
+        dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+
+    return schemas.DialogSessionRead.from_orm(dialog_session)
 
 
 @dialog_sessions_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
 async def get_dialog_session(
     dialog_session_id: int,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     """ """
     dialog_session = crud.get_dialog_session(db, dialog_session_id)
-    return schemas.DialogSession.from_orm(dialog_session)
+    return schemas.DialogSessionRead.from_orm(dialog_session)
 
 
 @dialog_sessions_router.post("/{dialog_session_id}/chat", status_code=status.HTTP_201_CREATED)
 async def send_dialog_session_message(
     dialog_session_id: int,
     payload: schemas.DialogChatMessageRequest,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     """
@@ -100,19 +107,20 @@ async def send_dialog_session_message(
     virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
 
     if virtual_assistant.publish_request is not None:
-        chat_url = dialog_session.deployment.chat_url
+        chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
     else:
         chat_url = crud.get_debug_assistant_chat_url(db)
 
-    lm_service = None
-    if dialog_session.deployment.lm_service:
-        lm_service = dialog_session.deployment.lm_service.display_name
+    if payload.lm_service_id:
+        lm_service = crud.get_lm_service(db, payload.lm_service_id).display_name
+    else:
+        lm_service = None
 
     agent_dialog_id, bot_response = await send_chat_request_to_deployed_agent(
         chat_url,
         dialog_session.id,
         payload.text,
-        dialog_session.deployment.prompt,
+        payload.prompt,
         lm_service,
     )
 
@@ -124,7 +132,7 @@ async def send_dialog_session_message(
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
 async def get_dialog_session_history(
     dialog_session_id: int,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     """
@@ -145,7 +153,8 @@ async def get_dialog_session_history(
         )
     else:
         history = await send_history_request_to_deployed_agent(
-            dialog_session.deployment.chat_url, dialog_session.agent_dialog_id
+            f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}",
+            dialog_session.agent_dialog_id,
         )
 
     return [schemas.DialogUtterance(**utterance) for utterance in history]

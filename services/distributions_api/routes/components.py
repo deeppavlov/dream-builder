@@ -1,8 +1,8 @@
-import json
-import secrets
 from typing import List
 
+from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component
 from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
+from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
@@ -10,12 +10,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-
-from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
-from deeppavlov_dreamtools.utils import generate_unique_name, load_json
-
 from services.distributions_api.security.auth import verify_token
-from services.distributions_api.utils import name_generator
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
@@ -27,7 +22,7 @@ async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.
 
 @components_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_component(
-    payload: schemas.ComponentCreate, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    payload: schemas.ComponentCreate, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:
     with db.begin():
         if payload.lm_service_id:
@@ -121,7 +116,7 @@ async def get_component(component_id: int, db: Session = Depends(get_db)) -> sch
 
 @components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_component(
-    component_id: int, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    component_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
         crud.delete_component(db, component_id)

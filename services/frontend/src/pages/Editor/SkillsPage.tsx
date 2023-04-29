@@ -57,7 +57,7 @@ const SkillsPage = () => {
               {!isPreview && (
                 <AddButton disabled={isPreview} forGrid forSkills />
               )}
-              {components?.isFetching && (
+              {components?.data?.skills === undefined && (
                 <CardsLoader cardsCount={3} type='skill' />
               )}
               <SkillList

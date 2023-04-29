@@ -18,7 +18,6 @@ export const useChat = () => {
   const [deepySession, setDeepySession] = useState(store('deepySession'))
   const [isDeepy, setIsDeepy] = useState<boolean>(Boolean(deepySession?.id))
   const { options } = useDisplay()
-  isDeepy && session?.id && store('deepyID', session)
 
   const renew = useMutation({
     onMutate: (data: string) => {

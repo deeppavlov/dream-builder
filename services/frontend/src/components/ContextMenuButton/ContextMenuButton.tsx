@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { trigger } from '../../utils/events'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './ContextMenuButton.module.scss'
 
 type TMenuItem =
@@ -48,12 +49,20 @@ const ContextMenuButton = ({
       onClick={handleBtnClick}
     >
       {type && (
-        <img
-          className={cx('icon', type === 'about' && 'dreambuilder')}
-          src={`./src/assets/icons/${
+        <SvgIcon
+          iconName={
             type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
-          }.svg`}
+          }
+          svgProp={{
+            className: cx('icon', type === 'about' && 'dreambuilder'),
+          }}
         />
+        // <img
+        //   className={cx('icon', type === 'about' && 'dreambuilder')}
+        //   src={`./src/assets/icons/${
+        //     type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
+        //   }.svg`}
+        // />
       )}
       <span>{children || name}</span>
     </button>

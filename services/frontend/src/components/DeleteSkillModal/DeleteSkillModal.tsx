@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
 import { ISkill } from '../../types/types'
@@ -10,21 +10,23 @@ import s from './DeleteSkillModal.module.scss'
 
 export const DeleteSkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
-  const { state } = useLocation()
   const { deleteComponent } = useComponent()
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
     setIsOpen(prev => !prev)
   }
   const deleteSkill = async () => {
-    const distName = state?.distName!
     const id = skill?.id!
-    await toast.promise(deleteComponent.mutateAsync({ distName, id }), {
-      loading: 'Deleting...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    await toast.promise(
+      deleteComponent.mutateAsync({ distName: distName || '', id }),
+      {
+        loading: 'Deleting...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
 
   const handleCancelClick = () => setIsOpen(false)

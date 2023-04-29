@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import { useAuth } from '../context/AuthProvider'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
@@ -16,8 +16,7 @@ export const useAssistants = () => {
   const auth = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const { name } = useParams()
-  const { state } = useLocation()
+  const { name: distName } = useParams()
   const isTopbarButton = Boolean(name)
 
   const publicDists = useQuery('publicDists', getPublicDists, {
@@ -28,11 +27,11 @@ export const useAssistants = () => {
     enabled: !!auth?.user && !Boolean(name),
   })
   const { data: dist } = useQuery(
-    ['dist', state?.distName],
-    () => getDist(state?.distName! || name),
+    ['dist', distName],
+    () => getDist(distName || ''),
     {
       refetchOnWindowFocus: false,
-      enabled: state?.distName?.length! > 0 || name?.length! > 0,
+      enabled: distName?.length! > 0,
     }
   )
   const rename = useMutation({

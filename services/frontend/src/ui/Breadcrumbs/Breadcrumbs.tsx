@@ -33,8 +33,14 @@ export const Breadcrumbs = () => {
       {crumbs?.map((item, i) => (
         <React.Fragment key={i}>
           <span className={s.slash} />
-          <span className={cx('route', crumbs.length - 1 === i && 'active')}>
-            {item ?? '...'}
+          <span
+            className={cx(
+              'route',
+              !item && 'skeleton',
+              item && crumbs.length - 1 === i && 'active'
+            )}
+          >
+            {item}
           </span>
         </React.Fragment>
       ))}

@@ -58,7 +58,7 @@ export const useChat = () => {
     {
       enabled:
         Boolean(deepySession?.id) && options.get(consts.COPILOT_SP_IS_ACTIVE),
-      refetchOnMount: true,
+      refetchOnMount: false,
       refetchOnWindowFocus: false,
       retry: 1,
     }

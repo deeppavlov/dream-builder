@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { addComponent } from '../services/addComponent'
 import {
   createComponent,
@@ -11,10 +11,8 @@ import { getComponents } from '../services/getComponents'
 import { ISkill } from '../types/types'
 
 export const useComponent = () => {
-  const { state } = useLocation()
+  const { name: nameFromURL } = useParams()
   const queryClient = useQueryClient()
-  const location = useLocation()
-  const nameFromURL = location?.pathname?.substring(1)
 
   const addSkill = useMutation({
     mutationFn: (variables: { distName: string; id: number }) => {
@@ -39,9 +37,8 @@ export const useComponent = () => {
       return createComponent(info)
     },
     onSuccess: (data: ISkill) => {
-      const distName = state?.distName
       const id = data?.id
-      addSkill.mutateAsync({ distName, id }).then(() => {
+      addSkill.mutateAsync({ distName: nameFromURL || '', id }).then(() => {
         queryClient.invalidateQueries('components')
       })
     },
@@ -60,11 +57,11 @@ export const useComponent = () => {
     error: componentsError,
     data: components,
   } = useQuery(
-    ['components', state?.distName],
-    () => getComponents(state?.distName! || nameFromURL),
+    ['components', nameFromURL],
+    () => getComponents(nameFromURL || ''),
     {
       refetchOnWindowFocus: false,
-      enabled: state?.distName?.length! > 0 || nameFromURL.length > 0,
+      enabled: nameFromURL?.length! > 0,
     }
   )
   return {

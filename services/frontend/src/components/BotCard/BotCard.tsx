@@ -85,23 +85,21 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
               {dateCreated}
             </div>
 
-            {type == 'your' && (
-              <SmallTag
-                theme={
-                  bot?.publish_state === 'in_progress'
-                    ? 'validating'
-                    : bot?.visibility
-                }
-              >
-                {!bot?.publish_state
-                  ? type === 'your' && bot?.visibility
-                  : bot?.publish_state == 'in_progress'
-                  ? 'On Moderation'
-                  : bot?.visibility === 'public_template'
-                  ? 'Public Template'
-                  : bot?.visibility}
-              </SmallTag>
-            )}
+            <SmallTag
+              theme={
+                bot?.publish_state === 'in_progress'
+                  ? 'validating'
+                  : bot?.visibility
+              }
+            >
+              {!bot?.publish_state
+                ? type === 'your' && bot?.visibility
+                : bot?.publish_state == 'in_progress'
+                ? 'On Moderation'
+                : bot?.visibility === 'public_template'
+                ? 'Public Template'
+                : bot?.visibility}
+            </SmallTag>
           </div>
         </div>
         <div className={s.btns}>

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { usePreview } from '../../context/PreviewProvider'
 import { mockSkills } from '../../mocks/database/mockSkills'
 import { RoutesList } from '../../router/RoutesList'
@@ -16,7 +16,7 @@ interface Props {
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
-  const { state } = useLocation()
+  const { name: distName } = useParams()
 
   const handleWelcomeClick = () => {
     navigate(RoutesList.profile)
@@ -33,7 +33,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const handleDeleteClick = () => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
-  const handleShareClick = () => trigger('ShareModal', state?.distName)
+  const handleShareClick = () => trigger('ShareModal', distName)
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>

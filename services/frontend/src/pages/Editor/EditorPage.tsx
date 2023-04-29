@@ -30,29 +30,24 @@ import { trigger } from '../../utils/events'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
-  const tabsNames = ['Skills', 'Architecture']
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
-  const { name: nameFromURL, skillId } = useParams()
+  const { name, skillId } = useParams()
   const { setIsPreview } = usePreview()
 
-  const { data: dist } = useQuery(
-    ['dist', nameFromURL],
-    () => getDist(nameFromURL!),
+  const { data: dist } = useQuery(['dist', name], () => getDist(name!), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  })
+  const components = useQuery(
+    ['components', name],
+    () => getComponents(name!),
     {
       refetchOnWindowFocus: false,
-      enabled: nameFromURL?.length! > 0,
-    }
-  )
-  const { data: components } = useQuery(
-    ['components', nameFromURL],
-    () => getComponents(nameFromURL!),
-    {
-      refetchOnWindowFocus: false,
-      enabled: nameFromURL?.length! > 0,
+      enabled: name?.length! > 0,
     }
   )
 
-  const skills = components?.skills
+  const skills = components?.data?.skills
 
   useEffect(() => {
     // Setting mode to Preview by default
@@ -111,7 +106,7 @@ export const EditorPage = () => {
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
-      
+
       <AreYouSureModal />
       <SkillPromptModal />
       <SkillQuitModal />

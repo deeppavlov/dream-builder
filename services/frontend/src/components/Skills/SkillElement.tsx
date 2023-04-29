@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { FC, useId, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useDisplay } from '../../context/DisplayContext'
 import { useComponent } from '../../hooks/useComponent'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
@@ -24,16 +24,18 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   let tooltipId = useId()
   const cx = classNames.bind(s)
-  const { state } = useLocation()
+  const { name: distName } = useParams()
   const { deleteComponent } = useComponent()
   const deleteSkill = () => {
-    const distName = state?.distName!
     const id = skill?.id!
-    toast.promise(deleteComponent.mutateAsync({ distName, id }), {
-      loading: 'Deleting...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    toast.promise(
+      deleteComponent.mutateAsync({ distName: distName || '', id }),
+      {
+        loading: 'Deleting...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
 
   return (

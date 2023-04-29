@@ -1,11 +1,6 @@
 import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
-import {
-  generatePath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
@@ -49,7 +44,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { options } = useDisplay()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const isActive = skill.id === activeSKillId
-  const { state } = useLocation()
+  const { name: distName } = useParams()
   let cx = classNames.bind(s)
   const nav = useNavigate()
   const { name: distRoutingName } = useParams()
@@ -66,7 +61,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     e.stopPropagation()
     e.preventDefault()
 
-    addFunc(state?.distName, skill?.id!)
+    addFunc(distName || '', skill?.id!)
   }
   const handleEditClick = (e: React.MouseEvent) => {
     if (skill.component_type === ('Generative' as any)) {
@@ -164,10 +159,9 @@ export const SkillListItem: FC<SkillListItemProps> = ({
               <Button
                 theme='primary'
                 small
-                  withIcon
-                  
-                  props={{
-                  disabled:!skill?.is_customizable,
+                withIcon
+                props={{
+                  disabled: !skill?.is_customizable,
                   onClick: handleEditClick,
                 }}
               >

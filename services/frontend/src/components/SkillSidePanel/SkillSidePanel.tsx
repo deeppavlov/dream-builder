@@ -2,7 +2,6 @@ import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
 import { FC, useEffect, useId } from 'react'
 import Woman from '../../assets/icons/woman.png'
-import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
@@ -14,7 +13,6 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -52,6 +50,9 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
 
+  const handleRenameBtnClick = () =>
+    trigger('SkillModal', { action: 'edit', skill })
+
   const dispatchTrigger = (isOpen: boolean) =>
     dispatch({
       type: 'set',
@@ -87,7 +88,13 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
             <span className={s.name}>{skill?.display_name}</span>
-            <EditPencilIcon className={s.icon} data-disabled />
+            <button
+              disabled={!skill?.is_customizable || isPreview}
+              onClick={handleRenameBtnClick}
+              className={s['rename-btn']}
+            >
+              <EditPencilIcon className={s.icon} />
+            </button>
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (
@@ -108,7 +115,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
               <span className={s.value}>{skill?.author?.fullname}</span>
             </li>
 
-            {skill?.component_type && (
+            {/* {skill?.component_type && (
               <li className={s.item}>
                 <span className={cx('table-name')}>Component Type:</span>
                 <span className={cx('value', nameForComponentType)}>
@@ -125,7 +132,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
                   {skill?.model_type}
                 </span>
               </span>
-            </li>
+            </li> */}
             <br />
             <li className={s.item}>
               {skill?.lm_service! && (
@@ -137,9 +144,9 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
             </li>
           </ul>
           <p className={s.desc}>{skill?.description}</p>
-          <div className={s.btns}>
+          {/* <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
-              {/* <Button
+              <Button
                 theme='primary'
                 props={{
                   disabled: isPreview,
@@ -147,7 +154,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
                 }}
               >
                 Add to ...
-              </Button> */}
+              </Button>
             </div>
           </div>
 
@@ -157,7 +164,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
               id={'skillAddTo' + tooltipId}
               content='You need to clone the virtual assistant to edit'
             />
-          )}
+          )} */}
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}

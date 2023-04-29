@@ -1,9 +1,9 @@
-import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
 import classNames from 'classnames/bind'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
 import { DEEPY_ASSISTANT } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
@@ -80,7 +80,7 @@ export const CopilotSidePanel = () => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  
+
   const historyList = history?.map((block: ChatHistory, i: number) => (
     <div
       key={`${block?.author == 'bot'}${i}`}

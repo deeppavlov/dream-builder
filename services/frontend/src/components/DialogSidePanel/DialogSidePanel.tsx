@@ -104,8 +104,9 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
         {chatWith == 'bot' && (
           <>
             <ul role='tablist'>
-              <li role='tab' key='Dialog' aria-selected>
-                Chat: <p className={s.botName}> {'  ' + dist?.display_name}</p>
+              <li role='tab' key='Dialog'>
+                <span aria-selected>Chat:</span>
+                <span role='name'>&nbsp;{dist?.display_name}</span>
               </li>
             </ul>
           </>

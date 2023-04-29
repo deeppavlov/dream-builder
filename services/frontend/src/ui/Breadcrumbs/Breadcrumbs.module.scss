@@ -63,3 +63,16 @@
     color: #190080;
   }
 }
+
+.skeleton {
+  @include skeleton_loader;
+  width: 100px;
+  height: 22px;
+  border-radius: 4px;
+
+  &:hover,
+  .active,
+  .route:active {
+    border-bottom: none !important;
+  }
+}

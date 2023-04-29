@@ -1,12 +1,12 @@
 from datetime import datetime
+from typing import Optional
 
-from sqlalchemy import select, update, and_, or_, delete, func
+from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
-from typing import Optional, List
 
 from database import models
-from database.models import GoogleUser, UserValid, ApiToken, UserApiToken
+from database.models import GoogleUser, UserValid, ApiToken
 
 
 # USER
@@ -128,25 +128,27 @@ def get_virtual_assistant(db: Session, id: int) -> Optional[models.VirtualAssist
     return db.get(models.VirtualAssistant, id)
 
 
+def get_virtual_assistant_by_name(db: Session, name: str) -> Optional[models.VirtualAssistant]:
+    return db.scalar(select(models.VirtualAssistant).filter_by(name=name))
+
+
 def get_all_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(select(models.VirtualAssistant)).all()
 
 
-def get_all_public_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
-    return db.scalars(
-        select(models.VirtualAssistant).where(models.VirtualAssistant.publish_request.has(is_confirmed=True))
-    ).all()
-
-
-def get_all_private_virtual_assistants(db: Session, user_id: int) -> [models.VirtualAssistant]:
+def get_all_public_templates_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
     return db.scalars(
         select(models.VirtualAssistant).where(
             and_(
-                models.VirtualAssistant.author_id == user_id,
-                ~models.VirtualAssistant.publish_request.has(is_confirmed=True),
+                models.VirtualAssistant.publish_request.has(visibility="public_template"),
+                models.VirtualAssistant.publish_request.has(is_confirmed=True),
             )
         )
     ).all()
+
+
+def get_all_user_virtual_assistants(db: Session, user_id: int) -> [models.VirtualAssistant]:
+    return db.scalars(select(models.VirtualAssistant).where(models.VirtualAssistant.author_id == user_id)).all()
 
 
 def create_virtual_assistant(
@@ -193,6 +195,12 @@ def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
     db.execute(delete(models.VirtualAssistant).where(models.VirtualAssistant.name == name))
 
 
+# SERVICE
+def create_service(db: Session, name: str, source: str):
+    return db.scalar(insert(models.Service).values(name=name, source=source).returning(models.Service))
+
+
+# COMPONENT
 def get_component(db: Session, component_id: int) -> Optional[models.Component]:
     return db.get(models.Component, component_id)
 
@@ -201,12 +209,17 @@ def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str) -> [models.Component]:
-    return db.scalars(select(models.Component).filter_by(group=group)).all()
+def get_components_by_group_name(db: Session, group: str, component_type: str = None) -> [models.Component]:
+    filters = {"group": group}
+    if component_type:
+        filters["component_type"] = component_type
+
+    return db.scalars(select(models.Component).filter_by(**filters)).all()
 
 
 def create_component(
     db: Session,
+    service_id: int,
     source: str,
     name: str,
     display_name: str,
@@ -219,6 +232,8 @@ def create_component(
     model_type: Optional[str] = None,
     gpu_usage: Optional[str] = None,
     description: Optional[str] = None,
+    prompt: Optional[str] = None,
+    lm_service_id: Optional[int] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
     # compose_dev: Optional[dict] = None,
@@ -227,6 +242,7 @@ def create_component(
     return db.scalar(
         insert(models.Component)
         .values(
+            service_id=service_id,
             source=source,
             name=name,
             display_name=display_name,
@@ -241,6 +257,8 @@ def create_component(
             # port=port,
             group=group,
             endpoint=endpoint,
+            prompt=prompt,
+            lm_service_id=lm_service_id,
             # build_args=build_args,
             # compose_override=compose_override,
             # compose_dev=compose_dev,
@@ -253,12 +271,7 @@ def create_component(
 def update_component(db: Session, id: int, **kwargs):
     values = {k: v for k, v in kwargs.items() if v is not None}
 
-    return db.scalar(
-        update(models.Component)
-        .filter_by(id=id)
-        .values(**values)
-        .returning(models.Component)
-    )
+    return db.scalar(update(models.Component).filter_by(id=id).values(**values).returning(models.Component))
 
 
 def delete_component(db: Session, id: int):
@@ -272,6 +285,7 @@ def get_next_available_component_port(db: Session, range_min: int = 8000, range_
     return last_used_component_port + 1
 
 
+# VIRTUAL ASSISTANT COMPONENT
 def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> [models.VirtualAssistantComponent]:
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
@@ -384,10 +398,37 @@ def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int,
     )
 
 
+def create_publish_request_autoconfirm(db: Session, virtual_assistant_id: int, user_id: int, slug: str):
+    return db.scalar(
+        insert(models.PublishRequest)
+        .values(
+            virtual_assistant_id=virtual_assistant_id,
+            user_id=user_id,
+            slug=slug,
+            visibility="unlisted",
+            is_confirmed=True,
+            reviewed_by_user_id=1,
+            date_reviewed=datetime.utcnow(),
+        )
+        .on_conflict_do_update(
+            index_elements=[models.PublishRequest.slug],
+            set_=dict(
+                visibility="unlisted",
+                date_created=datetime.utcnow(),
+                is_confirmed=True,
+                reviewed_by_user_id=1,
+                date_reviewed=datetime.utcnow(),
+            ),
+        )
+        .returning(models.PublishRequest)
+    )
+
+
 def delete_publish_request(db: Session, virtual_assistant_id: int):
     db.execute(delete(models.PublishRequest).filter_by(virtual_assistant_id=virtual_assistant_id))
 
 
+# DIALOG SESSION
 def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.DialogSession]:
     return db.get(models.DialogSession, dialog_session_id)
 
@@ -395,7 +436,7 @@ def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.D
 def get_debug_assistant_chat_url(db: Session) -> str:
     debug_assistant = get_virtual_assistant_by_name(db, "universal_prompted_assistant")
 
-    return debug_assistant.deployment.chat_url
+    return f"{debug_assistant.deployment.chat_host}:{debug_assistant.deployment.chat_port}"
 
 
 def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str) -> models.DialogSession:
@@ -414,10 +455,9 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
     )
     dialog_session = db.scalar(
         insert(models.DialogSession)
-        .values(user_id=1, deployment_id=virtual_assistant.deployment.id, is_active=True)
+        .values(user_id=user_id, deployment_id=virtual_assistant.deployment.id, is_active=True)
         .returning(models.DialogSession)
     )
-    db.commit()
 
     return dialog_session
 
@@ -429,10 +469,11 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
         .values(agent_dialog_id=agent_dialog_id)
         .returning(models.DialogSession)
     )
-    db.commit()
+
     return dialog_session
 
 
+# LM SERVICE
 def get_all_lm_services(db: Session) -> [models.LmService]:
     return db.scalars(select(models.LmService)).all()
 
@@ -445,10 +486,7 @@ def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]
     return db.scalar(select(models.LmService).filter_by(name=name))
 
 
-def get_virtual_assistant_by_name(db: Session, name: str) -> Optional[models.VirtualAssistant]:
-    return db.scalar(select(models.VirtualAssistant).filter_by(name=name))
-
-
+# DEPLOYMENT
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
 
@@ -461,15 +499,17 @@ def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.D
 
 
 def create_deployment(
-    db: Session, virtual_assistant_id: int, chat_url: str, prompt: str = None, lm_service_id: int = None
+    db: Session,
+    virtual_assistant_id: int,
+    chat_host: str,
+    chat_port: int,
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
         .values(
             virtual_assistant_id=virtual_assistant_id,
-            chat_url=chat_url,
-            prompt=prompt,
-            lm_service_id=lm_service_id,
+            chat_host=chat_host,
+            chat_port=chat_port,
         )
         .returning(models.Deployment)
     )
@@ -490,9 +530,8 @@ def create_deployment_from_copy(
     return create_deployment(
         db,
         new_virtual_assistant_id,
-        original_deployment.chat_url,
-        original_deployment.prompt,
-        original_deployment.lm_service_id,
+        original_deployment.chat_host,
+        original_deployment.chat_port,
     )
 
 
@@ -525,12 +564,3 @@ def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str) 
     deployment = get_deployment_by_virtual_assistant_name(db, name)
 
     return deployment.lm_service
-
-
-def set_deployment_lm_service_by_virtual_assistant_name(
-    db: Session, name: str, lm_service_name: str
-) -> models.Deployment:
-    lm_service = get_lm_service_by_name(db, lm_service_name)
-    deployment = update_deployment_by_virtual_assistant_name(db, name, lm_service_id=lm_service.id)
-
-    return deployment

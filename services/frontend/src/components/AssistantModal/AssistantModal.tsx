@@ -129,7 +129,7 @@ export const AssistantModal = () => {
           control={control}
           rules={{
             required: validationSchema.global.required,
-            pattern: validationSchema.global.engSpeechRegExp,
+            pattern: validationSchema.global.regExpPattern,
           }}
           props={{
             placeholder: 'A short name describing your Virtual Assistant',
@@ -145,7 +145,7 @@ export const AssistantModal = () => {
             rules={{
               required: validationSchema.global.required,
               maxLength: validationSchema.global.desc.maxLength(1000),
-              pattern: validationSchema.global.engSpeechRegExp,
+              pattern: validationSchema.global.regExpPattern,
             }}
             props={{
               placeholder:

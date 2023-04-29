@@ -125,7 +125,7 @@ export const SkillModal = () => {
             control={control}
             rules={{
               required: validationSchema.global.required,
-              pattern: validationSchema.global.engSpeechRegExp,
+              pattern: validationSchema.global.regExpPattern,
             }}
             props={{
               placeholder:
@@ -143,7 +143,7 @@ export const SkillModal = () => {
               required: validationSchema.global.required,
               maxLength:
                 validationSchema.global.desc.maxLength(descriptionMaxLenght),
-              pattern: validationSchema.global.engSpeechRegExp,
+              pattern: validationSchema.global.regExpPattern,
             }}
             props={{
               placeholder:

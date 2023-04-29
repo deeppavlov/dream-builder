@@ -1,8 +1,8 @@
 export const validationSchema = {
   global: {
     required: 'This field can’t be empty',
-    engSpeechRegExp: {
-      value: /^[a-zA-Z0-9\s\p{P}.'’,!-?]+$/gi,
+    regExpPattern: {
+      value: /^[\s\p{L}.'’,!-?]+$/giu,
       message: 'Invalid data',
     },
     desc: {

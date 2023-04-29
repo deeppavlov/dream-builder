@@ -5,7 +5,7 @@ from apiconfig.config import settings
 from services.distributions_api import schemas
 
 
-async def verify_token(token: str = Header()) -> schemas.User:
+async def verify_token(token: str = Header()) -> schemas.UserRead:
     header = {"token": token}
 
     async with aiohttp.ClientSession(headers=header) as session:
@@ -15,4 +15,4 @@ async def verify_token(token: str = Header()) -> schemas.User:
             if response.status != 200:
                 raise HTTPException(status_code=400, detail=json_data["detail"])
 
-    return schemas.User(**json_data)
+    return schemas.UserRead(**json_data)

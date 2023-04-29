@@ -1,9 +1,7 @@
-import secrets
 from typing import List
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
-from fastapi.logger import logger
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -32,7 +30,9 @@ def send_publish_request_created_emails(
 
 @assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_virtual_assistant(
-    payload: schemas.CreateAssistantDistModel, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
     Creates new distribution from base template
@@ -97,7 +97,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
 
 @assistant_dists_router.get("/user_owned", status_code=status.HTTP_200_OK)
 async def get_list_of_private_virtual_assistants(
-    user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ) -> List[schemas.VirtualAssistantRead]:
     """
     Lists private Dream distributions
@@ -137,7 +137,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
 async def patch_virtual_assistant_by_name(
     dist_name: str,
-    payload: schemas.EditAssistantDistModel,
+    payload: schemas.VirtualAssistantUpdate,
     user: str = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
@@ -181,7 +181,7 @@ async def patch_virtual_assistant_by_name(
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_virtual_assistant_by_name(
-    dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    dist_name: str, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     """
     Deletes existing dist
@@ -209,8 +209,8 @@ async def delete_virtual_assistant_by_name(
 @assistant_dists_router.post("/{dist_name}/clone", status_code=status.HTTP_201_CREATED)
 async def clone_dist(
     dist_name: str,
-    payload: schemas.CreateAssistantDistModel,
-    user: schemas.User = Depends(verify_token),
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
@@ -272,7 +272,7 @@ async def clone_dist(
 
 
 def _virtual_assistant_component_model_to_schema(virtual_assistant_component: models.VirtualAssistantComponent):
-    return schemas.VirtualAssistantComponentShort(
+    return schemas.VirtualAssistantComponentRead(
         id=virtual_assistant_component.id,
         component_id=virtual_assistant_component.component_id,
         name=virtual_assistant_component.component.name,
@@ -301,7 +301,7 @@ async def get_virtual_assistant_components(dist_name: str, db: Session = Depends
             _virtual_assistant_component_model_to_schema(va_component)
         )
 
-    return schemas.DistComponentsResponse(**grouped_components)
+    return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 
 @assistant_dists_router.post("/{dist_name}/components", status_code=status.HTTP_201_CREATED)
@@ -352,7 +352,7 @@ async def publish_dist(
     dist_name: str,
     payload: schemas.PublishRequestCreate,
     background_tasks: BackgroundTasks,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     with db.begin():
@@ -361,6 +361,8 @@ async def publish_dist(
 
         if payload.visibility == "private":
             crud.delete_publish_request(db, virtual_assistant.id)
+        elif payload.visibility == "unlisted":
+            crud.create_publish_request_autoconfirm(db, virtual_assistant.id, user.id, virtual_assistant.name)
         else:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)
@@ -372,43 +374,6 @@ async def publish_dist(
                 virtual_assistant_name=virtual_assistant.name,
                 virtual_assistant_display_name=virtual_assistant.display_name,
             )
-
-
-@assistant_dists_router.get("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def get_dist_prompt(dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
-    prompt = crud.get_deployment_prompt_by_virtual_assistant_name(db, dist_name)
-    return schemas.Prompt(text=prompt)
-
-
-@assistant_dists_router.post("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def set_dist_prompt(
-    dist_name: str, payload: schemas.Prompt, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-):
-    deployment = crud.set_deployment_prompt_by_virtual_assistant_name(db, dist_name, payload.text)
-    return schemas.Deployment.from_orm(deployment)
-
-
-@assistant_dists_router.get("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def get_dist_lm_service(
-    dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-):
-    try:
-        lm_service = crud.get_deployment_lm_service_by_virtual_assistant_name(db, dist_name)
-    except ValueError:
-        raise HTTPException(status_code=404, detail=f"No deployments for virtual assistant {dist_name}")
-
-    return schemas.LmService.from_orm(lm_service)
-
-
-@assistant_dists_router.post("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def set_dist_lm_service(
-    dist_name: str,
-    payload: schemas.SetLmServiceRequest,
-    user: dict = Depends(verify_token),
-    db: Session = Depends(get_db),
-):
-    deployment = crud.set_deployment_lm_service_by_virtual_assistant_name(db, dist_name, payload.name)
-    return schemas.Deployment.from_orm(deployment)
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

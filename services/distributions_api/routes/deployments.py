@@ -17,18 +17,19 @@ deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
 # deployer = Deployer(settings.deployer.portainer_key)
 
+
 def get_user_services(dist: AssistantDist):
     services = dist.compose_override.config.services.keys()
-    user_services = [service for service in services if service.endswith('-prompted-skill')]
-    user_services.append('agent')
-    if 'prompt-selector' in services:
-        user_services.append('prompt-selector')
+    user_services = [service for service in services if service.endswith("-prompted-skill")]
+    user_services.append("agent")
+    if "prompt-selector" in services:
+        user_services.append("prompt-selector")
     return user_services
 
 
 @deployments_router.post("/")
 async def create_deployment(
-    payload: schemas.DeploymentCreate, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+    payload: schemas.DeploymentCreate, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
@@ -37,17 +38,17 @@ async def create_deployment(
             user_identifier=dream_dist.name,
             registry_addr=settings.deployer.registry_url,
             user_services=get_user_services(dream_dist),
-            deployment_dict={'services': {'agent': {'ports': [f'{payload.assistant_port}:4242']}}},
+            deployment_dict={"services": {"agent": {"ports": [f"{payload.assistant_port}:4242"]}}},
             portainer_url=settings.deployer.portainer_url,
             portainer_key=settings.deployer.portainer_key,
-            default_prefix=settings.deployer.default_prefix
+            default_prefix=settings.deployer.default_prefix,
         )
         deployer.deploy(dream_dist)
         hostname = urlparse(settings.deployer.portainer_url).hostname
-        return f'{hostname}:{payload.assistant_port}'
+        return f"{hostname}:{payload.assistant_port}"
 
-        # chat_url = deployer.deploy(dream_dist)
-        # deployment = crud.create_deployment(db, virtual_assistant.id, chat_url)
+        # chat_host, chat_port = deployer.deploy(dream_dist)
+        # deployment = crud.create_deployment(db, virtual_assistant.id, chat_host, chat_port)
 
     # return schemas.Deployment.from_orm(deployment)
 
@@ -55,7 +56,7 @@ async def create_deployment(
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
 async def get_all_lm_services(db: Session = Depends(get_db)):
     """ """
-    return [schemas.LmService.from_orm(name) for name in crud.get_all_lm_services(db)]
+    return [schemas.LmServiceRead.from_orm(name) for name in crud.get_all_lm_services(db)]
 
 
 # @deployments_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)

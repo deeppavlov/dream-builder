@@ -12,30 +12,30 @@ users_router = APIRouter(prefix="/api/users", tags=["users"])
 
 @users_router.get("/", status_code=status.HTTP_200_OK)
 async def get_all_users(
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     users = crud.get_all_users(db)
 
-    return [schemas.User.from_orm(u) for u in users]
+    return [schemas.UserRead.from_orm(u) for u in users]
 
 
 @users_router.get("/self", status_code=status.HTTP_200_OK)
-async def get_user_self(user: schemas.User = Depends(verify_token)):
+async def get_user_self(user: schemas.UserRead = Depends(verify_token)):
     return user
 
 
 @users_router.get("/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user_by_id(user_id: int, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)):
+async def get_user_by_id(user_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)):
     selected_user = crud.get_user(db, user_id)
 
-    return schemas.User.from_orm(selected_user)
+    return schemas.UserRead.from_orm(selected_user)
 
 
 @users_router.get("/{user_id}/settings/api_tokens/", status_code=status.HTTP_200_OK)
 async def get_user_api_tokens(
     user_id: int,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> [schemas.UserApiToken]:
     user_api_tokens = crud.get_user_api_tokens(db, user_id)
@@ -47,7 +47,7 @@ async def get_user_api_tokens(
 async def create_or_update_user_api_token(
     user_id: int,
     payload: schemas.CreateTokenRequest,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.UserApiToken:
     with db.begin():
@@ -60,7 +60,7 @@ async def create_or_update_user_api_token(
 async def get_user_api_token(
     user_id: int,
     user_api_token_id: int,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.UserApiToken:
     user_api_token = crud.get_user_api_token(db, user_api_token_id)
@@ -72,7 +72,7 @@ async def get_user_api_token(
 async def delete_user_api_token(
     user_id: int,
     user_api_token_id: int,
-    user: schemas.User = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
     with db.begin():

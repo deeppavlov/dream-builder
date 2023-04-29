@@ -1,589 +1,567 @@
-import pytest
-import requests
 from qaseio.pytest import qase
-from sqlalchemy.dialects.postgresql import insert
-import database.crud as crud
-from database import models as db_models
-from database.core import init_db
-from services.distributions_api import schemas as models
 from .config import (
-    assistant_dists_endpoint,
-    users_endpoint,
-    api_tokens_endpoint,
-    dialog_sessions_endpoint,
-    deployments_endpoint,
-    auth_token,db_config,
-    exist_email,
-    google_user,
-    uservalid_user,
     va_data,
-    clean_testdata_wo_user,
-    clean_testdb,
-    create_mocks_public_dist,
+    public_va_names,
     counter_distributions as counter
+)
+from .distributions_methods import (
+    UserMethods,
+    DeploymentsMethods,
+    AdminMethods
 )
 
 
-# assistant_dists
-
-
-@pytest.fixture(scope="function")
-def create_va_by_db():
-    # to display private distributions, you need to use the database methods:
-    # 1) create user (in setup_class)
-    # 2) create VA
-    # 3) deploy VA from copy (from scratch not works)
-    db = init_db(*db_config)()
-    author_id = crud.get_user_by_email(db=db, email=exist_email).id
-    virtual_assistant = crud.create_virtual_assistant(
-        db=db,
-        cloned_from_id=va_data["cloned_from_id"],
-        author_id=author_id,
-        source=va_data["source"],
-        name=va_data["name"],
-        display_name=va_data["display_name"],
-        description=va_data["description"],
-    )
-    va = crud.get_virtual_assistant_by_name(db=db, name=va_data["name"])
-    deployment = db.scalar(
-        insert(db_models.Deployment)
-            .values(
-            virtual_assistant_id=va.id,
-            chat_url="chat_url",
-            prompt="prompt",
-            lm_service_id=1,
-        )
-            .returning(db_models.Deployment)
-    )
-    db.commit()
-
-    yield
-    clean_testdata_wo_user(db, exist_email)
-    db.close()
-
-
 class TestDistributions:
-    @classmethod
-    def setup_class(self):
-        db = init_db(*db_config)()
-        create_mocks_public_dist(db=db)
-        crud.add_google_user(db=db, user=google_user)
-        crud.add_user_to_uservalid(db=db, user=uservalid_user, email=exist_email)
-        db.close()
 
-    @classmethod
-    def teardown_class(self):
-        db = init_db(*db_config)()
-        # clean_all_testdata(db, exist_email)
-        clean_testdb(db=db)
-        db.close()
+    # assistant_dists
 
     @qase.title(f"{counter()}. test_create_distribution")
-    def test_create_distribution(self):
-        dist_response = requests.post(
-            url=f"{assistant_dists_endpoint}",
-            headers={
-                "accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            json={"display_name": "TestBot", "description": "TestBot"},
-        )
-
-        assert dist_response.status_code == 201, dist_response.json()
-        assert models.AssistantDistModelShort.parse_obj(dist_response.json())
+    def test_create_va(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(display_name)
+        #print(user.create_virtual_assistant(display_name)["name"])
 
     @qase.title(f"{counter()}. test_get_list_of_public_dist")
-    def test_get_list_of_public_dist(self):
-        public_dist_list = requests.get(assistant_dists_endpoint + "public")
-        assert public_dist_list.status_code == 200, public_dist_list.json()
+    def test_get_list_of_public_va(self):
+        user = UserMethods()
+        user.get_list_of_public_va()
 
-        for public_dist in public_dist_list.json():
-            assert models.VirtualAssistant.parse_obj(public_dist), \
-                "Validation error while test_get_list_of_public_dist"
+    @qase.title(f"{counter()}. test_get_list_of_private_va")
+    def test_get_list_of_private_va(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        va = user.create_virtual_assistant(display_name)
+        user.get_list_of_private_va(va)
 
-    @qase.title(f"{counter()}. test_get_list_of_private_dist")
-    def test_get_list_of_private_dist(self, create_va_by_db):
-        private_dist_list = requests.get(
-            url=assistant_dists_endpoint + "private",
-            headers={
-                "accept": "*/*",
-                "token": auth_token,
-            },
-        )
-        #print(f"private_dist_list = {private_dist_list.json()}")
-        assert private_dist_list.status_code == 200, private_dist_list.json()
-        for private_dist in private_dist_list.json():
-            assert models.VirtualAssistant.parse_obj(private_dist),\
-                "Validation error while test_get_list_of_private_dist"
+    @qase.title(f"{counter()}. test_get_private_va_by_name")
+    def test_get_private_va_by_name(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.get_va_by_name(name)
 
-    @qase.title(f"{counter()}. test_get_exist_dist_by_name")
-    def test_get_exist_dist_by_name(self):
+    @qase.title(f"{counter()}. test_get_public_va_by_name")
+    def test_get_public_va_by_name(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.get_va_by_name(name)
+
+    # @qase.title(f"{counter()}. test_get_non_exist_va_by_name")
+    # def test_get_non_exist_dist_by_name(self):
+    #    name = "non_exist_name"
+    #    user = UserMethods()
+    #    user.create_virtual_assistant()
+    #    user.get_va_by_name(name)
+
+    @qase.title(f"{counter()}. test_delete_private_va_by_name")
+    def test_delete_private_va_by_name(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.delete_va_by_name(name)
+
+    @qase.title(f"{counter()}. test_patch_private_va_by_name")
+    def test_patch_private_va_by_name(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.patch_va_by_name(name)
+
+        # + попробовать пропатчить публичный VA
+
+    @qase.title(f"{counter()}. test_clone_public_va")
+    def test_clone_public_va(self):
+        name = public_va_names[0]
+        # либо public_dist = get_public_dist_list_response.json()[0]
+        user = UserMethods()
+        user.clone_va(name)
+
+    #VA COMPONENTS
+
+    @qase.title(f"{counter()}. test_get_public_va_components_by_name")
+    def test_get_public_va_components_by_name(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.get_va_components(name)
+
+    @qase.title(f"{counter()}. test_get_created_from_scratch_va_components_by_name")
+    def test_get_created_from_scratch_va_components_by_name(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.get_va_components(name)
+
+    @qase.title(f"{counter()}. test_get_cloned_va_components_by_name")
+    def test_get_cloned_va_components_by_name(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va_name = user.clone_va(name)["name"]
+        user.get_va_components(va_name)
+
+    @qase.title(f"{counter()}. test_add_cloned_va_component")
+    def test_add_cloned_va_component(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va_name = user.clone_va(name)["name"]
+        component_id = 2
+        user.add_va_component(va_name, component_id)
+
+    @qase.title(f"{counter()}. test_add_created_from_scratch_va_component")
+    def test_add_created_from_scratch_va_component(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        component_id = 2
+        user.add_va_component(name, component_id)
+
+    @qase.title(f"{counter()}. test_delete_cloned_va_component")
+    def test_delete_cloned_va_component(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va_name = user.clone_va(name)["name"]
+        component_id = 2
+        user.add_va_component(va_name, component_id)
+        user.delete_va_component(va_name, component_id)
+
+    @qase.title(f"{counter()}. test_delete_created_from_scratch_va_component")
+    def test_delete_created_from_scratch_va_component(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        component_id = 2
+        user.add_va_component(name, component_id)
+        user.delete_va_component(name, component_id)
+
+    @qase.title(f"{counter()}. test_patch_cloned_va_component")
+    def test_patch_cloned_va_component(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va_name = user.clone_va(name)["name"]
+        component_id = 2
+        user.add_va_component(va_name, component_id)
+        user.patch_va_component(va_name, component_id)
+
+    @qase.title(f"{counter()}. test_patch_created_from_scratch_va_component")
+    def test_patch_created_from_scratch_va_component(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        component_id = 2
+        user.add_va_component(name, component_id)
+        user.patch_va_component(name, component_id)
+
+    # PUBLISH
+
+    @qase.title(f"{counter()}. test_publish_dist_unlisted")
+    def test_publish_dist_unlisted(self):
+        visibility = 'unlisted'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+    @qase.title(f"{counter()}. test_publish_dist_private")
+    def test_publish_dist_private(self):
+        visibility = 'private'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+    @qase.title(f"{counter()}. test_publish_dist_public_template")
+    def test_publish_dist_public_template(self):
+        visibility = 'public_template'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+    @qase.title(f"{counter()}. test_get_created_from_scratch_va_prompt")
+    def test_get_created_from_scratch_va_prompt(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        va = user.create_virtual_assistant(display_name)
+        name = va["name"]
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
+
+        user.get_dist_prompt(name)
+
+    @qase.title(f"{counter()}. test_get_cloned_va_prompt")
+    def test_get_cloned_va_prompt(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        cloned_va = user.clone_va(name)
+        cloned_va_name = cloned_va["name"]
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(cloned_va["id"])
+
+        user.get_dist_prompt(cloned_va_name)
+
+    @qase.title(f"{counter()}. test_set_created_from_scratch_va_prompt")
+    def test_set_created_from_scratch_va_prompt(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        va = user.create_virtual_assistant(display_name)
+        name = va["name"]
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
+
+        user.set_dist_prompt(name)
+
+    @qase.title(f"{counter()}. test_set_cloned_va_prompt")
+    def test_set_cloned_va_prompt(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va = user.clone_va(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
+
+        user.set_dist_prompt(name)
+
+    @qase.title(f"{counter()}. test_get_cloned_va_lm_service")
+    def test_get_cloned_va_lm_service(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va = user.clone_va(name)
+        name = va["name"]
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
+
+        user.get_dist_lm_service(name)
+
+    @qase.title(f"{counter()}. test_get_created_from_scratch_va_lm_service")
+    def test_get_created_from_scratch_va_lm_service(self):
         name = va_data["name"]
-        create_dist_response = requests.post(
-            url=f"{assistant_dists_endpoint}",
-            headers={
-                "accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            json={"display_name": name, "description": "description"},
-        )
-        get_dist_response = requests.get(assistant_dists_endpoint + create_dist_response.json()["name"])
-        assert get_dist_response.status_code == 200, get_dist_response.json()
-        assert models.AssistantDistModelShort.parse_obj(get_dist_response.json())
-        assert get_dist_response.json()["display_name"] == name, get_dist_response.json()
+        user = UserMethods()
+        va = user.clone_va(name)
+        name = va["name"]
 
-    @qase.title(f"{counter()}. test_get_non_exist_dist_by_name")
-    def test_get_non_exist_dist_by_name(self):
-        response = requests.get(assistant_dists_endpoint + "name")
-        assert response.status_code == 404, response.json()
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
 
-    @qase.title(f"{counter()}. test_delete_dist_by_name")
-    def test_delete_dist_by_name(self, create_va_by_db):
-        # need create from scratch
-        delete_response = requests.delete(
-            url=assistant_dists_endpoint + va_data["name"],
-            headers={
-                "accept": "*/*",
-                "token": auth_token,
-            },
-        )
-        assert delete_response.status_code == 204, delete_response.json()
+        user.get_dist_lm_service(name)
 
-    @qase.title(f"{counter()}. test_patch_dist_by_name")
-    def test_patch_dist_by_name(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        patch_dist_response = requests.patch(
-            url=assistant_dists_endpoint + public_dist["name"],
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={"display_name": "New_test_name", "description": "string"},
-        )
-        assert patch_dist_response.status_code == 200, patch_dist_response.json()
-        assert models.AssistantDistModelShort.parse_obj(
-            patch_dist_response.json()
-        ), "Validation error while test_clone_public_dist"
+    @qase.title(f"{counter()}. test_get_created_from_scratch_va_lm_service")
+    def test_set_created_from_scratch_va_lm_service(self):
+        display_name = va_data["name"]
+        user = UserMethods()
+        va = user.create_virtual_assistant(display_name)
+        name = va["name"]
 
-    @qase.title(f"{counter()}. test_clone_public_dist")
-    def test_clone_public_dist(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        clone_dist_response = requests.post(
-            url=assistant_dists_endpoint + public_dist["name"] + "/clone",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "display_name": "string",
-                "description": "string",
-                "annotators": [
-                    "string",
-                ],
-                "response_annotators": [
-                    "string",
-                ],
-                "candidate_annotators": [
-                    "string",
-                ],
-                "skill_selectors": [
-                    "string",
-                ],
-                "skills": [
-                    "string",
-                ],
-                "response_selectors": [
-                    "string",
-                ],
-            },
-        )
-        assert clone_dist_response.status_code == 201, clone_dist_response.json()
-        assert models.VirtualAssistant.parse_obj(
-            clone_dist_response.json()
-        ), "Validation error while test_clone_public_dist"
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
 
-    @qase.title(f"{counter()}. test_get_public_dist_components_by_name")
-    def test_get_public_dist_components_by_name(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        get_dist_components_response = requests.get(assistant_dists_endpoint + public_dist["name"] + "/components/")
-        assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
-        assert models.DistComponentsResponse.parse_obj(
-            get_dist_components_response.json()
-        ), "Error while test_get_public_dist_components_by_name"
+        user.set_dist_lm_service(name, lm_service_name="СhatGPT")
 
-    # @qase.title(f"{counter()}. test_get_exist_private_dist_components_by_name")
-    # def test_get_exist_private_dist_components_by_name(self, cr):
-    # need create from scratch
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_set_cloned_va_lm_service")
+    def test_set_cloned_va_lm_service(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        va = user.clone_va(name)
+        name = va["name"]
+        #print(f'name = = = {name}')
 
-    @qase.title(f"{counter()}. test_get_non_exist_dist_components_by_name")
-    def test_get_non_exist_dist_components_by_name(self):
-        response = requests.get(assistant_dists_endpoint + "name/components/")
-        assert response.status_code == 404, response.json()
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va["id"])
 
-    # @qase.title(f"{counter()}. test_publish_dist")
-    # def test_publish_dist(self):
-    # need create from scratch
-    #    create_va_by_db()
-    #    response_post = requests.post(url=assistant_dists_endpoint,
-    #                                  headers={
-    #                                      'accept': 'application/json',
-    #                                      'Content-Type': 'application/json',
-    #                                  },
-    #                                  json={
-    #                                      "display_name": "string",
-    #                                      "description": "string"
-    #                                  }
-    #                                  )
-    #
-    #    response = requests.post(url=assistant_dists_endpoint + response_post.json()["name"] + '/publish/',
-    #                             headers={
-    #                                 'accept': '*/*',
-    #                                 'token': auth_token,
-    #                                 'content-type': 'application/x-www-form-urlencoded',
-    #                             }
-    #                             )
-    #    assert response.status_code == 200, response.json()
+        user.set_dist_lm_service(name, lm_service_name="СhatGPT")
 
-    @qase.title(f"{counter()}. test_chat_dist")
-    def test_chat_dist(self):
-        response_post = requests.post(
-            url=assistant_dists_endpoint,
-            headers={
-                "accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            json={"display_name": "string", "description": "string"},
-        )
+    # @qase.title(f"{counter()}. test_get_debug_template")
+    # def test_get_debug_template(self):
+    # -- parametres? def debug_template(template_file_path: str, owner_address: str,
+    #    name = va_data["name"]
+    #    user = UserMethods()
+    #    # user.create_virtual_assistant()
+    #    user.debug_template(name)
 
-        response = requests.post(
-            url=assistant_dists_endpoint + response_post.json()["name"] + "/chat/",
-            headers={
-                "accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            json={
-                "text": "string",
-            },
-        )
-        assert response.status_code == 200, response.json()
-        assert models.AssistantDistChatResponse.parse_obj(response.json())
+    # COMPONENTS
 
-    @qase.title(f"{counter()}. test_get_public_dist_prompt")
-    def test_get_public_dist_prompt(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        get_prompt_response = requests.get(
-            url=assistant_dists_endpoint + public_dist["name"] + "/prompt/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_prompt_response.status_code == 200, get_prompt_response.json()
-        assert models.Prompt.parse_obj(get_prompt_response.json())
+    @qase.title(f"{counter()}. test_get_list_of_components")
+    def test_get_list_of_components(self):
+        user = UserMethods()
+        user.get_list_of_components()
 
-    @qase.title(f"{counter()}. test_get_private_dist_prompt")
-    def test_get_private_dist_prompt(self, create_va_by_db):
-        # need create from scratch
-        get_prompt_response = requests.get(
-            url=assistant_dists_endpoint + va_data["name"] + "/prompt/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_prompt_response.status_code == 200, get_prompt_response.json()
-        assert models.Prompt.parse_obj(get_prompt_response.json())
+    @qase.title(f"{counter()}. test_create_component")
+    def test_create_component(self):
+        user = UserMethods()
+        user.create_component()
 
-    @qase.title(f"{counter()}. test_set_public_dist_prompt")
-    def test_set_public_dist_prompt(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        prompt = "new_prompt_string"
-        set_prompt_response = requests.post(
-            url=assistant_dists_endpoint + public_dist["name"] + "/prompt/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "text": "new_prompt_string",
-            },
-        )
-        assert set_prompt_response.status_code == 200, set_prompt_response.json()
-        assert models.Deployment.parse_obj(set_prompt_response.json())
-        assert set_prompt_response.json()["prompt"] == prompt
+    @qase.title(f"{counter()}. test_get_component")
+    def test_get_component(self):
+        user = UserMethods()
+        component_id = user.create_component()["id"]
+        user.get_component(component_id)
 
-    @qase.title(f"{counter()}. test_set_private_dist_prompt")
-    def test_set_private_dist_prompt(self, create_va_by_db):
-        # need create from scratch
-        prompt = "new_prompt_string"
-        set_prompt_response = requests.post(
-            url=assistant_dists_endpoint + va_data["name"] + "/prompt/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "text": "new_prompt_string",
-            },
-        )
-        assert set_prompt_response.status_code == 200, set_prompt_response.json()
-        assert models.Deployment.parse_obj(set_prompt_response.json())
-        assert set_prompt_response.json()["prompt"] == prompt
+    @qase.title(f"{counter()}. test_delete_component")
+    def test_delete_component(self):
+        user = UserMethods()
+        component_id = user.create_component()["id"]
+        user.delete_component(component_id)
 
-    @qase.title(f"{counter()}. test_get_public_dist_lm_service")
-    def test_get_public_dist_lm_service(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        get_lm_service_response = requests.get(
-            url=assistant_dists_endpoint + public_dist["name"] + "/lm_service/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_lm_service_response.status_code == 200, get_lm_service_response.json()
-        assert models.LmService.parse_obj(get_lm_service_response.json())
+    @qase.title(f"{counter()}. test_patch_component")
+    def test_patch_component(self):
+        user = UserMethods()
+        component_id = user.create_component()["id"]
+        user.patch_component(component_id)
 
-    # @qase.title(f"{counter()}. test_get_public_dist_prompt")
-    # def test_get_private_dist_lm_service(self, create_va_by_db):
-    #    get_lm_service_response = requests.get(url=assistant_dists_endpoint + va_data["name"] + '/lm_service/',
-    #                                           headers={
-    #                                               'accept': 'application/json',
-    #                                               'token': auth_token,
-    #                                           }
-    #                                           )
-    #    assert get_lm_service_response.status_code == 200, get_lm_service_response.json()
-    #    assert models.LmService.parse_obj(get_lm_service_response.json())
+    @qase.title(f"{counter()}. test_get_list_of_group_components")
+    def test_get_list_of_group_components(self):
+        group_name = "Generative"
+        user = UserMethods()
+        user.get_list_of_group_components(group_name)
 
     # users
 
     @qase.title(f"{counter()}. test_get_all_users")
     def test_get_all_users(self):
-        get_all_users_response = requests.get(
-            url=users_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_all_users_response.status_code == 200, get_all_users_response.json()
-        for user in get_all_users_response.json():
-            assert models.User.parse_obj(user)
+        user = UserMethods()
+        user.get_all_users()
 
     @qase.title(f"{counter()}. test_get_user_self")
     def test_get_user_self(self):
-        get_user_response = requests.get(
-            url=users_endpoint + "self",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_user_response.status_code == 200, get_user_response.json()
-        assert models.User.parse_obj(get_user_response.json())
+        user = UserMethods()
+        user.get_user_self()
 
     @qase.title(f"{counter()}. test_get_user_by_id")
     def test_get_user_by_id(self):
-        get_user_response = requests.get(
-            url=users_endpoint + "self",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        user_id = str(get_user_response.json()["id"])
-        get_user_by_id_response = requests.get(
-            url=users_endpoint + user_id,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_user_by_id_response.status_code == 200, get_user_by_id_response.json()
-        assert models.User.parse_obj(get_user_by_id_response.json())
+        user = UserMethods()
+        user_id = user.get_user_self()
+        user.get_user_by_id(user_id)
+
+    @qase.title(f"{counter()}. test_get_user_api_tokens")
+    def test_get_user_api_tokens(self):
+        user = UserMethods()
+        user_id = user.get_user_self()
+        user.create_or_update_user_api_token(user_id, token_value="token")
+        user.get_user_api_tokens(user_id)
 
     @qase.title(f"{counter()}. test_create_or_update_user_api_token")
     def test_create_or_update_user_api_token(self):
-        get_user_response = requests.get(
-            url=users_endpoint + "self",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        user_id = str(get_user_response.json()["id"])
-        update_user_api_token_response = requests.post(
-            url=users_endpoint + user_id + "/settings/api_tokens/",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "api_token_id": user_id,
-                "token_value": "string",
-            },
-        )
+        user = UserMethods()
+        user_id = user.get_user_self()
+        user.create_or_update_user_api_token(user_id, token_value="token")
 
-        assert update_user_api_token_response.status_code == 201, update_user_api_token_response.json()
-        assert models.UserApiToken.parse_obj(update_user_api_token_response.json())
+    @qase.title(f"{counter()}. test_get_user_api_token")
+    def test_get_user_api_token(self):
+        user = UserMethods()
+        user_id = user.get_user_self()
+        user.create_or_update_user_api_token(user_id, token_value="token")
+        user_api_token_id = user.get_user_api_tokens(user_id)
+        user.get_user_api_token(user_id, user_api_token_id)
+
+    @qase.title(f"{counter()}. test_delete_user_api_token")
+    def test_delete_user_api_token(self):
+        user = UserMethods()
+        user_id = user.get_user_self()
+        user.create_or_update_user_api_token(user_id, token_value="token")
+        user_api_token_id = user.get_user_api_tokens(user_id)
+        user.delete_user_api_token(user_id, user_api_token_id)
 
     # api_tokens
 
     @qase.title(f"{counter()}. test_get_all_api_tokens")
     def test_get_all_api_tokens(self):
-        get_all_api_tokens_response = requests.get(
-            url=api_tokens_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_all_api_tokens_response.status_code == 200, get_all_api_tokens_response.json()
-        for token in get_all_api_tokens_response.json():
-            assert models.ApiToken.parse_obj(token), "Validation error while test_get_all_api_tokens"
+        user = UserMethods()
+        user.get_all_api_tokens()
 
     # dialog_sessions
 
-    @qase.title(f"{counter()}. test_create_dialog_sessions")
-    def test_create_dialog_sessions(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        create_dialog_response = requests.post(
-            url=dialog_sessions_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "virtual_assistant_name": public_dist["name"],
-            },
-        )
-        assert create_dialog_response.status_code == 201, create_dialog_response.json()
-        assert models.DialogSession.parse_obj(
-            create_dialog_response.json()
-        ), "Validation error while test_create_dialog_sessions"
+    @qase.title(f"{counter()}. test_create_dialog_sessions_with_public_va")
+    def test_create_dialog_sessions_with_public_template_va(self):
+        user = UserMethods()
+        for name in public_va_names:
+            user.create_dialog_sessions(name)
 
-    @qase.title(f"{counter()}. test_get_dialog_sessions")
-    def test_get_dialog_sessions(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        create_dialog_response = requests.post(
-            url=dialog_sessions_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "virtual_assistant_name": public_dist["name"],
-            },
-        )
+    @qase.title(f"{counter()}. test_create_dialog_sessions_with_created_from_scratch_va")
+    def test_create_dialog_sessions_with_created_from_scratch_va(self):
+        name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
 
-        dialog_session_id = str(create_dialog_response.json()["id"])
-        get_dialog_response = requests.get(
-            url=dialog_sessions_endpoint + dialog_session_id,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_dialog_response.status_code == 200, get_dialog_response.json()
-        assert models.DialogSession.parse_obj(
-            get_dialog_response.json()
-        ), "Validation error while test_create_dialog_sessions"
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        user.create_dialog_sessions(name)
 
-    @qase.title(f"{counter()}. test_send_dialog_session_message")
-    def test_send_dialog_session_message(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        create_dialog_response = requests.post(
-            url=dialog_sessions_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "virtual_assistant_name": public_dist["name"],
-            },
-        )
+    @qase.title(f"{counter()}. test_create_dialog_sessions_with_cloned_va")
+    def test_create_dialog_sessions_with_cloned_va(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.clone_va(name)
+        va_id = user.get_va_by_name(name)
 
-        dialog_session_id = str(create_dialog_response.json()["id"])
-        send_message_response = requests.post(
-            url=dialog_sessions_endpoint + dialog_session_id + "/chat",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "text": "Hello! What is your name?",
-            },
-        )
-        assert send_message_response.status_code == 201, send_message_response.json()
-        assert models.DialogChatMessageResponse.parse_obj(
-            send_message_response.json()
-        ), "Validation error while test_send_dialog_session_message"
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
 
-    @qase.title(f"{counter()}. test_get_dialog_session_history")
-    def test_get_dialog_session_history(self):
-        get_public_dist_list_response = requests.get(assistant_dists_endpoint + "public")
-        public_dist = get_public_dist_list_response.json()[0]
-        create_dialog_response = requests.post(
-            url=dialog_sessions_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "virtual_assistant_name": public_dist["name"],
-            },
-        )
+        user.create_dialog_sessions(name)
 
-        dialog_session_id = str(create_dialog_response.json()["id"])
+    @qase.title(f"{counter()}. test_get_dialog_sessions_with_public_va")
+    def test_get_dialog_sessions_with_public_template_va(self):
+        user = UserMethods()
+        for name in public_va_names:
+            dialog_session_id = user.create_dialog_sessions(name)["id"]
+            user.get_dialog_sessions(dialog_session_id)
 
-        send_message_response = requests.post(
-            url=dialog_sessions_endpoint + dialog_session_id + "/chat",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-                "Content-Type": "application/json",
-            },
-            json={
-                "text": "Hello! What is your name?",
-            },
-        )
+    @qase.title(f"{counter()}. test_get_dialog_sessions_with_with_created_from_scratch_va")
+    def test_get_dialog_sessions_with_created_from_scratch_va(self):
+        name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
 
-        get_dialog_history_response = requests.get(
-            url=dialog_sessions_endpoint + dialog_session_id + "/history",
-            headers={
-                "accept": "application/json",
-                "token": auth_token,
-            },
-        )
-        assert get_dialog_history_response.status_code == 200, get_dialog_history_response.json()
-        for dialog in get_dialog_history_response.json():
-            assert models.DialogUtterance.parse_obj(dialog), "Validation error while test_get_dialog_session_history"
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+
+        user.get_dialog_sessions(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_get_dialog_sessions_with_with_cloned_va")
+    def test_get_dialog_sessions_with_cloned_va(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.clone_va(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+        user.get_dialog_sessions(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_send_dialog_session_message_to_public_va")
+    def test_send_dialog_session_message_to_public_template_va(self):
+        user = UserMethods()
+        for name in public_va_names:
+            dialog_session_id = user.create_dialog_sessions(name)["id"]
+            user.send_dialog_session_message(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_send_dialog_session_message_to_created_from_scratch_va")
+    def test_send_dialog_session_message_to_created_from_scratch_va(self):
+        name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_send_dialog_session_message_to_cloned_va")
+    def test_send_dialog_session_message_to_cloned_va(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.clone_va(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_va")
+    def test_get_dialog_session_history_with_public_template_va(self):
+        user = UserMethods()
+        for name in public_va_names:
+            dialog_session_id = user.create_dialog_sessions(name)["id"]
+            user.send_dialog_session_message(dialog_session_id)
+            user.get_dialog_session_history(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_created_from_scratch_va")
+    def test_get_dialog_session_history_with_created_from_scratch_va(self):
+        name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+        user.get_dialog_session_history(dialog_session_id)
+
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
+    def test_get_dialog_session_history_with_cloned_va(self):
+        name = public_va_names[0]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+        dialog_session_id = user.create_dialog_sessions(name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+        user.get_dialog_session_history(dialog_session_id)
 
     # deployments
 
+    @qase.title(f"{counter()}. test_create_deployment")
+    def test_create_deployment(self):
+        name = va_data["name"]
+        user = UserMethods()
+        user.create_virtual_assistant(name)
+        va_id = user.get_va_by_name(name)
+
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_id)
+
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self):
-        lm_services_list_response = requests.get(
-            url=deployments_endpoint + "lm_services", headers={"accept": "application/json"}
-        )
-        assert lm_services_list_response.status_code == 200, lm_services_list_response.json()
-        for lm_service in lm_services_list_response.json():
-            assert models.LmService.parse_obj(lm_service), "Validation error while test_get_dialog_session_history"
+        deploy = DeploymentsMethods()
+        deploy.get_all_lm_services()
+
+    # admin
+
+    @qase.title(f"{counter()}. test_get_all_publish_requests")
+    def test_get_all_publish_requests(self):
+        visibility = 'public_template'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+        admin = AdminMethods()
+        admin.get_all_publish_requests()
+
+    @qase.title(f"{counter()}. test_get_unreviewed_publish_requests")
+    def test_get_get_unreviewed_publish_requests(self):
+        visibility = 'public_template'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+        admin = AdminMethods()
+        admin.get_all_publish_requests()
+
+    @qase.title(f"{counter()}. test_confirm_publish_request")
+    def test_confirm_publish_request(self):
+        visibility = 'public_template'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+        admin = AdminMethods()
+        publish_request_id = admin.get_all_publish_requests()[0]["id"]
+        admin.confirm_publish_request(publish_request_id)
+
+    @qase.title(f"{counter()}. test_decline_publish_request")
+    def test_decline_publish_request(self):
+        visibility = 'public_template'
+        display_name = va_data["name"]
+        user = UserMethods()
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+        admin = AdminMethods()
+        publish_request_id = admin.get_all_publish_requests()[0]["id"]
+        admin.decline_publish_request(publish_request_id)

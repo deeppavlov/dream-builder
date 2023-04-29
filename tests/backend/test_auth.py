@@ -4,29 +4,12 @@ from .config import (
     auth_endpoint,
     auth_token,
     auth_refresh_token,
-    db_config,
-    create_mocks_public_dist,
-    clean_testdb,
+
     counter_auth as counter
 )
-import database.crud as crud
-from database.core import init_db
 
 
 class TestAuth:
-    @classmethod
-    def setup_class(self):
-        db = init_db(*db_config)()
-        create_mocks_public_dist(db=db)
-        db.close()
-
-    @classmethod
-    def teardown_class(self):
-        db = init_db(*db_config)()
-        # clean_all_testdata(db, exist_email)
-        clean_testdb(db=db)
-        db.close()
-
     @qase.title(f"{counter()}. test_auth_bad_token")
     def test_auth_bad_token(self):
         response = requests.get(

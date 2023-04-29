@@ -14,9 +14,8 @@ from .config import (
     google_user,
     uservalid_user,
     va_data,
-    clean_all_testdata,
-    clean_testdb,
-    create_mocks_public_dist,
+    #clean_all_testdata,
+    #clean_testdb,
     counter_db as counter
 )
 
@@ -29,18 +28,20 @@ def db():
 
 
 class TestDb:
-    @classmethod
-    def setup_class(self):
-        db = init_db(*db_config)()
-        create_mocks_public_dist(db=db)
-        db.close()
+    #@classmethod
+    #def setup_class(self):
+    #    db = init_db(*db_config)()
+    #    create_mocks_public_dist(db=db)
+    #    db.close()
 
     @classmethod
     def teardown_class(self):
         db = init_db(*db_config)()
         # clean_all_testdata(db, exist_email)
-        clean_testdb(db=db)
+        #clean_testdb(db=db)
         db.close()
+
+    # USER
 
     @qase.title(f"{counter()}. test_add_google_user")
     def test_add_google_user(self, db):

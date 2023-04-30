@@ -284,7 +284,7 @@ def create_component(
     return component
 
 
-def update_component(db: Session, id: int, **kwargs):
+def update_component(db: Session, id: int, **kwargs) -> models.Component:
     values = {k: v for k, v in kwargs.items() if v is not None}
 
     return db.scalar(update(models.Component).filter_by(id=id).values(**values).returning(models.Component))

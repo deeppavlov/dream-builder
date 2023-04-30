@@ -1,6 +1,6 @@
 from typing import List
 
-from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component
+from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component, DreamComponent
 from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from fastapi import APIRouter, status, Depends
@@ -59,7 +59,7 @@ async def create_component(
 
         prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
         prompted_component.prompt = prompt
-        prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}"
+        prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
         component = crud.create_component(
@@ -103,6 +103,19 @@ async def patch_component(
             prompt=payload.prompt,
             lm_service_id=payload.lm_service_id,
         )
+        dream_component = DreamComponent.from_file(settings.db.dream_root_path / component.source)
+
+        if payload.display_name:
+            dream_component.component.display_name = payload.display_name
+        if payload.description:
+            dream_component.component.description = payload.description
+        if payload.prompt:
+            dream_component.prompt = payload.prompt
+        if payload.lm_service_id:
+            lm_service = crud.get_lm_service(db, payload.lm_service_id)
+            dream_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+
+        dream_component.save_configs()
 
     return schemas.ComponentRead.from_orm(component)
 

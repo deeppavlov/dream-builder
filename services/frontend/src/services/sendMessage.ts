@@ -13,11 +13,12 @@ export async function sendMessage({
   text,
   prompt,
   lm_service_id,
+  openai_api_key,
 }: IPostChat) {
   try {
     const { data } = await privateApi.post(
       `dialog_sessions/${dialog_session_id}/chat`,
-      { text, prompt, lm_service_id }
+      { text, prompt, lm_service_id, openai_api_key }
     )
 
     return data

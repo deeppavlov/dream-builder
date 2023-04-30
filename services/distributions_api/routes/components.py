@@ -35,7 +35,7 @@ async def create_component(
         prompted_skill_container_name = f"dff-{prompted_service_name}-prompted-skill"
         prompted_skill_port = 8199  # hardcoded until we implement dynamic port assignment
         prompted_service = create_generative_prompted_skill_service(
-            settings.db.dream_root,
+            settings.db.dream_root_path,
             f"skills/dff_template_prompted_skill/service_configs/{prompted_skill_name}",
             prompted_service_name,
             prompted_skill_name,

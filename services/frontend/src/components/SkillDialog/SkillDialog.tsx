@@ -41,7 +41,7 @@ const SkillDialog: FC<SkillDialogProps> = ({
       ({ api_token }: any) => api_token?.name === 'OpenAI'
     )[0]?.token_value
 
-    console.log(`Chatting with OpenAI service: ${isOpenAi}`)
+    console.log(`Chatting with OpenAI service: ${isOpenAi}`, api_token)
     send.mutate({
       dialog_session_id: id,
       text: message,

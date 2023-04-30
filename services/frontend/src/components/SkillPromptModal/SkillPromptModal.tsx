@@ -366,7 +366,13 @@ const SkillPromptModal = () => {
             </form>
 
             <div className={s.dialog}>
-              <SkillDialog debug chatWith={'skill'} dist={dist} />
+              <SkillDialog
+                debug
+                chatWith={'skill'}
+                dist={dist}
+                lm_service_id={conf?.lm_service?.id}
+                prompt={conf?.prompt}
+              />
             </div>
           </div>
         </Wrapper>

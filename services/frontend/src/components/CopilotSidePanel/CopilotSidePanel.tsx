@@ -54,9 +54,9 @@ export const CopilotSidePanel = () => {
 
   const handleSend = (data: ChatForm) => {
     const id = session?.id || deepySession?.id
-
     const message = data?.message
-    send.mutateAsync({ id, message })
+
+    send.mutateAsync({ dialog_session_id: id, text: message })
     reset()
   }
 

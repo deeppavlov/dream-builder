@@ -19,11 +19,15 @@ type TMenuItem =
   | 'about'
   | 'architecture'
   | 'chat'
+  | 'profile'
+  | 'logout'
 
 interface Props {
   name?: string
   type?: TMenuItem
+  theme?: 'dark'
   disabled?: boolean
+  linkTo?: string
   children?: React.ReactNode
   handleClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
@@ -31,11 +35,14 @@ interface Props {
 const ContextMenuButton = ({
   name,
   type,
+  theme,
   disabled,
+  linkTo,
   children,
   handleClick,
 }: Props) => {
   let cx = classNames.bind(s)
+
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     trigger('CtxMenuBtnClick', {})
@@ -43,28 +50,36 @@ const ContextMenuButton = ({
     handleClick && handleClick(e)
   }
 
+  const getIconElement = (type: TMenuItem) => (
+    <SvgIcon
+      iconName={type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type}
+      svgProp={{
+        className: cx('icon', type === 'about' && 'dreambuilder'),
+      }}
+    />
+  )
+
   return (
     <button
-      className={cx('item', disabled && 'disabled')}
+      className={cx('item', disabled && 'disabled', theme && theme)}
       onClick={handleBtnClick}
     >
-      {type && (
-        <SvgIcon
-          iconName={
-            type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
-          }
-          svgProp={{
-            className: cx('icon', type === 'about' && 'dreambuilder'),
-          }}
-        />
-        // <img
-        //   className={cx('icon', type === 'about' && 'dreambuilder')}
-        //   src={`./src/assets/icons/${
-        //     type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
-        //   }.svg`}
-        // />
+      {linkTo ? (
+        <a
+          href={linkTo}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={s.link}
+        >
+          {type && getIconElement(type)}
+          {children || name}
+        </a>
+      ) : (
+        <>
+          {type && getIconElement(type)}
+          <span>{children || name}</span>
+        </>
       )}
-      <span>{children || name}</span>
     </button>
   )
 }

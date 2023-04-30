@@ -51,6 +51,9 @@ interface FormValues {
   prompt: string
 }
 
+export const checkOpenAiType = (name: string) =>
+  new RegExp('\\b' + 'openai-api' + '\\b').test(name)
+
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAction | null>(null)
@@ -213,6 +216,15 @@ const SkillPromptModal = () => {
 
   // Update selected LM for TextArea tokenizer
   useEffect(() => {
+    const currentSelectedSerivce = services?.find(
+      (s: LM) => s?.display_name === model
+    )
+    if (checkOpenAiType(currentSelectedSerivce?.name)) {
+      console.log('selected openai service')
+      // return trigger('ApiTokenErrorModal', {
+      //   detail: { errorType: 'not-vaid' },
+      // })
+    }
     setSelectedService(services?.find((s: LM) => s?.display_name === model))
   }, [watch(['model'])])
 
@@ -371,6 +383,7 @@ const SkillPromptModal = () => {
                 chatWith={'skill'}
                 dist={dist}
                 lm_service_id={conf?.lm_service?.id}
+                lm_service_name={conf?.lm_service?.name}
                 prompt={conf?.prompt}
               />
             </div>

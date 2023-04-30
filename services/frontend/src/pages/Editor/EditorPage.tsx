@@ -27,6 +27,7 @@ import { getDist } from '../../services/getDist'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { ApiTokenErrorModal } from '../../components/ApiTokenErrorModal/ApiTokenErrorModal'
 
 export const EditorPage = () => {
   const { options, dispatch } = useDisplay()
@@ -120,6 +121,7 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
+      <ApiTokenErrorModal />
       {/* <CreateGenerativeSkillModal /> */}
     </>
   )

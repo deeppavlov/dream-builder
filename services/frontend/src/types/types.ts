@@ -150,9 +150,20 @@ export interface IStackElement {
   execution_time: string
 }
 
+export interface LM_Service {
+  id: number
+  name: string
+  display_name: string
+  size: string
+  gpu_usage: string
+  max_tokens: number
+  description: string
+  project_url: string
+}
+
 export interface ISkill extends IStackElement {
   prompt?: string
-  lm_service_id?: number
+  lm_service?: LM_Service
 }
 
 export interface SessionConfig {
@@ -167,6 +178,7 @@ export interface SkillDialogProps {
   debug: boolean
   chatWith: ChatPanelType
   dist: BotInfoInterface
+  lm_service_name?: string
   lm_service_id: number
   prompt: string
 }

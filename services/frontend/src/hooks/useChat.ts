@@ -9,6 +9,7 @@ import { renewDialog } from '../services/renewDialog'
 import { IPostChat, sendMessage } from '../services/sendMessage'
 import { SessionConfig } from '../types/types'
 import { consts } from '../utils/consts'
+import { checkOpenAiType } from '../components/SkillPromptModal/SkillPromptModal'
 
 export const useChat = () => {
   const [session, setSession] = useState<SessionConfig | null>(null)

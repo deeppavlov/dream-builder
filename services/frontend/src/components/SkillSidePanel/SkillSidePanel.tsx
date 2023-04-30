@@ -6,13 +6,10 @@ import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { ISkill } from '../../types/types'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { srcForIcons } from '../../utils/srcForIcons'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -47,9 +44,6 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
   // const srcForComponentType = srcForIcons(nameForComponentType)
   // const srcForModelType = srcForIcons(nameForModelType)
   let cx = classNames.bind(s)
-
-  
-
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
 
@@ -138,10 +132,12 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
             </li> */}
             <br />
             <li className={s.item}>
-              {skill?.lm_service! && (
+              {skill?.lm_service?.display_name && (
                 <>
                   <span className={cx('table-name')}>Model:</span>
-                  <span className={s.value}>{skill?.lm_service!}</span>
+                  <span className={s.value}>
+                    {skill?.lm_service?.display_name!}
+                  </span>
                 </>
               )}
             </li>

@@ -40,28 +40,13 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
-      {type === 'main' && (
-        <ContextMenuButton>
-          <a
-            href={'http://deepdream.builders'}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            About Dream Builder
-          </a>
-        </ContextMenuButton>
-      )}
+      <ContextMenuButton
+        type='about'
+        linkTo='http://deepdream.builders'
+        name='About'
+      />
       {type === 'editor' && (
         <>
-          <ContextMenuButton type='about'>
-            <a
-              href={'http://deepdream.builders'}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              Information about DB
-            </a>
-          </ContextMenuButton>
           <ContextMenuButton
             name='Welcome guide'
             type='properties'

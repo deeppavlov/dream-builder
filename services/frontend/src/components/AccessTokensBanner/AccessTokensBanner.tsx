@@ -2,12 +2,9 @@ import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { deleteUserToken } from '../../services/deleteUserToken'
+import { useQuery } from 'react-query'
 import { getTokens } from '../../services/getTokens'
 import { getUserId } from '../../services/getUserId'
-import { getUserTokens } from '../../services/getUserTokens'
-import { postUserTokens } from '../../services/postUserTokens'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { validationSchema } from '../../utils/validationSchema'
@@ -35,52 +32,78 @@ interface FormValues {
   service: string
 }
 
+const getTokensObjectName = (userId: number) => `user_${userId}_api_keys`
+
+export const getLocalStorageApiTokens = (userId: number) => {
+  const localStorageTokens = localStorage.getItem(getTokensObjectName(userId))
+  return localStorageTokens ? JSON.parse(localStorageTokens) : null
+}
+
 export const AccessTokensBanner = () => {
-  const { handleSubmit, reset, getValues, control, watch } =
-    useForm<FormValues>({ mode: 'onSubmit' })
   const [service, setService] = useState<IService | null>(null)
-  const queryClient = useQueryClient()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { data: api_services } = useQuery<IService[]>(['api_services'], () =>
     getTokens()
   )
-  const { data: user_tokens } = useQuery<IUserToken[]>(
-    ['user_tokens'],
-    () => getUserTokens(user?.id),
-    { enabled: !!user?.id }
-  )
+  const [tokens, setTokens] = useState<IUserToken[] | null>(null)
+  const { handleSubmit, reset, getValues, control, watch } =
+    useForm<FormValues>({ mode: 'onSubmit' })
 
-  const deleteToken = useMutation({
-    mutationFn: (token_id: string) => {
-      return deleteUserToken(user?.id, token_id)
-    },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: 'user_tokens',
-      }),
-  })
+  const deleteToken = (token_id: number) =>
+    new Promise((resolve, reject) => {
+      const isTokens = tokens !== undefined && tokens !== null
+
+      if (!isTokens) return reject('No tokens found.')
+
+      setTokens(prev => {
+        const newState = prev?.filter(({ id }) => id !== token_id) ?? prev
+        localStorage.setItem(
+          getTokensObjectName(user?.id),
+          JSON.stringify(newState)
+        )
+        return newState
+      })
+
+      resolve(true)
+    })
 
   const handleRemoveBtnClick = (token_id: number) => {
-    toast.promise(deleteToken.mutateAsync(token_id.toString()), {
+    toast.promise(deleteToken(token_id), {
       loading: 'Deleting...',
       success: 'Success!',
       error: 'Something Went Wrong...',
     })
   }
 
-  const createUserToken = useMutation({
-    mutationFn: ({ token }: FormValues) => {
-      return postUserTokens({
+  const createUserToken = (data: FormValues) =>
+    new Promise((resolve, reject) => {
+      const isService = service !== undefined && service !== null
+      const isUserId = user?.id !== undefined
+
+      if (!isService || !isUserId) return reject('Not find service or userId')
+
+      const newToken = {
+        id: 1,
         user_id: user?.id,
-        api_token_id: service?.id!,
-        token_value: token,
+        api_token: service,
+        token_value: data.token,
+      }
+
+      setTokens(prev => {
+        const isPrev = prev !== null && prev !== undefined
+        const newState = isPrev ? prev?.concat(newToken) ?? prev : [newToken]
+        localStorage.setItem(
+          getTokensObjectName(user?.id),
+          JSON.stringify(newState)
+        )
+        return newState
       })
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'user_tokens' }),
-  })
+
+      resolve(true)
+    })
 
   const onSubmit = (data: FormValues) => {
-    toast.promise(createUserToken.mutateAsync(data), {
+    toast.promise(createUserToken(data), {
       loading: 'Creating...',
       success: 'Success!',
       error: 'Something Went Wrong...',
@@ -93,6 +116,10 @@ export const AccessTokensBanner = () => {
       api_services?.find(({ name }) => name === getValues().service) ?? null
     )
   }, [watch(['service'])])
+
+  useEffect(() => {
+    setTokens(getLocalStorageApiTokens(user?.id))
+  }, [user])
 
   return (
     <Wrapper>
@@ -134,9 +161,9 @@ export const AccessTokensBanner = () => {
           props={{ placeholder: 'Choose service' }}
         />
       </form>
-      {user_tokens && (
+      {tokens && (
         <ul className={s.tokens}>
-          {user_tokens.map(({ id, api_token }: IUserToken) => (
+          {tokens.map(({ id, api_token }: IUserToken) => (
             <li className={s.token} key={id}>
               <TokenKeyIcon className={s.icon} />
               <div className={s.tokenName}>{api_token.name}</div>

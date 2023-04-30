@@ -176,18 +176,18 @@ class DialogUtteranceRead(BaseModel):
     text: str
 
 
-class ApiToken(BaseOrmModel):
+class ApiKeys(BaseOrmModel):
     id: int
     name: str
     description: str
     base_url: str
 
 
-class UserApiToken(BaseOrmModel):
-    id: int
-    user_id: int
-    api_token: ApiToken
-    token_value: str
+# class UserApiToken(BaseOrmModel):
+#     id: int
+#     user_id: int
+#     api_token: ApiKeys
+#     token_value: str
 
 
 class CreateTokenRequest(BaseModel):

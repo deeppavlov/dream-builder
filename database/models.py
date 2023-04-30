@@ -55,7 +55,7 @@ class GoogleUser(Base):
     virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
     components = relationship("Component", back_populates="author", passive_deletes=True)
     dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
-    api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
+    # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
 
 
 class UserValid(Base):
@@ -68,28 +68,13 @@ class UserValid(Base):
     expire_date = Column(DateTime, nullable=False)
 
 
-class ApiToken(Base):
-    __tablename__ = "api_token"
+class ApiKey(Base):
+    __tablename__ = "api_key"
 
     id = Column(Integer, index=True, primary_key=True)
     name = Column(String)
     description = Column(String)
     base_url = Column(String)
-
-
-class UserApiToken(Base):
-    __tablename__ = "user_api_token"
-    __table_args__ = (UniqueConstraint("user_id", "api_token_id", name="unique_user_api_token"),)
-
-    id = Column(Integer, index=True, primary_key=True)
-
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    user = relationship("GoogleUser")
-
-    api_token_id = Column(Integer, ForeignKey("api_token.id"), unique=True, nullable=False)
-    api_token = relationship("ApiToken")
-
-    token_value = Column(String)
 
 
 class VirtualAssistant(Base):
@@ -288,9 +273,9 @@ def pre_populate_google_user(target, connection, **kw):
     _pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
 
 
-@listens_for(ApiToken.__table__, "after_create")
-def pre_populate_api_token(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_token.tsv", target, connection)
+@listens_for(ApiKey.__table__, "after_create")
+def pre_populate_api_key(target, connection, **kw):
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_key.tsv", target, connection)
 
 
 @listens_for(VirtualAssistant.__table__, "after_create")

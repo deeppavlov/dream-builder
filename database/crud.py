@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import models
-from database.models import GoogleUser, UserValid, ApiToken
+from database.models import GoogleUser, UserValid, ApiKey
 
 
 # USER
@@ -94,33 +94,33 @@ def update_users_refresh_token(db: Session, user, email: str):
 
 
 # API TOKEN
-def get_all_api_tokens(db: Session) -> [models.UserApiToken]:
-    return db.scalars(select(ApiToken)).all()
+def get_all_api_keys(db: Session) -> [models.ApiKey]:
+    return db.scalars(select(ApiKey)).all()
 
 
-def create_or_update_user_api_token(
-    db: Session, user_id: int, api_token_id: int, token_value: str
-) -> models.UserApiToken:
-    user_api_token = db.scalar(
-        insert(models.UserApiToken)
-        .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
-        .on_conflict_do_update(constraint="unique_user_api_token", set_=dict(token_value=token_value))
-        .returning(models.UserApiToken)
-    )
-
-    return user_api_token
-
-
-def get_user_api_token(db: Session, id: int):
-    return db.get(models.UserApiToken, id)
-
-
-def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
-    return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
-
-
-def delete_user_api_token(db: Session, user_api_token_id: int):
-    db.execute(delete(models.UserApiToken).filter(models.UserApiToken.id == user_api_token_id))
+# def create_or_update_user_api_token(
+#     db: Session, user_id: int, api_token_id: int, token_value: str
+# ) -> models.UserApiToken:
+#     user_api_token = db.scalar(
+#         insert(models.UserApiToken)
+#         .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
+#         .on_conflict_do_update(constraint="unique_user_api_token", set_=dict(token_value=token_value))
+#         .returning(models.UserApiToken)
+#     )
+#
+#     return user_api_token
+#
+#
+# def get_user_api_token(db: Session, id: int):
+#     return db.get(models.UserApiToken, id)
+#
+#
+# def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
+#     return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
+#
+#
+# def delete_user_api_token(db: Session, user_api_token_id: int):
+#     db.execute(delete(models.UserApiToken).filter(models.UserApiToken.id == user_api_token_id))
 
 
 # VIRTUAL ASSISTANT

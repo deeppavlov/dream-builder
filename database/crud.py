@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
@@ -158,6 +158,7 @@ def create_virtual_assistant(
     name: str,
     display_name: str,
     description: str,
+    components: List[models.Component],
     cloned_from_id: Optional[int] = None,
 ) -> models.VirtualAssistant:
     new_virtual_assistant = db.scalar(
@@ -173,9 +174,10 @@ def create_virtual_assistant(
         .returning(models.VirtualAssistant)
     )
 
-    if cloned_from_id:
-        original_components = get_virtual_assistant_components(db, cloned_from_id)
-        create_virtual_assistant_components(db, new_virtual_assistant.id, original_components)
+    # if cloned_from_id:
+    #     original_components = get_virtual_assistant_components(db, cloned_from_id)
+
+    create_virtual_assistant_components(db, new_virtual_assistant.id, components)
 
     return new_virtual_assistant
 
@@ -197,7 +199,16 @@ def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
 
 # SERVICE
 def create_service(db: Session, name: str, source: str):
-    return db.scalar(insert(models.Service).values(name=name, source=source).returning(models.Service))
+    service = db.scalar(
+        insert(models.Service)
+        .values(name=name, source=source)
+        .on_conflict_do_nothing(index_elements=[models.Service.source])
+        .returning(models.Service)
+    )
+    if not service:
+        service = db.scalar(select(models.Service).filter_by(source=source))
+
+    return service
 
 
 # COMPONENT
@@ -239,7 +250,7 @@ def create_component(
     # compose_dev: Optional[dict] = None,
     # compose_proxy: Optional[dict] = None,
 ) -> models.Component:
-    return db.scalar(
+    component = db.scalar(
         insert(models.Component)
         .values(
             service_id=service_id,
@@ -264,8 +275,13 @@ def create_component(
             # compose_dev=compose_dev,
             # compose_proxy=compose_proxy,
         )
+        .on_conflict_do_nothing(index_elements=[models.Component.source])
         .returning(models.Component)
     )
+    if not component:
+        component = db.scalar(select(models.Component).filter_by(source=source))
+
+    return component
 
 
 def update_component(db: Session, id: int, **kwargs):
@@ -331,18 +347,14 @@ def create_virtual_assistant_component(
     )
 
 
-def create_virtual_assistant_components(
-    db: Session, virtual_assistant_id: int, components: [models.VirtualAssistantComponent]
-):
-    new_components = []
+def create_virtual_assistant_components(db: Session, virtual_assistant_id: int, components: [models.Component]):
+    new_virtual_assistant_components = []
 
     for component in components:
-        new_component = create_virtual_assistant_component(
-            db, virtual_assistant_id, component.component_id, component.is_enabled
-        )
-        new_components.append(new_component)
+        new_component = create_virtual_assistant_component(db, virtual_assistant_id, component.id, True)
+        new_virtual_assistant_components.append(new_component)
 
-    return new_components
+    return new_virtual_assistant_components
 
 
 def delete_virtual_assistant_component(db: Session, id: int):

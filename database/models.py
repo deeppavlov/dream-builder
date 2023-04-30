@@ -175,7 +175,7 @@ class Service(Base):
     __tablename__ = "service"
 
     id = Column(Integer, index=True, primary_key=True)
-    source = Column(String, nullable=False)
+    source = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
 
     # # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
@@ -203,7 +203,7 @@ class Component(Base):
     __tablename__ = "component"
 
     id = Column(Integer, index=True, primary_key=True)
-    source = Column(String, nullable=False)
+    source = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
     display_name = Column(String, nullable=False)
     component_type = Column(String, nullable=True)

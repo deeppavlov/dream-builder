@@ -6,7 +6,7 @@ export async function deleteUserToken(
 ) {
   try {
     const { data } = await privateApi.delete(
-      `users/${user_id}/settings/api_tokens/${user_api_token_id}`
+      `users/${user_id}/settings/api_keys/${user_api_token_id}`
     )
     return data
   } catch (e) {

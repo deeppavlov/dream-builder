@@ -15,7 +15,12 @@ import s from './SkillDialog.module.scss'
 
 export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
-const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
+const SkillDialog: FC<SkillDialogProps> = ({
+  dist,
+  debug,
+  lm_service_id,
+  prompt,
+}) => {
   const { send, renew, session, message, history } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const chatRef = useRef<HTMLUListElement>(null)
@@ -25,7 +30,7 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    send.mutate({ id, message })
+    send.mutate({ dialog_session_id: id, text: message, lm_service_id, prompt })
     reset()
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {

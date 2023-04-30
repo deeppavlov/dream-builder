@@ -6,7 +6,7 @@ import { DEEPY_ASSISTANT } from '../constants/constants'
 import { useDisplay } from '../context/DisplayContext'
 import { getHistory } from '../services/getHistory'
 import { renewDialog } from '../services/renewDialog'
-import { sendMessage } from '../services/sendMessage'
+import { IPostChat, sendMessage } from '../services/sendMessage'
 import { SessionConfig } from '../types/types'
 import { consts } from '../utils/consts'
 
@@ -35,12 +35,12 @@ export const useChat = () => {
   })
 
   const send = useMutation({
-    onMutate: variables => {
-      setMessage(variables.message)
-      setHistory(state => [...state, { text: variables.message, author: 'me' }])
+    onMutate: ({ text }: IPostChat) => {
+      setMessage(text)
+      setHistory(state => [...state, { text, author: 'me' }])
     },
-    mutationFn: (variables: { id: number; message: string }) => {
-      return sendMessage(variables?.id, variables?.message)
+    mutationFn: (variables: IPostChat) => {
+      return sendMessage(variables)
     },
     onSuccess: data => {
       // queryClient.invalidateQueries('history')

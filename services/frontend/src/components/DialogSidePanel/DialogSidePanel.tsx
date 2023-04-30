@@ -53,7 +53,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    send.mutate({ id, message })
+    send.mutate({ dialog_session_id: id, text: message })
     reset()
   }
   const handleRenewClick = () => {

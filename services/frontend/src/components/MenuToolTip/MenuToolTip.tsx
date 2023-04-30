@@ -1,3 +1,4 @@
+import { useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { usePreview } from '../../context/PreviewProvider'
 import { mockSkills } from '../../mocks/database/mockSkills'
@@ -17,6 +18,10 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
   const { name: distName } = useParams()
+  const { data: dist } = useQueryClient().getQueryState([
+    'dist',
+    distName,
+  ]) as any
 
   const handleWelcomeClick = () => {
     navigate(RoutesList.profile)
@@ -39,7 +44,11 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       {type === 'main' && (
         <ContextMenuButton>
-          <a href={'http://deepdream.builders'} target='_blank'>
+          <a
+            href={'http://deepdream.builders'}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             About Dream Builder
           </a>
         </ContextMenuButton>
@@ -47,7 +56,11 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
       {type === 'editor' && (
         <>
           <ContextMenuButton type='about'>
-            <a href={'http://deepdream.builders'} target='_blank'>
+            <a
+              href={'http://deepdream.builders'}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
               Information about DB
             </a>
           </ContextMenuButton>
@@ -80,6 +93,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <ContextMenuButton
             name='Share'
             type='share'
+            disabled={dist?.visibility === 'private' || isPreview}
             handleClick={handleShareClick}
           />
           <hr />

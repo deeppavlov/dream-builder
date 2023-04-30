@@ -91,16 +91,26 @@ export const ShareModal = () => {
             </div>
           </div>
           <p className={cx('text', 'lines')}>or copy link</p>
-          <div className={s.footer}>
-            <Input
-              name='link'
-              control={control}
-              big
-              props={{ readOnly: true }}
-            />
-            <Button props={{ onClick: clickHandler }} theme={'primary'}>
-              Copy
-            </Button>
+          <div className={s.bottom}>
+            <div className={s.footer}>
+              <Input
+                name='link'
+                control={control}
+                big
+                props={{ readOnly: true }}
+              />
+              <Button props={{ onClick: clickHandler }} theme={'primary'}>
+                Copy
+              </Button>
+            </div>
+            <a
+              href={getValues().link}
+              target='_blank'
+              rel='noopener noreferrer'
+              className={s.link}
+            >
+              Open in another tab
+            </a>
           </div>
         </div>
       </BaseModal>

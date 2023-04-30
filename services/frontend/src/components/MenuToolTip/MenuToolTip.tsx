@@ -18,10 +18,8 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
   const { name: distName } = useParams()
-  const { data: dist } = useQueryClient().getQueryState([
-    'dist',
-    distName,
-  ]) as any
+  const queryState = useQueryClient().getQueryState(['dist', distName])
+  const dist = queryState?.data as BotInfoInterface | undefined
 
   const handleWelcomeClick = () => {
     navigate(RoutesList.profile)

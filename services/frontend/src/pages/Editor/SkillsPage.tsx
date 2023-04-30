@@ -1,4 +1,4 @@
-import { useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import CardsLoader from '../../components/CardsLoader/CardsLoader'
 import { ErrorHandler } from '../../components/ErrorHandler/ErrorHandler'
@@ -12,6 +12,7 @@ import { Container } from '../../ui/Container/Container'
 import { Table } from '../../ui/Table/Table'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
+import { getComponents } from '../../services/getComponents'
 
 const SkillsPage = () => {
   const auth = useAuth()
@@ -20,7 +21,14 @@ const SkillsPage = () => {
   const { isPreview } = usePreview()
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const components = useQueryClient().getQueryState(['components', name])
+  const components = useQuery(
+    ['components', name],
+    () => getComponents(name!),
+    {
+      refetchOnWindowFocus: false,
+      enabled: name?.length! > 0,
+    }
+  )
 
   return (
     <Main sidebar editor>

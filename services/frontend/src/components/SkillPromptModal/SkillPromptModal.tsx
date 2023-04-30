@@ -6,16 +6,16 @@ import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
-import { DEBUG_DIST } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
-import { changeLMservice } from '../../services/changeLMservice'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import { getLMservice } from '../../services/getLMservice'
-import { getPrompt } from '../../services/getPrompt'
-import { postPrompt } from '../../services/postPrompt'
+import { getGenerativeConf } from '../../services/getGenerativeConf'
+import {
+  IPatchComponentParams,
+  patchComponent,
+} from '../../services/patchComponent'
 import { ISkill } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
@@ -65,30 +65,9 @@ const SkillPromptModal = () => {
   const nav = useNavigate()
   const cx = classNames.bind(s)
 
-  const setPromptForDist = useMutation({
-    mutationFn: (variables: { distName: string; prompt: string }) => {
-      return postPrompt(variables?.distName, variables?.prompt)
-    },
-    onSuccess: () => queryClient.invalidateQueries('prompt'),
-  })
-
-  const setServiceForDist = useMutation({
-    mutationFn: (variables: { distName: string; service: string }) => {
-      return changeLMservice(variables?.distName, variables?.service)
-    },
-    onSuccess: () => queryClient.invalidateQueries('lm_service'),
-  })
-
-  const setPromptForDebugDist = useMutation({
-    mutationFn: (variables: { DEBUG_DIST: string; prompt: string }) => {
-      return postPrompt(variables?.DEBUG_DIST, variables?.prompt)
-    },
-  })
-
-  const setServiceForDebugDist = useMutation({
-    mutationFn: (variables: { DEBUG_DIST: string; service: string }) => {
-      return changeLMservice(variables?.DEBUG_DIST, variables?.service)
-    },
+  const updatComponent = useMutation({
+    mutationFn: (variables: IPatchComponentParams) => patchComponent(variables),
+    onSuccess: () => queryClient.invalidateQueries('conf'),
   })
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -118,31 +97,13 @@ const SkillPromptModal = () => {
           disabled: true,
         },
       ]) || []
-  // console.log('servicesList = ', servicesList)
-  const { data: service } = useQuery(
-    ['lm_service', dist?.name],
-    () => getLMservice(dist?.name),
-    {
-      refetchOnWindowFocus: false,
-      enabled: dist?.name?.length > 0,
-      onSuccess: data => {
-        const service = data?.name
-        setSelectedService(data)
-        setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
-      },
-    }
-  )
 
-  const { data: prompt } = useQuery(
-    ['prompt', dist?.name!],
-    () => getPrompt(dist?.name),
+  const { data: conf } = useQuery(
+    ['conf', skill?.component_id],
+    () => getGenerativeConf(skill?.component_id as number),
     {
       refetchOnWindowFocus: false,
-      enabled: dist?.name?.length > 0,
-      onSuccess: data => {
-        const prompt = data?.text
-        setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
-      },
+      enabled: skill?.component_id !== undefined,
     }
   )
 
@@ -157,8 +118,8 @@ const SkillPromptModal = () => {
   } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
-      model: service?.displayName,
-      prompt: prompt?.text,
+      model: conf?.lm_service?.display_name,
+      prompt: conf?.prompt,
     },
   })
   const model = getValues().model
@@ -193,13 +154,13 @@ const SkillPromptModal = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    reset(
-      {
-        model: skill?.model,
-        prompt: skill?.prompt,
-      },
-      { keepDirty: false }
-    )
+    // reset(
+    //   {
+    //     model: skill?.model,
+    //     prompt: skill?.prompt,
+    //   },
+    //   { keepDirty: false }
+    // )
     setIsOpen(prev => !prev)
   }
 
@@ -219,15 +180,20 @@ const SkillPromptModal = () => {
     }
   }
 
-  const postServiceAndPrompt = async (data: FormValues) => {
-    const distName = dist?.name
-    const prompt = data.prompt
-    const service = servicesList.get(data.model)?.name!
+  const postServiceAndPrompt = async ({ prompt, model }: FormValues) => {
+    const service = servicesList.get(model)?.id
 
-    await setPromptForDist.mutateAsync({ distName, prompt })
-    await setServiceForDist.mutateAsync({ distName, service })
-    await setPromptForDebugDist.mutateAsync({ DEBUG_DIST, prompt })
-    await setServiceForDebugDist.mutateAsync({ DEBUG_DIST, service })
+    if (skill === undefined || skill === null) return
+
+    const { component_id, description, display_name } = skill
+
+    await updatComponent.mutateAsync({
+      component_id,
+      description,
+      display_name,
+      lm_service_id: service!,
+      prompt: prompt,
+    })
   }
 
   const update = useMutation({
@@ -253,12 +219,12 @@ const SkillPromptModal = () => {
   useEffect(() => {
     reset(
       {
-        model: service?.display_name,
-        prompt: prompt?.text,
+        model: conf?.lm_service?.display_name,
+        prompt: conf?.prompt,
       },
       { keepDirty: false }
     )
-  }, [service, prompt])
+  }, [conf])
 
   useEffect(() => {
     dispatch({
@@ -327,13 +293,13 @@ const SkillPromptModal = () => {
                     name='model'
                     control={control}
                     rules={{ required: true }}
-                    defaultValue={service?.display_name}
+                    defaultValue={conf?.lm_service?.display_name}
                     label='Generative model:'
                     list={dropboxArray}
                     props={{ placeholder: 'Choose model' }}
                     fullWidth
                   />
-                  {service?.display_name && (
+                  {conf?.lm_service?.display_name && (
                     <div>
                       <Accordion
                         title='Model Details:'
@@ -359,7 +325,7 @@ const SkillPromptModal = () => {
                   label='Enter prompt:'
                   countType='tokenizer'
                   tokenizerModel={selectedService?.display_name as any}
-                  defaultValue={prompt?.text}
+                  defaultValue={conf?.prompt}
                   withCounter
                   fullHeight
                   resizable={false}

@@ -136,6 +136,7 @@ export interface IContextMenu {
 
 export interface IStackElement {
   id: number
+  component_id: number
   name: string // Routing name
   display_name: string
   author: IAuthor
@@ -150,11 +151,8 @@ export interface IStackElement {
 }
 
 export interface ISkill extends IStackElement {
-  model?: string
   prompt?: string
   lm_service_id?: number
-  id: number
-  component_id?: number
 }
 
 export interface SessionConfig {

@@ -517,6 +517,10 @@ def get_available_deployment_port(db: Session, range_min: int = 4242, range_max:
     return first_available_port
 
 
+def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
+    return db.get(models.Deployment, id)
+
+
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
 
@@ -565,14 +569,12 @@ def create_deployment_from_copy(
     )
 
 
-def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs) -> models.Deployment:
-    virtual_assistant = get_virtual_assistant_by_name(db, name)
+def update_deployment(db: Session, id: int, **kwargs) -> models.Deployment:
     deployment = db.scalar(
         update(models.Deployment)
-        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
+        .filter_by(id=id)
         .values(**kwargs)
         .returning(models.Deployment)
     )
-    db.commit()
 
     return deployment

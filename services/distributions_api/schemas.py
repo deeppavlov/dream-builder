@@ -206,6 +206,9 @@ class DeploymentRead(BaseOrmModel):
     virtual_assistant: VirtualAssistantRead
     chat_host: str
     chat_port: int
+    date_created: datetime
+    state: str
+    date_state_updated: datetime
 
 
 class DeploymentCreate(BaseModel):

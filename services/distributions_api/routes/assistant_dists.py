@@ -101,7 +101,7 @@ async def create_virtual_assistant(
         new_virtual_assistant = crud.create_virtual_assistant(
             db,
             user.id,
-            str(new_dist.dist_path),
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
             new_dist.name,
             payload.display_name,
             payload.description,
@@ -317,19 +317,13 @@ async def clone_dist(
         new_virtual_assistant = crud.create_virtual_assistant(
             db,
             user.id,
-            str(new_dist.dist_path),
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
             new_dist.name,
             payload.display_name,
             payload.description,
             new_components,
             cloned_from_id=original_virtual_assistant.id,
         )
-
-        # TODO Remove this when deployment is done
-        try:
-            crud.create_deployment_from_copy(db, original_virtual_assistant.id, new_virtual_assistant.id)
-        except ValueError:
-            crud.create_deployment(db, new_virtual_assistant.id, "http://test-url", 4242)
 
     return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 

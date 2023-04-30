@@ -57,7 +57,7 @@ async def create_component(
             payload.description,
         )
 
-        prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
+        prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")["prompt"]
         prompted_component.prompt = prompt
         prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
 
@@ -65,7 +65,7 @@ async def create_component(
         component = crud.create_component(
             db,
             service_id=service.id,
-            source="skills/dff_template_prompted_skill",
+            source=str(prompted_component.component_file),
             name=prompted_component.component.name,
             display_name=prompted_component.component.display_name,
             component_type=prompted_component.component.component_type,

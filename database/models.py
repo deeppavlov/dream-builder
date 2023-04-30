@@ -45,10 +45,15 @@ class GoogleUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String)
     sub = Column(String, unique=True)
+
     picture = Column(String(500), nullable=True)
+
     fullname = Column(String(100), nullable=True)
     given_name = Column(String(50), nullable=True)
     family_name = Column(String(50), nullable=True)
+
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
@@ -128,6 +133,10 @@ class Deployment(Base):
     chat_host = Column(String, nullable=False)
     chat_port = Column(Integer, nullable=False)
 
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+    date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
+    state = Column(String)
+
 
 class PublishRequest(Base):
     __tablename__ = "publish_request"
@@ -163,15 +172,16 @@ class Service(Base):
     source = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
 
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+    components = relationship("Component", back_populates="service", passive_deletes=True)
+    deployment = relationship("ServiceDeployment", uselist=False, back_populates="service", passive_deletes=True)
+
     # # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
     # # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
     # build_args = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
     # compose_override = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
     # compose_dev = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
     # compose_proxy = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
-    components = relationship("Component", back_populates="service", passive_deletes=True)
-
-    deployment = relationship("ServiceDeployment", uselist=False, back_populates="service", passive_deletes=True)
 
 
 class ServiceDeployment(Base):
@@ -243,6 +253,7 @@ class DialogSession(Base):
 
     agent_dialog_id = Column(String)
 
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
     is_active = Column(Boolean, nullable=False)
 
 

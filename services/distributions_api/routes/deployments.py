@@ -1,8 +1,10 @@
 from urllib.parse import urlparse
 
+import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
+from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -14,6 +16,7 @@ from services.distributions_api.security.auth import verify_token
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
+swarm_client = SwarmClient(settings.deployer.portainer_url, settings.deployer.portainer_key)
 
 # deployer = Deployer(settings.deployer.portainer_key)
 
@@ -51,6 +54,20 @@ async def create_deployment(
         # deployment = crud.create_deployment(db, virtual_assistant.id, chat_host, chat_port)
 
     # return schemas.Deployment.from_orm(deployment)
+
+
+@deployments_router.get("/")
+async def get_stacks():
+    return swarm_client.get_stacks()
+
+
+@deployments_router.delete("/{stack_id}")
+async def delete_stack(stack_id: int):
+    # TODO: make better exception handling
+    try:
+        swarm_client.delete_stack(stack_id)
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(500, detail=repr(e))
 
 
 @deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)

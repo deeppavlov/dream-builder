@@ -5,6 +5,7 @@ export interface IPostChat {
   text: string
   prompt?: string
   lm_service_id?: number
+  openai_api_key?: string
 }
 
 export async function sendMessage({

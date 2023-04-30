@@ -2,14 +2,18 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
+import { getUserId } from '../../services/getUserId'
 import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { submitOnEnter } from '../../utils/submitOnEnter'
+import { getLocalStorageApiTokens } from '../AccessTokensBanner/AccessTokensBanner'
+import { checkOpenAiType } from '../SkillPromptModal/SkillPromptModal'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
@@ -19,18 +23,32 @@ const SkillDialog: FC<SkillDialogProps> = ({
   dist,
   debug,
   lm_service_id,
+  lm_service_name,
   prompt,
 }) => {
   const { send, renew, session, message, history } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const chatRef = useRef<HTMLUListElement>(null)
+  const { data: user } = useQuery(['user'], () => getUserId())
   const cx = classNames.bind(s)
 
   // handlers
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    send.mutate({ dialog_session_id: id, text: message, lm_service_id, prompt })
+    const isOpenAi = checkOpenAiType(lm_service_name || '')
+    const api_token = getLocalStorageApiTokens(user?.id).filter(
+      ({ api_token }: any) => api_token?.name === 'OpenAI'
+    )[0]?.token_value
+
+    console.log(`Chatting with OpenAI service: ${isOpenAi}`, api_token)
+    send.mutate({
+      dialog_session_id: id,
+      text: message,
+      lm_service_id,
+      prompt,
+      openai_api_key: api_token,
+    })
     reset()
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {

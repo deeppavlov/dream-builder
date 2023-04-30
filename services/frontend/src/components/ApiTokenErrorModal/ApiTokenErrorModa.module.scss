@@ -1,0 +1,18 @@
+.apiTokenErrorModal {
+  width: 100%;
+}
+
+.desc {
+  @include t3;
+  color: $text3;
+  margin-top: 8px;
+}
+
+.btns {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+}

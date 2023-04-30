@@ -347,7 +347,8 @@ def _virtual_assistant_component_model_to_schema(virtual_assistant_component: mo
         description=virtual_assistant_component.component.description,
         ram_usage=virtual_assistant_component.component.ram_usage,
         gpu_usage=virtual_assistant_component.component.gpu_usage,
-        # lm_service=virtual_assistant_component.component.lm_service,
+        prompt=virtual_assistant_component.component.prompt,
+        lm_service=virtual_assistant_component.component.lm_service,
         date_created=virtual_assistant_component.component.date_created,
         is_enabled=virtual_assistant_component.is_enabled,
     )

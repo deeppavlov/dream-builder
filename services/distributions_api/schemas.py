@@ -88,7 +88,7 @@ class ComponentRead(BaseOrmModel):
     is_customizable: bool
     author: UserRead
     description: Optional[str]
-    ram_usage: str
+    ram_usage: Optional[str]
     gpu_usage: Optional[str]
     prompt: Optional[str]
     lm_service_id: Optional[int]
@@ -134,9 +134,10 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     is_customizable: bool
     author: UserRead
     description: Optional[str]
-    ram_usage: str
+    ram_usage: Optional[str]
     gpu_usage: Optional[str]
-    # lm_service: Optional[str]
+    prompt: Optional[str]
+    lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
     is_enabled: bool
 

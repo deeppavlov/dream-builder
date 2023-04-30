@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && \
     apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-RUN git clone -b fix/component-compose-definitions https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
+RUN git clone -b dev https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 
 COPY services/distributions_api/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt

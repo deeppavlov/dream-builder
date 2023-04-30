@@ -108,7 +108,7 @@ async def patch_component(
 
 
 @components_router.get("/{component_id}/generative_config", status_code=status.HTTP_200_OK)
-async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentRead:
+async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentGenerativeRead:
     component = crud.get_component(db, component_id)
 
     return schemas.ComponentGenerativeRead.from_orm(component)

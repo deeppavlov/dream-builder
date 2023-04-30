@@ -68,6 +68,17 @@ class VirtualAssistantUpdate(BaseModel):
     description: Optional[str]
 
 
+class LmServiceRead(BaseOrmModel):
+    id: int
+    name: str
+    display_name: str
+    size: str
+    gpu_usage: Optional[str]
+    max_tokens: int
+    description: str
+    project_url: str
+
+
 class ComponentRead(BaseOrmModel):
     id: int
     name: str
@@ -92,7 +103,7 @@ class ComponentRead(BaseOrmModel):
 class ComponentGenerativeRead(BaseOrmModel):
     id: int
     prompt: Optional[str]
-    lm_service_id: Optional[int]
+    lm_service: Optional[LmServiceRead]
 
 
 class ComponentCreate(BaseModel):
@@ -186,17 +197,6 @@ class CreateTokenResponse(BaseModel):
     user_id: int
     api_token_id: int
     token_value: str
-
-
-class LmServiceRead(BaseOrmModel):
-    id: int
-    name: str
-    display_name: str
-    size: str
-    gpu_usage: Optional[str]
-    max_tokens: int
-    description: str
-    project_url: str
 
 
 class DeploymentRead(BaseOrmModel):

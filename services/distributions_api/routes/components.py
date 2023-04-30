@@ -103,7 +103,9 @@ async def patch_component(
             prompt=payload.prompt,
             lm_service_id=payload.lm_service_id,
         )
-        dream_component = DreamComponent.from_file(settings.db.dream_root_path / component.source)
+        dream_component = DreamComponent.from_file(
+            settings.db.dream_root_path / component.source, settings.db.dream_root_path
+        )
 
         if payload.display_name:
             dream_component.component.display_name = payload.display_name

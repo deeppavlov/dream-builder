@@ -499,6 +499,24 @@ def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]
 
 
 # DEPLOYMENT
+def get_available_deployment_port(db: Session, range_min: int = 4242, range_max: int = 4999):
+    used_ports = db.scalars(
+        select(models.Deployment.chat_port).filter(models.Deployment.chat_port.between(range_min, range_max))
+    ).all()
+
+    first_available_port = None
+
+    for port in range(range_min, range_max + 1):
+        if port not in used_ports:
+            first_available_port = port
+            break
+
+    if first_available_port is None:
+        raise ValueError(f"All ports in range [{range_min}, {range_max}] are exhausted.")
+
+    return first_available_port
+
+
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
 
@@ -558,21 +576,3 @@ def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs
     db.commit()
 
     return deployment
-
-
-def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str) -> str:
-    deployment = get_deployment_by_virtual_assistant_name(db, name)
-
-    return deployment.prompt
-
-
-def set_deployment_prompt_by_virtual_assistant_name(db: Session, name: str, prompt: str) -> models.Deployment:
-    deployment = update_deployment_by_virtual_assistant_name(db, name, prompt=prompt)
-
-    return deployment
-
-
-def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str) -> str:
-    deployment = get_deployment_by_virtual_assistant_name(db, name)
-
-    return deployment.lm_service

@@ -37,23 +37,24 @@ async def create_deployment(
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+
+        port = crud.get_available_deployment_port(db)
+
         deployer = SwarmDeployer(
             user_identifier=dream_dist.name,
             registry_addr=settings.deployer.registry_url,
             user_services=get_user_services(dream_dist),
-            deployment_dict={"services": {"agent": {"ports": [f"{payload.assistant_port}:4242"]}}},
+            deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
             portainer_url=settings.deployer.portainer_url,
             portainer_key=settings.deployer.portainer_key,
             default_prefix=settings.deployer.default_prefix,
         )
         deployer.deploy(dream_dist)
         hostname = urlparse(settings.deployer.portainer_url).hostname
-        return f"{hostname}:{payload.assistant_port}"
 
-        # chat_host, chat_port = deployer.deploy(dream_dist)
-        # deployment = crud.create_deployment(db, virtual_assistant.id, chat_host, chat_port)
+        deployment = crud.create_deployment(db, virtual_assistant.id, hostname, port)
 
-    # return schemas.Deployment.from_orm(deployment)
+    return schemas.DeploymentRead.from_orm(deployment)
 
 
 @deployments_router.get("/")

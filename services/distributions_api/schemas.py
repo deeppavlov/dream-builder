@@ -203,15 +203,13 @@ class CreateTokenResponse(BaseModel):
 
 class DeploymentRead(BaseOrmModel):
     id: int
-    virtual_assistant_id: int
+    virtual_assistant: VirtualAssistantRead
     chat_host: str
     chat_port: int
-    prompt: Optional[str]
 
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_id: int
-    assistant_port: int
 
 
 class PublishRequestRead(BaseOrmModel):

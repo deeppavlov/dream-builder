@@ -36,6 +36,7 @@ class VirtualAssistantRead(BaseOrmModel):
     date_created: datetime
     visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
     publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
+    deployment_state: Optional[str]
     cloned_from_id: Optional[int]
     # clones: List[VirtualAssistant]
 
@@ -54,6 +55,11 @@ class VirtualAssistantRead(BaseOrmModel):
         except AttributeError:
             obj.visibility = "private"
             obj.publish_state = None
+
+        try:
+            obj.deployment_state = obj.deployment.state
+        except AttributeError:
+            obj.deployment_state = None
 
         return super().from_orm(obj)
 

@@ -14,6 +14,7 @@ import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
 import { consts } from '../utils/consts'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
+import { SanboxPage } from '../pages/SanboxPage'
 
 export const RouterConfig: CustomRouteConfig[] = [
   {
@@ -142,6 +143,11 @@ export const RouterConfig: CustomRouteConfig[] = [
   {
     path: RoutesList.draft,
     element: <DraftPage />,
+    handle: 'Its For Crumbs',
+  },
+  {
+    path: RoutesList.sandbox,
+    element: <SanboxPage />,
     handle: 'Its For Crumbs',
   },
 ]

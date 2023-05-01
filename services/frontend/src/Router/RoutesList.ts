@@ -17,4 +17,5 @@ export const RoutesList = {
   // Dev routes
   draft: '/draft',
   test: '/test',
+  sandbox: '/sandbox',
 } as const

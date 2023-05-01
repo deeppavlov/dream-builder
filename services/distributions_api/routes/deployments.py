@@ -61,7 +61,7 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
 
         logger.error(
             f"Deployment background task for {dist.name} failed after {datetime.now() - now}"
-            f"Reason: {type(e).__name__}:{e}"
+            f"Reason: {type(e).__name__} ({e})"
         )
     else:
         db = next(get_db())
@@ -71,7 +71,7 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
         logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
-@deployments_router.post("/")
+@deployments_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_deployment(
     payload: schemas.DeploymentCreate,
     background_tasks: BackgroundTasks,
@@ -103,11 +103,14 @@ async def create_deployment(
     return schemas.DeploymentRead.from_orm(deployment)
 
 
-@deployments_router.get("/{deployment_id}")
+@deployments_router.get("/stacks")
+async def get_stacks():
+    return swarm_client.get_stacks()
+
+
+@deployments_router.get("/{deployment_id}", status_code=status.HTTP_200_OK)
 async def get_deployment(
-    deployment_id: int,
-    user: schemas.UserRead = Depends(verify_token),
-    db: Session = Depends(get_db)
+    deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
         deployment = crud.get_deployment(db, deployment_id)
@@ -115,9 +118,12 @@ async def get_deployment(
     return schemas.DeploymentRead.from_orm(deployment)
 
 
-@deployments_router.get("/stacks")
-async def get_stacks():
-    return swarm_client.get_stacks()
+@deployments_router.delete("/{deployment_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_deployment(
+    deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+):
+    with db.begin():
+        crud.delete_deployment(db, deployment_id)
 
 
 @deployments_router.delete("/stacks/{stack_id}")

@@ -49,21 +49,30 @@ async def create_virtual_assistant(
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / minimal_template_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
-        original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
+        original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
             db, minimal_template_virtual_assistant.id, "_prompted_skill"
-        )[0].component.name
-        original_connector_url = dream_dist.pipeline.skills[original_prompted_skill_name].component.connector.url
-        original_command = dream_dist.pipeline.skills[original_prompted_skill_name].service.service.compose.command
-        original_port = dream_dist.pipeline.skills[original_prompted_skill_name].service.environment.get("SERVICE_PORT")
+        )
+        existing_prompted_skills = []
+
+        for skill in original_prompted_skills:
+            existing_prompted_skill = {
+                "name": skill.component.name,
+                "port": dream_dist.pipeline.skills[skill.component.name].service.environment.get("SERVICE_PORT"),
+                "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
+                "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
+                "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
+                "description": dream_dist.pipeline.skills[skill.component.name].component.description,
+            }
+            existing_prompted_skills.append(existing_prompted_skill)
+
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
             user.email,
             payload.description,
-            original_prompted_skill_name,
-            original_connector_url,
-            original_command,
-            original_port,
+            existing_prompted_skills,
         )
         new_dist.save()
 
@@ -265,21 +274,30 @@ async def clone_dist(
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / original_virtual_assistant.source)
 
         new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
-        original_prompted_skill_name = crud.get_virtual_assistant_components_with_component_name_like(
+        original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
             db, original_virtual_assistant.id, "_prompted_skill"
-        )[0].component.name
-        original_connector_url = dream_dist.pipeline.skills[original_prompted_skill_name].component.connector.url
-        original_command = dream_dist.pipeline.skills[original_prompted_skill_name].service.service.compose.command
-        original_port = dream_dist.pipeline.skills[original_prompted_skill_name].service.environment.get("SERVICE_PORT")
+        )
+        existing_prompted_skills = []
+
+        for skill in original_prompted_skills:
+            existing_prompted_skill = {
+                "name": skill.component.name,
+                "port": dream_dist.pipeline.skills[skill.component.name].service.environment.get("SERVICE_PORT"),
+                "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
+                "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
+                "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
+                "description": dream_dist.pipeline.skills[skill.component.name].component.description,
+            }
+            existing_prompted_skills.append(existing_prompted_skill)
+
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
             user.email,
             payload.description,
-            original_prompted_skill_name,
-            original_connector_url,
-            original_command,
-            original_port,
+            existing_prompted_skills,
         )
         new_dist.save(overwrite=False)
 

@@ -570,11 +570,10 @@ def create_deployment_from_copy(
 
 
 def update_deployment(db: Session, id: int, **kwargs) -> models.Deployment:
-    deployment = db.scalar(
-        update(models.Deployment)
-        .filter_by(id=id)
-        .values(**kwargs)
-        .returning(models.Deployment)
-    )
+    deployment = db.scalar(update(models.Deployment).filter_by(id=id).values(**kwargs).returning(models.Deployment))
 
     return deployment
+
+
+def delete_deployment(db: Session, id: int, **kwargs):
+    db.execute(delete(models.Deployment).filter_by(id=id))

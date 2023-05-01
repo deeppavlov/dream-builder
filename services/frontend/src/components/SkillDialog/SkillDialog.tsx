@@ -36,8 +36,8 @@ const SkillDialog: FC<SkillDialogProps> = ({
   const api_token = getLocalStorageApiTokens(user?.id)?.filter(
     ({ api_token }: any) => api_token?.name === 'OpenAI'
   )[0]?.token_value
-  const isApiToken = isOpenAi && api_token?.length > 0
-  const isError = !isApiToken
+  const isApiToken = api_token?.length > 0
+  const isError = isOpenAi && !isApiToken
 
   // handlers
   const handleSend = (data: ChatForm) => {

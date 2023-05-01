@@ -127,9 +127,3 @@ async def delete_stack(stack_id: int):
         swarm_client.delete_stack(stack_id)
     except requests.exceptions.HTTPError as e:
         raise HTTPException(500, detail=repr(e))
-
-
-@deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
-async def get_all_lm_services(db: Session = Depends(get_db)):
-    """ """
-    return [schemas.LmServiceRead.from_orm(name) for name in crud.get_all_lm_services(db)]

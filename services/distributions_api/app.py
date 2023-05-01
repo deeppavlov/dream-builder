@@ -9,6 +9,7 @@ from services.distributions_api.routes.components import components_router
 from services.distributions_api.routes.deployments import deployments_router
 from services.distributions_api.routes.dialog_sessions import dialog_sessions_router
 from services.distributions_api.routes.users import users_router
+from services.distributions_api.routes.lm_services import lm_services_router
 
 app = FastAPI()
 
@@ -30,3 +31,4 @@ app.include_router(tokens_router)
 app.include_router(dialog_sessions_router)
 app.include_router(deployments_router)
 app.include_router(admin_router)
+app.include_router(lm_services_router)

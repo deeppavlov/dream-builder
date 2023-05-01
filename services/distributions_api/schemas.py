@@ -207,8 +207,8 @@ class DeploymentRead(BaseOrmModel):
     chat_host: str
     chat_port: int
     date_created: datetime
-    state: str
-    date_state_updated: datetime
+    state: Optional[str]
+    date_state_updated: Optional[datetime]
 
 
 class DeploymentCreate(BaseModel):

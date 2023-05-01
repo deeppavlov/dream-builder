@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import models
-from database.models import GoogleUser, UserValid, ApiToken
+from database.models import GoogleUser, UserValid, ApiKey
 
 
 # USER
@@ -94,33 +94,33 @@ def update_users_refresh_token(db: Session, user, email: str):
 
 
 # API TOKEN
-def get_all_api_tokens(db: Session) -> [models.UserApiToken]:
-    return db.scalars(select(ApiToken)).all()
+def get_all_api_keys(db: Session) -> [models.ApiKey]:
+    return db.scalars(select(ApiKey)).all()
 
 
-def create_or_update_user_api_token(
-    db: Session, user_id: int, api_token_id: int, token_value: str
-) -> models.UserApiToken:
-    user_api_token = db.scalar(
-        insert(models.UserApiToken)
-        .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
-        .on_conflict_do_update(constraint="unique_user_api_token", set_=dict(token_value=token_value))
-        .returning(models.UserApiToken)
-    )
-
-    return user_api_token
-
-
-def get_user_api_token(db: Session, id: int):
-    return db.get(models.UserApiToken, id)
-
-
-def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
-    return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
-
-
-def delete_user_api_token(db: Session, user_api_token_id: int):
-    db.execute(delete(models.UserApiToken).filter(models.UserApiToken.id == user_api_token_id))
+# def create_or_update_user_api_token(
+#     db: Session, user_id: int, api_token_id: int, token_value: str
+# ) -> models.UserApiToken:
+#     user_api_token = db.scalar(
+#         insert(models.UserApiToken)
+#         .values(user_id=user_id, api_token_id=api_token_id, token_value=token_value)
+#         .on_conflict_do_update(constraint="unique_user_api_token", set_=dict(token_value=token_value))
+#         .returning(models.UserApiToken)
+#     )
+#
+#     return user_api_token
+#
+#
+# def get_user_api_token(db: Session, id: int):
+#     return db.get(models.UserApiToken, id)
+#
+#
+# def get_user_api_tokens(db: Session, user_id: int) -> [models.UserApiToken]:
+#     return db.scalars(select(models.UserApiToken).filter_by(user_id=user_id)).all()
+#
+#
+# def delete_user_api_token(db: Session, user_api_token_id: int):
+#     db.execute(delete(models.UserApiToken).filter(models.UserApiToken.id == user_api_token_id))
 
 
 # VIRTUAL ASSISTANT
@@ -158,6 +158,7 @@ def create_virtual_assistant(
     name: str,
     display_name: str,
     description: str,
+    components: List[models.Component],
     cloned_from_id: Optional[int] = None,
 ) -> models.VirtualAssistant:
     new_virtual_assistant = db.scalar(
@@ -173,9 +174,10 @@ def create_virtual_assistant(
         .returning(models.VirtualAssistant)
     )
 
-    if cloned_from_id:
-        original_components = get_virtual_assistant_components(db, cloned_from_id)
-        create_virtual_assistant_components(db, new_virtual_assistant.id, original_components)
+    # if cloned_from_id:
+    #     original_components = get_virtual_assistant_components(db, cloned_from_id)
+
+    create_virtual_assistant_components(db, new_virtual_assistant.id, components)
 
     return new_virtual_assistant
 
@@ -197,7 +199,16 @@ def delete_virtual_assistant_by_name(db: Session, name: str) -> None:
 
 # SERVICE
 def create_service(db: Session, name: str, source: str):
-    return db.scalar(insert(models.Service).values(name=name, source=source).returning(models.Service))
+    service = db.scalar(
+        insert(models.Service)
+        .values(name=name, source=source)
+        .on_conflict_do_nothing(index_elements=[models.Service.source])
+        .returning(models.Service)
+    )
+    if not service:
+        service = db.scalar(select(models.Service).filter_by(source=source))
+
+    return service
 
 
 # COMPONENT
@@ -239,7 +250,7 @@ def create_component(
     # compose_dev: Optional[dict] = None,
     # compose_proxy: Optional[dict] = None,
 ) -> models.Component:
-    return db.scalar(
+    component = db.scalar(
         insert(models.Component)
         .values(
             service_id=service_id,
@@ -264,11 +275,16 @@ def create_component(
             # compose_dev=compose_dev,
             # compose_proxy=compose_proxy,
         )
+        .on_conflict_do_nothing(index_elements=[models.Component.source])
         .returning(models.Component)
     )
+    if not component:
+        component = db.scalar(select(models.Component).filter_by(source=source))
+
+    return component
 
 
-def update_component(db: Session, id: int, **kwargs):
+def update_component(db: Session, id: int, **kwargs) -> models.Component:
     values = {k: v for k, v in kwargs.items() if v is not None}
 
     return db.scalar(update(models.Component).filter_by(id=id).values(**values).returning(models.Component))
@@ -331,18 +347,14 @@ def create_virtual_assistant_component(
     )
 
 
-def create_virtual_assistant_components(
-    db: Session, virtual_assistant_id: int, components: [models.VirtualAssistantComponent]
-):
-    new_components = []
+def create_virtual_assistant_components(db: Session, virtual_assistant_id: int, components: [models.Component]):
+    new_virtual_assistant_components = []
 
     for component in components:
-        new_component = create_virtual_assistant_component(
-            db, virtual_assistant_id, component.component_id, component.is_enabled
-        )
-        new_components.append(new_component)
+        new_component = create_virtual_assistant_component(db, virtual_assistant_id, component.id, True)
+        new_virtual_assistant_components.append(new_component)
 
-    return new_components
+    return new_virtual_assistant_components
 
 
 def delete_virtual_assistant_component(db: Session, id: int):
@@ -487,6 +499,28 @@ def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]
 
 
 # DEPLOYMENT
+def get_available_deployment_port(db: Session, range_min: int = 4242, range_max: int = 4999):
+    used_ports = db.scalars(
+        select(models.Deployment.chat_port).filter(models.Deployment.chat_port.between(range_min, range_max))
+    ).all()
+
+    first_available_port = None
+
+    for port in range(range_min, range_max + 1):
+        if port not in used_ports:
+            first_available_port = port
+            break
+
+    if first_available_port is None:
+        raise ValueError(f"All ports in range [{range_min}, {range_max}] are exhausted.")
+
+    return first_available_port
+
+
+def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
+    return db.get(models.Deployment, id)
+
+
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
     virtual_assistant = get_virtual_assistant_by_name(db, name)
 
@@ -535,32 +569,12 @@ def create_deployment_from_copy(
     )
 
 
-def update_deployment_by_virtual_assistant_name(db: Session, name: str, **kwargs) -> models.Deployment:
-    virtual_assistant = get_virtual_assistant_by_name(db, name)
+def update_deployment(db: Session, id: int, **kwargs) -> models.Deployment:
     deployment = db.scalar(
         update(models.Deployment)
-        .where(models.Deployment.virtual_assistant_id == virtual_assistant.id)
+        .filter_by(id=id)
         .values(**kwargs)
         .returning(models.Deployment)
     )
-    db.commit()
 
     return deployment
-
-
-def get_deployment_prompt_by_virtual_assistant_name(db: Session, name: str) -> str:
-    deployment = get_deployment_by_virtual_assistant_name(db, name)
-
-    return deployment.prompt
-
-
-def set_deployment_prompt_by_virtual_assistant_name(db: Session, name: str, prompt: str) -> models.Deployment:
-    deployment = update_deployment_by_virtual_assistant_name(db, name, prompt=prompt)
-
-    return deployment
-
-
-def get_deployment_lm_service_by_virtual_assistant_name(db: Session, name: str) -> str:
-    deployment = get_deployment_by_virtual_assistant_name(db, name)
-
-    return deployment.lm_service

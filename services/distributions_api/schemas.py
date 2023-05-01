@@ -68,6 +68,17 @@ class VirtualAssistantUpdate(BaseModel):
     description: Optional[str]
 
 
+class LmServiceRead(BaseOrmModel):
+    id: int
+    name: str
+    display_name: str
+    size: str
+    gpu_usage: Optional[str]
+    max_tokens: int
+    description: str
+    project_url: str
+
+
 class ComponentRead(BaseOrmModel):
     id: int
     name: str
@@ -77,7 +88,7 @@ class ComponentRead(BaseOrmModel):
     is_customizable: bool
     author: UserRead
     description: Optional[str]
-    ram_usage: str
+    ram_usage: Optional[str]
     gpu_usage: Optional[str]
     prompt: Optional[str]
     lm_service_id: Optional[int]
@@ -92,7 +103,7 @@ class ComponentRead(BaseOrmModel):
 class ComponentGenerativeRead(BaseOrmModel):
     id: int
     prompt: Optional[str]
-    lm_service_id: Optional[int]
+    lm_service: Optional[LmServiceRead]
 
 
 class ComponentCreate(BaseModel):
@@ -123,9 +134,10 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     is_customizable: bool
     author: UserRead
     description: Optional[str]
-    ram_usage: str
+    ram_usage: Optional[str]
     gpu_usage: Optional[str]
-    # lm_service: Optional[str]
+    prompt: Optional[str]
+    lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
     is_enabled: bool
 
@@ -152,6 +164,7 @@ class DialogChatMessageCreate(BaseModel):
     text: str
     prompt: Optional[str]
     lm_service_id: Optional[int]
+    openai_api_key: Optional[str]
 
 
 class DialogChatMessageRead(BaseModel):
@@ -163,18 +176,18 @@ class DialogUtteranceRead(BaseModel):
     text: str
 
 
-class ApiToken(BaseOrmModel):
+class ApiKeys(BaseOrmModel):
     id: int
     name: str
     description: str
     base_url: str
 
 
-class UserApiToken(BaseOrmModel):
-    id: int
-    user_id: int
-    api_token: ApiToken
-    token_value: str
+# class UserApiToken(BaseOrmModel):
+#     id: int
+#     user_id: int
+#     api_token: ApiKeys
+#     token_value: str
 
 
 class CreateTokenRequest(BaseModel):
@@ -188,28 +201,18 @@ class CreateTokenResponse(BaseModel):
     token_value: str
 
 
-class LmServiceRead(BaseOrmModel):
-    id: int
-    name: str
-    display_name: str
-    size: str
-    gpu_usage: Optional[str]
-    max_tokens: int
-    description: str
-    project_url: str
-
-
 class DeploymentRead(BaseOrmModel):
     id: int
-    virtual_assistant_id: int
+    virtual_assistant: VirtualAssistantRead
     chat_host: str
     chat_port: int
-    prompt: Optional[str]
+    date_created: datetime
+    state: Optional[str]
+    date_state_updated: Optional[datetime]
 
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_id: int
-    assistant_port: int
 
 
 class PublishRequestRead(BaseOrmModel):

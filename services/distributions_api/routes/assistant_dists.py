@@ -1,4 +1,5 @@
 from typing import List
+from urllib.parse import urlparse
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
@@ -66,17 +67,46 @@ async def create_virtual_assistant(
         )
         new_dist.save()
 
+        new_components = []
+        for group, name, dream_component in new_dist.pipeline.iter_components():
+            service = crud.create_service(
+                db, dream_component.service.service.name, str(dream_component.service.config_dir)
+            )
+
+            if dream_component.lm_service:
+                lm_service_id = crud.get_lm_service_by_name(db, urlparse(dream_component.lm_service).hostname).id
+            else:
+                lm_service_id = None
+
+            component = crud.create_component(
+                db,
+                service_id=service.id,
+                source=str(dream_component.component_file),
+                name=dream_component.component.name,
+                display_name=dream_component.component.display_name,
+                component_type=dream_component.component.component_type,
+                is_customizable=dream_component.component.is_customizable,
+                author_id=user.id,
+                ram_usage=dream_component.component.ram_usage,
+                group=dream_component.component.group,
+                endpoint=dream_component.component.endpoint,
+                model_type=dream_component.component.model_type,
+                gpu_usage=dream_component.component.gpu_usage,
+                description=dream_component.component.description,
+                prompt=dream_component.prompt,
+                lm_service_id=lm_service_id,
+            )
+            new_components.append(component)
+
         new_virtual_assistant = crud.create_virtual_assistant(
             db,
             user.id,
-            str(new_dist.dist_path),
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
             new_dist.name,
             payload.display_name,
             payload.description,
+            new_components,
         )
-
-        original_components = crud.get_virtual_assistant_components(db, minimal_template_virtual_assistant.id)
-        crud.create_virtual_assistant_components(db, new_virtual_assistant.id, original_components)
 
     return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
@@ -253,20 +283,47 @@ async def clone_dist(
         )
         new_dist.save(overwrite=False)
 
+        new_components = []
+        for group, name, dream_component in new_dist.pipeline.iter_components():
+            service = crud.create_service(
+                db, dream_component.service.service.name, str(dream_component.service.config_dir)
+            )
+
+            if dream_component.lm_service:
+                lm_service_id = crud.get_lm_service_by_name(db, urlparse(dream_component.lm_service).hostname).id
+            else:
+                lm_service_id = None
+
+            component = crud.create_component(
+                db,
+                service_id=service.id,
+                source=str(dream_component.component_file),
+                name=dream_component.component.name,
+                display_name=dream_component.component.display_name,
+                component_type=dream_component.component.component_type,
+                is_customizable=dream_component.component.is_customizable,
+                author_id=user.id,
+                ram_usage=dream_component.component.ram_usage,
+                group=dream_component.component.group,
+                endpoint=dream_component.component.endpoint,
+                model_type=dream_component.component.model_type,
+                gpu_usage=dream_component.component.gpu_usage,
+                description=dream_component.component.description,
+                prompt=dream_component.prompt,
+                lm_service_id=lm_service_id,
+            )
+            new_components.append(component)
+
         new_virtual_assistant = crud.create_virtual_assistant(
             db,
             user.id,
-            str(new_dist.dist_path),
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
             new_dist.name,
             payload.display_name,
             payload.description,
+            new_components,
             cloned_from_id=original_virtual_assistant.id,
         )
-
-        try:
-            crud.create_deployment_from_copy(db, original_virtual_assistant.id, new_virtual_assistant.id)
-        except ValueError:
-            crud.create_deployment(db, new_virtual_assistant.id, "http://test-url", 4242)
 
     return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
@@ -284,7 +341,8 @@ def _virtual_assistant_component_model_to_schema(virtual_assistant_component: mo
         description=virtual_assistant_component.component.description,
         ram_usage=virtual_assistant_component.component.ram_usage,
         gpu_usage=virtual_assistant_component.component.gpu_usage,
-        # lm_service=virtual_assistant_component.component.lm_service,
+        prompt=virtual_assistant_component.component.prompt,
+        lm_service=virtual_assistant_component.component.lm_service,
         date_created=virtual_assistant_component.component.date_created,
         is_enabled=virtual_assistant_component.is_enabled,
     )

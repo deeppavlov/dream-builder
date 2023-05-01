@@ -1,10 +1,15 @@
+import asyncio
+from datetime import datetime
 from urllib.parse import urlparse
 
+from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi.logger import logger
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -30,95 +35,95 @@ def get_user_services(dist: AssistantDist):
     return user_services
 
 
-@deployments_router.post("/")
-async def create_deployment(
-    payload: schemas.DeploymentCreate, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
-):
-    with db.begin():
-        virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
-        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
+    now = datetime.now()
+    logger.info(f"Deployment background task for {dist.name} started")
+
+    try:
+        db = next(get_db())
+        with db.begin():
+            crud.update_deployment(db, deployment_id, state="in_progress")
+
         deployer = SwarmDeployer(
-            user_identifier=dream_dist.name,
+            user_identifier=dist.name,
             registry_addr=settings.deployer.registry_url,
-            user_services=get_user_services(dream_dist),
-            deployment_dict={"services": {"agent": {"ports": [f"{payload.assistant_port}:4242"]}}},
+            user_services=get_user_services(dist),
+            deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
             portainer_url=settings.deployer.portainer_url,
             portainer_key=settings.deployer.portainer_key,
             default_prefix=settings.deployer.default_prefix,
         )
-        deployer.deploy(dream_dist)
-        hostname = urlparse(settings.deployer.portainer_url).hostname
-        return f"{hostname}:{payload.assistant_port}"
+        deployer.deploy(dist)
+    except BotoCoreError as e:
+        db = next(get_db())
+        with db.begin():
+            crud.update_deployment(db, deployment_id, state="error")
 
-        # chat_host, chat_port = deployer.deploy(dream_dist)
-        # deployment = crud.create_deployment(db, virtual_assistant.id, chat_host, chat_port)
+        logger.error(
+            f"Deployment background task for {dist.name} failed after {datetime.now() - now}"
+            f"Reason: {type(e).__name__}:{e}"
+        )
+    else:
+        db = next(get_db())
+        with db.begin():
+            crud.update_deployment(db, deployment_id, state="up")
 
-    # return schemas.Deployment.from_orm(deployment)
+        logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
-@deployments_router.get("/")
+@deployments_router.post("/")
+async def create_deployment(
+    payload: schemas.DeploymentCreate,
+    background_tasks: BackgroundTasks,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db),
+):
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+
+        parsed_url = urlparse(settings.deployer.portainer_url)
+        host = f"{parsed_url.scheme}://{parsed_url.hostname}"
+        port = crud.get_available_deployment_port(db)
+
+        try:
+            deployment = crud.create_deployment(db, virtual_assistant.id, host, port)
+            db.commit()
+        except IntegrityError:
+            db.rollback()
+            raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
+
+    background_tasks.add_task(
+        run_deployer,
+        dist=dream_dist,
+        port=port,
+        deployment_id=deployment.id,
+    )
+
+    return schemas.DeploymentRead.from_orm(deployment)
+
+
+@deployments_router.get("/{deployment_id}")
+async def get_deployment(
+    deployment_id: int,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db)
+):
+    with db.begin():
+        deployment = crud.get_deployment(db, deployment_id)
+
+    return schemas.DeploymentRead.from_orm(deployment)
+
+
+@deployments_router.get("/stacks")
 async def get_stacks():
     return swarm_client.get_stacks()
 
 
-@deployments_router.delete("/{stack_id}")
+@deployments_router.delete("/stacks/{stack_id}")
 async def delete_stack(stack_id: int):
     # TODO: make better exception handling
     try:
         swarm_client.delete_stack(stack_id)
     except requests.exceptions.HTTPError as e:
         raise HTTPException(500, detail=repr(e))
-
-
-@deployments_router.get("/lm_services", status_code=status.HTTP_200_OK)
-async def get_all_lm_services(db: Session = Depends(get_db)):
-    """ """
-    return [schemas.LmServiceRead.from_orm(name) for name in crud.get_all_lm_services(db)]
-
-
-# @deployments_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
-# async def get_dialog_session(
-#     dialog_session_id: int,
-#     user: schemas.User = Depends(verify_token),
-#     db: Session = Depends(get_db),
-# ):
-#     """
-#
-#     Returns:
-#
-#     """
-#     return schemas.DialogSession(id=1, user_id=1, virtual_assistant_id=1, is_active=True)
-#
-#
-# @deployments_router.post("/{dialog_session_id}/chat", status_code=status.HTTP_201_CREATED)
-# async def send_dialog_session_message(
-#     dialog_session_id: int,
-#     payload: schemas.DialogChatMessageRequest,
-#     user: schemas.User = Depends(verify_token),
-#     db: Session = Depends(get_db),
-# ):
-#     """
-#     text
-#
-#     Returns:
-#
-#     """
-#     bot_response = f"This is a bot response to '{payload.text}'"
-#
-#     debug_chat.history.append(schemas.DialogUtterance(author="user", text=payload.text))
-#     debug_chat.history.append(schemas.DialogUtterance(author="bot", text=bot_response))
-#     return schemas.DialogChatMessageResponse(text=bot_response)
-#
-#
-# @deployments_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
-# async def get_dialog_session_history(
-#     dialog_session_id: int,
-#     user: schemas.User = Depends(verify_token),
-#     db: Session = Depends(get_db),
-# ):
-#     """
-#
-#     Returns:
-#
-#     """
-#     return debug_chat.history

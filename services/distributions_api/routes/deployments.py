@@ -103,6 +103,11 @@ async def create_deployment(
     return schemas.DeploymentRead.from_orm(deployment)
 
 
+@deployments_router.get("/stacks")
+async def get_stacks():
+    return swarm_client.get_stacks()
+
+
 @deployments_router.get("/{deployment_id}")
 async def get_deployment(
     deployment_id: int,
@@ -113,11 +118,6 @@ async def get_deployment(
         deployment = crud.get_deployment(db, deployment_id)
 
     return schemas.DeploymentRead.from_orm(deployment)
-
-
-@deployments_router.get("/stacks")
-async def get_stacks():
-    return swarm_client.get_stacks()
 
 
 @deployments_router.delete("/stacks/{stack_id}")

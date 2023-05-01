@@ -13,13 +13,15 @@ import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
 import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
+import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import { getLocalStorageApiTokens } from '../AccessTokensBanner/AccessTokensBanner'
 import { checkOpenAiType } from '../SkillPromptModal/SkillPromptModal'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
 export type ChatHistory = { text: string; author: 'bot' | 'me' }
+
+const OPEN_AI = 'OpenAI'
 
 const SkillDialog: FC<SkillDialogProps> = ({
   dist,
@@ -33,10 +35,9 @@ const SkillDialog: FC<SkillDialogProps> = ({
   const { data: user } = useQuery(['user'], () => getUserId())
   const cx = classNames.bind(s)
   const isOpenAi = checkOpenAiType(lm_service?.name || '')
-  const api_token = getLocalStorageApiTokens(user?.id)?.filter(
-    ({ api_token }: any) => api_token?.name === 'OpenAI'
-  )[0]?.token_value
-  const isApiToken = api_token?.length > 0
+  const api_token = getLSApiKeyByName(user?.id, OPEN_AI)
+  const isApiToken =
+    api_token !== null && api_token !== undefined && api_token.length > 0
   const isError = isOpenAi && !isApiToken
 
   // handlers
@@ -49,7 +50,7 @@ const SkillDialog: FC<SkillDialogProps> = ({
       text: message,
       lm_service_id: lm_service?.id,
       prompt,
-      openai_api_key: api_token,
+      openai_api_key: api_token ?? undefined,
     })
     reset()
   }

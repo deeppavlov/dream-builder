@@ -6,10 +6,9 @@ import { DEEPY_ASSISTANT } from '../constants/constants'
 import { useDisplay } from '../context/DisplayContext'
 import { getHistory } from '../services/getHistory'
 import { renewDialog } from '../services/renewDialog'
-import { IPostChat, sendMessage } from '../services/sendMessage'
-import { SessionConfig } from '../types/types'
+import { sendMessage } from '../services/sendMessage'
+import { IPostChat, SessionConfig } from '../types/types'
 import { consts } from '../utils/consts'
-import { checkOpenAiType } from '../components/SkillPromptModal/SkillPromptModal'
 
 export const useChat = () => {
   const [session, setSession] = useState<SessionConfig | null>(null)
@@ -40,9 +39,7 @@ export const useChat = () => {
       setMessage(text)
       setHistory(state => [...state, { text, author: 'me' }])
     },
-    mutationFn: (variables: IPostChat) => {
-      return sendMessage(variables)
-    },
+    mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
       // queryClient.invalidateQueries('history')
       setHistory(state => [...state, { text: data?.text, author: 'bot' }])

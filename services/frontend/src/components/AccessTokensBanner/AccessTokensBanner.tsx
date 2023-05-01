@@ -5,65 +5,50 @@ import toast from 'react-hot-toast'
 import { useQuery } from 'react-query'
 import { getTokens } from '../../services/getTokens'
 import { getUserId } from '../../services/getUserId'
+import { IApiService, IUserApiKey } from '../../types/types'
 import { Input } from '../../ui/Input/Input'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
+import { trigger } from '../../utils/events'
+import { getApiKeysLSId, getLSApiKeys } from '../../utils/getLSApiKeys'
 import { validationSchema } from '../../utils/validationSchema'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './AccessTokensBanner.module.scss'
-
-type TTokenState = 'not-valid' | 'validating' | 'valid'
-
-interface IService {
-  base_url: string
-  description: string
-  id: number
-  name: string
-}
-
-interface IUserToken {
-  id: number
-  user_id: number
-  api_token: IService
-  token_value: string
-}
 
 interface FormValues {
   token: string
   service: string
 }
 
-const getTokensObjectName = (userId: number) => `user_${userId}_api_keys`
-
-export const getLocalStorageApiTokens = (userId: number) => {
-  const localStorageTokens = localStorage.getItem(getTokensObjectName(userId))
-  return localStorageTokens ? JSON.parse(localStorageTokens) : null
-}
-
 export const AccessTokensBanner = () => {
-  const [service, setService] = useState<IService | null>(null)
   const { data: user } = useQuery(['user'], () => getUserId())
-  const { data: api_services } = useQuery<IService[]>(['api_services'], () =>
+  const { data: api_services } = useQuery<IApiService[]>(['api_services'], () =>
     getTokens()
   )
-  const [tokens, setTokens] = useState<IUserToken[] | null>(null)
-  const { handleSubmit, reset, getValues, control, watch } =
-    useForm<FormValues>({ mode: 'onSubmit' })
+  const [tokens, setTokens] = useState<IUserApiKey[] | null>(null)
+  const { handleSubmit, reset, control } = useForm<FormValues>({
+    mode: 'onSubmit',
+  })
+  const localStorageName = getApiKeysLSId(user?.id)
+
+  const clearTokens = () => localStorage.removeItem(localStorageName)
+
+  const saveTokens = (newState: IUserApiKey[] | null) => {
+    if (newState === null) return clearTokens()
+    localStorage.setItem(localStorageName, JSON.stringify(newState))
+  }
 
   const deleteToken = (token_id: number) =>
     new Promise((resolve, reject) => {
       const isTokens = tokens !== undefined && tokens !== null
 
       if (!isTokens) return reject('No tokens found.')
-
       setTokens(prev => {
-        const newState = prev?.filter(({ id }) => id !== token_id) ?? prev
-        localStorage.setItem(
-          getTokensObjectName(user?.id),
-          JSON.stringify(newState)
-        )
+        const newState =
+          prev?.filter(({ api_service }) => api_service.id !== token_id) ?? prev
+
+        saveTokens(newState)
         return newState
       })
-
       resolve(true)
     })
 
@@ -75,30 +60,53 @@ export const AccessTokensBanner = () => {
     })
   }
 
+  const updateToken = (index: number, token: IUserApiKey) => {
+    setTokens(prev => {
+      const isPrev = prev !== null && prev !== undefined
+      const newState = prev
+
+      if (!isPrev) return prev
+      newState?.splice(index, 1, token)
+      saveTokens(newState)
+      return newState
+    })
+  }
+
   const createUserToken = (data: FormValues) =>
     new Promise((resolve, reject) => {
-      const isService = service !== undefined && service !== null
+      const service = api_services?.find(({ name }) => name === data.service)
+      const isService = service !== undefined
       const isUserId = user?.id !== undefined
 
       if (!isService || !isUserId) return reject('Not find service or userId')
 
-      const newToken = {
-        id: 1,
-        user_id: user?.id,
-        api_token: service,
+      const newToken: IUserApiKey = {
+        api_service: service,
         token_value: data.token,
       }
+      const apiTokenIndex = tokens?.findIndex(
+        ({ api_service }) => api_service.id === service?.id
+      )
+      const isIndex = apiTokenIndex !== undefined && apiTokenIndex !== -1
 
+      if (isIndex) {
+        trigger('ConfirmApiTokenUpdate', {
+          serviceName: data.service,
+          onContinue: () => {
+            updateToken(apiTokenIndex, newToken)
+            resolve(true)
+          },
+          onCancel: () => resolve(true),
+        })
+        return
+      }
       setTokens(prev => {
-        const isPrev = prev !== null && prev !== undefined
-        const newState = isPrev ? prev?.concat(newToken) ?? prev : [newToken]
-        localStorage.setItem(
-          getTokensObjectName(user?.id),
-          JSON.stringify(newState)
-        )
+        const newState = prev ?? []
+
+        newState.push(newToken)
+        saveTokens(newState)
         return newState
       })
-
       resolve(true)
     })
 
@@ -111,15 +119,7 @@ export const AccessTokensBanner = () => {
     reset()
   }
 
-  useEffect(() => {
-    setService(
-      api_services?.find(({ name }) => name === getValues().service) ?? null
-    )
-  }, [watch(['service'])])
-
-  useEffect(() => {
-    setTokens(getLocalStorageApiTokens(user?.id))
-  }, [user])
+  useEffect(() => setTokens(getLSApiKeys(user?.id)), [user])
 
   return (
     <Wrapper>
@@ -163,23 +163,14 @@ export const AccessTokensBanner = () => {
       </form>
       {tokens && (
         <ul className={s.tokens}>
-          {tokens.map(({ id, api_token }: IUserToken) => (
-            <li className={s.token} key={id}>
+          {tokens.map(({ api_service }: IUserApiKey) => (
+            <li className={s.token} key={api_service.id}>
               <TokenKeyIcon className={s.icon} />
-              <div className={s.tokenName}>{api_token.name}</div>
+              <div className={s.tokenName}>{api_service.name}</div>
               <div className={s.right}>
-                {/* {state && (
-                  <SmallTag theme={state}>{state.replace(/-/g, ' ')}</SmallTag>
-                )} */}
-                {/* <button
-                  className={s.validate}
-                  onClick={() => handleValidateBtnClick(id)}
-                >
-                  Validate
-                </button> */}
                 <button
                   className={s.remove}
-                  onClick={() => handleRemoveBtnClick(id)}
+                  onClick={() => handleRemoveBtnClick(api_service.id)}
                 >
                   Remove
                 </button>

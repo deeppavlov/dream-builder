@@ -235,3 +235,23 @@ export type LanguageModel =
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
 export type AssistantFormValues = { display_name: string; description: string }
+
+export interface IApiService {
+  base_url: string
+  description: string
+  id: number
+  name: string
+}
+
+export interface IUserApiKey {
+  api_service: IApiService
+  token_value: string
+}
+
+export interface IPostChat {
+  dialog_session_id: number
+  text: string
+  prompt?: string
+  lm_service_id?: number
+  openai_api_key?: string
+}

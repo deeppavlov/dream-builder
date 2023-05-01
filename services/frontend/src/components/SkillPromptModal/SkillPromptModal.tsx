@@ -382,9 +382,9 @@ const SkillPromptModal = () => {
                 debug
                 chatWith={'skill'}
                 dist={dist}
-                lm_service_id={conf?.lm_service?.id}
-                lm_service_name={conf?.lm_service?.name}
+                lm_service={conf?.lm_service}
                 prompt={conf?.prompt}
+                // error={}
               />
             </div>
           </div>

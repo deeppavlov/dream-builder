@@ -3,11 +3,13 @@ import classNames from 'classnames/bind'
 import { FC, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
+import { Link } from 'react-router-dom'
 import { DEBUG_DIST } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
+import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
 import { ChatForm, SkillDialogProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -22,8 +24,7 @@ export type ChatHistory = { text: string; author: 'bot' | 'me' }
 const SkillDialog: FC<SkillDialogProps> = ({
   dist,
   debug,
-  lm_service_id,
-  lm_service_name,
+  lm_service,
   prompt,
 }) => {
   const { send, renew, session, message, history } = useChat()
@@ -31,21 +32,22 @@ const SkillDialog: FC<SkillDialogProps> = ({
   const chatRef = useRef<HTMLUListElement>(null)
   const { data: user } = useQuery(['user'], () => getUserId())
   const cx = classNames.bind(s)
+  const isOpenAi = checkOpenAiType(lm_service?.name || '')
+  const api_token = getLocalStorageApiTokens(user?.id)?.filter(
+    ({ api_token }: any) => api_token?.name === 'OpenAI'
+  )[0]?.token_value
+  const isApiToken = isOpenAi && api_token?.length > 0
+  const isError = !isApiToken
 
   // handlers
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    const isOpenAi = checkOpenAiType(lm_service_name || '')
-    const api_token = getLocalStorageApiTokens(user?.id).filter(
-      ({ api_token }: any) => api_token?.name === 'OpenAI'
-    )[0]?.token_value
 
-    console.log(`Chatting with OpenAI service: ${isOpenAi}`, api_token)
     send.mutate({
       dialog_session_id: id,
       text: message,
-      lm_service_id,
+      lm_service_id: lm_service?.id,
       prompt,
       openai_api_key: api_token,
     })
@@ -67,31 +69,48 @@ const SkillDialog: FC<SkillDialogProps> = ({
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={s.dialog}
+      className={cx('dialog', isError && 'error')}
     >
-      <div className={s.container}>
-        <ul ref={chatRef} className={s.chat}>
-          {history?.map(
-            (block: { author: string; text: string }, i: number) => (
-              <li
-                key={`${block?.author == 'bot'}${i}`}
-                className={cx('msg', block?.author == 'bot' && 'bot')}
-              >
-                {block?.text}
-              </li>
-            )
+      {isError && (
+        <>
+          <span className={s.alertName}>Error!</span>
+          <p className={s.alertDesc}>
+            {!isApiToken &&
+              'Enter your personal access token for OpenAI to run your Generative AI Skill'}
+          </p>
+          {!isApiToken && (
+            <Link className={s.link} to={RoutesList.profile}>
+              Enter your personal access token here
+            </Link>
           )}
-          {send.isLoading && (
-            <>
-              <li className={cx('bot', 'msg')}>
-                <TextLoader />
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
+          <button>Try again</button>
+        </>
+      )}
+      {!isError && (
+        <>
+          <div className={s.container}>
+            <ul ref={chatRef} className={s.chat}>
+              {history?.map(
+                (block: { author: string; text: string }, i: number) => (
+                  <li
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx('msg', block?.author == 'bot' && 'bot')}
+                  >
+                    {block?.text}
+                  </li>
+                )
+              )}
+              {send.isLoading && (
+                <>
+                  <li className={cx('bot', 'msg')}>
+                    <TextLoader />
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
 
-      {/* <div className={s.controls}>
+          {/* <div className={s.controls}>
         <div className={s.left}>
           <DialogButton active>
             <DialogTextIcon />
@@ -121,33 +140,35 @@ const SkillDialog: FC<SkillDialogProps> = ({
         </div>
       </div> */}
 
-      <div className={s.bottom}>
-        <div className={s['textarea-container']}>
-          <textarea
-            className={s.textarea}
-            rows={4}
-            placeholder='Type...'
-            {...register('message')}
-          />
-        </div>
+          <div className={s.bottom}>
+            <div className={s['textarea-container']}>
+              <textarea
+                className={s.textarea}
+                rows={4}
+                placeholder='Type...'
+                {...register('message')}
+              />
+            </div>
 
-        <div className={s.btns}>
-          <Button
-            theme='secondary'
-            props={{
-              onClick: handleRenewClick,
-            }}
-          >
-            <Renew data-tooltip-id='renew' />
-          </Button>
-          <Button
-            theme='secondary'
-            props={{ disabled: send?.isLoading, type: 'submit' }}
-          >
-            Send
-          </Button>
-        </div>
-      </div>
+            <div className={s.btns}>
+              <Button
+                theme='secondary'
+                props={{
+                  onClick: handleRenewClick,
+                }}
+              >
+                <Renew data-tooltip-id='renew' />
+              </Button>
+              <Button
+                theme='secondary'
+                props={{ disabled: send?.isLoading, type: 'submit' }}
+              >
+                Send
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </form>
   )
 }

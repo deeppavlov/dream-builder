@@ -178,8 +178,7 @@ export interface SkillDialogProps {
   debug: boolean
   chatWith: ChatPanelType
   dist: BotInfoInterface
-  lm_service_name?: string
-  lm_service_id: number
+  lm_service: LM_Service
   prompt: string
 }
 

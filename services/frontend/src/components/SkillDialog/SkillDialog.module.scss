@@ -127,3 +127,43 @@
   gap: 24px;
   padding: 0 24px 24px 24px;
 }
+
+.link {
+  text-decoration: underline;
+  align-self: flex-end;
+  text-underline-offset: 3px;
+}
+
+.start,
+.error {
+  display: flex;
+  font-display: column;
+  gap: 16px;
+  padding: 40px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  @include b3;
+
+  button {
+    @include large_btn;
+    @include lnks_n_btns3;
+    @include primary_btn;
+    @include btn_primary_behavior;
+  }
+}
+.alertName {
+  @include t2;
+}
+.alertDesc {
+  @include b3;
+}
+.runTest {
+  margin-top: 24px;
+}
+.error {
+  color: #ff3b30;
+  button {
+    background-color: #ff3b30;
+  }
+}

@@ -45,17 +45,22 @@ class GoogleUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String)
     sub = Column(String, unique=True)
+
     picture = Column(String(500), nullable=True)
+
     fullname = Column(String(100), nullable=True)
     given_name = Column(String(50), nullable=True)
     family_name = Column(String(50), nullable=True)
+
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
     components = relationship("Component", back_populates="author", passive_deletes=True)
     dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
-    api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
+    # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
 
 
 class UserValid(Base):
@@ -68,28 +73,13 @@ class UserValid(Base):
     expire_date = Column(DateTime, nullable=False)
 
 
-class ApiToken(Base):
-    __tablename__ = "api_token"
+class ApiKey(Base):
+    __tablename__ = "api_key"
 
     id = Column(Integer, index=True, primary_key=True)
     name = Column(String)
     description = Column(String)
     base_url = Column(String)
-
-
-class UserApiToken(Base):
-    __tablename__ = "user_api_token"
-    __table_args__ = (UniqueConstraint("user_id", "api_token_id", name="unique_user_api_token"),)
-
-    id = Column(Integer, index=True, primary_key=True)
-
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    user = relationship("GoogleUser")
-
-    api_token_id = Column(Integer, ForeignKey("api_token.id"), unique=True, nullable=False)
-    api_token = relationship("ApiToken")
-
-    token_value = Column(String)
 
 
 class VirtualAssistant(Base):
@@ -143,6 +133,10 @@ class Deployment(Base):
     chat_host = Column(String, nullable=False)
     chat_port = Column(Integer, nullable=False)
 
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+    date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
+    state = Column(String)
+
 
 class PublishRequest(Base):
     __tablename__ = "publish_request"
@@ -175,8 +169,12 @@ class Service(Base):
     __tablename__ = "service"
 
     id = Column(Integer, index=True, primary_key=True)
-    source = Column(String, nullable=False)
+    source = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
+
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+    components = relationship("Component", back_populates="service", passive_deletes=True)
+    deployment = relationship("ServiceDeployment", uselist=False, back_populates="service", passive_deletes=True)
 
     # # https://docs.sqlalchemy.org/en/20/orm/extensions/mutable.html#establishing-mutability-on-scalar-column-values
     # # let's see if it works with JSONB instead of the JSONEncodedDict from the docs
@@ -184,9 +182,6 @@ class Service(Base):
     # compose_override = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
     # compose_dev = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
     # compose_proxy = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
-    components = relationship("Component", back_populates="service", passive_deletes=True)
-
-    deployment = relationship("ServiceDeployment", uselist=False, back_populates="service", passive_deletes=True)
 
 
 class ServiceDeployment(Base):
@@ -203,7 +198,7 @@ class Component(Base):
     __tablename__ = "component"
 
     id = Column(Integer, index=True, primary_key=True)
-    source = Column(String, nullable=False)
+    source = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
     display_name = Column(String, nullable=False)
     component_type = Column(String, nullable=True)
@@ -258,6 +253,7 @@ class DialogSession(Base):
 
     agent_dialog_id = Column(String)
 
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
     is_active = Column(Boolean, nullable=False)
 
 
@@ -288,9 +284,9 @@ def pre_populate_google_user(target, connection, **kw):
     _pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
 
 
-@listens_for(ApiToken.__table__, "after_create")
-def pre_populate_api_token(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_token.tsv", target, connection)
+@listens_for(ApiKey.__table__, "after_create")
+def pre_populate_api_key(target, connection, **kw):
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_key.tsv", target, connection)
 
 
 @listens_for(VirtualAssistant.__table__, "after_create")

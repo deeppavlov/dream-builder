@@ -13,7 +13,7 @@ dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_
 
 
 async def send_chat_request_to_deployed_agent(
-    agent_url: str, session_id: int, text: str, prompt: str = None, lm_service: str = None
+    agent_url: str, session_id: int, text: str, prompt: str = None, lm_service: str = None, openai_api_key: str = None
 ):
     """ """
     data = {
@@ -24,6 +24,8 @@ async def send_chat_request_to_deployed_agent(
         data["prompt"] = prompt
     if lm_service:
         data["lm_service"] = lm_service
+    if openai_api_key:
+        data["openai_api_key"] = openai_api_key
 
     async with aiohttp.ClientSession() as session:
         async with session.post(agent_url, json=data) as response:
@@ -123,6 +125,7 @@ async def send_dialog_session_message(
             payload.text,
             payload.prompt,
             lm_service,
+            payload.openai_api_key,
         )
 
         crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)

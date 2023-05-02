@@ -17,6 +17,7 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
@@ -76,6 +77,7 @@ export const UsersBotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <DeployModalNotification />
       </Main>
       <Toaster />
     </>

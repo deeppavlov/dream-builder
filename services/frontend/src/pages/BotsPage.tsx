@@ -7,7 +7,7 @@ import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
-import { Placeholder } from '../components/PlaceHolder/Placeholder'
+import { Placeholder } from '../components/PlaceHolder/PlaceHolder'
 import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
@@ -22,6 +22,7 @@ import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const BotsPage = () => {
   const { options } = useDisplay()
@@ -117,6 +118,7 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
+        <DeployModalNotification/>
       </Main>
       <Toaster />
     </>

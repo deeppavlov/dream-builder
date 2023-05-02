@@ -2,10 +2,12 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { RotatingLines } from 'react-loader-spinner'
 import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { BotInfoInterface, ChatForm } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -32,6 +34,7 @@ interface Props {
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const [isFirstTest, setIsFirstTest] = useState(start)
+  const [isDeployed, setIsDeployed] = useState(dist?.deployment_state)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
   const { dispatch } = useDisplay()
@@ -39,6 +42,8 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
 
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
+  const deployPanel = dist?.deployment_state == null
+  const awaitDeployPanel = dist?.deployment_state == 'in_progress'
   const cx = classNames.bind(s)
 
   // handlers
@@ -85,7 +90,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  const { deploy } = useDeploy()
+  const handleDeploy = () => {
+    deploy.mutateAsync(dist?.id!)
+  }
   return (
     <div className={s.container}>
       <SidePanelHeader>
@@ -140,7 +148,36 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
             </button>
           </>
         )}
-        {chatPanel && (
+        {awaitDeployPanel && (
+          <div className={s.await}>
+            <RotatingLines
+              strokeColor='grey'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='64'
+              visible={true}
+            />
+            <p className={s.notification}>
+              Please wait till assistant launching
+            </p>
+            <p className={s.notification}>This may take a few minutes.</p>
+          </div>
+        )}
+        {deployPanel && (
+          <div className={s.deployPanel}>
+            <div className={s.text}>
+              <h5 className={s.notification}>Chat with AI Assistant</h5>
+              <p className={s.annotation}>
+                In order to start chat with AI Assistant, it is necessary to
+                build it
+              </p>
+            </div>
+            <Button theme='primary' props={{ onClick: handleDeploy }}>
+              Build Assistant
+            </Button>
+          </div>
+        )}
+        {!awaitDeployPanel && !deployPanel && chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
               {history?.map(

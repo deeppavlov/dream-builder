@@ -84,9 +84,9 @@ export const useAssistants = () => {
       return publishAssistantDist(variables.distName, variables.visibility)
     },
     onSuccess: (_, variables) => {
-      
       variables.visibility == 'public_template' &&
         queryClient.invalidateQueries({ queryKey: 'privateDists' })
+      queryClient.invalidateQueries({ queryKey: 'publicDists' })
       variables.visibility == 'private' &&
         queryClient.invalidateQueries({ queryKey: 'publicDists' })
       queryClient.invalidateQueries({

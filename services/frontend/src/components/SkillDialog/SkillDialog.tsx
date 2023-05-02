@@ -1,93 +1,166 @@
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
-import { DEBUG_DIST } from '../../constants/constants'
+import { DEBUG_DIST, OPEN_AI_LM } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
-import { ChatForm, SkillDialogProps } from '../../types/types'
+import { ChatForm, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
-import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
+import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import { checkOpenAiType } from '../SkillPromptModal/SkillPromptModal'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-export type ChatHistory = { text: string; author: 'bot' | 'me' }
+type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name'
 
-const OPEN_AI = 'OpenAI'
+interface IDialogError {
+  type: TDialogError
+  msg: string
+}
 
-const SkillDialog: FC<SkillDialogProps> = ({
-  dist,
-  debug,
-  lm_service,
-  prompt,
-}) => {
+interface Props {
+  isDebug: boolean
+  distName: string | undefined
+  skill?: ISkill | null
+}
+
+const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const { send, renew, session, message, history } = useChat()
-  const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const chatRef = useRef<HTMLUListElement>(null)
   const { data: user } = useQuery(['user'], () => getUserId())
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const [error, setError] = useState<IDialogError | null>(null)
+  const [isChecking, setIsChecking] = useState(false)
+  const [apiKey, setApiKey] = useState<string | null>(null)
+  const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-  const isOpenAi = checkOpenAiType(lm_service?.name || '')
-  const api_token = getLSApiKeyByName(user?.id, OPEN_AI)
-  const isApiToken =
-    api_token !== null && api_token !== undefined && api_token.length > 0
-  const isError = isOpenAi && !isApiToken
+
+  const renewDialogSession = () => {
+    const isDistName = distName !== undefined && distName?.length > 0
+
+    if (!isDistName && !isDebug)
+      return setError({
+        type: 'dist-name',
+        msg: 'The name of the assistant was not found.',
+      })
+
+    renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {
+      onSuccess: () =>
+        console.log('A new dialog session was successfully created!'),
+    })
+  }
+
+  const checkIsChatSettings = () => {
+    console.log('Start checking dialog settings...')
+    setError(null)
+    const isLMServiceId = skill?.lm_service?.id !== undefined
+    const isPrompt = skill?.prompt !== undefined
+    const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
+
+    if (skillHasOpenAiLM) {
+      const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+      const isApiKey =
+        openaiApiKey !== null &&
+        openaiApiKey !== undefined &&
+        openaiApiKey.length > 0
+
+      if (!isApiKey) {
+        setError({
+          type: 'api-key',
+          msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
+        })
+        return false
+      }
+
+      setApiKey(openaiApiKey)
+    }
+    if (!isLMServiceId) {
+      setError({
+        type: 'lm-service',
+        msg: `Select one of the available Generative models in the ${skill?.name} editor to run your Generative AI Skill`,
+      })
+      return false
+    }
+    if (!isPrompt) {
+      setError({
+        type: 'prompt',
+        msg: `Enter your prompt in the ${skill?.name} editor to run your Generative AI Skill`,
+      })
+      return false
+    }
+
+    return true
+  }
 
   // handlers
-  const handleSend = (data: ChatForm) => {
-    const id = session?.id!
-    const message = data?.message!
+  const handleSend = ({ message }: ChatForm) => {
+    const isChatSettings = checkIsChatSettings()
+
+    if (!isChatSettings) return
 
     send.mutate({
-      dialog_session_id: id,
+      dialog_session_id: session?.id!,
       text: message,
-      lm_service_id: lm_service?.id,
-      prompt,
-      openai_api_key: api_token ?? undefined,
+      lm_service_id: skill?.lm_service?.id,
+      prompt: skill?.prompt,
+      openai_api_key: apiKey ?? undefined,
     })
+
     reset()
   }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
-  const handleRenewClick = () => {
-    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+
+  const handleRenewClick = () => renewDialogSession()
+
+  const handleRetryBtnClick = () => {
+    setIsChecking(true)
+    setTimeout(() => {
+      checkIsChatSettings()
+      setIsChecking(false)
+    }, 1000)
   }
 
   // hooks
-  useOnlyOnMount(() => renew.mutateAsync(debug ? DEBUG_DIST : dist?.name))
+  useOnlyOnMount(() => renewDialogSession())
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
+  useEffect(() => {
+    checkIsChatSettings()
+  }, [skill])
 
   return (
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={cx('dialog', isError && 'error')}
+      className={cx('dialog', error && 'error')}
     >
-      {isError && (
+      {error && (
         <>
           <span className={s.alertName}>Error!</span>
-          <p className={s.alertDesc}>
-            {!isApiToken &&
-              'Enter your personal access token for OpenAI to run your Generative AI Skill'}
-          </p>
-          {!isApiToken && (
+          <p className={s.alertDesc}>{error.msg}</p>
+          {error.type === 'api-key' && (
             <Link className={s.link} to={RoutesList.profile}>
               Enter your personal access token here
             </Link>
           )}
-          <button>Try again</button>
+          <Button
+            theme='error'
+            props={{ disabled: isChecking, onClick: handleRetryBtnClick }}
+          >
+            Try again
+          </Button>
         </>
       )}
-      {!isError && (
+      {!error && (
         <>
           <div className={s.container}>
             <ul ref={chatRef} className={s.chat}>

@@ -65,7 +65,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   }
   const handleEditClick = (e: React.MouseEvent) => {
     if (skill.component_type === ('Generative' as any)) {
-      // trigger('SkillPromptModal', { skill, action: 'edit' })
+      // trigger('SkillPromptModal', { skill })
       // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       nav(
         generatePath(RoutesList.editor.skillEditor, {

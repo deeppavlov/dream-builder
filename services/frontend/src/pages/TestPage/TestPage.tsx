@@ -478,22 +478,13 @@ export const TestPage = () => {
         </div>
         <div className={s.testPage__component}>
           <span>SkillPromptModal</span>
-          <Button
-            theme='primary'
-            props={{
-              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
-            }}
-          >
+          <Button theme='primary' props={{ onClick: () => {} }}>
             SkillPromptModal (add)
           </Button>
           <Button
             theme='primary'
             props={{
-              onClick: () =>
-                trigger('SkillPromptModal', {
-                  action: 'edit',
-                  skill: mockSkill,
-                }),
+              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
             }}
           >
             SkillPromptModal (edit)

@@ -173,14 +173,7 @@ export interface SessionConfig {
   virtual_assistant_id: number
 }
 
-export interface SkillDialogProps {
-  error?: boolean
-  debug: boolean
-  chatWith: ChatPanelType
-  dist: BotInfoInterface
-  lm_service: LM_Service
-  prompt: string
-}
+export type ChatHistory = { text: string; author: 'bot' | 'me' }
 
 export type Message = { message: string }
 export type ChatPanelType = 'bot' | 'skill'

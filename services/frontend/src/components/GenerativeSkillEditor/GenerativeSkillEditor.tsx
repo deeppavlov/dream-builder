@@ -32,7 +32,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
     prompt?.match(/\S+/g)?.length || 0
 
   const triggerEditModal = () => {
-    trigger('SkillPromptModal', { skill, action: 'edit' })
+    trigger('SkillPromptModal', { skill })
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 

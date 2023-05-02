@@ -50,7 +50,12 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    triggerSkillSidePanel({ skill, type, activeTab: 'Properties', isOpen: !isActive })
+    triggerSkillSidePanel({
+      skill,
+      type,
+      activeTab: 'Properties',
+      isOpen: !isActive,
+    })
   }
 
   const handleAddSkillBtnClick = (e: React.MouseEvent) => {
@@ -60,8 +65,6 @@ export const SkillCard: FC<SkillCardProps> = ({
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
     if (skill.component_type === ('Generative' as any)) {
-      // trigger('SkillPromptModal', { skill, action: 'edit' })
-      // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name: distRoutingName as string,

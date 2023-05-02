@@ -25,3 +25,6 @@ export const getLSApiKeyByName = (
     )?.[0]?.token_value ?? null
   )
 }
+
+export const checkLMIsOpenAi = (name: string) =>
+  new RegExp('\\b' + 'openai-api' + '\\b').test(name)

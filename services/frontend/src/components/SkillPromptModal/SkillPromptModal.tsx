@@ -11,12 +11,11 @@ import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import { getGenerativeConf } from '../../services/getGenerativeConf'
 import {
   IPatchComponentParams,
   patchComponent,
 } from '../../services/patchComponent'
-import { ISkill } from '../../types/types'
+import { ISkill, LM_Service } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
@@ -30,18 +29,7 @@ import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
 
-type TAction = 'create' | 'edit'
-interface LM {
-  name: string
-  display_name: string
-  description: string
-  max_tokens: number
-  size: string
-  project_url: string
-  id: number
-}
 interface Props {
-  action?: TAction
   skill?: ISkill
   isOpen?: boolean
 }
@@ -51,17 +39,16 @@ interface FormValues {
   prompt: string
 }
 
-export const checkOpenAiType = (name: string) =>
-  new RegExp('\\b' + 'openai-api' + '\\b').test(name)
+
 
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [action, setAction] = useState<TAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
-  const [selectedService, setSelectedService] = useState<LM | null>(null)
+  const [selectedService, setSelectedService] = useState<LM_Service | null>(
+    null
+  )
   const queryClient = useQueryClient()
   const { options, dispatch } = useDisplay()
-  const dist = options.get(consts.ACTIVE_ASSISTANT)
   const { name: distName } = useParams()
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
@@ -70,16 +57,16 @@ const SkillPromptModal = () => {
 
   const updatComponent = useMutation({
     mutationFn: (variables: IPatchComponentParams) => patchComponent(variables),
-    onSuccess: () => queryClient.invalidateQueries('conf'),
+    onSuccess: () => queryClient.invalidateQueries('components'),
   })
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
     refetchOnWindowFocus: false,
   })
 
-  const createMap = (array: LM[]) => {
-    const map = new Map<string, LM>()
-    array?.forEach((object: LM) => {
+  const createMap = (array: LM_Service[]) => {
+    const map = new Map<string, LM_Service>()
+    array?.forEach((object: LM_Service) => {
       const { display_name } = object
       map.set(display_name, { ...object })
     })
@@ -89,7 +76,7 @@ const SkillPromptModal = () => {
   const servicesList = createMap(services)
   const dropboxArray =
     services
-      ?.map((service: LM) => ({
+      ?.map((service: LM_Service) => ({
         id: service?.name,
         name: service?.display_name,
       }))
@@ -101,14 +88,14 @@ const SkillPromptModal = () => {
         },
       ]) || []
 
-  const { data: conf } = useQuery(
-    ['conf', skill?.component_id],
-    () => getGenerativeConf(skill?.component_id as number),
-    {
-      refetchOnWindowFocus: false,
-      enabled: skill?.component_id !== undefined,
-    }
-  )
+  // const { data: conf } = useQuery(
+  //   ['conf', skill?.component_id],
+  //   () => getGenerativeConf(skill?.component_id as number),
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     enabled: skill?.component_id !== undefined,
+  //   }
+  // )
 
   const {
     handleSubmit,
@@ -121,8 +108,8 @@ const SkillPromptModal = () => {
   } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
-      model: conf?.lm_service?.display_name,
-      prompt: conf?.prompt,
+      model: skill?.lm_service?.display_name,
+      prompt: skill?.prompt,
     },
   })
   const model = getValues().model
@@ -132,7 +119,6 @@ const SkillPromptModal = () => {
 
   const clearStates = () => {
     setIsOpen(false)
-    setAction(null)
     setSkill(null)
     nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
   }
@@ -143,44 +129,43 @@ const SkillPromptModal = () => {
   }
 
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill, action } = data.detail
+    const { skill } = data.detail
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
 
     if (isRequestToClose) {
       setIsOpen(false)
-      setAction(null)
       setSkill(null)
       return
     }
 
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-    setAction(action ?? 'create')
     setSkill(skill ?? null)
-    // reset(
-    //   {
-    //     model: skill?.model,
-    //     prompt: skill?.prompt,
-    //   },
-    //   { keepDirty: false }
-    // )
-    setIsOpen(prev => !prev)
+    reset(
+      {
+        model: skill?.lm_service?.display_name,
+        prompt: skill?.prompt,
+      },
+      { keepDirty: false }
+    )
+
+    setIsOpen(prev => {
+      if (data.detail.isOpen && prev) return prev
+      return !prev
+    })
   }
 
-  const handleCreate = ({ model, prompt }: FormValues) => {
-    trigger('CreateSkillDistModal', { ...skill, ...{ model, prompt } })
+  const handleSave = async (data: FormValues) => {
+    toast.promise(update.mutateAsync(data), {
+      loading: 'Saving...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
+    trigger('RenewChat', {})
   }
 
   const onFormSubmit = (data: FormValues) => {
-    if (action === 'create') {
-      handleCreate(data)
-      return
-    }
-
-    // For prompt & model editing
-    if (action === 'edit' && isDirty) {
-      handleSaveAndTest(data)
-    }
+    if (isDirty) handleSave(data)
   }
 
   const postServiceAndPrompt = async ({ prompt, model }: FormValues) => {
@@ -203,40 +188,24 @@ const SkillPromptModal = () => {
     mutationFn: (data: FormValues) => postServiceAndPrompt(data),
   })
 
-  async function handleSaveAndTest(data: FormValues) {
-    toast.promise(update.mutateAsync(data), {
-      loading: 'Saving...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
-    trigger('RenewChat', {})
-  }
-
   useObserver('SkillPromptModal', handleEventUpdate)
 
   // Update selected LM for TextArea tokenizer
   useEffect(() => {
-    const currentSelectedSerivce = services?.find(
-      (s: LM) => s?.display_name === model
+    setSelectedService(
+      services?.find((s: LM_Service) => s?.display_name === model)
     )
-    if (checkOpenAiType(currentSelectedSerivce?.name)) {
-      console.log('selected openai service')
-      // return trigger('ApiTokenErrorModal', {
-      //   detail: { errorType: 'not-vaid' },
-      // })
-    }
-    setSelectedService(services?.find((s: LM) => s?.display_name === model))
   }, [watch(['model'])])
 
   useEffect(() => {
     reset(
       {
-        model: conf?.lm_service?.display_name,
-        prompt: conf?.prompt,
+        model: skill?.lm_service?.display_name,
+        prompt: skill?.prompt,
       },
       { keepDirty: false }
     )
-  }, [conf])
+  }, [skill])
 
   useEffect(() => {
     dispatch({
@@ -305,13 +274,13 @@ const SkillPromptModal = () => {
                     name='model'
                     control={control}
                     rules={{ required: true }}
-                    defaultValue={conf?.lm_service?.display_name}
+                    defaultValue={skill?.lm_service?.display_name}
                     label='Generative model:'
                     list={dropboxArray}
                     props={{ placeholder: 'Choose model' }}
                     fullWidth
                   />
-                  {conf?.lm_service?.display_name && (
+                  {skill?.lm_service?.display_name && (
                     <div>
                       <Accordion
                         title='Model Details:'
@@ -337,7 +306,7 @@ const SkillPromptModal = () => {
                   label='Enter prompt:'
                   countType='tokenizer'
                   tokenizerModel={selectedService?.display_name as any}
-                  defaultValue={conf?.prompt}
+                  defaultValue={skill?.prompt}
                   withCounter
                   fullHeight
                   resizable={false}
@@ -349,7 +318,6 @@ const SkillPromptModal = () => {
                       validationSchema.skill.prompt.maxLength(
                         selectedService?.max_tokens
                       ),
-                    // pattern: validationSchema.global.regExpPattern,
                   }}
                   setError={setError}
                   props={{
@@ -378,14 +346,7 @@ const SkillPromptModal = () => {
             </form>
 
             <div className={s.dialog}>
-              <SkillDialog
-                debug
-                chatWith={'skill'}
-                dist={dist}
-                lm_service={conf?.lm_service}
-                prompt={conf?.prompt}
-                // error={}
-              />
+              <SkillDialog isDebug distName={distName} skill={skill} />
             </div>
           </div>
         </Wrapper>

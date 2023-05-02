@@ -47,7 +47,9 @@ export const EditorPage = () => {
     }
   )
 
-  const skills = components?.data?.skills
+  const skillById = components?.data?.skills?.find(
+    (s: any) => s?.name === skillId
+  )
 
   useEffect(() => {
     // Setting mode to Preview by default
@@ -59,15 +61,17 @@ export const EditorPage = () => {
 
   // TODO: FIX
   useEffect(() => {
-    if (skillId && skills) {
-      return trigger('SkillPromptModal', {
-        action: 'edit',
-        skill: skills?.find((s: any) => s?.name === skillId),
-      })
+    if (skillId && skillById && !skillEditorIsActive) {
+      return trigger('SkillPromptModal', { skill: skillById })
     }
 
-    if (skillEditorIsActive) trigger('SkillPromptModal', { isOpen: false })
-  }, [skillId, skills])
+    if (skillId && skillById && skillEditorIsActive) {
+      return trigger('SkillPromptModal', { isOpen: true, skill: skillById })
+    }
+
+    if (skillId === undefined && skillEditorIsActive)
+      trigger('SkillPromptModal', { isOpen: false })
+  }, [skillId, skillById])
 
   useEffect(() => {
     dispatch({

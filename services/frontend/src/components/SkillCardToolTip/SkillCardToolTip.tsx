@@ -14,7 +14,7 @@ interface Props {
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   // const handleEditBtnClick = () => {
   //   if (skill.component_type === 'Generative') {
-  //     trigger('SkillPromptModal', { skill, action: 'edit' })
+  //     trigger('SkillPromptModal', { skill })
   //     return
   //   }
 

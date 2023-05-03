@@ -43,6 +43,8 @@ export interface IAuthor {
   sub: string
 }
 
+export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
+
 export interface BotInfoInterface {
   id: number
   name: string
@@ -53,7 +55,7 @@ export interface BotInfoInterface {
   ram_usage: string
   gpu_usage: string
   disk_usage: string
-  visibility: 'unlisted' | 'private' | 'public_template'
+  visibility: TDistVisibility
   publish_state: null | 'confirmed' | 'in_progress'
   deployment_state:
     | null

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
 import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
 
@@ -23,9 +23,9 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
-        <BotInfoSidePanel
+        <AssistantSidePanel
           key={bot.id}
-          bot={bot}
+          name={bot.name}
           disabled={!auth?.user}
           type={type}
         />
@@ -74,7 +74,6 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
       {type == 'your' && (
         <>
           <ContextMenuButton
-            
             name='Chat With Bot'
             type='chat'
             handleClick={handleChatClick}

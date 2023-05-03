@@ -11,9 +11,9 @@ import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { timeToUTC } from '../../utils/timeToUTC'
+import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import s from './BotListItem.module.scss'
 
 interface BotListItemProps {
@@ -37,10 +37,10 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
       children: (
-        <BotInfoSidePanel
+        <AssistantSidePanel
           type={type}
           key={bot?.id}
-          bot={bot}
+          name={bot.name}
           disabled={disabled}
         />
       ),

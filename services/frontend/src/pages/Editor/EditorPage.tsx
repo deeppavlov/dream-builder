@@ -33,8 +33,8 @@ export const EditorPage = () => {
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const { name, skillId } = useParams()
   const { setIsPreview } = usePreview()
-  const { loadDist } = useAssistants()
-  const dist = name ? loadDist(name).data : null
+  const { getDist } = useAssistants()
+  const dist = name ? getDist(name).data : null
 
   const components = useQuery(
     ['components', name],

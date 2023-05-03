@@ -3,6 +3,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -17,14 +18,13 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const { loadPrivateDists } = useAssistants()
-  const privateDists = loadPrivateDists()
+  const { fetchPrivateDists } = useAssistants()
+  const privateDists = fetchPrivateDists()
 
   return (
     <>

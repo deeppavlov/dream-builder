@@ -1,9 +1,9 @@
-import { privateApi } from './axiosConfig'
 import { PostDistParams } from '../types/types'
+import { privateApi } from './axiosConfig'
 
 export async function cloneAssistantDist(
-  params: PostDistParams,
-  dist_name: string
+  dist_name: string,
+  params: PostDistParams
 ) {
   try {
     const { data } = await privateApi.post(

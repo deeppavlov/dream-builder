@@ -1,108 +1,133 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
-import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthProvider'
+import { RoutesList } from '../router/RoutesList'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
-import { getDist } from '../services/getDist'
+import { getDist as fetchDist } from '../services/getDist'
 import { getPrivateDists } from '../services/getPrivateDists'
 import { getPublicDists } from '../services/getPublicDists'
 import { postAssistantDist } from '../services/postAssistanDist'
 import { publishAssistantDist } from '../services/publishUsersAssistantDist'
 import { renameAssistantDist } from '../services/renameAssistantDist'
-import { AssistantFormValues } from '../types/types'
-import { trigger } from '../utils/events'
+import {
+  AssistantFormValues,
+  BotInfoInterface,
+  TDistVisibility,
+} from '../types/types'
+
+interface IChangeVisibility {
+  name: string
+  visibility: TDistVisibility
+}
+
+interface IClone {
+  name: string
+  data: AssistantFormValues
+}
+
+interface IRename extends IClone {}
 
 export const useAssistants = () => {
   const auth = useAuth()
+  const userIsAuthorized = !!auth?.user
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const PUBLIC_DISTS = 'publicDists'
+  const PRIVATE_DISTS = 'privateDists'
+  const DIST = 'dist'
 
-  const loadPublicDists = () =>
-    useQuery('publicDists', getPublicDists, {
-      enabled: !Boolean(name),
-    })
+  const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicDists)
 
-  const loadPrivateDists = () =>
-    useQuery('privateDists', getPrivateDists, {
-      enabled: !!auth?.user && !Boolean(name),
-    })
+  const fetchPrivateDists = () =>
+    useQuery(PRIVATE_DISTS, getPrivateDists, { enabled: userIsAuthorized })
 
-  const loadDist = (distName: string) =>
-    useQuery(['dist', distName], () => getDist(distName || ''), {
+  const getDist = (name: string) =>
+    useQuery({
+      queryKey: ['dist', name],
+      queryFn: () => fetchDist(name),
+      refetchOnMount: false,
       refetchOnWindowFocus: false,
-      enabled: distName?.length! > 0,
+      initialData: () => getFetchedDist(name),
     })
 
   const rename = useMutation({
-    mutationFn: (variables: { data: AssistantFormValues; name: string }) => {
-      return renameAssistantDist(variables?.name, variables?.data)
+    mutationFn: ({ name, data }: IRename) => renameAssistantDist(name, data),
+    onSuccess: (dist: BotInfoInterface) => {
+      updatePrivateDist(dist.name, dist)
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: 'privateDists' }),
   })
 
   const clone = useMutation({
-    mutationFn: (variables: { data: AssistantFormValues; name: string }) => {
-      return cloneAssistantDist(variables?.data, variables?.name)
+    mutationFn: ({ name, data }: IClone) => cloneAssistantDist(name, data),
+    onSuccess: (dist: BotInfoInterface) => {
+      updatePrivateDist(dist.name, dist)
+      navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
-    onSuccess: data =>
-      queryClient
-        .invalidateQueries({ queryKey: 'privateDists' })
-        .then(() => {
-          navigate(`/${data?.name}`, {
-            state: {
-              preview: false,
-              distName: data?.name,
-              displayName: data?.display_name,
-            },
-          })
-        })
-        .finally(() => {
-          trigger('AssistantModal', { isOpen: false })
-          trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-        }),
   })
 
   const create = useMutation({
-    mutationFn: (data: AssistantFormValues) => {
-      return postAssistantDist(data)
+    mutationFn: (data: AssistantFormValues) => postAssistantDist(data),
+    onSuccess: (dist: BotInfoInterface) => {
+      updatePrivateDist(dist.name, dist)
+      navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
-    onSuccess: data =>
-      queryClient.invalidateQueries({ queryKey: 'privateDists' }).then(() => {
-        navigate(`/${data?.name}`, {
-          state: {
-            preview: false,
-            distName: data?.name,
-            displayName: data?.display_name,
-          },
+  })
+
+  const changeVisibility = useMutation({
+    mutationFn: ({ name, visibility }: IChangeVisibility) =>
+      publishAssistantDist(name, visibility),
+    onSuccess: (_, { name, visibility }) => {
+      updatePrivateDist(name, { visibility })
+    },
+  })
+
+  const updatePrivateDist = (
+    name: string,
+    newDist: Partial<BotInfoInterface>
+  ) => {
+    queryClient.setQueryData<BotInfoInterface[] | undefined>(
+      [PRIVATE_DISTS],
+      old =>
+        old &&
+        old.map(dist => {
+          console.log(Object.assign({}, dist, newDist))
+          return dist.name === name ? Object.assign({}, dist, newDist) : dist
         })
-      }),
-  })
+    )
 
-  const visibilityType = useMutation({
-    mutationFn: (variables: { distName: string; visibility: string }) => {
-      return publishAssistantDist(variables.distName, variables.visibility)
-    },
-    onSuccess: (_, variables) => {
-      variables.visibility == 'public_template' &&
-        queryClient.invalidateQueries({ queryKey: 'privateDists' })
-      queryClient.invalidateQueries({ queryKey: 'publicDists' })
-      variables.visibility == 'private' &&
-        queryClient.invalidateQueries({ queryKey: 'publicDists' })
-      queryClient.invalidateQueries({
-        queryKey: 'privateDists',
-      })
+    const isCachedDist = queryClient.getQueryData([DIST, name]) !== undefined
+    if (isCachedDist)
+      queryClient.setQueryData<BotInfoInterface | undefined>(
+        [DIST, name],
+        old => old && Object.assign({}, old, newDist)
+      )
+  }
 
-      variables.visibility == 'unlisted' &&
-        queryClient.invalidateQueries({ queryKey: 'privateDists' })
-    },
-  })
+  const getFetchedDist = (name: string) => {
+    const publicDists =
+      queryClient.getQueryData<BotInfoInterface[] | undefined>([
+        PUBLIC_DISTS,
+      ]) || []
+    const privateDists =
+      queryClient.getQueryData<BotInfoInterface[] | undefined>([
+        PRIVATE_DISTS,
+      ]) || []
+    const dist = queryClient.getQueryData<BotInfoInterface | undefined>([
+      DIST,
+      name,
+    ])
+    const result = [dist, ...publicDists, ...privateDists]?.find(
+      dist => dist?.name === name
+    )
+
+    return result
+  }
 
   return {
-    loadPublicDists,
-    loadPrivateDists,
-    loadDist,
-    visibilityType,
+    fetchPublicDists,
+    fetchPrivateDists,
+    getDist,
+    changeVisibility,
     rename,
     create,
     clone,

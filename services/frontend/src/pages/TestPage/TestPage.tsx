@@ -8,10 +8,10 @@ import {
   TRIGGER_RIGHT_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import { BotCard } from '../../components/BotCard/BotCard'
-import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import { CopilotSidePanel } from '../../components/CopilotSidePanel/CopilotSidePanel'
 
+import DumbAssistantSP from '../../components/AssistantSidePanel/DumbAssitantSP'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
@@ -770,18 +770,24 @@ export const TestPage = () => {
           </Button>
         </div>
         <div className={s.testPage__component}>
-          <span>BotInfoSidePanel</span>
+          <span>DumbAssistantSP (UI)</span>
           <Button
             theme='primary'
             props={{
               onClick: () => {
                 trigger(TRIGGER_RIGHT_SP_EVENT, {
-                  children: <BotInfoSidePanel bot={mockBot} disabled={false} />,
+                  children: (
+                    <DumbAssistantSP
+                      bot={mockBot}
+                      disabled={false}
+                      type='your'
+                    />
+                  ),
                 })
               },
             }}
           >
-            BotInfoSidePanel
+            DumbAssistantSP
           </Button>
         </div>
         <div className={s.testPage__component}>

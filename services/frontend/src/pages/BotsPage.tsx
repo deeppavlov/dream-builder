@@ -3,6 +3,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -22,15 +23,14 @@ import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const BotsPage = () => {
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
   const auth = useAuth()
-  const { loadPublicDists, loadPrivateDists } = useAssistants()
-  const publicDists = loadPublicDists()
-  const privateDists = loadPrivateDists()
+  const { fetchPublicDists, fetchPrivateDists } = useAssistants()
+  const publicDists = fetchPublicDists()
+  const privateDists = fetchPrivateDists()
 
   return (
     <>
@@ -120,7 +120,7 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
-        <DeployModalNotification/>
+        <DeployModalNotification />
       </Main>
       <Toaster />
     </>

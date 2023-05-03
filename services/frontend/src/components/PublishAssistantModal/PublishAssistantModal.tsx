@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface } from '../../types/types'
+import { BotInfoInterface, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
@@ -22,7 +22,7 @@ export const PublishAssistantModal = () => {
 
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
-  const { visibilityType } = useAssistants()
+  const { changeVisibility } = useAssistants()
   const currentVisibilityStatus = bot?.visibility
 
   const handleEventUpdate = (data: { detail: any }) => {
@@ -34,12 +34,12 @@ export const PublishAssistantModal = () => {
 
   const handlePublish = (data: FormValues) => {
     const visibility = data?.visibility!
-    const distName = bot?.name!
-    
+    const name = bot?.name!
+
     visibility !== currentVisibilityStatus ||
     bot?.publish_state == 'in_progress'
       ? toast
-          .promise(visibilityType.mutateAsync({ distName, visibility }), {
+          .promise(changeVisibility.mutateAsync({ name, visibility }), {
             loading: 'Loading...',
             success:
               visibility === 'public_template'
@@ -99,7 +99,7 @@ export const PublishAssistantModal = () => {
                       ...register('visibility'),
                       defaultChecked: type?.response === bot?.visibility,
                       onChange: e => {
-                        setNewValue(e?.currentTarget?.value)
+                        setNewValue(e?.currentTarget?.value as TDistVisibility)
                       },
                     }}
                     key={id}
@@ -122,7 +122,7 @@ export const PublishAssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
-                disabled: visibilityType?.isLoading,
+                disabled: changeVisibility?.isLoading,
               }}
             >
               {newValue === 'public_template' ? 'Publish' : ' Save'}

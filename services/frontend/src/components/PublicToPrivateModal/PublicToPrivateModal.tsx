@@ -22,15 +22,15 @@ export const PublicToPrivateModal = () => {
     setIsOpen(!isOpen)
   }
 
-  const { visibilityType } = useAssistants()
+  const { changeVisibility } = useAssistants()
   const handleCancelClick = () => setIsOpen(false)
 
   const handleYesClick = () => {
-    const distName = bot?.name!
+    const name = bot?.name!
     const visibility = 'private'
     action === 'edit' &&
-      visibilityType
-        .mutateAsync({ distName, visibility })
+      changeVisibility
+        .mutateAsync({ name, visibility })
         .then(() => {
           setIsOpen(false)
         })
@@ -44,8 +44,8 @@ export const PublicToPrivateModal = () => {
           })
         })
     action === 'rename' &&
-      visibilityType
-        .mutateAsync({ distName, visibility })
+      changeVisibility
+        .mutateAsync({ name, visibility })
         .then(() => {
           setIsOpen(false)
         })

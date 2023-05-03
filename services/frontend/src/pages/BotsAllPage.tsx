@@ -2,6 +2,7 @@ import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -13,11 +14,10 @@ import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const BotsAllPage = () => {
-  const { loadPublicDists } = useAssistants()
-  const publicDists = loadPublicDists()
+  const { fetchPublicDists } = useAssistants()
+  const publicDists = fetchPublicDists()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 

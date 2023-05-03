@@ -10,11 +10,11 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
+import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { Badge } from '../Badge/Badge'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotCard.module.scss'
 
@@ -33,10 +33,10 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
       children: (
-        <BotInfoSidePanel
+        <AssistantSidePanel
           type={type}
           key={bot?.id}
-          bot={bot}
+          name={bot.name}
           disabled={disabled}
         />
       ),

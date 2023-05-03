@@ -137,3 +137,8 @@ async def delete_stack(stack_id: int):
         swarm_client.delete_stack(stack_id)
     except requests.exceptions.HTTPError as e:
         raise HTTPException(500, detail=repr(e))
+
+
+@deployments_router.get("/stack_ports")
+async def get_stack_ports():
+    return swarm_client.get_used_ports()

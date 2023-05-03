@@ -26,7 +26,17 @@ class UserRead(BaseOrmModel):
     family_name: Optional[str]
 
 
-class VirtualAssistantRead(BaseOrmModel):
+class DeploymentBaseRead(BaseOrmModel):
+    id: int
+    chat_host: str
+    chat_port: int
+    date_created: datetime
+    state: Optional[str]
+    error: Optional[dict]
+    date_state_updated: Optional[datetime]
+
+
+class VirtualAssistantBaseRead(BaseOrmModel):
     id: int
     author: UserRead
     source: str
@@ -36,8 +46,6 @@ class VirtualAssistantRead(BaseOrmModel):
     date_created: datetime
     visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
     publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
-    deployment_state: Optional[str]
-    deployment_error: Optional[dict]
     cloned_from_id: Optional[int]
     # clones: List[VirtualAssistant]
 
@@ -57,13 +65,11 @@ class VirtualAssistantRead(BaseOrmModel):
             obj.visibility = "private"
             obj.publish_state = None
 
-        try:
-            obj.deployment_state = obj.deployment.state
-            obj.deployment_error = obj.deployment.error
-        except AttributeError:
-            obj.deployment_state = obj.deployment_error = None
-
         return super().from_orm(obj)
+
+
+class VirtualAssistantRead(VirtualAssistantBaseRead):
+    deployment: Optional[DeploymentBaseRead]
 
 
 class VirtualAssistantCreate(BaseModel):
@@ -209,14 +215,8 @@ class CreateTokenResponse(BaseModel):
     token_value: str
 
 
-class DeploymentRead(BaseOrmModel):
-    id: int
-    virtual_assistant: VirtualAssistantRead
-    chat_host: str
-    chat_port: int
-    date_created: datetime
-    state: Optional[str]
-    date_state_updated: Optional[datetime]
+class DeploymentRead(DeploymentBaseRead):
+    virtual_assistant: VirtualAssistantBaseRead
 
 
 class DeploymentCreate(BaseModel):

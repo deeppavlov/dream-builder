@@ -53,18 +53,18 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
         default_prefix=settings.deployer.default_prefix,
     )
 
-    for state, err in deployer.deploy(dist):
+    for state, updates, err in deployer.deploy(dist):
         db = next(get_db())
         with db.begin():
             if err:
-                err = dict(err)
+                err = err.dict()
                 logger.error(
                     f"Deployment background task for {dist.name} failed after {datetime.now() - now} with {err}"
                 )
             else:
                 logger.info(f"Deployment background task state changed to {state}")
 
-            crud.update_deployment(db, deployment_id, state=state, error=err)
+            crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
@@ -122,6 +122,11 @@ async def delete_deployment(
     deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
+        deployment = crud.get_deployment(db, deployment_id)
+
+        if deployment.stack_id:
+            swarm_client.delete_stack(deployment.stack_id)
+
         crud.delete_deployment(db, deployment_id)
 
 

@@ -6,15 +6,10 @@ import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { ISkill } from '../../types/types'
-import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { srcForIcons } from '../../utils/srcForIcons'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './SkillSidePanel.module.scss'
 
 interface Props {
@@ -44,20 +39,23 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
           : [[properties, { name: properties }]]
       ),
   })
-  const nameForComponentType = componentTypeMap[skill?.component_type!]
-  const nameForModelType = modelTypeMap[skill?.model_type!]
-  const srcForComponentType = srcForIcons(nameForComponentType)
-  const srcForModelType = srcForIcons(nameForModelType)
+  // const nameForComponentType = componentTypeMap[skill?.component_type!]
+  // const nameForModelType = modelTypeMap[skill?.model_type!]
+  // const srcForComponentType = srcForIcons(nameForComponentType)
+  // const srcForModelType = srcForIcons(nameForModelType)
   let cx = classNames.bind(s)
 
   const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+
+  const handleRenameBtnClick = () =>
+    trigger('SkillModal', { action: 'edit', skill })
 
   const dispatchTrigger = (isOpen: boolean) =>
     dispatch({
       type: 'set',
       option: {
         id: consts.ACTIVE_SKILL_SP_ID,
-        value: isOpen ? skill.name : null,
+        value: isOpen ? skill.id : null,
       },
     })
 
@@ -65,7 +63,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  
+
   return (
     <>
       <SidePanelHeader>
@@ -87,7 +85,13 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
             <span className={s.name}>{skill?.display_name}</span>
-            <EditPencilIcon className={s.icon} data-disabled />
+            <button
+              disabled={!skill?.is_customizable || isPreview}
+              onClick={handleRenameBtnClick}
+              className={s['rename-btn']}
+            >
+              <EditPencilIcon className={s.icon} />
+            </button>
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (
@@ -108,7 +112,7 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
               <span className={s.value}>{skill?.author?.fullname}</span>
             </li>
 
-            {skill?.component_type && (
+            {/* {skill?.component_type && (
               <li className={s.item}>
                 <span className={cx('table-name')}>Component Type:</span>
                 <span className={cx('value', nameForComponentType)}>
@@ -125,19 +129,21 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
                   {skill?.model_type}
                 </span>
               </span>
-            </li>
+            </li> */}
             <br />
             <li className={s.item}>
-              {skill?.lm_service! && (
+              {skill?.lm_service?.display_name && (
                 <>
                   <span className={cx('table-name')}>Model:</span>
-                  <span className={s.value}>{skill?.lm_service!}</span>
+                  <span className={s.value}>
+                    {skill?.lm_service?.display_name!}
+                  </span>
                 </>
               )}
             </li>
           </ul>
           <p className={s.desc}>{skill?.description}</p>
-          <div className={s.btns}>
+          {/* <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
               <Button
                 theme='primary'
@@ -153,10 +159,11 @@ const SkillSidePanel: FC<Props> = ({ skill, activeTab, tabs, children }) => {
 
           {(isPreview || !auth?.user) && (
             <BaseToolTip
+              delayShow={TOOLTIP_DELAY}
               id={'skillAddTo' + tooltipId}
               content='You need to clone the virtual assistant to edit'
             />
-          )}
+          )} */}
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}

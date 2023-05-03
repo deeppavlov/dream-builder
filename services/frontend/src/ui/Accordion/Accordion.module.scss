@@ -40,6 +40,16 @@
     transform: rotate(180deg);
   }
 
+  &.description {
+    @include t4;
+    padding: 0;
+    padding-right: 16px;
+
+    svg {
+      fill: $text3;
+    }
+  }
+
   svg {
     fill: rgba(0, 0, 0, 0.7);
     transition: ease 0.2s;
@@ -53,4 +63,8 @@
   overflow: hidden;
   max-width: 440px;
   transition: height ease 0.2s;
+
+  &.description {
+    max-width: 100%;
+  }
 }

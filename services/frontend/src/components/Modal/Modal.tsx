@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import BaseModal from '../../ui/BaseModal/BaseModal'
 import { useObserver } from '../../hooks/useObserver'
+import BaseModal from '../../ui/BaseModal/BaseModal'
 import s from './Modal.module.scss'
 
 export const Modal = () => {
@@ -10,7 +10,7 @@ export const Modal = () => {
     setIsOpen(false)
   }
 
-  const handleEventUpdate = () => setIsOpen(!isOpen)
+  const handleEventUpdate = () => setIsOpen(prev => !prev)
 
   useObserver('Modal', handleEventUpdate)
 

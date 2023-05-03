@@ -1,11 +1,12 @@
+import { useQueryClient } from 'react-query'
+import { useNavigate, useParams } from 'react-router-dom'
+import { usePreview } from '../../context/PreviewProvider'
+import { mockSkills } from '../../mocks/database/mockSkills'
+import { RoutesList } from '../../router/RoutesList'
+import { BotInfoInterface, TTopbar } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
-import { mockSkills } from '../../mocks/database/mockSkills'
-import { BotInfoInterface, TTopbar } from '../../types/types'
-import { usePreview } from '../../context/PreviewProvider'
-import { useNavigate } from 'react-router-dom'
-import { RoutesList } from '../../router/RoutesList'
 
 interface Props {
   tooltipId: string
@@ -16,6 +17,9 @@ interface Props {
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
+  const { name: distName } = useParams()
+  const queryState = useQueryClient().getQueryState(['dist', distName])
+  const dist = queryState?.data as BotInfoInterface | undefined
 
   const handleWelcomeClick = () => {
     navigate(RoutesList.profile)
@@ -32,25 +36,17 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const handleDeleteClick = () => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
-  const handleShareClick = () =>
-    trigger('ShareModal', { bot, smthElse: '1234' })
+  const handleShareClick = () => trigger('ShareModal', distName)
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
-      {type === 'main' && (
-        <ContextMenuButton>
-          <a href={'http://deepdream.builders'} target='_blank'>
-            About Dream Builder
-          </a>
-        </ContextMenuButton>
-      )}
+      <ContextMenuButton
+        type='about'
+        linkTo='http://deepdream.builders'
+        name='About'
+      />
       {type === 'editor' && (
         <>
-          <ContextMenuButton type='about'>
-            <a href={'http://deepdream.builders'} target='_blank'>
-              Information about DB
-            </a>
-          </ContextMenuButton>
           <ContextMenuButton
             name='Welcome guide'
             type='properties'
@@ -80,6 +76,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <ContextMenuButton
             name='Share'
             type='share'
+            disabled={dist?.visibility === 'private' || isPreview}
             handleClick={handleShareClick}
           />
           <hr />

@@ -1,33 +1,18 @@
-import { FC, useEffect, useId, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import {
-  BotAvailabilityType,
-  BotInfoInterface,
-  ISkill,
-  StackType,
-} from '../../types/types'
-import { trigger } from '../../utils/events'
-import { capitalizeTitle } from '../../utils/capitalizeTitle'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { getComponents } from '../../services/getComponents'
-import Button from '../../ui/Button/Button'
-import { Accordion } from '../../ui/Accordion/Accordion'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
-import useTabsManager from '../../hooks/useTabsManager'
-import { srcForIcons } from '../../utils/srcForIcons'
-import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { isAnnotator } from '../../utils/isAnnotator'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
-import { Loader } from '../Loader/Loader'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import { dateToUTC } from '../../utils/dateToUTC'
-import { consts } from '../../utils/consts'
-import { SmallTag } from '../SmallTag/SmallTag'
+import { useEffect, useId } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
-import s from './BotInfoSidePanel.module.scss'
+import useTabsManager from '../../hooks/useTabsManager'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import { SmallTag } from '../SmallTag/SmallTag'
+import s from './DumbAssitantSP.module.scss'
 
 interface Props {
   bot: BotInfoInterface
@@ -35,20 +20,14 @@ interface Props {
   type: BotAvailabilityType
 }
 
-const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
-  const [bot, setBot] = useState<BotInfoInterface>(propBot)
+const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
   const [properties] = ['Properties']
   const navigate = useNavigate()
-  const [tabsInfo, setTabsInfo] = useTabsManager({
+  const [tabsInfo] = useTabsManager({
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
   const { dispatch } = useDisplay()
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(['components', bot?.name], () => getComponents(bot?.name!))
   const tooltipId = useId()
 
   const handleCloneBtnClick = () => {
@@ -60,16 +39,6 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     trigger('SignInModal', {})
   }
 
-  const handlePreviewBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.name,
-      },
-    })
-  }
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     navigate(`/${bot?.name}`, {
       state: {
@@ -81,20 +50,21 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
     e.stopPropagation()
   }
 
-  const dispatchTrigger = (isOpen: boolean) =>
+  const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
       type: 'set',
       option: {
         id: consts.ACTIVE_ASSISTANT_SP_ID,
-        value: isOpen ? bot.name : null,
+        value: isOpen ? `info_${bot.id}` : null,
       },
     })
+  }
 
   useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  const onModeration = bot?.publish_state === 'in_progress'
   return (
     <>
       <SidePanelHeader>
@@ -105,7 +75,8 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => tabsInfo.handleTabSelect(id)}>
+              onClick={() => tabsInfo.handleTabSelect(id)}
+            >
               {tab.name}
             </li>
           ))}
@@ -135,15 +106,27 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
               <CalendarIcon />
               {dateToUTC(bot?.date_created)}
             </div>
-            <SmallTag theme={type}>
-              {type === 'your' ? 'Private' : type}
+            <SmallTag
+              theme={
+                bot?.publish_state === 'in_progress'
+                  ? 'validating'
+                  : bot?.visibility
+              }
+            >
+              {!bot?.publish_state
+                ? type === 'your' && bot?.visibility
+                : bot?.publish_state == 'in_progress'
+                ? 'On moderation'
+                : bot?.visibility === 'public_template'
+                ? 'Public Template'
+                : bot?.visibility}
             </SmallTag>
           </div>
         </div>
         <div className={s.scroll}>
           <div className={s.container}>
             <p className={s.desc}>{bot?.description}</p>
-            <div className={s.accordions}>
+            {/* <div className={s.accordions}>
               <Loader isLoading={isComponentsLoading} />
               {components &&
                 Object.keys(components).map((group: string, id: number) => (
@@ -183,7 +166,7 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
                     ))}
                   </Accordion>
                 ))}
-            </div>
+            </div> */}
           </div>
         </div>
         <div className={s.btns}>
@@ -191,11 +174,18 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <>
               <Button
                 theme='secondary'
-                props={{ onClick: handlePreviewBtnClick }}>
-                Preview
+                props={{ 'data-tooltip-id': tooltipId }}
+              >
+                More
               </Button>
+              <BotCardToolTip
+                tooltipId={tooltipId}
+                bot={bot}
+                type={type}
+                inSidePanel
+              />
               <Button theme='primary' props={{ onClick: handleCloneBtnClick }}>
-                Clone
+                Use
               </Button>
             </>
           )}
@@ -203,10 +193,14 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
             <>
               <Button
                 props={{ 'data-tooltip-id': tooltipId }}
-                theme='secondary'>
+                theme='secondary'
+              >
                 More
               </Button>
-              <Button props={{ onClick: handlEditClick }} theme='primary'>
+              <Button
+                props={{ onClick: handlEditClick, disabled: onModeration }}
+                theme='primary'
+              >
                 Edit
               </Button>
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
@@ -218,4 +212,4 @@ const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
   )
 }
 
-export default BotInfoSidePanel
+export default DumbAssistantSP

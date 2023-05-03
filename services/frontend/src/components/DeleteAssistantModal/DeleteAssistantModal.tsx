@@ -39,7 +39,7 @@ export const DeleteAssistantModal = () => {
 
   const handleEventUpdate = (data: { detail: IDeleteAssistantModal }) => {
     setBot(data.detail.bot ?? null)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   const handleCancelBtnClick = () => handleClose()

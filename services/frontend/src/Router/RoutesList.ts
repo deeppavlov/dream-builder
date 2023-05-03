@@ -1,14 +1,21 @@
 export const RoutesList = {
-  distributions: '/distributions',
+  start: '/',
   botsAll: '/allbots',
   yourBots: '/yourbots',
+  profile: '/profile',
+  code: '/code',
+  editor: {
+    default: '/:name',
+    skills: '/:name/skills?',
+    architecture: '/:name/architecture',
+    skillEditor: '/:name/skills/:skillId',
+  },
+  distributions: '/distributions',
   skills: '/skills',
   skillsAll: '/allskills',
   yourSkills: '/yourskills',
+  // Dev routes
   draft: '/draft',
   test: '/test',
-  code: '/code',
-  start: '/',
-  profile: '/profile',
-  editor: '/:name',
+  sandbox: '/sandbox',
 } as const

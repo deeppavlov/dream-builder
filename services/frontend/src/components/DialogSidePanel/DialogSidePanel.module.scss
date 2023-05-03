@@ -97,7 +97,6 @@
     padding: 12px;
     border-radius: 12px 12px 0px 12px;
     width: fit-content;
-    word-break: break-all;
 
     &_bot {
       background: rgba(255, 204, 0, 0.1);
@@ -137,6 +136,9 @@
 }
 .start,
 .error {
+  display: flex;
+  font-display: column;
+  gap: 16px;
   padding: 52px;
   align-items: center;
   justify-content: center;
@@ -149,10 +151,55 @@
     @include btn_primary_behavior;
   }
 }
-
+.alertName {
+  @include t2;
+}
+.runTest {
+  margin-top: 24px;
+}
 .error {
   color: #ff3b30;
   button {
     background-color: #ff3b30;
+  }
+}
+.deployPanel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    .notification {
+      text-align: center;
+      width: 264px;
+      color: $text1;
+      @include t2;
+    }
+    .annotation {
+      text-align: center;
+      width: 264px;
+      color: $text1;
+      @include b3;
+    }
+  }
+}
+.await {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  place-self: center;
+  gap: 32px;
+  width: 300px;
+  .notification {
+    @extend .notification;
   }
 }

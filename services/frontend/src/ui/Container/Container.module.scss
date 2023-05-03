@@ -9,6 +9,11 @@
 .gridForCards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+  overflow: visible; // ???
+}
+.gridForRequests{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 .layoutForTabs {
   width: 100%;
@@ -23,4 +28,8 @@
 }
 .overflowForAddButton {
   overflow: visible;
+}
+.scroll {overflow: scroll;
+  // display: flex;
+  // flex-direction: row; 
 }

@@ -1,26 +1,31 @@
+import { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
+import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
 
 interface Props {
   tooltipId: string
   bot: BotInfoInterface
   type: BotAvailabilityType
+  inSidePanel?: boolean
 }
 
-const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
+const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const auth = useAuth()
+  const navigate = useNavigate()
 
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
-        <BotInfoSidePanel
-          key={bot.name}
-          bot={bot}
+        <AssistantSidePanel
+          key={bot.id}
+          name={bot.name}
           disabled={!auth?.user}
           type={type}
         />
@@ -28,48 +33,110 @@ const BotCardToolTip = ({ tooltipId, bot, type }: Props) => {
     })
 
   const handleRenameBtnClick = () =>
-    trigger('AssistantModal', { action: 'edit', bot })
+    bot?.visibility === 'public_template'
+      ? trigger('PublicToPrivateModal', { bot, action: 'rename' })
+      : trigger('AssistantModal', { action: 'edit', bot })
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
-  const handleShareBtnClick = () =>
-    trigger('ShareModal', { bot, smthElse: '1234' })
+  const handleShareBtnClick = () => trigger('ShareModal', { bot })
 
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 
+  const handleChatClick = () => {
+    trigger(TRIGGER_RIGHT_SP_EVENT, {
+      children: (
+        <DialogSidePanel
+          debug={false}
+          key={bot?.name + 'chat_with_assistant'}
+          chatWith='bot'
+          // start
+          dist={bot}
+        />
+      ),
+    })
+  }
+  const handleCheckArchitectureClick = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    navigate(`/${bot?.name}`, {
+      state: {
+        preview: true,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
+    })
+    e.stopPropagation()
+  }
+
   return (
-    <BaseContextMenu tooltipId={tooltipId} place='bottom'>
-      <ContextMenuButton
-        name='Publish'
-        type='publish'
-        disabled={type === 'public'}
-        handleClick={handlePublishBtnClick}
-      />
-      <ContextMenuButton
-        name='Share'
-        type='share'
-        disabled={type === 'public'}
-        handleClick={handleShareBtnClick}
-      />
-      <hr />
-      <ContextMenuButton
-        name='Rename'
-        type='edit'
-        disabled={type === 'public'}
-        handleClick={handleRenameBtnClick}
-      />
-      <ContextMenuButton
-        name='Properties'
-        type='properties'
-        handleClick={handlePropertiesBtnClick}
-      />
-      <hr />
-      <ContextMenuButton
-        name='Delete'
-        type='delete'
-        disabled={type === 'public'}
-        handleClick={handleDeleteBtnClick}
-      />
+    <BaseContextMenu tooltipId={tooltipId} place='right'>
+      {type == 'your' && (
+        <>
+          <ContextMenuButton
+            name='Chat With Bot'
+            type='chat'
+            handleClick={handleChatClick}
+          />
+          <ContextMenuButton
+            disabled={bot?.visibility == 'private'}
+            name='Share'
+            type='share'
+            handleClick={handleShareBtnClick}
+          />
+          <ContextMenuButton
+            // disabled={bot?.publish_state === 'in_progress'}
+            name='Visibility'
+            type='publish'
+            handleClick={handlePublishBtnClick}
+          />
+          <hr />
+          <ContextMenuButton
+            disabled={bot?.publish_state == 'in_progress'}
+            name='Rename'
+            type='edit'
+            handleClick={handleRenameBtnClick}
+          />
+          {!inSidePanel && (
+            <ContextMenuButton
+              name='Properties'
+              type='properties'
+              handleClick={handlePropertiesBtnClick}
+            />
+          )}
+          <hr />
+          <ContextMenuButton
+            name='Delete'
+            type='delete'
+            handleClick={handleDeleteBtnClick}
+          />
+        </>
+      )}
+      {type == 'public' && (
+        <>
+          <ContextMenuButton
+            name='Chat With Bot'
+            type='chat'
+            handleClick={handleChatClick}
+          />
+          {!inSidePanel && (
+            <>
+              <hr />
+              <ContextMenuButton
+                name='Properties'
+                type='properties'
+                handleClick={handlePropertiesBtnClick}
+              />
+              <hr />
+            </>
+          )}
+          <ContextMenuButton
+            name='Check Skills'
+            type='architecture'
+            handleClick={handleCheckArchitectureClick}
+          />
+        </>
+      )}
     </BaseContextMenu>
   )
 }

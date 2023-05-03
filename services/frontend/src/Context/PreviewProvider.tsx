@@ -17,7 +17,7 @@ export const PreviewContext = createContext<IPreviewContext>(
 export const usePreview = () => useContext(PreviewContext)
 
 export const PreviewProvider: FC<ProviderProps> = ({ children }) => {
-  const [isPreview, setIsPreview] = useState<boolean>(false)
+  const [isPreview, setIsPreview] = useState<boolean>(true)
   const previewContextValue = useMemo(
     () => ({
       isPreview,

@@ -1,6 +1,22 @@
 .skillPromptModal {
   display: flex;
   height: 100%;
+  padding: 40px;
+  background-color: transparent;
+  transition: margin 0.3s linear;
+}
+
+.container {
+  display: flex;
+  grid-row: 2;
+  height: 100%;
+  width: 100%;
+  gap: 25px;
+}
+
+.dialog {
+  padding-top: 74px;
+  height: 100%;
 }
 
 .editor {
@@ -9,11 +25,10 @@
   height: 100%;
   width: 100%;
   flex-direction: column;
-  transition: padding 0.3s linear;
 }
 
 .withSidePanel {
-  padding-left: 368px;
+  margin-left: 368px;
 }
 
 .editor-container {
@@ -21,20 +36,19 @@
   height: 100%;
   width: 100%;
   flex-direction: column;
-  padding: 0 64px 24px 64px;
+  gap: 24px;
+  // padding: 0 64px 24px 64px;
 }
 
 .header {
-  @include t2;
-  padding: 8px 64px 10px 64px;
-  border-bottom: 1px dashed $text3;
+  @include t1;
+  margin-bottom: 16px;
 }
 
 .top {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 12px 0 40px 0;
   text-align: start;
 
   a {
@@ -54,17 +68,19 @@
   display: flex;
   flex-direction: column;
   gap: 17px;
-  padding: 24px 64px;
 }
 
 .tip {
   @include b3;
   color: $text3;
+  padding-right: 48px;
+  width: 100%;
 }
 
 .tip-bold {
   @include t4;
   color: $text3;
+  align-self: flex-end;
 }
 
 .btns {

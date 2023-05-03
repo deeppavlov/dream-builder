@@ -8,10 +8,10 @@ import {
   TRIGGER_RIGHT_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import { BotCard } from '../../components/BotCard/BotCard'
-import BotInfoSidePanel from '../../components/BotInfoSidePanel/BotInfoSidePanel'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import { CopilotSidePanel } from '../../components/CopilotSidePanel/CopilotSidePanel'
 
+import DumbAssistantSP from '../../components/AssistantSidePanel/DumbAssitantSP'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
 import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
@@ -39,6 +39,7 @@ import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
+import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
 import {
@@ -52,6 +53,7 @@ import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
 import { trigger } from '../../utils/events'
+import { validationSchema } from '../../utils/validationSchema'
 import s from './TestPage.module.scss'
 
 const notificMock: NotificationCardProps[] = [
@@ -352,6 +354,7 @@ const mockMultipleSkillSelector: SelectorSettings = {
 export const TestPage = () => {
   const {
     register,
+    control,
     formState: { errors },
   } = useForm({ mode: 'all' })
 
@@ -475,22 +478,13 @@ export const TestPage = () => {
         </div>
         <div className={s.testPage__component}>
           <span>SkillPromptModal</span>
-          <Button
-            theme='primary'
-            props={{
-              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
-            }}
-          >
+          <Button theme='primary' props={{ onClick: () => {} }}>
             SkillPromptModal (add)
           </Button>
           <Button
             theme='primary'
             props={{
-              onClick: () =>
-                trigger('SkillPromptModal', {
-                  action: 'edit',
-                  skill: mockSkill,
-                }),
+              onClick: () => trigger('SkillPromptModal', { skill: mockSkill }),
             }}
           >
             SkillPromptModal (edit)
@@ -776,18 +770,24 @@ export const TestPage = () => {
           </Button>
         </div>
         <div className={s.testPage__component}>
-          <span>BotInfoSidePanel</span>
+          <span>DumbAssistantSP (UI)</span>
           <Button
             theme='primary'
             props={{
               onClick: () => {
                 trigger(TRIGGER_RIGHT_SP_EVENT, {
-                  children: <BotInfoSidePanel bot={mockBot} disabled={false} />,
+                  children: (
+                    <DumbAssistantSP
+                      bot={mockBot}
+                      disabled={false}
+                      type='your'
+                    />
+                  ),
                 })
               },
             }}
           >
-            BotInfoSidePanel
+            DumbAssistantSP
           </Button>
         </div>
         <div className={s.testPage__component}>
@@ -1062,16 +1062,23 @@ export const TestPage = () => {
         <span className={s['testPage__block-name']}>Input</span>
         <div className={s.testPage__component}>
           <span>default</span>
-          <Input props={{ placeholder: 'Assistive text' }} label='Label' />
+          <Input
+            name='input_default'
+            control={control}
+            props={{ placeholder: 'Assistive text' }}
+            label='Label'
+          />
         </div>
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <Input
             label='Label'
             withEnterButton
+            defaultValue='Text input Text input Text input Text input'
+            name='input_with_enter_btn'
+            control={control}
             props={{
               placeholder: 'Assistive text',
-              defaultValue: 'Text input Text input Text input Text input',
             }}
           />
         </div>
@@ -1079,16 +1086,21 @@ export const TestPage = () => {
           <span>required (with error)</span>
           <Input
             label='Label'
+            name='input_required'
+            control={control}
+            rules={{
+              required: validationSchema.global.required,
+            }}
             props={{
               placeholder: 'Assistive text',
-              ...register('test_input_required', { required: 'Error message' }),
             }}
-            error={errors['test_input_required']}
           />
         </div>
         <div className={s.testPage__component}>
           <span>disabled</span>
           <Input
+            name='input_disabled'
+            control={control}
             props={{ placeholder: 'Assistive text', disabled: true }}
             label='Label'
           />
@@ -1099,19 +1111,22 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>default</span>
           <TextArea
-            props={{ placeholder: 'Assistive text' }}
+            name='textarea_default'
+            control={control}
             label='Label'
             about='Instructions'
+            props={{ placeholder: 'Assistive text' }}
           />
         </div>
         <div className={s.testPage__component}>
           <span>with Enter button</span>
           <TextArea
+            name='textarea_with_enter'
+            control={control}
+            defaultValue='Text input Text input Text input Text input Text input Text input Text input Text input'
             withEnterButton
             props={{
               placeholder: 'Assistive text',
-              defaultValue:
-                'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
             about='Instructions'
@@ -1120,11 +1135,18 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>with counter</span>
           <TextArea
+            name='textarea_with_counter'
+            control={control}
             withCounter
+            defaultValue='Text input Text input Text input Text input Text input Text input Text input Text input'
+            rules={{
+              maxLength: {
+                value: 100,
+                message: '',
+              },
+            }}
             props={{
               placeholder: 'Assistive text',
-              defaultValue:
-                'Text input Text input Text input Text input Text input Text input Text input Text input',
             }}
             label='Label'
             about='Instructions'
@@ -1133,20 +1155,21 @@ export const TestPage = () => {
         <div className={s.testPage__component}>
           <span>required (with error)</span>
           <TextArea
+            name='textarea_required'
+            control={control}
+            rules={{ required: 'Error message' }}
             props={{
               placeholder: 'Assistive text',
-              ...register('test_textarea_required', {
-                required: 'Error message',
-              }),
             }}
             label='Label'
             about='Instructions'
-            error={errors['test_textarea_required']}
           />
         </div>
         <div className={s.testPage__component}>
           <span>disabled</span>
           <TextArea
+            name='textarea_disabled'
+            control={control}
             props={{
               placeholder: 'Assistive text',
               disabled: true,
@@ -1200,6 +1223,7 @@ export const TestPage = () => {
       <DeleteAssistantModal />
       <SkillModal />
       <SkillPromptModal />
+      <SkillQuitModal />
       <CreateSkillDistModal />
       <ChooseBotModal />
       <IntentCatcherModal />

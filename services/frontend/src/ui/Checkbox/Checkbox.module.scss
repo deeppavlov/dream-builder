@@ -68,6 +68,9 @@
 }
 
 .secondary {
+  .checkbox {
+    border-color: $text3;
+  }
   &:hover {
     color: $text3;
 

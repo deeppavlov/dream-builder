@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import s from './Banner.module.scss'
 
@@ -5,16 +6,15 @@ interface BannerProps {
   name?: string
 }
 
-export const Banner = ({ name }: BannerProps) => {
+export const Banner:FC<BannerProps> = ({ name }) => {
   return (
-    <>
-      <Wrapper id='start-welcome-banner' closable>
+      <Wrapper id='start-welcome-banner'>
         <h5 className={s.title}>
           {!name && 'Welcome to'}
           {name && name.split(' ')[0] + ', welcome to'}
           <span className={s.accent_text}> Dream Builder</span> Console!
         </h5>
-        <ul>
+        <ul className={s.body}>
           <p className={s.annotations}>
             You can now build and manage your own virtual assistants & chatbots!
           </p>
@@ -27,6 +27,5 @@ export const Banner = ({ name }: BannerProps) => {
           </li>
         </ul>
       </Wrapper>
-    </>
   )
 }

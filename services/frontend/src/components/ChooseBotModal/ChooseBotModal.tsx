@@ -31,7 +31,7 @@ const ChooseBotModal = () => {
   const handleEventUpdate = (data: { detail: ISkill }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   const {

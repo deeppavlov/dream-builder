@@ -74,6 +74,7 @@
           @include t4;
         }
         .companyLogo {
+          border-radius: 50%;
           @include icon_size_24;
         }
       }

@@ -72,7 +72,7 @@ export interface BotCardProps {
   disabled: boolean
 }
 
-export interface Component {
+export interface IComponent {
   name: string
   display_name: string
   author: string
@@ -255,4 +255,13 @@ export interface IPostChat {
   prompt?: string
   lm_service_id?: number
   openai_api_key?: string
+}
+
+export interface IComponents {
+  annotators: IComponent
+  candidate_annotators: IComponent
+  response_annotators: IComponent
+  response_selectors: IComponent
+  skill_selectors: IComponent
+  skills: IComponent
 }

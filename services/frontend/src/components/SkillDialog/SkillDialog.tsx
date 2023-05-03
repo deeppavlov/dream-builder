@@ -2,7 +2,7 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { DEBUG_DIST, OPEN_AI_LM } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
@@ -28,10 +28,14 @@ interface IDialogError {
 interface Props {
   isDebug: boolean
   distName: string | undefined
-  skill?: ISkill | null
+  skill: ISkill
 }
 
-const SkillDialog = ({ isDebug, distName, skill }: Props) => {
+const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
+  const queryClient = useQueryClient()
+  const skill = queryClient
+    .getQueryData(['components', distName])
+    ?.skills?.find(({ name }) => name === propSkill.name)
   const { send, renew, session, message, history } = useChat()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()
@@ -39,6 +43,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const [isChecking, setIsChecking] = useState(false)
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
+  const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
   const cx = classNames.bind(s)
 
   const renewDialogSession = () => {
@@ -56,7 +61,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     })
   }
 
-  const checkIsChatSettings = () => {
+  const checkIsChatSettings = async () => {
     console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
@@ -64,7 +69,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
 
     if (skillHasOpenAiLM) {
-      const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -135,7 +139,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   useChatScroll(chatRef, [history, message])
   useEffect(() => {
     checkIsChatSettings()
-  }, [skill])
+  }, [skill, openaiApiKey])
 
   return (
     <form

@@ -17,7 +17,7 @@ import s from './SkillsListModal.module.scss'
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
-  const { addSkill } = useComponent()
+  const { addComponentToDist } = useComponent()
   const cx = classNames.bind(s)
   const { data: skillsList } = useQuery(
     'skills',
@@ -44,11 +44,14 @@ export const SkillsListModal = () => {
 
   const okHandler = () => setIsOpen(prev => !prev)
   const handleAdd = (distName: string, id: number) => {
-    toast.promise(addSkill.mutateAsync({ distName, id }), {
-      loading: 'Adding...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    toast.promise(
+      addComponentToDist.mutateAsync({ distName, id, type: 'skills' }),
+      {
+        loading: 'Adding...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
 
   useObserver('SkillsListModal', handleEventUpdate)

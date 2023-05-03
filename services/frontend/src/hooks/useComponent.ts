@@ -1,74 +1,154 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useParams } from 'react-router-dom'
-import { addComponent } from '../services/addComponent'
+import { addComponent as postComponent } from '../services/addComponent'
 import {
   createComponent,
   InfoForNewComponent,
 } from '../services/createComponent'
 import { deleteComoponent } from '../services/deleteComponent'
-import { ComponentData, editComponent } from '../services/editComponent'
+import { editComponent } from '../services/editComponent'
+import { getComponent as fetchComponent } from '../services/getComponent'
 import { getComponents } from '../services/getComponents'
-import { ISkill } from '../types/types'
+import { IStackElement, StackType, TComponents } from '../types/types'
 
-export const useComponent = (distName: string) => {
-  const { name: nameFromURL } = useParams()
+interface IGet {
+  distName: string
+  id: number
+  type: StackType
+}
+
+interface IAdd {
+  distName: string
+  id: number
+  type: StackType
+}
+
+interface IDelete extends IAdd {}
+
+interface ICreate {
+  distName: string
+  data: InfoForNewComponent
+  type: StackType
+}
+
+interface IEdit extends IGet {
+  id: number
+  data: IStackElement
+}
+
+interface ICachedComponent extends IGet {
+  data: IStackElement
+}
+
+export const useComponent = () => {
   const queryClient = useQueryClient()
+  const ALL_COMPONENTS = 'all_components'
+  const COMPONENT = 'component'
 
-  const addSkill = useMutation({
-    mutationFn: (variables: { distName: string; id: number }) => {
-      return addComponent(variables.distName, variables.id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('components')
+  const getAllComponents = (distName: string) =>
+    useQuery([ALL_COMPONENTS, distName], () => getComponents(distName), {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      enabled: distName?.length! > 0,
+      initialData: () => getAllFetchedComponents(distName),
+    })
+
+  const getComponent = ({ distName, id, type }: IGet) =>
+    useQuery([COMPONENT, distName, id], () => fetchComponent(id), {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      initialData: () => getFetchedComponent({ distName, id, type }),
+    })
+
+  const addComponentToDist = useMutation({
+    mutationFn: ({ distName, id }: IAdd) => postComponent(distName, id),
+    onSuccess: (data: IStackElement, { id, distName, type }) => {
+      updateComponent({ id, distName, type, data })
     },
   })
 
   const deleteComponent = useMutation({
-    mutationFn: (variables: { distName: string; id: number }) => {
-      return deleteComoponent(variables.distName, variables.id)
-    },
+    mutationFn: ({ distName, id }: IDelete) => deleteComoponent(distName, id),
     onSuccess: () => {
-      queryClient.invalidateQueries('components')
+      queryClient.invalidateQueries(ALL_COMPONENTS)
     },
   })
 
   const create = useMutation({
-    mutationFn: (info: InfoForNewComponent) => {
-      return createComponent(info)
-    },
-    onSuccess: (data: ISkill) => {
-      const id = data?.id
-      addSkill.mutateAsync({ distName: nameFromURL || '', id }).then(() => {
-        queryClient.invalidateQueries('components')
-      })
-    },
-  })
-  const edit = useMutation({
-    mutationFn: (variables: { data: ComponentData; id: number }) => {
-      return editComponent(variables?.data, variables?.id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('components')
+    mutationFn: ({ data }: ICreate) => createComponent(data),
+    onSuccess: ({ id }: IStackElement, { distName, type }) => {
+      addComponentToDist.mutateAsync({ distName, id: id, type })
     },
   })
 
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(
-    ['components', nameFromURL],
-    () => getComponents(nameFromURL || distName),
-    {
-      refetchOnWindowFocus: false,
-      enabled: nameFromURL?.length! > 0 || distName.length > 0,
+  const edit = useMutation({
+    mutationFn: ({ id, data }: IEdit) => editComponent(data, id),
+    onSuccess: (data: IStackElement, { id, distName, type }) => {
+      updateComponent({ id, distName, type, data })
+    },
+  })
+
+  const updateComponent = ({ distName, id, data, type }: ICachedComponent) => {
+    const isCachedComponent =
+      queryClient.getQueryData([COMPONENT, distName, id]) !== undefined
+
+    queryClient.setQueryData<TComponents | undefined>(
+      [ALL_COMPONENTS, distName],
+      old => {
+        if (old) {
+          const oldIndex = old[type].findIndex(
+            ({ component_id }) => component_id === id
+          )
+          const isExistOld = oldIndex > -1
+          const oldComponent = old[type][oldIndex]
+          const newState = old[type]
+
+          if (isExistOld) {
+            newState[oldIndex] = Object.assign({}, oldComponent, data)
+          } else {
+            newState.push(data)
+          }
+
+          return Object.assign({}, old, { [type]: newState })
+        }
+      }
+    )
+
+    if (isCachedComponent) {
+      queryClient.setQueryData<IStackElement | undefined>(
+        [COMPONENT, distName, id],
+        old => old && Object.assign({}, old, data)
+      )
     }
-  )
+  }
+
+  const getAllFetchedComponents = (distName: string) =>
+    queryClient.getQueryData<TComponents | undefined>([
+      ALL_COMPONENTS,
+      distName,
+    ])
+
+  const getFetchedComponent = ({ distName, id, type }: IGet) => {
+    const component = queryClient.getQueryData<IStackElement | undefined>([
+      COMPONENT,
+      distName,
+      id,
+    ])
+    const allComponents =
+      queryClient.getQueryData<TComponents | undefined>([
+        ALL_COMPONENTS,
+        distName,
+      ])?.[type] || []
+    const result = [component, ...allComponents]?.find(
+      component => component?.id === id
+    )
+
+    return result
+  }
+
   return {
-    components,
-    isComponentsLoading,
-    componentsError,
-    addSkill,
+    getAllComponents,
+    getComponent,
+    addComponentToDist,
     deleteComponent,
     create,
     edit,

@@ -55,7 +55,7 @@ const SkillPromptModal = () => {
   const nav = useNavigate()
   const cx = classNames.bind(s)
 
-  const updatComponent = useMutation({
+  const updateComponent = useMutation({
     mutationFn: (variables: IPatchComponentParams) => patchComponent(variables),
     onSuccess: () => queryClient.invalidateQueries('components'),
   })
@@ -175,7 +175,7 @@ const SkillPromptModal = () => {
 
     const { component_id, description, display_name } = skill
 
-    await updatComponent.mutateAsync({
+    await updateComponent.mutateAsync({
       component_id,
       description,
       display_name,

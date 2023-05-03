@@ -267,11 +267,11 @@ export interface IPostChat {
   openai_api_key?: string
 }
 
-export interface IComponents {
-  annotators: IComponent
-  candidate_annotators: IComponent
-  response_annotators: IComponent
-  response_selectors: IComponent
-  skill_selectors: IComponent
-  skills: IComponent
+export interface IEditComponent {
+  display_name: string
+  description: string
+}
+
+export type TComponents = {
+  [key in StackType]: IStackElement[]
 }

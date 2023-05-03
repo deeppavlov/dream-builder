@@ -1,4 +1,3 @@
-import { useQuery, useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import CardsLoader from '../../components/CardsLoader/CardsLoader'
 import { ErrorHandler } from '../../components/ErrorHandler/ErrorHandler'
@@ -7,28 +6,22 @@ import { SkillList } from '../../components/SkillList/SkillList'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useComponent } from '../../hooks/useComponent'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import { Container } from '../../ui/Container/Container'
 import { Table } from '../../ui/Table/Table'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
-import { getComponents } from '../../services/getComponents'
 
 const SkillsPage = () => {
   const auth = useAuth()
   const { name } = useParams()
   const { options } = useDisplay()
   const { isPreview } = usePreview()
+  const { getAllComponents } = useComponent()
+  const components = getAllComponents(name || '')
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-  const components = useQuery(
-    ['components', name],
-    () => getComponents(name!),
-    {
-      refetchOnWindowFocus: false,
-      enabled: name?.length! > 0,
-    }
-  )
 
   return (
     <Main sidebar editor>

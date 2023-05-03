@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { useNavigate,useParams } from 'react-router-dom'
 import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import { useAuth } from '../context/AuthProvider'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
@@ -9,7 +9,7 @@ import { getPublicDists } from '../services/getPublicDists'
 import { postAssistantDist } from '../services/postAssistanDist'
 import { publishAssistantDist } from '../services/publishUsersAssistantDist'
 import { renameAssistantDist } from '../services/renameAssistantDist'
-import { AssistantFormValues } from '../types/types'
+import { AssistantFormValues,BotInfoInterface } from '../types/types'
 import { trigger } from '../utils/events'
 
 export const useAssistants = () => {
@@ -19,13 +19,21 @@ export const useAssistants = () => {
   const { name: distName } = useParams()
   const isTopbarButton = Boolean(name)
 
-  const publicDists = useQuery('publicDists', getPublicDists, {
-    enabled: !Boolean(name),
-  })
+  const publicDists = useQuery<BotInfoInterface[]>(
+    'publicDists',
+    getPublicDists,
+    {
+      enabled: !Boolean(name),
+    }
+  )
 
-  const privateDists = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user && !Boolean(name),
-  })
+  const privateDists = useQuery<BotInfoInterface[]>(
+    'privateDists',
+    getPrivateDists,
+    {
+      enabled: !!auth?.user && !Boolean(name),
+    }
+  )
   const { data: dist } = useQuery(
     ['dist', distName],
     () => getDist(distName || ''),
@@ -92,6 +100,7 @@ export const useAssistants = () => {
       queryClient.invalidateQueries({
         queryKey: 'privateDists',
       })
+      
       variables.visibility == 'unlisted' &&
         queryClient.invalidateQueries({ queryKey: 'privateDists' })
     },

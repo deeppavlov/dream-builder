@@ -73,7 +73,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       onClick={handleBotCardClick}
       data-active={isActive}
     >
-      {type === 'your' && bot?.deployment_state === 'up' && <Badge />}
+      {type === 'your' && bot?.deployment_state === 'DEPLOYED' && <Badge />}
       <div
         className={cx(
           'header',

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useLocation } from 'react-router-dom'
 import { deleteDeploy } from '../services/deleteDeploy'
 import { deleteStackById } from '../services/deleteStackById'
 import { getDeploymentStack } from '../services/getDeploymentStack'
@@ -10,8 +11,11 @@ export const useDeploy = () => {
   //   const status = useQuery('status', () => getDeploy(0), {
   //     refetchInterval: 500,
   //   })
-
-  const stacks = useQuery('stacks', getDeploymentStack)
+  const loc = useLocation()
+  // console.log('loc = ', loc)
+  const stacks = useQuery('stacks', getDeploymentStack, {
+    enabled: loc.pathname === '/draft',
+  })
   const deploy = useMutation({
     mutationFn: (virtual_assistant_id: number) => {
       return postDeploy(virtual_assistant_id)

@@ -2,7 +2,9 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import { useQueryClient } from 'react-query'
 import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
@@ -34,17 +36,38 @@ interface Props {
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const [isFirstTest, setIsFirstTest] = useState(start)
-  const [isDeployed, setIsDeployed] = useState(dist?.deployment_state)
+  // const [isDeployed, setIsDeployed] = useState(dist?.deployment_state)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
   const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
-
+  const [bot, setBot] = useState<BotInfoInterface>(dist)
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
-  const deployPanel = dist?.deployment_state == null
-  const awaitDeployPanel = dist?.deployment_state == 'in_progress'
+  const deployPanel =
+    dist?.deployment_state == null && bot?.deployment_state == null //костыль
+  const awaitDeployPanel =
+    dist?.deployment_state || bot?.deployment_state == 'in_progress'
   const cx = classNames.bind(s)
+
+  const queryClient = useQueryClient()
+  const q = queryClient.getQueryCache()
+
+  const callback = e => {
+    if ((e.query.queryKey = 'privateDists')) {
+      const privateDists = q.find('privateDists')
+      const distFromCache = privateDists?.state?.data?.find(
+        (el: BotInfoInterface) => {
+          return el.name === dist?.name
+        }
+      )
+      if (distFromCache.publishState !== dist.publish_state) {
+        setBot(distFromCache)
+      }
+    }
+  }
+
+  q.subscribe(callback)
 
   // handlers
   const handleGoBackBtnClick = () => {
@@ -73,7 +96,9 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   useChatScroll(chatRef, [history, message])
 
   useEffect(() => {
-    !isFirstTest && renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    ;(!isFirstTest && dist?.deployment_state === 'DEPLOYED') ||
+      (bot?.deployment_state &&
+        renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!))
   }, [])
 
   const dispatchTrigger = (isOpen: boolean) => {
@@ -92,7 +117,11 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   }, [])
   const { deploy } = useDeploy()
   const handleDeploy = () => {
-    deploy.mutateAsync(dist?.id!)
+    toast.promise(deploy.mutateAsync(dist?.id!), {
+      loading: 'Loading...',
+      success: 'Send For Deploy!',
+      error: 'Something Went Wrong...',
+    })
   }
   return (
     <div className={s.container}>
@@ -172,7 +201,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                 build it
               </p>
             </div>
-            <Button theme='primary' props={{ onClick: handleDeploy }}>
+            <Button
+              theme='primary'
+              props={{ onClick: handleDeploy, disabled: deploy?.isLoading }}
+            >
               Build Assistant
             </Button>
           </div>

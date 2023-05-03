@@ -55,7 +55,7 @@ export interface BotInfoInterface {
   disk_usage: string
   visibility: 'unlisted' | 'private' | 'public_template'
   publish_state: null | 'confirmed' | 'in_progress'
-  deployment_state: null | 'in_progress' | 'error' | 'up'
+  deployment_state: null | 'in_progress' | 'error' | 'DEPLOYED'
 }
 
 export interface BotCardProps {

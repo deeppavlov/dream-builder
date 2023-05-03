@@ -35,6 +35,7 @@ export const PublishAssistantModal = () => {
   const handlePublish = (data: FormValues) => {
     const visibility = data?.visibility!
     const distName = bot?.name!
+    
     visibility !== currentVisibilityStatus ||
     bot?.publish_state == 'in_progress'
       ? toast

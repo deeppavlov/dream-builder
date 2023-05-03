@@ -164,12 +164,15 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 
     -``dist_name``: name of the distribution
     """
-    virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+    try:
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
 
     try:
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found locally")
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 

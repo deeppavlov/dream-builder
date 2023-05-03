@@ -38,7 +38,7 @@ export const BotsAllPage = () => {
                   />
                 </Table>
               ) : (
-                <Container gridForCards heightAuto>
+                <Container gridForCards heightAuto scroll>
                   {publicDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />
                   )}

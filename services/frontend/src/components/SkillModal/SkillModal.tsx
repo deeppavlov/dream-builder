@@ -83,7 +83,7 @@ export const SkillModal = () => {
       .promise(
         edit.mutateAsync({ data, id }).then(() => {}),
         {
-          loading: 'Creating...',
+          loading: 'Renaming...',
           success: 'Success!',
           error: 'Something Went Wrong...',
         }

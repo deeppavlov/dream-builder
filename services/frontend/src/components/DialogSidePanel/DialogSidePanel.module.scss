@@ -163,3 +163,43 @@
     background-color: #ff3b30;
   }
 }
+.deployPanel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    .notification {
+      text-align: center;
+      width: 264px;
+      color: $text1;
+      @include t2;
+    }
+    .annotation {
+      text-align: center;
+      width: 264px;
+      color: $text1;
+      @include b3;
+    }
+  }
+}
+.await {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  place-self: center;
+  gap: 32px;
+  width: 300px;
+  .notification {
+    @extend .notification;
+  }
+}

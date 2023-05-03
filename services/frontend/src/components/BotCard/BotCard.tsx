@@ -10,6 +10,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
+import { Badge } from '../Badge/Badge'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
@@ -65,14 +66,23 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     e.stopPropagation()
   }
   const onModeration = bot?.publish_state === 'in_progress'
-
+  const deployed = bot?.deployment_state === 'DEPLOYED'
+  const deploying =
+    bot?.deployment_state === 'in_progress' ||
+    bot?.deployment_state === 'PUSHING_IMAGES'
   return (
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
       data-active={isActive}
     >
-      <div className={s.header}>{bot?.display_name}</div>
+      {type === 'your' && deployed && <Badge />}
+      <div className={cx('header', deploying && 'deploying')}>
+        <span>{bot?.display_name}</span>
+        {/* {type === 'your' && (
+          <span className={s.deployment}>{bot?.deployment_state}</span>
+        )} */}
+      </div>
       <div className={s.body}>
         <div className={s.block}>
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>

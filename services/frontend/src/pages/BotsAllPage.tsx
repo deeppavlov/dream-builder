@@ -13,6 +13,7 @@ import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
 
 export const BotsAllPage = () => {
   const { loadPublicDists } = useAssistants()
@@ -55,6 +56,7 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
+        <DeployModalNotification />
       </Main>
       <Toaster />
     </>

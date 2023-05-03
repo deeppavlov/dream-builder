@@ -1,10 +1,10 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { FC, useEffect, useId, useState } from 'react'
+import { FC,useEffect,useId,useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
 import useTabsManager from '../../hooks/useTabsManager'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
@@ -13,6 +13,7 @@ import { trigger } from '../../utils/events'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotInfoSidePanel.module.scss'
+import { useQueryClient } from 'react-query'
 
 interface Props {
   bot: BotInfoInterface
@@ -20,7 +21,8 @@ interface Props {
   type: BotAvailabilityType
 }
 
-const BotInfoSidePanel: FC<Props> = ({ bot, disabled, type }) => {
+const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
+  const [bot,setBot] = useState<BotInfoInterface>(propBot)
   const [properties] = ['Properties']
   const navigate = useNavigate()
   const [tabsInfo] = useTabsManager({
@@ -31,6 +33,32 @@ const BotInfoSidePanel: FC<Props> = ({ bot, disabled, type }) => {
 
   const tooltipId = useId()
 
+  
+  
+    const queryClient = useQueryClient()
+    const q = queryClient.getQueryCache()
+
+    const callback = e => {
+      if ((e.query.queryKey = 'privateDists')) {
+        const privateDists = q.find('privateDists')
+        const distFromCache = privateDists?.state?.data?.find(
+          (el: BotInfoInterface) => {
+            return el.name === bot?.name
+          }
+        )
+        if (distFromCache.publishState !== bot.publish_state) {
+          // console.log('publishState has changed')
+          setBot(distFromCache)
+        }
+      }
+    }
+
+    q.subscribe(callback)
+
+  
+  
+  
+  
   const handleCloneBtnClick = () => {
     if (!disabled) {
       trigger('AssistantModal', { action: 'clone', bot: bot })

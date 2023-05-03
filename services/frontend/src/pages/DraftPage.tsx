@@ -7,6 +7,7 @@ import { Sidebar } from '../components/Sidebar/Sidebar'
 import { Topbar } from '../components/Topbar/Topbar'
 import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
+import { useDeploy } from '../hooks/useDeploy'
 import { BotInfoInterface, IAuthor } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
@@ -27,6 +28,8 @@ interface RequestProps {
     user: IAuthor
     virtual_assistant: BotInfoInterface
   }
+  confirm: any
+  decline: any
   handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
   handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
 }
@@ -62,17 +65,26 @@ export const DraftPage = () => {
     })
     e.stopPropagation()
   }
-
+  const { stacks, deleteStack } = useDeploy()
+  const handleStop = (id: number) => {
+    toast.promise(deleteStack.mutateAsync(id), {
+      loading: 'delete stack...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
+    })
+  }
   return (
     <>
       <Topbar />
       <Sidebar />
       <Main sidebar>
-        <Wrapper>
+        <Wrapper fitScreen title='Publication Requests'>
           <Container gridForRequests scroll>
             {sortDistsByISO8601(requests)?.map((r: any, i: number) => {
               return (
                 <Request
+                  confirm={confirm}
+                  decline={decline}
                   cardClickHandler={cardClickHandler}
                   r={r}
                   key={i}
@@ -81,6 +93,43 @@ export const DraftPage = () => {
                 />
               )
             })}
+          </Container>
+        </Wrapper>
+        <Wrapper fitScreen title='Deployment State'>
+          <Container gridForRequests>
+            {stacks?.data?.map((stack: any, i: number) => {
+              return (
+                <div key={i}>
+                  <Wrapper>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                      }}
+                    >
+                      <span style={{ overflow: 'hidden' }}>id:{stack?.Id}</span>
+                      <span>{stack?.Name}</span>
+                      <div className=''>
+                        <Button
+                          theme='primary'
+                          props={{
+                            onClick: () => {
+                              handleStop(stack?.Id)
+                            },
+                            disabled: deleteStack?.isLoading,
+                          }}
+                        >
+                          Stop
+                        </Button>
+                      </div>
+                    </div>
+                  </Wrapper>
+                </div>
+              )
+            })}{' '}
           </Container>
         </Wrapper>
       </Main>
@@ -94,6 +143,8 @@ const Request: FC<RequestProps> = ({
   r,
   handleApprove,
   handleDecline,
+  confirm,
+  decline,
 }) => {
   const tooltipId = useId()
   const style = {
@@ -158,6 +209,7 @@ const Request: FC<RequestProps> = ({
                 onClick: e => {
                   handleApprove(e, r.id)
                 },
+                disabled: confirm?.isLoading,
               }}
             >
               approve
@@ -167,6 +219,7 @@ const Request: FC<RequestProps> = ({
                 onClick: e => {
                   handleDecline(e, r.id)
                 },
+                disabled: decline?.isLoading,
               }}
               theme='secondary'
             >

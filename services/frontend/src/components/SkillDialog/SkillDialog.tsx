@@ -43,7 +43,6 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
   const [isChecking, setIsChecking] = useState(false)
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
-  const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
   const cx = classNames.bind(s)
 
   const renewDialogSession = () => {
@@ -61,7 +60,8 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
     })
   }
 
-  const checkIsChatSettings = async () => {
+  const checkIsChatSettings = (userId: number) => {
+    if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
@@ -69,6 +69,8 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
     const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
 
     if (skillHasOpenAiLM) {
+      const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
+
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -104,7 +106,7 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
 
   // handlers
   const handleSend = ({ message }: ChatForm) => {
-    const isChatSettings = checkIsChatSettings()
+    const isChatSettings = checkIsChatSettings(user?.id)
 
     if (!isChatSettings) return
 
@@ -128,7 +130,7 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
   const handleRetryBtnClick = () => {
     setIsChecking(true)
     setTimeout(() => {
-      checkIsChatSettings()
+      checkIsChatSettings(user?.id)
       setIsChecking(false)
     }, 1000)
   }
@@ -138,8 +140,8 @@ const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
   useEffect(() => {
-    checkIsChatSettings()
-  }, [skill, openaiApiKey])
+    checkIsChatSettings(user?.id)
+  }, [skill, user?.id])
 
   return (
     <form

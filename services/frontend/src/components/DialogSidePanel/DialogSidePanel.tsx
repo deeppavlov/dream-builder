@@ -45,9 +45,8 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
   const deployPanel =
-    dist?.deployment_state == null && bot?.deployment_state == null //костыль
-  const awaitDeployPanel =
-    dist?.deployment_state || bot?.deployment_state == 'PUSHING_IMAGES'||'in_progress'
+    dist?.deployment_state == null && bot?.deployment_state !=='DEPLOYED' //костыль
+  const awaitDeployPanel = bot?.deployment_state !== 'DEPLOYED'
   const cx = classNames.bind(s)
 
   const queryClient = useQueryClient()
@@ -61,7 +60,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           return el.name === dist?.name
         }
       )
-      if (distFromCache.publishState !== dist.publish_state) {
+      if (distFromCache?.publishState !== dist?.publish_state) {
         setBot(distFromCache)
       }
     }

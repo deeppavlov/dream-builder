@@ -47,7 +47,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const deployPanel =
     dist?.deployment_state == null && bot?.deployment_state == null //костыль
   const awaitDeployPanel =
-    dist?.deployment_state || bot?.deployment_state == 'in_progress'
+    dist?.deployment_state || bot?.deployment_state == 'PUSHING_IMAGES'||'in_progress'
   const cx = classNames.bind(s)
 
   const queryClient = useQueryClient()
@@ -94,12 +94,13 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
-
+  const readyToGetSession =
+    !isFirstTest && dist?.deployment_state === 'DEPLOYED'
   useEffect(() => {
-    ;(!isFirstTest && dist?.deployment_state === 'DEPLOYED') ||
-      (bot?.deployment_state &&
-        renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!))
-  }, [])
+    if (readyToGetSession || bot?.deployment_state === 'DEPLOYED') {
+      renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    }
+  }, [bot?.deployment_state, dist?.deployment_state])
 
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({

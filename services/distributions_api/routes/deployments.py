@@ -6,7 +6,7 @@ from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
-from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer
+from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerState, DeployerError
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.logger import logger
 from sqlalchemy.exc import IntegrityError
@@ -39,36 +39,34 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
     now = datetime.now()
     logger.info(f"Deployment background task for {dist.name} started")
 
-    try:
+    db = next(get_db())
+    with db.begin():
+        crud.update_deployment(db, deployment_id, state="in_progress")
+
+    deployer = SwarmDeployer(
+        user_identifier=dist.name,
+        registry_addr=settings.deployer.registry_url,
+        user_services=get_user_services(dist),
+        deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
+        portainer_url=settings.deployer.portainer_url,
+        portainer_key=settings.deployer.portainer_key,
+        default_prefix=settings.deployer.default_prefix,
+    )
+
+    for state, err in deployer.deploy(dist):
         db = next(get_db())
         with db.begin():
-            crud.update_deployment(db, deployment_id, state="in_progress")
+            if err:
+                err = dict(err)
+                logger.error(
+                    f"Deployment background task for {dist.name} failed after {datetime.now() - now} with {err}"
+                )
+            else:
+                logger.info(f"Deployment background task state changed to {state}")
 
-        deployer = SwarmDeployer(
-            user_identifier=dist.name,
-            registry_addr=settings.deployer.registry_url,
-            user_services=get_user_services(dist),
-            deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
-            portainer_url=settings.deployer.portainer_url,
-            portainer_key=settings.deployer.portainer_key,
-            default_prefix=settings.deployer.default_prefix,
-        )
-        deployer.deploy(dist)
-    except BotoCoreError as e:
-        db = next(get_db())
-        with db.begin():
-            crud.update_deployment(db, deployment_id, state="error")
+            crud.update_deployment(db, deployment_id, state=state, error=err)
 
-        logger.error(
-            f"Deployment background task for {dist.name} failed after {datetime.now() - now}"
-            f"Reason: {type(e).__name__} ({e})"
-        )
-    else:
-        db = next(get_db())
-        with db.begin():
-            crud.update_deployment(db, deployment_id, state="up")
-
-        logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
+    logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
 @deployments_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -81,6 +79,7 @@ async def create_deployment(
     with db.begin():
         virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+        dream_dist.save(overwrite=True, generate_configs=True)
 
         parsed_url = urlparse(settings.deployer.portainer_url)
         host = f"{parsed_url.scheme}://{parsed_url.hostname}"

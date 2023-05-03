@@ -37,6 +37,7 @@ class VirtualAssistantRead(BaseOrmModel):
     visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
     publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
     deployment_state: Optional[str]
+    deployment_error: Optional[dict]
     cloned_from_id: Optional[int]
     # clones: List[VirtualAssistant]
 
@@ -58,8 +59,9 @@ class VirtualAssistantRead(BaseOrmModel):
 
         try:
             obj.deployment_state = obj.deployment.state
+            obj.deployment_error = obj.deployment.error
         except AttributeError:
-            obj.deployment_state = None
+            obj.deployment_state = obj.deployment_error = None
 
         return super().from_orm(obj)
 

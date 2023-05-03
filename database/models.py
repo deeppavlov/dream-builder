@@ -134,8 +134,10 @@ class Deployment(Base):
     chat_port = Column(Integer, nullable=False)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+
     date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
-    state = Column(String)
+    state = Column(String, nullable=True)
+    error = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
 
 
 class PublishRequest(Base):

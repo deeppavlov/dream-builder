@@ -10,7 +10,7 @@ import { ComponentData, editComponent } from '../services/editComponent'
 import { getComponents } from '../services/getComponents'
 import { ISkill } from '../types/types'
 
-export const useComponent = () => {
+export const useComponent = (distName: string) => {
   const { name: nameFromURL } = useParams()
   const queryClient = useQueryClient()
 
@@ -58,10 +58,10 @@ export const useComponent = () => {
     data: components,
   } = useQuery(
     ['components', nameFromURL],
-    () => getComponents(nameFromURL || ''),
+    () => getComponents(nameFromURL || distName),
     {
       refetchOnWindowFocus: false,
-      enabled: nameFromURL?.length! > 0,
+      enabled: nameFromURL?.length! > 0 || distName.length > 0,
     }
   )
   return {

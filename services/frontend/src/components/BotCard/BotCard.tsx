@@ -65,11 +65,14 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
         })
     e.stopPropagation()
   }
+  
   const onModeration = bot?.publish_state === 'in_progress'
-  const deployed = bot?.deployment_state === 'DEPLOYED'
+  const deployed = bot?.deployment?.state === 'DEPLOYED'
   const deploying =
-    bot?.deployment_state === 'in_progress' ||
-    bot?.deployment_state === 'PUSHING_IMAGES'
+    bot?.deployment?.state !== 'DEPLOYED' &&
+    bot?.deployment?.state !== null &&
+    bot?.deployment !== null
+  
   return (
     <div
       className={cx('botCard', `${type}`, size)}

@@ -45,6 +45,14 @@ export interface IAuthor {
 
 export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
 
+type deploymentState =
+  | null
+  | 'CREATING_CONFIG_FILES'
+  | 'BUILDING_IMAGE'
+  | 'PUSHING_IMAGES'
+  | 'DEPLOYING_STACK'
+  | 'DEPLOYED'
+
 export interface BotInfoInterface {
   id: number
   name: string
@@ -57,12 +65,14 @@ export interface BotInfoInterface {
   disk_usage: string
   visibility: TDistVisibility
   publish_state: null | 'confirmed' | 'in_progress'
-  deployment_state:
-    | null
-    | 'PUSHING_IMAGES'
-    | 'error'
-    | 'DEPLOYED'
-    | 'in_progress'
+  deployment: {
+    chat_host: string
+    chat_port: number
+    date_created: string
+    date_state_updated: any
+    id: number
+    state: deploymentState
+  }
 }
 
 export interface BotCardProps {
@@ -213,7 +223,7 @@ export type PostDistParams = {
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
-  | 'generative'
+  | 'Generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'

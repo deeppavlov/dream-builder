@@ -47,8 +47,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const deployPanel =
     dist?.deployment_state == null && bot?.deployment_state == null //костыль
   const awaitDeployPanel =
-    bot?.deployment_state == 'in_progress' &&
-    dist?.deployment_state !== 'in_progress'
+    bot?.deployment_state !== null && bot?.deployment_state !== 'DEPLOYED'
   const cx = classNames.bind(s)
 
   const queryClient = useQueryClient()

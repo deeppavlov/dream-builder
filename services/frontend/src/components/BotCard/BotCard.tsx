@@ -66,20 +66,18 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     e.stopPropagation()
   }
   const onModeration = bot?.publish_state === 'in_progress'
-
+  const deployed = bot?.deployment_state === 'DEPLOYED'
+  const deploying =
+    bot?.deployment_state === 'in_progress' ||
+    bot?.deployment_state === 'PUSHING_IMAGES'
   return (
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
       data-active={isActive}
     >
-      {type === 'your' && bot?.deployment_state === 'DEPLOYED' && <Badge />}
-      <div
-        className={cx(
-          'header',
-          bot?.deployment_state === 'in_progress' && 'deploying'
-        )}
-      >
+      {type === 'your' && deployed && <Badge />}
+      <div className={cx('header', deploying && 'deploying')}>
         <span>{bot?.display_name}</span>
         {/* {type === 'your' && (
           <span className={s.deployment}>{bot?.deployment_state}</span>

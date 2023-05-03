@@ -27,7 +27,9 @@ export const BotsPage = () => {
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
   const auth = useAuth()
-  const { privateDists, publicDists } = useAssistants()
+  const { loadPublicDists, loadPrivateDists } = useAssistants()
+  const publicDists = loadPublicDists()
+  const privateDists = loadPrivateDists()
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
 import { useAuth } from '../context/AuthProvider'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
@@ -16,24 +16,23 @@ export const useAssistants = () => {
   const auth = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const { name: distName } = useParams()
-  const isTopbarButton = Boolean(name)
 
-  const publicDists = useQuery('publicDists', getPublicDists, {
-    enabled: !Boolean(name),
-  })
+  const loadPublicDists = () =>
+    useQuery('publicDists', getPublicDists, {
+      enabled: !Boolean(name),
+    })
 
-  const privateDists = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user && !Boolean(name),
-  })
-  const { data: dist } = useQuery(
-    ['dist', distName],
-    () => getDist(distName || ''),
-    {
+  const loadPrivateDists = () =>
+    useQuery('privateDists', getPrivateDists, {
+      enabled: !!auth?.user && !Boolean(name),
+    })
+
+  const loadDist = (distName: string) =>
+    useQuery(['dist', distName], () => getDist(distName || ''), {
       refetchOnWindowFocus: false,
       enabled: distName?.length! > 0,
-    }
-  )
+    })
+
   const rename = useMutation({
     mutationFn: (variables: { data: AssistantFormValues; name: string }) => {
       return renameAssistantDist(variables?.name, variables?.data)
@@ -58,8 +57,8 @@ export const useAssistants = () => {
             },
           })
         })
-        .then(() => {
-          isTopbarButton && trigger('AssistantModal', { isOpen: false })
+        .finally(() => {
+          trigger('AssistantModal', { isOpen: false })
           trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
         }),
   })
@@ -79,6 +78,7 @@ export const useAssistants = () => {
         })
       }),
   })
+
   const visibilityType = useMutation({
     mutationFn: (variables: { distName: string; visibility: string }) => {
       return publishAssistantDist(variables.distName, variables.visibility)
@@ -96,11 +96,12 @@ export const useAssistants = () => {
         queryClient.invalidateQueries({ queryKey: 'privateDists' })
     },
   })
+
   return {
-    privateDists,
-    publicDists,
+    loadPublicDists,
+    loadPrivateDists,
+    loadDist,
     visibilityType,
-    dist,
     rename,
     create,
     clone,

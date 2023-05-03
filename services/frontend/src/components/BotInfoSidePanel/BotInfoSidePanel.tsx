@@ -20,8 +20,7 @@ interface Props {
   type: BotAvailabilityType
 }
 
-const BotInfoSidePanel: FC<Props> = ({ bot: propBot, disabled, type }) => {
-  const [bot] = useState<BotInfoInterface>(propBot)
+const BotInfoSidePanel: FC<Props> = ({ bot, disabled, type }) => {
   const [properties] = ['Properties']
   const navigate = useNavigate()
   const [tabsInfo] = useTabsManager({

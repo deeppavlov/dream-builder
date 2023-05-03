@@ -4,8 +4,8 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
 import { useCheckClickOutside } from '../../hooks/useCheckClickOutside'
 import { useCheckDocumentScroll } from '../../hooks/useCheckDocumentScroll'
-import s from './BaseContextMenu.module.scss'
 import { subscribe, unsubscribe } from '../../utils/events'
+import s from './BaseContextMenu.module.scss'
 
 type TPlace = 'top' | 'right' | 'bottom' | 'left'
 

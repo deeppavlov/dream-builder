@@ -22,8 +22,8 @@ import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useAssistants } from '../../hooks/useAssistants'
 import { getComponents } from '../../services/getComponents'
-import { getDist } from '../../services/getDist'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
@@ -33,11 +33,9 @@ export const EditorPage = () => {
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const { name, skillId } = useParams()
   const { setIsPreview } = usePreview()
+  const { loadDist } = useAssistants()
+  const dist = name ? loadDist(name).data : null
 
-  const { data: dist } = useQuery(['dist', name], () => getDist(name!), {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  })
   const components = useQuery(
     ['components', name],
     () => getComponents(name!),

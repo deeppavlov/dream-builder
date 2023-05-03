@@ -15,7 +15,8 @@ import { consts } from '../utils/consts'
 import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsAllPage = () => {
-  const { publicDists } = useAssistants()
+  const { loadPublicDists } = useAssistants()
+  const publicDists = loadPublicDists()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 

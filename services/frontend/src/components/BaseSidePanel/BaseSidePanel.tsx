@@ -49,13 +49,15 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
    * Update BaseSidePanel content, when it's triggered
    */
   const updateState = (data: { detail: BaseSidePanel }) => {
-    const { isClosable, isOpen: detailsIsOpen, children } = data.detail
+    const { isClosable, children } = data.detail
+    const requestToClose =
+      data.detail?.isOpen !== undefined && !data.detail?.isOpen
 
     if (isClosable !== undefined) {
       setIsClosable(isClosable)
     } else setIsClosable(true)
 
-    if (detailsIsOpen !== undefined && !detailsIsOpen) return handleClose()
+    if (requestToClose) return handleClose()
 
     setContent(children)
 

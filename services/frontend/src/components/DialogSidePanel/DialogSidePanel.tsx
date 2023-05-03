@@ -45,7 +45,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
   const deployPanel =
-    dist?.deployment_state == null && bot?.deployment_state !== null //костыль
+    dist?.deployment_state == null && bot?.deployment_state == null //костыль
   const awaitDeployPanel =
     bot?.deployment_state == 'in_progress' &&
     dist?.deployment_state !== 'in_progress'

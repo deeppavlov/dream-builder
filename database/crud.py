@@ -446,8 +446,12 @@ def delete_publish_request(db: Session, virtual_assistant_id: int):
 
 
 # DIALOG SESSION
-def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.DialogSession]:
-    return db.get(models.DialogSession, dialog_session_id)
+def get_dialog_session(db: Session, dialog_session_id: int):
+    dialog_session = db.get(models.DialogSession, dialog_session_id)
+    if not dialog_session:
+        raise ValueError(f"Dialog session {dialog_session_id} does not exist")
+
+    return dialog_session
 
 
 def get_debug_assistant_chat_url(db: Session) -> str:
@@ -524,6 +528,10 @@ def get_available_deployment_port(db: Session, range_min: int = 4500, range_max:
 
 def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
     return db.get(models.Deployment, id)
+
+
+def get_all_deployments(db: Session) -> [models.Deployment]:
+    return db.scalars(select(models.Deployment)).all()
 
 
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:

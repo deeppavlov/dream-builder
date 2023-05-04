@@ -79,7 +79,10 @@ async def create_dialog_session(
 ):
     """ """
     with db.begin():
-        dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+        try:
+            dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
 
     return schemas.DialogSessionRead.from_orm(dialog_session)
 

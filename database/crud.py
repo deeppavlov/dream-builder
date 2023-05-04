@@ -461,7 +461,7 @@ def get_debug_assistant_chat_url(db: Session) -> str:
 
 
 def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str) -> models.DialogSession:
-    virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
+    virtual_assistant = get_virtual_assistant_by_name(db, virtual_assistant_name)
 
     db.scalar(
         update(models.DialogSession)

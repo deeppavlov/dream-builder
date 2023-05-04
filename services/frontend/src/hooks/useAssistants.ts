@@ -3,6 +3,7 @@ import { generatePath, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
+import { deleteAssistantDist } from '../services/deleteAssistantDist'
 import { getDist as fetchDist } from '../services/getDist'
 import { getPrivateDists } from '../services/getPrivateDists'
 import { getPublicDists } from '../services/getPublicDists'
@@ -14,6 +15,7 @@ import {
   BotInfoInterface,
   TDistVisibility,
 } from '../types/types'
+import { trigger } from '../utils/events'
 
 interface IChangeVisibility {
   name: string
@@ -73,6 +75,14 @@ export const useAssistants = () => {
     },
   })
 
+  const deleteDist = useMutation({
+    mutationFn: (name: string) => deleteAssistantDist(name),
+    onSuccess: (_, name) =>
+      queryClient.invalidateQueries([PRIVATE_DISTS]).finally(() => {
+        updateCachedDist(name)
+      }),
+  })
+
   const changeVisibility = useMutation({
     mutationFn: ({ name, visibility }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
@@ -87,15 +97,16 @@ export const useAssistants = () => {
   })
 
   const updateCachedDist = (name: string) => {
-    const privateDist = (
-      queryClient.getQueryData<BotInfoInterface[] | undefined>([
-        PRIVATE_DISTS,
-      ]) || []
-    ).find(dist => dist?.name === name)
+    const privateDist =
+      (
+        queryClient.getQueryData<BotInfoInterface[] | undefined>([
+          PRIVATE_DISTS,
+        ]) || []
+      ).find(dist => dist?.name === name) ?? null
 
     const isCachedDist = queryClient.getQueryData([DIST, name]) !== undefined
     if (isCachedDist)
-      queryClient.setQueryData<BotInfoInterface | undefined>(
+      queryClient.setQueryData<BotInfoInterface | null>(
         [DIST, name],
         privateDist
       )
@@ -129,5 +140,6 @@ export const useAssistants = () => {
     rename,
     create,
     clone,
+    deleteDist,
   }
 }

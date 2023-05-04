@@ -508,10 +508,12 @@ def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]
 
 
 # DEPLOYMENT
-def get_available_deployment_port(db: Session, range_min: int = 4500, range_max: int = 4999):
+def get_available_deployment_port(db: Session, range_min: int = 4550, range_max: int = 4999, exclude: list = None):
     used_ports = db.scalars(
         select(models.Deployment.chat_port).filter(models.Deployment.chat_port.between(range_min, range_max))
     ).all()
+    if exclude:
+        used_ports += exclude
 
     first_available_port = None
 

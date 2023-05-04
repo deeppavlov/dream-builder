@@ -2,7 +2,7 @@ import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import { DEBUG_DIST, OPEN_AI_LM } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
@@ -31,11 +31,7 @@ interface Props {
   skill: ISkill
 }
 
-const SkillDialog = ({ isDebug, distName, skill: propSkill }: Props) => {
-  const queryClient = useQueryClient()
-  const skill = queryClient
-    .getQueryData(['components', distName])
-    ?.skills?.find(({ name }) => name === propSkill.name)
+const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const { send, renew, session, message, history } = useChat()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()

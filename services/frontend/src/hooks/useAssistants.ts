@@ -15,11 +15,11 @@ import {
   BotInfoInterface,
   TDistVisibility,
 } from '../types/types'
-import { trigger } from '../utils/events'
 
 interface IChangeVisibility {
   name: string
   visibility: TDistVisibility
+  inEditor?: boolean
 }
 
 interface IClone {
@@ -84,12 +84,13 @@ export const useAssistants = () => {
   })
 
   const changeVisibility = useMutation({
-    mutationFn: ({ name, visibility }: IChangeVisibility) =>
+    mutationFn: ({ name, visibility, inEditor }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
-    onSuccess: (_, { name, visibility }) => {
+    onSuccess: (_, { name, visibility, inEditor }) => {
       const requestToPublicTemplate = visibility === 'public_template'
 
       if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
+      if (inEditor) queryClient.invalidateQueries([DIST, name])
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))

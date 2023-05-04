@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useParams } from 'react-router-dom'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { BotInfoInterface, TDistVisibility } from '../../types/types'
@@ -19,6 +20,8 @@ export const PublishAssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const [newValue, setNewValue] = useState<Visibility>()
+  const { name: distName } = useParams()
+  const isEditor = distName !== undefined && distName.length > 0
 
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
@@ -39,14 +42,21 @@ export const PublishAssistantModal = () => {
     visibility !== currentVisibilityStatus ||
     bot?.publish_state == 'in_progress'
       ? toast
-          .promise(changeVisibility.mutateAsync({ name, visibility }), {
-            loading: 'Loading...',
-            success:
-              visibility === 'public_template'
-                ? 'Submitted For Review!'
-                : 'Success!',
-            error: 'Something Went Wrong...',
-          })
+          .promise(
+            changeVisibility.mutateAsync({
+              name,
+              visibility,
+              inEditor: isEditor,
+            }),
+            {
+              loading: 'Loading...',
+              success:
+                visibility === 'public_template'
+                  ? 'Submitted For Review!'
+                  : 'Success!',
+              error: 'Something Went Wrong...',
+            }
+          )
           .then(() => {
             closeModal()
           })

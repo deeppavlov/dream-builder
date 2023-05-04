@@ -1,13 +1,10 @@
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
 import { ReactComponent as UploadIcon } from '@assets/icons/upload.svg'
-import { SidePanelProps } from '../../ui/SidePanel/SidePanel'
 import Button from '../../ui/Button/Button'
-import BaseSidePanel from '../BaseSidePanel/BaseSidePanel'
-import s from './FAQSidePanel.module.scss'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem from '../IntentListItem/IntentListItem'
 import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
-import { SkillInfoInterface } from '../../types/types'
+import s from './FAQSidePanel.module.scss'
 
 interface FAQItem {
   question: string
@@ -38,14 +35,24 @@ const faqMock: FAQItem[] = [
 ]
 
 interface Props {
-  skill: SkillInfoInterface
+  component_id: number
+  distName: string
   activeTab?: 'Properties' | 'Editor'
   disabled?: boolean
 }
 
-const FAQSidePanel = ({ skill, activeTab, disabled }: Props) => {
+const FAQSidePanel = ({
+  component_id,
+  distName,
+  activeTab,
+  disabled,
+}: Props) => {
   return (
-    <SkillSidePanel skill={skill} activeTab={activeTab}>
+    <SkillSidePanel
+      component_id={component_id}
+      distName={distName}
+      activeTab={activeTab}
+    >
       <div className={s.faqSidePanel}>
         <div className={s.name}>FAQ</div>
         <div>

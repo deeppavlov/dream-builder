@@ -41,6 +41,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
 
+  console.log(skill)
+
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
 

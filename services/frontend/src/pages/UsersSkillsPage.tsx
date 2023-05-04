@@ -1,6 +1,6 @@
 import { Main } from '../components/Main/Main'
 import { SkillModal } from '../components/SkillModal/SkillModal'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
+import SkillSidePanel from '../components/SkillSidePanel/DumbSkillSP'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
 import { SkillType } from '../types/types'

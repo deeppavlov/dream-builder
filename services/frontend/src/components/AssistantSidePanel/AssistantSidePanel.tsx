@@ -11,6 +11,7 @@ interface Props {
 const AssistantSidePanel = ({ name, disabled, type }: Props) => {
   const { getDist } = useAssistants()
   const { data: dist } = getDist(name)
+  console.log(dist)
 
   return <DumbAssistantSP bot={dist} disabled={disabled} type={type} />
 }

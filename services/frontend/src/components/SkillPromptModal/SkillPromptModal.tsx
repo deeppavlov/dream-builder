@@ -174,6 +174,7 @@ const SkillPromptModal = () => {
       description,
       display_name,
       lm_service_id: service!,
+      lm_service: services?.find(s => s.id === service), // FIX IT!
       prompt: prompt,
       distName: distName || '',
       type: 'skills',

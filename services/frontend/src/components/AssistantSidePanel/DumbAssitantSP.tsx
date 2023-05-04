@@ -108,17 +108,17 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
             </div>
             <SmallTag
               theme={
-                bot?.publish_state === 'in_progress'
+                bot?.visibility
+                  ? bot?.visibility
+                  : bot?.publish_state === 'in_progress'
                   ? 'validating'
                   : bot?.visibility
               }
             >
-              {!bot?.publish_state
-                ? type === 'your' && bot?.visibility
-                : bot?.publish_state == 'in_progress'
-                ? 'On moderation'
-                : bot?.visibility === 'public_template'
-                ? 'Public Template'
+              {bot?.visibility
+                ? bot?.visibility
+                : bot?.publish_state === 'in_progress'
+                ? 'validating'
                 : bot?.visibility}
             </SmallTag>
           </div>

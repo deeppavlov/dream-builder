@@ -40,7 +40,7 @@ import { SkillCard } from '../../components/SkillCard/SkillCard'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
-import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
+import SkillSidePanel from '../../components/SkillSidePanel/DumbSkillSP'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
 import {
   BotInfoInterface,

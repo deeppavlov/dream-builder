@@ -12,7 +12,12 @@ import {
   IPatchComponentParams,
   patchComponent,
 } from '../services/patchComponent'
-import { IStackElement, StackType, TComponents } from '../types/types'
+import {
+  IStackElement,
+  LM_Service,
+  StackType,
+  TComponents,
+} from '../types/types'
 
 interface IGet {
   distName: string
@@ -51,6 +56,7 @@ interface ICachedComponent {
 interface IUpdate extends IPatchComponentParams {
   distName: string
   type: StackType
+  lm_service: LM_Service
 }
 
 export const useComponent = () => {
@@ -107,9 +113,17 @@ export const useComponent = () => {
 
   const updateComponent = useMutation({
     mutationFn: (variables: IUpdate) => patchComponent(variables),
-    onSuccess: (data: IStackElement, { component_id, distName, type }) => {
+    onSuccess: (
+      data: IStackElement,
+      { component_id, distName, type, lm_service }
+    ) => {
       //fix lm_service on patchComponent endpoint not return from backend
-      updateCachedComponent({ id: component_id, distName, type, data })
+      updateCachedComponent({
+        id: component_id,
+        distName,
+        type,
+        data: { ...data, lm_service },
+      })
     },
   })
 

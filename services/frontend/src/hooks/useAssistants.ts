@@ -52,16 +52,16 @@ export const useAssistants = () => {
 
   const rename = useMutation({
     mutationFn: ({ name, data }: IRename) => renameAssistantDist(name, data),
-    onSuccess: (dist: BotInfoInterface) => {
-      queryClient.invalidateQueries([PRIVATE_DISTS])
-      updateCachedDist(dist.name, dist)
+    onSuccess: (_, { name }) => {
+      queryClient
+        .invalidateQueries([PRIVATE_DISTS])
+        .finally(() => updateCachedDist(name))
     },
   })
 
   const clone = useMutation({
     mutationFn: ({ name, data }: IClone) => cloneAssistantDist(name, data),
     onSuccess: (dist: BotInfoInterface) => {
-      // queryClient.invalidateQueries([PRIVATE_DISTS])
       navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
   })
@@ -69,7 +69,6 @@ export const useAssistants = () => {
   const create = useMutation({
     mutationFn: (data: AssistantFormValues) => postAssistantDist(data),
     onSuccess: (dist: BotInfoInterface) => {
-      // queryClient.invalidateQueries([PRIVATE_DISTS])
       navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
   })
@@ -78,32 +77,27 @@ export const useAssistants = () => {
     mutationFn: ({ name, visibility }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
     onSuccess: (_, { name, visibility }) => {
-      const publish = visibility === 'public_template'
+      const requestToPublicTemplate = visibility === 'public_template'
 
-      if (publish) queryClient.invalidateQueries([PUBLIC_DISTS])
-      queryClient.invalidateQueries([PRIVATE_DISTS])
-      updateCachedDist(name, publish ? {} : { visibility })
+      if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
+      queryClient
+        .invalidateQueries([PRIVATE_DISTS])
+        .finally(() => updateCachedDist(name))
     },
   })
 
-  const updateCachedDist = (
-    name: string,
-    newDist: Partial<BotInfoInterface>
-  ) => {
-    // queryClient.setQueryData<BotInfoInterface[] | undefined>(
-    //   [PRIVATE_DISTS],
-    //   old =>
-    //     old &&
-    //     old.map(dist => {
-    //       return dist.name === name ? Object.assign({}, dist, newDist) : dist
-    //     })
-    // )
+  const updateCachedDist = (name: string) => {
+    const privateDist = (
+      queryClient.getQueryData<BotInfoInterface[] | undefined>([
+        PRIVATE_DISTS,
+      ]) || []
+    ).find(dist => dist?.name === name)
 
     const isCachedDist = queryClient.getQueryData([DIST, name]) !== undefined
     if (isCachedDist)
       queryClient.setQueryData<BotInfoInterface | undefined>(
         [DIST, name],
-        old => old && Object.assign({}, old, newDist)
+        privateDist
       )
   }
 

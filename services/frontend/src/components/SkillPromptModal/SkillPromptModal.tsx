@@ -273,7 +273,7 @@ const SkillPromptModal = () => {
                     control={control}
                     rules={{ required: true }}
                     defaultValue={skill?.lm_service?.display_name}
-                    label='Generative model:'
+                    label='Choose model:'
                     list={dropboxArray}
                     props={{ placeholder: 'Choose model' }}
                     fullWidth

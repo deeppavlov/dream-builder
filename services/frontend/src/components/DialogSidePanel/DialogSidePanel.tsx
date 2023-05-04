@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import {
   DEBUG_DIST,
   OPEN_AI_LM,
@@ -42,8 +42,7 @@ interface Props {
 }
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
-  const { getAllComponents } = useComponent()
-  const { data: components } = getAllComponents(dist.name)
+  const { components } = useComponent(dist?.name)
   const [dialogError, setDilogError] = useState(null)
   const isOpenAIModelInside = components?.skills.filter((skill: ISkill) => {
     return (
@@ -84,30 +83,51 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const { send, renew, session, message, history, error } = useChat()
   const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
+  const [bot, setBot] = useState<BotInfoInterface>(dist)
 
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
 
   const deployPanel =
-    dist?.deployment?.state == null && dist?.deployment?.state == null //костыль
+    dist?.deployment?.state == null && bot?.deployment?.state == null //костыль
 
   const isDeployingFromProps =
     dist?.deployment?.state !== null &&
     dist?.deployment?.state !== 'DEPLOYED' &&
-    dist?.deployment
+    bot?.deployment
       ? true
       : false
 
   const isDeployingFromCache =
-    dist?.deployment?.state !== null &&
-    dist?.deployment?.state !== 'DEPLOYED' &&
-    dist &&
-    dist?.deployment
+    bot?.deployment?.state !== null &&
+    bot?.deployment?.state !== 'DEPLOYED' &&
+    bot &&
+    bot?.deployment
       ? true
       : false
 
   const awaitDeployPanel = isDeployingFromCache || isDeployingFromProps
+
   const cx = classNames.bind(s)
+
+  const queryClient = useQueryClient()
+  const q = queryClient.getQueryCache()
+
+  const callback = e => {
+    if ((e.query.queryKey = 'privateDists')) {
+      const privateDists = q.find('privateDists')
+      const distFromCache = privateDists?.state?.data?.find(
+        (el: BotInfoInterface) => {
+          return el.name === dist?.name
+        }
+      )
+      if (distFromCache?.deployment?.state !== dist?.deployment?.state) {
+        setBot(distFromCache)
+      }
+    }
+  }
+
+  q.subscribe(callback)
 
   useEffect(() => {}, [])
   // handlers
@@ -140,10 +160,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     !isFirstTest && dist?.deployment?.state === 'DEPLOYED'
 
   useEffect(() => {
-    if (readyToGetSession || dist?.deployment?.state === 'DEPLOYED') {
+    if (readyToGetSession || bot?.deployment?.state === 'DEPLOYED') {
       renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
     }
-  }, [dist?.deployment, dist?.deployment])
+  }, [bot?.deployment, dist?.deployment])
 
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({

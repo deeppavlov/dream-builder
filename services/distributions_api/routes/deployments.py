@@ -93,7 +93,7 @@ async def create_deployment(
         dream_dist.save(overwrite=True, generate_configs=True)
 
         parsed_url = urlparse(settings.deployer.portainer_url)
-        host = f"{parsed_url.scheme}://{parsed_url.hostname}"
+        host = f"http://{parsed_url.hostname}"
         port = crud.get_available_deployment_port(db)
 
         try:

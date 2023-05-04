@@ -1,12 +1,10 @@
-import asyncio
 from datetime import datetime
 from urllib.parse import urlparse
 
-from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
-from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerState, DeployerError
+from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.logger import logger
 from sqlalchemy.exc import IntegrityError
@@ -17,7 +15,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token
+from services.distributions_api.dependencies import verify_token
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 

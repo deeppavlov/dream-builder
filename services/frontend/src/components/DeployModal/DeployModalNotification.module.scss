@@ -1,0 +1,35 @@
+.deployNotification {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  // height: 236px;
+  background: #ffffff;
+  gap: 32px;
+  .notification {
+    text-align: center;
+    @include t1;
+  }
+  .annotation {
+    @include b3;
+    color: $text3;
+  }
+  .body {
+    svg {
+      width: 80px;
+      height: 80px;
+    }
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .footer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: end;
+  }
+}

@@ -2,6 +2,7 @@ from typing import List
 from urllib.parse import urlparse
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
+from deeppavlov_dreamtools.utils import generate_unique_name
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
@@ -48,7 +49,7 @@ async def create_virtual_assistant(
         minimal_template_virtual_assistant = crud.get_virtual_assistant_by_name(db, TEMPLATE_DIST_PROMPT_BASED)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / minimal_template_virtual_assistant.source)
 
-        new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
+        new_name = generate_unique_name()
         original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
             db, minimal_template_virtual_assistant.id, "_prompted_skill"
         )
@@ -163,12 +164,15 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 
     -``dist_name``: name of the distribution
     """
-    virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+    try:
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
 
     try:
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found")
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found locally")
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
@@ -273,7 +277,7 @@ async def clone_dist(
         original_virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / original_virtual_assistant.source)
 
-        new_name = name_generator.name_with_underscores_from_display_name(payload.display_name)
+        new_name = generate_unique_name()
         original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
             db, original_virtual_assistant.id, "_prompted_skill"
         )

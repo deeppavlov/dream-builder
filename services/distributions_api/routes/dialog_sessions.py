@@ -109,10 +109,7 @@ async def send_dialog_session_message(
         dialog_session = crud.get_dialog_session(db, dialog_session_id)
         virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
 
-        if virtual_assistant.publish_request is not None:
-            chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
-        else:
-            chat_url = crud.get_debug_assistant_chat_url(db)
+        chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
 
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id).display_name

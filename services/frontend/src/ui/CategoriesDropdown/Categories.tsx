@@ -6,7 +6,7 @@ import s from './Categories.module.scss'
 export const Categories = () => {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  useCheckClickOutside(open, ref, setOpen)
+  useCheckClickOutside(open, ref, () => setOpen(false))
   const handleOpen = () => {
     setOpen(!open)
   }

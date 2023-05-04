@@ -1,4 +1,10 @@
 .puzzle {
+  position: relative;
+  min-height: 40px;
+  max-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   width: $sidebar-width;
   @include sidebar_btn_height;
@@ -9,5 +15,22 @@
     &:hover {
       fill: $text5;
     }
+  }
+}
+
+.active {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: #3300ff;
+    border-radius: 0px 4px 4px 0px;
+  }
+
+  svg {
+    fill: $text5;
   }
 }

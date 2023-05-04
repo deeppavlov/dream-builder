@@ -48,7 +48,7 @@ export const Table: FC<TableProps> = ({
               {!withoutDate && (
                 <th className={s.th}>{fifth ? fifth : 'Created'}</th>
               )}
-              <th className={s.th}>{sixth ? sixth : 'Action'}</th>
+              <th className={s.th}>{sixth ? sixth : 'Actions'}</th>
             </tr>
           </thead>
           {addButton}

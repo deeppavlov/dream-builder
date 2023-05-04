@@ -1,29 +1,36 @@
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { DEBUG_DIST } from '../../constants/constants'
+import toast from 'react-hot-toast'
+import { RotatingLines } from 'react-loader-spinner'
+import { useQuery, useQueryClient } from 'react-query'
+import {
+  DEBUG_DIST,
+  OPEN_AI_LM,
+  TOOLTIP_DELAY,
+} from '../../constants/constants'
+import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
+import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface, ChatForm } from '../../types/types'
+import { getUserId } from '../../services/getUserId'
+import { BotInfoInterface, ChatForm, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
+import { validationSchema } from '../../utils/validationSchema'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
-const TEXT_CHAT_TYPE = 'text'
-const VOICE_CHAT_TYPE = 'voice'
-
-type ChatType = typeof TEXT_CHAT_TYPE | typeof VOICE_CHAT_TYPE
 type ChatPanelType = 'bot' | 'skill'
 
 interface Props {
@@ -32,25 +39,98 @@ interface Props {
   chatWith: ChatPanelType
   dist: BotInfoInterface
   debug: boolean
-  distName: string
-  service: string
-  prompt: string
 }
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
-  const [chatType, setChatType] = useState<ChatType>(TEXT_CHAT_TYPE)
+  const { components } = useComponent(dist?.name)
+  const [dialogError, setDilogError] = useState(null)
+  const isOpenAIModelInside = components?.skills.filter((skill: ISkill) => {
+    return (
+      skill?.component_type === 'Generative' &&
+      checkLMIsOpenAi(skill?.lm_service?.name!)
+    )
+  })
+  const { data: user } = useQuery(['user'], () => getUserId())
+  const [apiKey, setApiKey] = useState<string | null>(null)
+  const openApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+  const skillHasOpenAiLM = isOpenAIModelInside?.length > 0
+
+  // console.log('openApiKey = ', openApiKey)
+  const checkKey = () => {}
+  useEffect
+  // if (skillHasOpenAiLM) {
+  //   const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+  //   const isApiKey =
+  //     openaiApiKey !== null &&
+  //     openaiApiKey !== undefined &&
+  //     openaiApiKey.length > 0
+
+  //   if (!isApiKey) {
+  //     setDilogError({
+  //       type: 'api-key',
+  //       msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
+  //     })
+  //     return false
+  //   }
+
+  //   setApiKey(openaiApiKey)
+  // }
+  useEffect(() => {}, [])
+  console.log('error = ', dialogError)
+
   const [isFirstTest, setIsFirstTest] = useState(start)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
+  const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
-  const isTextChat = chatType === TEXT_CHAT_TYPE
+  const [bot, setBot] = useState<BotInfoInterface>(dist)
+
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
+
+  const deployPanel =
+    dist?.deployment?.state == null && bot?.deployment?.state == null //костыль
+
+  const isDeployingFromProps =
+    dist?.deployment?.state !== null &&
+    dist?.deployment?.state !== 'DEPLOYED' &&
+    bot?.deployment
+      ? true
+      : false
+
+  const isDeployingFromCache =
+    bot?.deployment?.state !== null &&
+    bot?.deployment?.state !== 'DEPLOYED' &&
+    bot &&
+    bot?.deployment
+      ? true
+      : false
+
+  const awaitDeployPanel = isDeployingFromCache || isDeployingFromProps
+
   const cx = classNames.bind(s)
-  
+
+  const queryClient = useQueryClient()
+  const q = queryClient.getQueryCache()
+
+  const callback = e => {
+    if ((e.query.queryKey = 'privateDists')) {
+      const privateDists = q.find('privateDists')
+      const distFromCache = privateDists?.state?.data?.find(
+        (el: BotInfoInterface) => {
+          return el.name === dist?.name
+        }
+      )
+      if (distFromCache?.deployment?.state !== dist?.deployment?.state) {
+        setBot(distFromCache)
+      }
+    }
+  }
+
+  q.subscribe(callback)
+
+  useEffect(() => {}, [])
   // handlers
-  const handleTypeBtnClick = (type: ChatType) => setChatType(type)
-  const handleDownloadBtnClick = () => {}
   const handleGoBackBtnClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
@@ -62,7 +142,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const handleSend = (data: ChatForm) => {
     const id = session?.id!
     const message = data?.message!
-    send.mutate({ id, message })
+    send.mutate({ dialog_session_id: id, text: message })
     reset()
   }
   const handleRenewClick = () => {
@@ -76,6 +156,39 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
 
+  const readyToGetSession =
+    !isFirstTest && dist?.deployment?.state === 'DEPLOYED'
+
+  useEffect(() => {
+    if (readyToGetSession || bot?.deployment?.state === 'DEPLOYED') {
+      renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    }
+  }, [bot?.deployment, dist?.deployment])
+
+  const dispatchTrigger = (isOpen: boolean) => {
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.ACTIVE_ASSISTANT_SP_ID,
+        value: isOpen ? dist.id : null,
+      },
+    })
+  }
+
+  useEffect(() => {
+    dispatchTrigger(true)
+    return () => dispatchTrigger(false)
+  }, [])
+
+  const { deploy } = useDeploy()
+
+  const handleDeploy = () => {
+    toast.promise(deploy.mutateAsync(dist?.id!), {
+      loading: 'Loading...',
+      success: 'Send For Deploy!',
+      error: 'Something Went Wrong...',
+    })
+  }
   return (
     <div className={s.container}>
       <SidePanelHeader>
@@ -94,8 +207,9 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
         {chatWith == 'bot' && (
           <>
             <ul role='tablist'>
-              <li role='tab' key='Dialog' aria-selected>
-                Dialog
+              <li role='tab' key='Dialog'>
+                <span aria-selected>Chat:</span>
+                <span role='name'>&nbsp;{dist?.display_name}</span>
               </li>
             </ul>
           </>
@@ -124,12 +238,44 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               Start a test to interact with your bot using text, voice or
               buttons
             </p>
-            <button onClick={handleStartBtnClick}>
+            <button className={s.runTest} onClick={handleStartBtnClick}>
               {renew.isLoading ? <TextLoader /> : 'Run Test'}
             </button>
           </>
         )}
-        {chatPanel && (
+        {awaitDeployPanel && (
+          <div className={s.await}>
+            <RotatingLines
+              strokeColor='grey'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='64'
+              visible={true}
+            />
+            <p className={s.notification}>
+              Please wait till assistant launching
+            </p>
+            <p className={s.notification}>This may take a few minutes.</p>
+          </div>
+        )}
+        {deployPanel && (
+          <div className={s.deployPanel}>
+            <div className={s.text}>
+              <h5 className={s.notification}>Chat with AI Assistant</h5>
+              <p className={s.annotation}>
+                In order to start chat with AI Assistant, it is necessary to
+                build it
+              </p>
+            </div>
+            <Button
+              theme='primary'
+              props={{ onClick: handleDeploy, disabled: deploy?.isLoading }}
+            >
+              Build Assistant
+            </Button>
+          </div>
+        )}
+        {!awaitDeployPanel && !deployPanel && chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
               {history?.map(
@@ -162,21 +308,8 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                 </>
               )}
             </div>
-            <div className={s.dialogSidePanel__controls}>
-              <div className={s.left}>
-                <DialogButton
-                  active={isTextChat}
-                  onClick={() => handleTypeBtnClick(TEXT_CHAT_TYPE)}
-                >
-                  <DialogTextIcon />
-                </DialogButton>
-                <button
-                  className={s.dialogSidePanel__control}
-                  onClick={handleDownloadBtnClick}
-                >
-                  <DownloadDialogIcon />
-                </button>
-              </div>
+            {/* <div className={s.dialogSidePanel__controls}>
+              <div className={s.left}></div>
               <div className={s.right}>
                 <Button
                   small
@@ -189,15 +322,25 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
                   </div>
                 </Button>
               </div>
-            </div>
+            </div> */}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 className={s.dialogSidePanel__textarea}
                 placeholder='Type...'
-                {...register('message')}
+                {...register('message', {
+                  required: validationSchema.global.required,
+                })}
               />
               <input type='submit' hidden />
               <SidePanelButtons>
+                <Button
+                  theme='secondary'
+                  props={{
+                    onClick: handleRenewClick,
+                  }}
+                >
+                  <Renew data-tooltip-id='renew' />
+                </Button>
                 <Button
                   theme='primary'
                   props={{ disabled: send?.isLoading, type: 'submit' }}
@@ -209,7 +352,11 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
           </>
         )}
       </div>
-      <BaseToolTip id='renew' content='Start a new dialog' />
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id='renew'
+        content='Start a new dialog'
+      />
     </div>
   )
 }

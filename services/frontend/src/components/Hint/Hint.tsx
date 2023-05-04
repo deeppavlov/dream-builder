@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useObserver } from '../../hooks/useObserver'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 
 interface Props {
-  id: string
+  tooltipId: string
+  name: string
+  text: string | JSX.Element | Element | ReactNode
   handleClose: () => void
 }
 
-const Hint = ({ id, handleClose }: Props) => {
+const Hint = ({ tooltipId, name, text, handleClose }: Props) => {
   const [isHidden, setIsHidden] = useState<boolean>(
-    JSON.parse(`${localStorage.getItem('HINT_IS_VISITED')}`) === true
+    JSON.parse(`${localStorage.getItem(`${name}_IS_VISITED`)}`) === true
   )
 
   const handleClick = () => {
     setIsHidden(true)
-    localStorage.setItem('HINT_IS_VISITED', JSON.stringify(true))
+    localStorage.setItem(`${name}_IS_VISITED`, JSON.stringify(true))
     handleClose()
   }
 
@@ -22,14 +24,9 @@ const Hint = ({ id, handleClose }: Props) => {
 
   return (
     <BaseToolTip
-      id={id}
-      children={
-        <>
-          Click here to control your Virtual Assistant: <br />
-          annotators, skill & response selectors, and skills.
-        </>
-      }
-      events={['click']}
+      id={tooltipId}
+      children={<>{text}</>}
+      openOnClick
       isOpen={!isHidden}
       place='right'
     />

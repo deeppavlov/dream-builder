@@ -1,38 +1,45 @@
-.breadcrumbs {
-  display: flex;
-  font-display: row;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 140%;
-  text-align: center;
-  color: #3300ff;
-  height: 63px;
-  width: 40px;
-  &:hover {
-    background: #f0f0f3;
-  }
-}
-.home {
-  width: $topbar_btn;
-  height: $topbar_btn;
-  background-image: url(../../assets/icons/home.svg);
-}
 .routes {
-  white-space: nowrap;
+  height: 100%;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-
-  // white-space: 'nowrap';
+  white-space: nowrap;
+  gap: 2px;
 
   .slash {
-    color: #8d96b5;
+    @include lnks_n_btns4;
+    color: $text3;
+
     &::before {
       content: '/';
     }
-    @include lnks_n_btns4;
+  }
+}
+
+.route {
+  @include b3;
+  @include accent_text;
+  cursor: pointer;
+  margin: 1px 8px;
+
+  &:hover {
+    color: $primary1;
+    border-bottom: 1px solid $primary1;
+
+    a {
+      color: $primary1;
+    }
+  }
+}
+
+.active,
+.route:active {
+  color: #190080;
+  border-bottom: 1px solid #190080;
+
+  a {
+    color: #190080;
   }
 }
 
@@ -54,5 +61,18 @@
 
   a {
     color: #190080;
+  }
+}
+
+.skeleton {
+  @include skeleton_loader;
+  width: 100px;
+  height: 22px;
+  border-radius: 4px;
+
+  &:hover,
+  .active,
+  .route:active {
+    border-bottom: none !important;
   }
 }

@@ -129,7 +129,12 @@ def get_virtual_assistant(db: Session, id: int) -> Optional[models.VirtualAssist
 
 
 def get_virtual_assistant_by_name(db: Session, name: str) -> Optional[models.VirtualAssistant]:
-    return db.scalar(select(models.VirtualAssistant).filter_by(name=name))
+    virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=name))
+
+    if not virtual_assistant:
+        raise ValueError(f"Virtual assistant {name} does not exist")
+
+    return virtual_assistant
 
 
 def get_all_virtual_assistants(db: Session) -> [models.VirtualAssistant]:
@@ -311,7 +316,7 @@ def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> 
 def get_virtual_assistant_components_by_name(
     db: Session, virtual_assistant_name: str
 ) -> [models.VirtualAssistantComponent]:
-    virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
+    virtual_assistant = get_virtual_assistant_by_name(db, virtual_assistant_name)
 
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)

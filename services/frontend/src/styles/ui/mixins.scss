@@ -275,17 +275,17 @@
   width: 32px;
   height: 32px;
   background: #ffffff;
-  border: 1px solid #8d96b5;
+  border: 2px solid #8d96b5;
   border-radius: 50%;
   cursor: pointer;
   &:hover {
-    border: 1px solid $primary1;
+    border: 2px solid $primary1;
     svg {
       stroke: $primary1;
     }
   }
   &:active {
-    border: 1px solid $primary4;
+    border: 2px solid $primary4;
     svg {
       stroke: $primary4;
     }
@@ -309,8 +309,8 @@
   max-height: 266px;
 }
 @mixin min_max_height_skill {
-  min-height: 274px;
-  max-height: 274px;
+  min-height: 244px;
+  max-height: 244px;
 }
 @mixin separator {
   height: 1px;
@@ -319,4 +319,22 @@
 }
 @mixin forGrid {
   max-width: 344px;
+}
+@mixin skeleton_loader {
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60%
+    )
+    #dcdcdfa8;
+  background-size: 200% 100%;
+  background-position-x: 180%;
+  animation: 3s loading ease-in-out infinite;
+
+  @keyframes loading {
+    to {
+      background-position-x: -20%;
+    }
+  }
 }

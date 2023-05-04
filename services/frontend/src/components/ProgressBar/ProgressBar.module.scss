@@ -1,0 +1,33 @@
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background-color: $bcgrnd4;
+  border-radius: 4px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 42px;
+    height: 100%;
+    background-color: $primary1;
+    border-radius: 4px;
+    top: 0;
+    left: 0;
+    animation: infiniyBarLoading 3s linear infinite;
+  }
+  @keyframes infiniyBarLoading {
+    0% {
+      left: 0%;
+    }
+
+    50% {
+      left: 100%;
+      transform: translateX(-100%);
+    }
+
+    100% {
+      left: 0%;
+    }
+  }
+}

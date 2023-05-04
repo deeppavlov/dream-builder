@@ -24,6 +24,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     @include t4;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .deployment {
+    }
   }
   .body {
     display: flex;
@@ -53,9 +58,11 @@
 
   .desc {
     color: $text2;
-    max-height: 88px;
+
     @include b3;
     @include hide_text;
+    max-height: 110px;
+    height: 110px;
     -webkit-line-clamp: 4;
   }
 
@@ -105,17 +112,50 @@
   @include tooltip_for_description;
 }
 .your {
+  position: relative;
   // min-width: 350px; //this style broke grid on 'yourbots' page
   // max-width: 350px;
   @include min_max_height;
-  .header {
+  .header {position: relative;
+    
     background-color: $purple;
     color: $text4;
   }
-  .desc {
-    max-height: 110px;
-    height: 110px;
-    -webkit-line-clamp: 4;
+  .header.deploying {
+    span {
+      z-index: 10;
+    }
+    background: linear-gradient(
+        0deg,
+        rgba(112, 0, 255, 0.4),
+        rgba(112, 0, 255, 0.4)
+      ),
+      #ffffff;
+    position: relative;
+    z-index: 2;
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: $purple;
+      top: 0;
+      left: 0;
+      animation: indeterminateAnimation 10s infinite linear;
+      z-index: 0;
+      transform-origin: 0% 50%;
+    }
+    @keyframes indeterminateAnimation {
+      0% {
+        transform: translateX(0) scaleX(0);
+      }
+      50% {
+        transform: translateX(0) scaleX(1);
+      }
+      100% {
+        transform: translateX(100%) scaleX(1);
+      }
+    }
   }
   .block {
     gap: 8px;

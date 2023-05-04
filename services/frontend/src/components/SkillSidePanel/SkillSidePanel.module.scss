@@ -18,13 +18,15 @@
   color: $text1;
 }
 
+.rename-btn {
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+
 .icon {
   height: 24px;
   width: 24px;
-
-  &[data-disabled] {
-    opacity: 0.3;
-  }
 
   path {
     stroke: $text2;

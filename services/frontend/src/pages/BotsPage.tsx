@@ -1,86 +1,113 @@
-import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { RoutesList } from '../router/RoutesList'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
+import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DistList } from '../components/DistList/DistList'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Main } from '../components/Main/Main'
+import { Modal } from '../components/Modal/Modal'
+import { Placeholder } from '../components/PlaceHolder/PlaceHolder'
+import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
+import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
+import { ShareModal } from '../components/ShareModal/ShareModal'
+import { SignInModal } from '../components/SignInModal/SignInModal'
 import { useAuth } from '../context/AuthProvider'
-import { getPublicDists } from '../services/getPublicDists'
-import { getPrivateDists } from '../services/getPrivateDists'
+import { useDisplay } from '../context/DisplayContext'
+import { useAssistants } from '../hooks/useAssistants'
+import { RoutesList } from '../router/RoutesList'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
+import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Slider } from '../ui/Slider/Slider'
-import { Main } from '../components/Main/Main'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { Modal } from '../components/Modal/Modal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { DistList } from '../components/DistList/DistList'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
-  const auth = useAuth()
   const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-
-  const {
-    data: publicDists,
-    error: publicDistsError,
-    isLoading: isPublicDistsLoading,
-  } = useQuery('publicDists', getPublicDists)
-
-  const {
-    data: privateDists,
-    error: privateDistsError,
-    isLoading: isPrivateDistsLoading,
-  } = useQuery('privateDists', getPrivateDists, {
-    enabled: !!auth?.user,
-  })
+  const auth = useAuth()
+  const { fetchPublicDists, fetchPrivateDists } = useAssistants()
+  const publicDists = fetchPublicDists()
+  const privateDists = fetchPrivateDists()
 
   return (
     <>
-      <Main>
+      <Main sidebar>
         <Wrapper
-          title='Public Virtual Assistants & Chatbots'
+          subWrapper
+          title='Create your Assistant '
           showAll
-          amount={publicDists?.length}
-          linkTo={RoutesList.botsAll}>
-          <Loader isLoading={isPublicDistsLoading} />
-          <ErrorHandler error={publicDistsError} />
-          {isTableView ? (
-            <Table>
-              <DistList view='table' dists={publicDists} type='public' />
-            </Table>
+          amount={publicDists?.data?.length}
+          linkTo={RoutesList.botsAll}
+        >
+          {publicDists?.error ? (
+            <ErrorHandler error={publicDists?.error} />
           ) : (
-            <Slider>
-              <DistList view='cards' dists={publicDists} type='public' />
-            </Slider>
+            <>
+              {isTableView ? (
+                <Table
+                  addButton={<AddButton forTable disabled={!auth?.user} />}
+                >
+                  <DistList
+                    view='table'
+                    dists={publicDists?.data}
+                    type='public'
+                  />
+                </Table>
+              ) : (
+                <Container overflowForAddButton>
+                  <AddButton disabled={!auth?.user} />
+                  <Slider subWrapper>
+                    {publicDists?.isLoading && <CardsLoader cardsCount={6} />}
+                    <DistList
+                      view='cards'
+                      dists={publicDists?.data}
+                      type='public'
+                    />
+                  </Slider>
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <Wrapper
           primary
           showAll
-          title='Your Virtual Assistants & Chatbots'
+          title='Assistants'
           amount={
-            auth?.user && privateDists?.length > 0 && privateDists?.length
+            auth?.user &&
+            privateDists?.data?.length > 0 &&
+            privateDists?.data?.length
           }
-          linkTo={RoutesList.yourBots}>
+          linkTo={RoutesList.yourBots}
+        >
           {isTableView ? (
-            <Table addButton={<AddButton forTable disabled={!auth?.user} />}>
-              <DistList view='table' dists={privateDists} type='your' />
+            <Table fourth='Visibility'>
+              <DistList view='table' dists={privateDists?.data} type='your' />
             </Table>
           ) : (
             <Container overflowForAddButton>
-              <AddButton disabled={!auth?.user} />
-              <Slider>
-                <Loader isLoading={isPrivateDistsLoading} />
-                <ErrorHandler error={privateDistsError} />
-                <DistList view='cards' dists={privateDists} type='your' />
+              <Slider privateAssistants>
+                {auth?.user && privateDists?.isLoading && (
+                  <CardsLoader cardsCount={6} />
+                )}
+                {privateDists?.error ? (
+                  <ErrorHandler error={privateDists?.error} />
+                ) : (
+                  <DistList
+                    view='cards'
+                    dists={privateDists?.data}
+                    type='your'
+                  />
+                )}
+                {privateDists?.data?.length === 0 && (
+                  <Placeholder>You assistants will appear here</Placeholder>
+                )}
+                {!auth?.user && (
+                  <Placeholder>You assistants will appear here</Placeholder>
+                )}
               </Slider>
             </Container>
           )}
@@ -90,8 +117,10 @@ export const BotsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareModal />
+        <PublicToPrivateModal />
         <Modal />
         <SignInModal />
+        <DeployModalNotification />
       </Main>
       <Toaster />
     </>

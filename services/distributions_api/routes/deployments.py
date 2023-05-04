@@ -107,6 +107,11 @@ async def get_stacks():
     return swarm_client.get_stacks()
 
 
+@deployments_router.get("/stack_ports")
+async def get_stack_ports():
+    return swarm_client.get_used_ports()
+
+
 @deployments_router.get("/{deployment_id}", status_code=status.HTTP_200_OK)
 async def get_deployment(
     deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)

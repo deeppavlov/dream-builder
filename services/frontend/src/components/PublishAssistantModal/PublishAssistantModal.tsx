@@ -1,110 +1,134 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-import { BotInfoInterface } from '../../types/types'
-import { publishAssistantDist } from '../../services/publishUsersAssistantDist'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useAssistants } from '../../hooks/useAssistants'
+import { useObserver } from '../../hooks/useObserver'
+import { BotInfoInterface, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
-import toast from 'react-hot-toast'
-import { useObserver } from '../../hooks/useObserver'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { Checkbox } from '../../ui/Checkbox/Checkbox'
 import s from './PublishAssistantModal.module.scss'
 
-interface IPublishBot extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
-interface IPublishAssistantModal {
-  bot: IPublishBot
+type Visibility = 'public_template' | 'private' | 'unlisted' | null
+interface FormValues {
+  hide: boolean
+  visibility: Visibility
 }
-
 export const PublishAssistantModal = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [bot, setBot] = useState<IPublishBot | null>(null)
-  const queryClient = useQueryClient()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [bot, setBot] = useState<BotInfoInterface | null>(null)
+  const [newValue, setNewValue] = useState<Visibility>()
 
-  const handleEventUpdate = (data: { detail: IPublishAssistantModal }) => {
-    setBot(data.detail.bot)
-    setIsOpen(!isOpen)
+  const { register, handleSubmit, reset } = useForm<FormValues>()
+
+  const { changeVisibility } = useAssistants()
+  const currentVisibilityStatus = bot?.visibility
+
+  const handleEventUpdate = (data: { detail: any }) => {
+    setBot(data?.detail.bot)
+    setIsOpen(prev => !prev)
   }
 
-  const handleNoBtnClick = () => setIsOpen(false)
+  const handleNoBtnClick = () => closeModal()
 
-  const handlePublishBtnClick = () => {
-    toast.promise(mutation.mutateAsync(), {
-      loading: 'Publishing...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+  const handlePublish = (data: FormValues) => {
+    const visibility = data?.visibility!
+    const name = bot?.name!
 
-    mutation.mutate()
-    setIsOpen(false)
+    visibility !== currentVisibilityStatus ||
+    bot?.publish_state == 'in_progress'
+      ? toast
+          .promise(changeVisibility.mutateAsync({ name, visibility }), {
+            loading: 'Loading...',
+            success:
+              visibility === 'public_template'
+                ? 'Submitted For Review!'
+                : 'Success!',
+            error: 'Something Went Wrong...',
+          })
+          .then(() => {
+            closeModal()
+          })
+      : closeModal()
   }
 
-  const mutation = useMutation({
-    mutationFn: () => {
-      return publishAssistantDist(bot?.name!)
-    },
-    // onSuccess: () =>
-    //   queryClient
-    //     .invalidateQueries({ queryKey: 'assistant_dists' })
-    //     .then(() => {
-    //       setIsOpen(false)
-    //       trigger('Modal', {})
-    //     }),
-  })
-
+  const closeModal = () => {
+    reset({ visibility: null })
+    setIsOpen(prev => !prev)
+    setBot(() => null)
+    setNewValue(() => null)
+  }
   useObserver('PublishAssistantModal', handleEventUpdate)
+  const visibility = [
+    {
+      id: 'Private',
+      response: 'private',
+      description: 'Private (only you can see it)',
+    },
+    {
+      id: 'Unlisted',
+      response: 'unlisted',
+      description:
+        'Unlisted (only those you’ve shared the direct link can see it)',
+    },
+    {
+      id: 'Public',
+      response: 'public_template',
+      description: 'Public Template (everyone can see it and re-use it)',
+    },
+  ]
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
       <div className={s.publishAssistantModal}>
-        <h4>
-          Do you want to publish <mark>{bot?.display_name}</mark> to Virtual
-          Assistants Store?
-        </h4>
-        <p className={s.text}>
-          Choose the type of visibility for Virtual Assistant
-        </p>
-        <div className={s.body}>
-          <form className={s.form}>
-            <RadioButton
-              tooltipId='Public'
-              name='visibility'
-              id='Public'
-              htmlFor='Public'
-              value='Public'
-              defaultChecked={true}>
-              Public
-            </RadioButton>
-            <p className={s.text}>or</p>
-            <RadioButton
-              tooltipId='Unlisted'
-              name='visibility'
-              id='Unlisted'
-              htmlFor='Unlisted'
-              value='Unlisted'>
-              Unlisted
-            </RadioButton>
-          </form>
-          <div className={s.forCheckbox}>
-            <Checkbox
-              defaultChecked={true}
-              theme='secondary'
-              label='Hide your prompt(s) so that others could not see them'
-            />
+        <div className={s.header}>
+          <h4>Change who can see your Assistant?</h4>
+          <p className={s.annotation}>
+            Sharing Assistants with OpenAI models is temporarily disabled. In
+            the future, we hope to remove this limitation.
+          </p>
+        </div>
+        <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
+          <div className={s.body}>
+            <div className={s.radio}>
+              {visibility.map((type, id) => {
+                return (
+                  <RadioButton
+                    props={{
+                      ...register('visibility'),
+                      defaultChecked: type?.response === bot?.visibility,
+                      onChange: e => {
+                        setNewValue(e?.currentTarget?.value as TDistVisibility)
+                      },
+                    }}
+                    key={id}
+                    name={type.response}
+                    id={type.id}
+                    htmlFor={type.id}
+                    value={type.response}
+                  >
+                    {type.description}
+                  </RadioButton>
+                )
+              })}
+            </div>
           </div>
-        </div>
-        <div className={s.btns}>
-          <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
-            No
-          </Button>
-          <Button
-            theme='primary'
-            props={{
-              onClick: handlePublishBtnClick,
-            }}>
-            Publish
-          </Button>
-        </div>
+          <div className={s.btns}>
+            <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
+              No
+            </Button>
+            <Button
+              theme='primary'
+              props={{
+                type: 'submit',
+                disabled: changeVisibility?.isLoading,
+              }}
+            >
+              {newValue === 'public_template' ? 'Publish' : ' Save'}
+            </Button>
+          </div>
+        </form>
       </div>
       <BaseToolTip
         id='Public'

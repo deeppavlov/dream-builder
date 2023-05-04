@@ -1,26 +1,52 @@
 import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
-import { FormState } from 'react-hook-form'
+import {
+  Control,
+  RegisterOptions,
+  useController,
+  UseFormSetError,
+} from 'react-hook-form'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import Button from '../Button/Button'
 import s from './Input.module.scss'
 
 interface InputProps {
+  control: Control<any>
+  name: string
   label?: string | JSX.Element
-  error?: Partial<{ type: any; message: any }>
-  formState?: FormState<any>
+  defaultValue?: string
+  rules?: RegisterOptions
   props?: React.InputHTMLAttributes<HTMLInputElement>
   withEnterButton?: boolean
   big?: boolean
+  setError?: UseFormSetError<any>
 }
 
 export const Input: FC<InputProps> = ({
   label,
-  error,
-  formState,
+  control,
+  name,
+  rules,
+  defaultValue,
+  setError,
   props,
   withEnterButton,
   big,
 }) => {
+  const {
+    field,
+    formState,
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+    rules: Object.assign(
+      {},
+      rules,
+      rules?.required ? { validate: checkIfEmptyString } : {}
+    ),
+    defaultValue,
+  })
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const inputId = props?.id ?? useId()
@@ -34,13 +60,13 @@ export const Input: FC<InputProps> = ({
     setIsEnter(isSubmitted && !isSubmitSuccessful)
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (props?.onBlur) props.onBlur(e)
+  const handleBlur = () => {
+    field.onBlur()
     setIsActive(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (props?.onChange) props.onChange(e)
+    field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
   }
@@ -53,7 +79,8 @@ export const Input: FC<InputProps> = ({
     <div
       className={s.input}
       data-active={isActive}
-      data-error={error !== undefined}>
+      data-error={error !== undefined}
+    >
       {label && (
         <label htmlFor={inputId} className={cx('label', 'title')}>
           {label}
@@ -62,7 +89,9 @@ export const Input: FC<InputProps> = ({
       <div className={s.container}>
         <input
           {...props}
+          {...field}
           id={inputId}
+          value={field.value || ''}
           onBlur={handleBlur}
           onChange={handleChange}
           className={cx('field', big && 'big')}

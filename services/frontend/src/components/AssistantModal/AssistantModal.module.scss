@@ -15,7 +15,8 @@
 }
 
 .textarea {
-  max-height: 25rem;
+  overflow: hidden;
+  padding: 0 3px;
 }
 
 .btns {

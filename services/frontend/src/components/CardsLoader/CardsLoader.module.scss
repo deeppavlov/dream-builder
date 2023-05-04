@@ -1,0 +1,77 @@
+.skeleton,
+.skeleton .header,
+.skeleton .desc,
+.skeleton .btn,
+.skeleton .small-btn {
+  @include skeleton_loader;
+}
+
+.skeleton .small-btn {
+  background-size: 800% 100%;
+  background-position-x: 100%;
+  animation: loading 3s ease-in-out 0.8s infinite;
+}
+
+.card {
+  width: 280px;
+  width: 280px;
+  height: 266px;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #8d96b5;
+}
+
+.skill {
+  max-height: 244px;
+  max-width: 344px;
+  width: 100%;
+}
+
+.bot {
+  max-width: 100%;
+  width: 100%;
+
+  .btn {
+    width: 100%;
+  }
+}
+
+.body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  gap: 8px;
+}
+
+.header {
+  height: 38px;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.desc {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.btns {
+  margin-top: 4px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  width: 195px;
+  height: 36px;
+  border-radius: 4px;
+}
+
+.small-btn {
+  min-width: 36px;
+  max-width: 36px;
+  height: 36px;
+  border-radius: 4px;
+}

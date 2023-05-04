@@ -1,20 +1,20 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import React, { FC, useId, useRef, useState } from 'react'
-import Woman from '../../assets/icons/woman.png'
+import React, { FC, useEffect, useId, useState } from 'react'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
+import { RoutesList } from '../../router/RoutesList'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { srcForIcons } from '../../utils/srcForIcons'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
 import s from './SkillCard.module.scss'
@@ -36,9 +36,11 @@ export const SkillCard: FC<SkillCardProps> = ({
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
-  const skillCardRef = useRef(null)
   const { options } = useDisplay()
+  const { name: distRoutingName } = useParams()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const isActive = skill.id === activeSKillId
+  const nav = useNavigate()
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -49,10 +51,10 @@ export const SkillCard: FC<SkillCardProps> = ({
   const handleSkillCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     triggerSkillSidePanel({
-      parent: skillCardRef,
       skill,
       type,
       activeTab: 'Properties',
+      isOpen: !isActive,
     })
   }
 
@@ -62,9 +64,13 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
-    if (skill.component_type === 'Generative') {
-      trigger('SkillPromptModal', { skill, action: 'edit' })
-      trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+    if (skill.component_type === ('Generative' as any)) {
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name: distRoutingName as string,
+          skillId: skill.name,
+        } as any)
+      )
       e.stopPropagation()
       return
     }
@@ -74,7 +80,16 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   const srcForComponentType = srcForIcons(nameForComponentType)
-  
+
+  // useEffect(() => {
+  //   triggerSkillSidePanel({
+  //     skill,
+  //     type,
+  //     activeTab: 'Properties',
+  //     isOpen: isActive,
+  //   })
+  // }, [skill])
+
   return (
     <div
       className={cx(
@@ -84,14 +99,13 @@ export const SkillCard: FC<SkillCardProps> = ({
         disabled && 'disabled'
       )}
       onClick={handleSkillCardClick}
-      ref={skillCardRef}
-      data-active={skill.name === activeSKillId}
+      data-active={isActive}
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
-        {type == 'your' && (
+        {/* {type == 'your' && (
           <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-        )}
+        )} */}
       </div>
       <div className={s.body}>
         <div className={s.top}>
@@ -101,14 +115,14 @@ export const SkillCard: FC<SkillCardProps> = ({
               {skill?.component_type ?? '------'}
             </p>
           </div>
-          <div className={s.name}>
-            <img className={s.companyLogo} src={Woman} />
+          {/* <div className={s.name}>
+            <img className={s.companyLogo} src={skill?.author?.picture} />
             <p className={s.companyName}>
               {skill?.author.fullname == 'DeepPavlov'
                 ? 'Dr. Xandra Smith'
                 : skill?.author.fullname}
             </p>
-          </div>
+          </div> */}
           <div
             className={s.description}
             data-tip
@@ -117,11 +131,12 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
-            <BaseToolTip
+            {/* <BaseToolTip
+              delayShow={TOOLTIP_DELAY}
               id={'skillCardDesc' + tooltipId}
               content={skill?.description}
               theme='description'
-            />
+            /> */}
           </div>
 
           <span className={s.separator} />
@@ -183,6 +198,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       </div>
       {isPreview && (
         <BaseToolTip
+          delayShow={TOOLTIP_DELAY}
           id={'editSkill' + tooltipId}
           content='You need to clone the virtual assistant to edit'
           theme='small'

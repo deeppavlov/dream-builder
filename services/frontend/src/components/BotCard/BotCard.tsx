@@ -1,67 +1,46 @@
-import { useId, useRef } from 'react'
-import classNames from 'classnames/bind'
-import { useNavigate } from 'react-router-dom'
-import { trigger } from '../../utils/events'
-import {
-  BotAvailabilityType,
-  BotCardSize,
-  BotInfoInterface,
-} from '../../types/types'
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { ReactComponent as PreviewIcon } from '@assets/icons/eye.svg'
-import Button from '../../ui/Button/Button'
-import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import Woman from '../../assets/icons/woman.png'
-import { Kebab } from '../../ui/Kebab/Kebab'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotInfoSidePanel from '../BotInfoSidePanel/BotInfoSidePanel'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import classNames from 'classnames/bind'
+import { FC, useId } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { BotCardProps } from '../../types/types'
+import Button from '../../ui/Button/Button'
+import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
+import { trigger } from '../../utils/events'
+import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
+import { Badge } from '../Badge/Badge'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotCard.module.scss'
 
-
-interface BotCardProps {
-  type: BotAvailabilityType
-  bot: BotInfoInterface
-  size?: BotCardSize
-  disabled: boolean
-}
-
-export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
+export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const navigate = useNavigate()
   const tooltipId = useId()
   let cx = classNames.bind(s)
   const dateCreated = dateToUTC(new Date(bot?.date_created))
-  const botCardRef = useRef(null)
   const { options } = useDisplay()
+  const infoSPId = `info_${bot.id}`
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const isActive =
+    infoSPId === activeAssistantId || bot.id === activeAssistantId
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      parent: botCardRef,
+      isOpen: activeAssistantId !== infoSPId,
       children: (
-        <BotInfoSidePanel
+        <AssistantSidePanel
           type={type}
-          key={bot?.name}
-          bot={bot}
+          key={bot?.id}
+          name={bot.name}
           disabled={disabled}
         />
       ),
     })
-  }
-
-  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
-    e.stopPropagation()
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,43 +54,42 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: false,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
+    bot?.visibility === 'public_template'
+      ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
+      : navigate(`/${bot?.name}`, {
+          state: {
+            preview: false,
+            distName: bot?.name,
+            displayName: bot?.display_name,
+          },
+        })
     e.stopPropagation()
   }
-
+  
+  const onModeration = bot?.publish_state === 'in_progress'
+  const deployed = bot?.deployment?.state === 'DEPLOYED'
+  const deploying =
+    bot?.deployment?.state !== 'DEPLOYED' &&
+    bot?.deployment?.state !== null &&
+    bot?.deployment !== null
+  
   return (
     <div
       className={cx('botCard', `${type}`, size)}
       onClick={handleBotCardClick}
-      ref={botCardRef}
-      data-active={bot.name === activeAssistantId}>
-      <div className={s.header}>{bot?.display_name}</div>
+      data-active={isActive}
+    >
+      {type === 'your' && deployed && <Badge />}
+      <div className={cx('header', deploying && 'deploying')}>
+        <span>{bot?.display_name}</span>
+        {/* {type === 'your' && (
+          <span className={s.deployment}>{bot?.deployment_state}</span>
+        )} */}
+      </div>
       <div className={s.body}>
         <div className={s.block}>
-          {type === 'public' && (
-            <div className={s.author}>
-              <img referrerPolicy='no-referrer' src={Woman} />
-              <span>
-                {bot?.author?.fullname! == 'Deepy Pavlova'
-                  ? 'Dr. Xandra Smith'
-                  : bot?.author?.fullname!}
-              </span>
-            </div>
-          )}
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>
             {bot?.description}
-            <BaseToolTip
-              id={'botCardDesc' + bot?.name}
-              content={bot?.description}
-              place='top'
-              theme='description'
-            />
           </div>
           <span className={s.separator} />
           <div className={s.dateAndVersion}>
@@ -119,6 +97,22 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
               <CalendarIcon />
               {dateCreated}
             </div>
+
+            <SmallTag
+              theme={
+                bot?.publish_state === 'in_progress'
+                  ? 'validating'
+                  : bot?.visibility
+              }
+            >
+              {!bot?.publish_state
+                ? type === 'your' && bot?.visibility
+                : bot?.publish_state == 'in_progress'
+                ? 'On Moderation'
+                : bot?.visibility === 'public_template'
+                ? 'Public Template'
+                : bot?.visibility}
+            </SmallTag>
           </div>
         </div>
         <div className={s.btns}>
@@ -127,22 +121,19 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
               <div
                 data-tip
                 data-tooltip-id={'botClone' + bot?.name}
-                className={s.container}>
+                className={s.container}
+              >
                 <Button
                   theme='primary'
                   small
                   long
-                  props={{ onClick: handleCloneClick }}>
-                  Clone
+                  props={{ onClick: handleCloneClick }}
+                >
+                  Use
                 </Button>
               </div>
-              <Button
-                theme='secondary'
-                small
-                withIcon
-                props={{ onClick: handlePreviewClick }}>
-                <PreviewIcon />
-              </Button>
+              <Kebab tooltipId={tooltipId} theme='card' />
+              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>
           ) : (
             <>
@@ -150,10 +141,25 @@ export const BotCard = ({ type, bot, size, disabled }: BotCardProps) => {
                 theme='primary'
                 small
                 long
-                props={{ onClick: handlEditClick }}>
+                props={{
+                  'data-tooltip-id': 'youcant' + tooltipId,
+                  onClick: handlEditClick,
+                  disabled: onModeration,
+                }}
+              >
                 Edit
               </Button>
-
+              {onModeration && (
+                <BaseToolTip
+                  id={'youcant' + tooltipId}
+                  content={
+                    'You cannot edit the ASSISTANT while its under moderation.'
+                  }
+                  place='bottom'
+                  theme='description'
+                  delayShow={TOOLTIP_DELAY}
+                />
+              )}
               <Kebab tooltipId={tooltipId} theme='card' />
               <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
             </>

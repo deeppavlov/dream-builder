@@ -11,8 +11,20 @@
 .btnL {
   left: -16px;
   @include slider_btns;
+  &.privateAssistants {
+    border-color: $purple;
+  }
 }
 .btnR {
   right: -16px;
   @include slider_btns;
+  &.privateAssistants {
+    border-color: $purple;
+  }
+}
+.subWrapperL {
+  left: -43px;
+}
+.subWrapperR {
+  right: -43px;
 }

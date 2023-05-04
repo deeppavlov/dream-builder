@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
-import classNames from 'classnames/bind'
-import { ReactComponent as PublicIcon } from '@assets/icons/eye.svg'
-import { ReactComponent as PrivateIcon } from '@assets/icons/private_eye.svg'
+import { ReactComponent as LoaderIcon } from '@assets/icons/circle_loader_small.svg'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { ReactComponent as DoneIcon } from '@assets/icons/done.svg'
-import { ReactComponent as LoaderIcon } from '@assets/icons/circle_loader_small.svg'
+import { ReactComponent as PublicIcon } from '@assets/icons/eye.svg'
+import { ReactComponent as PrivateIcon } from '@assets/icons/private_eye.svg'
+import classNames from 'classnames/bind'
+import React, { FC } from 'react'
 import s from './SmallTag.module.scss'
 
 type Theme =
@@ -17,6 +17,9 @@ type Theme =
   | 'not-valid'
   | 'public'
   | 'your'
+  | 'public_template'
+  | 'unlisted'
+  | 'private'
 
 interface SmallTagProps extends React.PropsWithChildren {
   theme?: Theme
@@ -39,6 +42,12 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         return <DoneIcon className={s.icon} />
       case 'validating':
         return <LoaderIcon className={s.icon} />
+      case 'public_template':
+        return <PublicIcon className={s.icon} />
+      case 'unlisted':
+        return <PublicIcon className={s.icon} />
+      case 'private':
+        return <PrivateIcon className={s.icon} />
       default:
         break
     }

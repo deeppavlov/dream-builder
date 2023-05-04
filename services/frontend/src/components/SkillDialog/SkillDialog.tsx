@@ -1,90 +1,190 @@
-import { ReactComponent as DownloadDialogIcon } from '@assets/icons/dialog_download.svg'
-import { ReactComponent as DialogMicrophoneIcon } from '@assets/icons/dialog_microphone.svg'
-import { ReactComponent as DialogTextIcon } from '@assets/icons/dialog_text.svg'
 import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
-import { FC, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { DEBUG_DIST } from '../../constants/constants'
+import { useQuery } from 'react-query'
+import { Link } from 'react-router-dom'
+import { DEBUG_DIST, OPEN_AI_LM } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
-import { ChatForm, SkillDialogProps } from '../../types/types'
+import { RoutesList } from '../../router/RoutesList'
+import { getUserId } from '../../services/getUserId'
+import { ChatForm, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
-import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
-import DialogButton from '../DialogButton/DialogButton'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-export type ChatHistory = { text: string; author: 'bot' | 'me' }
+type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name'
 
-const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
-  const { send, renew, session, message, history, error } = useChat()
+interface IDialogError {
+  type: TDialogError
+  msg: string
+}
+
+interface Props {
+  isDebug: boolean
+  distName: string | undefined
+  skill?: ISkill | null
+}
+
+const SkillDialog = ({ isDebug, distName, skill }: Props) => {
+  const { send, renew, session, message, history } = useChat()
+  const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const [error, setError] = useState<IDialogError | null>(null)
+  const [isChecking, setIsChecking] = useState(false)
+  const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
 
+  const renewDialogSession = () => {
+    const isDistName = distName !== undefined && distName?.length > 0
+
+    if (!isDistName && !isDebug)
+      return setError({
+        type: 'dist-name',
+        msg: 'The name of the assistant was not found.',
+      })
+
+    renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {
+      onSuccess: () =>
+        console.log('A new dialog session was successfully created!'),
+    })
+  }
+
+  const checkIsChatSettings = () => {
+    console.log('Start checking dialog settings...')
+    setError(null)
+    const isLMServiceId = skill?.lm_service?.id !== undefined
+    const isPrompt = skill?.prompt !== undefined
+    const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
+
+    if (skillHasOpenAiLM) {
+      const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+      const isApiKey =
+        openaiApiKey !== null &&
+        openaiApiKey !== undefined &&
+        openaiApiKey.length > 0
+
+      if (!isApiKey) {
+        setError({
+          type: 'api-key',
+          msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
+        })
+        return false
+      }
+
+      setApiKey(openaiApiKey)
+    }
+    if (!isLMServiceId) {
+      setError({
+        type: 'lm-service',
+        msg: `Select one of the available Generative models in the ${skill?.name} editor to run your Generative AI Skill`,
+      })
+      return false
+    }
+    if (!isPrompt) {
+      setError({
+        type: 'prompt',
+        msg: `Enter your prompt in the ${skill?.name} editor to run your Generative AI Skill`,
+      })
+      return false
+    }
+
+    return true
+  }
+
   // handlers
-  const handleSend = (data: ChatForm) => {
-    const id = session?.id!
-    const message = data?.message!
-    send.mutate({ id, message })
+  const handleSend = ({ message }: ChatForm) => {
+    const isChatSettings = checkIsChatSettings()
+
+    if (!isChatSettings) return
+
+    send.mutate({
+      dialog_session_id: session?.id!,
+      text: message,
+      lm_service_id: skill?.lm_service?.id,
+      prompt: skill?.prompt,
+      openai_api_key: apiKey ?? undefined,
+    })
+
     reset()
   }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
-  const handleRenewClick = () => {
-    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+
+  const handleRenewClick = () => renewDialogSession()
+
+  const handleRetryBtnClick = () => {
+    setIsChecking(true)
+    setTimeout(() => {
+      checkIsChatSettings()
+      setIsChecking(false)
+    }, 1000)
   }
 
   // hooks
-  useOnlyOnMount(() => renew.mutateAsync(debug ? DEBUG_DIST : dist?.name))
+  useOnlyOnMount(() => renewDialogSession())
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
+  useEffect(() => {
+    checkIsChatSettings()
+  }, [skill])
 
   return (
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={s.dialog}
+      className={cx('dialog', error && 'error')}
     >
-      <SidePanelHeader>
-        <ul role='tablist'>
-          <li role='tab' key='Current  Skill' aria-selected>
-            Current Skill
-          </li>
-          <li role='tab' key='All Skills'>
-            All Skills
-          </li>
-        </ul>
-      </SidePanelHeader>
+      {error && (
+        <>
+          <span className={s.alertName}>Error!</span>
+          <p className={s.alertDesc}>{error.msg}</p>
+          {error.type === 'api-key' && (
+            <Link className={s.link} to={RoutesList.profile}>
+              Enter your personal access token here
+            </Link>
+          )}
+          <Button
+            theme='error'
+            props={{ disabled: isChecking, onClick: handleRetryBtnClick }}
+          >
+            Try again
+          </Button>
+        </>
+      )}
+      {!error && (
+        <>
+          <div className={s.container}>
+            <ul ref={chatRef} className={s.chat}>
+              {history?.map(
+                (block: { author: string; text: string }, i: number) => (
+                  <li
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx('msg', block?.author == 'bot' && 'bot')}
+                  >
+                    {block?.text}
+                  </li>
+                )
+              )}
+              {send.isLoading && (
+                <>
+                  <li className={cx('bot', 'msg')}>
+                    <TextLoader />
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
 
-      <div className={s.container}>
-        <ul ref={chatRef} className={s.chat}>
-          {history?.map(
-            (block: { author: string; text: string }, i: number) => (
-              <li
-                key={`${block?.author == 'bot'}${i}`}
-                className={cx('msg', block?.author == 'bot' && 'bot')}
-              >
-                {block?.text}
-              </li>
-            )
-          )}
-          {send.isLoading && (
-            <>
-              <li className={cx('bot', 'msg')}>
-                <TextLoader />
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-      <div className={s.controls}>
+          {/* <div className={s.controls}>
         <div className={s.left}>
           <DialogButton active>
             <DialogTextIcon />
@@ -112,23 +212,37 @@ const SkillDialog: FC<SkillDialogProps> = ({ dist, debug }) => {
             </div>
           </Button>
         </div>
-      </div>
-      <div className={cx('textarea-container')}>
-        <textarea
-          className={s.textarea}
-          rows={4}
-          placeholder='Type...'
-          {...register('message')}
-        />
-      </div>
-      <SidePanelButtons>
-        <Button
-          theme='secondary'
-          props={{ disabled: send?.isLoading, type: 'submit' }}
-        >
-          Send
-        </Button>
-      </SidePanelButtons>
+      </div> */}
+
+          <div className={s.bottom}>
+            <div className={s['textarea-container']}>
+              <textarea
+                className={s.textarea}
+                rows={4}
+                placeholder='Type...'
+                {...register('message')}
+              />
+            </div>
+
+            <div className={s.btns}>
+              <Button
+                theme='secondary'
+                props={{
+                  onClick: handleRenewClick,
+                }}
+              >
+                <Renew data-tooltip-id='renew' />
+              </Button>
+              <Button
+                theme='secondary'
+                props={{ disabled: send?.isLoading, type: 'submit' }}
+              >
+                Send
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </form>
   )
 }

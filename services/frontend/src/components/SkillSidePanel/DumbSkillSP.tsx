@@ -1,4 +1,3 @@
-import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
 import { useEffect } from 'react'
 import Woman from '../../assets/icons/woman.png'
@@ -9,6 +8,7 @@ import { ISkill } from '../../types/types'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import EditPencilButton from '../EditPencilButton/EditPencilButton'
 import s from './DumbSkillSP.module.scss'
 
 interface Props {
@@ -82,13 +82,10 @@ const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
             <span className={s.name}>{skill?.display_name}</span>
-            <button
+            <EditPencilButton
               disabled={!skill?.is_customizable || isPreview}
               onClick={handleRenameBtnClick}
-              className={s['rename-btn']}
-            >
-              <EditPencilIcon className={s.icon} />
-            </button>
+            />
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (

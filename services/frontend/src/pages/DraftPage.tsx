@@ -73,6 +73,22 @@ export const DraftPage = () => {
       error: 'Something Went Wrong...',
     })
   }
+
+  function filterStack(arr) {
+    const excludedValues = [
+      'universal',
+      'multiskill',
+      'faq',
+      'fashion',
+      'marketing',
+      'fairytale',
+      'nutrition',
+      'deepy',
+      'coaching',
+    ]
+    return arr?.filter(obj => !excludedValues.includes(obj.Name))
+  }
+  const filtered = filterStack(stacks?.data)
   return (
     <>
       <Topbar />
@@ -97,7 +113,8 @@ export const DraftPage = () => {
         </Wrapper>
         <Wrapper fitScreen title='Deployment State'>
           <Container gridForRequests>
-            {stacks?.data?.map((stack: any, i: number) => {
+            {filtered?.map((stack: any, i: number) => {
+              stack?.Name !== 'deepy'
               return (
                 <div key={i}>
                   <Wrapper>

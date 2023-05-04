@@ -3,6 +3,7 @@ import { generatePath, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
+import { deleteAssistantDist } from '../services/deleteAssistantDist'
 import { getDist as fetchDist } from '../services/getDist'
 import { getPrivateDists } from '../services/getPrivateDists'
 import { getPublicDists } from '../services/getPublicDists'
@@ -18,6 +19,7 @@ import {
 interface IChangeVisibility {
   name: string
   visibility: TDistVisibility
+  inEditor?: boolean
 }
 
 interface IClone {
@@ -52,15 +54,16 @@ export const useAssistants = () => {
 
   const rename = useMutation({
     mutationFn: ({ name, data }: IRename) => renameAssistantDist(name, data),
-    onSuccess: (dist: BotInfoInterface) => {
-      updatePrivateDist(dist.name, dist)
+    onSuccess: (_, { name }) => {
+      queryClient
+        .invalidateQueries([PRIVATE_DISTS])
+        .finally(() => updateCachedDist(name))
     },
   })
 
   const clone = useMutation({
     mutationFn: ({ name, data }: IClone) => cloneAssistantDist(name, data),
     onSuccess: (dist: BotInfoInterface) => {
-      updatePrivateDist(dist.name, dist)
       navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
   })
@@ -68,38 +71,45 @@ export const useAssistants = () => {
   const create = useMutation({
     mutationFn: (data: AssistantFormValues) => postAssistantDist(data),
     onSuccess: (dist: BotInfoInterface) => {
-      updatePrivateDist(dist.name, dist)
       navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
     },
   })
 
+  const deleteDist = useMutation({
+    mutationFn: (name: string) => deleteAssistantDist(name),
+    onSuccess: (_, name) =>
+      queryClient.invalidateQueries([PRIVATE_DISTS]).finally(() => {
+        updateCachedDist(name)
+      }),
+  })
+
   const changeVisibility = useMutation({
-    mutationFn: ({ name, visibility }: IChangeVisibility) =>
+    mutationFn: ({ name, visibility, inEditor }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
-    onSuccess: (_, { name, visibility }) => {
-      updatePrivateDist(name, { visibility })
+    onSuccess: (_, { name, visibility, inEditor }) => {
+      const requestToPublicTemplate = visibility === 'public_template'
+
+      if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
+      if (inEditor) queryClient.invalidateQueries([DIST, name])
+      queryClient
+        .invalidateQueries([PRIVATE_DISTS])
+        .finally(() => updateCachedDist(name))
     },
   })
 
-  const updatePrivateDist = (
-    name: string,
-    newDist: Partial<BotInfoInterface>
-  ) => {
-    queryClient.setQueryData<BotInfoInterface[] | undefined>(
-      [PRIVATE_DISTS],
-      old =>
-        old &&
-        old.map(dist => {
-          console.log(Object.assign({}, dist, newDist))
-          return dist.name === name ? Object.assign({}, dist, newDist) : dist
-        })
-    )
+  const updateCachedDist = (name: string) => {
+    const privateDist =
+      (
+        queryClient.getQueryData<BotInfoInterface[] | undefined>([
+          PRIVATE_DISTS,
+        ]) || []
+      ).find(dist => dist?.name === name) ?? null
 
     const isCachedDist = queryClient.getQueryData([DIST, name]) !== undefined
     if (isCachedDist)
-      queryClient.setQueryData<BotInfoInterface | undefined>(
+      queryClient.setQueryData<BotInfoInterface | null>(
         [DIST, name],
-        old => old && Object.assign({}, old, newDist)
+        privateDist
       )
   }
 
@@ -131,5 +141,6 @@ export const useAssistants = () => {
     rename,
     create,
     clone,
+    deleteDist,
   }
 }

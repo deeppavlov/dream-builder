@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useParams } from 'react-router-dom'
 import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
 import { ISkill } from '../../types/types'
@@ -32,6 +33,7 @@ export const SkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<ISkilltInfo | null>(null)
+  const { name: distName } = useParams()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
@@ -66,10 +68,12 @@ export const SkillModal = () => {
 
   const handleCreate = (data: any) => {
     toast.promise(
-      create.mutateAsync({ ...data }).then(() => {
-        closeModal()
-        trigger('SkillsListModal', { isOpen: false })
-      }),
+      create
+        .mutateAsync({ data, distName: distName || '', type: 'skills' })
+        .then(() => {
+          closeModal()
+          trigger('SkillsListModal', { isOpen: false })
+        }),
       {
         loading: 'Creating...',
         success: 'Success!',
@@ -79,9 +83,13 @@ export const SkillModal = () => {
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
     const id = skill?.component_id!
+    const isDist = distName && distName?.length > 0
+
+    if (!isDist) return console.log(`${skill?.name} rename: dist not found.`)
+
     toast
       .promise(
-        edit.mutateAsync({ data, id }).then(() => {}),
+        edit.mutateAsync({ data, id, distName, type: 'skills' }).then(() => {}),
         {
           loading: 'Renaming...',
           success: 'Success!',

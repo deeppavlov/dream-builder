@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { useQuery } from 'react-query'
 import { Outlet, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
@@ -23,7 +22,7 @@ import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModa
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
-import { getComponents } from '../../services/getComponents'
+import { useComponent } from '../../hooks/useComponent'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
@@ -34,16 +33,9 @@ export const EditorPage = () => {
   const { name, skillId } = useParams()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
+  const { getAllComponents } = useComponent()
   const dist = name ? getDist(name).data : null
-
-  const components = useQuery(
-    ['components', name],
-    () => getComponents(name!),
-    {
-      refetchOnWindowFocus: false,
-      enabled: name?.length! > 0,
-    }
-  )
+  const components = getAllComponents(dist?.name)
 
   const skillById = components?.data?.skills?.find(
     (s: any) => s?.name === skillId

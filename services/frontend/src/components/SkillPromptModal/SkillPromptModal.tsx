@@ -4,17 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
+import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import {
-  IPatchComponentParams,
-  patchComponent,
-} from '../../services/patchComponent'
 import { ISkill, LM_Service } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
@@ -39,26 +36,23 @@ interface FormValues {
   prompt: string
 }
 
-
-
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [skill, setSkill] = useState<ISkill | null>(null)
+  const { name: distName, skillId } = useParams()
+  const { getAllComponents, updateComponent } = useComponent()
+  const skill = distName
+    ? (getAllComponents(distName).data?.skills?.find(
+        s => s.name === skillId
+      ) as ISkill)
+    : null
   const [selectedService, setSelectedService] = useState<LM_Service | null>(
     null
   )
-  const queryClient = useQueryClient()
   const { options, dispatch } = useDisplay()
-  const { name: distName } = useParams()
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const nav = useNavigate()
   const cx = classNames.bind(s)
-
-  const updatComponent = useMutation({
-    mutationFn: (variables: IPatchComponentParams) => patchComponent(variables),
-    onSuccess: () => queryClient.invalidateQueries('components'),
-  })
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
     refetchOnWindowFocus: false,
@@ -119,7 +113,7 @@ const SkillPromptModal = () => {
 
   const clearStates = () => {
     setIsOpen(false)
-    setSkill(null)
+    // setSkill(null)
     nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
   }
 
@@ -135,19 +129,19 @@ const SkillPromptModal = () => {
 
     if (isRequestToClose) {
       setIsOpen(false)
-      setSkill(null)
+      // setSkill(null)
       return
     }
 
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-    setSkill(skill ?? null)
-    reset(
-      {
-        model: skill?.lm_service?.display_name,
-        prompt: skill?.prompt,
-      },
-      { keepDirty: false }
-    )
+    // setSkill(skill ?? null)
+    // reset(
+    //   {
+    //     model: skill?.lm_service?.display_name,
+    //     prompt: skill?.prompt,
+    //   },
+    //   { keepDirty: false }
+    // )
 
     setIsOpen(prev => {
       if (data.detail.isOpen && prev) return prev
@@ -175,12 +169,15 @@ const SkillPromptModal = () => {
 
     const { component_id, description, display_name } = skill
 
-    await updatComponent.mutateAsync({
+    await updateComponent.mutateAsync({
       component_id,
       description,
       display_name,
       lm_service_id: service!,
+      lm_service: services?.find(s => s.id === service), // FIX IT!
       prompt: prompt,
+      distName: distName || '',
+      type: 'skills',
     })
   }
 
@@ -200,7 +197,8 @@ const SkillPromptModal = () => {
   useEffect(() => {
     reset(
       {
-        model: skill?.lm_service?.display_name,
+        // model: skill?.lm_service?.display_name,
+        model: getValues().model,
         prompt: skill?.prompt,
       },
       { keepDirty: false }
@@ -275,7 +273,7 @@ const SkillPromptModal = () => {
                     control={control}
                     rules={{ required: true }}
                     defaultValue={skill?.lm_service?.display_name}
-                    label='Generative model:'
+                    label='Choose model:'
                     list={dropboxArray}
                     props={{ placeholder: 'Choose model' }}
                     fullWidth

@@ -28,7 +28,7 @@ interface IDialogError {
 interface Props {
   isDebug: boolean
   distName: string | undefined
-  skill?: ISkill | null
+  skill: ISkill
 }
 
 const SkillDialog = ({ isDebug, distName, skill }: Props) => {
@@ -40,6 +40,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
+
+  console.log(skill)
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
@@ -56,7 +58,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     })
   }
 
-  const checkIsChatSettings = () => {
+  const checkIsChatSettings = (userId: number) => {
+    if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
@@ -64,7 +67,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
 
     if (skillHasOpenAiLM) {
-      const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+      const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
+
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -100,7 +104,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
 
   // handlers
   const handleSend = ({ message }: ChatForm) => {
-    const isChatSettings = checkIsChatSettings()
+    const isChatSettings = checkIsChatSettings(user?.id)
 
     if (!isChatSettings) return
 
@@ -124,7 +128,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const handleRetryBtnClick = () => {
     setIsChecking(true)
     setTimeout(() => {
-      checkIsChatSettings()
+      checkIsChatSettings(user?.id)
       setIsChecking(false)
     }, 1000)
   }
@@ -134,8 +138,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
   useEffect(() => {
-    checkIsChatSettings()
-  }, [skill])
+    checkIsChatSettings(user?.id)
+  }, [skill, user?.id])
 
   return (
     <form

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { IContextMenu, ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -18,11 +19,17 @@ const SkillStackToolTip = ({
   isPreview,
   skillRef,
 }: Props) => {
+  const { name } = useParams()
+
   const handleEditBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Editor', parent: skillRef })
+    triggerSkillSidePanel({ skill, activeTab: 'Editor', distName: name || '' })
 
   const handlePropertiesBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Properties', parent: skillRef })
+    triggerSkillSidePanel({
+      skill,
+      activeTab: 'Properties',
+      distName: name || '',
+    })
 
   const handleDeleteBtnClick = () => {
     trigger('DeleteSkillModal', { skill })

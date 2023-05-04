@@ -33,6 +33,7 @@ export const UsersBotsPage = () => {
           primary
           title='Your Assistants'
           amount={privateDists?.data?.length}
+          // fullHeight
         >
           {privateDists?.error ? (
             <ErrorHandler error={privateDists?.error} />
@@ -55,7 +56,7 @@ export const UsersBotsPage = () => {
                   />
                 </Table>
               ) : (
-                <Container gridForCards heightAuto>
+                <Container gridForCards heightAuto scroll>
                   <AddButton forGrid />
                   {privateDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />

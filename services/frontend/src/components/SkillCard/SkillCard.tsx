@@ -1,6 +1,6 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import React, { FC, useEffect, useId, useState } from 'react'
+import React, { FC, useId, useState } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -55,6 +55,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       type,
       activeTab: 'Properties',
       isOpen: !isActive,
+      distName: distRoutingName || '',
     })
   }
 
@@ -75,7 +76,12 @@ export const SkillCard: FC<SkillCardProps> = ({
       return
     }
 
-    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
+    triggerSkillSidePanel({
+      skill,
+      type,
+      activeTab: 'Editor',
+      distName: distRoutingName || '',
+    })
     e.stopPropagation()
   }
   const nameForComponentType = componentTypeMap[skill?.component_type!]

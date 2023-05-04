@@ -7,6 +7,7 @@ import { trigger } from './events'
 
 interface Props {
   skill: ISkill
+  distName: string
   activeTab: 'Properties' | 'Editor'
   type?: SkillAvailabilityType
   isOpen?: boolean
@@ -14,6 +15,7 @@ interface Props {
 
 const triggerSkillSidePanel = ({
   skill,
+  distName,
   type,
   activeTab,
   isOpen,
@@ -25,7 +27,7 @@ const triggerSkillSidePanel = ({
           isOpen,
           children: (
             <IntentResponderSidePanel
-              key={skill.id + activeTab}
+              key={skill.component_id + activeTab}
               skill={skill}
               activeTab={activeTab}
             />
@@ -38,8 +40,9 @@ const triggerSkillSidePanel = ({
           isOpen,
           children: (
             <SkillSidePanel
-              key={skill.id + activeTab}
-              skill={skill}
+              key={skill.component_id + activeTab}
+              component_id={skill?.component_id}
+              distName={distName}
               activeTab={activeTab}
             />
           ),
@@ -56,8 +59,9 @@ const triggerSkillSidePanel = ({
         isOpen,
         children: (
           <GenerativeSkillEditor
-            key={skill.id + activeTab}
-            skill={skill}
+            key={skill.component_id + activeTab}
+            component_id={skill?.component_id}
+            distName={distName}
             activeTab={activeTab}
           />
         ),

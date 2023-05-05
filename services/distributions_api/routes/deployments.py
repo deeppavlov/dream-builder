@@ -35,13 +35,16 @@ def get_user_services(dist: AssistantDist):
     return user_services
 
 
-def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
+def run_deployer(dist: AssistantDist, deployment_id: int):
     now = datetime.now()
     logger.info(f"Deployment background task for {dist.name} started")
 
     db = next(get_db())
     with db.begin():
-        crud.update_deployment(db, deployment_id, state="STARTED")
+        logger.info(f"Checking available ports")
+        port = crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
+        logger.info(f"Found available port {port}")
+        crud.update_deployment(db, deployment_id, chat_port=port)
 
     deployer = SwarmDeployer(
         user_identifier=dist.name,
@@ -95,21 +98,32 @@ async def create_deployment(
 
         parsed_url = urlparse(settings.deployer.portainer_url)
         host = f"http://{parsed_url.hostname}"
-        port = crud.get_available_deployment_port(db)
+        # port = crud.get_available_deployment_port(db)
 
         try:
-            deployment = crud.create_deployment(db, virtual_assistant.id, host, port)
+            deployment = crud.create_deployment(db, virtual_assistant.id, host)
+            if payload.error:
+                crud.update_deployment(
+                    db,
+                    deployment.id,
+                    state=DeployerState.BUILDING_IMAGE,
+                    error=DeployerError(
+                        state=DeployerState.BUILDING_IMAGE,
+                        exc=Exception(f"Oh no! Something bad happened during deployment"),
+                    ),
+                )
             db.commit()
         except IntegrityError:
             db.rollback()
             raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
 
-    background_tasks.add_task(
-        run_deployer,
-        dist=dream_dist,
-        port=port,
-        deployment_id=deployment.id,
-    )
+    if not payload.error:
+        background_tasks.add_task(
+            run_deployer,
+            dist=dream_dist,
+            # port=port,
+            deployment_id=deployment.id,
+        )
 
     return schemas.DeploymentRead.from_orm(deployment)
 
@@ -150,10 +164,12 @@ async def patch_deployment(
         if deployment.stack_id:
             swarm_client.delete_stack(deployment.stack_id)
 
+        deployment = crud.update_deployment(db, deployment_id, state="STARTED")
+
     background_tasks.add_task(
         run_deployer,
         dist=dream_dist,
-        port=deployment.chat_port,
+        # port=deployment.chat_port,
         deployment_id=deployment.id,
     )
 

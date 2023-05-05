@@ -559,7 +559,7 @@ def create_deployment(
     db: Session,
     virtual_assistant_id: int,
     chat_host: str,
-    chat_port: int,
+    chat_port: int = None,
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
@@ -567,6 +567,7 @@ def create_deployment(
             virtual_assistant_id=virtual_assistant_id,
             chat_host=chat_host,
             chat_port=chat_port,
+            state="STARTED",
         )
         .returning(models.Deployment)
     )

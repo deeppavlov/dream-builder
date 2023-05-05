@@ -29,7 +29,7 @@ class UserRead(BaseOrmModel):
 class DeploymentBaseRead(BaseOrmModel):
     id: int
     chat_host: str
-    chat_port: int
+    chat_port: Optional[int]
     date_created: datetime
     state: Optional[str]
     error: Optional[dict]
@@ -222,6 +222,7 @@ class DeploymentRead(DeploymentBaseRead):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_name: str
+    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):

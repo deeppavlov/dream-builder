@@ -5,25 +5,20 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
-import {
-  DEBUG_DIST,
-  OPEN_AI_LM,
-  TOOLTIP_DELAY,
-} from '../../constants/constants'
+import { DEBUG_DIST, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
-import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
-import { getUserId } from '../../services/getUserId'
-import { BotInfoInterface, ChatForm, ISkill } from '../../types/types'
+import { getDeploy } from '../../services/getDeploy'
+import { BotInfoInterface, ChatForm } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -42,22 +37,22 @@ interface Props {
 }
 
 const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
-  const { components } = useComponent(dist?.name)
-  const [dialogError, setDilogError] = useState(null)
-  const isOpenAIModelInside = components?.skills.filter((skill: ISkill) => {
-    return (
-      skill?.component_type === 'Generative' &&
-      checkLMIsOpenAi(skill?.lm_service?.name!)
-    )
-  })
-  const { data: user } = useQuery(['user'], () => getUserId())
-  const [apiKey, setApiKey] = useState<string | null>(null)
-  const openApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
-  const skillHasOpenAiLM = isOpenAIModelInside?.length > 0
+  // const { components } = useComponent(dist?.name)
+  // const [dialogError, setDilogError] = useState(null)
+  // const isOpenAIModelInside = components?.skills.filter((skill: ISkill) => {
+  //   return (
+  //     skill?.component_type === 'Generative' &&
+  //     checkLMIsOpenAi(skill?.lm_service?.name!)
+  //   )
+  // })
+  // const { data: user } = useQuery(['user'], () => getUserId())
+  // const [apiKey, setApiKey] = useState<string | null>(null)
+  // const openApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+  // const skillHasOpenAiLM = isOpenAIModelInside?.length > 0
 
   // console.log('openApiKey = ', openApiKey)
-  const checkKey = () => {}
-  useEffect
+  // const checkKey = () => {}
+  // useEffect
   // if (skillHasOpenAiLM) {
   //   const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
   //   const isApiKey =
@@ -75,59 +70,30 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
 
   //   setApiKey(openaiApiKey)
   // }
-  useEffect(() => {}, [])
-  console.log('error = ', dialogError)
+  // useEffect(() => {}, [])
+  // console.log('error = ', dialogError)
+  const { getDist } = useAssistants()
+  const { data: bot } = getDist(dist?.name)
+  // console.log('bott = ', bot?.deployment?.state)
 
   const [isFirstTest, setIsFirstTest] = useState(start)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
   const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
-  const [bot, setBot] = useState<BotInfoInterface>(dist)
+  // const [bot, setBot] = useState<BotInfoInterface>(dist)
 
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
 
-  const deployPanel =
-    dist?.deployment?.state == null && bot?.deployment?.state == null //костыль
+  const deployPanel = bot?.deployment?.state == null //костыль
 
-  const isDeployingFromProps =
-    dist?.deployment?.state !== null &&
-    dist?.deployment?.state !== 'DEPLOYED' &&
-    bot?.deployment
-      ? true
-      : false
-
-  const isDeployingFromCache =
-    bot?.deployment?.state !== null &&
+  const awaitDeployPanel =
     bot?.deployment?.state !== 'DEPLOYED' &&
-    bot &&
-    bot?.deployment
-      ? true
-      : false
-
-  const awaitDeployPanel = isDeployingFromCache || isDeployingFromProps
-
+    bot?.deployment &&
+    bot?.deployment?.state !== null
+  // console.log('awaitDeployPanel = ', awaitDeployPanel)
   const cx = classNames.bind(s)
-
-  const queryClient = useQueryClient()
-  const q = queryClient.getQueryCache()
-
-  const callback = e => {
-    if ((e.query.queryKey = 'privateDists')) {
-      const privateDists = q.find('privateDists')
-      const distFromCache = privateDists?.state?.data?.find(
-        (el: BotInfoInterface) => {
-          return el.name === dist?.name
-        }
-      )
-      if (distFromCache?.deployment?.state !== dist?.deployment?.state) {
-        setBot(distFromCache)
-      }
-    }
-  }
-
-  q.subscribe(callback)
 
   useEffect(() => {}, [])
   // handlers
@@ -135,7 +101,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
   const handleStartBtnClick = () => {
-    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!).then(() => {
+    renew.mutateAsync(debug ? DEBUG_DIST : bot?.name!).then(() => {
       setIsFirstTest(false)
     })
   }
@@ -146,7 +112,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     reset()
   }
   const handleRenewClick = () => {
-    renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+    renew.mutateAsync(debug ? DEBUG_DIST : bot?.name!)
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
@@ -157,20 +123,20 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   useChatScroll(chatRef, [history, message])
 
   const readyToGetSession =
-    !isFirstTest && dist?.deployment?.state === 'DEPLOYED'
+    !isFirstTest && bot?.deployment?.state === 'DEPLOYED'
 
   useEffect(() => {
     if (readyToGetSession || bot?.deployment?.state === 'DEPLOYED') {
-      renew.mutateAsync(debug ? DEBUG_DIST : dist?.name!)
+      renew.mutateAsync(debug ? DEBUG_DIST : bot?.name!)
     }
-  }, [bot?.deployment, dist?.deployment])
+  }, [bot?.deployment, bot?.deployment])
 
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
       type: 'set',
       option: {
         id: consts.ACTIVE_ASSISTANT_SP_ID,
-        value: isOpen ? dist.id : null,
+        value: isOpen ? bot?.id : null,
       },
     })
   }
@@ -181,9 +147,39 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   }, [])
 
   const { deploy } = useDeploy()
+  const queryClient = useQueryClient()
+
+  // console.log('isQueryEnable = ', isQueryEnable())
+  // const isQueryEnable = () => status?.data?.state === 'DEPLOYED'
+
+  const status = useQuery({
+    queryKey: ['deploy', bot?.deployment?.id],
+    queryFn: () => getDeploy(bot?.deployment?.id!),
+    refetchOnMount: false,
+    enabled: bot?.deployment?.id !== undefined,
+    onSuccess(data) {
+      if (data?.state !== 'DEPLOYED' && data?.state !== null) {
+        setTimeout(() => {
+          queryClient.invalidateQueries('deploy', data?.id)
+          queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+        }, 5000)
+      } else if (data?.error !== null) {
+        console.log('data?.error = ', data?.error)
+        // queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+        queryClient.invalidateQueries('privateDist')
+      }
+    },
+  })
+
+  // console.log(
+  //   'status= ',
+  //   status?.data?.state,
+  //   'deploy state = ',
+  //   bot?.deployment?.state
+  // )
 
   const handleDeploy = () => {
-    toast.promise(deploy.mutateAsync(dist?.id!), {
+    toast.promise(deploy.mutateAsync(bot?.name!), {
       loading: 'Loading...',
       success: 'Send For Deploy!',
       error: 'Something Went Wrong...',
@@ -209,7 +205,7 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
             <ul role='tablist'>
               <li role='tab' key='Dialog'>
                 <span aria-selected>Chat:</span>
-                <span role='name'>&nbsp;{dist?.display_name}</span>
+                <span role='name'>&nbsp;{bot?.display_name}</span>
               </li>
             </ul>
           </>
@@ -256,6 +252,10 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
               Please wait till assistant launching
             </p>
             <p className={s.notification}>This may take a few minutes.</p>
+            <p className={s.notification}>
+              {status?.data?.state}
+              <br />
+            </p>
           </div>
         )}
         {deployPanel && (

@@ -69,7 +69,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <hr />
           <ContextMenuButton
             disabled={isPreview}
-            name='Publish'
+            name='Visibility'
             type='publish'
             handleClick={handlePublishClick}
           />

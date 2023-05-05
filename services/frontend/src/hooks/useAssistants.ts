@@ -44,11 +44,11 @@ export const useAssistants = () => {
     useQuery(PRIVATE_DISTS, getPrivateDists, { enabled: userIsAuthorized })
 
   const getDist = (name: string) =>
-    useQuery({
+    useQuery<BotInfoInterface>({
       queryKey: ['dist', name],
       queryFn: () => fetchDist(name),
       refetchOnMount: false,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       initialData: () => getFetchedDist(name),
     })
 
@@ -129,7 +129,6 @@ export const useAssistants = () => {
     const result = [dist, ...publicDists, ...privateDists]?.find(
       dist => dist?.name === name
     )
-
     return result
   }
 

@@ -43,7 +43,8 @@ export const useChat = () => {
       // queryClient.invalidateQueries('history')
       setHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
-    onError: () => {
+    onError: data => {
+      console.log('error = ', data)
       setError(true)
     },
   })

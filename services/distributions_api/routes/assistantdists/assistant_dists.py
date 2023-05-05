@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
 from deeppavlov_dreamtools.utils import generate_unique_name
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
+from fastapi.logger import logger
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -11,7 +12,7 @@ from database import crud, models
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.dependencies import verify_token
+from services.distributions_api.dependencies import verify_token, ResourcePermission
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
@@ -155,7 +156,17 @@ async def get_list_of_private_virtual_assistants(
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
-async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(get_db)) -> schemas.VirtualAssistantRead:
+async def get_virtual_assistant_by_name(
+    dist_name: str,
+    virtual_assistant: models.Base = Depends(
+        ResourcePermission(
+            crud.get_virtual_assistant_by_name,
+            "dist_name",
+            "author",
+            allow_for_owner=True,
+        )
+    ),
+) -> schemas.VirtualAssistantRead:
     """
     Returns existing dist with the given name
 
@@ -163,11 +174,6 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 
     -``dist_name``: name of the distribution
     """
-    try:
-        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
-    except ValueError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
-
     try:
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     except FileNotFoundError:

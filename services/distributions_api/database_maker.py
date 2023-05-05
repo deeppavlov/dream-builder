@@ -1,3 +1,5 @@
+from fastapi.logger import logger
+
 from apiconfig.config import settings
 from database.core import init_db
 
@@ -14,6 +16,7 @@ SessionLocal = init_db(
 
 def get_db():
     db = SessionLocal()
+    logger.error("NEW DB SESSION")
     try:
         yield db
     finally:

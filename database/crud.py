@@ -9,6 +9,10 @@ from database import models
 from database.models import GoogleUser, UserValid, ApiKey
 
 
+class ResourceNotFoundError(Exception):
+    pass
+
+
 # USER
 def get_all_users(db: Session) -> [models.GoogleUser]:
     return db.scalars(select(GoogleUser)).all()
@@ -132,7 +136,7 @@ def get_virtual_assistant_by_name(db: Session, name: str) -> Optional[models.Vir
     virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=name))
 
     if not virtual_assistant:
-        raise ValueError(f"Virtual assistant {name} does not exist")
+        raise ResourceNotFoundError(f"Virtual assistant {name} does not exist")
 
     return virtual_assistant
 
@@ -449,7 +453,7 @@ def delete_publish_request(db: Session, virtual_assistant_id: int):
 def get_dialog_session(db: Session, dialog_session_id: int):
     dialog_session = db.get(models.DialogSession, dialog_session_id)
     if not dialog_session:
-        raise ValueError(f"Dialog session {dialog_session_id} does not exist")
+        raise ResourceNotFoundError(f"Dialog session {dialog_session_id} does not exist")
 
     return dialog_session
 
@@ -542,7 +546,7 @@ def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.D
     try:
         deployment = db.scalar(select(models.Deployment).filter_by(virtual_assistant_id=virtual_assistant.id))
     except AttributeError:
-        raise ValueError(f"No deployments for virtual_assistant.name = {name}")
+        raise ResourceNotFoundError(f"No deployments for virtual_assistant.name = {name}")
 
     return deployment
 
@@ -574,7 +578,7 @@ def create_deployment_from_copy(
     )
 
     if not original_deployment:
-        raise ValueError(f"No deployments for virtual assistant with id {original_virtual_assistant_id}")
+        raise ResourceNotFoundError(f"No deployments for virtual assistant with id {original_virtual_assistant_id}")
 
     return create_deployment(
         db,

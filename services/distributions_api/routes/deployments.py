@@ -69,13 +69,14 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
-@deployments_router.get("/", status_code=status.HTTP_201_CREATED)
+@deployments_router.get("", status_code=status.HTTP_201_CREATED)
 async def get_deployments(
+    state: str = None,
     user: schemas.UserRead = Depends(verify_token),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     with db.begin():
-        deployments = crud.get_all_deployments(db)
+        deployments = crud.get_all_deployments(db, state)
 
     return [schemas.DeploymentRead.from_orm(d) for d in deployments]
 

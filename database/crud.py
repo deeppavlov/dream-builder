@@ -532,8 +532,12 @@ def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
     return db.get(models.Deployment, id)
 
 
-def get_all_deployments(db: Session) -> [models.Deployment]:
-    return db.scalars(select(models.Deployment)).all()
+def get_all_deployments(db: Session, state: str = None) -> [models.Deployment]:
+    select_stmt = select(models.Deployment)
+    if state:
+        select_stmt.filter_by(state=state)
+
+    return db.scalars(select_stmt).all()
 
 
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:

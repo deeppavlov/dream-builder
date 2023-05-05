@@ -22,11 +22,9 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { IDialogError } from '../SkillDialog/SkillDialog'
 import TextLoader from '../TextLoader/TextLoader'
@@ -94,10 +92,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const { deploy, deleteDeployment } = useDeploy()
   const queryClient = useQueryClient()
-  // const clearStates = () => {
-  //   setErrorPanel(null)
-  //   setApiKey(null)
-  // }
+
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
     queryFn: () => getDeploy(bot?.deployment?.id!),
@@ -132,7 +127,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     session,
     message,
     history,
-    error: errorFromChat,
+    // error
   } = useChat()
   const { dispatch } = useDisplay()
   const deployPanel = bot?.deployment?.state == null //костыль
@@ -143,9 +138,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
 
   // handlers
-  const handleGoBackBtnClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-  }
+  // const handleGoBackBtnClick = () => {
+  //   trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+  // }
 
   const handleSend = (data: ChatForm) => {
     const isChatSettings = checkIsChatSettings(user?.id)
@@ -209,9 +204,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       })
       .finally(() => {
         setErrorPanel(null)
-      })
-      .then(() => {
-        setErrorPanel(null)
+
+        queryClient.invalidateQueries('privateDists')
+        queryClient.invalidateQueries('dist')
       })
   }
   const handleDeploy = () => {
@@ -242,12 +237,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           </ul>
         </>
       </SidePanelHeader>
-      <div
-        className={cx(
-          'dialogSidePanel',
-          errorPanel && 'error'
-        )}
-      >
+      <div className={cx('dialogSidePanel', errorPanel && 'error')}>
         {/* {errorFromChat && (
           <>
             <span className={s.alerName}>Alert!</span>
@@ -303,7 +293,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               theme='primary'
               props={{
                 onClick: handleDeploy,
-                disabled: deploy?.isLoading || deploy?.isSuccess,
+                disabled: deploy?.isLoading,
               }}
             >
               Build Assistant

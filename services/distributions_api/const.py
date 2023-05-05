@@ -8,3 +8,8 @@ INVISIBLE_VIRTUAL_ASSISTANT_NAMES = [
     "dream_persona_openai_prompted",
     "dream_persona_rullama_prompted",
 ]
+
+INVISIBLE_COMPONENT_NAMES = [
+    "dialogpt",
+    "dff_generative_skill",
+]

@@ -138,14 +138,10 @@ const SkillPromptModal = () => {
 
   const handleSave = async (data: FormValues) => {
     toast.promise(
-      update.mutateAsync(data, {
-        onSuccess: () => {
-          // setNeedRedeploy(distName)
-  
-          if (dist?.deployment.state === 'DEPLOYED') {
-            deleteDeployment.mutateAsync(dist?.deployment?.id!)
-          }
-        },
+      update.mutateAsync(data).then(() => {
+        if (dist?.deployment?.state === 'DEPLOYED') {
+          deleteDeployment.mutateAsync(dist?.deployment?.id!)
+        } else return
       }),
       {
         loading: 'Saving...',

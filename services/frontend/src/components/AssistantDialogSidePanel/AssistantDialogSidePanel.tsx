@@ -93,9 +93,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     checkIsChatSettings(user?.id)
   }, [user?.id])
 
-  const { deploy } = useDeploy()
+  const { deploy, deleteDeployment } = useDeploy()
   const queryClient = useQueryClient()
-
+  // const clearStates = () => {
+  //   setErrorPanel(null)
+  //   setApiKey(null)
+  // }
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
     queryFn: () => getDeploy(bot?.deployment?.id!),
@@ -190,7 +193,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     return () => dispatchTrigger(false)
   }, [])
   const handleTryAgain = () => {
-    setErrorPanel(null)
+    deleteDeployment
+      .mutateAsync(bot?.deployment?.id!)
+      .then(() => {
+        setErrorPanel(null)
+      })
+      .finally(() => {
+        setErrorPanel(null)
+      })
   }
   const handleDeploy = () => {
     toast.promise(

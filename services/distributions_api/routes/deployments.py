@@ -134,6 +134,32 @@ async def get_deployment(
     return schemas.DeploymentRead.from_orm(deployment)
 
 
+@deployments_router.patch("/{deployment_id}", status_code=status.HTTP_200_OK)
+async def patch_deployment(
+    deployment_id: int,
+    background_tasks: BackgroundTasks,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db),
+):
+    with db.begin():
+        deployment = crud.get_deployment(db, deployment_id)
+
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
+        dream_dist.save(overwrite=True, generate_configs=True)
+
+        if deployment.stack_id:
+            swarm_client.delete_stack(deployment.stack_id)
+
+    background_tasks.add_task(
+        run_deployer,
+        dist=dream_dist,
+        port=deployment.chat_port,
+        deployment_id=deployment.id,
+    )
+
+    return schemas.DeploymentRead.from_orm(deployment)
+
+
 @deployments_router.delete("/{deployment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_deployment(
     deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)

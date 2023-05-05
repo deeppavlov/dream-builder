@@ -140,9 +140,10 @@ const SkillPromptModal = () => {
     toast.promise(
       update.mutateAsync(data, {
         onSuccess: () => {
-          setNeedRedeploy(distName)
+          // setNeedRedeploy(distName)
+  
           if (dist?.deployment.state === 'DEPLOYED') {
-            // deleteDeployment.mutateAsync({component_id: dist.})  
+            deleteDeployment.mutateAsync(dist?.deployment?.id!)
           }
         },
       }),

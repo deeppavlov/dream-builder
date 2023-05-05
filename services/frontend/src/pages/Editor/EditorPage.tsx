@@ -16,30 +16,20 @@ import { SkillsTab } from '../../components/Sidebar/components/SkillsTab'
 import { Sidebar } from '../../components/Sidebar/Sidebar'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
-import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
-import { useComponent } from '../../hooks/useComponent'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
 
 export const EditorPage = () => {
-  const { options, dispatch } = useDisplay()
-  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
-  const { name, skillId } = useParams()
+  const { dispatch } = useDisplay()
+  const { name } = useParams()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const { getAllComponents } = useComponent()
   const dist = name ? getDist(name).data : null
-  const components = getAllComponents(dist?.name)
-
-  const skillById = components?.data?.skills?.find(
-    (s: any) => s?.name === skillId
-  )
 
   useEffect(() => {
     // Setting mode to Preview by default
@@ -48,20 +38,6 @@ export const EditorPage = () => {
     }
     return () => setIsPreview(true)
   }, [dist])
-
-  // TODO: FIX
-  useEffect(() => {
-    if (skillId && skillById && !skillEditorIsActive) {
-      return trigger('SkillPromptModal', { skill: skillById })
-    }
-
-    if (skillId && skillById && skillEditorIsActive) {
-      return trigger('SkillPromptModal', { isOpen: true, skill: skillById })
-    }
-
-    if (skillId === undefined && skillEditorIsActive)
-      trigger('SkillPromptModal', { isOpen: false })
-  }, [skillId, skillById])
 
   useEffect(() => {
     dispatch({
@@ -95,14 +71,13 @@ export const EditorPage = () => {
           </div>
         </Container>
       </Sidebar>
+
       <Outlet />
 
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
-
       <AreYouSureModal />
-      <SkillPromptModal />
       <SkillQuitModal />
       <Toaster />
       <PublishAssistantModal />
@@ -114,7 +89,6 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
-      {/* <CreateGenerativeSkillModal /> */}
     </>
   )
 }

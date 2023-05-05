@@ -98,9 +98,9 @@ const SkillPromptModal = () => {
     getValues,
     control,
     watch,
-    formState: { dirtyFields },
+    formState: { dirtyFields, errors },
   } = useForm<FormValues>({
-    mode: 'all',
+    // mode: 'all',
     defaultValues: {
       model: skill?.lm_service?.display_name,
       prompt: skill?.prompt,
@@ -150,12 +150,13 @@ const SkillPromptModal = () => {
   }
 
   const handleSave = async (data: FormValues) => {
-    toast.promise(update.mutateAsync(data), {
-      loading: 'Saving...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
-    trigger('RenewChat', {})
+    toast
+      .promise(update.mutateAsync(data), {
+        loading: 'Saving...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      })
+      .finally(() => trigger('RenewChat', {}))
   }
 
   const onFormSubmit = (data: FormValues) => {
@@ -200,8 +201,8 @@ const SkillPromptModal = () => {
         // model: skill?.lm_service?.display_name,
         model: getValues().model,
         prompt: skill?.prompt,
-      },
-      { keepDirty: false }
+      }
+      // { keepDirty: false }
     )
   }, [skill])
 
@@ -213,7 +214,7 @@ const SkillPromptModal = () => {
         value: isOpen ? skill : null,
       },
     })
-    return () => reset({})
+    // return () => reset({})
   }, [isOpen])
 
   useQuitConfirmation({
@@ -260,7 +261,7 @@ const SkillPromptModal = () => {
         <Wrapper closable onClose={closeModal}>
           <div className={s.container}>
             <form
-              onSubmit={handleSubmit(data => onFormSubmit(data))}
+              onSubmit={handleSubmit(onFormSubmit)}
               className={cx('editor')}
             >
               <div className={s.header}>
@@ -332,10 +333,7 @@ const SkillPromptModal = () => {
                   </Button>
                   <Button
                     theme='primary'
-                    props={{
-                      type: 'submit',
-                      disabled: update.isLoading,
-                    }}
+                    props={{ type: 'submit', disabled: update.isLoading }}
                   >
                     Save
                   </Button>

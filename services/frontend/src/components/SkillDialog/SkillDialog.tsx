@@ -28,7 +28,7 @@ export interface IDialogError {
 interface Props {
   isDebug: boolean
   distName: string | undefined
-  skill: ISkill
+  skill: ISkill | null
 }
 
 const SkillDialog = ({ isDebug, distName, skill }: Props) => {
@@ -40,8 +40,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-
-  // console.log(skill)
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0

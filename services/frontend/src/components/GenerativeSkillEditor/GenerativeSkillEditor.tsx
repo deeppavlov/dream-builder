@@ -1,5 +1,6 @@
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
+import { useEffect, useState } from 'react'
 import { generatePath, Link, useNavigate, useParams } from 'react-router-dom'
 import { usePreview } from '../../context/PreviewProvider'
 import { useComponent } from '../../hooks/useComponent'
@@ -7,6 +8,7 @@ import { RoutesList } from '../../router/RoutesList'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import getTokensLength from '../../utils/getTokensLength'
 import IntentList from '../IntentList/IntentList'
 import DumbSkillSP from '../SkillSidePanel/DumbSkillSP'
 import s from './GenerativeSkillEditor.module.scss'
@@ -36,13 +38,13 @@ const GenerativeSkillEditor = ({
     [properties, { name: properties }],
     [editor, { name: 'Details', disabled: isPreview }],
   ])
+  const [tokensLength, setTokensLength] = useState(0)
   let cx = classNames.bind(s)
 
-  const getPromptWordsLenght = (prompt: string) =>
-    prompt?.match(/\S+/g)?.length || 0
-
   const triggerEditModal = () => {
-    if (name !== undefined && name.length > 0) {
+    const isDistName = name !== undefined && name.length > 0
+
+    if (isDistName) {
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name,
@@ -51,6 +53,16 @@ const GenerativeSkillEditor = ({
       )
     }
   }
+
+  useEffect(() => {
+    const isLMService = !!skill?.lm_service?.display_name
+    const isPrompt = !!skill?.prompt
+
+    if (!isLMService && !isPrompt) return
+    setTokensLength(
+      getTokensLength(skill?.lm_service?.display_name, skill?.prompt)
+    )
+  }, [])
 
   return (
     <DumbSkillSP skill={skill} tabs={tabs} activeTab={activeTab}>
@@ -71,8 +83,7 @@ const GenerativeSkillEditor = ({
           <div className={cx('prompt-header')}>
             <span className={cx('label')}>Prompt:</span>
             <span className={cx('label', 'count')}>
-              {getPromptWordsLenght(skill?.prompt || '')}/
-              {skill?.lm_service?.max_tokens} words
+              {tokensLength}/{skill?.lm_service?.max_tokens} tokens
             </span>
           </div>
           <IntentList>

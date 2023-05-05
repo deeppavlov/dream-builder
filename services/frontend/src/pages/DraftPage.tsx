@@ -134,6 +134,7 @@ export const DraftPage = () => {
                         id:{deployment?.id}
                       </span>
                       <span>{deployment?.virtual_assistant?.name}</span>
+                      <span>{deployment?.virtual_assistant?.display_name}</span>
                       <div className=''>
                         <Button
                           theme='primary'

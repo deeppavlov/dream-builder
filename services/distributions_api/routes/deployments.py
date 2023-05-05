@@ -81,7 +81,7 @@ async def get_deployments(
     return [schemas.DeploymentRead.from_orm(d) for d in deployments]
 
 
-@deployments_router.post("/", status_code=status.HTTP_201_CREATED)
+@deployments_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_deployment(
     payload: schemas.DeploymentCreate,
     background_tasks: BackgroundTasks,

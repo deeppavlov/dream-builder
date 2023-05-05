@@ -10,7 +10,7 @@ from services.distributions_api.security.auth import verify_token
 users_router = APIRouter(prefix="/api/users", tags=["users"])
 
 
-@users_router.get("/", status_code=status.HTTP_200_OK)
+@users_router.get("", status_code=status.HTTP_200_OK)
 async def get_all_users(
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),

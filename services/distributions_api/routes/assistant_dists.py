@@ -30,7 +30,7 @@ def send_publish_request_created_emails(
     emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
 
 
-@assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
+@assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_virtual_assistant(
     payload: schemas.VirtualAssistantCreate,
     user: schemas.UserRead = Depends(verify_token),

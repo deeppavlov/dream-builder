@@ -75,7 +75,7 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
     return history
 
 
-@dialog_sessions_router.post("/", status_code=status.HTTP_201_CREATED)
+@dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
     payload: schemas.DialogSessionCreate,
     user: schemas.UserRead = Depends(verify_token),

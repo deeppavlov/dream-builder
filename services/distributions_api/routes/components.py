@@ -15,12 +15,12 @@ from services.distributions_api.security.auth import verify_token
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
 
-@components_router.get("/", status_code=status.HTTP_200_OK)
+@components_router.get("", status_code=status.HTTP_200_OK)
 async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.ComponentRead]:
     return [schemas.ComponentRead.from_orm(c) for c in crud.get_all_components(db)]
 
 
-@components_router.post("/", status_code=status.HTTP_201_CREATED)
+@components_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_component(
     payload: schemas.ComponentCreate, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:

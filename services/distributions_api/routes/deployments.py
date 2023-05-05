@@ -41,7 +41,7 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
 
     db = next(get_db())
     with db.begin():
-        crud.update_deployment(db, deployment_id, state="in_progress")
+        crud.update_deployment(db, deployment_id, state="STARTED")
 
     deployer = SwarmDeployer(
         user_identifier=dist.name,

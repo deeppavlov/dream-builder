@@ -7,7 +7,9 @@ import Modal from 'react-modal'
 import { useMutation, useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
@@ -52,6 +54,9 @@ const SkillPromptModal = () => {
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const nav = useNavigate()
+  const { getDist } = useAssistants()
+  const { deleteDeployment } = useDeploy()
+  const dist = distName ? getDist(distName).data : null
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -82,15 +87,6 @@ const SkillPromptModal = () => {
         },
       ]) || []
 
-  // const { data: conf } = useQuery(
-  //   ['conf', skill?.component_id],
-  //   () => getGenerativeConf(skill?.component_id as number),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //     enabled: skill?.component_id !== undefined,
-  //   }
-  // )
-
   const {
     handleSubmit,
     reset,
@@ -98,7 +94,7 @@ const SkillPromptModal = () => {
     getValues,
     control,
     watch,
-    formState: { dirtyFields, errors },
+    formState: { dirtyFields },
   } = useForm<FormValues>({
     // mode: 'all',
     defaultValues: {
@@ -110,12 +106,12 @@ const SkillPromptModal = () => {
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
   const isDirty = Object.values(dirtyFields).length > 0
-  const [needRedeploy, setNeedRedeploy] = useState<boolean>(false)
+  const [needRedeploy, setNeedRedeploy] = useState(null)
+  const needRedeployRef = useRef(null)
+  needRedeployRef.current = needRedeploy
 
   const clearStates = () => {
     setIsOpen(false)
-    setNeedRedeploy(false)
-    // setSkill(null)
     nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
   }
 
@@ -125,25 +121,14 @@ const SkillPromptModal = () => {
   }
 
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill } = data.detail
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
     if (isRequestToClose) {
-      // console.log('needRedeploy request to close = ', needRedeploy)
       setIsOpen(false)
-      // setSkill(null)
       return
     }
 
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-    // setSkill(skill ?? null)
-    // reset(
-    //   {
-    //     model: skill?.lm_service?.display_name,
-    //     prompt: skill?.prompt,
-    //   },
-    //   { keepDirty: false }
-    // )
 
     setIsOpen(prev => {
       if (data.detail.isOpen && prev) return prev
@@ -155,9 +140,10 @@ const SkillPromptModal = () => {
     toast.promise(
       update.mutateAsync(data, {
         onSuccess: () => {
-          // console.log('updated')
-          setNeedRedeploy(true)
-          // console.log('needRedeploy in tanstack = ', needRedeploy)
+          setNeedRedeploy(distName)
+          if (dist?.deployment.state === 'DEPLOYED') {
+            // deleteDeployment.mutateAsync({component_id: dist.})  
+          }
         },
       }),
       {
@@ -208,17 +194,12 @@ const SkillPromptModal = () => {
   useEffect(() => {
     reset(
       {
-        // model: skill?.lm_service?.display_name,
         model: getValues().model,
         prompt: skill?.prompt,
-      }
-      // { keepDirty: false }
+      },
+      { keepDirty: false }
     )
   }, [skill])
-
-  const triggerRedeploy = () => {
-    console.log('redeploy was triggered')
-  }
 
   useEffect(() => {
     dispatch({
@@ -230,12 +211,23 @@ const SkillPromptModal = () => {
     })
 
     return () => {
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.EDITOR_ACTIVE_SKILL,
+          value: null,
+        },
+      })
       reset({})
     }
   }, [isOpen])
+
   useEffect(() => {
-    console.log('needRedeploy = ', needRedeploy)
-  }, [isOpen])
+    return () => {
+      console.log(needRedeployRef.current)
+    }
+  }, [])
+
   useQuitConfirmation({
     activeElement: modalRef,
     availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],

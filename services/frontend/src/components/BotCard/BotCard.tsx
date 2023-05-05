@@ -1,6 +1,6 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC, useId } from 'react'
+import { FC,useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -144,7 +144,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 props={{
                   'data-tooltip-id': 'youcant' + tooltipId,
                   onClick: handlEditClick,
-                  disabled: onModeration,
+                  disabled: onModeration || deploying,
                 }}
               >
                 Edit

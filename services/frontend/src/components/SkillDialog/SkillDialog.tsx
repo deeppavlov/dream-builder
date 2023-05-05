@@ -18,7 +18,13 @@ import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name' | 'deploy'
+type TDialogError =
+  | 'lm-service'
+  | 'prompt'
+  | 'api-key'
+  | 'dist-name'
+  | 'deploy'
+  | 'chat'
 
 export interface IDialogError {
   type: TDialogError

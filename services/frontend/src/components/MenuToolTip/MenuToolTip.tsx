@@ -37,7 +37,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
   const handleShareClick = () => trigger('ShareModal', distName)
-
+  const handleFeedbackClick = () => {}
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
@@ -58,6 +58,12 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
             name='Rename'
             type='edit'
             handleClick={handleRenameClick}
+          />
+          <hr />
+          <ContextMenuButton
+            name='Feedback'
+            type='architecture'
+            handleClick={handleFeedbackClick}
           />
           <hr />
           <ContextMenuButton

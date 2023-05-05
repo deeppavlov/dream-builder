@@ -22,11 +22,9 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import { IDialogError } from '../SkillDialog/SkillDialog'
 import TextLoader from '../TextLoader/TextLoader'
@@ -65,7 +63,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         openaiApiKey !== undefined &&
         openaiApiKey.length > 0
 
-      if (!isApiKey) {
+      if (!isApiKey && bot?.author?.id !== 1) {
         setErrorPanel({
           type: 'api-key',
           msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
@@ -92,7 +90,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     checkIsChatSettings(user?.id)
   }, [user?.id])
 
-  const { deploy } = useDeploy()
+  const { deploy, deleteDeployment } = useDeploy()
   const queryClient = useQueryClient()
 
   const status = useQuery({
@@ -123,14 +121,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   })
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const {
-    send,
-    renew,
-    session,
-    message,
-    history,
-    error: errorFromChat,
-  } = useChat()
+  const { send, renew, session, message, history } = useChat()
   const { dispatch } = useDisplay()
   const deployPanel = bot?.deployment?.state == null //костыль
   const awaitDeployPanel =
@@ -139,26 +130,31 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
 
-  // handlers
-  const handleGoBackBtnClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-  }
-
   const handleSend = (data: ChatForm) => {
     const isChatSettings = checkIsChatSettings(user?.id)
 
     if (!isChatSettings) return
     const id = session?.id!
     const message = data?.message!
-    send.mutate({
-      dialog_session_id: id,
-      text: message,
-      openai_api_key: apiKey ?? undefined,
-    })
+    send.mutate(
+      {
+        dialog_session_id: id,
+        text: message,
+        openai_api_key: apiKey ?? undefined,
+      },
+      {
+        onError: () =>
+          setErrorPanel({
+            type: 'chat',
+            msg: 'Something went wrong...',
+          }),
+      }
+    )
     reset()
   }
   const handleRenewClick = () => {
     renew.mutateAsync(bot?.name!)
+    setErrorPanel(null)
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
@@ -189,7 +185,24 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     return () => dispatchTrigger(false)
   }, [])
   const handleTryAgain = () => {
-    setErrorPanel(null)
+    toast.promise(
+      deleteDeployment
+        .mutateAsync(bot?.deployment?.id!)
+        .then(() => {
+          setErrorPanel(null)
+        })
+        .finally(() => {
+          setErrorPanel(null)
+
+          queryClient.invalidateQueries('privateDists')
+          queryClient.invalidateQueries('dist')
+        }),
+      {
+        loading: 'Stop deploy...',
+        success: 'Deploy Stopped!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
   const handleDeploy = () => {
     toast.promise(
@@ -219,22 +232,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           </ul>
         </>
       </SidePanelHeader>
-      <div
-        className={cx(
-          'dialogSidePanel',
-          errorFromChat && 'error',
-          errorPanel && 'error'
-        )}
-      >
-        {errorFromChat && (
-          <>
-            <span className={s.alerName}>Alert!</span>
-            <p className={s.alertDesc}>
-              Check the settings of your bot. Something went wrong!
-            </p>
-            <button onClick={handleGoBackBtnClick}>Go back</button>
-          </>
-        )}
+      <div className={cx('dialogSidePanel', errorPanel && 'error')}>
         {errorPanel && (
           <>
             <span className={s.alertName}>Error!</span>
@@ -244,9 +242,16 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 Enter your personal access token here
               </Link>
             )}
-            <Button theme='error' props={{ onClick: handleTryAgain }}>
-              Try again
-            </Button>
+            {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
+              <>
+                <Button theme='error' props={{ onClick: handleTryAgain }}>
+                  Try again
+                </Button>
+                👆
+                <br />
+                Try again button stops deploy
+              </>
+            )}
           </>
         )}
         {awaitDeployPanel && (
@@ -281,7 +286,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               theme='primary'
               props={{
                 onClick: handleDeploy,
-                disabled: deploy?.isLoading || deploy?.isSuccess,
+                disabled: deploy?.isLoading,
               }}
             >
               Build Assistant

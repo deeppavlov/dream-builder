@@ -139,16 +139,22 @@ const SkillPromptModal = () => {
 
     toast
       .promise(
-        updateComponent.mutateAsync({
-          component_id,
-          description,
-          display_name,
-          lm_service_id: service!,
-          lm_service: services?.find((s: LM_Service) => s.id === service), // FIX IT!
-          prompt: prompt,
-          distName: distName || '',
-          type: 'skills',
-        }),
+        updateComponent
+          .mutateAsync({
+            component_id,
+            description,
+            display_name,
+            lm_service_id: service!,
+            lm_service: services?.find((s: LM_Service) => s.id === service), // FIX IT!
+            prompt: prompt,
+            distName: distName || '',
+            type: 'skills',
+          })
+          .then(() => {
+            if (dist?.deployment?.state === 'DEPLOYED') {
+              deleteDeployment.mutateAsync(dist?.deployment?.id!)
+            } else return
+          }),
         {
           loading: 'Saving...',
           success: 'Success!',

@@ -67,7 +67,7 @@ const GenerativeSkillEditor = ({
   return (
     <DumbSkillSP skill={skill} tabs={tabs} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
-        <SidePanelName>{skill.display_name}</SidePanelName>
+        <SidePanelName>{skill?.display_name}</SidePanelName>
         <ul className={s.table}>
           <li className={s.item}>
             <span className={cx('table-name')}>Generative model:</span>

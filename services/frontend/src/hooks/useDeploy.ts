@@ -1,8 +1,7 @@
-import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { deleteDeploy } from '../services/deleteDeploy'
 import { getDeployments } from '../services/getDeployments'
-import { patchDeploy } from '../services/patchDeploy'
 import { postDeploy } from '../services/postDeploy'
 
 export const useDeploy = () => {
@@ -27,28 +26,16 @@ export const useDeploy = () => {
     },
   })
   const deleteDeployment = useMutation({
-    mutationFn: (variables) => {
-      return deleteDeploy(variables.deployment_id)
+    mutationFn: (deployment_id: number) => {
+      return deleteDeploy(deployment_id)
     },
-    onSuccess: (_,variables) => {
+    onSuccess: (_, variables) => {
       queryClient?.invalidateQueries('deployments')
-      queryClient?.invalidateQueries('dist', variables.name)
     },
     onError: data => {
       console.log('error = ', data)
     },
   })
-  const redeploy = useMutation({
-    mutationFn: variables =>
-      patchDeploy(
-        variables.deployment_id,
-        variables.lm_service_id,
-        variables.prompt
-      ),
-    onSuccess: () => console.log('redeploy succes = '),
-    onError: () => {
-      console.log('redeploy error = ')
-    },
-  })
-  return { deploy, redeploy, deleteDeployment, deployments }
+
+  return { deploy, deleteDeployment, deployments }
 }

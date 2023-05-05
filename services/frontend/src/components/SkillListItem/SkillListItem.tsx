@@ -152,29 +152,31 @@ export const SkillListItem: FC<SkillListItemProps> = ({
               >
                 <Add />
               </Button>
-              <Button
+              {/* <Button
                 theme='secondary'
                 small
                 withIcon
                 props={{ onClick: handleSkillListItemClick }}
               >
                 <Properties />
-              </Button>
+              </Button> */}
             </>
           ) : (
             <>
               {/* <ToggleButton handleToggle={handleToggle} disabled={isPreview} /> */}
-              <Button
-                theme='primary'
-                small
-                withIcon
-                props={{
-                  disabled: !skill?.is_customizable,
-                  onClick: handleEditClick,
-                }}
-              >
-                <Edit />
-              </Button>
+              {!isPreview && (
+                <Button
+                  theme='primary'
+                  small
+                  withIcon
+                  props={{
+                    disabled: !skill?.is_customizable,
+                    onClick: handleEditClick,
+                  }}
+                >
+                  <Edit />
+                </Button>
+              )}
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

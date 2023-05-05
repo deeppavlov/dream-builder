@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime
 from urllib.parse import urlparse
 
+import requests
 from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
@@ -9,6 +10,7 @@ from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerState, DeployerError
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.logger import logger
+from requests.adapters import HTTPAdapter, Retry
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -67,7 +69,22 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
             else:
                 logger.info(f"Deployment background task state changed to {state}")
 
-            crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
+            deployment = crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
+
+    with requests.Session() as session:
+        # agent_response = session.get(f"{deployment.chat_host}:{deployment.chat_port}", timeout=20)
+        retries = Retry(
+            total=10,
+            backoff_factor=1.7,
+            # status_forcelist=[500, 502, 503, 504],
+        )
+
+        session.mount("http://", HTTPAdapter(max_retries=retries))
+        response = session.get(f"{deployment.chat_host}:{deployment.chat_port}", timeout=100)
+        logger.info(f"AGENT RESPONSE {response}")
+        # db = next(get_db())
+        # with db.begin():
+        #     crud.update_deployment(db, deployment_id, state="UP")
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
@@ -143,7 +160,10 @@ async def get_deployment(
     deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     with db.begin():
-        deployment = crud.get_deployment(db, deployment_id)
+        try:
+            deployment = crud.get_deployment(db, deployment_id)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
 
     return schemas.DeploymentRead.from_orm(deployment)
 

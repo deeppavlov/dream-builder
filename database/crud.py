@@ -532,8 +532,13 @@ def get_available_deployment_port(db: Session, range_min: int = 4550, range_max:
     return first_available_port
 
 
-def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
-    return db.get(models.Deployment, id)
+def get_deployment(db: Session, id: int):
+    deployment = db.get(models.Deployment, id)
+
+    if not deployment:
+        raise ValueError(f"No deployments with id = {id}")
+
+    return deployment
 
 
 def get_all_deployments(db: Session, state: str = None) -> [models.Deployment]:

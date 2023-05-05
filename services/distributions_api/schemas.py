@@ -34,6 +34,7 @@ class DeploymentBaseRead(BaseOrmModel):
     state: Optional[str]
     error: Optional[dict]
     date_state_updated: Optional[datetime]
+    stack_id: Optional[int]
 
 
 class VirtualAssistantBaseRead(BaseOrmModel):

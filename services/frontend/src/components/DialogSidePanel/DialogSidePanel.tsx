@@ -70,18 +70,15 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
 
   //   setApiKey(openaiApiKey)
   // }
-  // useEffect(() => {}, [])
-  // console.log('error = ', dialogError)
+
   const { getDist } = useAssistants()
   const { data: bot } = getDist(dist?.name)
-  // console.log('bott = ', bot?.deployment?.state)
 
   const [isFirstTest, setIsFirstTest] = useState(start)
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { send, renew, session, message, history, error } = useChat()
   const { dispatch } = useDisplay()
   const chatRef = useRef<HTMLDivElement>(null)
-  // const [bot, setBot] = useState<BotInfoInterface>(dist)
 
   const startPanel = isFirstTest && !error
   const chatPanel = !isFirstTest && !error
@@ -92,20 +89,22 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
     bot?.deployment?.state !== 'DEPLOYED' &&
     bot?.deployment &&
     bot?.deployment?.state !== null
-  // console.log('awaitDeployPanel = ', awaitDeployPanel)
+
   const cx = classNames.bind(s)
 
-  useEffect(() => {}, [])
   // handlers
   const handleGoBackBtnClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
+
   const handleStartBtnClick = () => {
     renew.mutateAsync(debug ? DEBUG_DIST : bot?.name!).then(() => {
       setIsFirstTest(false)
     })
   }
+
   const handleSend = (data: ChatForm) => {
+    console.log('data = ', data)
     const id = session?.id!
     const message = data?.message!
     send.mutate({ dialog_session_id: id, text: message })
@@ -149,15 +148,15 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
   const { deploy } = useDeploy()
   const queryClient = useQueryClient()
 
-  // console.log('isQueryEnable = ', isQueryEnable())
-  // const isQueryEnable = () => status?.data?.state === 'DEPLOYED'
-
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
     queryFn: () => getDeploy(bot?.deployment?.id!),
     refetchOnMount: false,
     enabled: bot?.deployment?.id !== undefined,
     onSuccess(data) {
+      data?.state === 'DEPLOYED' &&
+        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+      queryClient.invalidateQueries('publicDists')
       if (data?.state !== 'DEPLOYED' && data?.state !== null) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
@@ -170,13 +169,6 @@ const DialogSidePanel: FC<Props> = ({ start, chatWith, dist, debug }) => {
       }
     },
   })
-
-  // console.log(
-  //   'status= ',
-  //   status?.data?.state,
-  //   'deploy state = ',
-  //   bot?.deployment?.state
-  // )
 
   const handleDeploy = () => {
     toast.promise(deploy.mutateAsync(bot?.name!), {

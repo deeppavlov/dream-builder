@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation,useQuery,useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { deleteDeploy } from '../services/deleteDeploy'
 import { getDeployments } from '../services/getDeployments'
@@ -14,8 +14,8 @@ export const useDeploy = () => {
   })
 
   const deploy = useMutation({
-    mutationFn: (virtual_assistant_id: string) => {
-      return postDeploy(virtual_assistant_id)
+    mutationFn: (virtual_assistant_name: string) => {
+      return postDeploy(virtual_assistant_name)
     },
     onSuccess: data => {
       queryClient.invalidateQueries('privateDists')

@@ -79,7 +79,10 @@ async def create_dialog_session(
 ):
     """ """
     with db.begin():
-        dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+        try:
+            dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
 
     return schemas.DialogSessionRead.from_orm(dialog_session)
 
@@ -91,7 +94,11 @@ async def get_dialog_session(
     db: Session = Depends(get_db),
 ):
     """ """
-    dialog_session = crud.get_dialog_session(db, dialog_session_id)
+    try:
+        dialog_session = crud.get_dialog_session(db, dialog_session_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
     return schemas.DialogSessionRead.from_orm(dialog_session)
 
 
@@ -106,7 +113,11 @@ async def send_dialog_session_message(
     text
     """
     with db.begin():
-        dialog_session = crud.get_dialog_session(db, dialog_session_id)
+        try:
+            dialog_session = crud.get_dialog_session(db, dialog_session_id)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+
         virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
 
         chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
@@ -141,7 +152,10 @@ async def get_dialog_session_history(
     Returns:
 
     """
-    dialog_session = crud.get_dialog_session(db, dialog_session_id)
+    try:
+        dialog_session = crud.get_dialog_session(db, dialog_session_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
     try:
         agent_dialog_id = dialog_session.agent_dialog_id

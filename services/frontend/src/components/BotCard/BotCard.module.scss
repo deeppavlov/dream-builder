@@ -27,7 +27,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    .deployment {
+    span {    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     }
   }
   .body {

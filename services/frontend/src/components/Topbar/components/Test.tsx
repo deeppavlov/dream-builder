@@ -19,7 +19,7 @@ export const Test = () => {
           debug={false}
           key='chat_with_assistant'
           chatWith='bot'
-          start
+          // start
           dist={activeAssistant}
         />
       ),

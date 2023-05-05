@@ -1,43 +1,59 @@
 import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
-import { Link } from 'react-router-dom'
+import { generatePath, Link, useNavigate, useParams } from 'react-router-dom'
 import { usePreview } from '../../context/PreviewProvider'
+import { useComponent } from '../../hooks/useComponent'
 import { RoutesList } from '../../router/RoutesList'
-import { ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
-import { trigger } from '../../utils/events'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
-import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import DumbSkillSP from '../SkillSidePanel/DumbSkillSP'
 import s from './GenerativeSkillEditor.module.scss'
 
 interface Props {
-  skill: ISkill
+  component_id: number
+  distName: string
   activeTab?: 'Properties' | 'Editor'
 }
 
-const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
+const GenerativeSkillEditor = ({
+  component_id,
+  distName,
+  activeTab,
+}: Props) => {
+  const { getComponent } = useComponent()
+  const { data: skill } = getComponent({
+    id: component_id,
+    distName,
+    type: 'skills',
+  })
+  const { name } = useParams()
+  const nav = useNavigate()
   const { isPreview } = usePreview()
   const [properties, editor] = ['Properties', 'Editor']
   const tabs = new Map([
     [properties, { name: properties }],
     [editor, { name: 'Details', disabled: isPreview }],
   ])
-
   let cx = classNames.bind(s)
 
   const getPromptWordsLenght = (prompt: string) =>
     prompt?.match(/\S+/g)?.length || 0
 
   const triggerEditModal = () => {
-    trigger('SkillPromptModal', { skill })
-    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+    if (name !== undefined && name.length > 0) {
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name,
+          skillId: skill?.name,
+        })
+      )
+    }
   }
 
   return (
-    <SkillSidePanel skill={skill} tabs={tabs} activeTab={activeTab}>
+    <DumbSkillSP skill={skill} tabs={tabs} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
         <SidePanelName>{skill.display_name}</SidePanelName>
         <ul className={s.table}>
@@ -74,7 +90,7 @@ const GenerativeSkillEditor = ({ skill, activeTab }: Props) => {
           </Button>
         </SidePanelButtons>
       </div>
-    </SkillSidePanel>
+    </DumbSkillSP>
   )
 }
 

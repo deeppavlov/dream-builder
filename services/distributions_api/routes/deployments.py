@@ -69,6 +69,17 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
+@deployments_router.get("/", status_code=status.HTTP_201_CREATED)
+async def get_deployments(
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db)
+):
+    with db.begin():
+        deployments = crud.get_all_deployments(db)
+
+    return [schemas.DeploymentRead.from_orm(d) for d in deployments]
+
+
 @deployments_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_deployment(
     payload: schemas.DeploymentCreate,
@@ -77,12 +88,12 @@ async def create_deployment(
     db: Session = Depends(get_db),
 ):
     with db.begin():
-        virtual_assistant = crud.get_virtual_assistant(db, payload.virtual_assistant_id)
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, payload.virtual_assistant_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.save(overwrite=True, generate_configs=True)
 
         parsed_url = urlparse(settings.deployer.portainer_url)
-        host = f"{parsed_url.scheme}://{parsed_url.hostname}"
+        host = f"http://{parsed_url.hostname}"
         port = crud.get_available_deployment_port(db)
 
         try:

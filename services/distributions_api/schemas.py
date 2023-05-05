@@ -220,7 +220,7 @@ class DeploymentRead(DeploymentBaseRead):
 
 
 class DeploymentCreate(BaseModel):
-    virtual_assistant_id: int
+    virtual_assistant_name: str
 
 
 class PublishRequestRead(BaseOrmModel):

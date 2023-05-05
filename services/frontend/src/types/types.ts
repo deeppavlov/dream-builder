@@ -82,7 +82,7 @@ export interface BotCardProps {
   disabled: boolean
 }
 
-export interface Component {
+export interface IComponent {
   name: string
   display_name: string
   author: string
@@ -265,4 +265,13 @@ export interface IPostChat {
   prompt?: string
   lm_service_id?: number
   openai_api_key?: string
+}
+
+export interface IEditComponent {
+  display_name: string
+  description: string
+}
+
+export type TComponents = {
+  [key in StackType]: IStackElement[]
 }

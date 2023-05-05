@@ -55,6 +55,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       type,
       activeTab: 'Properties',
       isOpen: !isActive,
+      distName: distName || '',
     })
   }
   const handleAddClick = (e: React.MouseEvent) => {
@@ -77,7 +78,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       return
     }
 
-    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
+    triggerSkillSidePanel({
+      skill,
+      type,
+      activeTab: 'Editor',
+      distName: distName || '',
+    })
     e.stopPropagation()
   }
   // const handleAddBtnClick = (e: React.MouseEvent) => {

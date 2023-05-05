@@ -44,6 +44,9 @@ export const ShareModal = () => {
     })
   }
 
+  const handleOpenBtnClick = () =>
+    window.open(getValues().link, '_blank', 'noopener')?.focus()
+
   const url = getValues('link')
   const title =
     'Check out this Generative Assistant I made with deepdream.builders! '
@@ -103,14 +106,13 @@ export const ShareModal = () => {
                 Copy
               </Button>
             </div>
-            <a
-              href={getValues().link}
-              target='_blank'
-              rel='noopener noreferrer'
-              className={s.link}
+            <Button
+              theme='secondary'
+              long
+              props={{ onClick: handleOpenBtnClick }}
             >
               Open in another tab
-            </a>
+            </Button>
           </div>
         </div>
       </BaseModal>

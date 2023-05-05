@@ -7,7 +7,7 @@ export async function editComponent(
   newData: ComponentData,
   component_id: number
 ) {
-  console.log('newData, component_id = ', newData, component_id)
+
   try {
     const { data } = await privateApi.patch(`/components/${component_id}`, {
       ...newData,

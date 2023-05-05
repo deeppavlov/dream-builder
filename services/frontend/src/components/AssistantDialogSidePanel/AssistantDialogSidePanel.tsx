@@ -55,6 +55,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     }
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
+    console.log('foo = ', bot?.author?.id)
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
@@ -65,7 +66,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         openaiApiKey !== undefined &&
         openaiApiKey.length > 0
 
-      if (!isApiKey) {
+      if (!isApiKey && bot?.author?.id !== 1) {
         setErrorPanel({
           type: 'api-key',
           msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,

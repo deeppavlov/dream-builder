@@ -139,8 +139,9 @@ async def delete_component(
 
 @components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)
 async def get_list_of_group_components(
-    group_name: str, component_type: str = None, db: Session = Depends(get_db)
+    group_name: str, component_type: str = None, author_id: int = None, db: Session = Depends(get_db)
 ) -> List[schemas.ComponentRead]:
     return [
-        schemas.ComponentRead.from_orm(c) for c in crud.get_components_by_group_name(db, group_name, component_type)
+        schemas.ComponentRead.from_orm(c)
+        for c in crud.get_components_by_group_name(db, group_name, component_type, author_id)
     ]

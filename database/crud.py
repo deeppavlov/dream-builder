@@ -225,10 +225,14 @@ def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str, component_type: str = None) -> [models.Component]:
+def get_components_by_group_name(
+    db: Session, group: str, component_type: str = None, author_id: int = None
+) -> [models.Component]:
     filters = {"group": group}
     if component_type:
         filters["component_type"] = component_type
+    if author_id:
+        filters["author_id"] = author_id
 
     return db.scalars(select(models.Component).filter_by(**filters)).all()
 

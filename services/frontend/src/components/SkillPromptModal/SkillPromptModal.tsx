@@ -110,9 +110,11 @@ const SkillPromptModal = () => {
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
   const isDirty = Object.values(dirtyFields).length > 0
+  const [needRedeploy, setNeedRedeploy] = useState<boolean>(false)
 
   const clearStates = () => {
     setIsOpen(false)
+    setNeedRedeploy(false)
     // setSkill(null)
     nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
   }
@@ -126,8 +128,8 @@ const SkillPromptModal = () => {
     const { skill } = data.detail
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
-
     if (isRequestToClose) {
+      // console.log('needRedeploy request to close = ', needRedeploy)
       setIsOpen(false)
       // setSkill(null)
       return
@@ -150,13 +152,21 @@ const SkillPromptModal = () => {
   }
 
   const handleSave = async (data: FormValues) => {
-    toast
-      .promise(update.mutateAsync(data), {
+    toast.promise(
+      update.mutateAsync(data, {
+        onSuccess: () => {
+          // console.log('updated')
+          setNeedRedeploy(true)
+          // console.log('needRedeploy in tanstack = ', needRedeploy)
+        },
+      }),
+      {
         loading: 'Saving...',
         success: 'Success!',
         error: 'Something Went Wrong...',
-      })
-      .finally(() => trigger('RenewChat', {}))
+      }
+    )
+    trigger('RenewChat', {})
   }
 
   const onFormSubmit = (data: FormValues) => {
@@ -206,6 +216,10 @@ const SkillPromptModal = () => {
     )
   }, [skill])
 
+  const triggerRedeploy = () => {
+    console.log('redeploy was triggered')
+  }
+
   useEffect(() => {
     dispatch({
       type: 'set',
@@ -214,9 +228,14 @@ const SkillPromptModal = () => {
         value: isOpen ? skill : null,
       },
     })
-    // return () => reset({})
-  }, [isOpen])
 
+    return () => {
+      reset({})
+    }
+  }, [isOpen])
+  useEffect(() => {
+    console.log('needRedeploy = ', needRedeploy)
+  }, [isOpen])
   useQuitConfirmation({
     activeElement: modalRef,
     availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],

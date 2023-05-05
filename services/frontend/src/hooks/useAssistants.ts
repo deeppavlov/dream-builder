@@ -15,6 +15,7 @@ import {
   BotInfoInterface,
   TDistVisibility,
 } from '../types/types'
+import { useDeploy } from './useDeploy'
 
 interface IChangeVisibility {
   name: string
@@ -37,18 +38,18 @@ export const useAssistants = () => {
   const PUBLIC_DISTS = 'publicDists'
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
-
+  const { deploy } = useDeploy()
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicDists)
 
   const fetchPrivateDists = () =>
     useQuery(PRIVATE_DISTS, getPrivateDists, { enabled: userIsAuthorized })
 
   const getDist = (name: string) =>
-    useQuery({
+    useQuery<BotInfoInterface>({
       queryKey: ['dist', name],
       queryFn: () => fetchDist(name),
       refetchOnMount: false,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       initialData: () => getFetchedDist(name),
     })
 
@@ -77,13 +78,20 @@ export const useAssistants = () => {
 
   const deleteDist = useMutation({
     mutationFn: (name: string) => deleteAssistantDist(name),
-    onSuccess: (_, name) =>
+    onSuccess: (_, name) => {
       queryClient.invalidateQueries([PRIVATE_DISTS]).finally(() => {
         updateCachedDist(name)
       }),
+        queryClient.invalidateQueries([PUBLIC_DISTS]).then(() => {
+          updateCachedDist(name)
+        })
+    },
   })
 
   const changeVisibility = useMutation({
+    onMutate: ({ name, visibility }) => {
+      visibility !== 'private' && deploy.mutateAsync(name)
+    },
     mutationFn: ({ name, visibility, inEditor }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
     onSuccess: (_, { name, visibility, inEditor }) => {
@@ -129,7 +137,6 @@ export const useAssistants = () => {
     const result = [dist, ...publicDists, ...privateDists]?.find(
       dist => dist?.name === name
     )
-
     return result
   }
 

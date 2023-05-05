@@ -16,13 +16,6 @@ class BaseOrmModel(BaseModel):
         orm_mode = True
 
 
-class UserRoleRead(BaseOrmModel):
-    id: int
-    name: str
-    can_confirm_publish: bool
-    can_set_roles: bool
-
-
 class UserRead(BaseOrmModel):
     id: int
     email: EmailStr
@@ -31,7 +24,6 @@ class UserRead(BaseOrmModel):
     fullname: Optional[str]
     given_name: Optional[str]
     family_name: Optional[str]
-    role: Optional[UserRoleRead]
 
 
 class DeploymentBaseRead(BaseOrmModel):

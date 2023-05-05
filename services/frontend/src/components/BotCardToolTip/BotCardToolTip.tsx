@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
+import {AssistantDialogSidePanel} from '../AssistantDialogSidePanel/AssistantDialogSidePanel'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
-import DialogSidePanel from '../DialogSidePanel/DialogSidePanel'
 
 interface Props {
   tooltipId: string
@@ -46,7 +46,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const handleChatClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
-        <DialogSidePanel
+        <AssistantDialogSidePanel
           debug={false}
           key={bot?.name + 'chat_with_assistant'}
           chatWith='bot'

@@ -40,10 +40,11 @@ export const useChat = () => {
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
-      // queryClient.invalidateQueries('history')
       setHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
-    onError: () => {
+    onError: (_, variables) => {
+      
+      renew.mutate(DEEPY_ASSISTANT) //FIX!!!
       setError(true)
     },
   })

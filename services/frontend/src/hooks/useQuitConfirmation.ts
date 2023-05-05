@@ -12,8 +12,10 @@ export const useQuitConfirmation = ({
   quitHandler,
   isActive,
   availableSelectors,
+  
 }: Props) => {
   const handleWindowClick = (e: MouseEvent) => {
+    
     const quitModals = [
       ...document.querySelectorAll('[data-modal-type="quit"]'),
     ]
@@ -39,7 +41,6 @@ export const useQuitConfirmation = ({
       quitHandler()
     }
   }
-
   useEffect(() => {
     if (isActive) {
       window.addEventListener('click', handleWindowClick, true)

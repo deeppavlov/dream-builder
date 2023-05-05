@@ -20,57 +20,52 @@ const SkillsPage = () => {
   const { isPreview } = usePreview()
   const { getAllComponents } = useComponent()
   const components = getAllComponents(name || '')
-  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <Main sidebar editor>
-      {!skillEditorIsActive && (
-        <Wrapper
-          title='Skills'
-          skills
-          annotation='generate possible responses to the user'
-        >
-          {components?.error && <ErrorHandler error={components?.error} />}
-          {!components?.error && isTableView && (
-            <Table
-              second='Type'
-              addButton={
-                !isPreview ? (
-                  <AddButton
-                    forTable
-                    forSkills
-                    disabled={!auth?.user && isPreview}
-                    text='Add Skill'
-                  />
-                ) : undefined
-              }
-            >
-              <SkillList
-                skills={components?.data?.skills}
-                view='table'
-                type='your'
-              />
-            </Table>
-          )}
-          {!isTableView && (
-            <Container gridForCards heightAuto>
-              {!isPreview && (
-                <AddButton disabled={isPreview} forGrid forSkills />
-              )}
-              {components?.data?.skills === undefined && (
-                <CardsLoader cardsCount={3} type='skill' />
-              )}
-              <SkillList
-                skills={components?.data?.skills}
-                view='cards'
-                type='your'
-                forGrid
-              />
-            </Container>
-          )}
-        </Wrapper>
-      )}
+      <Wrapper
+        title='Skills'
+        skills
+        annotation='generate possible responses to the user'
+      >
+        {components?.error && <ErrorHandler error={components?.error} />}
+        {!components?.error && isTableView && (
+          <Table
+            second='Type'
+            addButton={
+              !isPreview ? (
+                <AddButton
+                  forTable
+                  forSkills
+                  disabled={!auth?.user && isPreview}
+                  text='Add Skill'
+                />
+              ) : undefined
+            }
+          >
+            <SkillList
+              skills={components?.data?.skills}
+              view='table'
+              type='your'
+            />
+          </Table>
+        )}
+        {!isTableView && (
+          <Container gridForCards heightAuto>
+            {!isPreview && <AddButton disabled={isPreview} forGrid forSkills />}
+            {components?.data?.skills === undefined && (
+              <CardsLoader cardsCount={3} type='skill' />
+            )}
+            <SkillList
+              skills={components?.data?.skills}
+              view='cards'
+              type='your'
+              forGrid
+            />
+          </Container>
+        )}
+      </Wrapper>
     </Main>
   )
 }

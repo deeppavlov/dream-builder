@@ -1,3 +1,4 @@
+import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
@@ -46,7 +47,9 @@ export const CopilotSidePanel = () => {
       duration: 1000,
     })
   }
-
+  const handleRenewClick = () => {
+    renew.mutateAsync(DEEPY_ASSISTANT)
+  }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
@@ -170,6 +173,14 @@ export const CopilotSidePanel = () => {
           />
           <input type='submit' hidden />
           <SidePanelButtons>
+            <Button
+              theme='secondary'
+              props={{
+                onClick: handleRenewClick,
+              }}
+            >
+              <Renew data-tooltip-id='renew' />
+            </Button>
             <Button
               theme='primary'
               props={{

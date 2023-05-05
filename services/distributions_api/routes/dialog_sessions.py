@@ -7,7 +7,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.dependencies import verify_token
+from services.distributions_api.security.auth import verify_token
 
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
 

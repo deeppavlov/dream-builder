@@ -11,7 +11,8 @@ from database import crud, models
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.dependencies import verify_token
+from services.distributions_api.security.auth import verify_token
+from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])

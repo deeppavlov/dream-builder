@@ -203,3 +203,23 @@
     @extend .notification;
   }
 }
+.link {
+  text-decoration: underline;
+  align-self: flex-end;
+  text-underline-offset: 3px;
+}
+.alertName {
+  @include t2;
+}
+.alertDesc {
+  @include b3;
+}
+.runTest {
+  margin-top: 24px;
+}
+.error {
+  color: #ff3b30;
+  button {
+    background-color: #ff3b30;
+  }
+}

@@ -18,9 +18,9 @@ import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name'
+type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name' | 'deploy'
 
-interface IDialogError {
+export interface IDialogError {
   type: TDialogError
   msg: string
 }
@@ -41,7 +41,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
 
-  console.log(skill)
+  // console.log(skill)
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
@@ -53,14 +53,14 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
       })
 
     renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {
-      onSuccess: () =>
-        console.log('A new dialog session was successfully created!'),
+      // onSuccess: () =>
+      // console.log('A new dialog session was successfully created!'),
     })
   }
 
   const checkIsChatSettings = (userId: number) => {
     if (userId === undefined || userId === null) return
-    console.log('Start checking dialog settings...')
+    // console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
     const isPrompt = skill?.prompt !== undefined

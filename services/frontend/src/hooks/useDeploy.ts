@@ -36,6 +36,6 @@ export const useDeploy = () => {
       console.log('error = ', data)
     },
   })
-
-  return { deploy, deleteDeployment, deployments }
+const redeploy =''
+  return { deploy,redeploy, deleteDeployment, deployments }
 }

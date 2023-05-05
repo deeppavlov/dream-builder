@@ -1,5 +1,5 @@
-import { CSSProperties, FC, useId } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import { CSSProperties,FC,useId } from 'react'
+import toast,{ Toaster } from 'react-hot-toast'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -8,7 +8,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
 import { useDeploy } from '../hooks/useDeploy'
-import { BotInfoInterface, IAuthor } from '../types/types'
+import { BotInfoInterface,IAuthor } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -115,7 +115,7 @@ export const DraftPage = () => {
             })}
           </Container>
         </Wrapper>
-        <Wrapper fitScreen title='Deployment State'>
+        <Wrapper fitScreen title='Deployments' amount={filtered?.length}>
           <Container gridForRequests>
             {filtered?.map((deployment: any, i: number) => {
               return (

@@ -55,7 +55,6 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     }
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
-    console.log('foo = ', bot?.author?.id)
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
@@ -154,15 +153,25 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     if (!isChatSettings) return
     const id = session?.id!
     const message = data?.message!
-    send.mutate({
-      dialog_session_id: id,
-      text: message,
-      openai_api_key: apiKey ?? undefined,
-    })
+    send.mutate(
+      {
+        dialog_session_id: id,
+        text: message,
+        openai_api_key: apiKey ?? undefined,
+      },
+      {
+        onError: () =>
+          setErrorPanel({
+            type: 'chat',
+            msg: 'Something went wrong...',
+          }),
+      }
+    )
     reset()
   }
   const handleRenewClick = () => {
     renew.mutateAsync(bot?.name!)
+    setErrorPanel(null)
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
@@ -201,6 +210,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       .finally(() => {
         setErrorPanel(null)
       })
+      .then(() => {
+        setErrorPanel(null)
+      })
   }
   const handleDeploy = () => {
     toast.promise(
@@ -233,11 +245,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       <div
         className={cx(
           'dialogSidePanel',
-          errorFromChat && 'error',
           errorPanel && 'error'
         )}
       >
-        {errorFromChat && (
+        {/* {errorFromChat && (
           <>
             <span className={s.alerName}>Alert!</span>
             <p className={s.alertDesc}>
@@ -245,7 +256,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             </p>
             <button onClick={handleGoBackBtnClick}>Go back</button>
           </>
-        )}
+        )} */}
         {errorPanel && (
           <>
             <span className={s.alertName}>Error!</span>

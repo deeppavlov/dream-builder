@@ -42,8 +42,9 @@ export const useChat = () => {
     onSuccess: data => {
       setHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
-    onError: data => {
-      console.log('error = ', data)
+    onError: (_, variables) => {
+      console.log('variables = ', variables)
+      renew.mutate(DEEPY_ASSISTANT) //FIX!!!
       setError(true)
     },
   })

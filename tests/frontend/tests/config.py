@@ -22,6 +22,13 @@ url = settings_test.url.frontend
 users_email = settings_test.url.email
 
 generative_model = "ChatGPT"
-public_va_name = "nutrition_assistant"
-skill_name = "Nutrition Skill"
+public_va_name = "Marketing Assistant"
+skill_name = "Marketing Skill"
 
+public_template_list = [" AI FAQ Assistant"
+                        "fairytale_assistant",
+                        "fashion_stylist_assistant",
+                        "life_coaching_assistant",
+                        "marketing_assistant",
+                        "nutrition_assistant",
+                        "multiskill_ai_assistant"]

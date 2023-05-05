@@ -13,7 +13,7 @@ class SkillEditorPage(BasePage):
         button.click()
 
     def click_enter_token_here(self):
-        button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
+        button = self.browser.find_element(*SkillEditorPageLocators.ENTER_TOKEN_HERE)
         button.click()
 
     def clear_old_prompt(self):
@@ -54,5 +54,9 @@ class SkillEditorPage(BasePage):
         button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_BUTTON_MODAL_WINDOW)
         button.click()
 
-
+    def check_prompt_is_not_builderbot(self):
+        textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
+        prompt = textarea.text
+        assert prompt != "Your name is BuilderBot, act like you know a lot about building bots"
+        assert prompt is not None
 

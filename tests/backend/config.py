@@ -1,9 +1,7 @@
 from pydantic import BaseModel, BaseSettings
 from pathlib import Path
 from services.auth_api.models import UserCreate, UserValidScheme
-from database import models
-from sqlalchemy.orm import Session
-from sqlalchemy.dialects.postgresql import insert
+#from database import models
 
 
 class LocalUrlSettings(BaseModel):
@@ -166,7 +164,19 @@ va_data = {
     "display_name": "Test_Assistant",
     "description": "description",
 }
-public_va_names = []
+public_va_names = ["ai_faq_assistant",
+                   "fairytale_assistant",
+                   "fashion_stylist_assistant",
+                   "life_coaching_assistant",
+                   "marketing_assistant",
+                   "nutrition_assistant",
+                   "multiskill_ai_assistant",
+
+                   "universal_prompted_assistant",
+                   "deepy_assistant",
+                   ]
+
+
 
 # config for test_distribution
 
@@ -176,9 +186,10 @@ base_url_distributions_api = settings_url.distributions_api
 assistant_dists_endpoint = f"{base_url_distributions_api}/assistant_dists/"
 components_endpoint = f"{base_url_distributions_api}/components/"
 users_endpoint = f"{base_url_distributions_api}/users/"
-api_tokens_endpoint = f"{base_url_distributions_api}/api_tokens/"
+api_keys_endpoint = f"{base_url_distributions_api}/api_keys/"
 dialog_sessions_endpoint = f"{base_url_distributions_api}/dialog_sessions/"
 deployments_endpoint = f"{base_url_distributions_api}/deployments/"
+lm_services_endpoint = f"{base_url_distributions_api}/lm_services/"
 admin_endpoint = f"{base_url_distributions_api}/admin/publish_request/"
 
 

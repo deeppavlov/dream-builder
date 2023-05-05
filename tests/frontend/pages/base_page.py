@@ -18,13 +18,6 @@ class BasePage:
     def delete_all_cookies(self):
         self.browser.delete_all_cookies()
 
-    def is_element_present(self, how, what):
-        try:
-            self.browser.find_element(how, what)
-        except NoSuchElementException:
-            return False
-        return True
-
     def click_sign_in_button(self):
         button = self.browser.find_element(*BasePageLocators.SIGN_IN_BUTTON)
         button.click()
@@ -41,11 +34,14 @@ class BasePage:
         button = self.browser.find_element(*BasePageLocators.HOME_BUTTON)
         button.click()
 
+    def is_element_present(self, how, what):
+        try:
+            self.browser.find_element(how, what)
+        except NoSuchElementException:
+            return False
+        return True
 
-
-
-
-    def is_not_element_present(self, how, what, timeout=4):
+    def is_not_element_present(self, how, what, timeout=2):
         try:
             WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
         except TimeoutException:

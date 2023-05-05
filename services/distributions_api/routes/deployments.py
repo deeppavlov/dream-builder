@@ -69,7 +69,7 @@ def run_deployer(dist: AssistantDist, port: int, deployment_id: int):
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
-@deployments_router.get("", status_code=status.HTTP_201_CREATED)
+@deployments_router.get("", status_code=status.HTTP_200_OK)
 async def get_deployments(
     state: str = None,
     user: schemas.UserRead = Depends(verify_token),

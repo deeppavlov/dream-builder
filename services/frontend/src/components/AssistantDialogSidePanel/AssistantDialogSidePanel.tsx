@@ -121,14 +121,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   })
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const {
-    send,
-    renew,
-    session,
-    message,
-    history,
-    // error
-  } = useChat()
+  const { send, renew, session, message, history } = useChat()
   const { dispatch } = useDisplay()
   const deployPanel = bot?.deployment?.state == null //костыль
   const awaitDeployPanel =
@@ -136,11 +129,6 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-
-  // handlers
-  // const handleGoBackBtnClick = () => {
-  //   trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-  // }
 
   const handleSend = (data: ChatForm) => {
     const isChatSettings = checkIsChatSettings(user?.id)
@@ -254,9 +242,16 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 Enter your personal access token here
               </Link>
             )}
-            <Button theme='error' props={{ onClick: handleTryAgain }}>
-              Try again
-            </Button>
+            {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
+              <>
+                <Button theme='error' props={{ onClick: handleTryAgain }}>
+                  Try again
+                </Button>
+                👆
+                <br />
+                Try again button stops deploy
+              </>
+            )}
           </>
         )}
         {awaitDeployPanel && (

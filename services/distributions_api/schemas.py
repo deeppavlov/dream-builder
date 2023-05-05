@@ -167,7 +167,7 @@ class VirtualAssistantComponentPipelineRead(BaseModel):
     skills: List[VirtualAssistantComponentRead]
     candidate_annotators: List[VirtualAssistantComponentRead]
     response_selectors: List[VirtualAssistantComponentRead]
-    response_annotators: List[VirtualAssistantComponentRead]
+    response_annotators: Optional[List[VirtualAssistantComponentRead]]
 
 
 class DialogSessionCreate(BaseModel):

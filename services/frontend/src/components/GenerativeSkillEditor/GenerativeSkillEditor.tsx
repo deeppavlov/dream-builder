@@ -34,7 +34,7 @@ const GenerativeSkillEditor = ({
   const [properties, editor] = ['Properties', 'Editor']
   const tabs = new Map([
     [properties, { name: properties }],
-    [editor, { name: 'Details', disabled: isPreview }],
+    // [editor, { name: 'Details', disabled: isPreview }],
   ])
   let cx = classNames.bind(s)
 

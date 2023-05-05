@@ -52,7 +52,7 @@ const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
       type: 'set',
       option: {
         id: consts.ACTIVE_SKILL_SP_ID,
-        value: isOpen ? skill.id : null,
+        value: isOpen ? skill?.id : null,
       },
     })
 
@@ -89,7 +89,8 @@ const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (
-              <img src={Woman} alt='Author' />
+              // <img src={Woman} alt='Author' />
+            <></>
             ) : (
               <img src={skill?.author?.picture} />
             )}
@@ -102,8 +103,12 @@ const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
           </div>
           <ul className={s.table}>
             <li className={s.item}>
-              <span className={cx('table-name')}>Original author:</span>
-              <span className={s.value}>{skill?.author?.fullname}</span>
+              {skill?.author?.fullname && (
+                <>
+                  <span className={cx('table-name')}>Original author:</span>
+                  <span className={s.value}>{skill?.author?.fullname}</span>
+                </>
+              )}
             </li>
 
             {/* {skill?.component_type && (

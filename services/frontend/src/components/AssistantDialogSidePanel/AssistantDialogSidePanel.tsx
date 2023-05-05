@@ -197,17 +197,24 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     return () => dispatchTrigger(false)
   }, [])
   const handleTryAgain = () => {
-    deleteDeployment
-      .mutateAsync(bot?.deployment?.id!)
-      .then(() => {
-        setErrorPanel(null)
-      })
-      .finally(() => {
-        setErrorPanel(null)
+    toast.promise(
+      deleteDeployment
+        .mutateAsync(bot?.deployment?.id!)
+        .then(() => {
+          setErrorPanel(null)
+        })
+        .finally(() => {
+          setErrorPanel(null)
 
-        queryClient.invalidateQueries('privateDists')
-        queryClient.invalidateQueries('dist')
-      })
+          queryClient.invalidateQueries('privateDists')
+          queryClient.invalidateQueries('dist')
+        }),
+      {
+        loading: 'Stop deploy...',
+        success: 'Deploy Stopped!',
+        error: 'Something Went Wrong...',
+      }
+    )
   }
   const handleDeploy = () => {
     toast.promise(
@@ -238,15 +245,6 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         </>
       </SidePanelHeader>
       <div className={cx('dialogSidePanel', errorPanel && 'error')}>
-        {/* {errorFromChat && (
-          <>
-            <span className={s.alerName}>Alert!</span>
-            <p className={s.alertDesc}>
-              Check the settings of your bot. Something went wrong!
-            </p>
-            <button onClick={handleGoBackBtnClick}>Go back</button>
-          </>
-        )} */}
         {errorPanel && (
           <>
             <span className={s.alertName}>Error!</span>

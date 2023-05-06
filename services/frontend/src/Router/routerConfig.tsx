@@ -144,7 +144,11 @@ export const RouterConfig: CustomRouteConfig[] = [
   },
   {
     path: RoutesList.draft,
-    element: <DraftPage />,
+    element: (
+      <PrivateRoute>
+        <DraftPage />
+      </PrivateRoute>
+    ),
     handle: 'Its For Crumbs',
   },
   {

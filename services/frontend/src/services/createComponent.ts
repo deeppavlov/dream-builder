@@ -8,7 +8,7 @@ export interface InfoForNewComponent extends PostDistParams {
 
 export async function createComponent(info: InfoForNewComponent) {
   try {
-    const { data } = await privateApi.post(`/components/`, {
+    const { data } = await privateApi.post(`/components`, {
       ...info,
     })
     return data

@@ -12,12 +12,10 @@ export const AssistantCloneButton = () => {
   const { isPreview } = usePreview()
   const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
+  const userIsAuthorized = !!auth?.user
 
   const handleCloneBtnClick = () => {
-    if (!auth?.user) {
-      trigger('SignInModal', {})
-      return
-    }
+    if (userIsAuthorized) return trigger('SignInModal', {})
 
     trigger('AssistantModal', {
       action: 'clone',
@@ -27,19 +25,17 @@ export const AssistantCloneButton = () => {
   }
 
   return (
-    <div className={s.clone}>
-      <Button
-        theme={isPreview ? 'primary' : 'secondary'}
-        small
-        withIcon
-        clone
-        props={{ onClick: handleCloneBtnClick }}
-      >
-        <CloneIcon />
-        <div className={s.container}>
-          <span>Make&nbsp;Copy</span>
-        </div>
-      </Button>
-    </div>
+    <Button
+      theme={isPreview ? 'primary' : 'secondary'}
+      small
+      withIcon
+      clone
+      props={{ onClick: handleCloneBtnClick }}
+    >
+      <div className={s.btn}>
+        <CloneIcon className={s.icon} />
+        <span>Use</span>
+      </div>
+    </Button>
   )
 }

@@ -30,6 +30,8 @@ export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
+  const isEditing = action === 'edit'
+  const isCloning = action === 'clone'
 
   const { handleSubmit, control, reset, getValues } =
     useForm<AssistantFormValues>({ mode: 'all' })
@@ -97,29 +99,18 @@ export const AssistantModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
-        <div>
-          {action === 'create' && <h4>Create a new Virtual Assistant</h4>}
-          {action === 'clone' && (
-            <h4>
-              Use Template Of <mark>{bot?.display_name}</mark>
-            </h4>
-          )}
-          {action === 'edit' && <h4>Rename Assistant</h4>}
+        <div className={s.header}>
+          <h4>
+            {isEditing ? 'Edit assistant:' : 'Create new assistant from:'}
+          </h4>
+          <mark>
+            {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
+          </mark>
+
           <div className={s.distribution}>
-            {action === 'clone' && (
-              <div>Enter Name And Description For Your Virtual Assistant</div>
-            )}
-            {action === 'create' && (
-              <div>
-                You are creating a new Virtual Assistant from{' '}
-                <mark>scratch</mark>
-              </div>
-            )}
-            {action === 'edit' && (
-              <div>
-                You are renaming: <mark>{bot?.display_name}</mark>
-              </div>
-            )}
+            {`${
+              isEditing ? 'Change' : 'Enter'
+            } name and description for your assistant`}
           </div>
         </div>
         <Input

@@ -15,7 +15,7 @@ export const AssistantCloneButton = () => {
   const userIsAuthorized = !!auth?.user
 
   const handleCloneBtnClick = () => {
-    if (userIsAuthorized) return trigger('SignInModal', {})
+    if (!userIsAuthorized) return trigger('SignInModal', {})
 
     trigger('AssistantModal', {
       action: 'clone',

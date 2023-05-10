@@ -68,11 +68,13 @@ services:
       - ./services/distributions_api:/src/services/distributions_api
       - ./database:/src/database
       - ./apiconfig:/src/apiconfig
+      - ~/.aws:/root/.aws
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
         reservations:
-          memory: 256M
+          memory: 512M
 
 version: '3.7'

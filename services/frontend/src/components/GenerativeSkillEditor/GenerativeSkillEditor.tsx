@@ -34,7 +34,7 @@ const GenerativeSkillEditor = ({
   const [properties, editor] = ['Properties', 'Editor']
   const tabs = new Map([
     [properties, { name: properties }],
-    [editor, { name: 'Details', disabled: isPreview }],
+    // [editor, { name: 'Details', disabled: isPreview }],
   ])
   let cx = classNames.bind(s)
 
@@ -55,7 +55,7 @@ const GenerativeSkillEditor = ({
   return (
     <DumbSkillSP skill={skill} tabs={tabs} activeTab={activeTab}>
       <div className={cx('generativeSkillEditor')}>
-        <SidePanelName>{skill.display_name}</SidePanelName>
+        <SidePanelName>{skill?.display_name}</SidePanelName>
         <ul className={s.table}>
           <li className={s.item}>
             <span className={cx('table-name')}>Generative model:</span>

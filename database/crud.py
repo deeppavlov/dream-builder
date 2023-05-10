@@ -225,10 +225,14 @@ def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str, component_type: str = None) -> [models.Component]:
+def get_components_by_group_name(
+    db: Session, group: str, component_type: str = None, author_id: int = None
+) -> [models.Component]:
     filters = {"group": group}
     if component_type:
         filters["component_type"] = component_type
+    if author_id:
+        filters["author_id"] = author_id
 
     return db.scalars(select(models.Component).filter_by(**filters)).all()
 
@@ -528,12 +532,21 @@ def get_available_deployment_port(db: Session, range_min: int = 4550, range_max:
     return first_available_port
 
 
-def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
-    return db.get(models.Deployment, id)
+def get_deployment(db: Session, id: int):
+    deployment = db.get(models.Deployment, id)
+
+    if not deployment:
+        raise ValueError(f"No deployments with id = {id}")
+
+    return deployment
 
 
-def get_all_deployments(db: Session) -> [models.Deployment]:
-    return db.scalars(select(models.Deployment)).all()
+def get_all_deployments(db: Session, state: str = None) -> [models.Deployment]:
+    select_stmt = select(models.Deployment)
+    if state:
+        select_stmt.filter_by(state=state)
+
+    return db.scalars(select_stmt).all()
 
 
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
@@ -551,7 +564,7 @@ def create_deployment(
     db: Session,
     virtual_assistant_id: int,
     chat_host: str,
-    chat_port: int,
+    chat_port: int = None,
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
@@ -559,6 +572,7 @@ def create_deployment(
             virtual_assistant_id=virtual_assistant_id,
             chat_host=chat_host,
             chat_port=chat_port,
+            state="STARTED",
         )
         .returning(models.Deployment)
     )

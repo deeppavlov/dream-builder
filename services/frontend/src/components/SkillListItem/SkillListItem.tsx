@@ -13,10 +13,10 @@ import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
-import { srcForIcons } from '../../utils/srcForIcons'
 import { timeToUTC } from '../../utils/timeToUTC'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
@@ -39,15 +39,14 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   // const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()
-  const nameForComponentType = componentTypeMap[skill?.component_type!]
-  const srcForComponentType = srcForIcons(nameForComponentType)
+  const { name: distRoutingName } = useParams()
   const { options } = useDisplay()
+  const { name: distName } = useParams()
+  const nav = useNavigate()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const isActive = skill.id === activeSKillId
-  const { name: distName } = useParams()
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
-  const nav = useNavigate()
-  const { name: distRoutingName } = useParams()
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
     triggerSkillSidePanel({
@@ -108,7 +107,10 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       <td className={s.td}>
         {skill?.component_type && (
           <div className={s.type}>
-            <img className={s.typeLogo} src={srcForComponentType} />
+            <SvgIcon
+              iconName={nameForComponentType}
+              svgProp={{ className: s.typeLogo }}
+            />
             <p className={cx('typeText', nameForComponentType)}>
               {skill?.component_type || '------'}
             </p>
@@ -150,29 +152,31 @@ export const SkillListItem: FC<SkillListItemProps> = ({
               >
                 <Add />
               </Button>
-              <Button
+              {/* <Button
                 theme='secondary'
                 small
                 withIcon
                 props={{ onClick: handleSkillListItemClick }}
               >
                 <Properties />
-              </Button>
+              </Button> */}
             </>
           ) : (
             <>
               {/* <ToggleButton handleToggle={handleToggle} disabled={isPreview} /> */}
-              <Button
-                theme='primary'
-                small
-                withIcon
-                props={{
-                  disabled: !skill?.is_customizable,
-                  onClick: handleEditClick,
-                }}
-              >
-                <Edit />
-              </Button>
+              {!isPreview && (
+                <Button
+                  theme='primary'
+                  small
+                  withIcon
+                  props={{
+                    disabled: !skill?.is_customizable,
+                    onClick: handleEditClick,
+                  }}
+                >
+                  <Edit />
+                </Button>
+              )}
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

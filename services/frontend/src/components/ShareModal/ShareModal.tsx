@@ -30,13 +30,14 @@ export const ShareModal = () => {
     setIsOpen(prev => !prev)
   }
   const { control, getValues, reset } = useForm({
-    defaultValues: {
-      link: bot,
-    },
+    defaultValues: { link: bot },
   })
+  const url = getValues('link')
+  const shareText =
+    'Check out this Generative Assistant I made with deepdream.builders! '
 
-  const clickHandler = () => {
-    navigator.clipboard.writeText(getValues('link'))
+  const handleCopyBtnClick = () => {
+    navigator.clipboard.writeText(url)
     toast.custom(<ToastCopySucces />, {
       position: 'top-center',
       id: 'copySucces',
@@ -44,19 +45,13 @@ export const ShareModal = () => {
     })
   }
 
-  const handleOpenBtnClick = () =>
-    window.open(getValues().link, '_blank', 'noopener')?.focus()
-
-  const url = getValues('link')
-  const title =
-    'Check out this Generative Assistant I made with deepdream.builders! '
-
   useObserver('ShareModal', handleEventUpdate)
   useEffect(() => {
     reset({
-      link: 'https://assistants.deepdream.builders/?assistant=' + bot,
+      link: `https://assistants.deepdream.builders/?assistant=${bot}`,
     })
   }, [bot])
+
   return (
     <>
       <Toaster />
@@ -67,27 +62,27 @@ export const ShareModal = () => {
             <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
               <FacebookShareButton
-                quote={title}
+                quote={shareText}
                 children={<FacebookIcon />}
                 url={url}
               />
               <TwitterShareButton
-                title={title}
+                title={shareText}
                 children={<TwitterIcon />}
                 url={url}
               />
               <TelegramShareButton
-                title={title}
+                title={shareText}
                 children={<TelegramIcon />}
                 url={url}
               />
               <LinkedinShareButton
-                title={title}
+                title={shareText}
                 children={<LinkedinIcon />}
                 url={url}
               />
               <RedditShareButton
-                title={title}
+                title={shareText}
                 children={<RedditIcon />}
                 url={url}
               />
@@ -102,17 +97,15 @@ export const ShareModal = () => {
                 big
                 props={{ readOnly: true }}
               />
-              <Button props={{ onClick: clickHandler }} theme={'primary'}>
+              <Button props={{ onClick: handleCopyBtnClick }} theme='primary'>
                 Copy
               </Button>
             </div>
-            <Button
-              theme='secondary'
-              long
-              props={{ onClick: handleOpenBtnClick }}
-            >
-              Open in another tab
-            </Button>
+            <a href={url} target='_blank' rel='noopener noreferrer'>
+              <Button theme='secondary' long>
+                Open in another tab
+              </Button>
+            </a>
           </div>
         </div>
       </BaseModal>

@@ -13,10 +13,10 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
-import { srcForIcons } from '../../utils/srcForIcons'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
@@ -41,6 +41,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const isActive = skill.id === activeSKillId
   const nav = useNavigate()
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -84,17 +85,6 @@ export const SkillCard: FC<SkillCardProps> = ({
     })
     e.stopPropagation()
   }
-  const nameForComponentType = componentTypeMap[skill?.component_type!]
-  const srcForComponentType = srcForIcons(nameForComponentType)
-
-  // useEffect(() => {
-  //   triggerSkillSidePanel({
-  //     skill,
-  //     type,
-  //     activeTab: 'Properties',
-  //     isOpen: isActive,
-  //   })
-  // }, [skill])
 
   return (
     <div
@@ -116,7 +106,10 @@ export const SkillCard: FC<SkillCardProps> = ({
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
-            <img className={s.typeLogo} src={srcForComponentType} />
+            <SvgIcon
+              iconName={nameForComponentType}
+              svgProp={{ className: s.typeLogo }}
+            />
             <p className={cx('typeText', nameForComponentType)}>
               {skill?.component_type ?? '------'}
             </p>

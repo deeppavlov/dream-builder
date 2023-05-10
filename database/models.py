@@ -131,7 +131,7 @@ class Deployment(Base):
     virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
     chat_host = Column(String, nullable=False)
-    chat_port = Column(Integer, nullable=False)
+    chat_port = Column(Integer, nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

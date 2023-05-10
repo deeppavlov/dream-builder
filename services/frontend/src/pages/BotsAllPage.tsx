@@ -24,7 +24,7 @@ export const BotsAllPage = () => {
   return (
     <>
       <Main sidebar fullWidth>
-        <Wrapper title='Assistant Templates' amount={publicDists?.data?.length}>
+        <Wrapper title='Public Templates' amount={publicDists?.data?.length}>
           {publicDists?.error ? (
             <ErrorHandler error={publicDists.error} />
           ) : (

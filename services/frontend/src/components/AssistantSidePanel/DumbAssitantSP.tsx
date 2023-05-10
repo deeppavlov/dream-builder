@@ -1,8 +1,9 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { useEffect, useId, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useId } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
+import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager from '../../hooks/useTabsManager'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -10,8 +11,8 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import EditPencilButton from '../EditPencilButton/EditPencilButton'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './DumbAssitantSP.module.scss'
 
@@ -28,7 +29,13 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
     activeTabId: properties,
     tabList: new Map([[properties, { name: properties }]]),
   })
+  const { isPreview } = usePreview()
+  const { name: distName } = useParams()
   const { dispatch } = useDisplay()
+  const onModeration = bot?.publish_state === 'in_progress'
+  const isPreviewEditor = distName && distName?.length > 0 && isPreview
+  const isPublic = bot?.visibility === 'public_template'
+  const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const tooltipId = useId()
 
   const handleCloneBtnClick = () => {
@@ -51,6 +58,10 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
     e.stopPropagation()
   }
 
+  const handleRenameBtnClick = () => {
+    trigger('AssistantModal', { bot, action: 'edit' })
+  }
+
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
       type: 'set',
@@ -60,11 +71,12 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
       },
     })
   }
+
   useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  const onModeration = bot?.publish_state === 'in_progress'
+
   return (
     bot && (
       <>
@@ -86,6 +98,12 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
         <div className={s.botInfoSidePanel}>
           <div className={s.header}>
             <span className={s.name}>{bot?.display_name}</span>
+            {!isPublic && (
+              <EditPencilButton
+                disabled={isCustomizable}
+                onClick={handleRenameBtnClick}
+              />
+            )}
           </div>
           <div className={s.topContainer}>
             <div className={s.author}>

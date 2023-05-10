@@ -1,12 +1,12 @@
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, RouterProvider } from 'react-router-dom'
-import { AuthProvider } from './context/AuthProvider'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { PreviewProvider } from './context/PreviewProvider'
-import { router } from './router/Router'
+import { RouterProvider } from 'react-router-dom'
 import { App } from './App'
-import { prepare } from './mocks/prepare'
+import { AuthProvider } from './context/AuthProvider'
 import { DisplayProvider } from './context/DisplayContext'
+import { PreviewProvider } from './context/PreviewProvider'
+import { prepare } from './mocks/prepare'
+import { router } from './router/Router'
 
 const queryClient = new QueryClient()
 

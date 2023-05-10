@@ -35,11 +35,15 @@ async def send_chat_request_to_deployed_agent(
         raise ValueError(f"Agent {agent_url} did not respond correctly. Response: {response}")
 
     try:
-        dialog_id, response_text = response_data["dialog_id"], response_data["response"]
+        dialog_id, response_text, active_skill = (
+            response_data["dialog_id"],
+            response_data["response"],
+            response_data["active_skill"],
+        )
     except KeyError:
-        raise ValueError(f"No 'response' and 'dialog_id' fields in agent response. Response: {response}")
+        raise ValueError(f"No 'response', 'dialog_id' or 'active_skill' fields in agent response. Response: {response}")
 
-    return dialog_id, response_text
+    return dialog_id, response_text, active_skill
 
 
 async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_id: str):
@@ -71,7 +75,7 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
     return history
 
 
-@dialog_sessions_router.post("/", status_code=status.HTTP_201_CREATED)
+@dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
     payload: schemas.DialogSessionCreate,
     user: schemas.UserRead = Depends(verify_token),
@@ -127,7 +131,7 @@ async def send_dialog_session_message(
         else:
             lm_service = None
 
-        agent_dialog_id, bot_response = await send_chat_request_to_deployed_agent(
+        agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
             chat_url,
             dialog_session.id,
             payload.text,
@@ -138,7 +142,7 @@ async def send_dialog_session_message(
 
         crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
 
-    return schemas.DialogChatMessageRead(text=bot_response)
+    return schemas.DialogChatMessageRead(text=bot_response, active_skill=active_skill)
 
 
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)

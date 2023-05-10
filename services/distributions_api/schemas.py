@@ -29,11 +29,12 @@ class UserRead(BaseOrmModel):
 class DeploymentBaseRead(BaseOrmModel):
     id: int
     chat_host: str
-    chat_port: int
+    chat_port: Optional[int]
     date_created: datetime
     state: Optional[str]
     error: Optional[dict]
     date_state_updated: Optional[datetime]
+    stack_id: Optional[int]
 
 
 class VirtualAssistantBaseRead(BaseOrmModel):
@@ -167,7 +168,7 @@ class VirtualAssistantComponentPipelineRead(BaseModel):
     skills: List[VirtualAssistantComponentRead]
     candidate_annotators: List[VirtualAssistantComponentRead]
     response_selectors: List[VirtualAssistantComponentRead]
-    response_annotators: List[VirtualAssistantComponentRead]
+    response_annotators: Optional[List[VirtualAssistantComponentRead]]
 
 
 class DialogSessionCreate(BaseModel):
@@ -183,6 +184,7 @@ class DialogChatMessageCreate(BaseModel):
 
 class DialogChatMessageRead(BaseModel):
     text: str
+    active_skill: str
 
 
 class DialogUtteranceRead(BaseModel):
@@ -221,6 +223,7 @@ class DeploymentRead(DeploymentBaseRead):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_name: str
+    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):

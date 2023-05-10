@@ -3,7 +3,7 @@ from fastapi import APIRouter
 skills_router = APIRouter(prefix="/api/skills")
 
 
-# @skills_router.get("/", status_code=status.HTTP_200_OK)
+# @skills_router.get("", status_code=status.HTTP_200_OK)
 # async def get_list_of_skills():
 #     skills = list_components(DREAM_ROOT_PATH, "skills")
 #

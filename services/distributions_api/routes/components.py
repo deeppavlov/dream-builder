@@ -8,19 +8,19 @@ from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import crud
-from services.distributions_api import schemas
+from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
 
-@components_router.get("/", status_code=status.HTTP_200_OK)
+@components_router.get("", status_code=status.HTTP_200_OK)
 async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.ComponentRead]:
     return [schemas.ComponentRead.from_orm(c) for c in crud.get_all_components(db)]
 
 
-@components_router.post("/", status_code=status.HTTP_201_CREATED)
+@components_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_component(
     payload: schemas.ComponentCreate, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:
@@ -139,8 +139,12 @@ async def delete_component(
 
 @components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)
 async def get_list_of_group_components(
-    group_name: str, component_type: str = None, db: Session = Depends(get_db)
+    group_name: str, component_type: str = None, author_id: int = None, db: Session = Depends(get_db)
 ) -> List[schemas.ComponentRead]:
-    return [
-        schemas.ComponentRead.from_orm(c) for c in crud.get_components_by_group_name(db, group_name, component_type)
-    ]
+    group_components = []
+
+    for c in crud.get_components_by_group_name(db, group_name, component_type, author_id):
+        if c.name not in const.INVISIBLE_COMPONENT_NAMES:
+            group_components.append(schemas.ComponentRead.from_orm(c))
+
+    return group_components

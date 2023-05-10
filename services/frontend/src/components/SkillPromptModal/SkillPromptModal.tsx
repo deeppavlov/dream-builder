@@ -7,7 +7,9 @@ import Modal from 'react-modal'
 import { useMutation, useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
@@ -52,6 +54,9 @@ const SkillPromptModal = () => {
   const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
   const modalRef = useRef(null)
   const nav = useNavigate()
+  const { getDist } = useAssistants()
+  const { deleteDeployment } = useDeploy()
+  const dist = distName ? getDist(distName).data : null
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -82,15 +87,6 @@ const SkillPromptModal = () => {
         },
       ]) || []
 
-  // const { data: conf } = useQuery(
-  //   ['conf', skill?.component_id],
-  //   () => getGenerativeConf(skill?.component_id as number),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //     enabled: skill?.component_id !== undefined,
-  //   }
-  // )
-
   const {
     handleSubmit,
     reset,
@@ -100,7 +96,7 @@ const SkillPromptModal = () => {
     watch,
     formState: { dirtyFields },
   } = useForm<FormValues>({
-    mode: 'all',
+    // mode: 'all',
     defaultValues: {
       model: skill?.lm_service?.display_name,
       prompt: skill?.prompt,
@@ -110,10 +106,12 @@ const SkillPromptModal = () => {
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
   const isDirty = Object.values(dirtyFields).length > 0
+  const [needRedeploy, setNeedRedeploy] = useState(null)
+  const needRedeployRef = useRef(null)
+  needRedeployRef.current = needRedeploy
 
   const clearStates = () => {
     setIsOpen(false)
-    // setSkill(null)
     nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
   }
 
@@ -123,25 +121,14 @@ const SkillPromptModal = () => {
   }
 
   const handleEventUpdate = (data: { detail: Props }) => {
-    const { skill } = data.detail
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
-
     if (isRequestToClose) {
       setIsOpen(false)
-      // setSkill(null)
       return
     }
 
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-    // setSkill(skill ?? null)
-    // reset(
-    //   {
-    //     model: skill?.lm_service?.display_name,
-    //     prompt: skill?.prompt,
-    //   },
-    //   { keepDirty: false }
-    // )
 
     setIsOpen(prev => {
       if (data.detail.isOpen && prev) return prev
@@ -150,11 +137,18 @@ const SkillPromptModal = () => {
   }
 
   const handleSave = async (data: FormValues) => {
-    toast.promise(update.mutateAsync(data), {
-      loading: 'Saving...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    toast.promise(
+      update.mutateAsync(data).then(() => {
+        if (dist?.deployment?.state === 'DEPLOYED') {
+          deleteDeployment.mutateAsync(dist?.deployment?.id!)
+        } else return
+      }),
+      {
+        loading: 'Saving...',
+        success: 'Success!',
+        error: 'Something Went Wrong...',
+      }
+    )
     trigger('RenewChat', {})
   }
 
@@ -197,7 +191,6 @@ const SkillPromptModal = () => {
   useEffect(() => {
     reset(
       {
-        // model: skill?.lm_service?.display_name,
         model: getValues().model,
         prompt: skill?.prompt,
       },
@@ -213,8 +206,24 @@ const SkillPromptModal = () => {
         value: isOpen ? skill : null,
       },
     })
-    return () => reset({})
+
+    return () => {
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.EDITOR_ACTIVE_SKILL,
+          value: null,
+        },
+      })
+      reset({})
+    }
   }, [isOpen])
+
+  useEffect(() => {
+    return () => {
+      console.log(needRedeployRef.current)
+    }
+  }, [])
 
   useQuitConfirmation({
     activeElement: modalRef,
@@ -260,7 +269,7 @@ const SkillPromptModal = () => {
         <Wrapper closable onClose={closeModal}>
           <div className={s.container}>
             <form
-              onSubmit={handleSubmit(data => onFormSubmit(data))}
+              onSubmit={handleSubmit(onFormSubmit)}
               className={cx('editor')}
             >
               <div className={s.header}>
@@ -332,10 +341,7 @@ const SkillPromptModal = () => {
                   </Button>
                   <Button
                     theme='primary'
-                    props={{
-                      type: 'submit',
-                      disabled: update.isLoading,
-                    }}
+                    props={{ type: 'submit', disabled: update.isLoading }}
                   >
                     Save
                   </Button>

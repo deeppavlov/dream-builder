@@ -1,0 +1,25 @@
+.edit {
+  padding: 4px;
+  background-color: $bcgrnd3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    opacity: 0.3;
+  }
+
+  &:hover .icon,
+  &:active .icon {
+    stroke: $primary1;
+  }
+}
+
+.icon {
+  max-width: 24px;
+  min-width: 24px;
+  max-height: 24px;
+  min-height: 24px;
+  stroke: $text2;
+}

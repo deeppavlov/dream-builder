@@ -1,5 +1,5 @@
-import { CSSProperties, FC, useId } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import { CSSProperties,FC,useId } from 'react'
+import toast,{ Toaster } from 'react-hot-toast'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -8,7 +8,7 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
 import { useDeploy } from '../hooks/useDeploy'
-import { BotInfoInterface, IAuthor } from '../types/types'
+import { BotInfoInterface,IAuthor } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
@@ -65,30 +65,34 @@ export const DraftPage = () => {
     })
     e.stopPropagation()
   }
-  const { stacks, deleteStack } = useDeploy()
+  const { deployments, deleteDeployment } = useDeploy()
   const handleStop = (id: number) => {
-    toast.promise(deleteStack.mutateAsync(id), {
+    toast.promise(deleteDeployment.mutateAsync(id), {
       loading: 'delete stack...',
       success: 'Success!',
       error: 'Something Went Wrong...',
     })
   }
 
-  function filterStack(arr) {
+  function filterStack(arr: any) {
     const excludedValues = [
-      'universal',
-      'multiskill',
-      'faq',
-      'fashion',
-      'marketing',
-      'fairytale',
-      'nutrition',
-      'deepy',
-      'coaching',
+      'universal_prompted_assistant',
+      'multiskill_ai_assistant',
+      'ai_faq_assistant',
+      'fashion_stylist_assistant',
+      'marketing_assistant',
+      'fairytale_assistant',
+      'nutrition_assistant',
+      'deepy_assistant',
+      'life_coaching_assistant',
+      'deeppavlov_assistant',
     ]
-    return arr?.filter(obj => !excludedValues.includes(obj.Name))
+    return arr?.filter(
+      (obj: any) => !excludedValues.includes(obj.virtual_assistant.name)
+    )
   }
-  const filtered = filterStack(stacks?.data)
+  const filtered = filterStack(deployments?.data)
+
   return (
     <>
       <Topbar />
@@ -111,10 +115,9 @@ export const DraftPage = () => {
             })}
           </Container>
         </Wrapper>
-        <Wrapper fitScreen title='Deployment State'>
+        <Wrapper fitScreen title='Deployments' amount={filtered?.length}>
           <Container gridForRequests>
-            {filtered?.map((stack: any, i: number) => {
-              stack?.Name !== 'deepy'
+            {filtered?.map((deployment: any, i: number) => {
               return (
                 <div key={i}>
                   <Wrapper>
@@ -127,16 +130,19 @@ export const DraftPage = () => {
                         width: '100%',
                       }}
                     >
-                      <span style={{ overflow: 'hidden' }}>id:{stack?.Id}</span>
-                      <span>{stack?.Name}</span>
+                      <span style={{ overflow: 'hidden' }}>
+                        id:{deployment?.id}
+                      </span>
+                      <span>{deployment?.virtual_assistant?.name}</span>
+                      <span>{deployment?.virtual_assistant?.display_name}</span>
                       <div className=''>
                         <Button
                           theme='primary'
                           props={{
                             onClick: () => {
-                              handleStop(stack?.Id)
+                              handleStop(deployment?.id)
                             },
-                            disabled: deleteStack?.isLoading,
+                            disabled: deleteDeployment?.isLoading,
                           }}
                         >
                           Stop

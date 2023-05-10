@@ -78,7 +78,7 @@ export const AccessTokensBanner = () => {
       const isService = service !== undefined
       const isUserId = user?.id !== undefined
 
-      if (!isService || !isUserId) return reject('Not find service or userId')
+      if (!isService || !isUserId) return reject('Not find Service or User id')
 
       const newToken: IUserApiKey = {
         api_service: service,
@@ -94,9 +94,9 @@ export const AccessTokensBanner = () => {
           serviceName: data.service,
           onContinue: () => {
             updateToken(apiTokenIndex, newToken)
-            resolve(true)
+            resolve('Successfully updated!')
           },
-          onCancel: () => resolve(true),
+          onCancel: () => resolve('Successfully cancelled!'),
         })
         return
       }
@@ -107,14 +107,14 @@ export const AccessTokensBanner = () => {
         saveTokens(newState)
         return newState
       })
-      resolve(true)
+      resolve('Successfully created!')
     })
 
   const onSubmit = (data: FormValues) => {
     toast.promise(createUserToken(data), {
       loading: 'Creating...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
+      success: data => `${data}`,
+      error: data => `${data}`,
     })
     reset()
   }

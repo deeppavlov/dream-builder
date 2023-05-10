@@ -9,6 +9,7 @@ import {
 } from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
 import { LanguageModel } from '../../types/types'
+import { checkIfEmptyString } from '../../utils/formValidate'
 import getTokensLength from '../../utils/getTokensLength'
 import Button from '../Button/Button'
 import s from './TextArea.module.scss'
@@ -95,6 +96,8 @@ export const TextArea: FC<TextAreaProps> = ({
               setIsCounting,
             }),
         })
+      : rules?.required
+      ? Object.assign({}, rules, { validate: checkIfEmptyString })
       : rules,
     defaultValue,
   })

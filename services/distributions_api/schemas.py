@@ -106,7 +106,7 @@ class ComponentRead(BaseOrmModel):
     ram_usage: Optional[str]
     gpu_usage: Optional[str]
     prompt: Optional[str]
-    lm_service_id: Optional[int]
+    lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")

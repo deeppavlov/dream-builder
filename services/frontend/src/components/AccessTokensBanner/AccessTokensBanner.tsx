@@ -60,17 +60,19 @@ export const AccessTokensBanner = () => {
     })
   }
 
-  const updateToken = (index: number, token: IUserApiKey) => {
-    setTokens(prev => {
-      const isPrev = prev !== null && prev !== undefined
-      const newState = prev
+  const updateToken = (index: number, token: IUserApiKey) =>
+    new Promise(resolve => {
+      setTokens(prev => {
+        const isPrev = prev !== null && prev !== undefined
+        const newState = isPrev ? prev : [token]
 
-      if (!isPrev) return prev
-      newState?.splice(index, 1, token)
-      saveTokens(newState)
-      return newState
+        if (!isPrev) return newState
+        newState?.splice(index, 1, token)
+        saveTokens(newState)
+        return newState
+      })
+      resolve('Successfully created!')
     })
-  }
 
   const createUserToken = (data: FormValues) =>
     new Promise((resolve, reject) => {
@@ -100,6 +102,7 @@ export const AccessTokensBanner = () => {
         })
         return
       }
+
       setTokens(prev => {
         const newState = prev ?? []
 
@@ -107,6 +110,7 @@ export const AccessTokensBanner = () => {
         saveTokens(newState)
         return newState
       })
+
       resolve('Successfully created!')
     })
 

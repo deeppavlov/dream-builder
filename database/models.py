@@ -78,6 +78,7 @@ class ApiKey(Base):
 
     id = Column(Integer, index=True, primary_key=True)
     name = Column(String)
+    display_name = Column(String)
     description = Column(String)
     base_url = Column(String)
 
@@ -118,6 +119,9 @@ class LmService(Base):
     max_tokens = Column(Integer)
     description = Column(String)
     project_url = Column(String)
+
+    api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
+    api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
 
 
 class Deployment(Base):

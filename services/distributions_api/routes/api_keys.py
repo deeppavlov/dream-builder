@@ -14,4 +14,4 @@ tokens_router = APIRouter(prefix="/api/api_keys", tags=["api_keys"])
 async def get_all_api_keys(user: str = Depends(verify_token), db: Session = Depends(get_db)):
     api_keys = crud.get_all_api_keys(db)
 
-    return [schemas.ApiKeys.from_orm(t) for t in api_keys]
+    return [schemas.ApiKeyRead.from_orm(t) for t in api_keys]

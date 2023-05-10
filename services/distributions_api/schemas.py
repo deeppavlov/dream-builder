@@ -83,6 +83,14 @@ class VirtualAssistantUpdate(BaseModel):
     description: Optional[str]
 
 
+class ApiKeyRead(BaseOrmModel):
+    id: int
+    name: str
+    display_name: str
+    description: str
+    base_url: str
+
+
 class LmServiceRead(BaseOrmModel):
     id: int
     name: str
@@ -92,6 +100,7 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
+    api_key: Optional[ApiKeyRead]
 
 
 class ComponentRead(BaseOrmModel):
@@ -190,13 +199,6 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
-
-
-class ApiKeys(BaseOrmModel):
-    id: int
-    name: str
-    description: str
-    base_url: str
 
 
 # class UserApiToken(BaseOrmModel):

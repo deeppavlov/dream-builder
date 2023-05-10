@@ -100,6 +100,9 @@ class VirtualAssistant(Base):
     description = Column(String, nullable=False)
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
+    components = relationship(
+        "VirtualAssistantComponent", uselist=True, back_populates="virtual_assistant", passive_deletes=True
+    )
     publish_request = relationship(
         "PublishRequest", uselist=False, back_populates="virtual_assistant", passive_deletes=True
     )

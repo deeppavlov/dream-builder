@@ -26,63 +26,6 @@ class UserRead(BaseOrmModel):
     family_name: Optional[str]
 
 
-class DeploymentBaseRead(BaseOrmModel):
-    id: int
-    chat_host: str
-    chat_port: Optional[int]
-    date_created: datetime
-    state: Optional[str]
-    error: Optional[dict]
-    date_state_updated: Optional[datetime]
-    stack_id: Optional[int]
-
-
-class VirtualAssistantBaseRead(BaseOrmModel):
-    id: int
-    author: UserRead
-    source: str
-    name: str
-    display_name: str
-    description: str
-    date_created: datetime
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
-    publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
-    cloned_from_id: Optional[int]
-    # clones: List[VirtualAssistant]
-
-    @classmethod
-    def from_orm(cls, obj):
-        try:
-            if obj.publish_request.is_confirmed is None:
-                obj.visibility = "private"
-                obj.publish_state = "in_progress"
-            elif obj.publish_request.is_confirmed:
-                obj.visibility = obj.publish_request.visibility
-                obj.publish_state = "confirmed"
-            else:
-                obj.visibility = "private"
-                obj.publish_state = "rejected"
-        except AttributeError:
-            obj.visibility = "private"
-            obj.publish_state = None
-
-        return super().from_orm(obj)
-
-
-class VirtualAssistantRead(VirtualAssistantBaseRead):
-    deployment: Optional[DeploymentBaseRead]
-
-
-class VirtualAssistantCreate(BaseModel):
-    display_name: str
-    description: str
-
-
-class VirtualAssistantUpdate(BaseModel):
-    display_name: Optional[str]
-    description: Optional[str]
-
-
 class ApiKeyRead(BaseOrmModel):
     id: int
     name: str
@@ -101,6 +44,17 @@ class LmServiceRead(BaseOrmModel):
     description: str
     project_url: str
     api_key: Optional[ApiKeyRead]
+
+
+class DeploymentBaseRead(BaseOrmModel):
+    id: int
+    chat_host: str
+    chat_port: Optional[int]
+    date_created: datetime
+    state: Optional[str]
+    error: Optional[dict]
+    date_state_updated: Optional[datetime]
+    stack_id: Optional[int]
 
 
 class ComponentRead(BaseOrmModel):
@@ -142,6 +96,65 @@ class ComponentUpdate(BaseModel):
     description: Optional[str]
     prompt: Optional[str]
     lm_service_id: Optional[int]
+
+
+class VirtualAssistantBaseRead(BaseOrmModel):
+    id: int
+    author: UserRead
+    source: str
+    name: str
+    display_name: str
+    description: str
+    date_created: datetime
+    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
+    cloned_from_id: Optional[int]
+    required_api_keys: Optional[List[ApiKeyRead]]
+    # clones: List[VirtualAssistant]
+
+    @classmethod
+    def from_orm(cls, obj):
+        try:
+            if obj.publish_request.is_confirmed is None:
+                obj.visibility = "private"
+                obj.publish_state = "in_progress"
+            elif obj.publish_request.is_confirmed:
+                obj.visibility = obj.publish_request.visibility
+                obj.publish_state = "confirmed"
+            else:
+                obj.visibility = "private"
+                obj.publish_state = "rejected"
+        except AttributeError:
+            obj.visibility = "private"
+            obj.publish_state = None
+
+        required_api_keys = []
+        for c in obj.components:
+            try:
+                api_key = c.component.lm_service.api_key
+                if api_key:
+                    required_api_keys.append(api_key)
+            except AttributeError:
+                pass
+
+        obj.required_api_keys = required_api_keys
+        print(required_api_keys)
+
+        return super().from_orm(obj)
+
+
+class VirtualAssistantRead(VirtualAssistantBaseRead):
+    deployment: Optional[DeploymentBaseRead]
+
+
+class VirtualAssistantCreate(BaseModel):
+    display_name: str
+    description: str
+
+
+class VirtualAssistantUpdate(BaseModel):
+    display_name: Optional[str]
+    description: Optional[str]
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):

@@ -60,62 +60,66 @@ export const AccessTokensBanner = () => {
     })
   }
 
-  const updateToken = (index: number, token: IUserApiKey) => {
-    setTokens(prev => {
-      const isPrev = prev !== null && prev !== undefined
-      const newState = prev
-
-      if (!isPrev) return prev
-      newState?.splice(index, 1, token)
-      saveTokens(newState)
-      return newState
+  const showToast = (promise: Promise<any>) =>
+    toast.promise(promise, {
+      loading: 'Creating...',
+      success: 'Success!',
+      error: 'Something Went Wrong...',
     })
-  }
 
-  const createUserToken = (data: FormValues) =>
-    new Promise((resolve, reject) => {
-      const service = api_services?.find(({ name }) => name === data.service)
-      const isService = service !== undefined
-      const isUserId = user?.id !== undefined
-
-      if (!isService || !isUserId) return reject('Not find service or userId')
-
-      const newToken: IUserApiKey = {
-        api_service: service,
-        token_value: data.token,
-      }
-      const apiTokenIndex = tokens?.findIndex(
-        ({ api_service }) => api_service.id === service?.id
-      )
-      const isIndex = apiTokenIndex !== undefined && apiTokenIndex !== -1
-
-      if (isIndex) {
-        trigger('ConfirmApiTokenUpdate', {
-          serviceName: data.service,
-          onContinue: () => {
-            updateToken(apiTokenIndex, newToken)
-            resolve(true)
-          },
-          onCancel: () => resolve(true),
-        })
-        return
-      }
+  const updateToken = (index: number, token: IUserApiKey) =>
+    new Promise(resolve => {
       setTokens(prev => {
-        const newState = prev ?? []
+        const isPrev = prev !== null && prev !== undefined
+        const newState = isPrev ? prev : [token]
 
-        newState.push(newToken)
+        if (!isPrev) return newState
+        newState?.splice(index, 1, token)
         saveTokens(newState)
         return newState
       })
       resolve(true)
     })
 
+  const createUserToken = (data: FormValues) => {
+    const service = api_services?.find(({ name }) => name === data.service)
+    const isService = service !== undefined
+    const isUserId = user?.id !== undefined
+    const apiTokenIndex = tokens?.findIndex(
+      ({ api_service }) => api_service.id === service?.id
+    )
+    const isIndex = apiTokenIndex !== undefined && apiTokenIndex !== -1
+
+    if (!isService || !isUserId) return
+
+    const newToken: IUserApiKey = {
+      api_service: service,
+      token_value: data.token,
+    }
+
+    if (isIndex) {
+      return trigger('ConfirmApiTokenUpdate', {
+        serviceName: data.service,
+        onContinue: () => showToast(updateToken(apiTokenIndex, newToken)),
+      })
+    }
+
+    return showToast(
+      new Promise(resolve => {
+        setTokens(prev => {
+          const newState = prev ?? []
+
+          newState.push(newToken)
+          saveTokens(newState)
+          return newState
+        })
+        resolve(true)
+      })
+    )
+  }
+
   const onSubmit = (data: FormValues) => {
-    toast.promise(createUserToken(data), {
-      loading: 'Creating...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+    createUserToken(data)
     reset()
   }
 

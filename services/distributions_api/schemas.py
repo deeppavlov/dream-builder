@@ -138,7 +138,6 @@ class VirtualAssistantBaseRead(BaseOrmModel):
                 pass
 
         obj.required_api_keys = required_api_keys
-        print(required_api_keys)
 
         return super().from_orm(obj)
 

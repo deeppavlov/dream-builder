@@ -57,16 +57,17 @@ export const SkillsListModal = () => {
 
   const handleEventUpdate = () => setIsOpen(true)
 
-  const handleOkBtnClick = () => handleClose()
+  const handleOk = () => setIsOpen(prev => !prev)
 
-  const handleAddBtnClick = (distName: string, id: number) => {
-    const assistantId = assistant?.data?.deployment.id
+  const handleAdd = (distName: string, id: number) => {
+    const assistantId = assistant?.data?.deployment?.id!
     toast.promise(
       addComponentToDist.mutateAsync(
         { distName, id, type: 'skills' },
         {
           onSuccess: () => {
-            deleteDeployment.mutateAsync(assistantId!)
+            assistant?.data?.deployment?.state === 'UP' &&
+              deleteDeployment.mutateAsync(assistantId)
           },
         }
       ),
@@ -99,7 +100,7 @@ export const SkillsListModal = () => {
               addButton={<AddButton forTable fromScratch />}
             >
               <SkillList
-                addFunc={handleAddBtnClick}
+                addFunc={handleAdd}
                 skills={skillsList}
                 view={'table'}
                 forModal
@@ -108,7 +109,7 @@ export const SkillsListModal = () => {
               />
             </Table>
             <div className={s.footer}>
-              <Button theme='primary' props={{ onClick: handleOkBtnClick }}>
+              <Button theme='primary' props={{ onClick: handleOk }}>
                 OK
               </Button>
             </div>

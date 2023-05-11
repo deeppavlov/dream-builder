@@ -45,20 +45,20 @@ const SkillsPage = () => {
             }
           >
             <SkillList
-              skills={components?.data?.skills}
+              skills={components?.data?.skills!}
               view='table'
               type='your'
             />
           </Table>
         )}
         {!isTableView && (
-          <Container gridForCards heightAuto>
+          <Container gridForCards scroll heightAuto>
             {!isPreview && <AddButton disabled={isPreview} forGrid forSkills />}
             {components?.data?.skills === undefined && (
               <CardsLoader cardsCount={3} type='skill' />
             )}
             <SkillList
-              skills={components?.data?.skills}
+              skills={components?.data?.skills!}
               view='cards'
               type='your'
               forGrid

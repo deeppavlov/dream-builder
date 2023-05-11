@@ -71,11 +71,13 @@ export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
 
 type TDeploymentState =
   | null
+  | 'STARTED'
   | 'CREATING_CONFIG_FILES'
   | 'BUILDING_IMAGE'
   | 'PUSHING_IMAGES'
   | 'DEPLOYING_STACK'
   | 'DEPLOYED'
+  | 'UP'
 
 export interface IDeployment {
   chat_host: string

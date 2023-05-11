@@ -71,9 +71,7 @@ export const EditorPage = () => {
           </div>
         </Container>
       </Sidebar>
-
       <Outlet />
-
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />

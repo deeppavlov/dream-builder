@@ -150,7 +150,7 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
-            if (dist?.deployment?.state === 'DEPLOYED') {
+            if (dist?.deployment?.state === 'UP') {
               deleteDeployment.mutateAsync(dist?.deployment?.id!)
             } else return
           }),

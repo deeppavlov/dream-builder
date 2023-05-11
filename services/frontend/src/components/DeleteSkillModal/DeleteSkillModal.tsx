@@ -40,8 +40,10 @@ export const DeleteSkillModal = () => {
         },
         {
           onSuccess: () => {
-            deleteDeployment.mutateAsync(assistantId)
-            queryClient.invalidateQueries('dist')
+            assistant?.data?.deployment?.state === 'UP' &&
+              deleteDeployment.mutateAsync(assistantId).then(() => {
+                queryClient.invalidateQueries('dist')
+              })
           },
         }
       ),

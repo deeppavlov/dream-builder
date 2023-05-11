@@ -109,11 +109,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     refetchOnMount: false,
     enabled: bot?.deployment?.id !== undefined,
     onSuccess(data) {
-      data?.state === 'DEPLOYED' &&
+      data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
       queryClient.invalidateQueries('privateDists')
       if (
-        data?.state !== 'DEPLOYED' &&
+        data?.state !== 'UP' &&
         data?.state !== null &&
         data?.error == null
       ) {
@@ -139,11 +139,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //костыль
   const awaitDeployPanel =
-    bot?.deployment?.state !== 'DEPLOYED' &&
+    bot?.deployment?.state !== 'UP' &&
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === 'DEPLOYED'
+  const readyToGetSession = bot?.deployment?.state === 'UP'
 
   // handlers
   const handleSend = (data: ChatForm) => {

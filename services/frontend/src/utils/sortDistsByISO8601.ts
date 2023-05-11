@@ -1,17 +1,16 @@
-import { BotInfoInterface, IPublicationRequest } from '../types/types'
+// type ArrayType<T> = T extends (infer BotInfoInterface | IPublicationRequest)[]
+//   ? BotInfoInterface
+//   : T
 
-type ArrayType<T> = T extends (infer BotInfoInterface | IPublicationRequest)[]
-  ? BotInfoInterface
-  : T
+// type t = ArrayType<[IPublicationRequest]>
 
-type t = ArrayType<[IPublicationRequest]>
+// type BotOrRequest<T extends BotInfoInterface[] | IPublicationRequest[]> =
+//   T extends BotInfoInterface[] ? BotInfoInterface[] : IPublicationRequest[]
 
-type BotOrRequest<T extends BotInfoInterface[] | IPublicationRequest[]> =
-  T extends BotInfoInterface[] ? BotInfoInterface[] : IPublicationRequest[]
-
-export function sortDistsByISO8601<
-  T extends BotInfoInterface[] | IPublicationRequest[]
->(dists: T): BotOrRequest<T> {
+export function sortDistsByISO8601(
+  // <T extends BotInfoInterface[] | IPublicationRequest[]>
+  dists: any
+) {
   const list = dists?.sort(
     (a, b) => -a.date_created.localeCompare(b.date_created)
   )

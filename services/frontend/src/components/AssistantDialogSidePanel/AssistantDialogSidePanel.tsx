@@ -42,7 +42,7 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
-  
+  console.log('dist = ', dist)
   // queries
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
@@ -265,6 +265,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             <p className={s.notification}>This may take a few minutes.</p>
             <p className={s.notification}>
               {status?.data?.state}
+              {'      '}
+              <TextLoader />
               <br />
             </p>
           </div>

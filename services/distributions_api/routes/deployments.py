@@ -37,17 +37,21 @@ def get_user_services(dist: AssistantDist):
     return user_services
 
 
-def ping_deployed_agent(host: str, port: int):
+def ping_deployed_agent(host: str, port: int, retries: int = 10, backoff_factor: float = 1.7):
     with requests.Session() as session:
         retries = Retry(
-            total=10,
-            backoff_factor=1.7,
+            total=retries,
+            backoff_factor=backoff_factor,
             # status_forcelist=[500, 502, 503, 504],
         )
-
         session.mount("http://", HTTPAdapter(max_retries=retries))
+
         response = session.get(f"{host}:{port}/ping", timeout=100)
-        logger.info(f"AGENT RESPONSE {response.json()}")
+        response_json = response.json()
+
+        logger.info(f"AGENT RESPONSE {response_json}")
+        if response_json == "pong":
+            return True
 
 
 def run_deployer(dist: AssistantDist, deployment_id: int):
@@ -84,10 +88,12 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
 
             deployment = crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
 
-        ping_deployed_agent(deployment.chat_host, deployment.chat_port)
-        # db = next(get_db())
-        # with db.begin():
-        #     crud.update_deployment(db, deployment_id, state="UP")
+    agent_is_up = ping_deployed_agent(deployment.chat_host, deployment.chat_port)
+
+    db = next(get_db())
+    with db.begin():
+        if agent_is_up:
+            crud.update_deployment(db, deployment_id, state="UP")
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 

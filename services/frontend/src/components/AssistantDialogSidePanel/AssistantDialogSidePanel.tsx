@@ -42,7 +42,7 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
-  console.log('dist = ', dist)
+  // console.log('dist = ', dist)
   // queries
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
@@ -52,6 +52,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const componentsInside = getAllComponents(bot?.name!)
 
   const { data: user } = useQuery(['user'], () => getUserId())
+  // console.log('user = ', user)
   const [apiKey, setApiKey] = useState<string | null>(null)
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
@@ -65,13 +66,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         }).length! > 0
       )
     }
+    // console.log('apiKey = ', apiKey)
+    // console.log('userId = ', userId)
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
       const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-
+      // console.log('openaiApiKey = ', openaiApiKey)
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&

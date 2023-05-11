@@ -21,7 +21,7 @@ export const getLSApiKeyByName = (
 ): string | null => {
   return (
     getLSApiKeys(userId)?.filter(
-      ({ api_service }: IUserApiKey) => api_service.name === name
+      ({ api_service }: IUserApiKey) => api_service.display_name === name
     )?.[0]?.token_value ?? null
   )
 }

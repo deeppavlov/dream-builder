@@ -211,7 +211,12 @@ const SkillPromptModal = () => {
 
   useQuitConfirmation({
     activeElement: modalRef,
-    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
+    availableSelectors: [
+      `#${HELPER_TAB_ID}`,
+      `#sp_left`,
+      `#testDialog`,
+      `#assistantDialogPanel`,
+    ],
     isActive: isOpen && isDirty,
     quitHandler: closeModal,
   })

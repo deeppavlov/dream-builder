@@ -58,11 +58,6 @@ export const AssistantModal = () => {
 
   const name = bot?.name!
 
-  // async function submit() {
-  //   const succeed = await handleSubmit(onFormSubmit)()
-  //   return succeed
-  // }
-
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     action === 'create' &&
       toast.promise(create.mutateAsync(data), {
@@ -105,6 +100,7 @@ export const AssistantModal = () => {
           </h4>
           <mark>
             {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
+            {/* fix */}
           </mark>
 
           <div className={s.distribution}>

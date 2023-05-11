@@ -1,6 +1,6 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC,useId } from 'react'
+import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -65,14 +65,12 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
         })
     e.stopPropagation()
   }
-  
+
   const onModeration = bot?.publish_state === 'in_progress'
   const deployed = bot?.deployment?.state === 'DEPLOYED'
   const deploying =
-    bot?.deployment?.state !== 'DEPLOYED' &&
-    bot?.deployment?.state !== null &&
-    bot?.deployment !== null
-  
+    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}
@@ -82,9 +80,6 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       {type === 'your' && deployed && <Badge />}
       <div className={cx('header', deploying && 'deploying')}>
         <span>{bot?.display_name}</span>
-        {/* {type === 'your' && (
-          <span className={s.deployment}>{bot?.deployment_state}</span>
-        )} */}
       </div>
       <div className={s.body}>
         <div className={s.block}>

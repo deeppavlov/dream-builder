@@ -16,9 +16,9 @@ export const Test = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <AssistantDialogSidePanel
-          debug={false}
+          // debug={false}
+          // chatWith='bot'
           key='chat_with_assistant'
-          chatWith='bot'
           dist={activeAssistant}
         />
       ),
@@ -26,7 +26,7 @@ export const Test = () => {
   }
 
   return (
-    <button data-tooltip-id='chatWithBot' className={s.test}>
+    <button id='testDialog' data-tooltip-id='chatWithBot' className={s.test}>
       <img
         src={Play}
         alt='Chat with your bot'

@@ -53,7 +53,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     e.stopPropagation()
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Properties',
       isOpen: !isActive,
       distName: distRoutingName || '',
@@ -70,7 +70,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name: distRoutingName as string,
-          skillId: skill.name,
+          skillId: skill.component_id,
         } as any)
       )
       e.stopPropagation()
@@ -79,7 +79,7 @@ export const SkillCard: FC<SkillCardProps> = ({
 
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Editor',
       distName: distRoutingName || '',
     })

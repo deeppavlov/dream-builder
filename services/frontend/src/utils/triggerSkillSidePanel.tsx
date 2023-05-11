@@ -9,17 +9,21 @@ interface Props {
   skill: ISkill
   distName: string
   activeTab: 'Properties' | 'Editor'
-  type?: SkillAvailabilityType
+  visibility?: SkillAvailabilityType
   isOpen?: boolean
 }
 
 const triggerSkillSidePanel = ({
   skill,
   distName,
-  type,
+  visibility,
   activeTab,
   isOpen,
 }: Props): void => {
+  const component_id = skill?.component_id ?? skill?.id
+  console.log(component_id)
+  const key = `${component_id}_${visibility}_${activeTab}`
+
   const triggerByName = (displayName: string) => {
     switch (displayName) {
       case 'Dff Intent Responder Skill':
@@ -27,7 +31,7 @@ const triggerSkillSidePanel = ({
           isOpen,
           children: (
             <IntentResponderSidePanel
-              key={skill.component_id + activeTab}
+              key={key}
               skill={skill}
               activeTab={activeTab}
             />
@@ -40,9 +44,10 @@ const triggerSkillSidePanel = ({
           isOpen,
           children: (
             <SkillSidePanel
-              key={skill.component_id + activeTab}
-              component_id={skill?.component_id}
+              key={key}
+              component_id={component_id}
               distName={distName}
+              visibility={visibility}
               activeTab={activeTab}
             />
           ),
@@ -51,7 +56,7 @@ const triggerSkillSidePanel = ({
     }
   }
 
-  if (type === 'public') return triggerByName(skill.display_name!)
+  // if (visibility === 'public') return triggerByName(skill.display_name!)
 
   switch (skill?.name?.includes('prompted')) {
     case true:
@@ -59,9 +64,10 @@ const triggerSkillSidePanel = ({
         isOpen,
         children: (
           <GenerativeSkillEditor
-            key={skill.component_id + activeTab}
-            component_id={skill?.component_id}
+            key={key}
+            component_id={component_id}
             distName={distName}
+            visibility={visibility}
             activeTab={activeTab}
           />
         ),

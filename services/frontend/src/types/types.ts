@@ -251,6 +251,7 @@ export interface IApiService {
   base_url: string
   description: string
   id: number
+  display_name: string
   name: string
 }
 
@@ -274,4 +275,9 @@ export interface IEditComponent {
 
 export type TComponents = {
   [key in StackType]: IStackElement[]
+}
+
+export interface IBeforeLoginModal {
+  name: string
+  options: { [x: string]: any }
 }

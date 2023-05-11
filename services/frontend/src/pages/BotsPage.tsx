@@ -75,7 +75,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Assistants'
+          title='Your Assistants'
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&

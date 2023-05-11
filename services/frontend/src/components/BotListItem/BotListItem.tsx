@@ -49,13 +49,16 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {
-      trigger('AssistantModal', { action: 'clone', bot: bot })
+      trigger('AssistantModal', assistantClone)
       return
     }
 
-    trigger('SignInModal', {})
+    trigger('SignInModal', {
+      requestModal: { name: 'AssistantModal', options: assistantClone },
+    })
   }
 
   const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {

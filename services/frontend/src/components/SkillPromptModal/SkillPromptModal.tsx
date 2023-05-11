@@ -41,12 +41,11 @@ interface FormValues {
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
-  const { getAllComponents, updateComponent } = useComponent()
-  const skill = distName
-    ? (getAllComponents(distName).data?.skills?.find(
-        s => s.name === skillId
-      ) as ISkill)
-    : null
+  const { getComponent, updateComponent } = useComponent()
+  const {data: skill} =
+    distName && skillId
+      ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })
+      : null
   const [selectedService, setSelectedService] = useState<LM_Service | null>(
     null
   )
@@ -135,7 +134,7 @@ const SkillPromptModal = () => {
 
     if (skill === undefined || skill === null) return
 
-    const { component_id, description, display_name } = skill
+    const { component_id, id, description, display_name } = skill
 
     toast
       .promise(
@@ -211,7 +210,7 @@ const SkillPromptModal = () => {
 
   useQuitConfirmation({
     activeElement: modalRef,
-    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
+    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`, '#testDialog'],
     isActive: isOpen && isDirty,
     quitHandler: closeModal,
   })

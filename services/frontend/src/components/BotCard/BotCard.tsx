@@ -1,6 +1,6 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC,useId } from 'react'
+import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -45,12 +45,16 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    const assistantClone = { action: 'clone', bot: bot }
+
     if (!disabled) {
-      trigger('AssistantModal', { action: 'clone', bot: bot })
+      trigger('AssistantModal', assistantClone)
       return
     }
 
-    trigger('SignInModal', {})
+    trigger('SignInModal', {
+      requestModal: { name: 'AssistantModal', options: assistantClone },
+    })
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,14 +69,14 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
         })
     e.stopPropagation()
   }
-  
+
   const onModeration = bot?.publish_state === 'in_progress'
   const deployed = bot?.deployment?.state === 'DEPLOYED'
   const deploying =
     bot?.deployment?.state !== 'DEPLOYED' &&
     bot?.deployment?.state !== null &&
     bot?.deployment !== null
-  
+
   return (
     <div
       className={cx('botCard', `${type}`, size)}

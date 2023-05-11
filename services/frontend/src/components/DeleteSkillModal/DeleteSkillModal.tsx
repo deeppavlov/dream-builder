@@ -18,9 +18,15 @@ export const DeleteSkillModal = () => {
     setIsOpen(prev => !prev)
   }
   const deleteSkill = async () => {
-    const id = skill?.id!
+    if (!skill?.id) return
+
     await toast.promise(
-      deleteComponent.mutateAsync({ distName: distName || '', id }),
+      deleteComponent.mutateAsync({
+        distName: distName || '',
+        id: skill.id,
+        component_id: skill.component_id,
+        type: 'skills',
+      }),
       {
         loading: 'Deleting...',
         success: 'Success!',
@@ -41,8 +47,9 @@ export const DeleteSkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.areYouSure}>
         <div className={s.header}>
-          Do you really want to delete this component:
-          <mark> {skill?.display_name} </mark>?
+          <h4>Do you really want to delete skill:</h4>
+          <mark>{skill?.display_name}</mark>
+          <div className={s.desc}>This action can’t be undone</div>
         </div>
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>

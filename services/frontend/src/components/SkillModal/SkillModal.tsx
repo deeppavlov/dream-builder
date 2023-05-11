@@ -15,24 +15,18 @@ import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
 
-interface ISkilltInfo
-  extends Pick<
-    ISkill,
-    'display_name' | 'name' | 'description' | 'component_id'
-  > {}
-
 interface IParentSkillInfo extends Pick<ISkill, 'display_name' | 'name'> {}
 
 interface SkillModalProps {
   action: TSkillModalAction
-  skill?: ISkilltInfo
+  skill?: ISkill
   parent?: IParentSkillInfo // The skill that we copy
 }
 
 export const SkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
-  const [skill, setSkill] = useState<ISkilltInfo | null>(null)
+  const [skill, setSkill] = useState<ISkill | null>(null)
   const { name: distName } = useParams()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
 
@@ -82,14 +76,16 @@ export const SkillModal = () => {
     )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
-    const id = skill?.component_id!
     const isDist = distName && distName?.length > 0
 
+    if (!skill) return
     if (!isDist) return console.log(`${skill?.name} rename: dist not found.`)
+
+    const { component_id } = skill
 
     toast
       .promise(
-        edit.mutateAsync({ data, id, distName, type: 'skills' }).then(() => {}),
+        edit.mutateAsync({ data, component_id, distName, type: 'skills' }),
         {
           loading: 'Renaming...',
           success: 'Success!',

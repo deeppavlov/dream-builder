@@ -1,10 +1,9 @@
 import classNames from 'classnames/bind'
 import { useEffect } from 'react'
-import Woman from '../../assets/icons/woman.png'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
-import { ISkill } from '../../types/types'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
@@ -15,14 +14,23 @@ interface Props {
   skill: ISkill
   activeTab?: 'Properties' | 'Editor'
   tabs?: TabList
+  visibility?: SkillAvailabilityType
   children?: React.ReactNode // Editor Tab element
 }
 
-const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
+const DumbSkillSP = ({
+  skill,
+  activeTab,
+  tabs,
+  visibility,
+  children,
+}: Props) => {
   const [properties, editor] = ['Properties', 'Editor']
   const isEditor = children !== undefined
   const { isPreview } = usePreview()
   const { dispatch } = useDisplay()
+  const isCustomizable =
+    skill?.is_customizable && !isPreview && visibility !== 'public'
   const [tabsInfo, setTabsInfo] = useTabsManager({
     activeTabId: isEditor ? activeTab ?? properties : properties,
     tabList:
@@ -83,14 +91,14 @@ const DumbSkillSP = ({ skill, activeTab, tabs, children }: Props) => {
           <div className={s.header}>
             <span className={s.name}>{skill?.display_name}</span>
             <EditPencilButton
-              disabled={!skill?.is_customizable || isPreview}
+              disabled={!isCustomizable}
               onClick={handleRenameBtnClick}
             />
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (
               // <img src={Woman} alt='Author' />
-            <></>
+              <></>
             ) : (
               <img src={skill?.author?.picture} />
             )}

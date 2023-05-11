@@ -76,7 +76,9 @@ export const AccessTokensBanner = () => {
 
   const createUserToken = (data: FormValues) =>
     new Promise((resolve, reject) => {
-      const service = api_services?.find(({ name }) => name === data.service)
+      const service = api_services?.find(
+        ({ display_name }) => display_name === data.service
+      )
       const isService = service !== undefined
       const isUserId = user?.id !== undefined
 
@@ -157,8 +159,10 @@ export const AccessTokensBanner = () => {
           name='service'
           label='Choose service:'
           list={
-            api_services?.map(s => ({ id: s.id.toString(), name: s.name })) ||
-            []
+            api_services?.map(s => ({
+              id: s.id.toString(),
+              name: s.display_name,
+            })) || []
           }
           control={control}
           rules={{ required: true }}
@@ -170,7 +174,7 @@ export const AccessTokensBanner = () => {
           {tokens.map(({ api_service }: IUserApiKey) => (
             <li className={s.token} key={api_service.id}>
               <TokenKeyIcon className={s.icon} />
-              <div className={s.tokenName}>{api_service.name}</div>
+              <div className={s.tokenName}>{api_service.display_name}</div>
               <div className={s.right}>
                 <button
                   className={s.remove}

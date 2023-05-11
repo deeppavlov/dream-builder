@@ -3,7 +3,6 @@ import { FC, useId } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
-import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
@@ -51,7 +50,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const handleSkillListItemClick = (e: React.MouseEvent) => {
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Properties',
       isOpen: !isActive,
       distName: distName || '',
@@ -70,7 +69,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name: distRoutingName as string,
-          skillId: skill.name,
+          skillId: skill.component_id,
         } as any)
       )
       e.stopPropagation()
@@ -79,7 +78,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
 
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Editor',
       distName: distName || '',
     })

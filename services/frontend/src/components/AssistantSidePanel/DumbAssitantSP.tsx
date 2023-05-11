@@ -39,12 +39,13 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
   const tooltipId = useId()
 
   const handleCloneBtnClick = () => {
-    if (!disabled) {
-      trigger('AssistantModal', { action: 'clone', bot: bot })
-      return
-    }
+    const assistantClone = { action: 'clone', bot: bot }
 
-    trigger('SignInModal', {})
+    if (!disabled) return trigger('AssistantModal', assistantClone)
+
+    trigger('SignInModal', {
+      requestModal: { name: 'AssistantModal', options: assistantClone },
+    })
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {

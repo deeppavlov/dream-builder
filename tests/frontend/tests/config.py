@@ -25,7 +25,7 @@ generative_model = "ChatGPT"
 public_va_name = "Marketing Assistant"
 skill_name = "Marketing Skill"
 
-public_template_list = [" AI FAQ Assistant"
+public_template_list = ["ai_faq_assistant"
                         "fairytale_assistant",
                         "fashion_stylist_assistant",
                         "life_coaching_assistant",

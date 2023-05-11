@@ -14,7 +14,7 @@ class ProfilePage(BasePage):
         button.click()
 
     def choose_service(self):
-        button = self.browser.find_element(*ProfilePageLocators.CHOOSE_TOKEN_SERVICE)
+        button = self.browser.find_element(*ProfilePageLocators.CHOOSE_TOKEN_SERVICE_OPENAI)
         button.click()
 
     def click_enter_token_button(self):

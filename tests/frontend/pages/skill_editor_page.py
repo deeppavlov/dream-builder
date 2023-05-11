@@ -50,7 +50,7 @@ class SkillEditorPage(BasePage):
         button = self.browser.find_element(*SkillEditorPageLocators.BCB_SKILL_NAME)
         button.click()
 
-    def click_close_do_you_want_to_clos_modal_window(self):
+    def click_close_do_you_want_to_close_modal_window(self):
         button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_BUTTON_MODAL_WINDOW)
         button.click()
 

@@ -35,13 +35,17 @@ class AllGAPage(BasePage):
         button.click()
 
     def click_use_template(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE)
+        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON)
         button.click()
 
     def click_use_template_modal_window(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW)
+        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
         button.click()
-        #self.browser.switch_to.frame(iframe_1)
+
+    def click_cancel_template_modal_window(self):
+        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_CANCEL_BUTTON)
+        button.click()
+
 
     def click_on_public_template_card(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_TEMPLATE_CARD)
@@ -59,20 +63,20 @@ class AllGAPage(BasePage):
 
     # PRIVATE
 
-    def click_private_edit_button(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_EDIT_BUTTON)
+    def click_your_a_edit_button(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_EDIT_BUTTON)
         button.click()
 
-    def click_kebab_private_va(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB)
+    def click_kebab_your_a(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
         button.click()
 
-    def click_kebab_private_va_chat(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_CHAT)
+    def click_kebab_your_a_chat(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_CHAT)
         button.click()
 
-    def click_kebab_private_va_share(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_SHARE)
+    def click_kebab_your_a_share(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_SHARE)
         button.click()
 
     def get_share_link(self):
@@ -80,8 +84,8 @@ class AllGAPage(BasePage):
         print(f'share_link = {link}')
         return link
 
-    def click_kebab_private_va_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_VISIBILITY)
+    def click_kebab_your_a_visibility(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_VISIBILITY)
         button.click()
 
     def change_visibility_to_private(self):
@@ -100,16 +104,16 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.SAVE_BUTTON_VISIBILITY_MW)
         button.click()
 
-    def click_kebab_private_va_rename(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_RENAME)
+    def click_kebab_your_a_rename(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_RENAME)
         button.click()
 
-    def click_kebab_private_va_properties(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_PROPERTIES)
+    def click_kebab_your_a_properties(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_PROPERTIES)
         button.click()
 
-    def click_kebab_private_va_delete(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_KEBAB_PROPERTIES)
+    def click_kebab_your_a_delete(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_PROPERTIES)
         button.click()
 
     def click_create_from_scratch_button(self):

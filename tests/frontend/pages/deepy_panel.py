@@ -9,10 +9,10 @@ class DeepyPanel(BasePage):
         button.click()
 
     def check_deepy_tooltip(self):
-        tooltip = self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE)
+        tooltip = self.browser.find_element(*DeepyLocators.DEEPY_TOOLTIP)
 
     def check_welcome_dialogue(self):
-        user_message = self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE)
+        user_message = self.browser.find_element(*DeepyLocators.USER_MESSAGE)
         assert user_message.text == "Hello"
         deepy_message = self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE)
         assert deepy_message.text == "Hello i'm deepy i can help you with this and that"

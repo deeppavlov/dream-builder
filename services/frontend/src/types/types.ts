@@ -60,7 +60,7 @@ export type TModals =
   | 'SkillModal'
   | 'SkillPromptModal'
   | 'SkillQuitModal'
-  | 'SkillListModal'
+  | 'SkillsListModal'
   | 'CreateGenerativeSkillModal'
   | 'CreateSkillDistModal'
   | 'DeleteSkillModal'

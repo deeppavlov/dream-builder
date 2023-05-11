@@ -2,9 +2,13 @@ import classNames from 'classnames/bind'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
+import { toasts } from '../../mapping/toasts'
 import { getComponentsGroup } from '../../services/getComponentsGroup'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
@@ -17,8 +21,12 @@ import s from './SkillsListModal.module.scss'
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
+  const { name: distName } = useParams()
   const { addComponentToDist } = useComponent()
+  const { deleteDeployment } = useDeploy()
   const cx = classNames.bind(s)
+  const { getDist } = useAssistants()
+  const assistant = getDist(distName!)
   const { data: skillsList } = useQuery(
     'skills',
     () => getComponentsGroup('skills?component_type=Generative&author_id=1'),
@@ -44,13 +52,17 @@ export const SkillsListModal = () => {
 
   const okHandler = () => setIsOpen(prev => !prev)
   const handleAdd = (distName: string, id: number) => {
+    const assistantId = assistant?.data?.deployment.id
     toast.promise(
-      addComponentToDist.mutateAsync({ distName, id, type: 'skills' }),
-      {
-        loading: 'Adding...',
-        success: 'Success!',
-        error: 'Something went wrong...',
-      }
+      addComponentToDist.mutateAsync(
+        { distName, id, type: 'skills' },
+        {
+          onSuccess: () => {
+            deleteDeployment.mutateAsync(assistantId)
+          },
+        }
+      ),
+      toasts.addComponent
     )
   }
 

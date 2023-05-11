@@ -287,7 +287,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               theme='primary'
               props={{
                 onClick: handleDeploy,
-                disabled: deploy?.isLoading,
+                disabled: deploy?.isLoading || deleteDeployment.isLoading,
               }}
             >
               Build Assistant

@@ -30,6 +30,8 @@ export const useDeploy = () => {
       return deleteDeploy(deployment_id)
     },
     onSuccess: (_, variables) => {
+      console.log('variables = ', variables)
+      queryClient.invalidateQueries('dist')
       queryClient?.invalidateQueries('deployments')
     },
     onError: data => {

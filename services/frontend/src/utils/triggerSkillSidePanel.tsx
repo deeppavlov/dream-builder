@@ -21,7 +21,6 @@ const triggerSkillSidePanel = ({
   isOpen,
 }: Props): void => {
   const component_id = skill?.component_id ?? skill?.id
-  console.log(component_id)
   const key = `${component_id}_${visibility}_${activeTab}`
 
   const triggerByName = (displayName: string) => {

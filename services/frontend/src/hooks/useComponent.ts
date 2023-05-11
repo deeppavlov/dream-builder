@@ -163,7 +163,6 @@ export const useComponent = () => {
     type,
     data,
   }: ICachedComponent) => {
-    console.log('update', id)
     const isCachedComponent =
       queryClient.getQueryData([COMPONENT, distName, id]) !== undefined
 
@@ -207,7 +206,6 @@ export const useComponent = () => {
     ])
 
   const getFetchedComponent = ({ distName, id, type }: IGet) => {
-    console.log('get cached', id)
     const component = queryClient.getQueryData<IStackElement | undefined>([
       COMPONENT,
       distName,

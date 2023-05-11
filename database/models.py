@@ -63,12 +63,39 @@ class GoogleUser(Base):
     # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
 
 
+class GithubUser(Base):
+    __table__ = "github_user"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=True)
+    github_id = Column(String, unique=True)
+    picture = Column(String(500), nullable=True)
+    name = Column(String(100), nullable=True)
+    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
+
+    role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
+    role = relationship("Role")
+
+    virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
+    components = relationship("Component", back_populates="author", passive_deletes=True)
+    dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
+
+
 class UserValid(Base):
     __tablename__ = "user_valid"
 
     id = Column(Integer, index=True, primary_key=True)
     user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
     refresh_token = Column(String, unique=True)
+    is_valid = Column(Boolean, nullable=False)
+    expire_date = Column(DateTime, nullable=False)
+
+
+class GithubUserValid(Base):
+    __tablename__ = "github_user_valid"
+
+    id = Column(Integer, index=True, primary_key=True)
+    user_id = Column(Integer, ForeignKey("github_user.id", ondelete="CASCADE"))
+    access_token = Column(String, unique=True)
     is_valid = Column(Boolean, nullable=False)
     expire_date = Column(DateTime, nullable=False)
 

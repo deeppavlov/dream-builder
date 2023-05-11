@@ -4,17 +4,25 @@ from typing import Mapping
 import aiohttp
 import requests
 from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi.responses import RedirectResponse
 from google.auth import jwt
 from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
-
+from urllib.parse import urlencode, parse_qs
 
 import database.crud as crud
 from database.core import init_db
-from database.models import UserValid
-from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
+from database.models import UserValid, GithubUserValid
+from apiconfig.config import (
+    settings,
+    URL_TOKENINFO,
+    CLIENT_SECRET_FILENAME,
+    GITHUB_AUTH_URL,
+    GITHUB_TOKENINFO,
+    GITHUB_URL_USERINFO,
+)
 from services.auth_api import schemas
-from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
+from services.auth_api.models import UserCreate, User, UserValidScheme, GithubUserCreate, GithubUser
 
 router = APIRouter(prefix="/auth")
 
@@ -22,6 +30,10 @@ SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host,
 
 flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
 flow.redirect_uri = settings.auth.redirect_uri
+
+github_params = settings.github_auth_client_info
+# example: https://github.com/login/oauth/authorize?client_id=1337&client_secret=1453
+github_auth_url_with_params = f"{GITHUB_AUTH_URL}?{urlencode(github_params)}"
 
 
 def get_db():
@@ -63,7 +75,6 @@ def validate_aud(input_aud: str) -> None:
 
 
 def validate_email(email: str, db: Session) -> None:
-
     if not crud.check_user_exists(db, email):
         raise ValueError("User is not listed in the database")
 
@@ -78,6 +89,45 @@ def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     return User(**user, name=user["fullname"])
 
 
+async def _fetch_gh_user_info_by_access_token(token: str):
+    header = {"Authorizaton": "Bearer " + token}
+    async with aiohttp.ClientSession(headers=header) as session:
+        async with session.get(GITHUB_URL_USERINFO) as resp:
+            response = await resp.json()
+            resp_status = resp.status
+    if resp_status != 200:
+        raise ValueError(f"Github token is bad. Response: {response}")
+
+    return response
+
+
+def validate_date(user: GithubUserValid):
+    if user.expire_date > datetime.now():
+        raise ValueError("Token has expired")
+
+
+@router.get("/gh_token", status_code=status.HTTP_200_OK)
+async def validate_gh(token: str = Header(), db: Session = Depends(get_db)):
+    """
+    """
+    if token == settings.auth.test_token:
+        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+    try:
+        uservalid_info_from_db = crud.get_github_uservalid_by_access_token(db, token)
+        validate_date(uservalid_info_from_db)
+        user_info_from_github = await _fetch_gh_user_info_by_access_token(token=token)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    # TODO: return github user info
+    # return GithubUser(
+    #     id=uservalid_info_from_db.id,
+    #     github_id=user_info_from_github.id,
+    #     email=user_info_from_github.email,
+    # )
+
+
+
+
 @router.get("/token", status_code=status.HTTP_200_OK)
 async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     """
@@ -87,7 +137,6 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     """
     if token == settings.auth.test_token:
         return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
-
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
 
@@ -101,7 +150,7 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
-async def logout(refresh_token: str = Header(), db: Session = Depends(get_db)) -> None:
+async def logout(refresh_token: str = Header(), auth_type: str = Header(), db: Session = Depends(get_db)) -> None:
     crud.set_users_refresh_token_invalid(db, refresh_token)
 
 
@@ -164,3 +213,27 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
     response = requests.post("https://oauth2.googleapis.com/token", data=info).json()
     access_token = response["access_token"]
     return {"token": access_token}
+
+
+# TEST ONLY
+@router.get("/github_auth")
+async def github_auth():
+    return RedirectResponse(github_auth_url_with_params)
+
+
+@router.get("/exchange_github")
+async def exchange_github_code(code: str, db: Session = Depends(get_db)):
+    code_params = settings.github_auth_client_info.update({"code": code})
+    endpoint = f"{GITHUB_TOKENINFO}?{urlencode(code_params)}"
+    response = requests.post(endpoint)
+    access_token = parse_qs(response.text)["access_token"][0]
+    user_data = requests.get(GITHUB_URL_USERINFO, headers={"Authorization": "Bearer " + access_token}).json()
+    github_user_create = GithubUserCreate(
+        email=user_data["email"],
+        github_id=user_data["github_id"],
+        picture=user_data["avatar_url"],
+        name=user_data["name"],
+    )
+    crud.add_github_user(db, github_user_create)
+    crud.add_github_uservalid(db=db, github_id=user_data["github_id"], access_token=access_token)
+    return {"token": access_token, **github_user_create.__dict__}

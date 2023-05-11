@@ -7,6 +7,10 @@ from pydantic import BaseModel, BaseSettings, Field
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
 
+GITHUB_AUTH_URL = "https://github.com/login/oauth/authorize"
+GITHUB_TOKENINFO = "https://github.com/login/oauth/access_token?"
+GITHUB_URL_USERINFO = "https://api.github.com/user"
+
 
 def _default_agent_user_id_prefix():
     return secrets.token_urlsafe(8)
@@ -55,6 +59,11 @@ class DeployerSettings(BaseModel):
     default_prefix: str
 
 
+class GithubAuth(BaseModel):
+    client_id: str
+    client_secret: str
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings
@@ -62,6 +71,7 @@ class Settings(BaseSettings):
     auth: AuthSettings
     smtp: SmtpSettings
     deployer: DeployerSettings
+    github: GithubAuth
 
     class Config:
         env_file = ".env"
@@ -74,6 +84,10 @@ class Settings(BaseSettings):
             "client_id": self.auth.google_client_id,
             "client_secret": self.auth.google_client_secret,
         }
+
+    @property
+    def github_auth_client_info(self):
+        return {"client_id": self.github.client_id, "client_secret": self.github.client_secret}
 
 
 settings = Settings()

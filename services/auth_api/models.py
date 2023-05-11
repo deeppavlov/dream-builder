@@ -10,7 +10,6 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-
     email: EmailStr
     sub: str
     picture: str
@@ -24,7 +23,6 @@ class User(UserCreate):
 
 
 class UserValidScheme(UserBase):
-
     refresh_token: str
     is_valid: bool
     expire_date: datetime
@@ -38,3 +36,21 @@ class UserModel(UserBase):
     fullname: str
     given_name: str
     family_name: str
+
+
+class GithubUserCreate(UserBase):
+    email: Optional[EmailStr]
+    github_id: str
+    picture: str
+    name: str
+
+
+class GithubUser(GithubUserCreate):
+    id: int
+
+
+class GithubUserValidCreate(UserBase):
+    user_id: str
+    access_token: str
+    is_valid: bool
+    expire_date: datetime

@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from apiconfig.config import settings
 from database import models
 from database.models import GoogleUser, UserValid, ApiKey
 
@@ -582,3 +583,68 @@ def update_deployment(db: Session, id: int, **kwargs) -> models.Deployment:
 
 def delete_deployment(db: Session, id: int, **kwargs):
     db.execute(delete(models.Deployment).filter_by(id=id))
+
+
+# GITHUB
+
+
+def add_github_user(db: Session, user) -> models.GithubUser:
+    """
+    `user` should be of type services.auth_api.models.GithubUserCreate
+
+    ```
+    class GithubUserCreate(UserBase):
+        email: Optional[EmailStr]
+        github_id: str
+        picture: str
+        name: str
+    ```
+
+    """
+    db_user = models.GithubUser(
+        email=user.email,
+        github_id=user.github_id,
+        picture=user.picture,
+        name=user.name,
+        role_id=1,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def get_github_user_by_github_id(db: Session, github_id: str) -> models.GithubUser:
+    return db.query(models.GithubUser).filter(models.GithubUser.github_id == github_id).first()
+
+
+def get_github_uservalid_by_access_token(db: Session, access_token: str) -> models.GithubUserValid:
+    return (
+        db.query(models.GithubUserValid)
+        .filter(models.GithubUserValid.access_token == access_token, models.GithubUserValid.is_valid == True)
+        .first()
+    )
+
+
+def add_github_uservalid(db: Session, github_id: str, access_token: str) -> models.GithubUserValid:
+    """
+    `uservalid` should be of type services.auth_api.models.GithubUserValidScheme
+    ```
+    class GithubUserValidScheme(UserBase):
+        access_token: str
+        is_valid: bool
+        expire_date: datetime
+    ```
+    """
+    github_user = get_github_user_by_github_id(db, github_id)
+    expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
+    user_valid = models.GithubUserValid(
+        user_id=github_user.id,
+        access_token=access_token,
+        is_valid=True,
+        expire_date=expire_date,
+    )
+    db.add(user_valid)
+    db.commit()
+    db.refresh(user_valid)
+    return user_valid

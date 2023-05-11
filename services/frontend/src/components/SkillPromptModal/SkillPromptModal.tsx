@@ -158,7 +158,7 @@ const SkillPromptModal = () => {
         {
           loading: 'Saving...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         }
       )
       .then(() => trigger('RenewChat', {}))

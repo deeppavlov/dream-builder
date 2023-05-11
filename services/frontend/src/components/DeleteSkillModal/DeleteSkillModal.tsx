@@ -24,7 +24,7 @@ export const DeleteSkillModal = () => {
       {
         loading: 'Deleting...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       }
     )
   }

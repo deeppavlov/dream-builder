@@ -32,7 +32,7 @@ export const UsersBotsPage = () => {
         <Wrapper
           primary
           title='Your Assistants'
-          amount={privateDists?.data?.length}
+          amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
           // fullHeight
         >
           {privateDists?.error ? (

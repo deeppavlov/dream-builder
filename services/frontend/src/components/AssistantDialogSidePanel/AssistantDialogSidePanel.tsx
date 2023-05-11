@@ -132,7 +132,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const setError = (type: TDialogError) => {
     setErrorPanel({
       type: type,
-      msg: 'Something Went Wrong...',
+      msg: 'Something went wrong...',
     })
   }
 

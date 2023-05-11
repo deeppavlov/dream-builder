@@ -54,7 +54,7 @@ export const PublishAssistantModal = () => {
                 visibility === 'public_template'
                   ? 'Submitted For Review!'
                   : 'Success!',
-              error: 'Something Went Wrong...',
+              error: 'Something went wrong...',
             }
           )
           .then(() => {

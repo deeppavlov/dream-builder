@@ -106,7 +106,7 @@ export const BotsPage = () => {
                   <Placeholder>You assistants will appear here</Placeholder>
                 )}
                 {!auth?.user && (
-                  <Placeholder>You assistants will appear here</Placeholder>
+                  <Placeholder>Your assistants will appear here</Placeholder>
                 )}
               </Slider>
             </Container>

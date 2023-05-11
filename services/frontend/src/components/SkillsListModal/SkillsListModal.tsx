@@ -49,7 +49,7 @@ export const SkillsListModal = () => {
       {
         loading: 'Adding...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       }
     )
   }

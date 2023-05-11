@@ -77,7 +77,7 @@ export const SkillModal = () => {
       {
         loading: 'Creating...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       }
     )
   }
@@ -93,7 +93,7 @@ export const SkillModal = () => {
         {
           loading: 'Renaming...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         }
       )
       .then(() => closeModal())

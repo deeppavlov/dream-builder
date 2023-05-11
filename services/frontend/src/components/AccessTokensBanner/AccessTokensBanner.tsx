@@ -56,7 +56,7 @@ export const AccessTokensBanner = () => {
     toast.promise(deleteToken(token_id), {
       loading: 'Deleting...',
       success: 'Success!',
-      error: 'Something Went Wrong...',
+      error: 'Something went wrong...',
     })
   }
 

@@ -29,8 +29,7 @@ export const useDeploy = () => {
     mutationFn: (deployment_id: number) => {
       return deleteDeploy(deployment_id)
     },
-    onSuccess: (_, variables) => {
-      console.log('variables = ', variables)
+    onSuccess: () => {
       queryClient.invalidateQueries('dist')
       queryClient?.invalidateQueries('deployments')
     },

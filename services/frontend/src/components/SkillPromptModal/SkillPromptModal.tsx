@@ -157,7 +157,7 @@ const SkillPromptModal = () => {
         {
           loading: 'Saving...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         }
       )
       .then(() => trigger('RenewChat', {}))
@@ -210,7 +210,12 @@ const SkillPromptModal = () => {
 
   useQuitConfirmation({
     activeElement: modalRef,
-    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`, '#testDialog'],
+    availableSelectors: [
+      `#${HELPER_TAB_ID}`,
+      `#sp_left`,
+      `#testDialog`,
+      `#assistantDialogPanel`,
+    ],
     isActive: isOpen && isDirty,
     quitHandler: closeModal,
   })

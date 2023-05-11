@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
+import { toasts } from '../../mapping/toasts'
 import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -13,25 +17,35 @@ export const DeleteSkillModal = () => {
   const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
   const { deleteComponent } = useComponent()
+  const { deleteDeployment } = useDeploy()
+  const queryClient = useQueryClient()
+  const { getDist } = useAssistants()
+  const assistant = getDist(distName!)
+
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
     setIsOpen(prev => !prev)
   }
   const deleteSkill = async () => {
     if (!skill?.id) return
+    const assistantId = assistant?.data?.deployment?.id!
 
     await toast.promise(
-      deleteComponent.mutateAsync({
-        distName: distName || '',
-        id: skill.id,
-        component_id: skill.component_id,
-        type: 'skills',
-      }),
-      {
-        loading: 'Deleting...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      }
+      deleteComponent.mutateAsync(
+        {
+          distName: distName || '',
+          id: skill.id,
+          component_id: skill.component_id,
+          type: 'skills',
+        },
+        {
+          onSuccess: () => {
+            deleteDeployment.mutateAsync(assistantId)
+            queryClient.invalidateQueries('dist')
+          },
+        }
+      ),
+      toasts.deleteComponent
     )
   }
 

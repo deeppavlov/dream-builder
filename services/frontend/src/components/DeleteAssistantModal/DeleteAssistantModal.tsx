@@ -42,7 +42,7 @@ export const DeleteAssistantModal = () => {
       .promise(deleteDist.mutateAsync(bot?.name!), {
         loading: 'Deleting...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       })
       .finally(() => handleClose())
   }

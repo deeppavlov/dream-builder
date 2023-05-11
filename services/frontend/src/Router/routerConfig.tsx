@@ -14,6 +14,7 @@ import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
 import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
 import { consts } from '../utils/consts'
+import { AdminRoute } from './AdminRoute'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
 
@@ -139,21 +140,29 @@ export const RouterConfig: CustomRouteConfig[] = [
   // Dev pages
   {
     path: RoutesList.test,
-    element: <TestPage />,
+    element: (
+      <AdminRoute>
+        <TestPage />
+      </AdminRoute>
+    ),
     handle: 'Test Page',
   },
   {
     path: RoutesList.draft,
     element: (
-      <PrivateRoute>
+      <AdminRoute>
         <DraftPage />
-      </PrivateRoute>
+      </AdminRoute>
     ),
     handle: 'Its For Crumbs',
   },
   {
     path: RoutesList.sandbox,
-    element: <SanboxPage />,
+    element: (
+      <AdminRoute>
+        <SanboxPage />
+      </AdminRoute>
+    ),
     handle: 'Its For Crumbs',
   },
 ]

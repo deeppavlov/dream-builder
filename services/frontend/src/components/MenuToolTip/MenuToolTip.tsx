@@ -37,7 +37,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
   const handleShareClick = () => trigger('ShareModal', distName)
-  const handleFeedbackClick = () => {}
+
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
@@ -62,8 +62,8 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <hr />
           <ContextMenuButton
             name='Feedback'
+            linkTo='https://forum.deeppavlov.ai/c/dream-builder/57'
             type='architecture'
-            handleClick={handleFeedbackClick}
           />
           <hr />
           <ContextMenuButton

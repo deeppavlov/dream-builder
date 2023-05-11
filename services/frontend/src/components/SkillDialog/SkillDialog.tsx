@@ -11,25 +11,12 @@ import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
-import { ChatForm, ISkill } from '../../types/types'
+import { ChatForm, IDialogError, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
-
-type TDialogError =
-  | 'lm-service'
-  | 'prompt'
-  | 'api-key'
-  | 'dist-name'
-  | 'deploy'
-  | 'chat'
-
-export interface IDialogError {
-  type: TDialogError
-  msg: string
-}
 
 interface Props {
   isDebug: boolean

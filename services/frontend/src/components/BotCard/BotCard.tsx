@@ -73,9 +73,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const onModeration = bot?.publish_state === 'in_progress'
   const deployed = bot?.deployment?.state === 'DEPLOYED'
   const deploying =
-    bot?.deployment?.state !== 'DEPLOYED' &&
-    bot?.deployment?.state !== null &&
-    bot?.deployment !== null
+    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
 
   return (
     <div
@@ -86,9 +84,6 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       {type === 'your' && deployed && <Badge />}
       <div className={cx('header', deploying && 'deploying')}>
         <span>{bot?.display_name}</span>
-        {/* {type === 'your' && (
-          <span className={s.deployment}>{bot?.deployment_state}</span>
-        )} */}
       </div>
       <div className={s.body}>
         <div className={s.block}>

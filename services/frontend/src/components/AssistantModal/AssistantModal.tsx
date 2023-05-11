@@ -58,24 +58,19 @@ export const AssistantModal = () => {
 
   const name = bot?.name!
 
-  // async function submit() {
-  //   const succeed = await handleSubmit(onFormSubmit)()
-  //   return succeed
-  // }
-
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     action === 'create' &&
       toast.promise(create.mutateAsync(data), {
         loading: 'Creating...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       })
     action === 'clone' &&
       toast
         .promise(clone.mutateAsync({ data, name }), {
           loading: 'Cloning...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         })
         .then(() => {
           closeModal()
@@ -85,7 +80,7 @@ export const AssistantModal = () => {
         .promise(rename.mutateAsync({ data, name }), {
           loading: 'Renaming...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         })
         .then(() => {
           closeModal()
@@ -105,6 +100,7 @@ export const AssistantModal = () => {
           </h4>
           <mark>
             {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
+            {/* fix */}
           </mark>
 
           <div className={s.distribution}>

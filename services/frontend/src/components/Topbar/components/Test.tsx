@@ -16,9 +16,9 @@ export const Test = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <AssistantDialogSidePanel
-          debug={false}
+          // debug={false}
+          // chatWith='bot'
           key='chat_with_assistant'
-          chatWith='bot'
           dist={activeAssistant}
         />
       ),

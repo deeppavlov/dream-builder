@@ -56,7 +56,7 @@ export const AccessTokensBanner = () => {
     toast.promise(deleteToken(token_id), {
       loading: 'Deleting...',
       success: 'Success!',
-      error: 'Something Went Wrong...',
+      error: 'Something went wrong...',
     })
   }
 
@@ -136,11 +136,11 @@ export const AccessTokensBanner = () => {
         tokens here if you want to stop use of the services they provide access
         to by your AI Assistants, or you can revoke these tokens in their
         respective services. Do not give out your personal access tokens to
-        anybody you don’t want to access your files.
+        anybody you don't want to access your files.
       </p>
       <p className={s.annotations}>
         When you added a token for a given service you will be offered to
-        manually validate that token. When you click “Validate” you may incur
+        manually validate that token. When you click "Validate" you may incur
         costs associated with invoking API calls to the respective services.
         These costs are usually quite nominal, but we advise you to check with
         the pricing plans of the respective services if in doubt before

@@ -43,9 +43,33 @@ export interface IAuthor {
   sub: string
 }
 
+export type TModals =
+  | 'ShareModal'
+  | 'SignInModal'
+  | 'AreYouSureModal'
+  | 'RenewChat'
+  | 'AssistantModal'
+  | 'ChooseBotModal'
+  | 'DeleteAssistantModal'
+  | 'DeployNotificationModal'
+  | 'IntentCatcherModal'
+  | 'IntentResponderModal'
+  | 'PublicToPrivateModal'
+  | 'Modal'
+  | 'PublishAssistantModal'
+  | 'SkillModal'
+  | 'SkillPromptModal'
+  | 'SkillQuitModal'
+  | 'SkillsListModal'
+  | 'CreateGenerativeSkillModal'
+  | 'CreateSkillDistModal'
+  | 'DeleteSkillModal'
+  | 'FreezeSkillModal'
+  | 'ConfirmApiTokenUpdate'
+
 export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
 
-type deploymentState =
+type TDeploymentState =
   | null
   | 'CREATING_CONFIG_FILES'
   | 'BUILDING_IMAGE'
@@ -53,6 +77,14 @@ type deploymentState =
   | 'DEPLOYING_STACK'
   | 'DEPLOYED'
 
+export interface IDeployment {
+  chat_host: string
+  chat_port: number
+  date_created: string
+  date_state_updated: any
+  id: number
+  state: TDeploymentState
+}
 export interface BotInfoInterface {
   id: number
   name: string
@@ -65,14 +97,8 @@ export interface BotInfoInterface {
   disk_usage: string
   visibility: TDistVisibility
   publish_state: null | 'confirmed' | 'in_progress'
-  deployment: {
-    chat_host: string
-    chat_port: number
-    date_created: string
-    date_state_updated: any
-    id: number
-    state: deploymentState
-  }
+  deployment: IDeployment
+  required_api_keys: []
 }
 
 export interface BotCardProps {
@@ -280,4 +306,41 @@ export type TComponents = {
 export interface IBeforeLoginModal {
   name: string
   options: { [x: string]: any }
+}
+
+export type TDialogError =
+  | 'lm-service'
+  | 'prompt'
+  | 'api-key'
+  | 'dist-name'
+  | 'deploy'
+  | 'chat'
+  | null
+
+export interface IDialogError {
+  type: TDialogError
+  msg: string
+}
+export interface RequestProps {
+  cardClickHandler: () => void
+  r: IPublicationRequest
+  confirm: any
+  decline: any
+  handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+}
+export interface IDeploymentState extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
+
+export interface IPublicationRequest {
+  date_created: string
+  date_reviewed: string
+  id: number
+  is_confirmed: boolean | null
+  reviewed_by_user: string | null
+  slug: string
+  user: IAuthor
+  virtual_assistant: BotInfoInterface
+  visibility: 'public_template' | 'private' | 'unlisted'
 }

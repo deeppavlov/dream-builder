@@ -3,7 +3,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -106,7 +106,7 @@ export const BotsPage = () => {
                   <Placeholder>You assistants will appear here</Placeholder>
                 )}
                 {!auth?.user && (
-                  <Placeholder>You assistants will appear here</Placeholder>
+                  <Placeholder>Your assistants will appear here</Placeholder>
                 )}
               </Slider>
             </Container>
@@ -120,7 +120,7 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
-        <DeployModalNotification />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

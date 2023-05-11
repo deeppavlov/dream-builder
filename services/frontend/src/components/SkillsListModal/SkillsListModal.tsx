@@ -3,8 +3,11 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
+import { toasts } from '../../mapping/toasts'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -29,6 +32,10 @@ export const SkillsListModal = () => {
     },
     { enabled: isOpen }
   )
+  const { deleteDeployment } = useDeploy()
+  const { getDist } = useAssistants()
+  const assistant = getDist(distName!)
+
   const rightSidepanelIsActive = options.get(consts.RIGHT_SP_IS_ACTIVE)
   const position = {
     overlay: {
@@ -53,13 +60,17 @@ export const SkillsListModal = () => {
   const handleOkBtnClick = () => handleClose()
 
   const handleAddBtnClick = (distName: string, id: number) => {
+    const assistantId = assistant?.data?.deployment.id
     toast.promise(
-      addComponentToDist.mutateAsync({ distName, id, type: 'skills' }),
-      {
-        loading: 'Adding...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      }
+      addComponentToDist.mutateAsync(
+        { distName, id, type: 'skills' },
+        {
+          onSuccess: () => {
+            deleteDeployment.mutateAsync(assistantId!)
+          },
+        }
+      ),
+      toasts.addComponent
     )
   }
 

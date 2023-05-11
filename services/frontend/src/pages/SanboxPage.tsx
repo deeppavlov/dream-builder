@@ -1,4 +1,4 @@
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
 import { Main } from '../components/Main/Main'
 import { ProgressBar } from '../components/ProgressBar/ProgressBar'
 import { Sidebar } from '../components/Sidebar/Sidebar'
@@ -36,7 +36,7 @@ export const SanboxPage = () => {
           trigger deploy notification
         </Button>
       </Main>
-      <DeployModalNotification />
+      <DeployNotificationModal />
     </>
   )
 }

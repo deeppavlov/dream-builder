@@ -4,7 +4,7 @@ export async function addComponent(dist_name: string, component_id: number) {
   try {
     const { data } = await privateApi.post(
       `/assistant_dists/${dist_name}/components`,
-      { component_id: component_id }
+      { component_id }
     )
     return data
   } catch (e) {

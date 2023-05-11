@@ -38,7 +38,7 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
       {
         loading: 'Deleting...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       }
     )
   }

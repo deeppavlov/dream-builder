@@ -14,10 +14,17 @@ import { useChatScroll } from '../../hooks/useChatScroll'
 import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
+import { toasts } from '../../mapping/toasts'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { getUserId } from '../../services/getUserId'
-import { BotInfoInterface, ChatForm, ISkill } from '../../types/types'
+import {
+  BotInfoInterface,
+  ChatForm,
+  IDialogError,
+  ISkill,
+  TDialogError,
+} from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
@@ -26,7 +33,7 @@ import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-import { IDialogError } from '../SkillDialog/SkillDialog'
+
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
@@ -35,9 +42,17 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
+  // console.log('dist = ', dist)
+  // queries
+  const queryClient = useQueryClient()
+  const { getDist } = useAssistants()
+  const { deploy, deleteDeployment } = useDeploy()
   const { getAllComponents } = useComponent()
+  const { data: bot } = getDist(dist?.name)
+  const componentsInside = getAllComponents(bot?.name!)
 
   const { data: user } = useQuery(['user'], () => getUserId())
+  // console.log('user = ', user)
   const [apiKey, setApiKey] = useState<string | null>(null)
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
@@ -51,13 +66,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         }).length! > 0
       )
     }
+    // console.log('apiKey = ', apiKey)
+    // console.log('userId = ', userId)
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
       const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-
+      // console.log('openaiApiKey = ', openaiApiKey)
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -82,16 +99,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const [errorPanel, setErrorPanel] = useState<IDialogError | null>(null)
 
-  const { getDist } = useAssistants()
-  const { data: bot } = getDist(dist?.name)
-  const componentsInside = getAllComponents(bot?.name!)
-
-  useEffect(() => {
-    checkIsChatSettings(user?.id)
-  }, [user?.id])
-
-  const { deploy, deleteDeployment } = useDeploy()
-  const queryClient = useQueryClient()
+  const { handleSubmit, register, reset } = useForm<ChatForm>()
+  const { send, renew, session, message, history } = useChat()
+  const { dispatch } = useDisplay()
 
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
@@ -119,17 +129,23 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       }
     },
   })
+  const setError = (type: TDialogError) => {
+    setErrorPanel({
+      type: type,
+      msg: 'Something went wrong...',
+    })
+  }
 
-  const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const { send, renew, session, message, history } = useChat()
-  const { dispatch } = useDisplay()
+  // panel state
   const deployPanel = bot?.deployment?.state == null //костыль
   const awaitDeployPanel =
     bot?.deployment?.state !== 'DEPLOYED' &&
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
+  const readyToGetSession = bot?.deployment?.state === 'DEPLOYED'
 
+  // handlers
   const handleSend = (data: ChatForm) => {
     const isChatSettings = checkIsChatSettings(user?.id)
 
@@ -143,11 +159,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         openai_api_key: apiKey ?? undefined,
       },
       {
-        onError: () =>
-          setErrorPanel({
-            type: 'chat',
-            msg: 'Something went wrong...',
-          }),
+        onError: () => setError('chat'),
       }
     )
     reset()
@@ -159,16 +171,43 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
+  const handleTryAgain = () => {
+    toast.promise(
+      deleteDeployment
+        .mutateAsync(bot?.deployment?.id!)
+        .then(() => {
+          setErrorPanel(null)
+        })
+        .finally(() => {
+          setErrorPanel(null)
+          queryClient.invalidateQueries('privateDists')
+          queryClient.invalidateQueries('dist')
+        }),
+      toasts.deleteDeployment
+    )
+  }
 
+  const handleDeploy = () => {
+    toast.promise(
+      deploy.mutateAsync(bot?.name!, {
+        onError: () => setError('deploy'),
+      }),
+      toasts.deploy
+    )
+  }
   // hooks
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
 
-  const readyToGetSession = bot?.deployment?.state === 'DEPLOYED'
+  // проверяем настройки
+  useEffect(() => {
+    checkIsChatSettings(user?.id)
+  }, [user?.id])
 
+  // обновляем диалоговую сессию
   useEffect(() => {
     readyToGetSession && renew.mutateAsync(bot?.name!)
-  }, [bot?.deployment])
+  }, [bot?.deployment?.state])
 
   const dispatchTrigger = (isOpen: boolean) => {
     dispatch({
@@ -184,44 +223,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  const handleTryAgain = () => {
-    toast.promise(
-      deleteDeployment
-        .mutateAsync(bot?.deployment?.id!)
-        .then(() => {
-          setErrorPanel(null)
-        })
-        .finally(() => {
-          setErrorPanel(null)
 
-          queryClient.invalidateQueries('privateDists')
-          queryClient.invalidateQueries('dist')
-        }),
-      {
-        loading: 'Stop deploy...',
-        success: 'Deploy Stopped!',
-        error: 'Something Went Wrong...',
-      }
-    )
-  }
-  const handleDeploy = () => {
-    toast.promise(
-      deploy.mutateAsync(bot?.name!, {
-        onError: () =>
-          setErrorPanel({
-            type: 'deploy',
-            msg: 'Something Went Wrong',
-          }),
-      }),
-      {
-        loading: 'Loading...',
-        success: 'Send For Deploy!',
-        error: 'Something Went Wrong...',
-      }
-    )
-  }
   return (
-    <div className={s.container}>
+    <div id='assistantDialogPanel' className={s.container}>
       <SidePanelHeader>
         <>
           <ul role='tablist'>
@@ -243,14 +247,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               </Link>
             )}
             {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
-              <>
-                <Button theme='error' props={{ onClick: handleTryAgain }}>
-                  Try again
-                </Button>
-                👆
-                <br />
-                Try again button stops deploy
-              </>
+              <Button theme='error' props={{ onClick: handleTryAgain }}>
+                Try again
+              </Button>
             )}
           </>
         )}
@@ -269,6 +268,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             <p className={s.notification}>This may take a few minutes.</p>
             <p className={s.notification}>
               {status?.data?.state}
+              {'      '}
+              <TextLoader />
               <br />
             </p>
           </div>
@@ -286,7 +287,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               theme='primary'
               props={{
                 onClick: handleDeploy,
-                disabled: deploy?.isLoading,
+                disabled: deploy?.isLoading || deleteDeployment.isLoading,
               }}
             >
               Build Assistant

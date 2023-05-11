@@ -27,12 +27,12 @@ export const toasts: Toasts = {
   },
   deleteDeployment: {
     loading: 'Stop deploy...',
-    success: 'Deploy Stopped!',
+    success: 'Deploy stopped!',
     error: 'Something went wrong...',
   },
   deploy: {
     loading: 'Loading...',
-    success: 'Sent For Deploy!',
+    success: 'Sent for deploy!',
     error: 'Something went wrong...',
   },
   createAssistant: {

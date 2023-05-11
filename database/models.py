@@ -88,7 +88,7 @@ class VirtualAssistant(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id"))
+    cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
     author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)

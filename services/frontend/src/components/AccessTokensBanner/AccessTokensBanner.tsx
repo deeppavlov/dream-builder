@@ -138,14 +138,14 @@ export const AccessTokensBanner = () => {
         respective services. Do not give out your personal access tokens to
         anybody you don't want to access your files.
       </p>
-      <p className={s.annotations}>
+      {/* <p className={s.annotations}>
         When you added a token for a given service you will be offered to
         manually validate that token. When you click "Validate" you may incur
         costs associated with invoking API calls to the respective services.
         These costs are usually quite nominal, but we advise you to check with
         the pricing plans of the respective services if in doubt before
         validating your tokens.
-      </p>
+      </p> */}
       <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
         <Input
           name='token'

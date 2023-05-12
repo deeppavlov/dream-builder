@@ -11,7 +11,6 @@ import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
-import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
@@ -22,14 +21,13 @@ import {
   BotInfoInterface,
   ChatForm,
   IDialogError,
-  ISkill,
   TDialogError,
 } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
-import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
+import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
@@ -45,25 +43,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { getAllComponents } = useComponent()
+
   const { data: bot } = getDist(dist?.name)
-  const componentsInside = getAllComponents(bot?.name!)
 
   const { data: user } = useQuery(['user'], () => getUserId())
 
   const [apiKey, setApiKey] = useState<string | null>(null)
   const checkIsChatSettings = (userId: number) => {
-    console.log(bot?.required_api_keys)
     const isOpenAIModelInside = () => {
-      return (
-        componentsInside?.data?.skills &&
-        componentsInside?.data?.skills.filter((skill: ISkill) => {
-          return (
-            skill?.component_type === 'Generative' &&
-            checkLMIsOpenAi(skill?.lm_service?.name!)
-          )
-        }).length! > 0
-      )
+      return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
     }
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
@@ -193,7 +181,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
-    checkIsChatSettings(user?.id)
+    bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
   }, [user?.id])
 
   // обновляем диалоговую сессию

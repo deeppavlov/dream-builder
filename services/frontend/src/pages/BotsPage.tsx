@@ -76,7 +76,6 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          // subWrapper
           title='Your Assistants'
           amount={
             auth?.user &&
@@ -86,7 +85,7 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table  assistants>
+            <Table assistants>
               <DistList view='table' dists={privateDists?.data} type='your' />
             </Table>
           ) : (

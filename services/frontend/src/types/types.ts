@@ -87,6 +87,13 @@ export interface IDeployment {
   id: number
   state: TDeploymentState
 }
+type TKey = {
+  base_url: string
+  description: string
+  display_name: string
+  id: number
+  name: string
+}
 export interface BotInfoInterface {
   id: number
   name: string
@@ -100,7 +107,7 @@ export interface BotInfoInterface {
   visibility: TDistVisibility
   publish_state: null | 'confirmed' | 'in_progress'
   deployment: IDeployment
-  required_api_keys: []
+  required_api_keys: TKey[] | null
 }
 
 export interface BotCardProps {

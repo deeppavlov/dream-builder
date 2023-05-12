@@ -7,7 +7,7 @@ interface PutDistParams {
 
 export async function postAssistantDist(params: PutDistParams) {
   try {
-    const { data } = await privateApi.post('/assistant_dists/', {
+    const { data } = await privateApi.post('/assistant_dists', {
       ...params,
     })
     return data

@@ -40,7 +40,12 @@ export const ConfirmApiTokenUpdate = () => {
   useObserver('ConfirmApiTokenUpdate', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} type='quit'>
+    <BaseModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      type='quit'
+      handleClose={() => onCancel && onCancel()}
+    >
       <div className={s.confirmApiTokenUpdate}>
         <h4>
           Do you want to update a <mark>{serviceName}</mark> token you have

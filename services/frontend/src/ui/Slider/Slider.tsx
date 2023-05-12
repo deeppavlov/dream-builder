@@ -22,7 +22,7 @@ export const Slider: FC<Props> = ({
   useDrag(contentWrapper)
   return (
     <>
-      <div className={s.wrapper} ref={contentWrapper}>
+      <div className={cx('wrapper', privateAssistants && 'private')} ref={contentWrapper}>
         {children}
       </div>
       <button

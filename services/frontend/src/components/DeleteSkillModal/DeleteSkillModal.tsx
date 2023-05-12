@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
+import { toasts } from '../../mapping/toasts'
 import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -13,19 +17,56 @@ export const DeleteSkillModal = () => {
   const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
   const { deleteComponent } = useComponent()
+  const { deleteDeployment } = useDeploy()
+  const queryClient = useQueryClient()
+  const { getDist } = useAssistants()
+  const assistant = getDist(distName!)
+
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
     setIsOpen(prev => !prev)
   }
+  const { changeVisibility } = useAssistants()
   const deleteSkill = async () => {
-    const id = skill?.id!
+    // console.log('skill?.id = ', skill?.id)
+    if (!skill?.id) return
+
+    const assistantId = assistant?.data?.deployment?.id!
+    const deploymentState = assistant?.data?.deployment?.state === 'UP'
+
     await toast.promise(
-      deleteComponent.mutateAsync({ distName: distName || '', id }),
-      {
-        loading: 'Deleting...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      }
+      deleteComponent.mutateAsync(
+        {
+          distName: distName || '',
+          id: skill.id,
+          component_id: skill.component_id,
+          type: 'skills',
+        },
+        {
+          onSuccess: () => {
+            // console.log('deploymentState = ', deploymentState)
+            // console.log('assistantId = ', assistantId)
+            deploymentState &&
+              deleteDeployment
+                .mutateAsync(assistantId)
+                .then(() => {
+                  queryClient.invalidateQueries('dist')
+                })
+                .then(() => {
+                  // unpublish
+                  const name = assistant?.data?.name!
+                  const visibility = 'private'
+                  const publishState = assistant?.data?.publish_state !== null
+                  // console.log('name = ', name)
+                  // console.log('visibility = ', visibility)
+                  // console.log('publishState = ', publishState)
+                  publishState &&
+                    changeVisibility.mutateAsync({ name, visibility }) //FIX
+                })
+          },
+        }
+      ),
+      toasts.deleteComponent
     )
   }
 
@@ -41,8 +82,9 @@ export const DeleteSkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.areYouSure}>
         <div className={s.header}>
-          Do you really want to delete this component:
-          <mark> {skill?.display_name} </mark>?
+          <h4>Do you really want to delete skill:</h4>
+          <mark>{skill?.display_name}</mark>
+          <div className={s.desc}>This action can’t be undone</div>
         </div>
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>

@@ -1,4 +1,4 @@
-import Play from '../../../assets/icons/test.svg'
+import { ReactComponent as PlayIcon } from '@assets/icons/chatting.svg'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
@@ -16,9 +16,9 @@ export const Test = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <AssistantDialogSidePanel
-          debug={false}
+          // debug={false}
+          // chatWith='bot'
           key='chat_with_assistant'
-          chatWith='bot'
           dist={activeAssistant}
         />
       ),
@@ -26,13 +26,13 @@ export const Test = () => {
   }
 
   return (
-    <button data-tooltip-id='chatWithBot' className={s.test}>
-      <img
-        src={Play}
-        alt='Chat with your bot'
-        className={s.test}
-        onClick={handleBtnClick}
-      />
+    <button
+      id='testDialog'
+      data-tooltip-id='chatWithBot'
+      className={s.test}
+      onClick={handleBtnClick}
+    >
+      <PlayIcon />
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='chatWithBot'

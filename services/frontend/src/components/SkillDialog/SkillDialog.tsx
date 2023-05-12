@@ -11,30 +11,17 @@ import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
-import { ChatForm, ISkill } from '../../types/types'
+import { ChatForm, IDialogError, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-type TDialogError =
-  | 'lm-service'
-  | 'prompt'
-  | 'api-key'
-  | 'dist-name'
-  | 'deploy'
-  | 'chat'
-
-export interface IDialogError {
-  type: TDialogError
-  msg: string
-}
-
 interface Props {
   isDebug: boolean
   distName: string | undefined
-  skill: ISkill
+  skill: ISkill | null
 }
 
 const SkillDialog = ({ isDebug, distName, skill }: Props) => {
@@ -46,8 +33,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-
-  // console.log(skill)
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0

@@ -1,31 +1,41 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useQuery } from 'react-query'
+import { useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
-import { getComponentsGroup } from '../../services/getComponentsGroup'
+import { toasts } from '../../mapping/toasts'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Table } from '../../ui/Table/Table'
 import { consts } from '../../utils/consts'
+import { trigger } from '../../utils/events'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
 import s from './SkillsListModal.module.scss'
 
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
-  const { addComponentToDist } = useComponent()
-  const cx = classNames.bind(s)
-  const { data: skillsList } = useQuery(
-    'skills',
-    () => getComponentsGroup('skills?component_type=Generative&author_id=1'),
+  const { getGroupComponents, addComponentToDist } = useComponent()
+  const { name: distName } = useParams()
+  const { data: skillsList } = getGroupComponents(
     {
-      enabled: isOpen,
-    }
+      distName: distName || '',
+      group: 'skills',
+      component_type: 'Generative',
+      author_id: 1,
+    },
+    { enabled: isOpen }
   )
+  const { deleteDeployment } = useDeploy()
+  const { getDist } = useAssistants()
+  const assistant = getDist(distName!)
+
   const rightSidepanelIsActive = options.get(consts.RIGHT_SP_IS_ACTIVE)
   const position = {
     overlay: {
@@ -38,23 +48,42 @@ export const SkillsListModal = () => {
       width: '95%',
     },
   }
-  const handleEventUpdate = () => {
-    setIsOpen(isOpen => !isOpen)
+  const cx = classNames.bind(s)
+  const { changeVisibility } = useAssistants()
+  const handleClose = () => {
+    setIsOpen(false)
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
-  const okHandler = () => setIsOpen(prev => !prev)
+  const handleEventUpdate = () => setIsOpen(true)
+
+  const handleOk = () => setIsOpen(prev => !prev)
+
   const handleAdd = (distName: string, id: number) => {
+    const assistantId = assistant?.data?.deployment?.id!
     toast.promise(
-      addComponentToDist.mutateAsync({ distName, id, type: 'skills' }),
-      {
-        loading: 'Adding...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      }
+      addComponentToDist.mutateAsync(
+        { distName, id, type: 'skills' },
+        {
+          onSuccess: () => {
+            assistant?.data?.deployment?.state === 'UP' &&
+              deleteDeployment.mutateAsync(assistantId).then(() => {
+                // unpublish
+                const name = assistant?.data?.name!
+                const visibility = 'private'
+
+                assistant?.data?.publish_state !== null &&
+                  changeVisibility.mutateAsync({ name, visibility }) //FIX
+              })
+          },
+        }
+      ),
+      toasts.addComponent
     )
   }
 
   useObserver('SkillsListModal', handleEventUpdate)
+
   return (
     <>
       {skillsList && (
@@ -63,6 +92,7 @@ export const SkillsListModal = () => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           customStyles={position}
+          handleClose={handleClose}
         >
           <div
             className={cx(
@@ -81,11 +111,12 @@ export const SkillsListModal = () => {
                 skills={skillsList}
                 view={'table'}
                 forModal
+                type='public'
                 withoutDate={rightSidepanelIsActive}
               />
             </Table>
             <div className={s.footer}>
-              <Button theme='primary' props={{ onClick: okHandler }}>
+              <Button theme='primary' props={{ onClick: handleOk }}>
                 OK
               </Button>
             </div>

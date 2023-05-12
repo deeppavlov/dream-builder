@@ -53,7 +53,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     e.stopPropagation()
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Properties',
       isOpen: !isActive,
       distName: distRoutingName || '',
@@ -70,7 +70,7 @@ export const SkillCard: FC<SkillCardProps> = ({
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name: distRoutingName as string,
-          skillId: skill.name,
+          skillId: skill.component_id,
         } as any)
       )
       e.stopPropagation()
@@ -79,7 +79,7 @@ export const SkillCard: FC<SkillCardProps> = ({
 
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Editor',
       distName: distRoutingName || '',
     })
@@ -99,9 +99,6 @@ export const SkillCard: FC<SkillCardProps> = ({
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
-        {/* {type == 'your' && (
-          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-        )} */}
       </div>
       <div className={s.body}>
         <div className={s.top}>
@@ -114,14 +111,6 @@ export const SkillCard: FC<SkillCardProps> = ({
               {skill?.component_type ?? '------'}
             </p>
           </div>
-          {/* <div className={s.name}>
-            <img className={s.companyLogo} src={skill?.author?.picture} />
-            <p className={s.companyName}>
-              {skill?.author.fullname == 'DeepPavlov'
-                ? 'Dr. Xandra Smith'
-                : skill?.author.fullname}
-            </p>
-          </div> */}
           <div
             className={s.description}
             data-tip
@@ -130,15 +119,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
-            {/* <BaseToolTip
-              delayShow={TOOLTIP_DELAY}
-              id={'skillCardDesc' + tooltipId}
-              content={skill?.description}
-              theme='description'
-            /> */}
           </div>
-
-          <span className={s.separator} />
           <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />

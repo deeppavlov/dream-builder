@@ -25,7 +25,7 @@ async def send_chat_request_to_deployed_agent(
     if prompt:
         data["prompt"] = prompt
     if lm_service:
-        data["lm_service"] = lm_service
+        data["lm_service_url"] = lm_service
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
 
@@ -134,16 +134,17 @@ async def send_dialog_session_message(
         chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
 
         if payload.lm_service_id:
-            lm_service = crud.get_lm_service(db, payload.lm_service_id).display_name
+            lm_service = crud.get_lm_service(db, payload.lm_service_id)
+            lm_service_url = f"http://{lm_service.name}:{lm_service.default_port}/respond"
         else:
-            lm_service = None
+            lm_service_url = None
 
         agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
             chat_url,
             dialog_session.id,
             payload.text,
             payload.prompt,
-            lm_service,
+            lm_service_url,
             payload.openai_api_key,
         )
 

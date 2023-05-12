@@ -59,6 +59,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log('click' )
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {

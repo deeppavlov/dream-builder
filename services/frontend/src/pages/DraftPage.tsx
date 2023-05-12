@@ -1,5 +1,6 @@
 import { CSSProperties, FC, useId } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import { RotatingLines } from 'react-loader-spinner'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -82,7 +83,23 @@ export const DraftPage = () => {
           </Container>
         </Wrapper>
         <Wrapper fitScreen title='Deployments' amount={filtered?.length}>
-          <Container gridForRequests>
+          {deployments?.isLoading && (
+            <div
+              style={{
+                alignSelf: 'center',
+                justifySelf: 'center',
+              }}
+            >
+              <RotatingLines
+                strokeColor='grey'
+                strokeWidth='5'
+                animationDuration='0.75'
+                width='64'
+                visible={true}
+              />
+            </div>
+          )}
+          <Container gridForDeploys>
             {filtered?.map((deployment, i: number) => {
               return (
                 <div key={i}>
@@ -90,17 +107,40 @@ export const DraftPage = () => {
                     <div
                       style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'start',
                         justifyContent: 'space-between',
                         width: '100%',
+                        gap: '8px',
+                        maxHeight: '200px',
                       }}
                     >
                       <span style={{ overflow: 'hidden' }}>
                         id:{deployment?.id}
                       </span>
-                      <span>{deployment?.virtual_assistant?.name}</span>
-                      <span>{deployment?.virtual_assistant?.display_name}</span>
+                      <span>name:{deployment?.virtual_assistant?.name}</span>
+                      <span>
+                        display name:
+                        {deployment?.virtual_assistant?.display_name}
+                      </span>
+                      <span>
+                        author:{deployment?.virtual_assistant?.author?.fullname}
+                      </span>
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        data-tooltip-id={
+                          deployment?.id + deployment?.virtual_assistant?.name
+                        }
+                      >
+                        <BaseToolTip
+                          delayShow={50}
+                          id={
+                            deployment?.id + deployment?.virtual_assistant?.name
+                          }
+                          content={deployment?.virtual_assistant?.description}
+                        />
+                        description
+                      </span>
                       <div className=''>
                         <Button
                           theme='primary'

@@ -47,3 +47,11 @@
     }
   }
 }
+.active {
+  background-color: $primary4;
+  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  svg path {
+    fill: $bcgrnd1;
+    stroke: $bcgrnd1;
+  }
+}

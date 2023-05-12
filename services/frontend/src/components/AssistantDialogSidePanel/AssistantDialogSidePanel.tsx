@@ -209,179 +209,159 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   }, [])
 
   return (
-    <>
-      {botIsLoading ? (
-        <RotatingLines
-          strokeColor='grey'
-          strokeWidth='5'
-          animationDuration='0.75'
-          width='64'
-          visible={true}
-        />
-      ) : (
-        <div id='assistantDialogPanel' className={s.container}>
-          <SidePanelHeader>
-            <>
-              <ul role='tablist'>
-                <li role='tab' key='Dialog'>
-                  <span aria-selected>Chat:</span>
-                  <span role='name'>&nbsp;{bot?.display_name}</span>
-                </li>
-              </ul>
-            </>
-          </SidePanelHeader>
-          <div className={cx('dialogSidePanel', errorPanel && 'error')}>
-            {errorPanel && (
-              <>
-                <span className={s.alertName}>Error!</span>
-                <p className={s.alertDesc}>{errorPanel.msg}</p>
-                {errorPanel.type === 'api-key' && (
-                  <Link className={s.link} to={RoutesList.profile}>
-                    Enter your personal access token here
-                  </Link>
-                )}
-                {bot?.author?.id !== 1 &&
-                  bot?.visibility !== 'public_template' && (
-                    <Button theme='error' props={{ onClick: handleTryAgain }}>
-                      Try again
-                    </Button>
-                  )}
-              </>
+    <div id='assistantDialogPanel' className={s.container}>
+      <SidePanelHeader>
+        <>
+          <ul role='tablist'>
+            <li role='tab' key='Dialog'>
+              <span aria-selected>Chat:</span>
+              <span role='name'>&nbsp;{bot?.display_name}</span>
+            </li>
+          </ul>
+        </>
+      </SidePanelHeader>
+      <div className={cx('dialogSidePanel', errorPanel && 'error')}>
+        {errorPanel && (
+          <>
+            <span className={s.alertName}>Error!</span>
+            <p className={s.alertDesc}>{errorPanel.msg}</p>
+            {errorPanel.type === 'api-key' && (
+              <Link className={s.link} to={RoutesList.profile}>
+                Enter your personal access token here
+              </Link>
             )}
-            {awaitDeployPanel && (
-              <div className={s.await}>
-                <RotatingLines
-                  strokeColor='grey'
-                  strokeWidth='5'
-                  animationDuration='0.75'
-                  width='64'
-                  visible={true}
-                />
-                <p className={s.notification}>
-                  Please wait till assistant launching
-                </p>
-                <p className={s.notification}>This may take a few minutes.</p>
-                <p className={s.notification}>{status?.data?.state + '...'}</p>
-                <br />
+            {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
+              <Button theme='error' props={{ onClick: handleTryAgain }}>
+                Try again
+              </Button>
+            )}
+          </>
+        )}
+        {awaitDeployPanel && (
+          <div className={s.await}>
+            <RotatingLines
+              strokeColor='grey'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='64'
+              visible={true}
+            />
+            <p className={s.notification}>
+              Please wait till assistant launching
+            </p>
+            <p className={s.notification}>This may take a few minutes.</p>
+            <p className={s.notification}>{status?.data?.state + '...'}</p>
+            <br />
+          </div>
+        )}
+        {!errorPanel && deployPanel && (
+          <div className={s.deployPanel}>
+            <div className={s.text}>
+              <h5 className={s.notification}>Chat with AI Assistant</h5>
+              <p className={s.annotation}>
+                In order to start chat with AI Assistant, it is necessary to
+                build it
+              </p>
+            </div>
+            <Button
+              theme='primary'
+              props={{
+                onClick: handleDeploy,
+                disabled: deploy?.isLoading || deleteDeployment.isLoading,
+              }}
+            >
+              Build Assistant
+            </Button>
+          </div>
+        )}
+        {chatPanel && (
+          <>
+            <div className={s.chat} ref={chatRef}>
+              {history?.map(
+                (block: { author: string; text: string }, i: number) => (
+                  <div
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx(
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
+                    )}
+                  >
+                    <span
+                      className={cx(
+                        'chat__message',
+                        block?.author == 'bot' && 'chat__message_bot'
+                      )}
+                    >
+                      {block?.text}
+                    </span>
+                  </div>
+                )
+              )}
+              {send?.isLoading && (
+                <>
+                  <div className={cx('chat__container_bot', 'chat__container')}>
+                    <span className={cx('chat__message', 'chat__message_bot')}>
+                      <TextLoader />
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+            {hereIsDummy && (
+              <div className={s.dummyContainer}>
+                <div className={s.dummy}>
+                  <span className={s.line} />
+                  <div className={s.message}>
+                    <div className={s.circle}>
+                      <Attention />
+                    </div>
+                    <p>
+                      Something went wrong.
+                      <br />
+                      Restart the system.
+                    </p>
+                  </div>
+                  <span className={s.line} />
+                </div>
               </div>
             )}
-            {!errorPanel && deployPanel && (
-              <div className={s.deployPanel}>
-                <div className={s.text}>
-                  <h5 className={s.notification}>Chat with AI Assistant</h5>
-                  <p className={s.annotation}>
-                    In order to start chat with AI Assistant, it is necessary to
-                    build it
-                  </p>
-                </div>
+            <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
+              <textarea
+                className={s.dialogSidePanel__textarea}
+                placeholder='Type...'
+                {...register('message', {
+                  required: validationSchema.global.required,
+                })}
+              />
+
+              <input type='submit' hidden />
+              <SidePanelButtons>
                 <Button
-                  theme='primary'
+                  theme='secondary'
                   props={{
-                    onClick: handleDeploy,
-                    disabled: deploy?.isLoading || deleteDeployment.isLoading,
+                    disabled: renew.isLoading,
+                    onClick: handleRenewClick,
                   }}
                 >
-                  Build Assistant
+                  <Renew data-tooltip-id='renew' />
                 </Button>
-              </div>
-            )}
-            {chatPanel && (
-              <>
-                <div className={s.chat} ref={chatRef}>
-                  {history?.map(
-                    (block: { author: string; text: string }, i: number) => (
-                      <div
-                        key={`${block?.author == 'bot'}${i}`}
-                        className={cx(
-                          'chat__container',
-                          block?.author == 'bot' && 'chat__container_bot'
-                        )}
-                      >
-                        <span
-                          className={cx(
-                            'chat__message',
-                            block?.author == 'bot' && 'chat__message_bot'
-                          )}
-                        >
-                          {block?.text}
-                        </span>
-                      </div>
-                    )
-                  )}
-                  {send?.isLoading && (
-                    <>
-                      <div
-                        className={cx('chat__container_bot', 'chat__container')}
-                      >
-                        <span
-                          className={cx('chat__message', 'chat__message_bot')}
-                        >
-                          <TextLoader />
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-                {hereIsDummy && (
-                  <div className={s.dummyContainer}>
-                    <div className={s.dummy}>
-                      <span className={s.line} />
-                      <div className={s.message}>
-                        <div className={s.circle}>
-                          <Attention />
-                        </div>
-                        <p>
-                          Something went wrong.
-                          <br />
-                          Restart the system.
-                        </p>
-                      </div>
-                      <span className={s.line} />
-                    </div>
-                  </div>
-                )}
-                <form
-                  onKeyDown={handleKeyDown}
-                  onSubmit={handleSubmit(handleSend)}
+                <Button
+                  theme='primary'
+                  props={{ disabled: send?.isLoading, type: 'submit' }}
                 >
-                  <textarea
-                    className={s.dialogSidePanel__textarea}
-                    placeholder='Type...'
-                    {...register('message', {
-                      required: validationSchema.global.required,
-                    })}
-                  />
-
-                  <input type='submit' hidden />
-                  <SidePanelButtons>
-                    <Button
-                      theme='secondary'
-                      props={{
-                        disabled: renew.isLoading,
-                        onClick: handleRenewClick,
-                      }}
-                    >
-                      <Renew data-tooltip-id='renew' />
-                    </Button>
-                    <Button
-                      theme='primary'
-                      props={{ disabled: send?.isLoading, type: 'submit' }}
-                    >
-                      Send
-                    </Button>
-                  </SidePanelButtons>
-                </form>
-              </>
-            )}
-          </div>
-          <BaseToolTip
-            isOpen={hereIsDummy}
-            delayShow={TOOLTIP_DELAY}
-            id='renew'
-            content='Start a new dialog'
-          />
-        </div>
-      )}{' '}
-    </>
+                  Send
+                </Button>
+              </SidePanelButtons>
+            </form>
+          </>
+        )}
+      </div>
+      <BaseToolTip
+        isOpen={hereIsDummy}
+        delayShow={TOOLTIP_DELAY}
+        id='renew'
+        content='Start a new dialog'
+      />
+    </div>
   )
 }

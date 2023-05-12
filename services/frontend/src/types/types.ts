@@ -69,7 +69,7 @@ export type TModals =
 
 export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
 
-type TDeploymentState =
+export type TDeploymentState =
   | null
   | 'STARTED'
   | 'CREATING_CONFIG_FILES'

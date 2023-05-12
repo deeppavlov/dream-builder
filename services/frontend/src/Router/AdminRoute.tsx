@@ -5,7 +5,7 @@ import { UserInterface } from '../types/types'
 export const AdminRoute = ({ children }: any) => {
   // If not admin redirect to main page
 
-  const q = import.meta.env.VITE_ADMINS.split(' ')
+  const q = import.meta.env?.VITE_ADMINS?.split(' ')
   const user: UserInterface = store('user')
   const isAdmin = q.includes(user?.email)
 

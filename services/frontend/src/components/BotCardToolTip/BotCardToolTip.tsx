@@ -115,7 +115,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
       {type == 'public' && (
         <>
           <ContextMenuButton
-            name='Chat With Bot'
+            name='Chat With Assistant'
             type='chat'
             handleClick={handleChatClick}
           />

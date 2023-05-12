@@ -296,6 +296,7 @@ export interface IUserApiKey {
 }
 
 export interface IPostChat {
+  hidden?:boolean
   dialog_session_id: number
   text: string
   prompt?: string

@@ -52,7 +52,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const dummyAnswersCounter = history.filter(message => {
     return message.active_skill === 'dummy_skill'
   }).length
-  const hereIsDummy = dummyAnswersCounter > 2
+  
+  const hereIsDummy = dummyAnswersCounter > 3
 
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {

@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import { useQueryClient } from 'react-query'
 import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
 import { DEEPY_ASSISTANT, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -34,7 +35,7 @@ export const CopilotSidePanel = () => {
   } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { dispatch } = useDisplay()
-
+  const queryClient = useQueryClient()
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
   const cx = classNames.bind(s)
@@ -49,7 +50,18 @@ export const CopilotSidePanel = () => {
     })
   }
   const handleRenewClick = () => {
-    renew.mutateAsync(DEEPY_ASSISTANT)
+    renew
+      .mutateAsync(DEEPY_ASSISTANT)
+      .then(() => {
+        queryClient.invalidateQueries('remoteHistory')
+      })
+      .then(() => {
+        send?.mutateAsync({
+          dialog_session_id: deepySession?.id!,
+          text: 'hi deepy!',
+          hidden: true,
+        })
+      })
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
@@ -62,15 +74,14 @@ export const CopilotSidePanel = () => {
     send.mutateAsync({ dialog_session_id: id, text: message })
     reset()
   }
-
+  useEffect(() => {
+    console.log('update session')
+  }, [session, deepySession])
   // hooks
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
   }, [])
-  // useEffect(() => {
-  //   const id = session?.id || deepySession?.id
-  //   send.mutateAsync({ dialog_session_id: id, text: 'hi deepy!' })
-  // }, [])
+
   useChatScroll(chatRef, [remoteHistory?.data, message, history])
 
   const dispatchTrigger = (isOpen: boolean) =>
@@ -96,6 +107,7 @@ export const CopilotSidePanel = () => {
       )}
     >
       <span
+        style={{ display: block?.hidden && 'none' }}
         ref={messageRef}
         onClick={handleMessageClick}
         className={cx(

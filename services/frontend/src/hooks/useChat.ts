@@ -34,16 +34,20 @@ export const useChat = () => {
   })
 
   const send = useMutation({
-    onMutate: ({ text }: IPostChat) => {
+    onMutate: ({ text, hidden }: IPostChat) => {
+      console.log('hidden = ', hidden)
       setMessage(text)
-      setHistory(state => [...state, { text, author: 'me' }])
+      setHistory(state => [...state, { text, author: 'me', hidden: hidden }])
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
-      setHistory(state => [...state, { text: data?.text, author: 'bot',active_skill:data?.active_skill }])
+      console.log('data = ', data)
+      setHistory(state => [
+        ...state,
+        { text: data?.text, author: 'bot', active_skill: data?.active_skill },
+      ])
     },
     onError: (_, variables) => {
-      
       renew.mutate(DEEPY_ASSISTANT) //FIX!!!
       setError(true)
     },

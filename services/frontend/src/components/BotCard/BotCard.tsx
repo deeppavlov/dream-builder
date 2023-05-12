@@ -59,7 +59,6 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {
@@ -70,6 +69,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
     })
+    e.stopPropagation()
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {

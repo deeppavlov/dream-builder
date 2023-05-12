@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
-import { DEEPY_ASSISTANT } from '../../constants/constants'
+import { DEEPY_ASSISTANT, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
@@ -17,6 +17,7 @@ import { consts } from '../../utils/consts'
 import { сopyToClipboard } from '../../utils/copyToClipboard'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import s from './CopilotSidePanel.module.scss'
@@ -66,7 +67,10 @@ export const CopilotSidePanel = () => {
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
   }, [])
-
+  // useEffect(() => {
+  //   const id = session?.id || deepySession?.id
+  //   send.mutateAsync({ dialog_session_id: id, text: 'hi deepy!' })
+  // }, [])
   useChatScroll(chatRef, [remoteHistory?.data, message, history])
 
   const dispatchTrigger = (isOpen: boolean) =>
@@ -179,6 +183,11 @@ export const CopilotSidePanel = () => {
                 onClick: handleRenewClick,
               }}
             >
+              <BaseToolTip
+                delayShow={TOOLTIP_DELAY}
+                id='renew'
+                content='Restart Dialog'
+              />
               <Renew data-tooltip-id='renew' />
             </Button>
             <Button

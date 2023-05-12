@@ -40,7 +40,7 @@ export const useChat = () => {
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
-      setHistory(state => [...state, { text: data?.text, author: 'bot' }])
+      setHistory(state => [...state, { text: data?.text, author: 'bot',active_skill:data?.active_skill }])
     },
     onError: (_, variables) => {
       

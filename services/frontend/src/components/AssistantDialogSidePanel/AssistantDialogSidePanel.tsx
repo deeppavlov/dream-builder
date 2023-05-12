@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
+import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
 import { OPEN_AI_LM, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -43,18 +44,21 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-
-  const { data: bot } = getDist(dist?.name)
-
+  const { data: bot, isLoading: botIsLoading } = getDist(dist?.name)
   const { data: user } = useQuery(['user'], () => getUserId())
-
+  const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
+
+  const dummyAnswersCounter = history.filter(message => {
+    return message.active_skill === 'dummy_skill'
+  }).length
+  const hereIsDummy = dummyAnswersCounter > 2
+
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
       return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
     }
     if (userId === undefined || userId === null) return
-    console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
@@ -84,7 +88,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const [errorPanel, setErrorPanel] = useState<IDialogError | null>(null)
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const { send, renew, session, message, history } = useChat()
+
   const { dispatch } = useDisplay()
 
   const status = useQuery({
@@ -182,7 +186,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // проверяем настройки
   useEffect(() => {
     bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
-  }, [user?.id])
+  }, [user?.id, bot])
 
   // обновляем диалоговую сессию
   useEffect(() => {
@@ -205,138 +209,179 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   }, [])
 
   return (
-    <div id='assistantDialogPanel' className={s.container}>
-      <SidePanelHeader>
-        <>
-          <ul role='tablist'>
-            <li role='tab' key='Dialog'>
-              <span aria-selected>Chat:</span>
-              <span role='name'>&nbsp;{bot?.display_name}</span>
-            </li>
-          </ul>
-        </>
-      </SidePanelHeader>
-      <div className={cx('dialogSidePanel', errorPanel && 'error')}>
-        {errorPanel && (
-          <>
-            <span className={s.alertName}>Error!</span>
-            <p className={s.alertDesc}>{errorPanel.msg}</p>
-            {errorPanel.type === 'api-key' && (
-              <Link className={s.link} to={RoutesList.profile}>
-                Enter your personal access token here
-              </Link>
+    <>
+      {botIsLoading ? (
+        <RotatingLines
+          strokeColor='grey'
+          strokeWidth='5'
+          animationDuration='0.75'
+          width='64'
+          visible={true}
+        />
+      ) : (
+        <div id='assistantDialogPanel' className={s.container}>
+          <SidePanelHeader>
+            <>
+              <ul role='tablist'>
+                <li role='tab' key='Dialog'>
+                  <span aria-selected>Chat:</span>
+                  <span role='name'>&nbsp;{bot?.display_name}</span>
+                </li>
+              </ul>
+            </>
+          </SidePanelHeader>
+          <div className={cx('dialogSidePanel', errorPanel && 'error')}>
+            {errorPanel && (
+              <>
+                <span className={s.alertName}>Error!</span>
+                <p className={s.alertDesc}>{errorPanel.msg}</p>
+                {errorPanel.type === 'api-key' && (
+                  <Link className={s.link} to={RoutesList.profile}>
+                    Enter your personal access token here
+                  </Link>
+                )}
+                {bot?.author?.id !== 1 &&
+                  bot?.visibility !== 'public_template' && (
+                    <Button theme='error' props={{ onClick: handleTryAgain }}>
+                      Try again
+                    </Button>
+                  )}
+              </>
             )}
-            {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
-              <Button theme='error' props={{ onClick: handleTryAgain }}>
-                Try again
-              </Button>
+            {awaitDeployPanel && (
+              <div className={s.await}>
+                <RotatingLines
+                  strokeColor='grey'
+                  strokeWidth='5'
+                  animationDuration='0.75'
+                  width='64'
+                  visible={true}
+                />
+                <p className={s.notification}>
+                  Please wait till assistant launching
+                </p>
+                <p className={s.notification}>This may take a few minutes.</p>
+                <p className={s.notification}>{status?.data?.state + '...'}</p>
+                <br />
+              </div>
             )}
-          </>
-        )}
-        {awaitDeployPanel && (
-          <div className={s.await}>
-            <RotatingLines
-              strokeColor='grey'
-              strokeWidth='5'
-              animationDuration='0.75'
-              width='64'
-              visible={true}
-            />
-            <p className={s.notification}>
-              Please wait till assistant launching
-            </p>
-            <p className={s.notification}>This may take a few minutes.</p>
-            <p className={s.notification}>{status?.data?.state + '...'}</p>
-            <br />
-          </div>
-        )}
-        {!errorPanel && deployPanel && (
-          <div className={s.deployPanel}>
-            <div className={s.text}>
-              <h5 className={s.notification}>Chat with AI Assistant</h5>
-              <p className={s.annotation}>
-                In order to start chat with AI Assistant, it is necessary to
-                build it
-              </p>
-            </div>
-            <Button
-              theme='primary'
-              props={{
-                onClick: handleDeploy,
-                disabled: deploy?.isLoading || deleteDeployment.isLoading,
-              }}
-            >
-              Build Assistant
-            </Button>
-          </div>
-        )}
-        {chatPanel && (
-          <>
-            <div className={s.chat} ref={chatRef}>
-              {history?.map(
-                (block: { author: string; text: string }, i: number) => (
-                  <div
-                    key={`${block?.author == 'bot'}${i}`}
-                    className={cx(
-                      'chat__container',
-                      block?.author == 'bot' && 'chat__container_bot'
-                    )}
-                  >
-                    <span
-                      className={cx(
-                        'chat__message',
-                        block?.author == 'bot' && 'chat__message_bot'
-                      )}
-                    >
-                      {block?.text}
-                    </span>
-                  </div>
-                )
-              )}
-              {send?.isLoading && (
-                <>
-                  <div className={cx('chat__container_bot', 'chat__container')}>
-                    <span className={cx('chat__message', 'chat__message_bot')}>
-                      <TextLoader />
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-            <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
-              <textarea
-                className={s.dialogSidePanel__textarea}
-                placeholder='Type...'
-                {...register('message', {
-                  required: validationSchema.global.required,
-                })}
-              />
-              <input type='submit' hidden />
-              <SidePanelButtons>
-                <Button
-                  theme='secondary'
-                  props={{
-                    onClick: handleRenewClick,
-                  }}
-                >
-                  <Renew data-tooltip-id='renew' />
-                </Button>
+            {!errorPanel && deployPanel && (
+              <div className={s.deployPanel}>
+                <div className={s.text}>
+                  <h5 className={s.notification}>Chat with AI Assistant</h5>
+                  <p className={s.annotation}>
+                    In order to start chat with AI Assistant, it is necessary to
+                    build it
+                  </p>
+                </div>
                 <Button
                   theme='primary'
-                  props={{ disabled: send?.isLoading, type: 'submit' }}
+                  props={{
+                    onClick: handleDeploy,
+                    disabled: deploy?.isLoading || deleteDeployment.isLoading,
+                  }}
                 >
-                  Send
+                  Build Assistant
                 </Button>
-              </SidePanelButtons>
-            </form>
-          </>
-        )}
-      </div>
-      <BaseToolTip
-        delayShow={TOOLTIP_DELAY}
-        id='renew'
-        content='Start a new dialog'
-      />
-    </div>
+              </div>
+            )}
+            {chatPanel && (
+              <>
+                <div className={s.chat} ref={chatRef}>
+                  {history?.map(
+                    (block: { author: string; text: string }, i: number) => (
+                      <div
+                        key={`${block?.author == 'bot'}${i}`}
+                        className={cx(
+                          'chat__container',
+                          block?.author == 'bot' && 'chat__container_bot'
+                        )}
+                      >
+                        <span
+                          className={cx(
+                            'chat__message',
+                            block?.author == 'bot' && 'chat__message_bot'
+                          )}
+                        >
+                          {block?.text}
+                        </span>
+                      </div>
+                    )
+                  )}
+                  {send?.isLoading && (
+                    <>
+                      <div
+                        className={cx('chat__container_bot', 'chat__container')}
+                      >
+                        <span
+                          className={cx('chat__message', 'chat__message_bot')}
+                        >
+                          <TextLoader />
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+                {hereIsDummy && (
+                  <div className={s.dummyContainer}>
+                    <div className={s.dummy}>
+                      <span className={s.line} />
+                      <div className={s.message}>
+                        <div className={s.circle}>
+                          <Attention />
+                        </div>
+                        <p>
+                          Something went wrong.
+                          <br />
+                          Restart the system.
+                        </p>
+                      </div>
+                      <span className={s.line} />
+                    </div>
+                  </div>
+                )}
+                <form
+                  onKeyDown={handleKeyDown}
+                  onSubmit={handleSubmit(handleSend)}
+                >
+                  <textarea
+                    className={s.dialogSidePanel__textarea}
+                    placeholder='Type...'
+                    {...register('message', {
+                      required: validationSchema.global.required,
+                    })}
+                  />
+
+                  <input type='submit' hidden />
+                  <SidePanelButtons>
+                    <Button
+                      theme='secondary'
+                      props={{
+                        disabled: renew.isLoading,
+                        onClick: handleRenewClick,
+                      }}
+                    >
+                      <Renew data-tooltip-id='renew' />
+                    </Button>
+                    <Button
+                      theme='primary'
+                      props={{ disabled: send?.isLoading, type: 'submit' }}
+                    >
+                      Send
+                    </Button>
+                  </SidePanelButtons>
+                </form>
+              </>
+            )}
+          </div>
+          <BaseToolTip
+            isOpen={hereIsDummy}
+            delayShow={TOOLTIP_DELAY}
+            id='renew'
+            content='Start a new dialog'
+          />
+        </div>
+      )}{' '}
+    </>
   )
 }

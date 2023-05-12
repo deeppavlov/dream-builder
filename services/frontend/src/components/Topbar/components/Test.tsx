@@ -27,7 +27,7 @@ export const Test = () => {
 
   return (
     <button
-      id='testDialog'
+      id='testDialog' // for quitConfirmation
       data-tooltip-id='chatWithBot'
       className={s.test}
       onClick={handleBtnClick}

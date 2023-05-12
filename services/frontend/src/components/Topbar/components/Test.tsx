@@ -1,4 +1,5 @@
 import { ReactComponent as PlayIcon } from '@assets/icons/chatting.svg'
+import classNames from 'classnames/bind'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
@@ -11,25 +12,26 @@ import s from './Test.module.scss'
 export const Test = () => {
   const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
+  const activePanel = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const cx = classNames.bind(s)
 
   const handleBtnClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, {
-      children: (
-        <AssistantDialogSidePanel
-          // debug={false}
-          // chatWith='bot'
-          key='chat_with_assistant'
-          dist={activeAssistant}
-        />
-      ),
-    })
+    activeAssistant &&
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
+        children: (
+          <AssistantDialogSidePanel
+            key='chat_with_assistant'
+            dist={activeAssistant}
+          />
+        ),
+      })
   }
 
   return (
     <button
-      id='testDialog'
+      id='testDialog' // for quitConfirmation
       data-tooltip-id='chatWithBot'
-      className={s.test}
+      className={cx('test', activePanel && 'active')}
       onClick={handleBtnClick}
     >
       <PlayIcon />

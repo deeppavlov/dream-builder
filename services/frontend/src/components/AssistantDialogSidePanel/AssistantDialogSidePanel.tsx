@@ -6,12 +6,12 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
+import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
 import { OPEN_AI_LM, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
-import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
@@ -22,18 +22,16 @@ import {
   BotInfoInterface,
   ChatForm,
   IDialogError,
-  ISkill,
   TDialogError,
 } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
-import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
+import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
@@ -42,39 +40,30 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
-  // console.log('dist = ', dist)
   // queries
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { getAllComponents } = useComponent()
-  const { data: bot } = getDist(dist?.name)
-  const componentsInside = getAllComponents(bot?.name!)
-
+  const { data: bot, isLoading: botIsLoading } = getDist(dist?.name)
   const { data: user } = useQuery(['user'], () => getUserId())
-  // console.log('user = ', user)
+  const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
+
+  const dummyAnswersCounter = history.filter(message => {
+    return message.active_skill === 'dummy_skill'
+  }).length
+  
+  const hereIsDummy = dummyAnswersCounter > 3
+
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
-      return (
-        componentsInside?.data?.skills &&
-        componentsInside?.data?.skills.filter((skill: ISkill) => {
-          return (
-            skill?.component_type === 'Generative' &&
-            checkLMIsOpenAi(skill?.lm_service?.name!)
-          )
-        }).length! > 0
-      )
+      return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
     }
-    // console.log('apiKey = ', apiKey)
-    // console.log('userId = ', userId)
     if (userId === undefined || userId === null) return
-    console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
       const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-      // console.log('openaiApiKey = ', openaiApiKey)
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -100,7 +89,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const [errorPanel, setErrorPanel] = useState<IDialogError | null>(null)
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const { send, renew, session, message, history } = useChat()
+
   const { dispatch } = useDisplay()
 
   const status = useQuery({
@@ -112,11 +101,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
       queryClient.invalidateQueries('privateDists')
-      if (
-        data?.state !== 'UP' &&
-        data?.state !== null &&
-        data?.error == null
-      ) {
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)
@@ -201,8 +186,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
-    checkIsChatSettings(user?.id)
-  }, [user?.id])
+    bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
+  }, [user?.id, bot])
 
   // обновляем диалоговую сессию
   useEffect(() => {
@@ -266,12 +251,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               Please wait till assistant launching
             </p>
             <p className={s.notification}>This may take a few minutes.</p>
-            <p className={s.notification}>
-              {status?.data?.state}
-              {'      '}
-              <TextLoader />
-              <br />
-            </p>
+            <p className={s.notification}>{status?.data?.state + '...'}</p>
+            <br />
           </div>
         )}
         {!errorPanel && deployPanel && (
@@ -327,6 +308,24 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 </>
               )}
             </div>
+            {hereIsDummy && (
+              <div className={s.dummyContainer}>
+                <div className={s.dummy}>
+                  <span className={s.line} />
+                  <div className={s.message}>
+                    <div className={s.circle}>
+                      <Attention />
+                    </div>
+                    <p>
+                      Something went wrong.
+                      <br />
+                      Restart the system.
+                    </p>
+                  </div>
+                  <span className={s.line} />
+                </div>
+              </div>
+            )}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 className={s.dialogSidePanel__textarea}
@@ -335,11 +334,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   required: validationSchema.global.required,
                 })}
               />
+
               <input type='submit' hidden />
               <SidePanelButtons>
                 <Button
                   theme='secondary'
                   props={{
+                    disabled: renew.isLoading,
                     onClick: handleRenewClick,
                   }}
                 >
@@ -357,6 +358,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         )}
       </div>
       <BaseToolTip
+        isOpen={hereIsDummy}
         delayShow={TOOLTIP_DELAY}
         id='renew'
         content='Start a new dialog'

@@ -96,16 +96,10 @@ const DumbSkillSP = ({
             />
           </div>
           <div className={s.author}>
-            {skill?.author.fullname == 'DeepPavlov' ? (
-              // <img src={Woman} alt='Author' />
-              <></>
-            ) : (
-              <img src={skill?.author?.picture} />
-            )}
+            <img src={skill?.author?.picture} />
             <span>
-              {' '}
-              {skill?.author.fullname == 'DeepPavlov'
-                ? 'Dr. Xandra Smith'
+              {skill?.author.fullname == 'Deepy Pavlova'
+                ? 'Dream Builder Team'
                 : skill?.author.fullname}
             </span>
           </div>
@@ -114,7 +108,11 @@ const DumbSkillSP = ({
               {skill?.author?.fullname && (
                 <>
                   <span className={cx('table-name')}>Original author:</span>
-                  <span className={s.value}>{skill?.author?.fullname}</span>
+                  <span className={s.value}>
+                    {skill?.author.fullname == 'Deepy Pavlova'
+                      ? 'Dream Builder Team'
+                      : skill?.author.fullname}
+                  </span>
                 </>
               )}
             </li>

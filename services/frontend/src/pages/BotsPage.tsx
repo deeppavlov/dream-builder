@@ -48,6 +48,7 @@ export const BotsPage = () => {
             <>
               {isTableView ? (
                 <Table
+                  assistants
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
                   <DistList
@@ -84,7 +85,7 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table fourth='Visibility'>
+            <Table assistants>
               <DistList view='table' dists={privateDists?.data} type='your' />
             </Table>
           ) : (

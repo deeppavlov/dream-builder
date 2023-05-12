@@ -1,7 +1,7 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { useEffect, useId } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Woman from '../../assets/icons/woman.png'
+import DB from '../../assets/icons/logo.png'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager from '../../hooks/useTabsManager'
@@ -32,11 +32,20 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { dispatch } = useDisplay()
-  const onModeration = bot?.publish_state === 'in_progress'
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === 'public_template'
-  const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const tooltipId = useId()
+
+  const onModeration = bot?.publish_state === 'in_progress'
+  const published = bot?.visibility === 'public_template'
+  const deployed = bot?.deployment?.state === 'UP'
+  const deploying =
+    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+
+  const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
+
+  const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
 
   const handleCloneBtnClick = () => {
     const assistantClone = { action: 'clone', bot: bot }
@@ -49,13 +58,15 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: false,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
+    published
+      ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
+      : navigate(`/${bot?.name}`, {
+          state: {
+            preview: false,
+            distName: bot?.name,
+            displayName: bot?.display_name,
+          },
+        })
     e.stopPropagation()
   }
 
@@ -101,24 +112,19 @@ const DumbAssistantSP = ({ bot, disabled, type }: Props) => {
             <span className={s.name}>{bot?.display_name}</span>
             {!isPublic && (
               <EditPencilButton
-                disabled={!isCustomizable}
+                disabled={!isCustomizable || deploying}
                 onClick={handleRenameBtnClick}
               />
             )}
           </div>
           <div className={s.topContainer}>
             <div className={s.author}>
-              {bot?.author?.fullname == 'Deepy Pavlova' ? (
-                <img src={Woman} alt='Author' />
+              {isDeepyPavlova ? (
+                <img src={DB} alt='Author' />
               ) : (
                 <img src={bot?.author?.picture} />
               )}
-              <span>
-                {bot?.author?.fullname! == 'Deepy Pavlova'
-                  ? 'Dr. Xandra Smith'
-                  : bot?.author?.fullname!}
-                {/* {bot?.author.fullname} */}
-              </span>
+              <span>{author}</span>
             </div>
             <span className={s.separator} />
             <div className={s.dateAndVersion}>

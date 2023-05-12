@@ -20,7 +20,7 @@ const AssistantSidePanel = ({ name, disabled, type }: Props) => {
     if (!dist) trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }, [dist])
 
-  return <DumbAssistantSP bot={dist} disabled={disabled} type={type} />
+  return <DumbAssistantSP bot={dist!} disabled={disabled} type={type} />
 }
 
 export default AssistantSidePanel

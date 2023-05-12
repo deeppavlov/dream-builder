@@ -4,8 +4,9 @@ import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import { useQueryClient } from 'react-query'
 import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
-import { DEEPY_ASSISTANT } from '../../constants/constants'
+import { DEEPY_ASSISTANT, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
@@ -17,6 +18,7 @@ import { consts } from '../../utils/consts'
 import { сopyToClipboard } from '../../utils/copyToClipboard'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import s from './CopilotSidePanel.module.scss'
@@ -33,7 +35,7 @@ export const CopilotSidePanel = () => {
   } = useChat()
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { dispatch } = useDisplay()
-
+  const queryClient = useQueryClient()
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
   const cx = classNames.bind(s)
@@ -48,7 +50,18 @@ export const CopilotSidePanel = () => {
     })
   }
   const handleRenewClick = () => {
-    renew.mutateAsync(DEEPY_ASSISTANT)
+    renew
+      .mutateAsync(DEEPY_ASSISTANT)
+      .then(() => {
+        queryClient.invalidateQueries('remoteHistory')
+      })
+      .then(() => {
+        send?.mutateAsync({
+          dialog_session_id: deepySession?.id!,
+          text: 'hi deepy!',
+          hidden: true,
+        })
+      })
   }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
@@ -61,7 +74,9 @@ export const CopilotSidePanel = () => {
     send.mutateAsync({ dialog_session_id: id, text: message })
     reset()
   }
-
+  useEffect(() => {
+    console.log('update session')
+  }, [session, deepySession])
   // hooks
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
@@ -92,6 +107,7 @@ export const CopilotSidePanel = () => {
       )}
     >
       <span
+        style={{ display: block?.hidden && 'none' }}
         ref={messageRef}
         onClick={handleMessageClick}
         className={cx(
@@ -179,6 +195,11 @@ export const CopilotSidePanel = () => {
                 onClick: handleRenewClick,
               }}
             >
+              <BaseToolTip
+                delayShow={TOOLTIP_DELAY}
+                id='renew'
+                content='Restart Dialog'
+              />
               <Renew data-tooltip-id='renew' />
             </Button>
             <Button

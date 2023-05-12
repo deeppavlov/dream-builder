@@ -30,7 +30,7 @@ export const BotsAllPage = () => {
           ) : (
             <>
               {isTableView ? (
-                <Table>
+                <Table assistants>
                   <DistList
                     view='table'
                     dists={publicDists?.data}

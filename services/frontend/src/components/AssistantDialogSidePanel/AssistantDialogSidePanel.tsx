@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
+import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
 import { OPEN_AI_LM, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -43,18 +44,22 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-
-  const { data: bot } = getDist(dist?.name)
-
+  const { data: bot, isLoading: botIsLoading } = getDist(dist?.name)
   const { data: user } = useQuery(['user'], () => getUserId())
-
+  const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
+
+  const dummyAnswersCounter = history.filter(message => {
+    return message.active_skill === 'dummy_skill'
+  }).length
+  
+  const hereIsDummy = dummyAnswersCounter > 3
+
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
       return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
     }
     if (userId === undefined || userId === null) return
-    console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
@@ -84,7 +89,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const [errorPanel, setErrorPanel] = useState<IDialogError | null>(null)
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const { send, renew, session, message, history } = useChat()
+
   const { dispatch } = useDisplay()
 
   const status = useQuery({
@@ -182,7 +187,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // проверяем настройки
   useEffect(() => {
     bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
-  }, [user?.id])
+  }, [user?.id, bot])
 
   // обновляем диалоговую сессию
   useEffect(() => {
@@ -303,6 +308,24 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 </>
               )}
             </div>
+            {hereIsDummy && (
+              <div className={s.dummyContainer}>
+                <div className={s.dummy}>
+                  <span className={s.line} />
+                  <div className={s.message}>
+                    <div className={s.circle}>
+                      <Attention />
+                    </div>
+                    <p>
+                      Something went wrong.
+                      <br />
+                      Restart the system.
+                    </p>
+                  </div>
+                  <span className={s.line} />
+                </div>
+              </div>
+            )}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 className={s.dialogSidePanel__textarea}
@@ -311,11 +334,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   required: validationSchema.global.required,
                 })}
               />
+
               <input type='submit' hidden />
               <SidePanelButtons>
                 <Button
                   theme='secondary'
                   props={{
+                    disabled: renew.isLoading,
                     onClick: handleRenewClick,
                   }}
                 >
@@ -333,6 +358,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         )}
       </div>
       <BaseToolTip
+        isOpen={hereIsDummy}
         delayShow={TOOLTIP_DELAY}
         id='renew'
         content='Start a new dialog'

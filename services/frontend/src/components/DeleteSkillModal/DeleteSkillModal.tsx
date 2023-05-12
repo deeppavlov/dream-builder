@@ -16,10 +16,12 @@ export const DeleteSkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
-  const { deleteComponent } = useComponent()
-  const { deleteDeployment } = useDeploy()
+
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
+  const { deleteComponent } = useComponent()
+  const { deleteDeployment } = useDeploy()
+
   const assistant = getDist(distName!)
 
   const handleEventUpdate = ({ detail }: any) => {
@@ -28,11 +30,10 @@ export const DeleteSkillModal = () => {
   }
   const { changeVisibility } = useAssistants()
   const deleteSkill = async () => {
-    // console.log('skill?.id = ', skill?.id)
     if (!skill?.id) return
 
     const assistantId = assistant?.data?.deployment?.id!
-    const deploymentState = assistant?.data?.deployment?.state === 'UP'
+    const isDeployed = assistant?.data?.deployment?.state === 'UP'
 
     await toast.promise(
       deleteComponent.mutateAsync(
@@ -44,9 +45,7 @@ export const DeleteSkillModal = () => {
         },
         {
           onSuccess: () => {
-            // console.log('deploymentState = ', deploymentState)
-            // console.log('assistantId = ', assistantId)
-            deploymentState &&
+            isDeployed &&
               deleteDeployment
                 .mutateAsync(assistantId)
                 .then(() => {
@@ -57,9 +56,6 @@ export const DeleteSkillModal = () => {
                   const name = assistant?.data?.name!
                   const visibility = 'private'
                   const publishState = assistant?.data?.publish_state !== null
-                  // console.log('name = ', name)
-                  // console.log('visibility = ', visibility)
-                  // console.log('publishState = ', publishState)
                   publishState &&
                     changeVisibility.mutateAsync({ name, visibility }) //FIX
                 })

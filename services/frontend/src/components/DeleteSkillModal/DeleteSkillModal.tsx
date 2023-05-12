@@ -26,9 +26,13 @@ export const DeleteSkillModal = () => {
     setSkill(detail?.skill)
     setIsOpen(prev => !prev)
   }
+  const { changeVisibility } = useAssistants()
   const deleteSkill = async () => {
+    // console.log('skill?.id = ', skill?.id)
     if (!skill?.id) return
+
     const assistantId = assistant?.data?.deployment?.id!
+    const deploymentState = assistant?.data?.deployment?.state === 'UP'
 
     await toast.promise(
       deleteComponent.mutateAsync(
@@ -40,10 +44,25 @@ export const DeleteSkillModal = () => {
         },
         {
           onSuccess: () => {
-            assistant?.data?.deployment?.state === 'UP' &&
-              deleteDeployment.mutateAsync(assistantId).then(() => {
-                queryClient.invalidateQueries('dist')
-              })
+            // console.log('deploymentState = ', deploymentState)
+            // console.log('assistantId = ', assistantId)
+            deploymentState &&
+              deleteDeployment
+                .mutateAsync(assistantId)
+                .then(() => {
+                  queryClient.invalidateQueries('dist')
+                })
+                .then(() => {
+                  // unpublish
+                  const name = assistant?.data?.name!
+                  const visibility = 'private'
+                  const publishState = assistant?.data?.publish_state !== null
+                  // console.log('name = ', name)
+                  // console.log('visibility = ', visibility)
+                  // console.log('publishState = ', publishState)
+                  publishState &&
+                    changeVisibility.mutateAsync({ name, visibility }) //FIX
+                })
           },
         }
       ),

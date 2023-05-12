@@ -163,7 +163,6 @@ export const useComponent = () => {
     type,
     data,
   }: ICachedComponent) => {
-    console.log('update', id)
     const isCachedComponent =
       queryClient.getQueryData([COMPONENT, distName, id]) !== undefined
 

@@ -49,7 +49,7 @@ export const SkillsListModal = () => {
     },
   }
   const cx = classNames.bind(s)
-
+  const { changeVisibility } = useAssistants()
   const handleClose = () => {
     setIsOpen(false)
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
@@ -67,7 +67,14 @@ export const SkillsListModal = () => {
         {
           onSuccess: () => {
             assistant?.data?.deployment?.state === 'UP' &&
-              deleteDeployment.mutateAsync(assistantId)
+              deleteDeployment.mutateAsync(assistantId).then(() => {
+                // unpublish
+                const name = assistant?.data?.name!
+                const visibility = 'private'
+
+                assistant?.data?.publish_state !== null &&
+                  changeVisibility.mutateAsync({ name, visibility }) //FIX
+              })
           },
         }
       ),

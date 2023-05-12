@@ -13,6 +13,7 @@ import { renameAssistantDist } from '../services/renameAssistantDist'
 import {
   AssistantFormValues,
   BotInfoInterface,
+  TDeploymentState,
   TDistVisibility,
 } from '../types/types'
 import { useDeploy } from './useDeploy'
@@ -21,6 +22,7 @@ interface IChangeVisibility {
   name: string
   visibility: TDistVisibility
   inEditor?: boolean
+  deploymentState?: TDeploymentState
 }
 
 interface IClone {
@@ -89,8 +91,11 @@ export const useAssistants = () => {
   })
 
   const changeVisibility = useMutation({
-    onMutate: ({ name, visibility }) => {
-      visibility !== 'private' && deploy.mutateAsync(name)
+    onMutate: ({ name, visibility, deploymentState }) => {
+      // console.log('deploymentState = ', deploymentState)
+      if (visibility !== 'private' && deploymentState !== 'UP') {
+        deploy.mutateAsync(name)
+      }
     },
     mutationFn: ({ name, visibility, inEditor }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),

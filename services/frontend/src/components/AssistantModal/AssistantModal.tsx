@@ -32,6 +32,7 @@ export const AssistantModal = () => {
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
   const isEditing = action === 'edit'
   const isCloning = action === 'clone'
+  const isCreateFromScratch = action === 'create'
 
   const { handleSubmit, control, reset, getValues } =
     useForm<AssistantFormValues>({ mode: 'all' })
@@ -96,13 +97,15 @@ export const AssistantModal = () => {
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div className={s.header}>
           <h4>
-            {isEditing ? 'Edit assistant:' : 'Create new assistant from:'}
+            {isCloning && 'Create new assistant from:'}
+            {isEditing && 'Edit assistant:'}
+            {isCreateFromScratch && 'Create new assistant from scratch'}
           </h4>
-          <mark>
-            {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
-            {/* fix */}
-          </mark>
-
+          {!isCreateFromScratch && (
+            <mark>
+              {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
+            </mark>
+          )}
           <div className={s.distribution}>
             {`${
               isEditing ? 'Change' : 'Enter'
@@ -137,7 +140,7 @@ export const AssistantModal = () => {
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
-              rows: 3,
+              rows: 6,
             }}
           />
         </div>

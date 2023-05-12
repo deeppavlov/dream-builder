@@ -6,7 +6,7 @@ export const CrumbForEditor = () => {
   const { isPreview } = usePreview()
   return (
     <Link to={isPreview ? RoutesList.botsAll : RoutesList.yourBots}>
-      {isPreview ? 'Assistant Templates' : 'Your Assistants'}
+      {isPreview ? 'Public Templates' : 'Your Assistants'}
     </Link>
   )
 }

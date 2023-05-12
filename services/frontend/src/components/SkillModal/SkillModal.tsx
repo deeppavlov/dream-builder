@@ -152,6 +152,7 @@ export const SkillModal = () => {
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
+              rows: 6,
             }}
           />
           <div className={s.btns}>

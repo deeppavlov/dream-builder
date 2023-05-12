@@ -30,7 +30,6 @@ export const Container = ({
         gridForCards && 'gridForCards',
         layoutForTabs && 'layoutForTabs',
         overflowForAddButton && 'overflowForAddButton',
-        scroll && 'scroll',
         gridForRequests && 'gridForRequests'
       )}
     >

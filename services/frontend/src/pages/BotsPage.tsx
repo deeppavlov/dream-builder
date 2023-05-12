@@ -88,7 +88,7 @@ export const BotsPage = () => {
               <DistList view='table' dists={privateDists?.data} type='your' />
             </Table>
           ) : (
-            <Container overflowForAddButton>
+            <Container>
               <Slider privateAssistants>
                 {auth?.user && privateDists?.isLoading && (
                   <CardsLoader cardsCount={6} />

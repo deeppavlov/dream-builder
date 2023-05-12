@@ -32,7 +32,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         element: <BotsAllPage />,
         handle: {
           crumb: () => [
-            <Link to={RoutesList.botsAll}>Assistant Templates</Link>,
+            <Link to={RoutesList.botsAll}>Public Templates</Link>,
           ],
         },
       },

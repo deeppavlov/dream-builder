@@ -52,7 +52,7 @@ const SkillsPage = () => {
           </Table>
         )}
         {!isTableView && (
-          <Container gridForCards scroll heightAuto>
+          <Container gridForCards heightAuto>
             {!isPreview && <AddButton disabled={isPreview} forGrid forSkills />}
             {components?.data?.skills === undefined && (
               <CardsLoader cardsCount={3} type='skill' />

@@ -65,7 +65,7 @@ export const DraftPage = () => {
       <Sidebar />
       <Main sidebar>
         <Wrapper fitScreen title='Publication Requests'>
-          <Container gridForRequests scroll>
+          <Container gridForRequests>
             {sortedRequest?.map((r, i: number) => {
               return (
                 <Request

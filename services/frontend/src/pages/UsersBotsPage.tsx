@@ -56,7 +56,7 @@ export const UsersBotsPage = () => {
                   />
                 </Table>
               ) : (
-                <Container gridForCards heightAuto scroll>
+                <Container gridForCards heightAuto>
                   <AddButton forGrid />
                   {privateDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />

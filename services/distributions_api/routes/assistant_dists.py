@@ -2,6 +2,7 @@ from typing import List
 from urllib.parse import urlparse
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
+from deeppavlov_dreamtools.distconfigs.components import DreamComponent
 from deeppavlov_dreamtools.utils import generate_unique_name
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
@@ -393,11 +394,13 @@ async def add_virtual_assistant_component(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        # TODO add dream_dist.add_component(...)
-
         virtual_assistant_component = crud.create_virtual_assistant_component(
             db, virtual_assistant.id, payload.component_id
         )
+        dream_dist.add_generative_prompted_skill(
+            DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
+        )
+        dream_dist.save(overwrite=True, generate_configs=True)
 
     return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
@@ -422,7 +425,9 @@ async def delete_virtual_assistant_component(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        # TODO add dream_dist.remove_component(...)
+        virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
+        dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
+        dream_dist.save(overwrite=True, generate_configs=True)
 
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 

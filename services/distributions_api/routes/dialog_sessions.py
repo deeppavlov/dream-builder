@@ -1,3 +1,5 @@
+from typing import Optional
+
 import aiohttp
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -7,7 +9,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token
+from services.distributions_api.security.auth import verify_token, verify_token_or_none
 
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
 
@@ -78,13 +80,18 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 @dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
     payload: schemas.DialogSessionCreate,
-    user: schemas.UserRead = Depends(verify_token),
+    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
     db: Session = Depends(get_db),
 ):
     """ """
+    if user:
+        user_id = user.id
+    else:
+        user_id = None
+
     with db.begin():
         try:
-            dialog_session = crud.create_dialog_session_by_name(db, user.id, payload.virtual_assistant_name)
+            dialog_session = crud.create_dialog_session_by_name(db, user_id, payload.virtual_assistant_name)
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 
@@ -94,7 +101,7 @@ async def create_dialog_session(
 @dialog_sessions_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
 async def get_dialog_session(
     dialog_session_id: int,
-    user: schemas.UserRead = Depends(verify_token),
+    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
     db: Session = Depends(get_db),
 ):
     """ """
@@ -110,7 +117,7 @@ async def get_dialog_session(
 async def send_dialog_session_message(
     dialog_session_id: int,
     payload: schemas.DialogChatMessageCreate,
-    user: schemas.UserRead = Depends(verify_token),
+    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
     db: Session = Depends(get_db),
 ):
     """
@@ -148,7 +155,7 @@ async def send_dialog_session_message(
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
 async def get_dialog_session_history(
     dialog_session_id: int,
-    user: schemas.UserRead = Depends(verify_token),
+    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
     db: Session = Depends(get_db),
 ):
     """

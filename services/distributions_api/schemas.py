@@ -258,6 +258,6 @@ class PublishRequestCreate(BaseOrmModel):
 
 class DialogSessionRead(BaseOrmModel):
     id: int
-    user_id: int
+    user_id: Optional[int]
     deployment: DeploymentRead
     is_active: bool

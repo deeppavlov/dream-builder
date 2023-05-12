@@ -27,12 +27,12 @@
   flex-direction: column;
   gap: 24px;
   overflow: auto;
-  /* Hide scrollbar for IE, Edge and Firefox */
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  // /* Hide scrollbar for IE, Edge and Firefox */
+  // &::-webkit-scrollbar {
+  //   display: none;
+  // }
+  // -ms-overflow-style: none; /* IE and Edge */
+  // scrollbar-width: none; /* Firefox */
 }
 
 .msg {

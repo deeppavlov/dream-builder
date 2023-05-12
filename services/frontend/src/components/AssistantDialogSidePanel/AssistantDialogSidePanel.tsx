@@ -33,7 +33,6 @@ import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
-
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
@@ -42,7 +41,6 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
-  // console.log('dist = ', dist)
   // queries
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
@@ -52,9 +50,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const componentsInside = getAllComponents(bot?.name!)
 
   const { data: user } = useQuery(['user'], () => getUserId())
-  // console.log('user = ', user)
+
   const [apiKey, setApiKey] = useState<string | null>(null)
   const checkIsChatSettings = (userId: number) => {
+    console.log(bot?.required_api_keys)
     const isOpenAIModelInside = () => {
       return (
         componentsInside?.data?.skills &&
@@ -66,15 +65,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         }).length! > 0
       )
     }
-    // console.log('apiKey = ', apiKey)
-    // console.log('userId = ', userId)
     if (userId === undefined || userId === null) return
     console.log('Start checking dialog settings...')
     setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
       const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-      // console.log('openaiApiKey = ', openaiApiKey)
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -112,11 +108,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
       queryClient.invalidateQueries('privateDists')
-      if (
-        data?.state !== 'UP' &&
-        data?.state !== null &&
-        data?.error == null
-      ) {
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)
@@ -266,12 +258,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               Please wait till assistant launching
             </p>
             <p className={s.notification}>This may take a few minutes.</p>
-            <p className={s.notification}>
-              {status?.data?.state}
-              {'      '}
-              <TextLoader />
-              <br />
-            </p>
+            <p className={s.notification}>{status?.data?.state + '...'}</p>
+            <br />
           </div>
         )}
         {!errorPanel && deployPanel && (

@@ -44,8 +44,8 @@
     height: 88px;
     max-height: 88px;
     color: $text2;
-    -webkit-line-clamp: 4;
     @include hide_text;
+    -webkit-line-clamp: 4; 
     @include b3;
   }
   .dateAndVersion {

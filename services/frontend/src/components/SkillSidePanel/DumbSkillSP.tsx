@@ -97,7 +97,7 @@ const DumbSkillSP = ({
           </div>
           <div className={s.author}>
             {skill?.author.fullname == 'DeepPavlov' ? (
-              // <img src={Woman} alt='Author' />
+              // <img src={DB} alt='Author' />
               <></>
             ) : (
               <img src={skill?.author?.picture} />
@@ -105,7 +105,7 @@ const DumbSkillSP = ({
             <span>
               {' '}
               {skill?.author.fullname == 'DeepPavlov'
-                ? 'Dr. Xandra Smith'
+                ? 'Dream Builder Team'
                 : skill?.author.fullname}
             </span>
           </div>

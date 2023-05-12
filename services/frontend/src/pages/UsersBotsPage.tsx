@@ -41,6 +41,7 @@ export const UsersBotsPage = () => {
             <>
               {isTableView ? (
                 <Table
+                  assistants
                   addButton={
                     <AddButton
                       forTable

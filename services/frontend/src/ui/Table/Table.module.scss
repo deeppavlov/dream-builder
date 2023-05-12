@@ -16,12 +16,16 @@
           &:nth-child(2) {
             padding-left: 0;
           }
-          padding: 24px 24px 8px;
+          &:first-child {
+            padding-left: 24px;
+          }
+          padding: 24px 12px 8px;
           background: #fff;
           color: #8d96b5;
           text-align: start;
           border: none;
           @include b3;
+         
         }
         .checkboxArea {
           height: 60px;

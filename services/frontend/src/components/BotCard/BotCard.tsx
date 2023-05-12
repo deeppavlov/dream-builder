@@ -1,6 +1,6 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC,useId } from 'react'
+import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisplay } from '../../context/DisplayContext'
 import { BotCardProps } from '../../types/types'
@@ -43,7 +43,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     : published
     ? 'Public Template'
     : bot?.visibility
-  
+
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -62,13 +62,14 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {
-      trigger('AssistantModal', assistantClone)
-      return
+      e.stopPropagation()
+      return trigger('AssistantModal', assistantClone)
     }
 
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
     })
+
     e.stopPropagation()
   }
 

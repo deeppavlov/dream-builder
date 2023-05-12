@@ -188,17 +188,18 @@ class UserMethods:
                                                      }
                                                      )
         assert get_dist_components_response.status_code == 201, get_dist_components_response.json()
+        return get_dist_components_response.json()
         # assert models.VirtualAssistantComponentShort.parse_obj(get_dist_components_response.json()), \
         #    "Error while test_get_public_dist_components_by_name"
 
     def delete_va_component(self, name, component_id):
-        get_dist_components_response = requests.delete(url=assistant_dists_endpoint + name + "/components/" +
+        delete_va_component_response = requests.delete(url=assistant_dists_endpoint + name + "/components/" +
                                                            str(component_id),
                                                        headers={
                                                            'accept': '*/*',
                                                        }
                                                        )
-        assert get_dist_components_response.status_code == 204, get_dist_components_response.json()
+        assert delete_va_component_response.status_code == 204, delete_va_component_response.json()
 
     def patch_va_component(self, name, component_id):
         get_dist_components_response = requests.patch(url=assistant_dists_endpoint + name + "/components/" +
@@ -480,7 +481,7 @@ class UserMethods:
         )
         assert get_all_api_tokens_response.status_code == 200, get_all_api_tokens_response.json()
         for token in get_all_api_tokens_response.json():
-            assert models.ApiKeys.parse_obj(token), "Validation error while test_get_all_api_tokens"
+            assert models.ApiKeyRead.parse_obj(token), "Validation error while test_get_all_api_tokens"
 
     # dialog_sessions
 
@@ -572,6 +573,20 @@ class UserMethods:
 
 
 class DeploymentsMethods:
+    def get_deployments(self):
+        deployment_response = requests.get(
+            url=deployments_endpoint,
+            headers={
+                'accept': 'application/json',
+                'token': auth_token},
+            params={
+                'state': 'DEPLOYED',
+            }
+        )
+        assert deployment_response.status_code == 200, deployment_response.json()
+        for deployment in deployment_response.json():
+            assert models.DeploymentRead.parse_obj(deployment), "Validation error while get_deployments"
+
     def create_deployment(self, va_name):
         deployment_response = requests.post(
             url=deployments_endpoint,
@@ -597,6 +612,13 @@ class DeploymentsMethods:
                 'accept': 'application/json'})
         assert deployment_response.status_code == 200, deployment_response.json()
 
+    def get_stack_ports(self):
+        deployment_response = requests.get(
+            url=deployments_endpoint + "stack_ports",
+            headers={
+                'accept': 'application/json'})
+        assert deployment_response.status_code == 200, deployment_response.json()
+
     def get_deployment(self, deployment_id):
         deployment_response = requests.get(
             url=deployments_endpoint + str(deployment_id),
@@ -615,13 +637,22 @@ class DeploymentsMethods:
             })
         assert deployment_response.status_code == 204, deployment_response.json()
 
+    def patch_deployment(self, deployment_id):
+        deployment_response = requests.patch(
+            url=deployments_endpoint + str(deployment_id),
+            headers={
+                'accept': 'application/json',
+                'token': auth_token,
+            })
+        assert deployment_response.status_code == 200, deployment_response.json()
+
     def delete_stack(self, stack_id):
         deployment_response = requests.delete(
             url=deployments_endpoint + "stacks/" + str(stack_id),
             headers={
                 'accept': 'application/json',
             })
-        assert deployment_response.status_code == 204, deployment_response.json()
+        assert deployment_response.status_code == 200, deployment_response.json()
 
 
 class AdminMethods:

@@ -109,6 +109,7 @@ class TestDistributions:
 
         user.delete_va_by_name(va_name)
 
+
     #VA COMPONENTS
 
 
@@ -153,18 +154,20 @@ class TestDistributions:
         name = public_va_names[0]
         user = UserMethods()
         va_name = user.clone_va(name)["name"]
-        component_id = 2
-        user.add_va_component(va_name, component_id)
-        user.delete_va_component(va_name, component_id)
+        component_id = user.create_component()["id"]
+        va_component_id = user.add_va_component(name, component_id)["id"]
+        user.delete_va_component(name, va_component_id)
+        user.delete_component(component_id)
 
     @qase.title(f"{counter()}. test_delete_created_from_scratch_va_component")
     def test_delete_created_from_scratch_va_component(self):
         display_name = va_data["name"]
         user = UserMethods()
         name = user.create_virtual_assistant(display_name)["name"]
-        component_id = 2
-        user.add_va_component(name, component_id)
-        user.delete_va_component(name, component_id)
+        component_id = user.create_component()["id"]
+        va_component_id = user.add_va_component(name, component_id)["id"]
+        user.delete_va_component(name, va_component_id)
+        user.delete_component(component_id)
 
     @qase.title(f"{counter()}. test_patch_cloned_va_component")
     def test_patch_cloned_va_component(self):
@@ -617,6 +620,11 @@ class TestDistributions:
         deploy = DeploymentsMethods()
         deploy.get_stacks()
 
+    @qase.title(f"{counter()}. test_get_stack_ports")
+    def test_get_stack_ports(self):
+        deploy = DeploymentsMethods()
+        deploy.get_stack_ports()
+
     @qase.title(f"{counter()}. test_create_get_delete_deployment")
     def test_create_get_delete_deployment(self):
         name = va_data["name"]
@@ -633,6 +641,22 @@ class TestDistributions:
         deploy.get_deployment(deployment_id)
         deploy.delete_deployment(deployment_id)
 
+    @qase.title(f"{counter()}. test_patch_deployment")
+    def test_patch_deployment(self):
+        name = va_data["name"]
+        user = UserMethods()
+
+        va = user.create_virtual_assistant(name)
+        va_name = va["name"]
+
+        deploy = DeploymentsMethods()
+        deployment = deploy.create_deployment(va_name)
+        time.sleep(60)
+        deployment_id = deployment["id"]
+        deploy.patch_deployment(deployment_id)
+        time.sleep(60)
+        deploy.delete_deployment(deployment_id)
+
     #@qase.title(f"{counter()}. test_delete_deployment")
     #def test_delete_deployment(self):
     #    name = va_data["name"]
@@ -647,12 +671,14 @@ class TestDistributions:
 #
     #    deploy.delete_deployment(deployment_id)
 
+
+    #@pytest.mark.atom
+    #@pytest.mark.parametrize("stack_id", range(578, 699))
     #@qase.title(f"{counter()}. test_delete_stack")
-    #def test_delete_stack(self):
-    #    stack_id = ''
+    #def test_delete_stack(self, stack_id):
     #    deploy = DeploymentsMethods()
     #    deploy.delete_stack(stack_id)
-
+#
 
     # ADMIN
 

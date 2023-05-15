@@ -19,8 +19,8 @@ class UserCreate(UserBase):
     family_name: Optional[str]
 
 
-class User(UserCreate):
-    pass
+class UserRead(UserCreate):
+    id: int
 
 
 class UserValidScheme(UserBase):

@@ -52,6 +52,21 @@ def get_users_by_role(db: Session, role_id: int) -> [models.GoogleUser]:
     return db.scalars(select(models.GoogleUser).filter_by(role_id=role_id)).all()
 
 
+def update_user(db: Session, id: int, **kwargs) -> models.GoogleUser:
+    kwargs = {k: v for k, v in kwargs.items() if k in models.GoogleUser.__table__.columns.keys()}
+
+    user = db.scalar(
+        update(models.GoogleUser)
+        .filter_by(id=id)
+        .values(**kwargs)
+        .returning(models.GoogleUser)
+    )
+    if not user:
+        raise ValueError(f"GoogleUser with id={id} does not exist")
+
+    return user
+
+
 # USER VALID
 def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:
     db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)

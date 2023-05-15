@@ -2,6 +2,7 @@ from typing import Optional
 
 import aiohttp
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.logger import logger
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -29,9 +30,13 @@ async def send_chat_request_to_deployed_agent(
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
 
+    # logger.warning(f"Sending {agent_url} data:\n{data}")
+
     async with aiohttp.ClientSession() as session:
         async with session.post(agent_url, json=data) as response:
             response_data = await response.json()
+
+    # logger.warning(f"{agent_url} response:\n{response_data}")
 
     if response.status != 200:
         raise ValueError(f"Agent {agent_url} did not respond correctly. Response: {response}")

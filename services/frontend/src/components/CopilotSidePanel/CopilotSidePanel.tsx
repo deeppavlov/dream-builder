@@ -62,11 +62,7 @@ export const CopilotSidePanel = () => {
     send.mutateAsync({ dialog_session_id: id, text: message })
     reset()
   }
-  useEffect(() => {
-    console.log('session = ', session)
-    console.log('deepySession = ', deepySession)
-    console.log('update session')
-  }, [session, deepySession])
+
   // hooks
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
@@ -131,8 +127,7 @@ export const CopilotSidePanel = () => {
               />
             </div>
           ) : (
-              remoteHistory?.data?.map((block: ChatHistory, i: number) => {
-              console.log('block = ', block)
+            remoteHistory?.data?.map((block: ChatHistory, i: number) => {
               return (
                 <div
                   key={`${block?.author == 'bot'}${i}`}

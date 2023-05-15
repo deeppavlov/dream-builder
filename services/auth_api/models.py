@@ -13,9 +13,9 @@ class UserCreate(UserBase):
 
     email: EmailStr
     sub: str
-    picture: str
-    name: str
-    given_name: str
+    picture: Optional[str]
+    name: Optional[str]
+    given_name: Optional[str]
     family_name: Optional[str]
 
 

@@ -231,7 +231,7 @@ export type ChatHistory = {
   active_skill: string
   text: string
   author: 'bot' | 'me'
-  hidden?: boolean
+  hidden?: boolean 
 }
 
 export type Message = { message: string }
@@ -287,7 +287,7 @@ export type LanguageModel =
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
 export type AssistantFormValues = { display_name: string; description: string }
-
+export type Visibility = 'public_template' | 'private' | 'unlisted' | null
 export interface IApiService {
   base_url: string
   description: string

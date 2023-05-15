@@ -21,12 +21,15 @@ export const useChat = () => {
   const { options } = useDisplay()
   const queryClient = useQueryClient()
   const renew = useMutation({
-    onMutate: (data: string) => {
+    onMutate: data => {
       setMessage('')
       setHistory([])
-      data === DEEPY_ASSISTANT && store.remove('deepySession')
-      data === DEEPY_ASSISTANT && setIsDeepy(true)
-      data === DEEPY_ASSISTANT && setDeepySession(null)
+      if (data === DEEPY_ASSISTANT) {
+        // wtf
+        store.remove('deepySession')
+        setDeepySession(null)
+        setIsDeepy(true)
+      }
     },
     mutationFn: (data: string) => {
       return renewDialog(data)
@@ -67,7 +70,7 @@ export const useChat = () => {
       ])
     },
     onError: () => {
-      renew.mutate(DEEPY_ASSISTANT) //FIX!!!
+      isDeepy && renew.mutate(DEEPY_ASSISTANT) //FIX!!!
       setError(true)
     },
   })

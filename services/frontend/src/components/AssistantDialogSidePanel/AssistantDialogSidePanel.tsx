@@ -295,7 +295,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                     {block?.text}
                     {block?.author === 'bot' && (
                       <span className={s.skill}>
-                        Response: {block?.active_skill}
+                        Skill: {block?.active_skill}
                       </span>
                     )}
                   </span>

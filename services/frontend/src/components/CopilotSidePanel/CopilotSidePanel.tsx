@@ -64,26 +64,28 @@ export const CopilotSidePanel = () => {
   }
 
   // hooks
+  
+  
+  const dispatchTrigger = (isOpen: boolean) =>
+  dispatch({
+    type: 'set',
+    option: {
+      id: consts.COPILOT_SP_IS_ACTIVE,
+      value: isOpen,
+    },
+  })
+  
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
   }, [])
-
-  useChatScroll(chatRef, [remoteHistory?.data, message, history])
-
-  const dispatchTrigger = (isOpen: boolean) =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.COPILOT_SP_IS_ACTIVE,
-        value: isOpen,
-      },
-    })
-
+  
   useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-
+  
+  useChatScroll(chatRef, [remoteHistory?.data, message, history])
+  
   const historyList = history?.map((block: ChatHistory, i: number) => (
     <div
       key={`${block?.author == 'bot'}${i}`}

@@ -4,14 +4,17 @@ import toast from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface, TDistVisibility } from '../../types/types'
+import {
+BotInfoInterface,
+TDistVisibility,
+Visibility
+} from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
-type Visibility = 'public_template' | 'private' | 'unlisted' | null
 interface FormValues {
   hide: boolean
   visibility: Visibility
@@ -44,12 +47,19 @@ export const PublishAssistantModal = () => {
     bot?.publish_state == 'in_progress'
       ? toast
           .promise(
-            changeVisibility.mutateAsync({
-              name,
-              visibility,
-              inEditor: isEditor,
-              deploymentState,
-            }),
+            changeVisibility.mutateAsync(
+              {
+                name,
+                visibility,
+                inEditor: isEditor,
+                deploymentState,
+              },
+              {
+                onSuccess: () => {
+                 console.log('v =  ', currentVisibilityStatus)
+                },
+              }
+            ),
             {
               loading: 'Loading...',
               success:
@@ -96,10 +106,6 @@ export const PublishAssistantModal = () => {
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
-          {/* <p className={s.annotation}>
-            Sharing Assistants with OpenAI models is temporarily disabled. In
-            the future, we hope to remove this limitation.
-          </p> */}
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>

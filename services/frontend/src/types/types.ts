@@ -212,6 +212,7 @@ export interface LM_Service {
   max_tokens: number
   description: string
   project_url: string
+  api_key: string | null
 }
 
 export interface ISkill extends IStackElement {
@@ -226,7 +227,12 @@ export interface SessionConfig {
   virtual_assistant_id: number
 }
 
-export type ChatHistory = { text: string; author: 'bot' | 'me' }
+export type ChatHistory = {
+  active_skill: string
+  text: string
+  author: 'bot' | 'me'
+  hidden?: boolean
+}
 
 export type Message = { message: string }
 export type ChatPanelType = 'bot' | 'skill'
@@ -296,7 +302,7 @@ export interface IUserApiKey {
 }
 
 export interface IPostChat {
-  hidden?:boolean
+  hidden?: boolean
   dialog_session_id: number
   text: string
   prompt?: string

@@ -44,7 +44,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { data: bot, isLoading: botIsLoading } = getDist(dist?.name)
+  const { data: bot } = getDist(dist?.name)
   const { data: user } = useQuery(['user'], () => getUserId())
   const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
@@ -52,7 +52,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const dummyAnswersCounter = history.filter(message => {
     return message.active_skill === 'dummy_skill'
   }).length
-  
+
   const hereIsDummy = dummyAnswersCounter > 3
 
   const checkIsChatSettings = (userId: number) => {

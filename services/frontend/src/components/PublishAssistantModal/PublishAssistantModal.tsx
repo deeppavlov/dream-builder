@@ -39,7 +39,7 @@ export const PublishAssistantModal = () => {
     const visibility = data?.visibility!
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
-    
+
     visibility !== currentVisibilityStatus ||
     bot?.publish_state == 'in_progress'
       ? toast
@@ -96,10 +96,10 @@ export const PublishAssistantModal = () => {
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
-          <p className={s.annotation}>
+          {/* <p className={s.annotation}>
             Sharing Assistants with OpenAI models is temporarily disabled. In
             the future, we hope to remove this limitation.
-          </p>
+          </p> */}
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>

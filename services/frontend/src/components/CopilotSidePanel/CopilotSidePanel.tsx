@@ -128,27 +128,38 @@ export const CopilotSidePanel = () => {
                 visible={true}
               />
             </div>
+          ) : renew.isLoading ? (
+            <RotatingLines
+              strokeColor='grey'
+              strokeWidth='5'
+              animationDuration='0.75'
+              width='64'
+              visible={true}
+            />
           ) : (
-            remoteHistory?.data?.map((block: ChatHistory, i: number) => (
-              <div
-                key={`${block?.author == 'bot'}${i}`}
-                className={cx(
-                  'chat__container',
-                  block?.author == 'bot' && 'chat__container_bot'
-                )}
-              >
-                <span
-                  ref={messageRef}
-                  onClick={handleMessageClick}
+            remoteHistory?.data?.map((block: ChatHistory, i: number) => {
+              console.log('remapping')
+              return (
+                <div
+                  key={`${block?.author == 'bot'}${i}`}
                   className={cx(
-                    'chat__message',
-                    block?.author == 'bot' && 'chat__message_bot'
+                    'chat__container',
+                    block?.author == 'bot' && 'chat__container_bot'
                   )}
                 >
-                  {block?.text}
-                </span>
-              </div>
-            ))
+                  <span
+                    ref={messageRef}
+                    onClick={handleMessageClick}
+                    className={cx(
+                      'chat__message',
+                      block?.author == 'bot' && 'chat__message_bot'
+                    )}
+                  >
+                    {block?.text}
+                  </span>
+                </div>
+              )
+            })
           )}
           {historyList}
           {send?.isLoading && !remoteHistory.isLoading && (

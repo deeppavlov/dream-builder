@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import store from 'store2'
 import { DEEPY_ASSISTANT } from '../constants/constants'
 import { useDisplay } from '../context/DisplayContext'
 import { getHistory } from '../services/getHistory'
 import { renewDialog } from '../services/renewDialog'
 import { sendMessage } from '../services/sendMessage'
-import { ChatHistory,IPostChat,SessionConfig } from '../types/types'
+import { ChatHistory, IPostChat, SessionConfig } from '../types/types'
 import { consts } from '../utils/consts'
 
 export const useChat = () => {
@@ -34,8 +34,10 @@ export const useChat = () => {
     onSuccess: (data, variables) => {
       variables == DEEPY_ASSISTANT ? setDeepySession(data) : setSession(data)
       variables == DEEPY_ASSISTANT && store('deepySession', data)
+      console.log(deepySession?.id)
       variables == DEEPY_ASSISTANT &&
         queryClient.invalidateQueries('history').then(() => {
+          console.log('queries invalidate')
           send.mutateAsync({
             dialog_session_id: deepySession?.id,
             text: 'hi deepy!',

@@ -53,7 +53,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     return message.active_skill === 'dummy_skill'
   }).length
 
-  const hereIsDummy = dummyAnswersCounter > 3
+  const hereIsDummy = dummyAnswersCounter > 2
 
   const checkIsChatSettings = (userId: number) => {
     const isOpenAIModelInside = () => {
@@ -278,26 +278,29 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         {chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
-              {history?.map(
-                (block: { author: string; text: string }, i: number) => (
-                  <div
-                    key={`${block?.author == 'bot'}${i}`}
+              {history?.map((block, i: number) => (
+                <div
+                  key={`${block?.author == 'bot'}${i}`}
+                  className={cx(
+                    'chat__container',
+                    block?.author == 'bot' && 'chat__container_bot'
+                  )}
+                >
+                  <span
                     className={cx(
-                      'chat__container',
-                      block?.author == 'bot' && 'chat__container_bot'
+                      'chat__message',
+                      block?.author == 'bot' && 'chat__message_bot'
                     )}
                   >
-                    <span
-                      className={cx(
-                        'chat__message',
-                        block?.author == 'bot' && 'chat__message_bot'
-                      )}
-                    >
-                      {block?.text}
-                    </span>
-                  </div>
-                )
-              )}
+                    {block?.text}
+                    {block?.author === 'bot' && (
+                      <span className={s.skill}>
+                        Response: {block?.active_skill}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              ))}
               {send?.isLoading && (
                 <>
                   <div className={cx('chat__container_bot', 'chat__container')}>

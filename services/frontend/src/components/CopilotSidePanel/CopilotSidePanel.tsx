@@ -63,6 +63,8 @@ export const CopilotSidePanel = () => {
     reset()
   }
   useEffect(() => {
+    console.log('session = ', session)
+    console.log('deepySession = ', deepySession)
     console.log('update session')
   }, [session, deepySession])
   // hooks
@@ -128,17 +130,9 @@ export const CopilotSidePanel = () => {
                 visible={true}
               />
             </div>
-          ) : renew.isLoading ? (
-            <RotatingLines
-              strokeColor='grey'
-              strokeWidth='5'
-              animationDuration='0.75'
-              width='64'
-              visible={true}
-            />
           ) : (
-            remoteHistory?.data?.map((block: ChatHistory, i: number) => {
-              console.log('remapping')
+              remoteHistory?.data?.map((block: ChatHistory, i: number) => {
+              console.log('block = ', block)
               return (
                 <div
                   key={`${block?.author == 'bot'}${i}`}

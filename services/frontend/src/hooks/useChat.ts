@@ -32,18 +32,27 @@ export const useChat = () => {
       return renewDialog(data)
     },
     onSuccess: (data, variables) => {
-      variables == DEEPY_ASSISTANT ? setDeepySession(data) : setSession(data)
-      variables == DEEPY_ASSISTANT && store('deepySession', data)
-      console.log(deepySession?.id)
-      variables == DEEPY_ASSISTANT &&
-        queryClient.invalidateQueries('history').then(() => {
-          console.log('queries invalidate')
-          send.mutateAsync({
-            dialog_session_id: deepySession?.id,
-            text: 'hi deepy!',
-            hidden: true,
+      async function handleDeepyAssistant() {
+        setDeepySession(data)
+        store('deepySession', data)
+
+        console.log(deepySession?.id)
+        console.log('queries invalidate')
+      }
+
+      if (variables === DEEPY_ASSISTANT) {
+        handleDeepyAssistant().then(() => {
+          queryClient.invalidateQueries('history').then(() => {
+            send.mutateAsync({
+              dialog_session_id: deepySession?.id,
+              text: 'hi deepy!',
+              hidden: true,
+            })
           })
         })
+      } else {
+        setSession(data)
+      }
     },
   })
 

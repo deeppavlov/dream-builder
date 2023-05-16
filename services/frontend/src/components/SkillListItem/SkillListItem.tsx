@@ -47,7 +47,6 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { name: distName } = useParams()
   const nav = useNavigate()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
-  const isActive = skill.id === activeSKillId
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
@@ -56,7 +55,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       skill,
       visibility: type,
       activeTab: 'Properties',
-      isOpen: !isActive,
+      isOpen: true,
       distName: distName || '',
     })
   }

@@ -222,7 +222,7 @@ export const useComponent = () => {
       queryClient.getQueryData<IStackElement[] | undefined>([type, distName]) ||
       []
     const result = [component, ...allComponents, ...groupComponents]?.find(
-      el => el?.component_id === id
+      el => (el?.component_id ?? el?.id) === id
     )
 
     return result

@@ -43,17 +43,20 @@ privateApi.interceptors.response.use(
   response => response,
   async error => {
     const prevRequest = error?.config
-    const errorMsg = error.response.data?.detail
+    const expiredTokenMsg = error.response.data?.detail
       ?.toString()
       ?.match(/Access token has expired or token is bad/gi)
+    const userDoesntExist =
+      error.response.data?.detail
+        ?.toString()
+        ?.match(/User is not listed in the database/gi)?.length > 0
     const accessTokenIsExpired =
       error?.response?.status === 400 &&
-      errorMsg !== null &&
-      errorMsg !== undefined
+      expiredTokenMsg !== null &&
+      expiredTokenMsg !== undefined
     const accessTokenIsExist = getAccessToken() !== null
-    const accessTokenIsValid = !accessTokenIsExpired && accessTokenIsExist
-
-    // console.log(`Access token is valid: ${accessTokenIsValid}`)
+    const accessTokenIsValid =
+      !accessTokenIsExpired && accessTokenIsExist && !userDoesntExist
 
     if (!accessTokenIsValid && !prevRequest?.sent) {
       prevRequest.sent = true // Avoid unnecessary repeat on one request

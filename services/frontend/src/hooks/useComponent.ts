@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { addComponent as postComponent } from '../services/addComponent'
-import {
-  createComponent,
-  InfoForNewComponent,
-} from '../services/createComponent'
+import { createComponent } from '../services/createComponent'
 import { deleteComoponent } from '../services/deleteComponent'
 import { editComponent } from '../services/editComponent'
 import { getComponent as fetchComponent } from '../services/getComponent'
@@ -14,6 +11,7 @@ import {
   patchComponent,
 } from '../services/patchComponent'
 import {
+  ICreateComponent,
   IStackElement,
   LM_Service,
   PostDistParams,
@@ -39,7 +37,7 @@ interface IDelete extends IAdd {
 
 interface ICreate {
   distName: string
-  data: InfoForNewComponent
+  data: ICreateComponent
   type: StackType
 }
 

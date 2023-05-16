@@ -30,7 +30,7 @@ export const AddButton: FC<Props> = ({
   const handleClick = () => {
     const isCreateScratchAssistant = !forSkills && !fromScratch
     const isCreateScratchSkill = fromScratch
-    const isAddExistSkill = forSkills && !isPreview
+    const isAddPublicSkill = forSkills && !isPreview
     const scratchAssistant = { action: 'create' }
 
     if (!auth?.user)
@@ -45,7 +45,7 @@ export const AddButton: FC<Props> = ({
             }
           : {}
       )
-    if (isAddExistSkill) return trigger('SkillsListModal', {})
+    if (isAddPublicSkill) return trigger('SkillsListModal', {})
     if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
     if (isCreateScratchAssistant)
       return trigger('AssistantModal', scratchAssistant)

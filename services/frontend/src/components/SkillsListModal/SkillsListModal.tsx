@@ -18,11 +18,19 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
 import s from './SkillsListModal.module.scss'
 
+interface IAddPublicSkill {
+  display_name: string
+  description: string
+}
+
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
-  const { getGroupComponents, addComponentToDist } = useComponent()
   const { name: distName } = useParams()
+  const { deleteDeployment } = useDeploy()
+  const { getDist, changeVisibility } = useAssistants()
+  const { getGroupComponents, create } = useComponent()
+  const assistant = getDist(distName!)
   const { data: skillsList } = getGroupComponents(
     {
       distName: distName || '',
@@ -32,10 +40,6 @@ export const SkillsListModal = () => {
     },
     { enabled: isOpen }
   )
-  const { deleteDeployment } = useDeploy()
-  const { getDist } = useAssistants()
-  const assistant = getDist(distName!)
-
   const rightSidepanelIsActive = options.get(consts.RIGHT_SP_IS_ACTIVE)
   const position = {
     overlay: {
@@ -49,7 +53,7 @@ export const SkillsListModal = () => {
     },
   }
   const cx = classNames.bind(s)
-  const { changeVisibility } = useAssistants()
+
   const handleClose = () => {
     setIsOpen(false)
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
@@ -59,11 +63,12 @@ export const SkillsListModal = () => {
 
   const handleOk = () => setIsOpen(prev => !prev)
 
-  const handleAdd = (distName: string, id: number) => {
+  const handleAdd = (data: IAddPublicSkill) => {
     const assistantId = assistant?.data?.deployment?.id!
+
     toast.promise(
-      addComponentToDist.mutateAsync(
-        { distName, id, type: 'skills' },
+      create.mutateAsync(
+        { data, distName: distName || '', type: 'skills' },
         {
           onSuccess: () => {
             assistant?.data?.deployment?.state === 'UP' &&
@@ -107,7 +112,7 @@ export const SkillsListModal = () => {
               addButton={<AddButton forTable fromScratch />}
             >
               <SkillList
-                addFunc={handleAdd}
+                handleAdd={handleAdd}
                 skills={skillsList}
                 view={'table'}
                 forModal

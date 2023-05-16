@@ -7,7 +7,11 @@ import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { RoutesList } from '../../router/RoutesList'
-import { ISkill, SkillAvailabilityType } from '../../types/types'
+import {
+  ICreateComponent,
+  ISkill,
+  SkillAvailabilityType,
+} from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -23,7 +27,7 @@ interface SkillListItemProps {
   type: SkillAvailabilityType
   forModal?: boolean
   withoutDate?: boolean
-  addFunc: (distName: string, id: number) => void | undefined
+  handleAdd?: (skill: ICreateComponent) => void
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
@@ -31,7 +35,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   forModal,
   type,
   withoutDate,
-  addFunc,
+  handleAdd,
 }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
@@ -59,8 +63,15 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
+    const { display_name, description, prompt, lm_service } = skill
 
-    addFunc(distName || '', skill?.id!)
+    handleAdd &&
+      handleAdd({
+        display_name,
+        description,
+        prompt,
+        lm_service_id: lm_service?.id,
+      })
   }
   const handleEditClick = (e: React.MouseEvent) => {
     if (skill.component_type === ('Generative' as any)) {

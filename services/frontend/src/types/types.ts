@@ -166,6 +166,14 @@ export interface DistListProps {
   type: BotAvailabilityType
   size?: BotCardSize
 }
+
+export interface ICreateComponent {
+  display_name: string
+  description: string
+  lm_service_id?: number
+  prompt?: string
+}
+
 export interface SkillListProps {
   skills: ISkill[]
   view: ViewType
@@ -174,7 +182,7 @@ export interface SkillListProps {
   forGrid?: boolean
   forModal?: boolean
   withoutDate?: boolean
-  addFunc?: (distName: string, id: number) => void
+  handleAdd?: (skill: ICreateComponent) => void
 }
 export interface SettingKey {
   name: string
@@ -231,7 +239,7 @@ export type ChatHistory = {
   active_skill: string
   text: string
   author: 'bot' | 'me'
-  hidden?: boolean 
+  hidden?: boolean
 }
 
 export type Message = { message: string }

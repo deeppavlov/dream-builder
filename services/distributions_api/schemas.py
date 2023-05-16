@@ -205,7 +205,7 @@ class DialogChatMessageCreate(BaseModel):
 
 class DialogChatMessageRead(BaseModel):
     text: str
-    active_skill: str
+    active_skill: ComponentRead
 
 
 class DialogUtteranceRead(BaseModel):

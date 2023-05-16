@@ -55,12 +55,7 @@ def get_users_by_role(db: Session, role_id: int) -> [models.GoogleUser]:
 def update_user(db: Session, id: int, **kwargs) -> models.GoogleUser:
     kwargs = {k: v for k, v in kwargs.items() if k in models.GoogleUser.__table__.columns.keys()}
 
-    user = db.scalar(
-        update(models.GoogleUser)
-        .filter_by(id=id)
-        .values(**kwargs)
-        .returning(models.GoogleUser)
-    )
+    user = db.scalar(update(models.GoogleUser).filter_by(id=id).values(**kwargs).returning(models.GoogleUser))
     if not user:
         raise ValueError(f"GoogleUser with id={id} does not exist")
 
@@ -326,8 +321,27 @@ def get_next_available_component_port(db: Session, range_min: int = 8000, range_
 
 
 # VIRTUAL ASSISTANT COMPONENT
-def get_virtual_assistant_component(db: Session, virtual_assistant_component_id: int) -> [models.VirtualAssistantComponent]:
+def get_virtual_assistant_component(
+    db: Session, virtual_assistant_component_id: int
+) -> [models.VirtualAssistantComponent]:
     return db.get(models.VirtualAssistantComponent, virtual_assistant_component_id)
+
+
+def get_virtual_assistant_component_by_component_name(
+    db: Session, virtual_assistant_id: int, component_name: str
+) -> models.VirtualAssistantComponent:
+    va_component = db.scalar(
+        select(models.VirtualAssistantComponent).filter(
+            and_(
+                models.VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
+                models.VirtualAssistantComponent.component.has(name=component_name),
+            )
+        )
+    )
+    if not va_component:
+        raise ValueError(f"Component with name={component_name} does not exist")
+
+    return va_component
 
 
 def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> [models.VirtualAssistantComponent]:

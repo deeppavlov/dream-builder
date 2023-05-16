@@ -154,8 +154,13 @@ async def send_dialog_session_message(
         )
 
         crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
+        active_va_component = crud.get_virtual_assistant_component_by_component_name(
+            db, virtual_assistant.id, active_skill
+        )
 
-    return schemas.DialogChatMessageRead(text=bot_response, active_skill=active_skill)
+    return schemas.DialogChatMessageRead(
+        text=bot_response, active_skill=schemas.ComponentRead.from_orm(active_va_component.component)
+    )
 
 
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)

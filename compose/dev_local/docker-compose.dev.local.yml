@@ -49,9 +49,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
         reservations:
-          memory: 256M
+          memory: 512M
 
   distributions-api:
     env_file: [ ../.envs/.env.dev.local ]

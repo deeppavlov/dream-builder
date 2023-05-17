@@ -78,7 +78,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  text-transform: capitalize;
+  // text-transform: capitalize;
   svg {
     @include icon_size_24;
   }

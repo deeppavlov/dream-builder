@@ -75,10 +75,12 @@ const ReadFirstSidePanel = ({
         </ul>
       </div>
       <SidePanelButtons>
-        <Button theme='secondary' props={{ onClick: handleBackClick }}>
-          <LeftArrowIcon className={s.icon} />
-          Back to skill
-        </Button>
+        <div className={s.backBtn}>
+          <Button theme='secondary' props={{ onClick: handleBackClick }}>
+            <LeftArrowIcon className={s.icon} />
+            Back to skill
+          </Button>
+        </div>
       </SidePanelButtons>
     </div>
   )

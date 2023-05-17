@@ -43,7 +43,8 @@ export interface IAuthor {
   sub: string
 }
 
-export type TModals =
+export type TEvents =
+  | 'TRIGGER_RIGHT_SP_EVENT'
   | 'ShareModal'
   | 'SignInModal'
   | 'AreYouSureModal'
@@ -86,6 +87,11 @@ export interface IDeployment {
   date_state_updated: any
   id: number
   state: TDeploymentState
+  error: {
+    state: string
+    message: string
+    exception: string
+  }
 }
 type TKey = {
   base_url: string

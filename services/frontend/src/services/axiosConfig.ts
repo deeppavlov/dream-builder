@@ -7,7 +7,9 @@ export const mode =
     ? 'PROD'
     : import.meta.env.MODE === 'msw'
     ? 'MSW'
-    : 'DEV'
+    : import.meta.env.MODE === 'dev'
+    ? 'DEV'
+    : 'STAGE'
 /**
  * Axios instance of public distribution API
  */

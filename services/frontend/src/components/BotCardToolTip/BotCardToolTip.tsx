@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
@@ -19,7 +19,8 @@ interface Props {
 const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const auth = useAuth()
   const navigate = useNavigate()
-
+  const { name } = useParams()
+  const isEditor = Boolean(name)
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
@@ -97,7 +98,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             type='edit'
             handleClick={handleRenameBtnClick}
           />
-          {!inSidePanel && (
+          {!inSidePanel && !isEditor && ( //FIX!!
             <ContextMenuButton
               name='Properties'
               type='properties'

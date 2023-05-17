@@ -39,6 +39,7 @@ const SkillDropboxSearch = ({
     field,
     fieldState: { error },
   } = useController({ name, control, rules, defaultValue })
+
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
   const dropboxRef = useRef<HTMLDivElement | null>(null)
   let cx = classNames.bind(s)
@@ -89,19 +90,21 @@ const SkillDropboxSearch = ({
       </div>
 
       <ul className={s.list}>
-        {list?.map((item, i) => (
-          <li
-            key={i}
-            className={cx(
-              'item',
-              item.name === field.value && 'activeItem',
-              item?.disabled && 'disabled'
-            )}
-            onClick={() => !item?.disabled && handleItemClick(item)}
-          >
-            {item.name}
-          </li>
-        ))}
+        {list?.map((item, i) => {
+          return (
+            <li
+              key={i}
+              className={cx(
+                'item',
+                item.name === field.value && 'activeItem',
+                item?.disabled && 'disabled'
+              )}
+              onClick={() => !item?.disabled && handleItemClick(item)}
+            >
+              {item.name}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

@@ -7,7 +7,6 @@ import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { BurgerMenu } from '../../ui/BurgerMenu/BurgerMenu'
 import { Profile } from '../../ui/Profile/Profile'
 import { consts } from '../../utils/consts'
-import { AssistantCloneButton } from '../AssistantCloneButton/AssistantCloneButton'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
 import { Display } from './components/Display'
 import { Test } from './components/Test'
@@ -23,7 +22,7 @@ export const Topbar = () => {
   const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
   const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
   const isTableViewSwitcher = isEditor
-    ? editorActiveTab !== 'Architecture' && !skillEditorIsActive
+    ? editorActiveTab == 'Architecture' && !skillEditorIsActive
     : location.pathname !== '/profile'
   let cx = classNames.bind(s)
 
@@ -33,7 +32,6 @@ export const Topbar = () => {
       <div className={s.logo_area}>
         <Breadcrumbs />
       </div>
-      {isEditor && <AssistantCloneButton />}
       <div className={s.btns_area}>
         {isTableViewSwitcher && <Display />}
         {isEditor && <Test />}

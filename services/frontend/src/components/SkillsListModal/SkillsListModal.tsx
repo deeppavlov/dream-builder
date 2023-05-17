@@ -59,13 +59,9 @@ export const SkillsListModal = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
-  const handleEventUpdate = () => setIsOpen(true)
-
   const handleOk = () => setIsOpen(prev => !prev)
-
-  const handleAdd = (data: IAddPublicSkill) => {
+  const handleAdd = (distName: string, id: number) => {
     const assistantId = assistant?.data?.deployment?.id!
-
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },
@@ -73,7 +69,7 @@ export const SkillsListModal = () => {
           onSuccess: () => {
             assistant?.data?.deployment?.state === 'UP' &&
               deleteDeployment.mutateAsync(assistantId).then(() => {
-                // unpublish
+                // unpublish // FIX
                 const name = assistant?.data?.name!
                 const visibility = 'private'
 
@@ -86,7 +82,7 @@ export const SkillsListModal = () => {
       toasts.addComponent
     )
   }
-
+  const handleEventUpdate = () => setIsOpen(true)
   useObserver('SkillsListModal', handleEventUpdate)
 
   return (

@@ -53,7 +53,7 @@ const DumbSkillSP = ({
   // const srcForModelType = srcForIcons(nameForModelType)
   let cx = classNames.bind(s)
 
-  const handleAddSkillBtnClick = () => trigger('CreateSkillModal', skill)
+  // const handleAddSkillBtnClick = () => trigger('CreateSkillModal' as any, skill)
 
   const handleRenameBtnClick = () =>
     trigger('SkillModal', { action: 'edit', skill })
@@ -153,35 +153,12 @@ const DumbSkillSP = ({
           </li>
           <li className={cx('item', 'big-item')}>
             <SkillTaskPlaceholder
-              skillId={skill?.component_id ?? skill?.id}
+              skill={skill}
               value={skill?.description}
               distName={distName || ''}
               activeTab={tabsInfo.activeTabId as any}
               visibility={visibility}
             />
-            {/* <span className={cx('table-name')}>Skill task:</span>
-            <IntentList>
-              <div
-              className={cx('prompt')}
-              onClick={isCustomizable && triggerEditModal}
-              >
-                {skill?.description}
-              </div>
-              <p className={cx('prompt', 'value')}>{skill?.description}</p>
-            </IntentList>
-            <TextArea
-              name='skill_task'
-              control={control}
-              defaultValue={skill?.description}
-              resizable={false}
-              theme='withShadow'
-            />
-            <Button theme='tertiary-round' small>
-              Read First
-            </Button>
-            <Button theme='primary' small>
-              Save
-            </Button> */}
           </li>
           {/* <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>

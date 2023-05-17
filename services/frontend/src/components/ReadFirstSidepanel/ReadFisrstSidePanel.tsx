@@ -10,25 +10,23 @@ import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './ReadFirstSidePanel.module.scss'
 
 interface IProps {
-  skillId?: number
+  skill?: ISkill
   distName: string
   activeTab: 'Properties' | 'Editor'
   visibility?: SkillAvailabilityType
 }
 
 const ReadFirstSidePanel = ({
-  skillId,
+  skill,
   distName,
   activeTab,
   visibility,
 }: IProps) => {
   const handleBackClick = () => {
-    if (skillId === undefined) {
-      return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-    }
+    if (!skill) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     triggerSkillSidePanel({
-      skill: { id: skillId } as ISkill,
+      skill,
       distName,
       activeTab,
       visibility,

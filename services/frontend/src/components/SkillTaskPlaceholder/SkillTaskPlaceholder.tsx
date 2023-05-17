@@ -1,5 +1,5 @@
 import { ReactComponent as AlertIcon } from '@assets/icons/read_first_alert.svg'
-import { SkillAvailabilityType } from '../../types/types'
+import { ISkill, SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
@@ -11,11 +11,11 @@ interface IProps {
   distName: string
   activeTab: 'Properties' | 'Editor'
   visibility?: SkillAvailabilityType
-  skillId?: number
+  skill?: ISkill
 }
 
 const SkillTaskPlaceholder = ({
-  skillId,
+  skill,
   value,
   distName,
   activeTab,
@@ -28,7 +28,7 @@ const SkillTaskPlaceholder = ({
       isOpen: true,
       children: (
         <ReadFirstSidePanel
-          skillId={skillId}
+          skill={skill}
           distName={distName}
           activeTab={activeTab}
           visibility={visibility}

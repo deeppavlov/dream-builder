@@ -98,13 +98,14 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             type='edit'
             handleClick={handleRenameBtnClick}
           />
-          {!inSidePanel && !isEditor && ( //FIX!!
-            <ContextMenuButton
-              name='Properties'
-              type='properties'
-              handleClick={handlePropertiesBtnClick}
-            />
-          )}
+          {!inSidePanel &&
+            !isEditor && ( //FIX!!
+              <ContextMenuButton
+                name='Properties'
+                type='properties'
+                handleClick={handlePropertiesBtnClick}
+              />
+            )}
           <hr />
           <ContextMenuButton
             name='Delete'

@@ -31,9 +31,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         path: RoutesList.botsAll,
         element: <BotsAllPage />,
         handle: {
-          crumb: () => [
-            <Link to={RoutesList.botsAll}>Public Templates</Link>,
-          ],
+          crumb: () => [<Link to={RoutesList.botsAll}>Public Templates</Link>],
         },
       },
       {

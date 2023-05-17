@@ -53,6 +53,7 @@ export const useAssistants = () => {
       refetchOnMount: false,
       refetchOnWindowFocus: true,
       initialData: () => getFetchedDist(name),
+      // retry: 1,
     })
 
   const rename = useMutation({
@@ -93,7 +94,7 @@ export const useAssistants = () => {
 
   const changeVisibility = useMutation({
     onMutate: ({ name, visibility, deploymentState }) => {
-      if (visibility !== 'private' && !deploymentState ) {
+      if (visibility !== 'private' && !deploymentState) {
         console.log('deploymentState = ', deploymentState)
         deploy.mutateAsync(name)
       }

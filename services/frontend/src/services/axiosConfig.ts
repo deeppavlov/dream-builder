@@ -72,10 +72,12 @@ privateApi.interceptors.response.use(
         const isUser = localStorage.getItem('user') !== null // Prevent infinity logout
         // console.log('Update access token is failed!')
         isUser && logout()
-        return
+        return Promise.reject(error)
       }
 
       return privateApi(prevRequest)
     }
+
+    return Promise.reject(error)
   }
 )

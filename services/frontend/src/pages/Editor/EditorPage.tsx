@@ -29,25 +29,35 @@ export const EditorPage = () => {
   const { name } = useParams()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const dist = name ? getDist(name).data : null
+  const { data: dist } = getDist(name!)
 
   useEffect(() => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
       setIsPreview(dist?.visibility === 'public_template')
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.ACTIVE_ASSISTANT,
+          value: dist,
+        },
+      })
     }
+
     return () => setIsPreview(true)
   }, [dist])
 
-  useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_ASSISTANT,
-        value: dist,
-      },
-    })
-  }, [dist])
+  // useEffect(() => {
+  //   const error = (errorResponse as any)?.response as Response
+
+  //   if (error?.status === undefined) return
+  //   console.log('aboba')
+
+  //   return nav(
+  //     generatePath(RoutesList.error, { statusCode: error.status.toString() }),
+  //     { state: { error } }
+  //   )
+  // }, [isError])
 
   return (
     <>

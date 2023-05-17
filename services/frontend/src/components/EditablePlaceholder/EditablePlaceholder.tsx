@@ -6,15 +6,17 @@ import s from './EditablePlaceholder.module.scss'
 interface IProps {
   label: string
   value: string
+  disabled?: boolean
   rules?: RegisterOptions
-  handleSave?: (value: string) => void
   buttons?: React.ReactNode
   children?: React.ReactNode
+  handleSave?: (value: string) => void
 }
 
 export const EditablePlaceholder = ({
   label,
   value,
+  disabled,
   rules,
   buttons,
   handleSave,
@@ -40,6 +42,7 @@ export const EditablePlaceholder = ({
         defaultValue={value}
         resizable={false}
         theme='placeholder'
+        props={{ disabled }}
         rules={rules}
       />
       <div className={s.btns}>

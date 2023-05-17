@@ -8,6 +8,7 @@ import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
+import { ICreateComponent } from '../../types/types'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -17,7 +18,6 @@ import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
 import s from './SkillsListModal.module.scss'
-import { ICreateComponent } from '../../types/types'
 
 interface IAddPublicSkill {
   display_name: string
@@ -61,6 +61,7 @@ export const SkillsListModal = () => {
   }
 
   const handleOk = () => setIsOpen(prev => !prev)
+
   const handleAdd = (skill: ICreateComponent) => {
     const assistantId = assistant?.data?.deployment?.id!
     toast.promise(
@@ -77,13 +78,17 @@ export const SkillsListModal = () => {
                 assistant?.data?.publish_state !== null &&
                   changeVisibility.mutateAsync({ name, visibility }) //FIX
               })
+
+            handleClose()
           },
         }
       ),
       toasts.addComponent
     )
   }
+
   const handleEventUpdate = () => setIsOpen(true)
+  
   useObserver('SkillsListModal', handleEventUpdate)
 
   return (
@@ -106,7 +111,9 @@ export const SkillsListModal = () => {
             <Table
               second='Type'
               withoutDate={rightSidepanelIsActive}
-              addButton={<AddButton forTable fromScratch />}
+              addButton={
+                <AddButton forTable fromScratch onAddRequest={handleClose} />
+              }
             >
               <SkillList
                 handleAdd={handleAdd}

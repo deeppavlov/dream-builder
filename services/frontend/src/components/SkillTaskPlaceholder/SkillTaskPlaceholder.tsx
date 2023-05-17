@@ -48,6 +48,7 @@ const SkillTaskPlaceholder = ({
           message: '',
         },
       }}
+      disabled={visibility !== 'your'}
       buttons={
         <Button
           theme='tertiary-round'

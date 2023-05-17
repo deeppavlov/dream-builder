@@ -9,7 +9,6 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { trigger } from '../../utils/events'
 import { validationSchema } from '../../utils/validationSchema'
 import s from './SkillModal.module.scss'
 
@@ -62,12 +61,10 @@ export const SkillModal = () => {
 
   const handleCreate = (data: any) => {
     toast.promise(
-      create
-        .mutateAsync({ data, distName: distName || '', type: 'skills' })
-        .then(() => {
-          closeModal()
-          trigger('SkillsListModal', { isOpen: false })
-        }),
+      create.mutateAsync(
+        { data, distName: distName || '', type: 'skills' },
+        { onSuccess: closeModal }
+      ),
       {
         loading: 'Creating...',
         success: 'Success!',

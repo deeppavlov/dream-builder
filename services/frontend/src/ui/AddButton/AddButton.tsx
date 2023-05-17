@@ -13,6 +13,7 @@ interface Props {
   forGrid?: boolean
   forSkills?: boolean
   fromScratch?: boolean
+  onAddRequest?: () => void
 }
 
 export const AddButton: FC<Props> = ({
@@ -22,16 +23,19 @@ export const AddButton: FC<Props> = ({
   forTable,
   forSkills,
   fromScratch,
+  onAddRequest,
 }) => {
-  const cx = classNames.bind(s)
   const auth = useAuth()
   const { isPreview } = usePreview()
+  const cx = classNames.bind(s)
 
   const handleClick = () => {
     const isCreateScratchAssistant = !forSkills && !fromScratch
     const isCreateScratchSkill = fromScratch
     const isAddPublicSkill = forSkills && !isPreview
     const scratchAssistant = { action: 'create' }
+
+    if (onAddRequest) onAddRequest()
 
     if (!auth?.user)
       return trigger(

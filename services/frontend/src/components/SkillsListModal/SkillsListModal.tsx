@@ -17,6 +17,7 @@ import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
 import s from './SkillsListModal.module.scss'
+import { ICreateComponent } from '../../types/types'
 
 interface IAddPublicSkill {
   display_name: string
@@ -60,11 +61,11 @@ export const SkillsListModal = () => {
   }
 
   const handleOk = () => setIsOpen(prev => !prev)
-  const handleAdd = (distName: string, id: number) => {
+  const handleAdd = (skill: ICreateComponent) => {
     const assistantId = assistant?.data?.deployment?.id!
     toast.promise(
       create.mutateAsync(
-        { data, distName: distName || '', type: 'skills' },
+        { data: skill, distName: distName || '', type: 'skills' },
         {
           onSuccess: () => {
             assistant?.data?.deployment?.state === 'UP' &&

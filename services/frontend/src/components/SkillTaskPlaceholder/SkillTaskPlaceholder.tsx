@@ -45,7 +45,7 @@ const SkillTaskPlaceholder = ({
         required: true,
         maxLength: {
           value: 500,
-          message: 'fsdfsdfsfd',
+          message: '',
         },
       }}
       buttons={

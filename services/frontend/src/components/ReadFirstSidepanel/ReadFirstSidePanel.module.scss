@@ -63,6 +63,11 @@
 
 .icon {
   transform: rotate(180deg);
+
+  path {
+    stroke: none !important;
+    fill: $text2;
+  }
 }
 
 .backBtn button {

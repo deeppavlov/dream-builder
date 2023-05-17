@@ -241,6 +241,7 @@ export const AssistantModule: FC<Props> = () => {
               rules={{ required: true }}
               list={visibilityForDropbox}
               fullWidth
+              props={{ disabled: deploying }}
             />
           )}
           {!isPreview && (

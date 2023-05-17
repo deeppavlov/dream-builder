@@ -58,6 +58,7 @@ export const useAssistants = () => {
   const rename = useMutation({
     mutationFn: ({ name, data }: IRename) => renameAssistantDist(name, data),
     onSuccess: (_, { name }) => {
+      queryClient.invalidateQueries('dist')
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))

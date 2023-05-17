@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { FC,ReactNode,useEffect,useRef,useState } from 'react'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import { Badge } from '../../components/Badge/Badge'
@@ -24,7 +24,6 @@ interface Props {
   subWrapper?: boolean
   btns?: ReactNode
   badge?: boolean
-  overFlowVisible?: boolean
 }
 
 export const Wrapper: FC<Props> = ({
@@ -46,7 +45,6 @@ export const Wrapper: FC<Props> = ({
   subWrapper,
   btns,
   badge,
-  overFlowVisible,
 }) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -82,8 +80,8 @@ export const Wrapper: FC<Props> = ({
             limiter && 'limiter',
             primary && 'primary',
             skills && 'skills',
-            forCard && 'forCard',
-            overFlowVisible&& 'overFlowVisible'
+            forCard && 'forCard'
+
             // subWrapper && 'subWrapper'
           )}
         >

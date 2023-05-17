@@ -30,11 +30,15 @@ export const AssistantModule: FC<Props> = () => {
   const { getDist, changeVisibility } = useAssistants()
   const { data: bot } = getDist(name!)
   const { deploy, deleteDeployment } = useDeploy()
-  const { control } = useForm({
+
+  const { control, reset, getValues } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues: {
+      visibility: visibilityForDropbox.find(type => type.id === bot?.visibility)
+        ?.name,
+    },
   })
-
   const v = useWatch({
     control,
     name: 'visibility',
@@ -51,7 +55,6 @@ export const AssistantModule: FC<Props> = () => {
   //   const isSidePanelActive = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
 
   const handleVisibility = v => {
-    console.log('handleVisibility - ', v)
     const visibility = visibilityForDropbox.find(type => type.name === v)?.id!
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
@@ -89,6 +92,16 @@ export const AssistantModule: FC<Props> = () => {
   useEffect(() => {
     v && handleVisibility(v)
   }, [v])
+
+  const defaultDropboxValue = visibilityForDropbox.find(
+    type => type.id === bot?.visibility
+  )?.name
+
+  useEffect(() => {
+    reset({
+      visibility: defaultDropboxValue,
+    })
+  }, [bot?.visibility])
 
   const handleInfo = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -152,8 +165,6 @@ export const AssistantModule: FC<Props> = () => {
       <Wrapper
         title={bot?.display_name}
         primary
-        overFlowVisible
-        fullHeight
         badge={deployed}
         btns={
           <Container>
@@ -206,14 +217,10 @@ export const AssistantModule: FC<Props> = () => {
           </Container>
         }
       >
-        <Container>
+        <Container overflowVisible>
           <Details>{bot?.description!}</Details>
           {!isPreview && (
             <SkillDropboxSearch
-              defaultValue={
-                visibilityForDropbox.find(type => type.id === bot?.visibility)
-                  ?.name
-              }
               name='visibility'
               control={control}
               rules={{ required: true }}
@@ -226,7 +233,6 @@ export const AssistantModule: FC<Props> = () => {
               <SvgIcon iconName='share' />
             </Button>
           )}
-          {/* </div> */}
         </Container>
       </Wrapper>
     </>

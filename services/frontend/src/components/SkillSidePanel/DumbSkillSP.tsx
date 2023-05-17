@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useEffect } from 'react'
+import { useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
@@ -8,6 +9,7 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import EditPencilButton from '../EditPencilButton/EditPencilButton'
+import SkillTaskPlaceholder from '../SkillTaskPlaceholder/SkillTaskPlaceholder'
 import s from './DumbSkillSP.module.scss'
 
 interface Props {
@@ -44,6 +46,7 @@ const DumbSkillSP = ({
           : [[properties, { name: properties }]]
       ),
   })
+  const { name: distName } = useParams()
   // const nameForComponentType = componentTypeMap[skill?.component_type!]
   // const nameForModelType = modelTypeMap[skill?.model_type!]
   // const srcForComponentType = srcForIcons(nameForComponentType)
@@ -135,19 +138,51 @@ const DumbSkillSP = ({
                 </span>
               </span>
             </li> */}
-            <br />
-            <li className={s.item}>
-              {skill?.lm_service?.display_name && (
-                <>
-                  <span className={cx('table-name')}>Model:</span>
-                  <span className={s.value}>
-                    {skill?.lm_service?.display_name!}
-                  </span>
-                </>
-              )}
-            </li>
+            {skill?.lm_service?.display_name && (
+              <li className={s.item}>
+                <span className={cx('table-name')}>Model:</span>
+                <span className={s.value}>
+                  {skill?.lm_service?.display_name!}
+                </span>
+              </li>
+            )}
           </ul>
-          <p className={s.desc}>{skill?.description}</p>
+          <li className={cx('item', 'big-item')}>
+            <span className={cx('table-name')}>Description:</span>
+            <p className={s.value}>{skill?.description}</p>
+          </li>
+          <li className={cx('item', 'big-item')}>
+            <SkillTaskPlaceholder
+              skillId={skill?.component_id ?? skill?.id}
+              value={skill?.description}
+              distName={distName || ''}
+              activeTab={tabsInfo.activeTabId as any}
+              visibility={visibility}
+            />
+            {/* <span className={cx('table-name')}>Skill task:</span>
+            <IntentList>
+              <div
+              className={cx('prompt')}
+              onClick={isCustomizable && triggerEditModal}
+              >
+                {skill?.description}
+              </div>
+              <p className={cx('prompt', 'value')}>{skill?.description}</p>
+            </IntentList>
+            <TextArea
+              name='skill_task'
+              control={control}
+              defaultValue={skill?.description}
+              resizable={false}
+              theme='withShadow'
+            />
+            <Button theme='tertiary-round' small>
+              Read First
+            </Button>
+            <Button theme='primary' small>
+              Save
+            </Button> */}
+          </li>
           {/* <div className={s.btns}>
             <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
               <Button

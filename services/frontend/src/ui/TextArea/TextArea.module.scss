@@ -6,7 +6,7 @@
   border-radius: 12px;
   gap: 2px;
   position: relative;
-  padding: 24px 0px;
+  margin: 24px 0px;
   height: 100%;
 
   &[data-active='true'] {
@@ -55,6 +55,10 @@
       display: none !important;
     }
   }
+}
+
+.header {
+  transform: translateY(-100%);
 }
 
 .fullHeight {
@@ -123,7 +127,6 @@
 
 .about {
   top: 100%;
-  transform: translateY(-100%);
 }
 
 .title {
@@ -175,5 +178,19 @@
 
   path {
     stroke: $text3;
+  }
+}
+
+.placeholder {
+  .title {
+    @include t4;
+  }
+  .container {
+    background-color: $bcgrnd2;
+
+    &:hover,
+    &:focus-within {
+      background-color: $bcgrnd1;
+    }
   }
 }

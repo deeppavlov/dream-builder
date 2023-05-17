@@ -1,0 +1,66 @@
+.readFirst {
+  height: 100%;
+  p {
+    @include b3;
+    color: $text2;
+  }
+}
+
+.readFirst,
+.explanation,
+.examples,
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.explanation,
+.examples {
+  padding: 0 24px;
+}
+
+.sidepanel-name {
+  margin-top: 10px;
+}
+
+.explanation {
+  margin: 18px 0 12px 0;
+  gap: 8;
+
+  span {
+    @include t3;
+    color: $text1;
+  }
+}
+
+.examples {
+  height: 100%;
+}
+
+.examples-title {
+  @include t4;
+  color: $text2;
+}
+
+.item-name {
+  @include b3;
+  color: $primary1;
+  position: relative;
+  padding-left: 18px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    top: 50%;
+    left: 8px;
+    background-color: $primary1;
+    transform: translateY(-50%);
+  }
+}
+
+.icon {
+  transform: rotate(180deg);
+}

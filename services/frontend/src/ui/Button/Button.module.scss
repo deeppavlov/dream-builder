@@ -80,8 +80,13 @@
         }
       }
 
+      &:has(svg) {
+        gap: 8px;
+        padding-left: 12px;
+      }
+
       > svg path {
-        stroke: $text1;
+        fill: $text1;
       }
     }
 
@@ -205,6 +210,10 @@
     &_tertiary-round {
       @extend .button_theme_tertiary;
       border-radius: 8px;
+
+      &_small {
+        padding: 5px 10px;
+      }
     }
 
     &_ghost {

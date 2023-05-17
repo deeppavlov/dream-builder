@@ -85,9 +85,27 @@
   @include modelType;
 }
 
-.desc {
+.big-item {
   @include b3;
   margin-top: 8px;
+  flex-direction: column;
+  align-items: start;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.prompt {
+  min-height: 149px;
+  background-color: $bcgrnd2;
+  padding: 8px 40px 8px 16px;
+  display: flex;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  white-space: pre-line;
+  overflow-y: auto;
 }
 
 .btns {

@@ -11,8 +11,8 @@ import s from './ReadFirstSidePanel.module.scss'
 
 interface IProps {
   skill?: ISkill
-  distName: string
-  activeTab: 'Properties' | 'Editor'
+  distName?: string
+  activeTab?: 'Properties' | 'Editor'
   visibility?: SkillAvailabilityType
 }
 
@@ -22,8 +22,10 @@ const ReadFirstSidePanel = ({
   activeTab,
   visibility,
 }: IProps) => {
+  const isProps = skill && distName && activeTab && visibility
+
   const handleBackClick = () => {
-    if (!skill) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+    if (!isProps) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     triggerSkillSidePanel({
       skill,
@@ -72,14 +74,16 @@ const ReadFirstSidePanel = ({
           </li>
         </ul>
       </div>
-      <SidePanelButtons>
-        <div className={s.backBtn}>
-          <Button theme='secondary' props={{ onClick: handleBackClick }}>
-            <LeftArrowIcon className={s.icon} />
-            Back to skill
-          </Button>
-        </div>
-      </SidePanelButtons>
+      {isProps && (
+        <SidePanelButtons>
+          <div className={s.backBtn}>
+            <Button theme='secondary' props={{ onClick: handleBackClick }}>
+              <LeftArrowIcon className={s.icon} />
+              Back to skill
+            </Button>
+          </div>
+        </SidePanelButtons>
+      )}
     </div>
   )
 }

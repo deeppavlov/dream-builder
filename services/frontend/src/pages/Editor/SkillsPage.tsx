@@ -1,8 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { AssistantModule } from '../../components/AssistantModule/AssistantModule'
+import { TRIGGER_RIGHT_SP_EVENT } from '../../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../../components/CardsLoader/CardsLoader'
 import { ErrorHandler } from '../../components/ErrorHandler/ErrorHandler'
 import { Main } from '../../components/Main/Main'
+import ReadFirstSidePanel from '../../components/ReadFirstSidepanel/ReadFisrstSidePanel'
 import { SkillList } from '../../components/SkillList/SkillList'
 import SvgIcon from '../../components/SvgIcon/SvgIcon'
 import { useAuth } from '../../context/AuthProvider'
@@ -34,9 +36,9 @@ const SkillsPage = () => {
       },
     })
 
-  const handleReadFirst = () => {
-    trigger('ReadFirstSidePanel', {})
-  }
+  const handleReadFirst = () =>
+    trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })
+
   return (
     <Main sidebar column>
       <AssistantModule />

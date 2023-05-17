@@ -59,13 +59,9 @@ export const SkillsListModal = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
-  const handleEventUpdate = () => setIsOpen(true)
-
   const handleOk = () => setIsOpen(prev => !prev)
-
-  const handleAdd = (data: IAddPublicSkill) => {
+  const handleAdd = (distName: string, id: number) => {
     const assistantId = assistant?.data?.deployment?.id!
-
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },

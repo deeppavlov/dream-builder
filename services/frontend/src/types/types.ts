@@ -93,6 +93,9 @@ export interface IDeployment {
     exception: string
   }
 }
+export interface IDeploymentStatus extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
 type TKey = {
   base_url: string
   description: string
@@ -242,7 +245,7 @@ export interface SessionConfig {
 }
 
 export type ChatHistory = {
-  active_skill: string
+  active_skill?: string
   text: string
   author: 'bot' | 'me'
   hidden?: boolean

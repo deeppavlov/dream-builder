@@ -1,14 +1,14 @@
-import { FC, useEffect } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { FC,useEffect } from 'react'
+import { useForm,useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useQuery, useQueryClient } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useQueryClient } from 'react-query'
+import { useNavigate,useParams } from 'react-router-dom'
+import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useDeploy } from '../../hooks/useDeploy'
 import { toasts } from '../../mapping/toasts'
 import { visibilityForDropbox } from '../../mapping/visibility'
-import { getDeploy } from '../../services/getDeploy'
 import Button from '../../ui/Button/Button'
 import { Container } from '../../ui/Container/Container'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
@@ -24,14 +24,16 @@ interface Props {}
 export const AssistantModule: FC<Props> = () => {
   const { name } = useParams()
   const { isPreview } = usePreview()
-  //   const { options } = useDisplay()
+  const navigate = useNavigate()
+  const auth = useAuth()
 
   const queryClient = useQueryClient()
   const { getDist, changeVisibility } = useAssistants()
   const { data: bot } = getDist(name!)
-  const { deploy, deleteDeployment } = useDeploy()
+  const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
+  checkDeployStatus(bot!)
 
-  const { control, reset, getValues } = useForm({
+  const { control, reset } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -43,6 +45,9 @@ export const AssistantModule: FC<Props> = () => {
     control,
     name: 'visibility',
   })
+  const defaultDropboxValue = visibilityForDropbox.find(
+    type => type.id === bot?.visibility
+  )?.name
 
   const deployed = bot?.deployment?.state === 'UP'
   const deploying =
@@ -50,11 +55,11 @@ export const AssistantModule: FC<Props> = () => {
   const error =
     bot?.deployment?.error !== null && bot?.deployment?.error !== undefined
 
+  const onModeration = bot?.publish_state === 'in_progress'
+
   const currentVisibilityStatus = bot?.visibility
 
-  //   const isSidePanelActive = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
-
-  const handleVisibility = v => {
+  const handleVisibility = (v: string) => {
     const visibility = visibilityForDropbox.find(type => type.name === v)?.id!
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
@@ -89,19 +94,6 @@ export const AssistantModule: FC<Props> = () => {
       )
     }
   }
-  useEffect(() => {
-    v && handleVisibility(v)
-  }, [v])
-
-  const defaultDropboxValue = visibilityForDropbox.find(
-    type => type.id === bot?.visibility
-  )?.name
-
-  useEffect(() => {
-    reset({
-      visibility: defaultDropboxValue,
-    })
-  }, [bot?.visibility])
 
   const handleInfo = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -152,28 +144,36 @@ export const AssistantModule: FC<Props> = () => {
   const handleShare = () => {
     trigger('ShareModal', { bot })
   }
+
   const handleDuplicate = () => {
+    if (!auth?.user)
+      return trigger('SignInModal', {
+        requestModal: {
+          name: 'AssistantModal',
+          options: { action: 'clone', bot: bot },
+        },
+      })
+
     trigger('AssistantModal', { bot, action: 'clone' })
   }
 
-  const status = useQuery({
-    queryKey: ['deploy', bot?.deployment?.id],
-    queryFn: () => getDeploy(bot?.deployment?.id!),
-    refetchOnMount: false,
-    enabled: bot?.deployment?.id !== undefined,
-    onSuccess(data) {
-      data?.state === 'UP' &&
-        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+  useEffect(() => {
+    reset({
+      visibility: defaultDropboxValue,
+    })
+  }, [bot?.visibility])
 
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
-        setTimeout(() => {
-          queryClient.invalidateQueries('deploy', data?.id)
-        }, 5000)
-      } else if (data?.error !== null) {
-        console.log('error')
-      }
-    },
-  })
+  useEffect(() => {
+    v && handleVisibility(v)
+  }, [v])
+
+  useEffect(() => {
+    const redirectConditions =
+      !auth?.user! || onModeration || bot?.visibility! == 'public_template'
+    if (bot && redirectConditions) {
+      navigate('/')
+    }
+  }, [bot])
 
   return (
     <>
@@ -245,7 +245,14 @@ export const AssistantModule: FC<Props> = () => {
             />
           )}
           {!isPreview && (
-            <Button props={{ onClick: handleShare }} withIcon theme='tertiary2'>
+            <Button
+              props={{
+                onClick: handleShare,
+                disabled: bot?.visibility == 'private',
+              }}
+              withIcon
+              theme='tertiary2'
+            >
               <SvgIcon iconName='share' />
             </Button>
           )}

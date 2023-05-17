@@ -27,7 +27,7 @@ export const Topbar = () => {
   let cx = classNames.bind(s)
 
   return (
-    <div className={cx('topbar', isEditor && 'editor')}>
+    <div className={cx('topbar', isEditor && 'editor', !user && 'gapForBtns')}>
       <BurgerMenu type={type} dist={options.get(consts.ACTIVE_ASSISTANT)} />
       <div className={s.logo_area}>
         <Breadcrumbs />

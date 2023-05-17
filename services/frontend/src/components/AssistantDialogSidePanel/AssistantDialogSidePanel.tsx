@@ -8,12 +8,12 @@ import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
 import { OPEN_AI_LM, TOOLTIP_DELAY } from '../../constants/constants'
+import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useDeploy } from '../../hooks/useDeploy'
-import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
@@ -48,6 +48,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { data: user } = useQuery(['user'], () => getUserId())
   const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
+  const auth = useAuth()
 
   const dummyAnswersCounter = history.filter(message => {
     return message.active_skill === 'dummy_skill'
@@ -113,7 +114,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         queryClient.invalidateQueries('privateDist')
       }
     },
-  })
+  }) //TODO transfer to useDeploy & add necessary conditions of invalidation
   const setError = (type: TDialogError) => {
     setErrorPanel({
       type: type,
@@ -134,7 +135,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleSend = (data: ChatForm) => {
     const isChatSettings = checkIsChatSettings(user?.id)
 
-    if (!isChatSettings) return
+    if (auth?.user && !isChatSettings) return
     const id = session?.id!
     const message = data?.message!
     send.mutate(
@@ -181,7 +182,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     )
   }
   // hooks
-  useObserver('RenewChat', handleRenewClick)
+  // useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
 
   // проверяем настройки
@@ -317,6 +318,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   <span className={s.line} />
                   <div className={s.message}>
                     <div className={s.circle}>
+                      {/* TODO: Change SVG ReactComponent to our SvgComponent */}
                       <Attention />
                     </div>
                     <p>

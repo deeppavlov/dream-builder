@@ -15,6 +15,7 @@ import { Container } from '../../ui/Container/Container'
 import { Table } from '../../ui/Table/Table'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
+import { trigger } from '../../utils/events'
 
 const SkillsPage = () => {
   const auth = useAuth()
@@ -33,6 +34,9 @@ const SkillsPage = () => {
       },
     })
 
+  const handleReadFirst = () => {
+    trigger('ReadFirstSidePanel', {})
+  }
   return (
     <Main sidebar column>
       <AssistantModule />
@@ -43,7 +47,11 @@ const SkillsPage = () => {
         btns={
           <Container>
             {!isPreview && (
-              <Button withIcon theme='tertiary2'>
+              <Button
+                withIcon
+                theme='tertiary2'
+                props={{ onClick: handleReadFirst }}
+              >
                 <SvgIcon iconName={'attention'} />
                 Read First!
               </Button>

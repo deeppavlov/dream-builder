@@ -3,3 +3,16 @@
   color: $text3;
   @include t3;
 }
+
+.placeholderTable {
+  @extend .placeholder;
+  align-items: center;
+  background-color: #fff;
+  border-top: 1px solid #f0f0f3;
+  gap: 32px;
+  height: 64px;
+  padding: 12px;
+  td {
+    padding: 24px;
+  }
+}

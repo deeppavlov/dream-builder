@@ -1,11 +1,11 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
-import { useEffect,useId } from 'react'
-import { useNavigate,useParams } from 'react-router-dom'
+import { useEffect, useId } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import DB from '../../assets/icons/logo.png'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager from '../../hooks/useTabsManager'
-import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
@@ -230,7 +230,10 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                 </Button>
                 {!isEditor && (
                   <Button
-                    props={{ onClick: handlEditClick, disabled: onModeration }}
+                    props={{
+                      onClick: handlEditClick,
+                      disabled: onModeration || deploying,
+                    }}
                     theme='primary'
                   >
                     Edit

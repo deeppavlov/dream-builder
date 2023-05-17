@@ -25,9 +25,8 @@ export const useChat = () => {
       setMessage('')
       setHistory([])
       if (data === DEEPY_ASSISTANT) {
-        // wtf
         store.remove('deepySession')
-        setDeepySession(null)
+        setDeepySession(null!)
         setIsDeepy(true)
       }
     },
@@ -43,9 +42,10 @@ export const useChat = () => {
       if (variables === DEEPY_ASSISTANT) {
         updateDeepyAssistant().then(() => {
           queryClient.invalidateQueries('history').then(() => {
+            const id = data?.id
             queryClient.removeQueries('history')
             send.mutateAsync({
-              dialog_session_id: deepySession?.id,
+              dialog_session_id: id,
               text: 'hi deepy!',
               hidden: true,
             })

@@ -1,7 +1,8 @@
 import classNames from 'classnames/bind'
-import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { FC,ReactNode,useEffect,useRef,useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
+import { Badge } from '../../components/Badge/Badge'
 import s from './Wrapper.module.scss'
 
 interface Props {
@@ -21,6 +22,9 @@ interface Props {
   onClose?: (e: React.MouseEvent) => void
   forCard?: boolean
   subWrapper?: boolean
+  btns?: ReactNode
+  badge?: boolean
+  overFlowVisible?: boolean
 }
 
 export const Wrapper: FC<Props> = ({
@@ -40,6 +44,9 @@ export const Wrapper: FC<Props> = ({
   onClose,
   forCard,
   subWrapper,
+  btns,
+  badge,
+  overFlowVisible,
 }) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -75,10 +82,12 @@ export const Wrapper: FC<Props> = ({
             limiter && 'limiter',
             primary && 'primary',
             skills && 'skills',
-            forCard && 'forCard'
+            forCard && 'forCard',
+            overFlowVisible&& 'overFlowVisible'
             // subWrapper && 'subWrapper'
           )}
         >
+          {badge && <Badge />}
           {closable && (
             <button ref={closeRef} onClick={handleClose} className={s.close}>
               <Close />
@@ -87,7 +96,7 @@ export const Wrapper: FC<Props> = ({
           {(title || amount) && (
             <div className={cx('header', annotation && 'annotationFlex')}>
               {title && <h5 className={s.title}>{title}</h5>}
-              {annotation && <p className={s.annotation}>{annotation}</p>}
+
               {!subWrapper && (
                 <>
                   {amount && (
@@ -100,10 +109,12 @@ export const Wrapper: FC<Props> = ({
                       <span className={s.amount}>{amount || '...'}</span>
                     </div>
                   )}
+                  {btns && <div className={s.btns_area}>{btns}</div>}
                 </>
               )}
             </div>
           )}
+          {annotation && <p className={s.annotation}>{annotation}</p>}
           {!subWrapper && children}
           {subWrapper && (
             <div className={cx('wrapper', 'subWrapper')}>

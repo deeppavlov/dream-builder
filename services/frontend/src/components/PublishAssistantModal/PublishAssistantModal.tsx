@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
+import { visibility } from '../../mapping/visibility'
 import {
-BotInfoInterface,
-TDistVisibility,
-Visibility
+  BotInfoInterface,
+  TDistVisibility,
+  Visibility,
 } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -25,7 +27,7 @@ export const PublishAssistantModal = () => {
   const [newValue, setNewValue] = useState<Visibility>()
   const { name: distName } = useParams()
   const isEditor = distName !== undefined && distName.length > 0
-
+  const queryClient = useQueryClient()
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
   const { changeVisibility } = useAssistants()
@@ -56,7 +58,8 @@ export const PublishAssistantModal = () => {
               },
               {
                 onSuccess: () => {
-                 console.log('v =  ', currentVisibilityStatus)
+                  currentVisibilityStatus === 'public_template' &&
+                    queryClient.invalidateQueries('public_dists')
                 },
               }
             ),
@@ -82,24 +85,6 @@ export const PublishAssistantModal = () => {
     setNewValue(() => null)
   }
   useObserver('PublishAssistantModal', handleEventUpdate)
-  const visibility = [
-    {
-      id: 'Private',
-      response: 'private',
-      description: 'Private (only you can see it)',
-    },
-    {
-      id: 'Unlisted',
-      response: 'unlisted',
-      description:
-        'Unlisted (only those you’ve shared the direct link can see it)',
-    },
-    {
-      id: 'Public',
-      response: 'public_template',
-      description: 'Public Template (everyone can see it and re-use it)',
-    },
-  ]
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={closeModal}>

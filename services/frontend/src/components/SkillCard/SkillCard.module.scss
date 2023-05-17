@@ -1,11 +1,11 @@
 .card.forGrid {
- @include forGrid; 
+  @include forGrid;
 }
 .card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 275px;
+  min-width: 255px;
   max-width: 280px;
   border: 1px solid $text3;
   border-radius: 12px;
@@ -149,7 +149,7 @@
 
 .yourCard {
   .header {
-    background-color: $orange;
+    background-color: rgba(51, 0, 255, 0.1);
   }
   .body .top .description {
     max-height: 100%;

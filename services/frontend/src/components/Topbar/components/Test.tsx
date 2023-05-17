@@ -1,4 +1,3 @@
-import { ReactComponent as PlayIcon } from '@assets/icons/chatting.svg'
 import classNames from 'classnames/bind'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
@@ -7,6 +6,7 @@ import { trigger } from '../../../utils/events'
 import { AssistantDialogSidePanel } from '../../AssistantDialogSidePanel/AssistantDialogSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
+import SvgIcon from '../../SvgIcon/SvgIcon'
 import s from './Test.module.scss'
 
 export const Test = () => {
@@ -34,7 +34,8 @@ export const Test = () => {
       className={cx('test', activePanel && 'active')}
       onClick={handleBtnClick}
     >
-      <PlayIcon />
+      <SvgIcon iconName={'chat'} />
+      <p>Chat&nbsp;with&nbsp;Assistant</p>
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='chatWithBot'

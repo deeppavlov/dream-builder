@@ -65,16 +65,21 @@
     }
   }
 }
+.left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .annotation {
   @include b2;
-  color: $text3;
+  color: $text1;
 }
 .annotation.subWrapper {
   @include t3;
   padding: 0;
 }
 .header.annotationFlex {
-  justify-content: start;
+  justify-content: space-between;
   gap: 16px;
 }
 .forCard {
@@ -89,7 +94,10 @@
 }
 .subWrapper {
   background-color: #fff;
-  padding: 16px 16px ;
-  padding: 16px 16px ;
+  padding: 16px 16px;
+  padding: 16px 16px;
   border: none;
+}
+.overFlowVisible {
+  overflow: visible;
 }

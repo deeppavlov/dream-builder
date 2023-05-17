@@ -124,7 +124,22 @@ export const AssistantModule: FC<Props> = () => {
 
     deployed &&
       toast.promise(
-        deleteDeployment.mutateAsync(bot?.deployment?.id!),
+        deleteDeployment.mutateAsync(bot?.deployment?.id!, {
+          onSuccess: () => {
+            const name = bot?.name
+            const visibility = 'private'
+            if (bot?.visibility !== 'private') {
+              changeVisibility.mutateAsync(
+                { name, visibility },
+                {
+                  onSuccess: data => {
+                    console.log('data = ', data)
+                  },
+                }
+              )
+            }
+          },
+        }),
         toasts.deleteDeployment
       )
 

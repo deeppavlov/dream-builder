@@ -1,9 +1,11 @@
 import DB from '@assets/icons/logo.png'
 import { FC, useId } from 'react'
+import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { useDisplay } from '../../context/DisplayContext'
+import { getDeploy } from '../../services/getDeploy'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -48,7 +50,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     ? 'Public Template'
     : bot?.visibility
 
-  const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
+  const isDeepyPavlova = import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
 
   const handleBotListItemClick = () => {
@@ -89,7 +91,30 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       },
     })
   }
+  const queryClient = useQueryClient()
+  
+  const status = useQuery({
+    queryKey: ['deploy', bot?.deployment?.id],
+    queryFn: () => getDeploy(bot?.deployment?.id!),
+    refetchOnMount: false,
+    enabled:
+      bot?.deployment?.id !== undefined &&
+      type !== 'public' &&
+      bot?.deployment?.state !== 'UP',
+    onSuccess(data) {
+      console.log('bot?.deployment?.id = ', bot?.deployment?.id)
+      data?.state === 'UP' &&
+        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
 
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+        setTimeout(() => {
+          queryClient.invalidateQueries('deploy', data?.id)
+        }, 5000)
+      } else if (data?.error !== null) {
+        console.log('error')
+      }
+    },
+  })
   return (
     <tr
       className={s.tr}

@@ -1,8 +1,8 @@
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
+import { FC } from 'react'
 import { useAuth } from '../../context/AuthProvider'
 import { ProfileContextMenu } from '../ProfileContextMenu/ProfileContextMenu'
 import s from './Profile.module.scss'
-import { FC } from 'react'
 
 interface Props {
   auth: any

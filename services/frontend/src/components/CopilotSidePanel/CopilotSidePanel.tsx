@@ -64,28 +64,27 @@ export const CopilotSidePanel = () => {
   }
 
   // hooks
-  
-  
+
   const dispatchTrigger = (isOpen: boolean) =>
-  dispatch({
-    type: 'set',
-    option: {
-      id: consts.COPILOT_SP_IS_ACTIVE,
-      value: isOpen,
-    },
-  })
-  
+    dispatch({
+      type: 'set',
+      option: {
+        id: consts.COPILOT_SP_IS_ACTIVE,
+        value: isOpen,
+      },
+    })
+
   useEffect(() => {
     !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
   }, [])
-  
+
   useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  
+
   useChatScroll(chatRef, [remoteHistory?.data, message, history])
-  
+
   const historyList = history?.map((block: ChatHistory, i: number) => (
     <div
       key={`${block?.author == 'bot'}${i}`}
@@ -130,26 +129,27 @@ export const CopilotSidePanel = () => {
             </div>
           ) : (
             remoteHistory?.data?.map((block: ChatHistory, i: number) => {
-              return (
-                <div
-                  key={`${block?.author == 'bot'}${i}`}
-                  className={cx(
-                    'chat__container',
-                    block?.author == 'bot' && 'chat__container_bot'
-                  )}
-                >
-                  <span
-                    ref={messageRef}
-                    onClick={handleMessageClick}
+              if (i > 0)
+                return (
+                  <div
+                    key={`${block?.author == 'bot'}${i}`}
                     className={cx(
-                      'chat__message',
-                      block?.author == 'bot' && 'chat__message_bot'
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
                     )}
                   >
-                    {block?.text}
-                  </span>
-                </div>
-              )
+                    <span
+                      ref={messageRef}
+                      onClick={handleMessageClick}
+                      className={cx(
+                        'chat__message',
+                        block?.author == 'bot' && 'chat__message_bot'
+                      )}
+                    >
+                      {block?.text}
+                    </span>
+                  </div>
+                )
             })
           )}
           {historyList}

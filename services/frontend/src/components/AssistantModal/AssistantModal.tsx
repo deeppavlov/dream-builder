@@ -170,7 +170,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
             >
-              Use
+              Create
             </Button>
           )}
           {action === 'edit' && (

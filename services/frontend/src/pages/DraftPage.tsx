@@ -19,7 +19,7 @@ import { sortByISO8601 } from '../utils/sortByISO8601'
 
 type IHandler = (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
 
-function filterStack(arr:IDeploymentState[]) {
+function filterStack(arr: IDeploymentState[]) {
   const excludedValues = [
     'universal_prompted_assistant',
     'multiskill_ai_assistant',
@@ -33,7 +33,7 @@ function filterStack(arr:IDeploymentState[]) {
     'deeppavlov_assistant',
   ]
   return arr?.filter(
-    (obj) => !excludedValues.includes(obj.virtual_assistant.name)
+    obj => !excludedValues.includes(obj.virtual_assistant.name)
   )
 }
 
@@ -41,7 +41,9 @@ export const DraftPage = () => {
   const { requests, confirm, decline } = useAdmin()
   const { deployments, deleteDeployment } = useDeploy()
 
-  const filtered = filterStack(deployments?.data!)
+  const filteredDeployment = filterStack(deployments?.data!)
+
+  const sortedDeployment = sortByISO8601(filteredDeployment)
   const sortedRequest = sortByISO8601(requests!)
 
   const cardClickHandler = () => {}
@@ -85,7 +87,7 @@ export const DraftPage = () => {
         <Wrapper
           fitScreen
           title='Deployments'
-          amount={filtered?.length > 0 ? filtered?.length : ''}
+          amount={sortedDeployment?.length > 0 ? sortedDeployment?.length : ''}
         >
           {deployments?.isLoading && (
             <div
@@ -104,7 +106,7 @@ export const DraftPage = () => {
             </div>
           )}
           <Container gridForDeploys>
-            {filtered?.map((deployment, i: number) => {
+            {sortedDeployment?.map((deployment, i: number) => {
               return (
                 <div key={i}>
                   <Wrapper>
@@ -116,7 +118,7 @@ export const DraftPage = () => {
                         justifyContent: 'space-between',
                         width: '100%',
                         gap: '8px',
-                        maxHeight: '200px',
+                        height: '250px',
                       }}
                     >
                       <span style={{ overflow: 'hidden' }}>

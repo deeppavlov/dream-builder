@@ -29,6 +29,7 @@
     height: 64px;
     width: 100%;
     padding: 16px;
+
     img {
       width: 40px;
       height: 40px;
@@ -92,5 +93,10 @@ a {
   @include tooltip;
   &::after {
     top: -2px !important;
+  }
+}
+.topbar.gapForBtns {
+  .btns_area {
+    gap: 16px;
   }
 }

@@ -6,7 +6,7 @@ import s from './Table.module.scss'
 interface TableProps {
   children: ReactNode
   checkbox?: boolean
-  addButton?: JSX.Element
+  addButton?: JSX.Element // TODO: Rename to 'header' or smth
   first?: string
   second?: string
   third?: string

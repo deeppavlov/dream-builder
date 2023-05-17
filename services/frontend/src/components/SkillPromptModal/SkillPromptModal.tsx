@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
-import { useMutation, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -41,12 +41,11 @@ interface FormValues {
 const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
-  const { getAllComponents, updateComponent } = useComponent()
-  const skill = distName
-    ? (getAllComponents(distName).data?.skills?.find(
-        s => s.name === skillId
-      ) as ISkill)
-    : null
+  const { getComponent, updateComponent } = useComponent()
+  const {data: skill} =
+    distName && skillId
+      ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })
+      : null
   const [selectedService, setSelectedService] = useState<LM_Service | null>(
     null
   )
@@ -90,13 +89,14 @@ const SkillPromptModal = () => {
   const {
     handleSubmit,
     reset,
-    setError,
+    trigger: triggerField,
     getValues,
     control,
     watch,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isSubmitting },
   } = useForm<FormValues>({
-    // mode: 'all',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       model: skill?.lm_service?.display_name,
       prompt: skill?.prompt,
@@ -105,10 +105,7 @@ const SkillPromptModal = () => {
   const model = getValues().model
   const skillModelTip = servicesList.get(model)?.description
   const skillModelLink = servicesList.get(model)?.project_url
-  const isDirty = Object.values(dirtyFields).length > 0
-  const [needRedeploy, setNeedRedeploy] = useState(null)
-  const needRedeployRef = useRef(null)
-  needRedeployRef.current = needRedeploy
+  const isDirty = Boolean(dirtyFields?.prompt || dirtyFields?.model)
 
   const clearStates = () => {
     setIsOpen(false)
@@ -123,61 +120,53 @@ const SkillPromptModal = () => {
   const handleEventUpdate = (data: { detail: Props }) => {
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
-    if (isRequestToClose) {
-      setIsOpen(false)
-      return
-    }
 
+    if (isRequestToClose) return setIsOpen(false)
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-
     setIsOpen(prev => {
       if (data.detail.isOpen && prev) return prev
       return !prev
     })
   }
 
-  const handleSave = async (data: FormValues) => {
-    toast.promise(
-      update.mutateAsync(data).then(() => {
-        if (dist?.deployment?.state === 'DEPLOYED') {
-          deleteDeployment.mutateAsync(dist?.deployment?.id!)
-        } else return
-      }),
-      {
-        loading: 'Saving...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      }
-    )
-    trigger('RenewChat', {})
-  }
-
-  const onFormSubmit = (data: FormValues) => {
-    if (isDirty) handleSave(data)
-  }
-
-  const postServiceAndPrompt = async ({ prompt, model }: FormValues) => {
+  const handleSave = ({ prompt, model }: FormValues) => {
     const service = servicesList.get(model)?.id
 
     if (skill === undefined || skill === null) return
 
-    const { component_id, description, display_name } = skill
+    const { component_id, id, description, display_name } = skill
 
-    await updateComponent.mutateAsync({
-      component_id,
-      description,
-      display_name,
-      lm_service_id: service!,
-      lm_service: services?.find(s => s.id === service), // FIX IT!
-      prompt: prompt,
-      distName: distName || '',
-      type: 'skills',
-    })
+    toast
+      .promise(
+        updateComponent
+          .mutateAsync({
+            component_id,
+            description,
+            display_name,
+            lm_service_id: service!,
+            lm_service: services?.find((s: LM_Service) => s.id === service), // FIX IT!
+            prompt: prompt,
+            distName: distName || '',
+            type: 'skills',
+          })
+          .then(() => {
+            if (dist?.deployment?.state === 'UP') {
+              deleteDeployment.mutateAsync(dist?.deployment?.id!)
+            } else return
+          }),
+        {
+          loading: 'Saving...',
+          success: 'Success!',
+          error: 'Something went wrong...',
+        }
+      )
+      .then(() => trigger('RenewChat', {}))
   }
 
-  const update = useMutation({
-    mutationFn: (data: FormValues) => postServiceAndPrompt(data),
-  })
+  const onFormSubmit = (data: FormValues) => {
+    const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
+    if (isDirty) handleSave(data)
+  }
 
   useObserver('SkillPromptModal', handleEventUpdate)
 
@@ -219,15 +208,14 @@ const SkillPromptModal = () => {
     }
   }, [isOpen])
 
-  useEffect(() => {
-    return () => {
-      console.log(needRedeployRef.current)
-    }
-  }, [])
-
   useQuitConfirmation({
     activeElement: modalRef,
-    availableSelectors: [`#${HELPER_TAB_ID}`, `#sp_left`],
+    availableSelectors: [
+      `#${HELPER_TAB_ID}`,
+      `#sp_left`,
+      `#testDialog`,
+      `#assistantDialogPanel`,
+    ],
     isActive: isOpen && isDirty,
     quitHandler: closeModal,
   })
@@ -326,7 +314,7 @@ const SkillPromptModal = () => {
                         selectedService?.max_tokens
                       ),
                   }}
-                  setError={setError}
+                  triggerField={triggerField}
                   props={{
                     placeholder:
                       "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
@@ -341,7 +329,10 @@ const SkillPromptModal = () => {
                   </Button>
                   <Button
                     theme='primary'
-                    props={{ type: 'submit', disabled: update.isLoading }}
+                    props={{
+                      type: 'submit',
+                      disabled: updateComponent.isLoading || isSubmitting,
+                    }}
                   >
                     Save
                   </Button>

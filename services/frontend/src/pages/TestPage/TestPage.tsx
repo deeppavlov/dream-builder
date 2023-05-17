@@ -476,7 +476,7 @@ export const TestPage = () => {
             SkillModal (edit)
           </Button>
         </div>
-        <div className={s.testPage__component}>
+        {/* <div className={s.testPage__component}>
           <span>SkillPromptModal</span>
           <Button theme='primary' props={{ onClick: () => {} }}>
             SkillPromptModal (add)
@@ -489,7 +489,7 @@ export const TestPage = () => {
           >
             SkillPromptModal (edit)
           </Button>
-        </div>
+        </div> */}
         <div className={s.testPage__component}>
           <span>CreateSkillDistModal</span>
           <Button
@@ -1222,7 +1222,7 @@ export const TestPage = () => {
       <PublishAssistantModal />
       <DeleteAssistantModal />
       <SkillModal />
-      <SkillPromptModal />
+      {/* <SkillPromptModal /> */}
       <SkillQuitModal />
       <CreateSkillDistModal />
       <ChooseBotModal />

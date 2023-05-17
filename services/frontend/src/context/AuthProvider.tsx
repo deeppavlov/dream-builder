@@ -1,7 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { authApi } from '../services/axiosConfig'
 import { getGoogleOAuthURL } from '../services/getGoogleOAuthUrl'
-import { ITokens, UserContext, UserInterface } from '../types/types'
+import {
+  IBeforeLoginModal,
+  ITokens,
+  UserContext,
+  UserInterface,
+} from '../types/types'
+import { trigger } from '../utils/events'
 
 export const deleteLocalStorageUser = () => localStorage.removeItem('user')
 
@@ -18,6 +24,20 @@ export const setAccessToken = (token: string) => {
 
   setLocalStorageUser({ ...user, ...{ token } })
 }
+
+export const AuthContext = createContext<UserContext | null>(null)
+export const useAuth = () => useContext(AuthContext)
+
+export const saveBeforeLoginModal = (modal: IBeforeLoginModal) =>
+  sessionStorage.setItem('db_before_login_modal', JSON.stringify(modal))
+
+const getBeforeLoginModal = (): IBeforeLoginModal | null => {
+  const modal = sessionStorage.getItem('db_before_login_modal')
+  return modal ? JSON.parse(modal) : null
+}
+
+const clearBeforeLoginModal = () =>
+  sessionStorage.removeItem('db_before_login_modal')
 
 const getLocalStorageUser = (): (UserInterface & ITokens) | null => {
   const user = localStorage.getItem('user')
@@ -40,12 +60,8 @@ const savePreviousLocation = () =>
 
 const getPreviousLocation = () => sessionStorage.getItem('db_redirect_to')
 
-export const AuthContext = createContext<UserContext | null>(null)
-export const useAuth = () => useContext(AuthContext)
+const clearPreviousLocation = () => sessionStorage.removeItem('db_redirect_to')
 
-/**
- * Exchange Google `auth_code` for tokens
- */
 export const exchangeAuthCode = async (code: string) => {
   let axiosConfig = {
     mode: 'no-cors',
@@ -63,8 +79,8 @@ export const exchangeAuthCode = async (code: string) => {
       console.log('ExchangeAuthCode failed!')
     })
 
-  location.href = getPreviousLocation() ?? getClearUrl(location.origin)
-  sessionStorage.clear()
+  const beforeLoginUrl = getPreviousLocation() ?? getClearUrl(location.origin)
+  location.href = beforeLoginUrl
 }
 
 export const login = () => {
@@ -101,6 +117,22 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
       setUser(localStorageUser)
     }
   }, [])
+
+  // Trigger requested before login Modal window,
+  // and clear sessionStorage states
+  useEffect(() => {
+    const beforeLoginUrl = getPreviousLocation()
+
+    if (!beforeLoginUrl || user === null) return
+
+    const beforeLoginModal = getBeforeLoginModal()
+
+    if (beforeLoginModal && location.href === beforeLoginUrl)
+      trigger(beforeLoginModal.name, beforeLoginModal.options)
+
+    clearPreviousLocation()
+    clearBeforeLoginModal()
+  }, [user])
 
   const userContextValue = useMemo(
     () => ({

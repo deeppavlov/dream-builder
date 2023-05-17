@@ -45,7 +45,7 @@ const SkillsPage = () => {
             }
           >
             <SkillList
-              skills={components?.data?.skills}
+              skills={components?.data?.skills!}
               view='table'
               type='your'
             />
@@ -58,7 +58,7 @@ const SkillsPage = () => {
               <CardsLoader cardsCount={3} type='skill' />
             )}
             <SkillList
-              skills={components?.data?.skills}
+              skills={components?.data?.skills!}
               view='cards'
               type='your'
               forGrid

@@ -29,11 +29,16 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
   const deleteSkill = () => {
     const id = skill?.id!
     toast.promise(
-      deleteComponent.mutateAsync({ distName: distName || '', id }),
+      deleteComponent.mutateAsync({
+        distName: distName || '',
+        id,
+        component_id: skill.component_id,
+        type: 'skills',
+      }),
       {
         loading: 'Deleting...',
         success: 'Success!',
-        error: 'Something Went Wrong...',
+        error: 'Something went wrong...',
       }
     )
   }

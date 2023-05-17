@@ -8,6 +8,7 @@ import { deleteComoponent } from '../services/deleteComponent'
 import { editComponent } from '../services/editComponent'
 import { getComponent as fetchComponent } from '../services/getComponent'
 import { getComponents } from '../services/getComponents'
+import { getComponentsGroup } from '../services/getComponentsGroup'
 import {
   IPatchComponentParams,
   patchComponent,
@@ -15,6 +16,7 @@ import {
 import {
   IStackElement,
   LM_Service,
+  PostDistParams,
   StackType,
   TComponents,
 } from '../types/types'
@@ -31,7 +33,9 @@ interface IAdd {
   type: StackType
 }
 
-interface IDelete extends IAdd {}
+interface IDelete extends IAdd {
+  component_id: number
+}
 
 interface ICreate {
   distName: string
@@ -41,22 +45,29 @@ interface ICreate {
 
 interface IEdit {
   distName: string
-  id: number
+  component_id: number
   type: StackType
-  data: IStackElement
+  data: PostDistParams
 }
 
 interface ICachedComponent {
   distName: string
   id: number
   type: StackType
-  data: IStackElement
+  data: IStackElement | null
 }
 
 interface IUpdate extends IPatchComponentParams {
   distName: string
   type: StackType
   lm_service: LM_Service
+}
+
+interface IGetGroup {
+  distName: string
+  group: StackType
+  component_type?: string
+  author_id?: number
 }
 
 export const useComponent = () => {
@@ -72,7 +83,24 @@ export const useComponent = () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         enabled: distName?.length! > 0,
-        initialData: () => getAllFetchedComponents(distName),
+        initialData: () =>
+          getAllFetchedComponents(distName, ALL_COMPONENTS) as TComponents,
+      }
+    )
+
+  const getGroupComponents = (
+    { distName, group, component_type, author_id }: IGetGroup,
+    { enabled }: { enabled?: boolean }
+  ) =>
+    useQuery<IStackElement[]>(
+      [group, distName],
+      () => getComponentsGroup({ group, component_type, author_id }),
+      {
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        enabled: enabled ?? distName?.length! > 0,
+        initialData: () =>
+          getAllFetchedComponents(distName, group) as IStackElement[],
       }
     )
 
@@ -85,29 +113,35 @@ export const useComponent = () => {
 
   const addComponentToDist = useMutation({
     mutationFn: ({ distName, id }: IAdd) => postComponent(distName, id),
-    onSuccess: (data: IStackElement, { id, distName, type }) => {
-      updateCachedComponent({ id, distName, type, data })
-    },
+    onSuccess: () => queryClient.invalidateQueries([ALL_COMPONENTS]),
   })
 
   const deleteComponent = useMutation({
     mutationFn: ({ distName, id }: IDelete) => deleteComoponent(distName, id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(ALL_COMPONENTS)
+    onSuccess: (_, { type, distName, component_id }) => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+      queryClient.invalidateQueries([type, distName])
+      updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })
 
   const create = useMutation({
+    onMutate: data => {
+      console.log('data = ', data)
+    },
     mutationFn: ({ data }: ICreate) => createComponent(data),
     onSuccess: ({ id }: IStackElement, { distName, type }) => {
+      console.log('id = ', id)
       addComponentToDist.mutateAsync({ distName, id: id, type })
     },
   })
 
   const edit = useMutation({
-    mutationFn: ({ id, data }: IEdit) => editComponent(data, id),
-    onSuccess: (data: IStackElement, { id, distName, type }) => {
-      updateCachedComponent({ id, distName, type, data })
+    mutationFn: ({ component_id, data }: IEdit) =>
+      editComponent(data, component_id),
+    onSuccess: (data: IStackElement, { component_id, distName, type }) => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+      updateCachedComponent({ id: component_id, distName, type, data })
     },
   })
 
@@ -115,14 +149,14 @@ export const useComponent = () => {
     mutationFn: (variables: IUpdate) => patchComponent(variables),
     onSuccess: (
       data: IStackElement,
-      { component_id, distName, type, lm_service }
+      { component_id, distName, lm_service, type }
     ) => {
       //fix lm_service on patchComponent endpoint not return from backend
       updateCachedComponent({
         id: component_id,
         distName,
         type,
-        data: { ...data, lm_service },
+        data: { ...data, lm_service } as IStackElement,
       })
     },
   })
@@ -130,45 +164,48 @@ export const useComponent = () => {
   const updateCachedComponent = ({
     distName,
     id,
-    data,
     type,
+    data,
   }: ICachedComponent) => {
     const isCachedComponent =
       queryClient.getQueryData([COMPONENT, distName, id]) !== undefined
+
+    if (isCachedComponent) {
+      queryClient.setQueryData<IStackElement | undefined>(
+        [COMPONENT, distName, id],
+        old => {
+          const isComparable = old && data
+
+          if (!isComparable) return undefined
+          return Object.assign({}, old, data)
+        }
+      )
+    }
 
     queryClient.setQueryData<TComponents | undefined>(
       [ALL_COMPONENTS, distName],
       old => {
         if (old) {
-          const oldIndex = old[type].findIndex(
-            ({ component_id }) => component_id === id
-          )
-          const isExistOld = oldIndex > -1
+          const oldIndex = old[type].findIndex(el => el.component_id === id)
+          const isOldExist = oldIndex > -1
           const oldComponent = old[type][oldIndex]
           const newState = old[type]
 
-          if (isExistOld) {
+          if (isOldExist)
             newState[oldIndex] = Object.assign({}, oldComponent, data)
-          } else {
-            newState.push(data)
-          }
 
           return Object.assign({}, old, { [type]: newState })
         }
       }
     )
-
-    if (isCachedComponent) {
-      queryClient.setQueryData<IStackElement | undefined>(
-        [COMPONENT, distName, id],
-        old => old && Object.assign({}, old, data)
-      )
-    }
   }
 
-  const getAllFetchedComponents = (distName: string) =>
-    queryClient.getQueryData<TComponents | undefined>([
-      ALL_COMPONENTS,
+  const getAllFetchedComponents = (
+    distName: string,
+    group: StackType | typeof ALL_COMPONENTS
+  ) =>
+    queryClient.getQueryData<TComponents | IStackElement[] | undefined>([
+      group,
       distName,
     ])
 
@@ -183,8 +220,11 @@ export const useComponent = () => {
         ALL_COMPONENTS,
         distName,
       ])?.[type] || []
-    const result = [component, ...allComponents]?.find(
-      component => component?.component_id === id
+    const groupComponents =
+      queryClient.getQueryData<IStackElement[] | undefined>([type, distName]) ||
+      []
+    const result = [component, ...allComponents, ...groupComponents]?.find(
+      el => el?.component_id === id
     )
 
     return result
@@ -192,6 +232,7 @@ export const useComponent = () => {
 
   return {
     getAllComponents,
+    getGroupComponents,
     getComponent,
     updateComponent,
     addComponentToDist,

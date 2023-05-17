@@ -58,6 +58,9 @@
       src="https://www.googletagmanager.com/gtag/js?id=G-X8CZNB50ZH"
     ></script>
     <script>
+      if (window.location.hostname === 'localhost') {
+        window['ga-disable-G-X8CZNB50ZH'] = true
+      }
       window.dataLayer = window.dataLayer || []
       function gtag() {
         dataLayer.push(arguments)

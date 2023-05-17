@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
+import { TModals } from '../types/types'
 import { subscribe, unsubscribe } from '../utils/events'
 
 export const useObserver = (
-  eventName: string,
+  eventName: TModals,
   callback: (data: any) => void
 ) => {
   useEffect(() => {

@@ -2,12 +2,18 @@
   &:nth-child(2) {
     padding-left: 0;
   }
+  &:last-child {
+    padding-right: 24px;
+  }
+  &:ашкые-child {
+    padding-left: 24px;
+  }
   border: none;
   text-align: start;
   max-height: 64px;
   background: #ffffff;
   color: #313030;
-  padding: 0px 24px;
+  // padding: 0px 0px;
   svg {
     @include icon_size_24;
   }
@@ -35,17 +41,20 @@
   @include tr_behavior;
 
   .td {
+    &:first-child {
+      padding-left: 24px;
+    }
     &:nth-child(2) {
       padding-left: 0;
     }
+
     border: none;
     text-align: start;
     max-height: 64px;
     background: #fff;
     color: #313030;
-    padding: 0px 24px;
+    padding: 0px 12px;
     svg {
-      // fill: rgba(0, 0, 0, 0.7);
       @include icon_size_24;
     }
   }
@@ -119,6 +128,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: fit-content;
   gap: 24px;
 }
 .area {

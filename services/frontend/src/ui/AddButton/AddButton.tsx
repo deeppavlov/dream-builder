@@ -28,18 +28,27 @@ export const AddButton: FC<Props> = ({
   const { isPreview } = usePreview()
 
   const handleClick = () => {
-    if (!auth?.user) {
-      trigger('SignInModal', {})
-      return
-    }
+    const isCreateScratchAssistant = !forSkills && !fromScratch
+    const isCreateScratchSkill = fromScratch
+    const isAddExistSkill = forSkills && !isPreview
+    const scratchAssistant = { action: 'create' }
 
-    const addBot = () => {
-      trigger('AssistantModal', { action: 'create' })
-    }
-
-    if (forSkills && !isPreview) trigger('SkillsListModal', {})
-    fromScratch && trigger('SkillModal', { action: 'create' })
-    if (!forSkills && !fromScratch) addBot()
+    if (!auth?.user)
+      return trigger(
+        'SignInModal',
+        isCreateScratchAssistant
+          ? {
+              requestModal: {
+                name: 'AssistantModal',
+                options: scratchAssistant,
+              },
+            }
+          : {}
+      )
+    if (isAddExistSkill) return trigger('SkillsListModal', {})
+    if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
+    if (isCreateScratchAssistant)
+      return trigger('AssistantModal', scratchAssistant)
   }
 
   return !forTable ? (
@@ -57,7 +66,7 @@ export const AddButton: FC<Props> = ({
   ) : (
     <tbody>
       <tr className={cx('tr')}>
-        <td colSpan={5} className={s.td}>
+        <td colSpan={6} className={s.td}>
           <button className={s.forTable} onClick={handleClick}>
             <img src={Add} />
             <p>{text || 'Create From Scratch'}</p>

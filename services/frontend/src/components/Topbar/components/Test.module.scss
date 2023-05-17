@@ -2,25 +2,56 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 68px;
-  height: $topbar-height;
+  max-width: 52px;
+  min-width: 52px;
+  max-height: 44px;
+  min-height: 44px;
+  background-color: rgba(51, 0, 255, 0.1);
+  border-radius: 8px;
+  margin: 0 12px;
+
+  &:disabled {
+    background-color: $bcgrnd3;
+    opacity: 0.3;
+
+    svg path {
+      fill: $text3;
+      stroke: $text3;
+    }
+  }
+
   svg {
     cursor: pointer;
-    fill: $text3;
-    width: 52px;
+
+    path {
+      fill: $text1;
+      stroke: $text1;
+    }
   }
+
   &:hover {
-    background: #f0f0f3;
-    svg {
-      fill: #3300ff;
-    }
+    background-color: $primary1;
   }
+
   &:active {
-    svg {
-      fill: #190080;
+    background-color: $primary4;
+  }
+
+  &:hover,
+  &:active {
+    box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+
+    svg path {
+      fill: $bcgrnd1;
+      stroke: $bcgrnd1;
     }
   }
-  &:disable {
-    opacity: 0.3;
+}
+.active {
+  background-color: $primary1;
+  box-shadow: 0px 8px 15px rgba(14, 1, 66, 0.15);
+  svg path {
+    fill: $bcgrnd1;
+    stroke: $bcgrnd1;
   }
 }

@@ -56,29 +56,33 @@ export const AccessTokensBanner = () => {
     toast.promise(deleteToken(token_id), {
       loading: 'Deleting...',
       success: 'Success!',
-      error: 'Something Went Wrong...',
+      error: 'Something went wrong...',
     })
   }
 
-  const updateToken = (index: number, token: IUserApiKey) => {
-    setTokens(prev => {
-      const isPrev = prev !== null && prev !== undefined
-      const newState = prev
+  const updateToken = (index: number, token: IUserApiKey) =>
+    new Promise(resolve => {
+      setTokens(prev => {
+        const isPrev = prev !== null && prev !== undefined
+        const newState = isPrev ? prev : [token]
 
-      if (!isPrev) return prev
-      newState?.splice(index, 1, token)
-      saveTokens(newState)
-      return newState
+        if (!isPrev) return newState
+        newState?.splice(index, 1, token)
+        saveTokens(newState)
+        return newState
+      })
+      resolve('Successfully created!')
     })
-  }
 
   const createUserToken = (data: FormValues) =>
     new Promise((resolve, reject) => {
-      const service = api_services?.find(({ name }) => name === data.service)
+      const service = api_services?.find(
+        ({ display_name }) => display_name === data.service
+      )
       const isService = service !== undefined
       const isUserId = user?.id !== undefined
 
-      if (!isService || !isUserId) return reject('Not find service or userId')
+      if (!isService || !isUserId) return reject('Not find Service or User id')
 
       const newToken: IUserApiKey = {
         api_service: service,
@@ -94,12 +98,13 @@ export const AccessTokensBanner = () => {
           serviceName: data.service,
           onContinue: () => {
             updateToken(apiTokenIndex, newToken)
-            resolve(true)
+            resolve('Successfully updated!')
           },
-          onCancel: () => resolve(true),
+          onCancel: () => resolve('Successfully cancelled!'),
         })
         return
       }
+
       setTokens(prev => {
         const newState = prev ?? []
 
@@ -107,14 +112,15 @@ export const AccessTokensBanner = () => {
         saveTokens(newState)
         return newState
       })
-      resolve(true)
+
+      resolve('Successfully created!')
     })
 
   const onSubmit = (data: FormValues) => {
     toast.promise(createUserToken(data), {
       loading: 'Creating...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
+      success: data => `${data}`,
+      error: data => `${data}`,
     })
     reset()
   }
@@ -130,16 +136,16 @@ export const AccessTokensBanner = () => {
         tokens here if you want to stop use of the services they provide access
         to by your AI Assistants, or you can revoke these tokens in their
         respective services. Do not give out your personal access tokens to
-        anybody you don’t want to access your files.
+        anybody you don't want to access your files.
       </p>
-      <p className={s.annotations}>
+      {/* <p className={s.annotations}>
         When you added a token for a given service you will be offered to
-        manually validate that token. When you click “Validate” you may incur
+        manually validate that token. When you click "Validate" you may incur
         costs associated with invoking API calls to the respective services.
         These costs are usually quite nominal, but we advise you to check with
         the pricing plans of the respective services if in doubt before
         validating your tokens.
-      </p>
+      </p> */}
       <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
         <Input
           name='token'
@@ -153,8 +159,10 @@ export const AccessTokensBanner = () => {
           name='service'
           label='Choose service:'
           list={
-            api_services?.map(s => ({ id: s.id.toString(), name: s.name })) ||
-            []
+            api_services?.map(s => ({
+              id: s.id.toString(),
+              name: s.display_name,
+            })) || []
           }
           control={control}
           rules={{ required: true }}
@@ -166,7 +174,7 @@ export const AccessTokensBanner = () => {
           {tokens.map(({ api_service }: IUserApiKey) => (
             <li className={s.token} key={api_service.id}>
               <TokenKeyIcon className={s.icon} />
-              <div className={s.tokenName}>{api_service.name}</div>
+              <div className={s.tokenName}>{api_service.display_name}</div>
               <div className={s.right}>
                 <button
                   className={s.remove}

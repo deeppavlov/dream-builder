@@ -2,7 +2,7 @@ import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -30,7 +30,7 @@ export const BotsAllPage = () => {
           ) : (
             <>
               {isTableView ? (
-                <Table>
+                <Table assistants>
                   <DistList
                     view='table'
                     dists={publicDists?.data}
@@ -38,7 +38,7 @@ export const BotsAllPage = () => {
                   />
                 </Table>
               ) : (
-                <Container gridForCards heightAuto scroll>
+                <Container gridForCards heightAuto>
                   {publicDists?.isLoading && (
                     <CardsLoader cardsCount={6} type='bot' />
                   )}
@@ -56,7 +56,7 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
-        <DeployModalNotification />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

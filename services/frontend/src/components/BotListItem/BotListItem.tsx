@@ -1,4 +1,4 @@
-import Woman from '@assets/icons/woman.png'
+import DB from '@assets/icons/logo.png'
 import { FC, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
@@ -14,6 +14,7 @@ import { timeToUTC } from '../../utils/timeToUTC'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 
 interface BotListItemProps {
@@ -33,6 +34,23 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
+  const onModeration = bot?.publish_state === 'in_progress'
+  const published = bot?.visibility === 'public_template'
+  const deployed = bot?.deployment?.state === 'UP'
+  const deploying =
+    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+
+  const publishState = !bot?.publish_state
+    ? type === 'your' && bot?.visibility
+    : onModeration
+    ? 'On Moderation'
+    : published
+    ? 'Public Template'
+    : bot?.visibility
+
+  const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
+
   const handleBotListItemClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -49,23 +67,15 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {
-      trigger('AssistantModal', { action: 'clone', bot: bot })
+      trigger('AssistantModal', assistantClone)
       return
     }
 
-    trigger('SignInModal', {})
-  }
-
-  const handlePreviewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
+    trigger('SignInModal', {
+      requestModal: { name: 'AssistantModal', options: assistantClone },
     })
   }
 
@@ -79,7 +89,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       },
     })
   }
-  const onModeration = bot?.publish_state === 'in_progress'
+
   return (
     <tr
       className={s.tr}
@@ -93,16 +103,12 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
       </td>
       <td className={s.td}>
         <div className={s.author}>
-          {bot?.author?.fullname == 'Deepy Pavlova' ? (
-            <img src={Woman} alt='Author' />
+          {isDeepyPavlova ? (
+            <img src={DB} alt='Author' />
           ) : (
             <img src={bot?.author?.picture} />
           )}
-          <p>
-            {bot?.author?.fullname! == 'Deepy Pavlova'
-              ? 'Dr. Xandra Smith'
-              : bot?.author?.fullname!}
-          </p>
+          <p>{author}</p>
         </div>
       </td>
       <td className={s.td}>
@@ -111,36 +117,17 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
           data-tooltip-id={'botTableDesc' + tooltipId}
         >
           {bot?.description}
-          {/* <BaseToolTip
-            id={'botTableDesc' + tooltipId}
-            content={bot?.description}
-            place='bottom'
-            theme='description'
-            delayShow={TOOLTIP_DELAY}
-          /> */}
         </div>
       </td>
-      {/* <td className={s.td}>
+      <td className={s.td}>
         <div className={s.visibility}>
-          {type == 'your' && (
-            <SmallTag
-              theme={
-                bot?.publish_state === 'in_progress'
-                  ? 'validating'
-                  : bot?.visibility
-              }
-            >
-              {!bot?.publish_state
-                ? type === 'your' && bot?.visibility
-                : bot?.publish_state == 'in_progress'
-                ? 'On moderation'
-                : bot?.visibility === 'public_template'
-                ? 'Public'
-                : bot?.visibility}
+          {
+            <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
+              {publishState}
             </SmallTag>
-          )}
+          }
         </div>
-      </td> */}
+      </td>
       <td className={s.td}>
         <div className={s.date}>
           <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
@@ -154,13 +141,12 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
             small
             withIcon
             props={{
-              disabled: onModeration,
+              disabled: onModeration || deploying,
               onClick: type === 'public' ? handleCloneClick : handlEditClick,
             }}
           >
             {type === 'public' ? <Clone /> : <Edit />}
           </Button>
-
           {type === 'your' ? (
             <>
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />

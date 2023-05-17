@@ -38,7 +38,8 @@ export const PublishAssistantModal = () => {
   const handlePublish = (data: FormValues) => {
     const visibility = data?.visibility!
     const name = bot?.name!
-
+    const deploymentState = bot?.deployment?.state
+    
     visibility !== currentVisibilityStatus ||
     bot?.publish_state == 'in_progress'
       ? toast
@@ -47,6 +48,7 @@ export const PublishAssistantModal = () => {
               name,
               visibility,
               inEditor: isEditor,
+              deploymentState,
             }),
             {
               loading: 'Loading...',
@@ -54,7 +56,7 @@ export const PublishAssistantModal = () => {
                 visibility === 'public_template'
                   ? 'Submitted For Review!'
                   : 'Success!',
-              error: 'Something Went Wrong...',
+              error: 'Something went wrong...',
             }
           )
           .then(() => {

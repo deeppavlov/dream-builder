@@ -1,17 +1,16 @@
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useObserver } from '../../hooks/useObserver'
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
-import { AssistantModal } from '../AssistantModal/AssistantModal'
+import { trigger } from '../../utils/events'
 import s from './CreateSkillDistModal.module.scss'
 
 const CreateSkillDistModal = () => {
   let cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState(false)
-  const [skill, setSkill] = useState<SkillInfoInterface | null>(null)
+  const [skill, setSkill] = useState<ISkill | null>(null)
 
   const closeModal = () => {
     setIsOpen(false)
@@ -31,7 +30,7 @@ const CreateSkillDistModal = () => {
   /**
    * Set modal is open and getting skill info
    */
-  const handleEventUpdate = (data: { detail: SkillInfoInterface }) => {
+  const handleEventUpdate = (data: { detail: ISkill }) => {
     const { detail } = data
     setSkill(detail?.name ? detail : null)
     setIsOpen(prev => !prev)
@@ -54,7 +53,8 @@ const CreateSkillDistModal = () => {
             theme='primary'
             props={{
               onClick: handleExistingBotBtnClick,
-            }}>
+            }}
+          >
             Add to existing bot
           </Button>
         </div>

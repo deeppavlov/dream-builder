@@ -324,12 +324,7 @@ def pre_populate_virtual_assistant(target, connection, **kw):
 
 @listens_for(PublishRequest.__table__, "after_create")
 def pre_populate_publish_request(target, connection, **kw):
-    _pre_populate_from_tsv(
-        settings.db.initial_data_dir / "publish_request.tsv",
-        target,
-        connection,
-        map_value_types={"is_confirmed": lambda x: bool(int(x))},
-    )
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "publish_request.tsv", target, connection)
 
 
 @listens_for(LmService.__table__, "after_create")

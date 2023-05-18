@@ -257,7 +257,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     current_assistant_dist_id,
                     1,
                     enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE.value,
-                    enums.PublishRequestState.APPROVED,
+                    enums.PublishRequestState.APPROVED.value,
                     1,
                 ]
                 publish_csv_writer.writerow(publish_row)

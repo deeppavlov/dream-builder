@@ -8,6 +8,8 @@ import openpyxl
 from deeppavlov_dreamtools import list_dists, utils
 from deeppavlov_dreamtools.distconfigs.components import DreamComponent
 
+from database import enums
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
@@ -192,14 +194,16 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
         open(f"{output_dir}/deployment.tsv", "w", encoding="utf-8") as deployment_tsv_f,
     ):
         va_csv_writer = csv.writer(va_tsv_f, delimiter="\t", quotechar='"')
-        va_csv_writer.writerow(["author_id", "source", "name", "display_name", "description", "date_created"])
+        va_csv_writer.writerow(
+            ["author_id", "source", "name", "display_name", "description", "private_visibility", "date_created"]
+        )
 
         va_components_csv_writer = csv.writer(va_components_tsv_f, delimiter="\t", quotechar='"')
         va_components_csv_writer.writerow(["virtual_assistant_id", "component_id", "is_enabled"])
 
         publish_csv_writer = csv.writer(publish_tsv_f, delimiter="\t", quotechar='"')
         publish_csv_writer.writerow(
-            ["slug", "virtual_assistant_id", "user_id", "visibility", "is_confirmed", "reviewed_by_user_id"]
+            ["slug", "virtual_assistant_id", "user_id", "public_visibility", "state", "reviewed_by_user_id"]
         )
 
         deployment_csv_writer = csv.writer(deployment_tsv_f, delimiter="\t", quotechar='"')
@@ -214,6 +218,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     dist.name,
                     dist.pipeline.metadata.display_name,
                     dist.pipeline.metadata.description,
+                    enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK.value,
                     dist.pipeline.metadata.date_created.strftime("%Y-%m-%dT%H:%M:%S"),
                 ]
                 va_csv_writer.writerow(va_row)
@@ -251,8 +256,8 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     dist.name,
                     current_assistant_dist_id,
                     1,
-                    "public_template",
-                    1,
+                    enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE.value,
+                    enums.PublishRequestState.APPROVED,
                     1,
                 ]
                 publish_csv_writer.writerow(publish_row)

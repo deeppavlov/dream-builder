@@ -3,17 +3,27 @@ import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, JSON, TypeDecorator, VARCHAR, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    JSON,
+    TypeDecorator,
+    VARCHAR,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import insert, JSONB
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext import mutable
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql import expression
+from sqlalchemy.sql import expression, sqltypes
 from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
-from database import utils
+from database import utils, enums
 from database.core import Base
 
 
@@ -98,6 +108,11 @@ class VirtualAssistant(Base):
     name = Column(String, unique=True, nullable=False)
     display_name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    private_visibility = Column(
+        sqltypes.Enum(enums.VirtualAssistantPrivateVisibility),
+        nullable=False,
+        server_default=enums.VirtualAssistantPrivateVisibility.PRIVATE.value,
+    )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     components = relationship(
@@ -144,7 +159,7 @@ class Deployment(Base):
 
     stack_id = Column(Integer, nullable=True)
     date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
-    state = Column(String, nullable=True)
+    state = Column(sqltypes.Enum(enums.DeploymentState), nullable=True)
     error = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
 
 
@@ -164,10 +179,13 @@ class PublishRequest(Base):
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
-    visibility = Column(String, nullable=False)  # unlisted, public_template, public
+    public_visibility = Column(sqltypes.Enum(enums.VirtualAssistantPublicVisibility), nullable=False)
+    state = Column(
+        sqltypes.Enum(enums.PublishRequestState),
+        nullable=False,
+        server_default=enums.PublishRequestState.IN_REVIEW.value,
+    )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-
-    is_confirmed = Column(Boolean, nullable=True)
 
     reviewed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
     reviewed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")

@@ -8,7 +8,7 @@ from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud, models
+from database import crud, models, enums
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -444,11 +444,10 @@ async def publish_dist(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        if payload.visibility == "private":
+        if payload.visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
             crud.delete_publish_request(db, virtual_assistant.id)
-        elif payload.visibility == "unlisted":
-            crud.create_publish_request_autoconfirm(db, virtual_assistant.id, user.id, virtual_assistant.name)
-        else:
+            virtual_assistant = crud.update_virtual_assistant_by_name(db, dist_name, private_visibility=payload.visibility)
+        elif payload.visibility.__class__ == enums.VirtualAssistantPublicVisibility:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)
 

@@ -1,8 +1,8 @@
-import { FC,useEffect } from 'react'
-import { useForm,useWatch } from 'react-hook-form'
+import { FC, useEffect } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
-import { useNavigate,useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -29,7 +29,7 @@ export const AssistantModule: FC<Props> = () => {
 
   const queryClient = useQueryClient()
   const { getDist, changeVisibility } = useAssistants()
-  const { data: bot } = getDist(name!)
+  const { data: bot } = getDist({ distName: name! })
   const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
   checkDeployStatus(bot!)
 
@@ -168,8 +168,7 @@ export const AssistantModule: FC<Props> = () => {
   }, [v])
 
   useEffect(() => {
-    const redirectConditions =
-      !auth?.user! || onModeration || bot?.visibility! == 'public_template'
+    const redirectConditions = !auth?.user! || onModeration // || bot?.visibility! == 'public_template'
     if (bot && redirectConditions) {
       navigate('/')
     }

@@ -22,7 +22,7 @@ export const DeleteSkillModal = () => {
   const { deleteComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
 
-  const assistant = getDist(distName!)
+  const assistant = getDist({ distName: distName! })
 
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)

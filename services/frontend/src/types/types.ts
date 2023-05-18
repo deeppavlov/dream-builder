@@ -377,3 +377,5 @@ export interface IPublicationRequest {
   virtual_assistant: BotInfoInterface
   visibility: 'public_template' | 'private' | 'unlisted'
 }
+
+export type TErrorStatus = 401 | 404 | 500 | 503

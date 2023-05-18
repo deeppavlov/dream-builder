@@ -31,7 +31,7 @@ export const SkillsListModal = () => {
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
   const { getGroupComponents, create } = useComponent()
-  const assistant = getDist(distName!)
+  const assistant = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
       distName: distName || '',
@@ -88,7 +88,7 @@ export const SkillsListModal = () => {
   }
 
   const handleEventUpdate = () => setIsOpen(true)
-  
+
   useObserver('SkillsListModal', handleEventUpdate)
 
   return (

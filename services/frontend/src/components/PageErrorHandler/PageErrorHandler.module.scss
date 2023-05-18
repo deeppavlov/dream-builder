@@ -1,2 +1,115 @@
 .pageErrorHandler {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-info {
+  position: absolute;
+  z-index: 3;
+  left: 48%;
+  top: 50%;
+  background-color: $bcgrnd1;
+  max-width: 705px;
+  max-height: 705px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.bg-info-semi-circle {
+  position: absolute;
+  top: -65%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(112, 0, 255, 0.15);
+  border-radius: 50% 50% 0 0;
+  transform: rotate(225deg);
+}
+
+.bg-front-circle {
+  left: 50%;
+  top: 50%;
+  width: 60%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+}
+
+.bg-back-circle {
+  left: 48%;
+  top: 48%;
+  width: 72%;
+  height: 130%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+}
+
+.bg-front-circle,
+.bg-back-circle {
+  position: absolute;
+  background: rgba(112, 0, 255, 0.1);
+  border-radius: 50%;
+}
+
+.icon {
+  position: absolute;
+  top: 23%;
+  left: 20%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 58%;
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+
+  svg {
+    rotate: 180deg;
+
+    path {
+      stroke: none !important;
+      fill: $text4;
+    }
+  }
+}
+
+.title {
+  @include t1;
+  color: $text1;
+}
+
+.message {
+  @include t3;
+  color: $text3;
+  margin-bottom: 24px;
+}
+
+.status {
+  position: absolute;
+  z-index: 4;
+  top: 20%;
+  left: 55%;
+  color: $text6;
+  transform: rotate(2.67deg);
+  font-weight: 600;
+  font-size: 96px;
+  line-height: 120%;
+}
+
+.background {
+  width: 100%;
+  height: 100%;
 }

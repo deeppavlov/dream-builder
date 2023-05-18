@@ -42,7 +42,7 @@ const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
-  const {data: skill} =
+  const { data: skill } =
     distName && skillId
       ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })
       : null
@@ -55,7 +55,7 @@ const SkillPromptModal = () => {
   const nav = useNavigate()
   const { getDist } = useAssistants()
   const { deleteDeployment } = useDeploy()
-  const dist = distName ? getDist(distName).data : null
+  const dist = distName ? getDist({ distName }).data : null
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {

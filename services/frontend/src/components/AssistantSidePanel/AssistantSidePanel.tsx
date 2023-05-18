@@ -12,11 +12,9 @@ interface Props {
   fromEditor?: boolean
 }
 
-const AssistantSidePanel = ({ name, disabled, type,
-  fromEditor
-}: Props) => {
+const AssistantSidePanel = ({ name, disabled, type, fromEditor }: Props) => {
   const { getDist } = useAssistants()
-  const { data: dist } = getDist(name)
+  const { data: dist } = getDist({ distName: name })
 
   // Close SidePanel if the assistant was deleted
   useEffect(() => {
@@ -26,7 +24,10 @@ const AssistantSidePanel = ({ name, disabled, type,
   return (
     <DumbAssistantSP
       // fromEditor={fromEditor}
-      bot={dist!} disabled={disabled} type={type} />
+      bot={dist!}
+      disabled={disabled}
+      type={type}
+    />
   )
 }
 

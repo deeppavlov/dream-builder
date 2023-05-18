@@ -1,14 +1,12 @@
-// import { useLocation, useParams } from 'react-router'
-// import PageErrorHandler from '../components/PageErrorHandler/PageErrorHandler'
+import { useRouteError } from 'react-router'
+import PageErrorHandler from '../components/PageErrorHandler/PageErrorHandler'
 
-// const ErrorPage = () => {
-//   const { statusCode } = useParams()
-//   const { state } = useLocation()
-//   const isStatus = statusCode !== undefined
-//   const message = state?.error?.data?.detail
-//   console.log(message)
+const ErrorPage = () => {
+  let error = useRouteError() as any
+  const defaultErrorStatus = 404
+  const status = error?.response?.status ?? defaultErrorStatus
 
-//   return <>fdfd</>
-// }
+  return <PageErrorHandler status={status} />
+}
 
-// export default ErrorPage
+export default ErrorPage

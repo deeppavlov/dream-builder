@@ -48,11 +48,11 @@ export const useDeploy = () => {
       refetchOnMount: false,
       enabled: bot?.deployment?.id !== undefined,
       onSuccess(data) {
-        data?.state === 'UP' &&
+        data?.state === 'UP' && //FIX
           queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
 
         if (
-          data?.state !== 'UP' &&
+          data?.state !== 'UP' && //FIX
           data?.state !== null &&
           data?.error == null
         ) {

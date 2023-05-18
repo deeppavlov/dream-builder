@@ -3,12 +3,17 @@ import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useDeploy } from '../../hooks/useDeploy'
 import { toasts } from '../../mapping/toasts'
 import { visibilityForDropbox } from '../../mapping/visibility'
+import { TDistVisibility } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Container } from '../../ui/Container/Container'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
@@ -49,24 +54,25 @@ export const AssistantModule: FC<Props> = () => {
     type => type.id === bot?.visibility
   )?.name
 
-  const deployed = bot?.deployment?.state === 'UP'
+  const deployed = bot?.deployment?.state === 'UP' //FIX
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
   const error =
     bot?.deployment?.error !== null && bot?.deployment?.error !== undefined
 
-  const onModeration = bot?.publish_state === 'in_progress'
+  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
 
   const currentVisibilityStatus = bot?.visibility
 
   const handleVisibility = (v: string) => {
-    const visibility = visibilityForDropbox.find(type => type.name === v)?.id!
+    const visibility = visibilityForDropbox.find(type => type.name === v)
+      ?.id! as TDistVisibility
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
 
     if (
       visibility !== currentVisibilityStatus ||
-      bot?.publish_state == 'in_progress'
+      bot?.publish_state == PublishRequestsStatus.IN_REVIEW
     ) {
       toast.promise(
         changeVisibility.mutateAsync(
@@ -78,7 +84,7 @@ export const AssistantModule: FC<Props> = () => {
           },
           {
             onSuccess: () => {
-              currentVisibilityStatus === 'public_template' &&
+              currentVisibilityStatus === VisibilityStatus.PUBLIC_TEMPLATE &&
                 queryClient.invalidateQueries('dist')
             },
           }
@@ -86,7 +92,7 @@ export const AssistantModule: FC<Props> = () => {
         {
           loading: 'Loading...',
           success:
-            visibility === 'public_template'
+            visibility === VisibilityStatus.PUBLIC_TEMPLATE
               ? 'Submitted For Review!'
               : 'Success!',
           error: 'Something went wrong...',
@@ -100,7 +106,11 @@ export const AssistantModule: FC<Props> = () => {
       isOpen: true,
       children: (
         <AssistantSidePanel
-          type={bot?.visibility === 'public_template' ? 'public' : 'your'}
+          type={
+            bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+              ? 'public'
+              : 'your'
+          } //FIX
           key={bot?.id}
           name={bot?.name!}
           fromEditor
@@ -119,8 +129,9 @@ export const AssistantModule: FC<Props> = () => {
         deleteDeployment.mutateAsync(bot?.deployment?.id!, {
           onSuccess: () => {
             const name = bot?.name
-            const visibility = 'private'
-            if (bot?.visibility !== 'private') {
+            const visibility: TDistVisibility =
+              VisibilityStatus.PRIVATE as TDistVisibility
+            if (bot?.visibility !== VisibilityStatus.PRIVATE) {
               changeVisibility.mutateAsync(
                 { name, visibility },
                 {
@@ -168,7 +179,7 @@ export const AssistantModule: FC<Props> = () => {
   }, [v])
 
   useEffect(() => {
-    const redirectConditions = !auth?.user! || onModeration
+    const redirectConditions = !auth?.user! || onModeration || deploying
     if (bot && redirectConditions) {
       navigate('/')
     }
@@ -235,21 +246,20 @@ export const AssistantModule: FC<Props> = () => {
           <Details>{bot?.description!}</Details>
           {!isPreview && (
             <SkillDropboxSearch
+              small
               withoutSearch
               name='visibility'
               control={control}
               rules={{ required: true }}
               list={visibilityForDropbox}
               props={{ disabled: deploying }}
-              // fullWidth
-              small
             />
           )}
           {!isPreview && (
             <Button
               props={{
                 onClick: handleShare,
-                disabled: bot?.visibility == 'private',
+                disabled: bot?.visibility == VisibilityStatus.PRIVATE,
               }}
               withIcon
               theme='tertiary2'

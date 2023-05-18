@@ -3,6 +3,10 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { visibility } from '../../mapping/visibility'
@@ -46,7 +50,7 @@ export const PublishAssistantModal = () => {
     const deploymentState = bot?.deployment?.state
 
     visibility !== currentVisibilityStatus ||
-    bot?.publish_state == 'in_progress'
+    bot?.publish_state == PublishRequestsStatus.IN_REVIEW
       ? toast
           .promise(
             changeVisibility.mutateAsync(
@@ -58,7 +62,8 @@ export const PublishAssistantModal = () => {
               },
               {
                 onSuccess: () => {
-                  currentVisibilityStatus === 'public_template' &&
+                  currentVisibilityStatus ===
+                    VisibilityStatus.PUBLIC_TEMPLATE &&
                     queryClient.invalidateQueries('public_dists')
                 },
               }
@@ -66,7 +71,7 @@ export const PublishAssistantModal = () => {
             {
               loading: 'Loading...',
               success:
-                visibility === 'public_template'
+                visibility === VisibilityStatus.PUBLIC_TEMPLATE
                   ? 'Submitted For Review!'
                   : 'Success!',
               error: 'Something went wrong...',
@@ -128,7 +133,9 @@ export const PublishAssistantModal = () => {
                 disabled: changeVisibility?.isLoading,
               }}
             >
-              {newValue === 'public_template' ? 'Publish' : ' Save'}
+              {newValue === VisibilityStatus.PUBLIC_TEMPLATE
+                ? 'Publish'
+                : ' Save'}
             </Button>
           </div>
         </form>

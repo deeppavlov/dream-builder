@@ -7,7 +7,7 @@ import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
-import { OPEN_AI_LM, TOOLTIP_DELAY } from '../../constants/constants'
+import { OPEN_AI_LM, TOOLTIP_DELAY, VisibilityStatus } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -102,7 +102,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
       queryClient.invalidateQueries('privateDists')
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) { //FIX
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)
@@ -125,11 +125,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //костыль
   const awaitDeployPanel =
-    bot?.deployment?.state !== 'UP' &&
+    bot?.deployment?.state !== 'UP' && //FIX
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === 'UP'
+  const readyToGetSession = bot?.deployment?.state === 'UP' //FIX
 
   // handlers
   const handleSend = (data: ChatForm) => {
@@ -232,7 +232,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 Enter your personal access token here
               </Link>
             )}
-            {bot?.author?.id !== 1 && bot?.visibility !== 'public_template' && (
+            {bot?.author?.id !== 1 && bot?.visibility !== VisibilityStatus.PUBLIC_TEMPLATE && (
               <Button theme='error' props={{ onClick: handleTryAgain }}>
                 Try again
               </Button>

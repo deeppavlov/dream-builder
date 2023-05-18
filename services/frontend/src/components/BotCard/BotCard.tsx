@@ -3,6 +3,10 @@ import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { getDeploy } from '../../services/getDeploy'
 import { BotCardProps } from '../../types/types'
@@ -32,19 +36,27 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
-  const onModeration = bot?.publish_state === 'in_progress'
-  const published = bot?.visibility === 'public_template'
+  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
+  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
+  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
   const deployed = bot?.deployment?.state === 'UP'
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
-
+console.log('bot?.publish_state = ', bot?.publish_state)
   const publishState = !bot?.publish_state
     ? type === 'your' && bot?.visibility
     : onModeration
     ? 'On Moderation'
     : published
     ? 'Public Template'
-    : bot?.visibility
+    : privateAssistant
+    ? 'Private'
+    : unlistedAssistant
+    ? 'Unlisted'
+    : null
+
+  // console.log('publishState = ', publishState)
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -98,9 +110,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       type !== 'public' &&
       bot?.deployment?.state !== 'UP',
     onSuccess(data) {
-      data?.state === 'UP' &&
-        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
-
+      data?.state === 'UP' && queryClient.invalidateQueries('privateDists')
       if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)

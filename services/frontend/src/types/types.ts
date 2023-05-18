@@ -68,7 +68,7 @@ export type TEvents =
   | 'FreezeSkillModal'
   | 'ConfirmApiTokenUpdate'
 
-export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
+export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
 export type TDeploymentState =
   | null
@@ -114,7 +114,7 @@ export interface BotInfoInterface {
   gpu_usage: string
   disk_usage: string
   visibility: TDistVisibility
-  publish_state: null | 'confirmed' | 'in_progress'
+  publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
 }
@@ -303,8 +303,11 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
+
 export type AssistantFormValues = { display_name: string; description: string }
-export type Visibility = 'public_template' | 'private' | 'unlisted' | null
+
+export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
+
 export interface IApiService {
   base_url: string
   description: string
@@ -375,7 +378,7 @@ export interface IPublicationRequest {
   slug: string
   user: IAuthor
   virtual_assistant: BotInfoInterface
-  visibility: 'public_template' | 'private' | 'unlisted'
+  visibility: 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK'
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503

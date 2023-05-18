@@ -5,6 +5,7 @@ import { ReactComponent as PublicIcon } from '@assets/icons/eye.svg'
 import { ReactComponent as PrivateIcon } from '@assets/icons/private_eye.svg'
 import classNames from 'classnames/bind'
 import React, { FC } from 'react'
+import { VisibilityStatus } from '../../constants/constants'
 import s from './SmallTag.module.scss'
 
 type Theme =
@@ -17,9 +18,9 @@ type Theme =
   | 'not-valid'
   | 'public'
   | 'your'
-  | 'public_template'
-  | 'unlisted'
-  | 'private'
+  | 'PUBLIC_TEMPLATE' //fix
+  | 'UNLISTED_LINK'
+  | 'PRIVATE'
 
 interface SmallTagProps extends React.PropsWithChildren {
   theme?: Theme
@@ -42,17 +43,17 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         return <DoneIcon className={s.icon} />
       case 'validating':
         return <LoaderIcon className={s.icon} />
-      case 'public_template':
+      case VisibilityStatus.PUBLIC_TEMPLATE:
         return <PublicIcon className={s.icon} />
-      case 'unlisted':
+      case VisibilityStatus.UNLISTED_LINK:
         return <PublicIcon className={s.icon} />
-      case 'private':
+      case VisibilityStatus.PRIVATE:
         return <PrivateIcon className={s.icon} />
       default:
         break
     }
   }
-
+  // console.log('theme = ', theme)
   return (
     <span className={cx('smallTag', theme && theme, isLoading && 'loading')}>
       {getIcon(theme)}

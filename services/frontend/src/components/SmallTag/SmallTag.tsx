@@ -53,7 +53,7 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         break
     }
   }
-  // console.log('theme = ', theme)
+
   return (
     <span className={cx('smallTag', theme && theme, isLoading && 'loading')}>
       {getIcon(theme)}

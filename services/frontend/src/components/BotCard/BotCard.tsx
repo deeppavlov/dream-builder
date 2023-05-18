@@ -43,21 +43,27 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const deployed = bot?.deployment?.state === 'UP'
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
-console.log('bot?.publish_state = ', bot?.publish_state)
-  const publishState = !bot?.publish_state
-    ? type === 'your' && bot?.visibility
-    : onModeration
+
+  // const publishState = !bot?.publish_state
+  //   ? type === 'your' && bot?.visibility
+  //   : onModeration
+  //   ? 'On Moderation'
+  //   : published
+  //   ? 'Public Template'
+  //   : privateAssistant
+  //   ? 'Private'
+  //   : unlistedAssistant
+  //   ? 'Unlisted'
+  //   : null
+  const publishState = onModeration
     ? 'On Moderation'
     : published
     ? 'Public Template'
-    : privateAssistant
-    ? 'Private'
     : unlistedAssistant
     ? 'Unlisted'
+    : privateAssistant
+    ? 'Private'
     : null
-
-  // console.log('publishState = ', publishState)
-
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -101,6 +107,7 @@ console.log('bot?.publish_state = ', bot?.publish_state)
   }
 
   const queryClient = useQueryClient()
+
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
     queryFn: () => getDeploy(bot?.deployment?.id!),

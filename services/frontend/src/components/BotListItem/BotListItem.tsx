@@ -1,12 +1,13 @@
 import DB from '@assets/icons/logo.png'
-import { FC, useId } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { FC,useId } from 'react'
+import { useQuery,useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
+import { PublishRequestsStatus,VisibilityStatus } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { getDeploy } from '../../services/getDeploy'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -36,20 +37,31 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
-  const onModeration = bot?.publish_state === 'in_progress'
-  const published = bot?.visibility === 'public_template'
-  const deployed = bot?.deployment?.state === 'UP'
+  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
+  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const deployed = bot?.deployment?.state === 'UP' //FIX
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+ const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
+ const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
+  // const publishState = !bot?.publish_state
+  //   ? type === 'your' && bot?.visibility
+  //   : onModeration
+  //   ? 'On Moderation'
+  //   : published
+  //   ? 'Public Template'
+  //   : bot?.visibility
 
-  const publishState = !bot?.publish_state
-    ? type === 'your' && bot?.visibility
-    : onModeration
-    ? 'On Moderation'
-    : published
-    ? 'Public Template'
-    : bot?.visibility
-
+    const publishState = onModeration
+      ? 'On Moderation'
+      : published
+      ? 'Public Template'
+      : unlistedAssistant
+      ? 'Unlisted'
+      : privateAssistant
+      ? 'Private'
+      : null
+  
   const isDeepyPavlova = import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
 
@@ -100,13 +112,13 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     enabled:
       bot?.deployment?.id !== undefined &&
       type !== 'public' &&
-      bot?.deployment?.state !== 'UP',
+      bot?.deployment?.state !== 'UP', //FIX
     onSuccess(data) {
       console.log('bot?.deployment?.id = ', bot?.deployment?.id)
-      data?.state === 'UP' &&
+      data?.state === 'UP' && //FIX
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
 
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) { //FIX
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)

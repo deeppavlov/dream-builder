@@ -43,6 +43,7 @@ export const BotsPage = () => {
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
           fitScreen={isTableView}
+          table
         >
           {publicDists?.error ? (
             <ErrorHandler error={publicDists?.error} />

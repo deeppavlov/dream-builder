@@ -7,6 +7,7 @@ import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useDisplay } from '../context/DisplayContext'
 import { useAssistants } from '../hooks/useAssistants'
 import { Container } from '../ui/Container/Container'
@@ -30,6 +31,9 @@ export const BotsAllPage = () => {
             <>
               {isTableView ? (
                 <Table assistants>
+                  {publicDists?.isLoading && (
+                    <TableRowsLoader rowsCount={6} colCount={6} />
+                  )}
                   <DistList
                     view='table'
                     dists={publicDists?.data}

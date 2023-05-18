@@ -23,6 +23,7 @@ import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 
 export const BotsPage = () => {
   const { options } = useDisplay()
@@ -41,6 +42,7 @@ export const BotsPage = () => {
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
+          fitScreen={isTableView}
         >
           {publicDists?.error ? (
             <ErrorHandler error={publicDists?.error} />
@@ -51,6 +53,7 @@ export const BotsPage = () => {
                   assistants
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
+                  {publicDists?.isLoading && <TableRowsLoader rowsCount={4} colCount={6} />}
                   <DistList
                     view='table'
                     dists={publicDists?.data}
@@ -96,6 +99,7 @@ export const BotsPage = () => {
                   ) : undefined
                 }
               >
+                {publicDists?.isLoading && <TableRowsLoader rowsCount={2} colCount={6} />}
                 <DistList view='table' dists={privateDists?.data} type='your' />
               </Table>
             </>

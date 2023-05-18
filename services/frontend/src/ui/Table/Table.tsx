@@ -1,4 +1,4 @@
-import React,{ cloneElement,FC,ReactNode } from 'react'
+import React, { cloneElement, FC, ReactNode } from 'react'
 import { ReactComponent as Arrow } from '../../assets/icons/triangle_down.svg'
 import { Checkbox } from '../Checkbox/Checkbox'
 import s from './Table.module.scss'
@@ -60,7 +60,7 @@ export const Table: FC<TableProps> = ({
           {addButton}
           <tbody className={s.body}>
             {React.Children.map(children, child =>
-              cloneElement(child, { checkbox })
+              cloneElement(<>{child}</>, { checkbox })
             )}
           </tbody>
         </table>

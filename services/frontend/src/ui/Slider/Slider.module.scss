@@ -2,8 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: row;
-  overflow: hidden;
-  overflow-x: scroll;
+  overflow: auto;
   width: 100%;
   gap: 16px;
   padding-bottom: 22px;
@@ -27,9 +26,4 @@
 }
 .subWrapperR {
   right: -43px;
-}
-
-.private {
-  padding-bottom: 0;
-  overflow: auto;
 }

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -27,15 +27,9 @@ import { consts } from '../../utils/consts'
 export const EditorPage = () => {
   const { dispatch } = useDisplay()
   const { name } = useParams()
-  const { state } = useLocation()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const nav = useNavigate()
-  const {
-    data: dist,
-    error: errorResponse,
-    isError,
-  } = getDist({ distName: name!, useErrorBoundary: true })
+  const { data: dist } = getDist({ distName: name!, useErrorBoundary: true })
 
   useEffect(() => {
     // Setting mode to Preview by default
@@ -52,18 +46,6 @@ export const EditorPage = () => {
 
     return () => setIsPreview(true)
   }, [dist])
-
-  useEffect(() => {
-    const error = (errorResponse as any)?.response as Response
-
-    if (error?.status === undefined) return
-    console.log('aboba')
-
-    // return nav(
-    //   generatePath(RoutesList.error, { statusCode: error.status.toString() }),
-    //   { state: Object.assign({}, state, { error }), replace: true }
-    // )
-  }, [isError])
 
   return (
     <>

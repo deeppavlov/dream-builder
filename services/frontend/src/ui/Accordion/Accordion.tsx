@@ -27,7 +27,6 @@ export const Accordion = ({
   let cx = classNames.bind(s)
 
   const handleAccordionClick = () => setIsActive(prev => !prev)
-
   useEffect(() => {
     if (contentEl?.current) {
       // Получаем высоту дочерних элементов и обновляем высоту контейнера

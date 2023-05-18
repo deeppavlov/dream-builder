@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import store from 'store2'
 import { DEEPY_ASSISTANT } from '../constants/constants'
 import { useDisplay } from '../context/DisplayContext'
@@ -14,48 +14,70 @@ export const useChat = () => {
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
   const [error, setError] = useState(false)
-  const [deepySession, setDeepySession] = useState(store('deepySession'))
+  const [deepySession, setDeepySession] = useState<SessionConfig>(
+    store('deepySession')
+  )
   const [isDeepy, setIsDeepy] = useState<boolean>(Boolean(deepySession?.id))
   const { options } = useDisplay()
-
+  const queryClient = useQueryClient()
   const renew = useMutation({
-    onMutate: (data: string) => {
+    onMutate: data => {
       setMessage('')
       setHistory([])
-      data === DEEPY_ASSISTANT && setIsDeepy(true)
+      if (data === DEEPY_ASSISTANT) {
+        store.remove('deepySession')
+        setDeepySession(null!)
+        setIsDeepy(true)
+      }
     },
     mutationFn: (data: string) => {
       return renewDialog(data)
     },
     onSuccess: (data, variables) => {
-      variables == DEEPY_ASSISTANT ? setDeepySession(data) : setSession(data)
-      variables == DEEPY_ASSISTANT && store('deepySession', data)
+      async function updateDeepyAssistant() {
+        setDeepySession(data)
+        store('deepySession', data)
+      }
+
+      if (variables === DEEPY_ASSISTANT) {
+        updateDeepyAssistant().then(() => {
+          queryClient.invalidateQueries('history').then(() => {
+            const id = data?.id
+            queryClient.removeQueries('history')
+            send.mutateAsync({
+              dialog_session_id: id,
+              text: 'hi deepy!',
+              hidden: true,
+            })
+          })
+        })
+      } else {
+        setSession(data)
+      }
     },
   })
 
   const send = useMutation({
     onMutate: ({ text, hidden }: IPostChat) => {
-      console.log('hidden = ', hidden)
       setMessage(text)
       setHistory(state => [...state, { text, author: 'me', hidden: hidden }])
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
-      console.log('data = ', data)
       setHistory(state => [
         ...state,
         { text: data?.text, author: 'bot', active_skill: data?.active_skill },
       ])
     },
-    onError: (_, variables) => {
-      renew.mutate(DEEPY_ASSISTANT) //FIX!!!
+    onError: () => {
+      isDeepy && renew.mutate(DEEPY_ASSISTANT) //FIX!!!
       setError(true)
     },
   })
 
   const remoteHistory = useQuery(
     'history',
-    () => getHistory(isDeepy ? deepySession.id : session?.id),
+    () => getHistory(deepySession?.id),
     {
       enabled:
         Boolean(deepySession?.id) && options.get(consts.COPILOT_SP_IS_ACTIVE),

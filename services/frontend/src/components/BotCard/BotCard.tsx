@@ -1,8 +1,14 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
+import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { getDeploy } from '../../services/getDeploy'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
@@ -30,20 +36,34 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
-  const onModeration = bot?.publish_state === 'in_progress'
-  const published = bot?.visibility === 'public_template'
+  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
+  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
+  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
   const deployed = bot?.deployment?.state === 'UP'
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
 
-  const publishState = !bot?.publish_state
-    ? type === 'your' && bot?.visibility
-    : onModeration
+  // const publishState = !bot?.publish_state
+  //   ? type === 'your' && bot?.visibility
+  //   : onModeration
+  //   ? 'On Moderation'
+  //   : published
+  //   ? 'Public Template'
+  //   : privateAssistant
+  //   ? 'Private'
+  //   : unlistedAssistant
+  //   ? 'Unlisted'
+  //   : null
+  const publishState = onModeration
     ? 'On Moderation'
     : published
     ? 'Public Template'
-    : bot?.visibility
-
+    : unlistedAssistant
+    ? 'Unlisted'
+    : privateAssistant
+    ? 'Private'
+    : null
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -85,6 +105,28 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
         })
     e.stopPropagation()
   }
+
+  const queryClient = useQueryClient()
+
+  const status = useQuery({
+    queryKey: ['deploy', bot?.deployment?.id],
+    queryFn: () => getDeploy(bot?.deployment?.id!),
+    refetchOnMount: false,
+    enabled:
+      bot?.deployment?.id !== undefined &&
+      type !== 'public' &&
+      bot?.deployment?.state !== 'UP',
+    onSuccess(data) {
+      data?.state === 'UP' && queryClient.invalidateQueries('privateDists')
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+        setTimeout(() => {
+          queryClient.invalidateQueries('deploy', data?.id)
+        }, 5000)
+      } else if (data?.error !== null) {
+        console.log('error')
+      }
+    },
+  })
 
   return (
     <div

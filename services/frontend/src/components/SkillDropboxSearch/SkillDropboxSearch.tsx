@@ -22,6 +22,8 @@ interface Props {
   label?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
   fullWidth?: boolean
+  withoutSearch?: boolean
+  small?: boolean
 }
 
 const SkillDropboxSearch = ({
@@ -34,11 +36,14 @@ const SkillDropboxSearch = ({
   label,
   props,
   fullWidth,
+  withoutSearch,
+  small,
 }: Props) => {
   const {
     field,
     fieldState: { error },
   } = useController({ name, control, rules, defaultValue })
+
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
   const dropboxRef = useRef<HTMLDivElement | null>(null)
   let cx = classNames.bind(s)
@@ -70,14 +75,15 @@ const SkillDropboxSearch = ({
         'skillDropboxSearch',
         isOpen && 'open',
         error && 'error',
-        fullWidth && 'fullWidth'
+        fullWidth && 'fullWidth',
+        small && 'small'
       )}
       onFocus={() => setIsOpen(true)}
     >
       {label && <span className={s.label}>{label}</span>}
 
       <div className={s.search} onClick={handleSearchClick}>
-        <LoupeIcon className={s.icon} />
+        {!withoutSearch && <LoupeIcon className={s.icon} />}
         <input
           {...props}
           {...field}
@@ -89,19 +95,21 @@ const SkillDropboxSearch = ({
       </div>
 
       <ul className={s.list}>
-        {list?.map((item, i) => (
-          <li
-            key={i}
-            className={cx(
-              'item',
-              item.name === field.value && 'activeItem',
-              item?.disabled && 'disabled'
-            )}
-            onClick={() => !item?.disabled && handleItemClick(item)}
-          >
-            {item.name}
-          </li>
-        ))}
+        {list?.map((item, i) => {
+          return (
+            <li
+              key={i}
+              className={cx(
+                'item',
+                item.name === field.value && 'activeItem',
+                item?.disabled && 'disabled'
+              )}
+              onClick={() => !item?.disabled && handleItemClick(item)}
+            >
+              {item.name}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

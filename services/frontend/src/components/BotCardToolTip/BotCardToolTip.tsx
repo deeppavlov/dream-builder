@@ -1,5 +1,9 @@
 import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
@@ -19,7 +23,8 @@ interface Props {
 const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   const auth = useAuth()
   const navigate = useNavigate()
-
+  const { name } = useParams()
+  const isEditor = Boolean(name)
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
@@ -33,7 +38,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
     })
 
   const handleRenameBtnClick = () =>
-    bot?.visibility === 'public_template'
+    bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
       ? trigger('PublicToPrivateModal', { bot, action: 'rename' })
       : trigger('AssistantModal', { action: 'edit', bot })
 
@@ -79,31 +84,31 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             handleClick={handleChatClick}
           />
           <ContextMenuButton
-            disabled={bot?.visibility == 'private'}
+            disabled={bot?.visibility == VisibilityStatus.PRIVATE}
             name='Share'
             type='share'
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
-            // disabled={bot?.publish_state === 'in_progress'}
             name='Visibility'
             type='publish'
             handleClick={handlePublishBtnClick}
           />
           <hr />
           <ContextMenuButton
-            disabled={bot?.publish_state == 'in_progress'}
+            disabled={bot?.publish_state == PublishRequestsStatus.IN_REVIEW}
             name='Rename'
             type='edit'
             handleClick={handleRenameBtnClick}
           />
-          {!inSidePanel && (
-            <ContextMenuButton
-              name='Properties'
-              type='properties'
-              handleClick={handlePropertiesBtnClick}
-            />
-          )}
+          {!inSidePanel &&
+            !isEditor && ( //FIX!!
+              <ContextMenuButton
+                name='Properties'
+                type='properties'
+                handleClick={handlePropertiesBtnClick}
+              />
+            )}
           <hr />
           <ContextMenuButton
             name='Delete'

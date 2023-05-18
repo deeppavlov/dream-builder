@@ -94,7 +94,7 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
         validate_aud(data["aud"])
         validate_email(data["email"], db)
         user = crud.get_user_by_sub(db, data["sub"])
-        user = crud.update_user(db, user.id, **data)
+        # user = crud.update_user(db, user.id, **data)
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

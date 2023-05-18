@@ -18,6 +18,7 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   countType?: 'tokenizer' | 'character'
+  theme?: 'placeholder'
   tokenizerModel?: LanguageModel
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
@@ -74,6 +75,7 @@ export const TextArea: FC<TextAreaProps> = ({
   control,
   name,
   rules,
+  theme,
   triggerField,
 }) => {
   const isTokenizer = countType === 'tokenizer'
@@ -156,12 +158,12 @@ export const TextArea: FC<TextAreaProps> = ({
 
   return (
     <div
-      className={cx('textArea', fullHeight && 'fullHeight')}
+      className={cx('textArea', fullHeight && 'fullHeight', theme)}
       data-active={isActive}
       data-error={error !== undefined}
     >
       {(label || withCounter) && (
-        <label htmlFor={textAreaId} className={s.label}>
+        <label htmlFor={textAreaId} className={cx('label', 'header')}>
           {label && <span className={s.title}>{label}</span>}
           {withCounter && maxLength?.value && (
             <span className={s.counter}>

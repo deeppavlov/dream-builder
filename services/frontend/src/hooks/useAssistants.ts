@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
+import { VisibilityStatus } from '../constants/constants'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
@@ -32,6 +33,11 @@ interface IClone {
 
 interface IRename extends IClone {}
 
+interface IGetDist {
+  distName: string
+  useErrorBoundary?: boolean
+}
+
 export const useAssistants = () => {
   const auth = useAuth()
   const userIsAuthorized = !!auth?.user
@@ -46,18 +52,21 @@ export const useAssistants = () => {
   const fetchPrivateDists = () =>
     useQuery(PRIVATE_DISTS, getPrivateDists, { enabled: userIsAuthorized })
 
-  const getDist = (name: string) =>
+  const getDist = ({ distName, useErrorBoundary }: IGetDist) =>
     useQuery<BotInfoInterface>({
-      queryKey: ['dist', name],
-      queryFn: () => fetchDist(name),
+      queryKey: ['dist', distName],
+      queryFn: () => fetchDist(distName),
       refetchOnMount: false,
       refetchOnWindowFocus: true,
-      initialData: () => getFetchedDist(name),
+      initialData: () => getFetchedDist(distName),
+      useErrorBoundary,
+      retry: 1,
     })
 
   const rename = useMutation({
     mutationFn: ({ name, data }: IRename) => renameAssistantDist(name, data),
     onSuccess: (_, { name }) => {
+      queryClient.invalidateQueries('dist')
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
@@ -92,15 +101,15 @@ export const useAssistants = () => {
 
   const changeVisibility = useMutation({
     onMutate: ({ name, visibility, deploymentState }) => {
-      // console.log('deploymentState = ', deploymentState)
-      if (visibility !== 'private' && deploymentState !== 'UP') {
+      if (visibility !== VisibilityStatus.PRIVATE && !deploymentState) {
         deploy.mutateAsync(name)
       }
     },
     mutationFn: ({ name, visibility, inEditor }: IChangeVisibility) =>
       publishAssistantDist(name, visibility),
     onSuccess: (_, { name, visibility, inEditor }) => {
-      const requestToPublicTemplate = visibility === 'public_template'
+      const requestToPublicTemplate =
+        visibility === VisibilityStatus.PUBLIC_TEMPLATE
 
       if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
       if (inEditor) queryClient.invalidateQueries([DIST, name])

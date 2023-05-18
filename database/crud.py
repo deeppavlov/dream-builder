@@ -5,7 +5,7 @@ from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database import models
+from database import models, enums
 from database.models import GoogleUser, UserValid, ApiKey
 
 
@@ -155,8 +155,10 @@ def get_all_public_templates_virtual_assistants(db: Session) -> [models.VirtualA
     return db.scalars(
         select(models.VirtualAssistant).where(
             and_(
-                models.VirtualAssistant.publish_request.has(visibility="public_template"),
-                models.VirtualAssistant.publish_request.has(is_confirmed=True),
+                models.VirtualAssistant.publish_request.has(
+                    public_visibility=enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE
+                ),
+                models.VirtualAssistant.publish_request.has(state=enums.PublishRequestState.APPROVED),
             )
         )
     ).all()
@@ -195,6 +197,12 @@ def create_virtual_assistant(
     create_virtual_assistant_components(db, new_virtual_assistant.id, components)
 
     return new_virtual_assistant
+
+
+def update_virtual_assistant_by_name(db: Session, name: str, **kwargs):
+    return db.scalar(
+        update(models.VirtualAssistant).where(models.VirtualAssistant.name == name).values(**kwargs).returning(models.VirtualAssistant)
+    )
 
 
 def update_virtual_assistant_metadata_by_name(db: Session, name: str, **kwargs) -> models.VirtualAssistant:
@@ -410,40 +418,54 @@ def get_all_publish_requests(db: Session):
 
 def get_unreviewed_publish_requests(db: Session):
     return db.scalars(
-        select(models.PublishRequest).filter(
-            models.PublishRequest.is_confirmed == None, models.PublishRequest.reviewed_by_user_id == None
-        )
+        select(models.PublishRequest).filter(models.PublishRequest.state == enums.PublishRequestState.IN_REVIEW)
     ).all()
 
 
-def confirm_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+def approve_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
     return db.scalar(
         update(models.PublishRequest)
         .filter(models.PublishRequest.id == id)
-        .values(is_confirmed=True, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .values(
+            state=enums.PublishRequestState.APPROVED,
+            reviewed_by_user_id=reviewed_by_user_id,
+            date_reviewed=datetime.utcnow(),
+        )
         .returning(models.PublishRequest)
     )
 
 
-def decline_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+def reject_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
     return db.scalar(
         update(models.PublishRequest)
         .filter(models.PublishRequest.id == id)
-        .values(is_confirmed=False, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .values(
+            state=enums.PublishRequestState.REJECTED,
+            reviewed_by_user_id=reviewed_by_user_id,
+            date_reviewed=datetime.utcnow(),
+        )
         .returning(models.PublishRequest)
     )
 
 
-def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str, visibility: str):
+def create_publish_request(
+    db: Session,
+    virtual_assistant_id: int,
+    user_id: int,
+    slug: str,
+    public_visibility: enums.VirtualAssistantPublicVisibility,
+):
     return db.scalar(
         insert(models.PublishRequest)
-        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, visibility=visibility)
+        .values(
+            virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, public_visibility=public_visibility
+        )
         .on_conflict_do_update(
             index_elements=[models.PublishRequest.slug],
             set_=dict(
-                visibility=visibility,
+                public_visibility=public_visibility,
                 date_created=datetime.utcnow(),
-                is_confirmed=None,
+                state=enums.PublishRequestState.IN_REVIEW,
                 reviewed_by_user_id=None,
                 date_reviewed=None,
             ),

@@ -10,6 +10,7 @@
   justify-content: center;
   text-align: center;
   @include lnks_n_btns3;
+
   svg {
     @include icon_size_24;
   }
@@ -35,6 +36,7 @@
   &_with-icon {
     padding: 6px;
   }
+
   &_clone {
     padding: 0px 12px;
   }
@@ -59,7 +61,15 @@
         stroke: $text4;
       }
     }
-
+    &_purple {
+      @extend .button_theme_primary;
+      background-color: $purple;
+      padding: 12px;
+      &:active,
+      &:hover {
+        background-color: #5a00cc;
+      }
+    }
     &_secondary {
       background-color: $bcgrnd5;
       color: $text1;
@@ -204,7 +214,31 @@
 
     &_tertiary-round {
       @extend .button_theme_tertiary;
-      border-radius: 8px;
+      border-radius: 12px;
+
+      &_small {
+        padding: 5px 10px;
+      }
+    }
+
+    &_tertiary2 {
+      min-height: 28px;
+      padding: 12px;
+      gap: 4px;
+      border-radius: 12px;
+      border: 1px solid $text3;
+      background-color: $bcgrnd1;
+      color: $text2;
+      svg {
+        @include icon_size_24;
+        path {
+          stroke: $text2;
+        }
+      }
+      &:hover,
+      &:focus-visible {
+        border-color: $text5;
+      }
     }
 
     &_ghost {
@@ -226,6 +260,9 @@
     &_error {
       @extend .button_theme_primary;
       background-color: $red;
+      &:active {
+        background-color: #b20000;
+      }
     }
   }
 
@@ -251,5 +288,42 @@
   &_theme_ghost:hover &__icon path,
   &_theme_ghost:active &__icon path {
     fill: $primary4;
+  }
+
+  &.loader {
+    border-radius: 12px !important;
+    z-index: 1;
+    background: linear-gradient(
+        0deg,
+        rgba(112, 0, 255, 0.4),
+        rgba(112, 0, 255, 0.4)
+      ),
+      #ffffff;
+    position: relative;
+    overflow: hidden;
+    &::before {
+      content: '';
+
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: $purple;
+      top: 0;
+      left: 0;
+      animation: indeterminateAnimation 10s infinite linear;
+      z-index: -1;
+      transform-origin: 0% 50%;
+    }
+    @keyframes indeterminateAnimation {
+      0% {
+        transform: translateX(0) scaleX(0);
+      }
+      50% {
+        transform: translateX(0) scaleX(1);
+      }
+      100% {
+        transform: translateX(100%) scaleX(1);
+      }
+    }
   }
 }

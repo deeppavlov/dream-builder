@@ -13,6 +13,7 @@ interface Props {
   forGrid?: boolean
   forSkills?: boolean
   fromScratch?: boolean
+  onAddRequest?: () => void
 }
 
 export const AddButton: FC<Props> = ({
@@ -22,16 +23,19 @@ export const AddButton: FC<Props> = ({
   forTable,
   forSkills,
   fromScratch,
+  onAddRequest,
 }) => {
-  const cx = classNames.bind(s)
   const auth = useAuth()
   const { isPreview } = usePreview()
+  const cx = classNames.bind(s)
 
   const handleClick = () => {
     const isCreateScratchAssistant = !forSkills && !fromScratch
     const isCreateScratchSkill = fromScratch
-    const isAddExistSkill = forSkills && !isPreview
+    const isAddPublicSkill = forSkills && !isPreview
     const scratchAssistant = { action: 'create' }
+
+    if (onAddRequest) onAddRequest()
 
     if (!auth?.user)
       return trigger(
@@ -45,7 +49,7 @@ export const AddButton: FC<Props> = ({
             }
           : {}
       )
-    if (isAddExistSkill) return trigger('SkillsListModal', {})
+    if (isAddPublicSkill) return trigger('SkillsListModal', {})
     if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
     if (isCreateScratchAssistant)
       return trigger('AssistantModal', scratchAssistant)
@@ -65,7 +69,7 @@ export const AddButton: FC<Props> = ({
     </button>
   ) : (
     <tbody>
-      <tr className={cx('tr')}>
+      <tr className={s.tr}>
         <td colSpan={6} className={s.td}>
           <button className={s.forTable} onClick={handleClick}>
             <img src={Add} />

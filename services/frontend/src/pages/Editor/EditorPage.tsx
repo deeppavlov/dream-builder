@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -23,31 +23,48 @@ import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
+import { VisibilityStatus } from '../../constants/constants'
 
 export const EditorPage = () => {
   const { dispatch } = useDisplay()
   const { name } = useParams()
+  const { state } = useLocation()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const dist = name ? getDist(name).data : null
+  const nav = useNavigate()
+  const {
+    data: dist,
+    error: errorResponse,
+    isError,
+  } = getDist({ distName: name!, useErrorBoundary: true })
 
   useEffect(() => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
-      setIsPreview(dist?.visibility === 'public_template')
+      setIsPreview(dist?.visibility === VisibilityStatus.PUBLIC_TEMPLATE)
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.ACTIVE_ASSISTANT,
+          value: dist,
+        },
+      })
     }
+
     return () => setIsPreview(true)
   }, [dist])
 
   useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_ASSISTANT,
-        value: dist,
-      },
-    })
-  }, [dist])
+    const error = (errorResponse as any)?.response as Response
+
+    if (error?.status === undefined) return
+    console.log('aboba')
+
+    // return nav(
+    //   generatePath(RoutesList.error, { statusCode: error.status.toString() }),
+    //   { state: Object.assign({}, state, { error }), replace: true }
+    // )
+  }, [isError])
 
   return (
     <>

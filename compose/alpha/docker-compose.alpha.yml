@@ -62,6 +62,7 @@ services:
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
+        DREAM_BRANCH: main
         PORT: 6998
     depends_on:
       - auth-api

@@ -245,7 +245,7 @@ export interface SessionConfig {
 }
 
 export type ChatHistory = {
-  active_skill?: string
+  active_skill?: ISkill
   text: string
   author: 'bot' | 'me'
   hidden?: boolean

@@ -51,7 +51,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const auth = useAuth()
 
   const dummyAnswersCounter = history.filter(message => {
-    return message.active_skill === 'dummy_skill'
+    return message?.active_skill?.name! === 'dummy_skill'
   }).length
 
   const hereIsDummy = dummyAnswersCounter > 2
@@ -296,7 +296,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                     {block?.text}
                     {block?.author === 'bot' && (
                       <span className={s.skill}>
-                        Skill: {block?.active_skill}
+                        Skill: {block?.active_skill?.display_name}
                       </span>
                     )}
                   </span>

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { VisibilityStatus } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface } from '../../types/types'
+import { BotInfoInterface, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { trigger } from '../../utils/events'
@@ -27,7 +28,7 @@ export const PublicToPrivateModal = () => {
 
   const handleYesClick = () => {
     const name = bot?.name!
-    const visibility = 'private'
+    const visibility = VisibilityStatus.PRIVATE as TDistVisibility
     action === 'edit' &&
       changeVisibility
         .mutateAsync({ name, visibility })

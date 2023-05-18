@@ -2,6 +2,10 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import { useEffect, useId } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import DB from '../../assets/icons/logo.png'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import useTabsManager from '../../hooks/useTabsManager'
@@ -34,12 +38,12 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { name: distName } = useParams()
   const { dispatch } = useDisplay()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
-  const isPublic = bot?.visibility === 'public_template'
+  const isPublic = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
   const tooltipId = useId()
 
-  const onModeration = bot?.publish_state === 'in_progress'
-  const published = bot?.visibility === 'public_template'
-  const deployed = bot?.deployment?.state === 'UP'
+  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
+  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const deployed = bot?.deployment?.state === 'UP' //FIX
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
 
@@ -90,6 +94,17 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
+  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
+  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
+  const publishState = onModeration
+    ? 'On Moderation'
+    : published
+    ? 'Public Template'
+    : unlistedAssistant
+    ? 'Unlisted'
+    : privateAssistant
+    ? 'Private'
+    : null
 
   return (
     bot && (
@@ -136,18 +151,12 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
               </div>
               <SmallTag
                 theme={
-                  bot?.publish_state === 'in_progress'
+                  bot?.publish_state === PublishRequestsStatus.IN_REVIEW
                     ? 'validating'
                     : bot?.visibility
                 }
               >
-                {!bot?.publish_state
-                  ? type === 'your' && bot?.visibility
-                  : bot?.publish_state == 'in_progress'
-                  ? 'On Moderation'
-                  : bot?.visibility === 'public_template'
-                  ? 'Public Template'
-                  : bot?.visibility}
+                {publishState}
               </SmallTag>
             </div>
           </div>

@@ -2,13 +2,14 @@ import classNames from 'classnames/bind'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router'
+import { VisibilityStatus } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
-import { ICreateComponent } from '../../types/types'
+import { ICreateComponent, TDistVisibility } from '../../types/types'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -71,12 +72,12 @@ export const SkillsListModal = () => {
           onSuccess: () => {
             assistant?.data?.deployment?.state === 'UP' &&
               deleteDeployment.mutateAsync(assistantId).then(() => {
-                // unpublish // FIX
+                // unpublish /
                 const name = assistant?.data?.name!
-                const visibility = 'private'
+                const visibility = VisibilityStatus.PRIVATE as TDistVisibility
 
                 assistant?.data?.publish_state !== null &&
-                  changeVisibility.mutateAsync({ name, visibility }) //FIX
+                  changeVisibility.mutateAsync({ name, visibility }) 
               })
 
             handleClose()

@@ -23,6 +23,7 @@ import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
+import { VisibilityStatus } from '../../constants/constants'
 
 export const EditorPage = () => {
   const { dispatch } = useDisplay()
@@ -40,7 +41,7 @@ export const EditorPage = () => {
   useEffect(() => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
-      setIsPreview(dist?.visibility === 'public_template')
+      setIsPreview(dist?.visibility === VisibilityStatus.PUBLIC_TEMPLATE)
       dispatch({
         type: 'set',
         option: {

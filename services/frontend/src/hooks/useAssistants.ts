@@ -101,7 +101,6 @@ export const useAssistants = () => {
   const changeVisibility = useMutation({
     onMutate: ({ name, visibility, deploymentState }) => {
       if (visibility !== 'private' && !deploymentState) {
-        console.log('deploymentState = ', deploymentState)
         deploy.mutateAsync(name)
       }
     },

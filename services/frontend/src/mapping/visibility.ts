@@ -29,7 +29,7 @@ export const visibilityForDropbox = [
       'Unlisted (only those you’ve shared the direct link can see it)',
   },
   {
-    name: 'Public',
+    name: 'Public Template',
     id: 'public_template',
     description: 'Public Template (everyone can see it and re-use it)',
   },

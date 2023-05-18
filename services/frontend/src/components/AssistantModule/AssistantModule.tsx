@@ -168,7 +168,7 @@ export const AssistantModule: FC<Props> = () => {
   }, [v])
 
   useEffect(() => {
-    const redirectConditions = !auth?.user! || onModeration // || bot?.visibility! == 'public_template'
+    const redirectConditions = !auth?.user! || onModeration
     if (bot && redirectConditions) {
       navigate('/')
     }
@@ -235,12 +235,14 @@ export const AssistantModule: FC<Props> = () => {
           <Details>{bot?.description!}</Details>
           {!isPreview && (
             <SkillDropboxSearch
+              withoutSearch
               name='visibility'
               control={control}
               rules={{ required: true }}
               list={visibilityForDropbox}
-              fullWidth
               props={{ disabled: deploying }}
+              // fullWidth
+              small
             />
           )}
           {!isPreview && (

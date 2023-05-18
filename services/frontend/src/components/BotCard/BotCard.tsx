@@ -98,7 +98,6 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
       type !== 'public' &&
       bot?.deployment?.state !== 'UP',
     onSuccess(data) {
-      console.log('bot?.deployment?.id = ', bot?.deployment?.id)
       data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
 

@@ -14,7 +14,7 @@ from database.core import init_db
 from database.models import UserValid
 from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api import schemas
-from services.auth_api.models import UserCreate, User, UserValidScheme, UserModel
+from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
 
 router = APIRouter(prefix="/auth")
 
@@ -71,11 +71,11 @@ def validate_email(email: str, db: Session) -> None:
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
-        crud.add_google_user(db, user)
-        return User(**data)
+        return UserRead.from_orm(crud.add_google_user(db, user))
 
-    user = crud.get_user_by_email(db, data["email"]).__dict__
-    return User(**user, name=user["fullname"])
+    user = crud.get_user_by_sub(db, data["sub"])
+    user = crud.update_user(db, user.id, **data)
+    return UserRead.from_orm(user)
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
@@ -93,7 +93,9 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
 
         validate_aud(data["aud"])
         validate_email(data["email"], db)
-        user = crud.get_user_by_email(db, data["email"])
+        user = crud.get_user_by_sub(db, data["sub"])
+        # user = crud.update_user(db, user.id, **data)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -131,9 +133,8 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    save_user(user_info, db)
-    user = User(**user_info)
-    del user.sub
+    user = save_user(user_info, db)
+    # del user.sub
 
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
 

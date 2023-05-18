@@ -1,14 +1,15 @@
+# apis expose 698* ports
 services:
 
   frontend:
-    env_file: [ .env.dev.local ]
+    env_file: [ ../.envs/.env.stage ]
     build:
-      context: ./
+      context: ../..
       dockerfile: ./services/frontend/Dockerfile
     ports:
       - "5173:5173"
     volumes:
-      - ./services/frontend:/src
+      - ../../services/frontend:/src
     deploy:
       resources:
         limits:
@@ -18,14 +19,14 @@ services:
 
   postgres:
     image: postgres:15.1
-    env_file: [ .env.dev.local ]
+    env_file: [ ../.envs/.env.stage ]
     restart: always
 #    volumes:
 #      - ./postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5000:5432"
+      - "6980:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -33,18 +34,18 @@ services:
       retries: 5
 
   auth-api:
-    env_file: [ .env.dev.local ]
+    env_file: [ ../.envs/.env.stage ]
     build:
-      context: ./
+      context: ../..
       dockerfile: ./services/auth_api/Dockerfile
       args:
-        PORT: 6099
+        PORT: 6999
     ports:
-      - "6099:6099"
+      - "6989:6999"
     volumes:
-      - ./services/auth_api:/src/services/auth_api
-      - ./database:/src/database
-      - ./apiconfig:/src/apiconfig
+      - ../../services/auth_api:/src/services/auth_api
+      - ../../database:/src/database
+      - ../../apiconfig:/src/apiconfig
     deploy:
       resources:
         limits:
@@ -53,26 +54,28 @@ services:
           memory: 256M
 
   distributions-api:
-    env_file: [ .env.dev.local ]
+    env_file: [ ../.envs/.env.stage ]
     build:
-      context: ./
+      context: ../..
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
-        PORT: 6098
+        PORT: 6998
     depends_on:
       - auth-api
     ports:
-      - "6098:6098"
+      - "6988:6998"
     volumes:
-      - ./services/distributions_api:/src/services/distributions_api
-      - ./database:/src/database
-      - ./apiconfig:/src/apiconfig
+      - ../../services/distributions_api:/src/services/distributions_api
+      - ../../database:/src/database
+      - ../../apiconfig:/src/apiconfig
+      - ~/.aws:/root/.aws
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
         reservations:
-          memory: 256M
+          memory: 512M
 
 version: '3.7'

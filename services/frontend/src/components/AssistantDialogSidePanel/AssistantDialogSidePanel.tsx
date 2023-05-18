@@ -7,7 +7,12 @@ import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
-import { OPEN_AI_LM, TOOLTIP_DELAY, VisibilityStatus } from '../../constants/constants'
+import {
+  DUMMY_SKILL,
+  OPEN_AI_LM,
+  TOOLTIP_DELAY,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -51,7 +56,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const auth = useAuth()
 
   const dummyAnswersCounter = history.filter(message => {
-    return message?.active_skill?.name! === 'dummy_skill'
+    return message?.active_skill?.name! === DUMMY_SKILL
   }).length
 
   const hereIsDummy = dummyAnswersCounter > 2
@@ -102,7 +107,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       data?.state === 'UP' &&
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
       queryClient.invalidateQueries('privateDists')
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) { //FIX
+      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+        //FIX
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)
@@ -232,11 +238,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 Enter your personal access token here
               </Link>
             )}
-            {bot?.author?.id !== 1 && bot?.visibility !== VisibilityStatus.PUBLIC_TEMPLATE && (
-              <Button theme='error' props={{ onClick: handleTryAgain }}>
-                Try again
-              </Button>
-            )}
+            {bot?.author?.id !== 1 &&
+              bot?.visibility !== VisibilityStatus.PUBLIC_TEMPLATE && (
+                <Button theme='error' props={{ onClick: handleTryAgain }}>
+                  Try again
+                </Button>
+              )}
           </>
         )}
         {awaitDeployPanel && (

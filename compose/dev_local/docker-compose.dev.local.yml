@@ -6,8 +6,10 @@ services:
     build:
       context: ../..
       dockerfile: ./services/frontend/Dockerfile
+      args:
+        FRONTEND_ENV: dev
     ports:
-      - "5173:5173"
+      - "6971:5173"
     volumes:
       - ../../services/frontend:/src
     deploy:

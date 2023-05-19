@@ -178,6 +178,7 @@ export const AssistantCard: FC<BotCardProps> = ({
                 tooltipId={tooltipId}
                 bot={bot}
                 type={type}
+                isDeployed={isDeployed}
               />
             </>
           ) : (
@@ -198,6 +199,7 @@ export const AssistantCard: FC<BotCardProps> = ({
                 tooltipId={tooltipId}
                 bot={bot}
                 type={type}
+                isDeployed={isDeployed}
               />
             </>
           )}

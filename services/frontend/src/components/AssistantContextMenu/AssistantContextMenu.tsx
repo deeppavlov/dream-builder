@@ -18,6 +18,7 @@ interface Props {
   tooltipId: string
   bot: BotInfoInterface
   type: BotAvailabilityType
+  isDeployed: boolean
   inSidePanel?: boolean
 }
 
@@ -26,6 +27,7 @@ const AssistantContextMenu: FC<Props> = ({
   bot,
   type,
   inSidePanel,
+  isDeployed,
 }) => {
   const auth = useAuth()
   const navigate = useNavigate()
@@ -87,7 +89,9 @@ const AssistantContextMenu: FC<Props> = ({
             handleClick={handleChatClick}
           />
           <ContextMenuButton
-            disabled={bot?.visibility == VisibilityStatus.PRIVATE}
+            disabled={
+              bot?.visibility === VisibilityStatus.PRIVATE || !isDeployed
+            }
             name='Share'
             type='share'
             handleClick={handleShareBtnClick}

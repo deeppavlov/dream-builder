@@ -219,6 +219,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   tooltipId={tooltipId}
                   bot={bot}
                   type={type}
+                  isDeployed={deployed}
                   inSidePanel
                 />
                 <Button
@@ -252,6 +253,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   tooltipId={tooltipId}
                   bot={bot}
                   type={type}
+                  isDeployed={deployed}
                 />
               </>
             )}

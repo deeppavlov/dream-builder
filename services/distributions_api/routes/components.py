@@ -116,6 +116,7 @@ async def patch_component(
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
             dream_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+            dream_component.lm_config = lm_service.default_generative_config
 
         dream_component.save_configs()
 

@@ -32,3 +32,11 @@ app.include_router(dialog_sessions_router)
 app.include_router(deployments_router)
 app.include_router(admin_router)
 app.include_router(lm_services_router)
+# FOR TEST PURPOSES ONLY
+from services.distributions_api.tasks.tasks import heavy_func
+
+
+@app.get("/test", tags=["test"])
+async def test():
+    heavy_func.delay()
+    return {"hello": "the worker's planet"}

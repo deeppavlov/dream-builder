@@ -34,7 +34,7 @@ export const AssistantModule: FC<Props> = () => {
 
   const queryClient = useQueryClient()
   const { getDist, changeVisibility } = useAssistants()
-  const { data: bot } = getDist({ distName: name! })
+  const { data: bot, isFetched } = getDist({ distName: name!, inEditor: true })
   const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
   checkDeployStatus(bot!)
 
@@ -179,11 +179,10 @@ export const AssistantModule: FC<Props> = () => {
   }, [v])
 
   useEffect(() => {
-    const redirectConditions = !auth?.user! || onModeration || deploying
-    if (bot && redirectConditions) {
-      navigate('/')
-    }
-  }, [bot])
+    const redirectConditions = isFetched && (onModeration || deploying)
+
+    if (redirectConditions) navigate('/')
+  }, [bot, isFetched])
 
   return (
     <>

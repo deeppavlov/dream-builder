@@ -55,6 +55,7 @@ export const AssistantCard: FC<BotCardProps> = ({
     ? 'Private'
     : null
 
+
   // const publishState = !bot?.publish_state
   //   ? type === 'your' && bot?.visibility
   //   : onModeration
@@ -120,7 +121,10 @@ export const AssistantCard: FC<BotCardProps> = ({
       type !== 'public' &&
       bot?.deployment?.state !== 'UP',
     onSuccess(data) {
-      data?.state === 'UP' && queryClient.invalidateQueries('privateDists')
+      if (data?.state === 'UP') {
+        queryClient.invalidateQueries('privateDists')
+        queryClient.invalidateQueries(['dist', bot?.name])
+      }
       if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)

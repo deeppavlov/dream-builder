@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { AssistantModule } from '../../components/AssistantModule/AssistantModule'
 import { TRIGGER_RIGHT_SP_EVENT } from '../../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../../components/CardsLoader/CardsLoader'
@@ -28,6 +28,7 @@ const SkillsPage = () => {
   const { getAllComponents } = useComponent()
   const components = getAllComponents(name || '')
   const isTableView = options.get(consts.IS_TABLE_VIEW)
+
   const changeView = () =>
     dispatch({
       type: 'set',

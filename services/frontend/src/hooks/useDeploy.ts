@@ -8,7 +8,6 @@ import { BotInfoInterface } from '../types/types'
 
 export const useDeploy = () => {
   const queryClient = useQueryClient()
-
   const loc = useLocation()
 
   const deployments = useQuery('deployments', getDeployments, {
@@ -49,7 +48,7 @@ export const useDeploy = () => {
       enabled: bot?.deployment?.id !== undefined,
       onSuccess(data) {
         data?.state === 'UP' && //FIX
-          queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+          queryClient.invalidateQueries(['dist', data?.virtual_assistant?.name])
 
         if (
           data?.state !== 'UP' && //FIX

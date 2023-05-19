@@ -7,6 +7,7 @@ import { Main } from '../../components/Main/Main'
 import ReadFirstSidePanel from '../../components/ReadFirstSidepanel/ReadFisrstSidePanel'
 import { SkillList } from '../../components/SkillList/SkillList'
 import SvgIcon from '../../components/SvgIcon/SvgIcon'
+import TableRowsLoader from '../../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
@@ -79,6 +80,9 @@ const SkillsPage = () => {
               ) : undefined
             }
           >
+            {components.isLoading && (
+              <TableRowsLoader rowsCount={4} colCount={6} />
+            )}
             <SkillList
               skills={components?.data?.skills!}
               view='table'

@@ -24,6 +24,7 @@ interface Props {
   subWrapper?: boolean
   btns?: ReactNode
   badge?: boolean
+  table?: boolean
 }
 
 export const Wrapper: FC<Props> = ({
@@ -45,6 +46,7 @@ export const Wrapper: FC<Props> = ({
   subWrapper,
   btns,
   badge,
+  table,
 }) => {
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -80,8 +82,8 @@ export const Wrapper: FC<Props> = ({
             limiter && 'limiter',
             primary && 'primary',
             skills && 'skills',
-            forCard && 'forCard'
-
+            forCard && 'forCard',
+            table && 'forTable'
             // subWrapper && 'subWrapper'
           )}
         >

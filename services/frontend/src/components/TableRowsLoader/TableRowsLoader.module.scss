@@ -1,0 +1,33 @@
+.tr {
+  border-bottom: 1px solid #f0f0f3;
+
+  &:first-child {
+    border-top: 1px solid #f0f0f3;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.td {
+  &:first-child .skeleton {
+    margin-left: 24px;
+  }
+
+  &:last-child .skeleton {
+    margin-right: 24px;
+
+    .skeleton {
+      margin-right: 0;
+    }
+  }
+}
+
+.skeleton {
+  border-radius: 4px;
+  height: 44px;
+  margin: 10px 0;
+  margin-right: 52px;
+  @include skeleton_loader;
+}

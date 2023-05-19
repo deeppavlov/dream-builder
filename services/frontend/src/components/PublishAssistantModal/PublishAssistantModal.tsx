@@ -33,9 +33,8 @@ export const PublishAssistantModal = () => {
   const isEditor = distName !== undefined && distName.length > 0
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset } = useForm<FormValues>()
-
   const { changeVisibility } = useAssistants()
-  const currentVisibilityStatus = bot?.visibility
+  const currentVisibilityStatus = bot?.visibility?.toLowerCase()
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data?.detail.bot)
@@ -56,7 +55,7 @@ export const PublishAssistantModal = () => {
             changeVisibility.mutateAsync(
               {
                 name,
-                visibility,
+                visibility: visibility.toUpperCase(),
                 inEditor: isEditor,
                 deploymentState,
               },
@@ -105,7 +104,8 @@ export const PublishAssistantModal = () => {
                   <RadioButton
                     props={{
                       ...register('visibility'),
-                      defaultChecked: type?.response === bot?.visibility,
+                      defaultChecked:
+                        type?.response === bot?.visibility?.toLowerCase(),
                       onChange: e => {
                         setNewValue(e?.currentTarget?.value as TDistVisibility)
                       },

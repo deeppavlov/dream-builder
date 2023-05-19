@@ -15,34 +15,45 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
+import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { Badge } from '../Badge/Badge'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { SmallTag } from '../SmallTag/SmallTag'
-import s from './BotCard.module.scss'
+import s from './AssistantCard.module.scss'
 
-export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
+export const AssistantCard: FC<BotCardProps> = ({
+  type,
+  bot,
+  size,
+  disabled,
+}) => {
   const navigate = useNavigate()
   const tooltipId = useId()
   const { options } = useDisplay()
-
-  let cx = classNames.bind(s)
-
-  const dateCreated = dateToUTC(new Date(bot?.date_created))
-
-  const infoSPId = `info_${bot.id}`
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const infoSPId = `info_${bot.id}`
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
+  const dateCreated = dateToUTC(new Date(bot?.date_created))
+  let cx = classNames.bind(s)
 
   const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
-  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const isPublished = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
   const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
   const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
-  const deployed = bot?.deployment?.state === 'UP'
-  const deploying =
-    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+  const isDeployed = bot?.deployment?.state === 'UP'
+  const isDeploying =
+    !isDeployed && bot?.deployment?.state !== null && bot?.deployment !== null
+  const publishState = onModeration
+    ? 'On Moderation'
+    : isPublished
+    ? 'Public Template'
+    : unlistedAssistant
+    ? 'Unlisted'
+    : privateAssistant
+    ? 'Private'
+    : null
 
   // const publishState = !bot?.publish_state
   //   ? type === 'your' && bot?.visibility
@@ -55,15 +66,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   //   : unlistedAssistant
   //   ? 'Unlisted'
   //   : null
-  const publishState = onModeration
-    ? 'On Moderation'
-    : published
-    ? 'Public Template'
-    : unlistedAssistant
-    ? 'Unlisted'
-    : privateAssistant
-    ? 'Private'
-    : null
+
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -94,7 +97,7 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    published
+    isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(`/${bot?.name}`, {
           state: {
@@ -130,12 +133,12 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
 
   return (
     <div
-      className={cx('botCard', `${type}`, size)}
+      className={cx('assistantCard', `${type}`, size)}
       onClick={handleBotCardClick}
       data-active={isActive}
     >
-      {type === 'your' && deployed && <Badge />}
-      <div className={cx('header', deploying && 'deploying')}>
+      {type === 'your' && isDeployed && <Badge />}
+      <div className={cx('header', isDeploying && 'deploying')}>
         <span>{bot?.display_name}</span>
       </div>
       <div className={s.body}>
@@ -171,7 +174,11 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 </Button>
               </div>
               <Kebab tooltipId={tooltipId} theme='card' />
-              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+              <AssistantContextMenu
+                tooltipId={tooltipId}
+                bot={bot}
+                type={type}
+              />
             </>
           ) : (
             <>
@@ -181,13 +188,17 @@ export const BotCard: FC<BotCardProps> = ({ type, bot, size, disabled }) => {
                 long
                 props={{
                   onClick: handlEditClick,
-                  disabled: onModeration || deploying,
+                  disabled: onModeration || isDeploying,
                 }}
               >
                 Edit
               </Button>
               <Kebab tooltipId={tooltipId} theme='card' />
-              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+              <AssistantContextMenu
+                tooltipId={tooltipId}
+                bot={bot}
+                type={type}
+              />
             </>
           )}
         </div>

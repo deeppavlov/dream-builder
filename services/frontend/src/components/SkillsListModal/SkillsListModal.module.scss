@@ -1,9 +1,9 @@
 .container {
-  width: 100%;
+  width: 80vw;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-height: calc(100vh - $topbar-height * 2);
+  transition: width 0.3s linear;
   .header {
     @include t1;
   }
@@ -13,4 +13,7 @@
     flex-direction: row;
     justify-content: flex-end;
   }
+}
+.withRightSidePanel {
+  width: calc(80vw - 400px);
 }

@@ -103,6 +103,7 @@ type TKey = {
   id: number
   name: string
 }
+
 export interface BotInfoInterface {
   id: number
   name: string

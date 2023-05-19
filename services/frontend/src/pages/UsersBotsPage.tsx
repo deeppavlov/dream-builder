@@ -10,6 +10,7 @@ import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
+import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
 import { useAssistants } from '../hooks/useAssistants'
@@ -50,6 +51,9 @@ export const UsersBotsPage = () => {
                     />
                   }
                 >
+                  {privateDists?.isLoading && (
+                    <TableRowsLoader rowsCount={6} colCount={6} />
+                  )}
                   <DistList
                     view='table'
                     dists={privateDists?.data}

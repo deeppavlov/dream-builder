@@ -18,6 +18,7 @@ import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
+import TableRowsLoader from '../TableRowsLoader/TableRowsLoader'
 import s from './SkillsListModal.module.scss'
 
 interface IAddPublicSkill {
@@ -50,9 +51,6 @@ export const SkillsListModal = () => {
       right: rightSidepanelIsActive ? '368px' : 0,
       transition: 'all 0.3s linear',
     },
-    content: {
-      width: '95%',
-    },
   }
   const cx = classNames.bind(s)
 
@@ -61,7 +59,7 @@ export const SkillsListModal = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
-  const handleOk = () => setIsOpen(prev => !prev)
+  const handleOk = () => handleClose()
 
   const handleAdd = (skill: ICreateComponent) => {
     const assistantId = assistant?.data?.deployment?.id!
@@ -93,46 +91,46 @@ export const SkillsListModal = () => {
   useObserver('SkillsListModal', handleEventUpdate)
 
   return (
-    <>
-      {skillsList && (
-        <BaseModal
-          skillsListModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          customStyles={position}
-          handleClose={handleClose}
+    <BaseModal
+      skillsListModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      customStyles={position}
+      handleClose={handleClose}
+    >
+      <div
+        className={cx(
+          'container',
+          rightSidepanelIsActive && 'withRightSidePanel'
+        )}
+      >
+        <div className={s.header}>Choose Skill</div>
+        <Table
+          second='Type'
+          withoutDate={rightSidepanelIsActive}
+          addButton={
+            <AddButton forTable fromScratch onAddRequest={handleClose} />
+          }
         >
-          <div
-            className={cx(
-              'container',
-              rightSidepanelIsActive && 'rightSidepanelIsActive'
-            )}
-          >
-            <div className={s.header}>Choose Skill</div>
-            <Table
-              second='Type'
+          {skillsList ? (
+            <SkillList
+              handleAdd={handleAdd}
+              skills={skillsList}
+              view={'table'}
+              forModal
+              type='public'
               withoutDate={rightSidepanelIsActive}
-              addButton={
-                <AddButton forTable fromScratch onAddRequest={handleClose} />
-              }
-            >
-              <SkillList
-                handleAdd={handleAdd}
-                skills={skillsList}
-                view={'table'}
-                forModal
-                type='public'
-                withoutDate={rightSidepanelIsActive}
-              />
-            </Table>
-            <div className={s.footer}>
-              <Button theme='primary' props={{ onClick: handleOk }}>
-                OK
-              </Button>
-            </div>
-          </div>
-        </BaseModal>
-      )}
-    </>
+            />
+          ) : (
+            <TableRowsLoader rowsCount={6} colCount={6} />
+          )}
+        </Table>
+        <div className={s.footer}>
+          <Button theme='primary' props={{ onClick: handleOk }}>
+            OK
+          </Button>
+        </div>
+      </div>
+    </BaseModal>
   )
 }

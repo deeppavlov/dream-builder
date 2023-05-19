@@ -20,6 +20,7 @@ from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
+from services.distributions_api.tasks.tasks import app as celery_app
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
@@ -54,7 +55,11 @@ def ping_deployed_agent(host: str, port: int, retries: int = 10, backoff_factor:
             return True
 
 
+@celery_app.tasks(ignore_result=True)
 def run_deployer(dist: AssistantDist, deployment_id: int):
+    """
+    celery_app.tasks.ignore_result stands for caching the result in broker
+    """
     now = datetime.now()
     logger.info(f"Deployment background task for {dist.name} started")
 
@@ -113,7 +118,6 @@ async def get_deployments(
 @deployments_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_deployment(
     payload: schemas.DeploymentCreate,
-    background_tasks: BackgroundTasks,
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -144,12 +148,10 @@ async def create_deployment(
             raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
 
     if not payload.error:
-        background_tasks.add_task(
-            run_deployer,
+        queue_id = run_deployer.delay(
             dist=dream_dist,
-            # port=port,
             deployment_id=deployment.id,
-        )
+        ).id
 
     return schemas.DeploymentRead.from_orm(deployment)
 
@@ -180,7 +182,6 @@ async def get_deployment(
 @deployments_router.patch("/{deployment_id}", status_code=status.HTTP_200_OK)
 async def patch_deployment(
     deployment_id: int,
-    background_tasks: BackgroundTasks,
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -195,12 +196,10 @@ async def patch_deployment(
 
         deployment = crud.update_deployment(db, deployment_id, state="STARTED")
 
-    background_tasks.add_task(
-        run_deployer,
-        dist=dream_dist,
-        # port=deployment.chat_port,
-        deployment_id=deployment.id,
-    )
+        run_deployer.delay(
+            dist=dream_dist,
+            deployment_id=deployment.id,
+        )
 
     return schemas.DeploymentRead.from_orm(deployment)
 

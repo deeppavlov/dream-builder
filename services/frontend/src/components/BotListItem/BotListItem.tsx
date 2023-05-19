@@ -13,9 +13,9 @@ import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
 import { timeToUTC } from '../../utils/timeToUTC'
+import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './BotListItem.module.scss'
 
@@ -92,7 +92,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     })
   }
   const queryClient = useQueryClient()
-  
+
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
     queryFn: () => getDeploy(bot?.deployment?.id!),
@@ -175,7 +175,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
           {type === 'your' ? (
             <>
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
-              <BotCardToolTip
+              <AssistantContextMenu
                 tooltipId={'ctxMenu' + tooltipId}
                 bot={bot}
                 type={type}
@@ -184,7 +184,11 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
           ) : (
             <>
               <Kebab tooltipId={tooltipId} theme='card' />
-              <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+              <AssistantContextMenu
+                tooltipId={tooltipId}
+                bot={bot}
+                type={type}
+              />
             </>
           )}
         </div>

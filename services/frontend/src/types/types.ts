@@ -103,6 +103,8 @@ type TKey = {
   id: number
   name: string
 }
+export type TAssistantPublishState = null | 'confirmed' | 'in_progress'
+
 export interface BotInfoInterface {
   id: number
   name: string
@@ -114,7 +116,7 @@ export interface BotInfoInterface {
   gpu_usage: string
   disk_usage: string
   visibility: TDistVisibility
-  publish_state: null | 'confirmed' | 'in_progress'
+  publish_state: TAssistantPublishState
   deployment: IDeployment
   required_api_keys: TKey[] | null
 }

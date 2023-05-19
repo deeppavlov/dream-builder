@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host --mode development",
-    "msw": "vite --host --mode msw",
-    "prod": "vite --host --mode production",
-    "stage": "vite --host --mode stage",
-    "build": "vite build --mode production",
+    "dev": "vite --host --mode DEV",
+    "msw": "vite --host --mode MSW",
+    "prod": "vite --host --mode PROD",
+    "stage": "vite --host --mode STAGE",
+    "build": "vite build --mode PROD",
     "preview": "vite preview --port 5173"
   },
   "dependencies": {

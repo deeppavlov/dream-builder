@@ -1,6 +1,7 @@
 import { FC } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
+import { RoutesList } from '../../router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { AssistantDialogSidePanel } from '../AssistantDialogSidePanel/AssistantDialogSidePanel'
@@ -16,11 +17,17 @@ interface Props {
   inSidePanel?: boolean
 }
 
-const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
+const AssistantContextMenu: FC<Props> = ({
+  tooltipId,
+  bot,
+  type,
+  inSidePanel,
+}) => {
   const auth = useAuth()
   const navigate = useNavigate()
   const { name } = useParams()
-  const isEditor = Boolean(name)
+  const isEditor = name !== undefined && name !== null && name?.length > 0
+
   const handlePropertiesBtnClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
@@ -33,10 +40,14 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
       ),
     })
 
-  const handleRenameBtnClick = () =>
-    bot?.visibility === 'public_template'
-      ? trigger('PublicToPrivateModal', { bot, action: 'rename' })
-      : trigger('AssistantModal', { action: 'edit', bot })
+  const handleRenameBtnClick = () => {
+    const isPublicTemplate = bot?.visibility === 'public_template'
+
+    if (isPublicTemplate)
+      return trigger('PublicToPrivateModal', { bot, action: 'rename' })
+
+    trigger('AssistantModal', { action: 'edit', bot })
+  }
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
@@ -44,29 +55,20 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
 
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 
-  const handleChatClick = () => {
+  const handleChatClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <AssistantDialogSidePanel
-          debug={false}
           key={bot?.name + 'chat_with_assistant'}
-          chatWith='bot'
-          // start
           dist={bot}
         />
       ),
     })
-  }
+
   const handleCheckArchitectureClick = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    navigate(`/${bot?.name}`, {
-      state: {
-        preview: true,
-        distName: bot?.name,
-        displayName: bot?.display_name,
-      },
-    })
+    navigate(generatePath(RoutesList.editor.default, { name: bot?.name }))
     e.stopPropagation()
   }
 
@@ -86,7 +88,7 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
-            // disabled={bot?.publish_state === 'in_progress'}
+            disabled={bot?.publish_state === 'in_progress'}
             name='Visibility'
             type='publish'
             handleClick={handlePublishBtnClick}
@@ -143,4 +145,4 @@ const BotCardToolTip: FC<Props> = ({ tooltipId, bot, type, inSidePanel }) => {
   )
 }
 
-export default BotCardToolTip
+export default AssistantContextMenu

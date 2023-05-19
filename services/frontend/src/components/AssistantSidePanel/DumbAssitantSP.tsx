@@ -11,7 +11,7 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
-import BotCardToolTip from '../BotCardToolTip/BotCardToolTip'
+import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import EditPencilButton from '../EditPencilButton/EditPencilButton'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './DumbAssitantSP.module.scss'
@@ -206,7 +206,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                 >
                   More
                 </Button>
-                <BotCardToolTip
+                <AssistantContextMenu
                   tooltipId={tooltipId}
                   bot={bot}
                   type={type}
@@ -239,7 +239,11 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                     Edit
                   </Button>
                 )}
-                <BotCardToolTip tooltipId={tooltipId} bot={bot} type={type} />
+                <AssistantContextMenu
+                  tooltipId={tooltipId}
+                  bot={bot}
+                  type={type}
+                />
               </>
             )}
           </div>

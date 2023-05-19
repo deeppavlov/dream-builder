@@ -1,13 +1,13 @@
 import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
 import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
+import { AssistantCard } from '../../components/AssistantCard/AssistantCard'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import BaseLink from '../../components/BaseLink/BaseLink'
 import {
-BaseSidePanel,
-TRIGGER_RIGHT_SP_EVENT
+  BaseSidePanel,
+  TRIGGER_RIGHT_SP_EVENT,
 } from '../../components/BaseSidePanel/BaseSidePanel'
-import { BotCard } from '../../components/BotCard/BotCard'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import { CopilotSidePanel } from '../../components/CopilotSidePanel/CopilotSidePanel'
 
@@ -20,33 +20,32 @@ import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/Genera
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentList from '../../components/IntentList/IntentList'
-import IntentListItem,{
-IntentListItemInterface
+import IntentListItem, {
+  IntentListItemInterface,
 } from '../../components/IntentListItem/IntentListItem'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import NotificationCard,{
-NotificationCardProps
+import NotificationCard, {
+  NotificationCardProps,
 } from '../../components/NotificationCard/NotificationCard'
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
-import SelectorSettingsSidePanel,{
-SelectorSettings
+import SelectorSettingsSidePanel, {
+  SelectorSettings,
 } from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
-import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import SkillSidePanel from '../../components/SkillSidePanel/DumbSkillSP'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
 import {
-BotInfoInterface,
-ISkill,
-IStackElement,
-TotalResourcesInterface
+  BotInfoInterface,
+  ISkill,
+  IStackElement,
+  TotalResourcesInterface,
 } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
@@ -1191,14 +1190,14 @@ export const TestPage = () => {
         />
       </div>
       <div className={s.testPage__block}>
-        <span className={s['testPage__block-name']}>BotCard</span>
+        <span className={s['testPage__block-name']}>AssistantCard</span>
         <div className={s.testPage__component}>
           <span>public</span>
-          <BotCard type='public' bot={mockBot} disabled={false} />
+          <AssistantCard type='public' bot={mockBot} disabled={false} />
         </div>
         <div className={s.testPage__component}>
           <span>your</span>
-          <BotCard type='your' bot={mockBot} disabled={false} />
+          <AssistantCard type='your' bot={mockBot} disabled={false} />
         </div>
       </div>
       <div className={s.testPage__block}>

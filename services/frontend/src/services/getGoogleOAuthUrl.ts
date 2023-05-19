@@ -1,11 +1,9 @@
-import { mode } from './axiosConfig'
-
 export const getGoogleOAuthURL = () => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/auth'
 
   const options = {
     redirect_uri: import.meta.env[
-      'VITE_GOOGLE_OAUTH_REDIRECT_URL_' + mode
+      'VITE_GOOGLE_OAUTH_REDIRECT_URL_' + import.meta.env.MODE
     ] as string,
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
     access_type: 'offline',

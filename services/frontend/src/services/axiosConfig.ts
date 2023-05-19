@@ -2,33 +2,27 @@ import axios from 'axios'
 import { getAccessToken, logout, setAccessToken } from '../context/AuthProvider'
 import { updateAccessToken } from './updateAccessToken'
 
-export const mode =
-  import.meta.env.MODE === 'production'
-    ? 'PROD'
-    : import.meta.env.MODE === 'msw'
-    ? 'MSW'
-    : import.meta.env.MODE === 'dev'
-    ? 'DEV'
-    : 'STAGE'
+const { MODE } = import.meta.env
+
 /**
  * Axios instance of public distribution API
  */
 export const api = axios.create({
-  baseURL: import.meta.env['VITE_DIST_API_URL_' + mode],
+  baseURL: import.meta.env['VITE_DIST_API_URL_' + MODE],
 })
 
 /**
  * Axios instance of authorization API
  */
 export const authApi = axios.create({
-  baseURL: import.meta.env['VITE_AUTH_API_URL_' + mode],
+  baseURL: import.meta.env['VITE_AUTH_API_URL_' + MODE],
 })
 
 /**
  * Axios instance of private distribution API
  */
 export const privateApi = axios.create({
-  baseURL: import.meta.env['VITE_DIST_API_URL_' + mode],
+  baseURL: import.meta.env['VITE_DIST_API_URL_' + MODE],
 })
 
 privateApi.interceptors.request.use(

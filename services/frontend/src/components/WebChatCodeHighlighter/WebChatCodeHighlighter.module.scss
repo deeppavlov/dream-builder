@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  gap: 16px;
+  .btnContainer {
+    display: flex;
+    justify-content: end;
+  }
+}

@@ -1,6 +1,12 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { Outlet, useParams } from 'react-router-dom'
+import {
+  Outlet,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -11,6 +17,7 @@ import IntentResponderModal from '../../components/IntentResponderModal/IntentRe
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../../components/ShareModal/ShareModal'
 import { DeepyHelperTab } from '../../components/Sidebar/components/DeepyHelperTab'
+import { IntegrationTab } from '../../components/Sidebar/components/IntegrationTab'
 import { SettingsTab } from '../../components/Sidebar/components/SettingsTab'
 import { SkillsTab } from '../../components/Sidebar/components/SkillsTab'
 import { Sidebar } from '../../components/Sidebar/Sidebar'
@@ -22,6 +29,7 @@ import { VisibilityStatus } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
+import { RoutesList } from '../../router/RoutesList'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
 
@@ -52,11 +60,32 @@ export const EditorPage = () => {
     return () => setIsPreview(true)
   }, [dist])
 
+  // useEffect(() => {
+  //   const error = (errorResponse as any)?.response as Response
+
+  //   if (error?.status === undefined) return
+  //   console.log('aboba')
+
+  //   // return nav(
+  //   //   generatePath(RoutesList.error, { statusCode: error.status.toString() }),
+  //   //   { state: Object.assign({}, state, { error }), replace: true }
+  //   // )
+  // }, [isError])
+
+  // const match = useMatch(RoutesList.editor.skills)
+  // console.log('RoutesList.editor.skills = ', RoutesList.editor.skills)
+  // console.log('match = ', match)
+
   return (
     <>
       <Sidebar>
         <Container layoutForTabs>
-          <SkillsTab isActive={true} />
+          <SkillsTab
+            isActive={Boolean(useMatch(RoutesList.editor.skills) )}
+          />
+          <IntegrationTab
+            isActive={Boolean(useMatch(RoutesList.editor.integration))}
+          />
           {/* <BotTab /> */}
           <div style={{ height: '100%' }}></div>
           <div

@@ -57,7 +57,7 @@ export const useAssistants = () => {
     useQuery<BotInfoInterface>({
       queryKey: ['dist', distName],
       queryFn: () => fetchDist(distName),
-      refetchOnMount: false,
+      refetchOnMount: true,
       refetchOnWindowFocus: true,
       initialData: () => (inEditor ? undefined : getFetchedDist(distName)),
       useErrorBoundary,

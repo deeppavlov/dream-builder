@@ -36,7 +36,7 @@ export const PublicToPrivateModal = () => {
           setIsOpen(false)
         })
         .then(() => {
-          navigate(`/${bot?.name}`, {
+          navigate(`/${bot?.name}/skills`, {
             state: {
               preview: false,
               distName: bot?.name,

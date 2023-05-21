@@ -12,6 +12,8 @@ interface ContainerProps {
   gridForRequests?: boolean
   gridForDeploys?: boolean
   overflowVisible?: boolean
+  flexEnd?: boolean
+  column?: boolean
 }
 
 export const Container = ({
@@ -24,6 +26,8 @@ export const Container = ({
   gridForRequests,
   gridForDeploys,
   overflowVisible,
+  flexEnd,
+  column,
 }: ContainerProps) => {
   const cx = classNames.bind(s)
   return (
@@ -37,7 +41,9 @@ export const Container = ({
         scroll && 'scroll',
         gridForRequests && 'gridForRequests',
         gridForDeploys && 'gridForDeploys',
-        overflowVisible && 'overflowVisible'
+        overflowVisible && 'overflowVisible',
+        flexEnd && 'flexEnd',
+        column && 'column'
       )}
     >
       {children}

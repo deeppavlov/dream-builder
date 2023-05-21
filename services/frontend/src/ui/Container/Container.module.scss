@@ -45,3 +45,13 @@
 .overflowVisible {
   overflow: visible;
 }
+.flexEnd {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+}
+.column {
+  flex-direction: column;
+  height: min-content;
+}

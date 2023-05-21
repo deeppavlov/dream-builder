@@ -6,8 +6,9 @@ export const RoutesList = {
   code: '/code',
   editor: {
     default: '/:name',
-    skills: '/:name/skills?',
+    skills: '/:name/skills',
     architecture: '/:name/architecture',
+    integration: '/:name/integration',
     skillEditor: '/:name/skills/:skillId',
   },
   distributions: '/distributions',

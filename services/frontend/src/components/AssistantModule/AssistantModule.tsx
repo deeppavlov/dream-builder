@@ -1,7 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   PublishRequestsStatus,
@@ -10,9 +8,9 @@ import {
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
+import { useCheckIsAdmin } from '../../hooks/useCheckIsAdmin'
 import { useDeploy } from '../../hooks/useDeploy'
 import { toasts } from '../../mapping/toasts'
-import { visibilityForDropbox } from '../../mapping/visibility'
 import { TDistVisibility } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Container } from '../../ui/Container/Container'
@@ -21,7 +19,7 @@ import { trigger } from '../../utils/events'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { Details } from '../Details/Details'
-import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
+import { SmallTag } from '../SmallTag/SmallTag'
 import SvgIcon from '../SvgIcon/SvgIcon'
 
 interface Props {}
@@ -32,27 +30,11 @@ export const AssistantModule: FC<Props> = () => {
   const navigate = useNavigate()
   const auth = useAuth()
 
-  const queryClient = useQueryClient()
   const { getDist, changeVisibility } = useAssistants()
   const { data: bot, isFetched } = getDist({ distName: name!, inEditor: true })
   const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
-  checkDeployStatus(bot!)
 
-  const { control, reset } = useForm({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      visibility: visibilityForDropbox.find(type => type.id === bot?.visibility)
-        ?.name,
-    },
-  })
-  const v = useWatch({
-    control,
-    name: 'visibility',
-  })
-  const defaultDropboxValue = visibilityForDropbox.find(
-    type => type.id === bot?.visibility
-  )?.name
+  checkDeployStatus(bot!)
 
   const deployed = bot?.deployment?.state === 'UP' //FIX
   const deploying =
@@ -62,43 +44,22 @@ export const AssistantModule: FC<Props> = () => {
 
   const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
 
-  const currentVisibilityStatus = bot?.visibility
+  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
+  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
 
-  const handleVisibility = (v: string) => {
-    const visibility = visibilityForDropbox.find(type => type.name === v)
-      ?.id! as TDistVisibility
-    const name = bot?.name!
-    const deploymentState = bot?.deployment?.state
+  const publishState = onModeration
+    ? 'On Moderation'
+    : published
+    ? 'Public Template'
+    : unlistedAssistant
+    ? 'Unlisted'
+    : privateAssistant
+    ? 'Private'
+    : null
 
-    if (
-      visibility !== currentVisibilityStatus ||
-      bot?.publish_state == PublishRequestsStatus.IN_REVIEW
-    ) {
-      toast.promise(
-        changeVisibility.mutateAsync(
-          {
-            name,
-            visibility,
-            inEditor: true,
-            deploymentState,
-          },
-          {
-            onSuccess: () => {
-              currentVisibilityStatus === VisibilityStatus.PUBLIC_TEMPLATE &&
-                queryClient.invalidateQueries('dist')
-            },
-          }
-        ),
-        {
-          loading: 'Loading...',
-          success:
-            visibility === VisibilityStatus.PUBLIC_TEMPLATE
-              ? 'Submitted For Review!'
-              : 'Success!',
-          error: 'Something went wrong...',
-        }
-      )
-    }
+  const handleVisibility = () => {
+    trigger('PublishAssistantModal', { bot })
   }
 
   const handleInfo = () => {
@@ -155,7 +116,6 @@ export const AssistantModule: FC<Props> = () => {
   const handleShare = () => {
     trigger('ShareModal', { bot })
   }
-
   const handleDuplicate = () => {
     if (!auth?.user)
       return trigger('SignInModal', {
@@ -168,15 +128,7 @@ export const AssistantModule: FC<Props> = () => {
     trigger('AssistantModal', { bot, action: 'clone' })
   }
 
-  useEffect(() => {
-    reset({
-      visibility: defaultDropboxValue,
-    })
-  }, [bot?.visibility])
-
-  useEffect(() => {
-    v && handleVisibility(v)
-  }, [v])
+  const { isAdmin } = useCheckIsAdmin()
 
   useEffect(() => {
     const redirectConditions = isFetched && (onModeration || deploying)
@@ -244,17 +196,6 @@ export const AssistantModule: FC<Props> = () => {
         <Container overflowVisible>
           <Details>{bot?.description!}</Details>
           {!isPreview && (
-            <SkillDropboxSearch
-              small
-              withoutSearch
-              name='visibility'
-              control={control}
-              rules={{ required: true }}
-              list={visibilityForDropbox}
-              props={{ disabled: deploying }}
-            />
-          )}
-          {!isPreview && (
             <Button
               props={{
                 onClick: handleShare,
@@ -266,6 +207,23 @@ export const AssistantModule: FC<Props> = () => {
               <SvgIcon iconName='share' />
             </Button>
           )}
+          {!isPreview && (
+            <Button
+              theme='tertiary2'
+              props={{
+                onClick: handleVisibility,
+                disabled: deploying,
+              }}
+            >
+              <SvgIcon iconName='publish' />
+              Visibility
+            </Button>
+          )}
+        </Container>
+        <Container flexEnd>
+          <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
+            {publishState}
+          </SmallTag>
         </Container>
       </Wrapper>
     </>

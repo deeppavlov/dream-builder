@@ -66,7 +66,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     published
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
-      : navigate(`/${bot?.name}`, {
+      : navigate(`/${bot?.name}/skills`, {
           state: {
             preview: false,
             distName: bot?.name,

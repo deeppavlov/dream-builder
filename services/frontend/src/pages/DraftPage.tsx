@@ -1,6 +1,7 @@
 import { CSSProperties, FC, useId } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import { useNavigate } from 'react-router-dom'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -45,8 +46,10 @@ export const DraftPage = () => {
 
   const sortedDeployment = sortByISO8601(filteredDeployment)
   const sortedRequest = sortByISO8601(requests!)
-
-  const cardClickHandler = () => {}
+  const navigate = useNavigate()
+  const cardClickHandler = (name: string) => {
+    navigate(`/${name}`)
+  }
   const handleApprove: IHandler = (e, id) => {
     toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)
     e.stopPropagation()
@@ -74,7 +77,9 @@ export const DraftPage = () => {
                 <Request
                   confirm={confirm}
                   decline={decline}
-                  cardClickHandler={cardClickHandler}
+                  cardClickHandler={() => {
+                    cardClickHandler(r?.virtual_assistant?.name)
+                  }}
                   r={r}
                   key={i}
                   handleApprove={handleApprove}

@@ -150,7 +150,8 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
-            if (dist?.deployment?.state === 'UP') { //FIX
+            if (dist?.deployment?.state === 'UP') {
+              //FIX
               deleteDeployment.mutateAsync(dist?.deployment?.id!)
             } else return
           }),
@@ -180,7 +181,7 @@ const SkillPromptModal = () => {
   useEffect(() => {
     reset(
       {
-        model: getValues().model,
+        model: getValues().model ?? skill?.lm_service?.display_name,
         prompt: skill?.prompt,
       },
       { keepDirty: false }
@@ -206,7 +207,7 @@ const SkillPromptModal = () => {
       })
       reset({})
     }
-  }, [isOpen])
+  }, [skill])
 
   useQuitConfirmation({
     activeElement: modalRef,

@@ -19,6 +19,7 @@ import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import EditPencilButton from '../EditPencilButton/EditPencilButton'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './DumbAssitantSP.module.scss'
+import { getAssistantState } from '../../utils/getAssistantState'
 
 interface Props {
   bot: BotInfoInterface
@@ -40,12 +41,8 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
   const tooltipId = useId()
-
-  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
-  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
-  const deployed = bot?.deployment?.state === 'UP' //FIX
-  const deploying =
-    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
+  const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
+  const isPublished = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
 
   const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
@@ -64,7 +61,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    published
+    isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(`/${bot?.name}`, {
           state: {
@@ -98,7 +95,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
   const publishState = onModeration
     ? 'On Moderation'
-    : published
+    : isPublished
     ? 'Public Template'
     : unlistedAssistant
     ? 'Unlisted'
@@ -129,7 +126,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <span className={s.name}>{bot?.display_name}</span>
             {!isPublic && (
               <EditPencilButton
-                disabled={!isCustomizable || deploying}
+                disabled={!isCustomizable || isDeploying}
                 onClick={handleRenameBtnClick}
               />
             )}
@@ -219,7 +216,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   tooltipId={tooltipId}
                   bot={bot}
                   type={type}
-                  isDeployed={deployed}
+                  isDeployed={isDeployed}
                   inSidePanel
                 />
                 <Button
@@ -242,7 +239,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   <Button
                     props={{
                       onClick: handlEditClick,
-                      disabled: onModeration || deploying,
+                      disabled: onModeration || isDeploying,
                     }}
                     theme='primary'
                   >
@@ -253,7 +250,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   tooltipId={tooltipId}
                   bot={bot}
                   type={type}
-                  isDeployed={deployed}
+                  isDeployed={isDeployed}
                 />
               </>
             )}

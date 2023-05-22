@@ -49,7 +49,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { data: bot } = getDist({ distName: dist?.name })
+  const { data: bot } = getDist({ distName: dist?.name, refetchOnMount: true })
   const { data: user } = useQuery(['user'], () => getUserId())
   const { send, renew, session, message, history } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)

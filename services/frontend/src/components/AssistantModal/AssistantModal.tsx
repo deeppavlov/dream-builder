@@ -46,7 +46,7 @@ export const AssistantModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
-    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+    if (!isEditing) trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {

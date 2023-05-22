@@ -18,6 +18,7 @@ import Button from '../../ui/Button/Button'
 import { Container } from '../../ui/Container/Container'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { trigger } from '../../utils/events'
+import { getAssistantState } from '../../utils/getAssistantState'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { Details } from '../Details/Details'
@@ -31,11 +32,12 @@ export const AssistantModule: FC<Props> = () => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
   const auth = useAuth()
-
   const queryClient = useQueryClient()
   const { getDist, changeVisibility } = useAssistants()
   const { data: bot, isFetched } = getDist({ distName: name!, inEditor: true })
   const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
+  const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
+
   checkDeployStatus(bot!)
 
   const { control, reset } = useForm({
@@ -46,22 +48,13 @@ export const AssistantModule: FC<Props> = () => {
         ?.name,
     },
   })
-  const v = useWatch({
-    control,
-    name: 'visibility',
-  })
+  const v = useWatch({ control, name: 'visibility' })
   const defaultDropboxValue = visibilityForDropbox.find(
     type => type.id === bot?.visibility
   )?.name
 
-  const deployed = bot?.deployment?.state === 'UP' //FIX
-  const deploying =
-    !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
   const error =
     bot?.deployment?.error !== null && bot?.deployment?.error !== undefined
-
-  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
-
   const currentVisibilityStatus = bot?.visibility
 
   const handleVisibility = (v: string) => {
@@ -119,12 +112,12 @@ export const AssistantModule: FC<Props> = () => {
     })
   }
   const handleBuild = () => {
-    !deployed &&
-      !deploying &&
+    !isDeployed &&
+      !isDeploying &&
       !error &&
       toast.promise(deploy.mutateAsync(bot?.name!), toasts.deploy)
 
-    deployed &&
+    isDeployed &&
       toast.promise(
         deleteDeployment.mutateAsync(bot?.deployment?.id!, {
           onSuccess: () => {
@@ -179,7 +172,7 @@ export const AssistantModule: FC<Props> = () => {
   }, [v])
 
   useEffect(() => {
-    const redirectConditions = isFetched && (onModeration || deploying)
+    const redirectConditions = isFetched && (onModeration || isDeploying)
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])
@@ -189,7 +182,7 @@ export const AssistantModule: FC<Props> = () => {
       <Wrapper
         title={bot?.display_name}
         primary
-        badge={deployed}
+        badge={isDeployed}
         btns={
           <Container>
             <Button withIcon theme='tertiary2' props={{ onClick: handleInfo }}>
@@ -205,7 +198,7 @@ export const AssistantModule: FC<Props> = () => {
             </Button>
             {!isPreview && (
               <Button
-                loader={deploying}
+                loader={isDeploying}
                 theme={!error ? 'purple' : 'error'}
                 props={{
                   onClick: handleBuild,
@@ -218,13 +211,13 @@ export const AssistantModule: FC<Props> = () => {
                     Build Assistant
                   </>
                 )}
-                {deploying && (
+                {isDeploying && (
                   <>
                     <SvgIcon iconName='start' />
                     Build Assistant
                   </>
                 )}
-                {deployed && (
+                {isDeployed && (
                   <>
                     <SvgIcon iconName='stop' />
                     Stop Assistant
@@ -251,7 +244,7 @@ export const AssistantModule: FC<Props> = () => {
               control={control}
               rules={{ required: true }}
               list={visibilityForDropbox}
-              props={{ disabled: deploying }}
+              props={{ disabled: isDeploying }}
             />
           )}
           {!isPreview && (

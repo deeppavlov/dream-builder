@@ -3,10 +3,7 @@ import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import {
-  PublishRequestsStatus,
-  VisibilityStatus,
-} from '../../constants/constants'
+import { VisibilityStatus } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { getDeploy } from '../../services/getDeploy'
 import { BotCardProps } from '../../types/types'
@@ -15,6 +12,7 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
+import { getAssistantState } from '../../utils/getAssistantState'
 import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { Badge } from '../Badge/Badge'
@@ -36,15 +34,13 @@ export const AssistantCard: FC<BotCardProps> = ({
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
   const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
 
-  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
   const isPublished = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
   const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
   const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
-  const isDeployed = bot?.deployment?.state === 'UP'
-  const isDeploying =
-    !isDeployed && bot?.deployment?.state !== null && bot?.deployment !== null
+
   const publishState = onModeration
     ? 'On Moderation'
     : isPublished
@@ -54,19 +50,6 @@ export const AssistantCard: FC<BotCardProps> = ({
     : privateAssistant
     ? 'Private'
     : null
-
-
-  // const publishState = !bot?.publish_state
-  //   ? type === 'your' && bot?.visibility
-  //   : onModeration
-  //   ? 'On Moderation'
-  //   : published
-  //   ? 'Public Template'
-  //   : privateAssistant
-  //   ? 'Private'
-  //   : unlistedAssistant
-  //   ? 'Unlisted'
-  //   : null
 
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {

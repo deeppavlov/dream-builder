@@ -33,7 +33,7 @@ export const EditorPage = () => {
   const { data: dist } = getDist({
     distName: name!,
     useErrorBoundary: true,
-    inEditor: true,
+    refetchOnMount: true,
   })
 
   useEffect(() => {

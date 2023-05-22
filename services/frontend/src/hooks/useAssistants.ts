@@ -36,7 +36,7 @@ interface IRename extends IClone {}
 interface IGetDist {
   distName: string
   useErrorBoundary?: boolean
-  inEditor?: boolean
+  refetchOnMount?: boolean
 }
 
 export const useAssistants = () => {
@@ -53,16 +53,15 @@ export const useAssistants = () => {
   const fetchPrivateDists = () =>
     useQuery(PRIVATE_DISTS, getPrivateDists, { enabled: userIsAuthorized })
 
-  const getDist = ({ distName, useErrorBoundary, inEditor }: IGetDist) =>
+  const getDist = ({ distName, useErrorBoundary, refetchOnMount }: IGetDist) =>
     useQuery<BotInfoInterface>({
       queryKey: ['dist', distName],
       queryFn: () => fetchDist(distName),
-      refetchOnMount: false,
+      refetchOnMount: Boolean(refetchOnMount),
       refetchOnWindowFocus: true,
-      initialData: () => (inEditor ? undefined : getFetchedDist(distName)),
+      initialData: () => getFetchedDist(distName),
       useErrorBoundary,
       retry: 1,
-      cacheTime: inEditor ? 0 : undefined,
     })
 
   const rename = useMutation({

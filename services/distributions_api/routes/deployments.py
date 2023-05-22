@@ -20,7 +20,9 @@ from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
-from services.distributions_api.tasks.tasks import app as celery_app
+import services.distributions_api.tasks.tasks as tasks
+
+# from services.distributions_api.tasks.tasks import app as celery_app
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
@@ -55,7 +57,6 @@ def ping_deployed_agent(host: str, port: int, retries: int = 10, backoff_factor:
             return True
 
 
-@celery_app.tasks(ignore_result=True)
 def run_deployer(dist: AssistantDist, deployment_id: int):
     """
     celery_app.tasks.ignore_result stands for caching the result in broker
@@ -147,13 +148,14 @@ async def create_deployment(
             db.rollback()
             raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
 
+    task_id = None
     if not payload.error:
-        queue_id = run_deployer.delay(
+        task_id = tasks.run_deployer_task.delay(
             dist=dream_dist,
             deployment_id=deployment.id,
         ).id
 
-    return schemas.DeploymentRead.from_orm(deployment)
+    return {"task_id": task_id, **schemas.DeploymentRead.from_orm(deployment).__dict__}
 
 
 @deployments_router.get("/stacks")
@@ -182,6 +184,7 @@ async def get_deployment(
 @deployments_router.patch("/{deployment_id}", status_code=status.HTTP_200_OK)
 async def patch_deployment(
     deployment_id: int,
+    task_id: str,
     user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
@@ -193,15 +196,16 @@ async def patch_deployment(
 
         if deployment.stack_id:
             swarm_client.delete_stack(deployment.stack_id)
+        tasks.app.control.revoke(task_id, terminate=True)
 
         deployment = crud.update_deployment(db, deployment_id, state="STARTED")
 
-        run_deployer.delay(
+        new_task_id = tasks.run_deployer_task.delay(
             dist=dream_dist,
             deployment_id=deployment.id,
         )
 
-    return schemas.DeploymentRead.from_orm(deployment)
+    return {"task_id": new_task_id, **schemas.DeploymentRead.from_orm(deployment).__dict__}
 
 
 @deployments_router.delete("/{deployment_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -218,9 +222,20 @@ async def delete_deployment(
 
 
 @deployments_router.delete("/stacks/{stack_id}")
-async def delete_stack(stack_id: int):
+async def delete_stack(stack_id: int, task_id: str):
     # TODO: make better exception handling
     try:
         swarm_client.delete_stack(stack_id)
     except requests.exceptions.HTTPError as e:
         raise HTTPException(500, detail=repr(e))
+
+    tasks.app.control.revoke(task_id, terminate=True)
+
+
+@deployments_router.get("/task/{task_id}")
+async def get_task_status(task_id: str):
+    result = tasks.app.AsyncResult(task_id)
+    task_status = result.status
+    if result.status == "PENDING":
+        task_status = "Task state is unknown"
+    return {"status": task_status}

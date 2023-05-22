@@ -8,6 +8,8 @@ services:
     restart: always
 
   celery_worker:
+    env_file: [ ../.envs/.env.dev.local ]
+    restart: on-failure
     build:
       context: ../..
       dockerfile: ./services/distributions_api/Dockerfile
@@ -22,6 +24,7 @@ services:
 
   flower:
     env_file: [ ../.envs/.env.dev.local ]
+    restart: on-failure
     build:
       context: ../..
       dockerfile: ./services/distributions_api/Dockerfile
@@ -29,7 +32,7 @@ services:
       - ../../services/distributions_api:/src/services/distributions_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
-    command: celery -A services.distributions_api.tasks.tasks flower --port=5555 --basic_auth=name:pass
+    command: celery -A services.distributions_api.tasks.tasks flower --port=5555 # --basic_auth=name:pass
     ports:
       - 5555:5555
     depends_on:

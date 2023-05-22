@@ -34,6 +34,7 @@ services:
       retries: 5
 
   auth-api:
+    restart: on-failure
     env_file: [ ../.envs/.env.dev.local ]
     build:
       context: ../..
@@ -55,6 +56,7 @@ services:
 
   distributions-api:
     env_file: [ ../.envs/.env.dev.local ]
+    restart: on-failure
     build:
       context: ../..
       dockerfile: ./services/distributions_api/Dockerfile

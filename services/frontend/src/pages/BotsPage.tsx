@@ -37,7 +37,7 @@ export const BotsPage = () => {
     <>
       <Main sidebar>
         <Wrapper
-          subWrapper={!isTableView}
+          subWrapper
           title='Create your Assistant '
           showAll
           amount={publicDists?.data?.length}

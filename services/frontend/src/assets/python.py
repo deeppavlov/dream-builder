@@ -17,8 +17,6 @@ def send_chat_message(dialog_session_id, your_message, your_prompt, lm_service_i
     url = f'http://hostname/api/dialog_sessions/{dialog_session_id}/chat'
     payload = {
         'text': your_message,
-        'prompt': your_prompt,
-        'lm_service_id': lm_service_id,
         'openai_api_key': openai_api_key,
     }
     
@@ -40,9 +38,7 @@ dialog_session_id = 42  # Replace with the actual dialog session ID
 create_dialog_session()
 
 your_message = 'your message'
-your_prompt = 'your prompt'
-lm_service_id = 0
 openai_api_key = 'your-api-key'
 
-send_chat_message(dialog_session_id, your_message, your_prompt, lm_service_id, openai_api_key)
+send_chat_message(dialog_session_id, your_message, openai_api_key)
 get_dialog_session_history(dialog_session_id)

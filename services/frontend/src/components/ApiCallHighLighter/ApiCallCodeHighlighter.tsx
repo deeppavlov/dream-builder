@@ -1,5 +1,3 @@
-// @ts-ignore
-// @ts-ignore
 import { FC, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'

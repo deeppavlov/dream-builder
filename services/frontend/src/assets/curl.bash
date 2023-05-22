@@ -13,12 +13,9 @@ curl -X 'POST'
 curl -X 'POST' 
   'http://hostname/api/dialog_sessions/$your_dialog_session_id/chat' 
   -H 'accept: application/json' 
-  -H 'token: $your_auth_token' 
   -H 'Content-Type: application/json' 
   -d '{
   "text": $your_message,
-  "prompt": $your_prompt,
-  "lm_service_id": $lm_service_id,
   "openai_api_key": $your_open_api_key
 }'
 
@@ -27,6 +24,5 @@ curl -X 'POST'
 curl -X 'GET' 
   'http://hostname/api/dialog_sessions/$your_dialog_session_id/history' 
   -H 'accept: application/json' 
-  -H 'token: $your_auth_token'
   
 

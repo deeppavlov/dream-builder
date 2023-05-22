@@ -20,15 +20,11 @@ const createDialogSession = async () => {
 const sendChatMessage = async (
   dialogSessionId,
   yourMessage,
-  yourPrompt,
-  lmServiceId,
   openaiApiKey
 ) => {
   const url = `http://hostname/api/dialog_sessions/${dialogSessionId}/chat`
   const payload = {
     text: yourMessage,
-    prompt: yourPrompt,
-    lm_service_id: lmServiceId,
     openai_api_key: openaiApiKey,
   }
 
@@ -44,7 +40,6 @@ const sendChatMessage = async (
 // Endpoint 3: Get dialog session history
 const getDialogSessionHistory = async dialogSessionId => {
   const url = `http://hostname/api/dialog_sessions/${dialogSessionId}/history`
-
   const response = await fetch(url)
   const data = await response.json()
   // Handle the response data as needed
@@ -55,16 +50,13 @@ const dialogSessionId = 42 // Replace with the actual dialog session ID
 
 createDialogSession()
   .then(() => {
-    const yourMessage = 'your message'
-    const yourPrompt = 'your prompt'
-    const lmServiceId = 0
-    const openaiApiKey = 'your-api-key'
+  const yourMessage = 'Hello World!'
+
+    const openaiApiKey = 'sk-(the rest of your OpenAI key)'
 
     return sendChatMessage(
       dialogSessionId,
       yourMessage,
-      yourPrompt,
-      lmServiceId,
       openaiApiKey
     )
   })

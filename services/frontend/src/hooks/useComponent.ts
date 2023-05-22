@@ -77,7 +77,7 @@ export const useComponent = () => {
   const ALL_COMPONENTS = 'all_components'
   const COMPONENT = 'component'
 
-  const getAllComponents = (distName: string) =>
+  const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
       [ALL_COMPONENTS, distName],
       () => getComponents(distName),
@@ -87,6 +87,7 @@ export const useComponent = () => {
         enabled: distName?.length! > 0,
         initialData: () =>
           getAllFetchedComponents(distName, ALL_COMPONENTS) as TComponents,
+        ...options,
       }
     )
 

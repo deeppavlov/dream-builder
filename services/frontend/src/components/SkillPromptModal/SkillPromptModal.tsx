@@ -140,7 +140,7 @@ const SkillPromptModal = () => {
       .promise(
         updateComponent
           .mutateAsync({
-            component_id,
+            component_id: component_id ?? id,
             description,
             display_name,
             lm_service_id: service!,

@@ -27,7 +27,7 @@ const SkillsPage = () => {
   const { options } = useDisplay()
   const { isPreview } = usePreview()
   const { getAllComponents } = useComponent()
-  const components = getAllComponents(name || '')
+  const components = getAllComponents(name || '', {refetchOnMount: true})
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   const handleReadFirst = () =>

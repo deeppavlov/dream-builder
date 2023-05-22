@@ -136,7 +136,7 @@ async def create_deployment(
                     error=DeployerError(
                         state=enums.DeploymentState.BUILDING_IMAGE.value,
                         exc=Exception(f"Oh no! Something bad happened during deployment"),
-                    ),
+                    ).dict(),
                 )
             db.commit()
         except IntegrityError:

@@ -1,4 +1,3 @@
-import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -6,7 +5,6 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
-import { ReactComponent as Attention } from '../../assets/icons/attention.svg'
 import {
   DUMMY_SKILL,
   OPEN_AI_LM,
@@ -37,6 +35,7 @@ import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
 
@@ -326,7 +325,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   <div className={s.message}>
                     <div className={s.circle}>
                       {/* TODO: Change SVG ReactComponent to our SvgComponent */}
-                      <Attention />
+                      <SvgIcon iconName='attention' />
                     </div>
                     <p>
                       Something went wrong.
@@ -352,11 +351,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 <Button
                   theme='secondary'
                   props={{
+                    "data-tooltip-id":'renew',
                     disabled: renew.isLoading,
                     onClick: handleRenewClick,
                   }}
                 >
-                  <Renew data-tooltip-id='renew' />
+                  <SvgIcon iconName='renew' />
                 </Button>
                 <Button
                   theme='primary'

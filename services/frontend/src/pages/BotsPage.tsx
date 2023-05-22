@@ -95,7 +95,7 @@ export const BotsPage = () => {
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>
-                      You assistants will appear here
+                      Your assistants will appear here
                     </Placeholder>
                   ) : undefined
                 }
@@ -120,7 +120,7 @@ export const BotsPage = () => {
                   />
                 )}
                 {privateDists?.data?.length === 0 || !auth?.user ? (
-                  <Placeholder>You assistants will appear here</Placeholder>
+                  <Placeholder>Your assistants will appear here</Placeholder>
                 ) : null}
               </Slider>
             </Container>

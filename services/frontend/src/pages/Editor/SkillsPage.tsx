@@ -24,20 +24,11 @@ import { trigger } from '../../utils/events'
 const SkillsPage = () => {
   const auth = useAuth()
   const { name } = useParams()
-  const { options, dispatch } = useDisplay()
+  const { options } = useDisplay()
   const { isPreview } = usePreview()
   const { getAllComponents } = useComponent()
   const components = getAllComponents(name || '')
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-
-  const changeView = () =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.IS_TABLE_VIEW,
-        value: !isTableView,
-      },
-    })
 
   const handleReadFirst = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })

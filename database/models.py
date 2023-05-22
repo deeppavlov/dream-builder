@@ -131,6 +131,7 @@ class LmService(Base):
 
     name = Column(String, nullable=False)
     default_port = Column(Integer, nullable=False)
+    default_generative_config = Column(String, nullable=True)
     display_name = Column(String, nullable=False)
     size = Column(String)
     gpu_usage = Column(String)

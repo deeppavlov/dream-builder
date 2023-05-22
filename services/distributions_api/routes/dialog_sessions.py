@@ -76,8 +76,9 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
                 author = "bot"
 
             text = utterance["text"]
+            active_skill = utterance.get("active_skill")
 
-            history.append({"author": author, "text": text})
+            history.append({"author": author, "text": text, "active_skill": active_skill})
 
     return history
 

@@ -102,6 +102,8 @@
   }
 }
 .subWrapper {
+  @include t3;
+  color: $text3;
   background-color: #fff;
   padding: 16px 16px;
   border: none;

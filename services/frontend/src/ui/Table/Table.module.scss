@@ -1,8 +1,9 @@
 .scroll {
   width: 100%;
-  overflow: auto;
   // overscroll-behavior: none;
   border-radius: 12px;
+  overflow: auto;
+
   .table {
     width: 100%;
     border-collapse: collapse;
@@ -25,7 +26,6 @@
           text-align: start;
           border: none;
           @include b3;
-         
         }
         .checkboxArea {
           height: 60px;

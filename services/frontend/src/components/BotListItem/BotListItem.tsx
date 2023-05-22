@@ -196,6 +196,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
                 tooltipId={'ctxMenu' + tooltipId}
                 bot={bot}
                 type={type}
+                isDeployed={deployed}
               />
             </>
           ) : (
@@ -205,6 +206,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
                 tooltipId={tooltipId}
                 bot={bot}
                 type={type}
+                isDeployed={deployed}
               />
             </>
           )}

@@ -75,14 +75,14 @@ const AssistantContextMenu: FC<Props> = ({
   const handleCheckArchitectureClick = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    navigate(generatePath(RoutesList.editor.default, { name: bot?.name })) //state??
-    // navigate(`/${bot?.name}/skills`, {
-    //   state: {
-    //     preview: true,
-    //     distName: bot?.name,
-    //     displayName: bot?.display_name,
-    //   },
-    // })
+    navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
+      state: {
+        preview: true,
+        distName: bot?.name,
+        displayName: bot?.display_name,
+      },
+    })
+
     e.stopPropagation()
   }
 

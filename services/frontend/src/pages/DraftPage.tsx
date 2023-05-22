@@ -1,7 +1,7 @@
 import { CSSProperties, FC, useId } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
-import { useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -11,6 +11,7 @@ import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
 import { useDeploy } from '../hooks/useDeploy'
 import { toasts } from '../mapping/toasts'
+import { RoutesList } from '../router/RoutesList'
 import { IDeploymentState, RequestProps } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
@@ -48,7 +49,7 @@ export const DraftPage = () => {
   const sortedRequest = sortByISO8601(requests!)
   const navigate = useNavigate()
   const cardClickHandler = (name: string) => {
-    navigate(`/${name}`)
+    navigate(generatePath(RoutesList.editor.skills, { name: name }))
   }
   const handleApprove: IHandler = (e, id) => {
     toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)

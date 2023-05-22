@@ -2,12 +2,13 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate } from 'react-router-dom'
 import {
   PublishRequestsStatus,
   VisibilityStatus,
 } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -55,19 +56,6 @@ export const AssistantCard: FC<BotCardProps> = ({
     ? 'Private'
     : null
 
-
-  // const publishState = !bot?.publish_state
-  //   ? type === 'your' && bot?.visibility
-  //   : onModeration
-  //   ? 'On Moderation'
-  //   : published
-  //   ? 'Public Template'
-  //   : privateAssistant
-  //   ? 'Private'
-  //   : unlistedAssistant
-  //   ? 'Unlisted'
-  //   : null
-
   const handleBotCardClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
@@ -100,13 +88,21 @@ export const AssistantCard: FC<BotCardProps> = ({
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
-      : navigate(`/${bot?.name}/skills`, {
+      : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
           state: {
             preview: false,
             distName: bot?.name,
             displayName: bot?.display_name,
           },
         })
+
+    // `/${bot?.name}/skills`, {
+    //   state: {
+    //     preview: false,
+    //     distName: bot?.name,
+    //     displayName: bot?.display_name,
+    //   },
+    // })
     e.stopPropagation()
   }
 

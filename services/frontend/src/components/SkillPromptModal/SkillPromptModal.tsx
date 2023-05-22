@@ -109,7 +109,7 @@ const SkillPromptModal = () => {
 
   const clearStates = () => {
     setIsOpen(false)
-    nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
+    nav(generatePath(RoutesList.editor.skills, { name: distName || '' }))
   }
 
   const closeModal = () => {

@@ -1,7 +1,7 @@
 import DB from '@assets/icons/logo.png'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import {
@@ -9,6 +9,7 @@ import {
   VisibilityStatus,
 } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -98,7 +99,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    navigate(`/${bot?.name}/skills`, {
+    navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
       state: {
         preview: false,
         distName: bot?.name,

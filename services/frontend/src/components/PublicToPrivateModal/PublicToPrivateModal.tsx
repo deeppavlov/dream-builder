@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { VisibilityStatus } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
+import { RoutesList } from '../../router/RoutesList'
 import { BotInfoInterface, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -36,13 +37,16 @@ export const PublicToPrivateModal = () => {
           setIsOpen(false)
         })
         .then(() => {
-          navigate(`/${bot?.name}/skills`, {
-            state: {
-              preview: false,
-              distName: bot?.name,
-              displayName: bot?.display_name,
-            },
-          })
+          navigate(
+            generatePath(RoutesList.editor.skills, { name: bot?.name! }),
+            {
+              state: {
+                preview: false,
+                distName: bot?.name,
+                displayName: bot?.display_name,
+              },
+            }
+          )
         })
     action === 'rename' &&
       changeVisibility

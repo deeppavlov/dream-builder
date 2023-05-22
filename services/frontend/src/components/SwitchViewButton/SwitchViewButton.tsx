@@ -35,7 +35,7 @@ export const SwitchViewButton = () => {
         onClick={listViewHandler}
         className={cx('switch', 'left', !isTableView && 'active')}
       >
-        <SvgIcon iconName='display' />
+        <SvgIcon iconName='cards' />
       </button>
       <button
         onClick={cardViewHandler}

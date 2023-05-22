@@ -77,14 +77,14 @@ export const useAssistants = () => {
   const clone = useMutation({
     mutationFn: ({ name, data }: IClone) => cloneAssistantDist(name, data),
     onSuccess: (dist: BotInfoInterface) => {
-      navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
+      navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
     },
   })
 
   const create = useMutation({
     mutationFn: (data: AssistantFormValues) => postAssistantDist(data),
     onSuccess: (dist: BotInfoInterface) => {
-      navigate(generatePath(RoutesList.editor.default, { name: dist.name }))
+      navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
     },
   })
 

@@ -1,9 +1,8 @@
-import { ReactComponent as CardsView } from '../../../assets/icons/display.svg'
-import { ReactComponent as ListView } from '../../../assets/icons/list-view.svg'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
+import SvgIcon from '../../SvgIcon/SvgIcon'
 import s from './Display.module.scss'
 
 export const Display = () => {
@@ -25,7 +24,7 @@ export const Display = () => {
       onClick={changeView}
       className={s.display}
     >
-      {isTableView ? <ListView /> : <CardsView />}
+      <SvgIcon iconName={isTableView ? 'list' : 'cards'} />
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='viewType'

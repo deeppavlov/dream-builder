@@ -135,10 +135,7 @@ const SkillPromptModal = () => {
     if (skill === undefined || skill === null) return
 
     const { component_id, id, description, display_name } = skill
-    
-    console.log('component_id = ', component_id)
-    console.log('skill = ', skill)
-    
+
     toast
       .promise(
         updateComponent
@@ -153,8 +150,7 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
-            if (dist?.deployment?.state === 'UP') {
-              //FIX
+            if (dist?.deployment?.state === 'UP') { //FIX
               deleteDeployment.mutateAsync(dist?.deployment?.id!)
             } else return
           }),

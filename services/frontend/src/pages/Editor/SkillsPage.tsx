@@ -1,4 +1,4 @@
-import { useOutletContext, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { AssistantModule } from '../../components/AssistantModule/AssistantModule'
 import { TRIGGER_RIGHT_SP_EVENT } from '../../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../../components/CardsLoader/CardsLoader'
@@ -7,6 +7,7 @@ import { Main } from '../../components/Main/Main'
 import ReadFirstSidePanel from '../../components/ReadFirstSidepanel/ReadFisrstSidePanel'
 import { SkillList } from '../../components/SkillList/SkillList'
 import SvgIcon from '../../components/SvgIcon/SvgIcon'
+import { SwitchViewButton } from '../../components/SwitchViewButton/SwitchViewButton'
 import TableRowsLoader from '../../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
@@ -19,7 +20,6 @@ import { Table } from '../../ui/Table/Table'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
-import { SwitchViewButton } from '../../components/SwitchViewButton/SwitchViewButton'
 
 const SkillsPage = () => {
   const auth = useAuth()

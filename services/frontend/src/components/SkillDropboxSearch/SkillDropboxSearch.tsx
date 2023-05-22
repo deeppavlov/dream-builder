@@ -39,7 +39,6 @@ const SkillDropboxSearch = ({
   withoutSearch,
   small,
 }: Props) => {
-  console.log(defaultValue)
   const {
     field,
     fieldState: { error },

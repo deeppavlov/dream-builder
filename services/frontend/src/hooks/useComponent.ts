@@ -25,6 +25,10 @@ interface IGet {
   type: StackType
 }
 
+interface IOptions {
+  refetchOnMount?: boolean
+}
+
 interface IAdd {
   distName: string
   id: number
@@ -102,11 +106,12 @@ export const useComponent = () => {
       }
     )
 
-  const getComponent = ({ distName, id, type }: IGet) =>
+  const getComponent = ({ distName, id, type }: IGet, options?: IOptions) =>
     useQuery([COMPONENT, distName, id], () => fetchComponent(id), {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       initialData: () => getFetchedComponent({ distName, id, type }),
+      ...options,
     })
 
   const addComponentToDist = useMutation({

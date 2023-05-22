@@ -206,7 +206,7 @@ const SkillPromptModal = () => {
       })
       reset({})
     }
-  }, [skill])
+  }, [skill, isOpen])
 
   useQuitConfirmation({
     activeElement: modalRef,

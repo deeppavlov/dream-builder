@@ -3,11 +3,10 @@
   display: flex;
   flex-direction: column;
   color: $text2;
-  @include b3;
-  .header {
-  }
+  @include b2;
+
   .body {
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     @include hide_text;
   }
 }

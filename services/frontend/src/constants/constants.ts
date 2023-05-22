@@ -1,6 +1,6 @@
 export const DEBUG_DIST = 'universal_prompted_assistant'
 export const DEEPY_ASSISTANT = 'deepy_assistant'
-export const DUMMY_SKILL='dummy_skill'
+export const DUMMY_SKILL = 'dummy_skill'
 export const TOOLTIP_DELAY = 1000
 export const OPEN_AI_LM = 'OpenAI'
 
@@ -21,4 +21,13 @@ export const PublishRequestsStatus = {
   IN_REVIEW: 'IN_REVIEW',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED',
+}
+export const INTEGRATION_ACTIVE_TAB = {
+  CHAT: 'CHAT',
+  API: 'API',
+}
+export const API_CALL_TAB = {
+  CURL: 'CURL',
+  NODE: 'NODE',
+  PYTHON: 'PYTHON',
 }

@@ -109,7 +109,7 @@ const SkillPromptModal = () => {
 
   const clearStates = () => {
     setIsOpen(false)
-    nav(generatePath(RoutesList.editor.default, { name: distName || '' }))
+    nav(generatePath(RoutesList.editor.skills, { name: distName || '' }))
   }
 
   const closeModal = () => {
@@ -135,7 +135,10 @@ const SkillPromptModal = () => {
     if (skill === undefined || skill === null) return
 
     const { component_id, id, description, display_name } = skill
-
+    
+    console.log('component_id = ', component_id)
+    console.log('skill = ', skill)
+    
     toast
       .promise(
         updateComponent

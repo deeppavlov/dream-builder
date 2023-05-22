@@ -2,9 +2,13 @@ import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
-import { VisibilityStatus } from '../../constants/constants'
+import { generatePath, useNavigate } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { BotCardProps } from '../../types/types'
 import Button from '../../ui/Button/Button'
@@ -83,13 +87,21 @@ export const AssistantCard: FC<BotCardProps> = ({
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
-      : navigate(`/${bot?.name}`, {
+      : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
           state: {
             preview: false,
             distName: bot?.name,
             displayName: bot?.display_name,
           },
         })
+
+    // `/${bot?.name}/skills`, {
+    //   state: {
+    //     preview: false,
+    //     distName: bot?.name,
+    //     displayName: bot?.display_name,
+    //   },
+    // })
     e.stopPropagation()
   }
 

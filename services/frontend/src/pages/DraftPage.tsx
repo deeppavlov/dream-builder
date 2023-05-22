@@ -1,6 +1,7 @@
 import { CSSProperties, FC, useId } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -10,6 +11,7 @@ import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
 import { useDeploy } from '../hooks/useDeploy'
 import { toasts } from '../mapping/toasts'
+import { RoutesList } from '../router/RoutesList'
 import { IDeploymentState, RequestProps } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
@@ -45,8 +47,10 @@ export const DraftPage = () => {
 
   const sortedDeployment = sortByISO8601(filteredDeployment)
   const sortedRequest = sortByISO8601(requests!)
-
-  const cardClickHandler = () => {}
+  const navigate = useNavigate()
+  const cardClickHandler = (name: string) => {
+    navigate(generatePath(RoutesList.editor.skills, { name: name }))
+  }
   const handleApprove: IHandler = (e, id) => {
     toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)
     e.stopPropagation()
@@ -74,7 +78,9 @@ export const DraftPage = () => {
                 <Request
                   confirm={confirm}
                   decline={decline}
-                  cardClickHandler={cardClickHandler}
+                  cardClickHandler={() => {
+                    cardClickHandler(r?.virtual_assistant?.name)
+                  }}
                   r={r}
                   key={i}
                   handleApprove={handleApprove}

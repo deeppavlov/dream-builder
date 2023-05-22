@@ -19,6 +19,7 @@ import { Table } from '../../ui/Table/Table'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 import { trigger } from '../../utils/events'
+import { SwitchViewButton } from '../../components/SwitchViewButton/SwitchViewButton'
 
 const SkillsPage = () => {
   const auth = useAuth()
@@ -60,9 +61,7 @@ const SkillsPage = () => {
                 Read First!
               </Button>
             )}
-            <Button props={{ onClick: changeView }} theme='tertiary2'>
-              <SvgIcon iconName={isTableView ? 'list' : 'cards'} />
-            </Button>
+            <SwitchViewButton />
           </Container>
         }
       >

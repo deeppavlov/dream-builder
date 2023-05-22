@@ -9,7 +9,7 @@ import ErrorPage from '../pages/ErrorPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import Root from '../pages/Root'
-import { SanboxPage } from '../pages/SanboxPage'
+import {  SandboxPage } from '../pages/SandboxPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
@@ -18,6 +18,7 @@ import { consts } from '../utils/consts'
 import { AdminRoute } from './AdminRoute'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
+import { IntegrationPage } from '../pages/Editor/IntegrationPage'
 
 export const RouterConfig: CustomRouteConfig[] = [
   {
@@ -84,6 +85,18 @@ export const RouterConfig: CustomRouteConfig[] = [
               crumb: (params: any) => [
                 <Link to={generatePath(RoutesList.editor.default, params)}>
                   Skills
+                </Link>,
+              ],
+            },
+          },
+          {
+            path: RoutesList.editor.integration,
+            element: <IntegrationPage />,
+            loader: ({ params }) => params,
+            handle: {
+              crumb: (params: any) => [
+                <Link to={generatePath(RoutesList.editor.integration, params)}>
+                  Integration
                 </Link>,
               ],
             },
@@ -164,7 +177,7 @@ export const RouterConfig: CustomRouteConfig[] = [
     path: RoutesList.sandbox,
     element: (
       <AdminRoute>
-        <SanboxPage />
+        <SandboxPage />
       </AdminRoute>
     ),
     handle: 'Its For Crumbs',

@@ -12,6 +12,8 @@ type TOptionValue = any
 type TOptionsMap = Map<string, TOptionValue>
 
 type TAction = 'reset' | 'set' | 'delete'
+export type TIntegrationTabType = 'CHAT' | 'API'
+export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 
 interface IAction {
   type: TAction
@@ -25,6 +27,9 @@ interface Props {
   children?: ReactNode
 }
 
+const defaultIntegrationTab: TIntegrationTabType = 'CHAT'
+const defaultApiCallTab: TApiCallType = 'CURL'
+
 const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.IS_PREVIEW_MODE, true],
   [consts.IS_TABLE_VIEW, false],
@@ -37,6 +42,8 @@ const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.ACTIVE_ASSISTANT_SP_ID, null],
   [consts.ACTIVE_SKILL_SP_ID, null],
   [consts.ACTIVE_ANNOTATOR_SP_ID, null],
+  [consts.INTEGRATION_ACTIVE_TAB, defaultIntegrationTab],
+  [consts.API_CALL_ACTIVE_TAB, defaultApiCallTab],
 ])
 
 const DisplayContext = createContext({})

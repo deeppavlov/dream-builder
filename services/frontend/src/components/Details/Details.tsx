@@ -8,7 +8,6 @@ interface Props {
 export const Details: FC<Props> = ({ children }) => {
   return (
     <div className={s.details}>
-      {/* <span className={s.header}>Details:</span> */}
       <span className={s.body}>{children}</span>
     </div>
   )

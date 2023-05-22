@@ -9,18 +9,18 @@
   height: 63px;
   width: 40px;
   svg {
-    fill: $text3;
+    stroke: $text3;
     @include icon_size_24;
   }
   &:hover {
     background: #f0f0f3;
     svg {
-      fill: #3300ff;
+      stroke: #3300ff;
     }
   }
   &:active {
     svg {
-      fill: #190080;
+      stroke: #190080;
     }
   }
   &:disable {

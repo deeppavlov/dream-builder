@@ -1,7 +1,11 @@
 import GoogleLogo from '@assets/images/GoogleLogo.svg'
 import classNames from 'classnames/bind'
 import { useState } from 'react'
-import { login, saveBeforeLoginModal } from '../../context/AuthProvider'
+import {
+  clearBeforeLoginModal,
+  login,
+  saveBeforeLoginModal,
+} from '../../context/AuthProvider'
 import { useObserver } from '../../hooks/useObserver'
 import { IBeforeLoginModal } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
@@ -19,6 +23,11 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
   const [msg, setMsg] = useState<MessageType | null>(propsMsg ?? null)
   let cx = classNames.bind(s)
 
+  const handleClose = () => {
+    clearBeforeLoginModal()
+    setIsOpen(false)
+  }
+
   const handleEventUpdate = (data: { detail: Props | null }) => {
     if (data.detail?.msg) setMsg(data.detail.msg)
     if (data.detail?.requestModal)
@@ -31,7 +40,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
   useObserver('SignInModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose} >
       <div className={cx('signInModal')}>
         <h4>
           {/* span tag styled as primary color marked text */}

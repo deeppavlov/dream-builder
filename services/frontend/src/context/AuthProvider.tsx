@@ -31,13 +31,13 @@ export const useAuth = () => useContext(AuthContext)
 export const saveBeforeLoginModal = (modal: IBeforeLoginModal) =>
   sessionStorage.setItem('db_before_login_modal', JSON.stringify(modal))
 
+export const clearBeforeLoginModal = () =>
+  sessionStorage.removeItem('db_before_login_modal')
+
 const getBeforeLoginModal = (): IBeforeLoginModal | null => {
   const modal = sessionStorage.getItem('db_before_login_modal')
   return modal ? JSON.parse(modal) : null
 }
-
-const clearBeforeLoginModal = () =>
-  sessionStorage.removeItem('db_before_login_modal')
 
 const getLocalStorageUser = (): (UserInterface & ITokens) | null => {
   const user = localStorage.getItem('user')
@@ -72,12 +72,8 @@ export const exchangeAuthCode = async (code: string) => {
 
   await authApi
     .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
-    .then(({ data }) => {
-      setLocalStorageUser(data)
-    })
-    .catch(e => {
-      console.log('ExchangeAuthCode failed!')
-    })
+    .then(({ data }) => setLocalStorageUser(data))
+    .catch(e => console.log('ExchangeAuthCode failed!'))
 
   const beforeLoginUrl = getPreviousLocation() ?? getClearUrl(location.origin)
   location.href = beforeLoginUrl

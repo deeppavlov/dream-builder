@@ -204,7 +204,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     dispatch({
       type: 'set',
       option: {
-        id: consts.ACTIVE_ASSISTANT_SP_ID,
+        id: consts.CHAT_SP_IS_ACTIVE,
         value: isOpen ? bot?.id : null,
       },
     })

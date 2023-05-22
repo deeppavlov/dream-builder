@@ -12,7 +12,7 @@ import s from './Test.module.scss'
 export const Test = () => {
   const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
-  const activePanel = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const activePanel = options.get(consts.CHAT_SP_IS_ACTIVE)
   const cx = classNames.bind(s)
 
   const handleBtnClick = () => {

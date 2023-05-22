@@ -5,7 +5,6 @@ import { VisibilityStatus } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
-import { useCheckIsAdmin } from '../../hooks/useCheckIsAdmin'
 import { useDeploy } from '../../hooks/useDeploy'
 import { toasts } from '../../mapping/toasts'
 import { TDistVisibility } from '../../types/types'
@@ -122,8 +121,6 @@ export const AssistantModule: FC<Props> = () => {
 
     trigger('AssistantModal', { bot, action: 'clone' })
   }
-
-  const { isAdmin } = useCheckIsAdmin()
 
   useEffect(() => {
     const redirectConditions = isFetched && (onModeration || isDeploying)

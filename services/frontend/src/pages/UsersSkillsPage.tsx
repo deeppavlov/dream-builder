@@ -1,20 +1,12 @@
-import { useState } from 'react'
-import { Container } from '../ui/Container/Container'
 import { Main } from '../components/Main/Main'
-import { SkillCard } from '../components/SkillCard/SkillCard'
-import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { Table } from '../ui/Table/Table'
-import { Topbar } from '../components/Topbar/Topbar'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { useQuery } from 'react-query'
-import { getSkillList } from '../services/getSkillsList'
-import { dateToUTC } from '../utils/dateToUTC'
-import { timeToUTC } from '../utils/timeToUTC'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
 import { SkillModal } from '../components/SkillModal/SkillModal'
+import SkillSidePanel from '../components/SkillSidePanel/DumbSkillSP'
 import { useAuth } from '../context/AuthProvider'
-import { SkillType } from '../types/types'
 import { useDisplay } from '../context/DisplayContext'
+import { SkillType } from '../types/types'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 interface skill_list {
@@ -42,12 +34,13 @@ export const UsersSkillsPage = () => {
   return (
     <>
       {/* <Topbar viewHandler={viewHandler} type='main' /> */}
-      <Main>
+      <Main sidebar>
         {!isTableView ? (
           <Wrapper title='Your Skills' amount={42}>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'></Container>
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'
+            ></Container>
           </Wrapper>
         ) : (
           <Wrapper title='Your Skills' amount={42}>

@@ -1,13 +1,12 @@
 import { FC } from 'react'
 import SkillsLogo from '../../assets/icons/skills.svg'
-import { Accordion } from '../../ui/Accordion/Accordion'
-import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
-import { SkillElement } from './SkillElement'
 import { usePreview } from '../../context/PreviewProvider'
 import { ISkill } from '../../types/types'
-import s from './Skills.module.scss'
+import { Accordion } from '../../ui/Accordion/Accordion'
+import { AddButtonStack } from '../../ui/AddButtonStack/AddButtonStack'
 import { trigger } from '../../utils/events'
-import { mockSkills } from '../../mocks/database/mockSkills'
+import { SkillElement } from './SkillElement'
+import s from './Skills.module.scss'
 interface SkillsStackProps {
   skills: ISkill[]
 }
@@ -17,9 +16,11 @@ export const Skills: FC<SkillsStackProps> = ({ skills }) => {
 
   const customizable = skills?.filter(skill => skill?.is_customizable)
   const nonCustomizable = skills?.filter(skill => !skill?.is_customizable)
+
   const handleAddClick = () => {
-    trigger('SkillsListModal', { mockSkills })
+    trigger('SkillsListModal', {})
   }
+
   return (
     <div className={s.stack}>
       <div className={s.header}>

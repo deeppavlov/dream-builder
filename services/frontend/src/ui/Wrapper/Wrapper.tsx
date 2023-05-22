@@ -1,10 +1,11 @@
-import { ReactNode, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import classNames from 'classnames/bind'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
+import { Badge } from '../../components/Badge/Badge'
 import s from './Wrapper.module.scss'
 
-interface WrapperProps {
+interface Props {
   id?: string
   amount?: number | string
   linkTo?: string
@@ -17,9 +18,15 @@ interface WrapperProps {
   primary?: boolean
   skills?: boolean
   children?: ReactNode
+  annotation?: string
+  onClose?: (e: React.MouseEvent) => void
+  forCard?: boolean
+  subWrapper?: boolean
+  btns?: ReactNode
+  badge?: boolean
 }
 
-export const Wrapper = ({
+export const Wrapper: FC<Props> = ({
   id,
   amount,
   children,
@@ -32,26 +39,33 @@ export const Wrapper = ({
   limiter,
   primary,
   skills,
-}: WrapperProps) => {
+  annotation,
+  onClose,
+  forCard,
+  subWrapper,
+  btns,
+  badge,
+}) => {
   const [visible, setVisible] = useState(true)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const isStorable = closable && id
+  const isCustomClose = onClose && closable
   let cx = classNames.bind(s)
 
-  const onClose = () => {
-    // For store state in localStorage need to get `closable` & `id` props
-    if (closable && id) {
+  const handleClose = (e: React.MouseEvent) => {
+    if (isStorable)
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
-    }
+
+    // Return to prevent run is so important! TODO: fix it
+    if (isCustomClose) return onClose(e)
 
     setVisible(false)
   }
 
   useEffect(() => {
-    if (closable && id) {
+    if (isStorable) {
       const state = localStorage.getItem(`${id}_is_visible`.toUpperCase())
-
-      if (state !== null) {
-        setVisible(state === 'true')
-      }
+      if (state !== null) setVisible(state === 'true')
     }
   }, [])
 
@@ -65,29 +79,61 @@ export const Wrapper = ({
             fitScreen && 'fitScreen',
             limiter && 'limiter',
             primary && 'primary',
-            skills && 'skills'
-          )}>
+            skills && 'skills',
+            forCard && 'forCard'
+
+            // subWrapper && 'subWrapper'
+          )}
+        >
+          {badge && <Badge />}
           {closable && (
-            <button onClick={onClose} className={s.close}>
+            <button ref={closeRef} onClick={handleClose} className={s.close}>
               <Close />
             </button>
           )}
           {(title || amount) && (
-            <div className={s.header}>
+            <div className={cx('header', annotation && 'annotationFlex')}>
               {title && <h5 className={s.title}>{title}</h5>}
-              {amount && (
-                <div className={s.btns_area}>
-                  {showAll && (
-                    <Link to={linkTo!}>
-                      <button className={s.ghost_btn}>Show&nbsp;All</button>
-                    </Link>
+
+              {!subWrapper && (
+                <>
+                  {amount && (
+                    <div className={s.btns_area}>
+                      {showAll && (
+                        <Link to={linkTo!}>
+                          <button className={s.ghost_btn}>Show&nbsp;All</button>
+                        </Link>
+                      )}
+                      <span className={s.amount}>{amount || '...'}</span>
+                    </div>
                   )}
-                  <span className={s.amount}>{amount || '...'}</span>
-                </div>
+                  {btns && <div className={s.btns_area}>{btns}</div>}
+                </>
               )}
             </div>
           )}
-          {children}
+          {annotation && <p className={s.annotation}>{annotation}</p>}
+          {!subWrapper && children}
+          {subWrapper && (
+            <div className={cx('wrapper', 'subWrapper')}>
+              <div className={s.header}>
+                <p className={cx('annotation', 'subWrapper')}>
+                  Recommended Templates
+                </p>
+                {amount && (
+                  <div className={s.btns_area}>
+                    {showAll && (
+                      <Link to={linkTo!}>
+                        <button className={s.ghost_btn}>Show&nbsp;All</button>
+                      </Link>
+                    )}
+                    <span className={s.amount}>{amount || '...'}</span>
+                  </div>
+                )}
+              </div>
+              {children}
+            </div>
+          )}
         </div>
       )}
     </>

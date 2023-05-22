@@ -1,89 +1,99 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useParams } from 'react-router-dom'
+import { useComponent } from '../../hooks/useComponent'
 import { useObserver } from '../../hooks/useObserver'
-import { SkillInfoInterface } from '../../types/types'
+import { ISkill } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
-import { subscribe, trigger, unsubscribe } from '../../utils/events'
+import { validationSchema } from '../../utils/validationSchema'
 import s from './SkillModal.module.scss'
 
 type TSkillModalAction = 'create' | 'copy' | 'edit'
 
-interface ISkilltInfo
-  extends Pick<SkillInfoInterface, 'display_name' | 'name' | 'desc'> {}
-
-interface IParentSkillInfo
-  extends Pick<SkillInfoInterface, 'display_name' | 'name'> {}
+interface IParentSkillInfo extends Pick<ISkill, 'display_name' | 'name'> {}
 
 interface SkillModalProps {
   action: TSkillModalAction
-  skill?: Partial<ISkilltInfo>
+  skill?: ISkill
   parent?: IParentSkillInfo // The skill that we copy
 }
 
 export const SkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
-  const [skill, setSkill] = useState<Partial<ISkilltInfo> | null>(null)
-  const [parent, setParent] = useState<IParentSkillInfo | null>(null)
-  const {
-    handleSubmit,
-    register,
-    reset,
-    getValues,
-    formState: { errors },
-  } = useForm({ mode: 'all' })
+  const [skill, setSkill] = useState<ISkill | null>(null)
+  const { name: distName } = useParams()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
+
+  const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
+
   const descriptionMaxLenght = 500
 
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setSkill(null)
-    setParent(null)
   }
 
   /**
    * Set modal is open and getting skill info
    */
   const handleEventUpdate = ({
-    detail: { action, skill, parent },
+    detail: { action, skill },
   }: {
     detail: SkillModalProps
   }) => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    setParent(parent ?? null)
+
     // Reset values and errors states
     reset({
       [NAME_ID]: skill?.display_name,
-      [DESC_ID]: skill?.desc,
+      [DESC_ID]: skill?.description,
     })
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
+  const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
-    // trigger('SkillPromptModal', {
-    //   action: 'create',
-    //   skill: {
-    //     ...skill,
-    //     ...{ display_name: data[NAME_ID], desc: data[DESC_ID] },
-    //   },
-    // })
-    closeModal()
+    toast.promise(
+      create.mutateAsync(
+        { data, distName: distName || '', type: 'skills' },
+        { onSuccess: closeModal }
+      ),
+      {
+        loading: 'Creating...',
+        success: 'Success!',
+        error: 'Something went wrong...',
+      }
+    )
   }
+  const handleEdit = (data: { display_name: string; description: string }) => {
+    const isDist = distName && distName?.length > 0
 
-  const handleCopy = () => {}
+    if (!skill) return
+    if (!isDist) return console.log(`${skill?.name} rename: dist not found.`)
 
-  const handleEdit = () => {}
+    const { component_id } = skill
 
+    toast
+      .promise(
+        edit.mutateAsync({ data, component_id, distName, type: 'skills' }),
+        {
+          loading: 'Renaming...',
+          success: 'Success!',
+          error: 'Something went wrong...',
+        }
+      )
+      .then(() => closeModal())
+  }
   const onFormSubmit = (data: any) => {
-    if (action === 'create') {
-      handleCreate(data)
-      return
-    }
+    action === 'create' && handleCreate(data)
+    action === 'edit' && handleEdit(data)
   }
 
   useObserver('SkillModal', handleEventUpdate)
@@ -92,25 +102,18 @@ export const SkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
-          {action === 'create' && <h4>Create a new generative skill</h4>}
-          {action === 'copy' && <h4>Create a new copy of a skill</h4>}
-          {action === 'edit' && <h4>Edit skill</h4>}
+          {action == 'create' && <h4>Create a new generative skill</h4>}
+          {action == 'edit' && <h4>Rename skill</h4>}
           <div className={s.distribution}>
-            {action === 'create' && (
+            {action == 'create' && (
               <div>
                 You are creating a skill that uses{' '}
                 <mark>large language models</mark>
               </div>
             )}
-            {action === 'copy' && (
+            {action == 'edit' && (
               <div>
-                You are creating a copy of a skill from{' '}
-                <mark>{parent?.display_name}</mark>
-              </div>
-            )}
-            {action === 'edit' && (
-              <div>
-                You are editing <mark>{skill?.display_name}</mark> skill
+                You are renaming: <mark>{skill?.display_name}</mark>
               </div>
             )}
           </div>
@@ -118,33 +121,35 @@ export const SkillModal = () => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Input
             label='Name'
-            error={errors[NAME_ID]}
+            name={NAME_ID}
+            defaultValue={getValues()[NAME_ID]}
+            control={control}
+            rules={{
+              required: validationSchema.global.required,
+              pattern: validationSchema.global.regExpPattern,
+            }}
             props={{
               placeholder:
                 'A short name describing your Virtual Assistant’s skill',
-              defaultValue: getValues()[NAME_ID],
-              ...register(NAME_ID, {
-                required: 'This field can’t be empty',
-              }),
             }}
           />
 
           <TextArea
+            name={DESC_ID}
+            control={control}
             label='Description'
+            defaultValue={getValues()[DESC_ID]}
             withCounter
-            error={errors[DESC_ID]}
-            maxLenght={descriptionMaxLenght}
+            rules={{
+              required: validationSchema.global.required,
+              maxLength:
+                validationSchema.global.desc.maxLength(descriptionMaxLenght),
+              pattern: validationSchema.global.regExpPattern,
+            }}
             props={{
               placeholder:
                 'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
-              defaultValue: getValues()[DESC_ID],
-              ...register(DESC_ID, {
-                required: 'This field can’t be empty',
-                maxLength: {
-                  value: descriptionMaxLenght,
-                  message: `Limit text description to ${descriptionMaxLenght} characters`,
-                },
-              }),
+              rows: 6,
             }}
           />
           <div className={s.btns}>
@@ -152,7 +157,8 @@ export const SkillModal = () => {
               Cancel
             </Button>
             <Button theme='primary' props={{ type: 'submit' }}>
-              {action === 'edit' ? 'Save' : 'Create'}
+              {action == 'create' && 'Create'}
+              {action == 'edit' && 'Save'}
             </Button>
           </div>
         </form>

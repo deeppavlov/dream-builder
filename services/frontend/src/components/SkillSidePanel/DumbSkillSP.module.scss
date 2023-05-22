@@ -1,0 +1,120 @@
+.properties {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 24px 24px 24px;
+  gap: 4px;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.name {
+  @include t3;
+  color: $text1;
+}
+
+.rename-btn {
+  &:disabled {
+    opacity: 0.3;
+  }
+}
+
+.icon {
+  height: 24px;
+  width: 24px;
+
+  path {
+    stroke: $text2;
+  }
+}
+
+.author {
+  @include b3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  svg {
+    height: 32px;
+    width: 32px;
+  }
+  img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+  }
+}
+
+.table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @include componentType;
+  @include modelType;
+  img {
+    @include icon_size_24;
+  }
+}
+
+.table-name {
+  @include t4;
+  color: $text2;
+}
+
+.value {
+  @include b3;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  // text-transform: capitalize;
+  svg {
+    @include icon_size_24;
+  }
+  @include modelType;
+}
+
+.big-item {
+  @include b3;
+  margin-top: 8px;
+  flex-direction: column;
+  align-items: start;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.prompt {
+  min-height: 149px;
+  background-color: $bcgrnd2;
+  padding: 8px 40px 8px 16px;
+  display: flex;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  white-space: pre-line;
+  overflow-y: auto;
+}
+
+.btns {
+  width: 100%;
+  margin-top: auto;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+.disabled[aria-selected='false'] {
+  @include disabled;
+}

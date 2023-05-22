@@ -16,7 +16,7 @@ const getAnnotatorSidePanel = ({ annotator, activeTab, name }: Props): void => {
       trigger(TRIGGER_RIGHT_SP_EVENT, {
         children: (
           <IntentCatcherSidePanel
-            key={annotator.name + activeTab}
+            key={annotator.id + activeTab}
             annotator={annotator}
             activeTab={activeTab}
             disabled
@@ -28,7 +28,7 @@ const getAnnotatorSidePanel = ({ annotator, activeTab, name }: Props): void => {
       trigger(TRIGGER_RIGHT_SP_EVENT, {
         children: (
           <AnnotatorSidePanel
-            key={annotator.name + activeTab}
+            key={annotator.id + activeTab}
             annotator={annotator}
             activeTab={activeTab}
             name={name}

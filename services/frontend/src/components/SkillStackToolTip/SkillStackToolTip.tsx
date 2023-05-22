@@ -1,5 +1,7 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { IContextMenu, ISkill } from '../../types/types'
+import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../ContextMenuButton/ContextMenuButton'
@@ -8,6 +10,7 @@ interface Props extends IContextMenu {
   tooltipId: string
   skill: ISkill
   skillRef?: React.MutableRefObject<any>
+  deleteFunc: () => void
 }
 
 const SkillStackToolTip = ({
@@ -16,14 +19,24 @@ const SkillStackToolTip = ({
   isPreview,
   skillRef,
 }: Props) => {
+  const { name } = useParams()
+
   const handleEditBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Editor', parent: skillRef })
+    triggerSkillSidePanel({ skill, activeTab: 'Editor', distName: name || '' })
 
   const handlePropertiesBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Properties', parent: skillRef })
+    triggerSkillSidePanel({
+      skill,
+      activeTab: 'Properties',
+      distName: name || '',
+    })
 
-  const handleDeleteBtnClick = () => {}
-
+  const handleDeleteBtnClick = () => {
+    trigger('DeleteSkillModal', { skill })
+  }
+  const handleRenameBtnClick = () => {
+    trigger('SkillModal', { action: 'edit', skill })
+  }
   return (
     <BaseContextMenu tooltipId={tooltipId}>
       {skill.is_customizable && (
@@ -34,21 +47,29 @@ const SkillStackToolTip = ({
           handleClick={handleEditBtnClick}
         />
       )}
+      {skill.is_customizable && (
+        <ContextMenuButton
+          name='Rename'
+          type='edit'
+          disabled={isPreview}
+          handleClick={handleRenameBtnClick}
+        />
+      )}
       <ContextMenuButton
         name='Properties'
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
-      <ContextMenuButton
+      {/* <ContextMenuButton
         name='Disable Skill'
         type='disable'
         disabled={isPreview}
-      />
+      /> */}
       <hr />
       <ContextMenuButton
         name='Delete'
         type='delete'
-        disabled={isPreview}
+        disabled={isPreview || skill?.component_type !== 'Generative'}
         handleClick={handleDeleteBtnClick}
       />
     </BaseContextMenu>

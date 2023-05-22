@@ -1,23 +1,25 @@
 import classNames from 'classnames/bind'
-import { FC, useId, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
+import { FC, useId } from 'react'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
-import { ReactComponent as Properties } from '../../assets/icons/properties.svg'
+import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
-import { ISkill, SkillAvailabilityType } from '../../types/types'
+import { RoutesList } from '../../router/RoutesList'
+import {
+  ICreateComponent,
+  ISkill,
+  SkillAvailabilityType,
+} from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { ToggleButton } from '../../ui/ToggleButton/ToggleButton'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
-import { trigger } from '../../utils/events'
-import { srcForIcons } from '../../utils/srcForIcons'
 import { timeToUTC } from '../../utils/timeToUTC'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
-import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
@@ -25,6 +27,7 @@ interface SkillListItemProps {
   type: SkillAvailabilityType
   forModal?: boolean
   withoutDate?: boolean
+  handleAdd?: (skill: ICreateComponent) => void
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
@@ -32,50 +35,78 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   forModal,
   type,
   withoutDate,
+  handleAdd,
 }) => {
   const date = dateToUTC(skill?.date_created)
   const time = timeToUTC(new Date(skill?.date_created))
-  const [disabled, setDisabled] = useState<boolean>(false)
+  // const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()
-  const nameForComponentType = componentTypeMap[skill?.component_type!]
-  const srcForComponentType = srcForIcons(nameForComponentType)
-  const skillListItemRef = useRef(null)
+  const { name: distRoutingName } = useParams()
   const { options } = useDisplay()
+  const { name: distName } = useParams()
+  const nav = useNavigate()
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDisabled(disabled => !disabled)
-  }
   const handleSkillListItemClick = (e: React.MouseEvent) => {
     triggerSkillSidePanel({
-      parent: skillListItemRef,
       skill,
-      type,
+      visibility: type,
       activeTab: 'Properties',
+      isOpen: true,
+      distName: distName || '',
     })
   }
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    toast.success('Successfully Added!', { id: 'addSkill' })
+    const { display_name, description, prompt, lm_service } = skill
+
+    handleAdd &&
+      handleAdd({
+        display_name,
+        description,
+        prompt,
+        lm_service_id: lm_service?.id,
+      })
   }
-  const handleAddBtnClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    trigger('SkillModal', {
-      action: 'create',
-      parent: skill,
+  const handleEditClick = (e: React.MouseEvent) => {
+    if (skill.component_type === ('Generative' as any)) {
+      // trigger('SkillPromptModal', { skill })
+      // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+      nav(
+        generatePath(RoutesList.editor.skillEditor, {
+          name: distRoutingName as string,
+          skillId: skill.component_id,
+        } as any)
+      )
+      e.stopPropagation()
+      return
+    }
+
+    triggerSkillSidePanel({
+      skill,
+      visibility: type,
+      activeTab: 'Editor',
+      distName: distName || '',
     })
+    e.stopPropagation()
   }
+  // const handleAddBtnClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation()
+  //   trigger('SkillModal', {
+  //     action: 'create',
+  //     parent: skill,
+  //   })
+  // }
 
   return (
     <tr
-      className={cx('tr', disabled && 'disabled')}
+      className={s.tr}
       onClick={handleSkillListItemClick}
-      ref={skillListItemRef}
-      data-active={skill.name === activeSKillId}
+      data-active={skill.id === activeSKillId}
     >
       <td className={s.td}>
         <div className={s.name}>
@@ -85,7 +116,10 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       <td className={s.td}>
         {skill?.component_type && (
           <div className={s.type}>
-            <img className={s.typeLogo} src={srcForComponentType} />
+            <SvgIcon
+              iconName={nameForComponentType}
+              svgProp={{ className: s.typeLogo }}
+            />
             <p className={cx('typeText', nameForComponentType)}>
               {skill?.component_type || '------'}
             </p>
@@ -99,11 +133,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           data-tooltip-id={'skillTableDesc' + tooltipId}
         >
           {skill?.description}
-          <BaseToolTip
+          {/* <BaseToolTip
+            delayShow={TOOLTIP_DELAY}
             id={'skillTableDesc' + tooltipId}
             content={skill?.description}
             theme='description'
-          />
+          /> */}
         </div>
       </td>
       {!withoutDate && (
@@ -126,18 +161,31 @@ export const SkillListItem: FC<SkillListItemProps> = ({
               >
                 <Add />
               </Button>
-              <Button
+              {/* <Button
                 theme='secondary'
                 small
                 withIcon
                 props={{ onClick: handleSkillListItemClick }}
               >
                 <Properties />
-              </Button>
+              </Button> */}
             </>
           ) : (
             <>
-              <ToggleButton handleToggle={handleToggle} disabled={isPreview} />
+              {/* <ToggleButton handleToggle={handleToggle} disabled={isPreview} /> */}
+              {!isPreview && (
+                <Button
+                  theme='primary'
+                  small
+                  withIcon
+                  props={{
+                    disabled: !skill?.is_customizable,
+                    onClick: handleEditClick,
+                  }}
+                >
+                  <Edit />
+                </Button>
+              )}
               <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
             </>
           )}

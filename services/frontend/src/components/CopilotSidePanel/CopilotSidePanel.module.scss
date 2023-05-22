@@ -118,14 +118,17 @@
   overflow: auto;
   gap: 24px;
   background-color: $bcgrnd2;
-
+  // &::-webkit-scrollbar {
+  //   display: none;
+  // }
+  // -ms-overflow-style: none; /* IE and Edge */
+  // scrollbar-width: none; /* Firefox */
   &__message {
     @include b2;
     background-color: $bcgrnd3;
     padding: 12px;
     border-radius: 12px 12px 0px 12px;
     width: fit-content;
-    word-break: break-all;
 
     &_bot {
       background: rgba(255, 204, 0, 0.1);
@@ -176,4 +179,10 @@
   path {
     stroke: $text3;
   }
+}
+.loaderWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  place-content: center;
 }

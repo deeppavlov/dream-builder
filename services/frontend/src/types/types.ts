@@ -43,7 +43,68 @@ export interface IAuthor {
   sub: string
 }
 
+export type TEvents =
+  | 'TRIGGER_RIGHT_SP_EVENT'
+  | 'ShareModal'
+  | 'SignInModal'
+  | 'AreYouSureModal'
+  | 'RenewChat'
+  | 'AssistantModal'
+  | 'ChooseBotModal'
+  | 'DeleteAssistantModal'
+  | 'DeployNotificationModal'
+  | 'IntentCatcherModal'
+  | 'IntentResponderModal'
+  | 'PublicToPrivateModal'
+  | 'Modal'
+  | 'PublishAssistantModal'
+  | 'SkillModal'
+  | 'SkillPromptModal'
+  | 'SkillQuitModal'
+  | 'SkillsListModal'
+  | 'CreateGenerativeSkillModal'
+  | 'CreateSkillDistModal'
+  | 'DeleteSkillModal'
+  | 'FreezeSkillModal'
+  | 'ConfirmApiTokenUpdate'
+
+export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
+
+export type TDeploymentState =
+  | null
+  | 'STARTED'
+  | 'CREATING_CONFIG_FILES'
+  | 'BUILDING_IMAGE'
+  | 'PUSHING_IMAGES'
+  | 'DEPLOYING_STACK'
+  | 'DEPLOYED'
+  | 'UP'
+
+export interface IDeployment {
+  chat_host: string
+  chat_port: number
+  date_created: string
+  date_state_updated: any
+  id: number
+  state: TDeploymentState
+  error: {
+    state: string
+    message: string
+    exception: string
+  }
+}
+export interface IDeploymentStatus extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
+type TKey = {
+  base_url: string
+  description: string
+  display_name: string
+  id: number
+  name: string
+}
 export interface BotInfoInterface {
+  id: number
   name: string
   display_name: string
   author: IAuthor
@@ -52,9 +113,20 @@ export interface BotInfoInterface {
   ram_usage: string
   gpu_usage: string
   disk_usage: string
+  visibility: TDistVisibility
+  publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
+  deployment: IDeployment
+  required_api_keys: TKey[] | null
 }
 
-export interface Component {
+export interface BotCardProps {
+  type: BotAvailabilityType
+  bot: BotInfoInterface
+  size?: BotCardSize
+  disabled: boolean
+}
+
+export interface IComponent {
   name: string
   display_name: string
   author: string
@@ -103,6 +175,14 @@ export interface DistListProps {
   type: BotAvailabilityType
   size?: BotCardSize
 }
+
+export interface ICreateComponent {
+  display_name: string
+  description: string
+  lm_service_id?: number
+  prompt?: string
+}
+
 export interface SkillListProps {
   skills: ISkill[]
   view: ViewType
@@ -110,7 +190,8 @@ export interface SkillListProps {
   size?: SkillCardSize
   forGrid?: boolean
   forModal?: boolean
-  withoutDate?:boolean
+  withoutDate?: boolean
+  handleAdd?: (skill: ICreateComponent) => void
 }
 export interface SettingKey {
   name: string
@@ -124,6 +205,8 @@ export interface IContextMenu {
 }
 
 export interface IStackElement {
+  id: number
+  component_id: number
   name: string // Routing name
   display_name: string
   author: IAuthor
@@ -137,11 +220,21 @@ export interface IStackElement {
   execution_time: string
 }
 
+export interface LM_Service {
+  id: number
+  name: string
+  display_name: string
+  size: string
+  gpu_usage: string
+  max_tokens: number
+  description: string
+  project_url: string
+  api_key: string | null
+}
+
 export interface ISkill extends IStackElement {
-  model?: string
   prompt?: string
-  lm_service: string
-  
+  lm_service?: LM_Service
 }
 
 export interface SessionConfig {
@@ -151,11 +244,11 @@ export interface SessionConfig {
   virtual_assistant_id: number
 }
 
-export interface SkillDialogProps {
-  error?: boolean
-  debug: boolean
-  chatWith: ChatPanelType
-  dist: BotInfoInterface
+export type ChatHistory = {
+  active_skill?: ISkill
+  text: string
+  author: 'bot' | 'me'
+  hidden?: boolean
 }
 
 export type Message = { message: string }
@@ -188,7 +281,7 @@ export type PostDistParams = {
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
-  | 'generative'
+  | 'Generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'
@@ -201,6 +294,91 @@ export type StackType =
   | 'skill_selectors'
   | 'skills'
 
-export type BotVisabilityType = 'public' | 'unlisted'
+export type BotVisabilityType = 'Public' | 'Unlisted'
 
 export type TTopbar = 'main' | 'editor'
+
+export type LanguageModel =
+  | 'ChatGPT'
+  | 'GPT-3.5'
+  | 'Open-Assistant SFT-1 12B'
+  | 'GPT-J 6B'
+
+export type AssistantFormValues = { display_name: string; description: string }
+
+export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
+
+export interface IApiService {
+  base_url: string
+  description: string
+  id: number
+  display_name: string
+  name: string
+}
+
+export interface IUserApiKey {
+  api_service: IApiService
+  token_value: string
+}
+
+export interface IPostChat {
+  hidden?: boolean
+  dialog_session_id: number
+  text: string
+  prompt?: string
+  lm_service_id?: number
+  openai_api_key?: string
+}
+
+export interface IEditComponent {
+  display_name: string
+  description: string
+}
+
+export type TComponents = {
+  [key in StackType]: IStackElement[]
+}
+
+export interface IBeforeLoginModal {
+  name: string
+  options: { [x: string]: any }
+}
+
+export type TDialogError =
+  | 'lm-service'
+  | 'prompt'
+  | 'api-key'
+  | 'dist-name'
+  | 'deploy'
+  | 'chat'
+  | null
+
+export interface IDialogError {
+  type: TDialogError
+  msg: string
+}
+export interface RequestProps {
+  cardClickHandler: () => void
+  r: IPublicationRequest
+  confirm: any
+  decline: any
+  handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+}
+export interface IDeploymentState extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
+
+export interface IPublicationRequest {
+  date_created: string
+  date_reviewed: string
+  id: number
+  is_confirmed: boolean | null
+  reviewed_by_user: string | null
+  slug: string
+  user: IAuthor
+  virtual_assistant: BotInfoInterface
+  visibility: 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK'
+}
+
+export type TErrorStatus = 401 | 404 | 500 | 503

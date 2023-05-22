@@ -1,35 +1,50 @@
-import classNames from 'classnames/bind'
-import React, { useEffect, useRef, useState } from 'react'
-import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
-import s from './SkillDropboxSearch.module.scss'
+import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
+import classNames from 'classnames/bind'
+import React, { useRef, useState } from 'react'
+import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { useObserver } from '../../hooks/useObserver'
+import s from './SkillDropboxSearch.module.scss'
+
+interface Item {
+  id: string
+  name: string
+  disabled?: boolean
+}
 
 interface Props {
+  list: Item[]
+  name: string
+  control: Control<any>
+  defaultValue?: string
+  rules?: RegisterOptions
   isOpen?: boolean
-  list: string[]
-  activeItem?: string
   label?: string
-  error?: Partial<{ type: any; message: any }>
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onSelect?: (value: string) => void
   fullWidth?: boolean
+  withoutSearch?: boolean
+  small?: boolean
 }
 
 const SkillDropboxSearch = ({
+  name,
+  control,
+  defaultValue,
+  rules,
   isOpen: propIsOpen,
   list,
-  activeItem: propActiveItem,
   label,
-  error,
   props,
   fullWidth,
-  onSelect,
+  withoutSearch,
+  small,
 }: Props) => {
+  const {
+    field,
+    fieldState: { error },
+  } = useController({ name, control, rules, defaultValue })
+
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
-  const [activeItem, setActiveItem] = useState<string | null>(
-    propActiveItem ?? null
-  )
   const dropboxRef = useRef<HTMLDivElement | null>(null)
   let cx = classNames.bind(s)
 
@@ -42,20 +57,13 @@ const SkillDropboxSearch = ({
   const handleSearchClick = (e: React.MouseEvent) => {
     const targetIsInput =
       (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
-
     if (!isOpen && targetIsInput) setIsOpen(true)
-    if (!targetIsInput) setIsOpen(!isOpen)
+    if (!targetIsInput) setIsOpen(prev => !prev)
   }
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props?.onChange && props.onChange(e)
-    setActiveItem(e.target.value)
-  }
-
-  const handleItemClick = (v: string) => {
-    setActiveItem(v)
+  const handleItemClick = (item: Item) => {
+    field.onChange(item.name)
     setIsOpen(false)
-    onSelect && onSelect(v)
   }
 
   useObserver('click', handleClickOutside)
@@ -67,31 +75,41 @@ const SkillDropboxSearch = ({
         'skillDropboxSearch',
         isOpen && 'open',
         error && 'error',
-        fullWidth && 'fullWidth'
+        fullWidth && 'fullWidth',
+        small && 'small'
       )}
-      onFocus={() => setIsOpen(true)}>
+      onFocus={() => setIsOpen(true)}
+    >
       {label && <span className={s.label}>{label}</span>}
 
       <div className={s.search} onClick={handleSearchClick}>
-        <LoupeIcon className={s.icon} />
+        {!withoutSearch && <LoupeIcon className={s.icon} />}
         <input
           {...props}
+          {...field}
+          value={field.value || ''}
           className={s.input}
-          value={activeItem || ''}
-          onChange={handleSearchChange}
+          readOnly
         />
         <ArrowDownIcon className={cx('icon', 'arrowDown')} />
       </div>
 
       <ul className={s.list}>
-        {list.map((v, i) => (
-          <li
-            key={i}
-            className={cx('item', v === activeItem && 'activeItem')}
-            onClick={() => handleItemClick(v)}>
-            {v}
-          </li>
-        ))}
+        {list?.map((item, i) => {
+          return (
+            <li
+              key={i}
+              className={cx(
+                'item',
+                item.name === field.value && 'activeItem',
+                item?.disabled && 'disabled'
+              )}
+              onClick={() => !item?.disabled && handleItemClick(item)}
+            >
+              {item.name}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

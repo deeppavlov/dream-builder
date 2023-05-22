@@ -9,13 +9,15 @@ export const SkillList: FC<SkillListProps> = ({
   type,
   forGrid,
   forModal,
-  withoutDate
+  withoutDate,
+  handleAdd,
 }) => {
   return (
     <>
       {skills?.map((skill, i) => {
         return view == 'table' ? (
           <SkillListItem
+            handleAdd={handleAdd}
             forModal={forModal}
             key={i}
             skill={skill}

@@ -13,6 +13,7 @@ interface Props {
   forGrid?: boolean
   forSkills?: boolean
   fromScratch?: boolean
+  onAddRequest?: () => void
 }
 
 export const AddButton: FC<Props> = ({
@@ -22,24 +23,36 @@ export const AddButton: FC<Props> = ({
   forTable,
   forSkills,
   fromScratch,
+  onAddRequest,
 }) => {
-  const cx = classNames.bind(s)
   const auth = useAuth()
   const { isPreview } = usePreview()
+  const cx = classNames.bind(s)
 
   const handleClick = () => {
-    if (!auth?.user) {
-      trigger('SignInModal', {})
-      return
-    }
+    const isCreateScratchAssistant = !forSkills && !fromScratch
+    const isCreateScratchSkill = fromScratch
+    const isAddPublicSkill = forSkills && !isPreview
+    const scratchAssistant = { action: 'create' }
 
-    const addBot = () => {
-      trigger('AssistantModal', { action: 'create' })
-    }
+    if (onAddRequest) onAddRequest()
 
-    if (forSkills && !isPreview) trigger('SkillsListModal', {})
-    fromScratch && trigger('SkillModal', { action: 'create' })
-    if (!forSkills && !fromScratch) addBot()
+    if (!auth?.user)
+      return trigger(
+        'SignInModal',
+        isCreateScratchAssistant
+          ? {
+              requestModal: {
+                name: 'AssistantModal',
+                options: scratchAssistant,
+              },
+            }
+          : {}
+      )
+    if (isAddPublicSkill) return trigger('SkillsListModal', {})
+    if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
+    if (isCreateScratchAssistant)
+      return trigger('AssistantModal', scratchAssistant)
   }
 
   return !forTable ? (
@@ -56,8 +69,8 @@ export const AddButton: FC<Props> = ({
     </button>
   ) : (
     <tbody>
-      <tr className={cx('tr')}>
-        <td colSpan={5} className={s.td}>
+      <tr className={s.tr}>
+        <td colSpan={6} className={s.td}>
           <button className={s.forTable} onClick={handleClick}>
             <img src={Add} />
             <p>{text || 'Create From Scratch'}</p>

@@ -6,9 +6,9 @@
   width: 100vw;
   height: calc(100vh - $topbar-height);
   gap: 24px;
-  padding: 24px 40px;
+  padding: 40px;
   z-index: 0;
-  overflow: scroll;
+  overflow: auto;
   &.sidebar {
     left: 80px;
     width: calc(100vw - $sidebar-width);
@@ -16,4 +16,12 @@
   &.editor {
     flex-direction: row;
   }
+  &.fullWidth {
+    flex-direction: row;
+  }
+}
+.column {
+  display: flex;
+
+  flex-direction: column;
 }

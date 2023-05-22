@@ -77,7 +77,7 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
       if (newIntent?.responses) setResponses(newIntent.responses)
     }
 
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   useObserver('IntentResponderModal', handleEventUpdate)
@@ -101,6 +101,7 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
               {responses.length === 0 ? 'Edit Response to Intent:' : 'Add'}{' '}
               Response to Intent:
             </span>
+            {/* fix input and for catcher */}
             <DropboxSearch intents={intentsMock} />
 
             <button className={s.intentModal__close} onClick={closeModal}>

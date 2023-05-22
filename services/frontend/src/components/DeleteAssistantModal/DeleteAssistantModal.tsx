@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useMutation, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { RoutesList } from '../../router/RoutesList'
-import { deleteAssistantDist } from '../../services/deleteAssistantDist'
 import { BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
-import { subscribe, unsubscribe } from '../../utils/events'
 import s from './DeleteAssistantModal.module.scss'
 
 interface IDeleteAssistantInfo
@@ -21,36 +19,32 @@ interface IDeleteAssistantModal {
 export const DeleteAssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<IDeleteAssistantInfo | null>()
-  const queryClient = useQueryClient()
-  
-  const deleteDist = useMutation({
-    mutationFn: name => {
-      return deleteAssistantDist(name!)
-    },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: 'privateDists',
-      }),
-  })
+  const { deleteDist } = useAssistants()
+  const { name } = useParams()
+  const nav = useNavigate()
+  const isEditorRoute = name !== undefined && name.length > 0
+
   const handleClose = () => {
     setBot(null)
     setIsOpen(false)
+    if (isEditorRoute) nav(RoutesList.start)
   }
 
   const handleEventUpdate = (data: { detail: IDeleteAssistantModal }) => {
     setBot(data.detail.bot ?? null)
-    setIsOpen(!isOpen)
+    setIsOpen(prev => !prev)
   }
 
   const handleCancelBtnClick = () => handleClose()
 
   const handleDeleteBtnClick = () => {
-    toast.promise(deleteDist.mutateAsync(bot?.name!), {
-      loading: 'Deleting...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
-    handleClose()
+    toast
+      .promise(deleteDist.mutateAsync(bot?.name!), {
+        loading: 'Deleting...',
+        success: 'Success!',
+        error: 'Something went wrong...',
+      })
+      .finally(() => handleClose())
   }
 
   useObserver('DeleteAssistantModal', handleEventUpdate)
@@ -67,11 +61,7 @@ export const DeleteAssistantModal = () => {
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
             Cancel
           </Button>
-          <Button
-            theme='error'
-            props={{
-              onClick: handleDeleteBtnClick,
-            }}>
+          <Button theme='error' props={{ onClick: handleDeleteBtnClick }}>
             Delete
           </Button>
         </div>

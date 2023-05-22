@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { useAuth } from '../../context/AuthProvider'
 import { DistListProps } from '../../types/types'
+import { sortByISO8601 } from '../../utils/sortByISO8601'
 import { BotCard } from '../BotCard/BotCard'
 import { BotListItem } from '../BotListItem/BotListItem'
 
@@ -10,7 +11,7 @@ export const DistList: FC<DistListProps> = ({ view, dists, type, size }) => {
 
   return (
     <>
-      {dists?.map((bot, i) => {
+      {sortByISO8601(dists)?.map((bot, i: number) => {
         return view == 'table' ? (
           <BotListItem key={i} bot={bot} type={type} disabled={disabled} />
         ) : (

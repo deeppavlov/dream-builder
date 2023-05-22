@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
-import { stopPropagation } from '../../utils/stopPropagation'
+import { trigger } from '../../utils/events'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './ContextMenuButton.module.scss'
 
 type TMenuItem =
@@ -16,11 +17,17 @@ type TMenuItem =
   | 'share'
   | 'save'
   | 'about'
+  | 'architecture'
+  | 'chat'
+  | 'profile'
+  | 'logout'
 
 interface Props {
   name?: string
   type?: TMenuItem
+  theme?: 'dark'
   disabled?: boolean
+  linkTo?: string
   children?: React.ReactNode
   handleClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
@@ -28,30 +35,51 @@ interface Props {
 const ContextMenuButton = ({
   name,
   type,
+  theme,
   disabled,
+  linkTo,
   children,
   handleClick,
 }: Props) => {
   let cx = classNames.bind(s)
+
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    trigger('CtxMenuBtnClick', {})
+    if (disabled) return
     handleClick && handleClick(e)
   }
-  const handleChildClick = (e: React.MouseEvent) => {
-    disabled && stopPropagation(e)
-  }
+
+  const getIconElement = (type: TMenuItem) => (
+    <SvgIcon
+      iconName={type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type}
+      svgProp={{
+        className: cx('icon', type === 'about' && 'dreambuilder'),
+      }}
+    />
+  )
+
   return (
-    <button className={s.item} disabled={disabled} onClick={handleBtnClick}>
-      {type && (
-        <img
-          onClick={handleChildClick}
-          className={cx('icon', type === 'about' && 'dreambuilder')}
-          src={`./src/assets/icons/${
-            type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type
-          }.svg`}
-        />
+    <button
+      className={cx('item', disabled && 'disabled', theme && theme)}
+      onClick={handleBtnClick}
+    >
+      {linkTo ? (
+        <a
+          href={linkTo}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={s.link}
+        >
+          {type && getIconElement(type)}
+          {children || name}
+        </a>
+      ) : (
+        <>
+          {type && getIconElement(type)}
+          <span>{children || name}</span>
+        </>
       )}
-      <span onClick={handleChildClick}>{children || name}</span>
     </button>
   )
 }

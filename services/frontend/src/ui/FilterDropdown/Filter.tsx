@@ -5,7 +5,7 @@ import s from './Filter.module.scss'
 export const Filter = () => {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  // useCheckClickOutside(open, ref, setOpen)
+  //   useCheckClickOutside(open, ref, () => setOpen(false))
   const handleOpen = () => {
     setOpen(!open)
   }

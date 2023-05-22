@@ -16,6 +16,7 @@
   &::first-letter {
     text-transform: uppercase;
   }
+  white-space: nowrap;
 }
 
 .icon {
@@ -85,7 +86,10 @@
 }
 
 .public,
-.your {
+.your,
+.PRIVATE,
+.PUBLIC_TEMPLATE,
+.UNLISTED_LINK {
   @extend .text-capitalize;
   font-size: 10px;
   padding: 4px 8px 4px 4px;
@@ -100,7 +104,8 @@
   }
 }
 
-.public {
+.public,
+.PUBLIC_TEMPLATE {
   @extend .success;
   color: #009973;
 
@@ -109,7 +114,16 @@
   }
 }
 
-.your {
+.UNLISTED_LINK {
+  @extend .version;
+  color: #ff9500;
+  .icon path {
+    stroke: #ff9500;
+  }
+}
+
+.your,
+.PRIVATE {
   background: #8d96b51a;
   border-color: $text3;
   color: $text3;

@@ -29,7 +29,6 @@ body {
   color: $text1;
   font-family: $main-font;
   font-size: 18px;
-  user-select: none;
 }
 button {
   background-color: inherit;
@@ -43,7 +42,10 @@ li {
 p {
   @include b1;
 }
-.app {
-  height: 100vh;
-  width: 100vw;
+
+:global {
+  .app {
+    height: 100vh;
+    width: 100vw;
+  }
 }

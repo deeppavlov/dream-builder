@@ -1,0 +1,25 @@
+.topbarBtn {
+  height: 100%;
+  padding: 20px 8px;
+
+  &:hover {
+    background-color: $primary3;
+
+    .content path {
+      stroke: $primary_btn;
+    }
+  }
+
+  &:active {
+    background-color: $primary3;
+    .content path {
+      stroke: $primary4;
+    }
+  }
+}
+
+.content {
+  height: $topbar_btn;
+  min-width: $topbar_btn;
+  width: fit-content;
+}

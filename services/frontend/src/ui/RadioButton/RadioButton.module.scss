@@ -9,8 +9,11 @@ $color2: #3300ff;
   @include b3;
   color: $text2;
   cursor: pointer;
+  &.disabled {
+    @include disabled;
+  }
 
-  &:hover {
+  &:hover:not(.disabled) {
     color: $text6 !important;
 
     input {
@@ -19,8 +22,7 @@ $color2: #3300ff;
       border-color: $text6 !important;
     }
   }
-
-  &:active {
+  &:active:not(.disabled) {
     color: $color2 !important;
 
     input {

@@ -1,157 +1,42 @@
-import secrets
-from asyncio import sleep
 from typing import List
+from urllib.parse import urlparse
 
-from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist, list_dists
-from deeppavlov_dreamtools.distconfigs.generics import Component
-from deeppavlov_dreamtools.distconfigs.pipeline import Pipeline
-from deeppavlov_dreamtools.utils import parse_connector_url
-from fastapi import APIRouter, status, Depends, HTTPException
-from fastapi.logger import logger
+from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
+from deeppavlov_dreamtools.distconfigs.components import DreamComponent
+from deeppavlov_dreamtools.utils import generate_unique_name
+from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud
-from services.distributions_api import schemas
-from services.distributions_api.const import DREAM_ROOT_PATH, INVISIBLE_DIST_NAMES, TEMPLATE_DIST_PROMPT_BASED
+from database import crud, models, enums
+from services.distributions_api import schemas, const
+from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.schemas import (
-    AssistantDistModel,
-    AssistantDistModelShort,
-    CreateAssistantDistModel,
-    CloneAssistantDistModel,
-    EditAssistantDistModel,
-    ComponentShort,
-    DistComponentsResponse,
-    AssistantDistChatRequest,
-    AssistantDistChatResponse,
-)
 from services.distributions_api.security.auth import verify_token
+from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
 
 
-emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+def send_publish_request_created_emails(
+    owner_email: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
+):
+    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+
+    for moderator_email in moderator_emails:
+        emailer.send_publish_request_created_to_moderators(
+            moderator_email, owner_email, virtual_assistant_name, virtual_assistant_display_name
+        )
+    emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
 
 
-def _generate_name_from_display_name(display_name: str):
-    """Generates unique snake_case name from human-readable name
-
-    Args:
-        display_name: assistant dist display name
-
-    Returns:
-        assistant dist name in snake_case with unique identifier
-    """
-    normalized_name = "".join(
-        char for char in display_name.replace(" ", "_").lower() if char.isalnum() or char in ["_"]
-    )
-    random_id = secrets.token_hex(4)
-
-    return f"{normalized_name}_{random_id}"
-
-
-def _dist_to_dist_model_short(dream_dist: AssistantDist) -> AssistantDistModelShort:
-    """Creates a pydantic object with minimal distribution description
-
-    Args:
-        dream_dist: AssistantDist object
-
-    Returns:
-        Pydantic object with distribution description
-    """
-    return AssistantDistModelShort(
-        name=dream_dist.name,
-        **dream_dist.pipeline_conf.config.metadata.dict(),
-    )
-
-
-def _dist_to_dist_model(dream_dist: AssistantDist) -> AssistantDistModel:
-    """Creates a pydantic object with extended distribution description
-
-    Args:
-        dream_dist: AssistantDist object
-
-    Returns:
-        Pydantic object with distribution description
-    """
-    return AssistantDistModel(
-        dist_path=str(dream_dist.dist_path),
-        name=dream_dist.name,
-        dream_root=str(dream_dist.dream_root),
-        pipeline_conf=dream_dist.pipeline_conf.config if dream_dist.pipeline_conf else None,
-        compose_override=dream_dist.compose_override.config if dream_dist.compose_override else None,
-        compose_dev=dream_dist.compose_dev.config if dream_dist.compose_dev else None,
-        compose_proxy=dream_dist.compose_proxy.config if dream_dist.compose_proxy else None,
-    )
-
-
-# def _dist_model_to_dist(dream_dist_model: AssistantDistModel) -> AssistantDist:
-#     """Creates AssistantDist object from pydantic distribution object
-#
-#     Args:
-#         dream_dist_model: AssistantDist object
-#
-#     Returns:
-#         AssistantDist object
-#     """
-#     return AssistantDist(
-#         dist_path=dream_dist_model.dist_path,
-#         name=dream_dist_model.name,
-#         dream_root=dream_dist_model.dream_root,
-#         pipeline_conf=DreamPipeline(dream_dist_model.pipeline_conf),
-#         compose_override=DreamComposeOverride(dream_dist_model.compose_override),
-#         compose_dev=DreamComposeDev(dream_dist_model.compose_dev),
-#         compose_proxy=DreamComposeProxy(dream_dist_model.compose_proxy),
-#     )
-
-
-def _component_to_component_short(component: Component) -> ComponentShort:
-    component_dict = component.dict(exclude_none=True)
-
-    if component.container_name.endswith("prompted-skill") and component.build_args.get("GENERATIVE_SERVICE_URL"):
-        lm_service_url = component.build_args["GENERATIVE_SERVICE_URL"]
-        lm_service_host, _, _ = parse_connector_url(lm_service_url)
-        lm_name_map = {
-            "transformers-lm-gptj": "GPT-J 6B",
-            "transformers-lm-bloomz7b": "BLOOMZ 7B",
-            "openai-api-davinci3": "GPT-3.5",
-            "openai-api-chatgpt": "ChatGPT",
-        }
-        lm_service_display_name = lm_name_map.get(lm_service_host)
-        if lm_service_display_name:
-            component_dict["lm_service"] = lm_service_display_name
-
-    return ComponentShort(**component_dict)
-
-
-def _pipeline_to_dist_component_response(pipeline: Pipeline) -> DistComponentsResponse:
-    all_components = {}
-
-    for group_name in [
-        "annotators",
-        "skill_selectors",
-        "skills",
-        "candidate_annotators",
-        "response_selectors",
-        "response_annotators",
-    ]:
-        group = getattr(pipeline, group_name, {})
-        group_components = []
-
-        if group:
-            for name, component in group.items():
-                component_short = _component_to_component_short(component.config)
-                group_components.append(component_short)
-
-        all_components[group_name] = group_components
-
-    return DistComponentsResponse(**all_components)
-
-
-@assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDistModelShort:
+@assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
+async def create_virtual_assistant(
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
+    db: Session = Depends(get_db),
+) -> schemas.VirtualAssistantRead:
     """
     Creates new distribution from base template
 
@@ -161,39 +46,100 @@ async def create_distribution(payload: CreateAssistantDistModel) -> AssistantDis
 
     -``description``: new assistant dist description
     """
-    dream_dist = AssistantDist.from_name(TEMPLATE_DIST_PROMPT_BASED, DREAM_ROOT_PATH)
+    with db.begin():
+        minimal_template_virtual_assistant = crud.get_virtual_assistant_by_name(db, TEMPLATE_DIST_PROMPT_BASED)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / minimal_template_virtual_assistant.source)
 
-    new_name = _generate_name_from_display_name(payload.display_name)
-    new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
-    new_dist.save()
+        new_name = generate_unique_name()
+        original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
+            db, minimal_template_virtual_assistant.id, "_prompted_skill"
+        )
+        existing_prompted_skills = []
 
-    return _dist_to_dist_model_short(new_dist)
+        for skill in original_prompted_skills:
+            existing_prompted_skill = {
+                "name": skill.component.name,
+                "port": dream_dist.pipeline.skills[skill.component.name].service.environment.get("SERVICE_PORT"),
+                "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
+                "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
+                "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
+                "description": dream_dist.pipeline.skills[skill.component.name].component.description,
+            }
+            existing_prompted_skills.append(existing_prompted_skill)
+
+        new_dist = dream_dist.clone(
+            new_name,
+            payload.display_name,
+            user.email,
+            payload.description,
+            existing_prompted_skills,
+        )
+        new_dist.save()
+
+        new_components = []
+        for group, name, dream_component in new_dist.pipeline.iter_components():
+            service = crud.create_service(
+                db, dream_component.service.service.name, str(dream_component.service.config_dir)
+            )
+
+            if dream_component.lm_service:
+                lm_service_id = crud.get_lm_service_by_name(db, urlparse(dream_component.lm_service).hostname).id
+            else:
+                lm_service_id = None
+
+            component = crud.create_component(
+                db,
+                service_id=service.id,
+                source=str(dream_component.component_file),
+                name=dream_component.component.name,
+                display_name=dream_component.component.display_name,
+                component_type=dream_component.component.component_type,
+                is_customizable=dream_component.component.is_customizable,
+                author_id=user.id,
+                ram_usage=dream_component.component.ram_usage,
+                group=dream_component.component.group,
+                endpoint=dream_component.component.endpoint,
+                model_type=dream_component.component.model_type,
+                gpu_usage=dream_component.component.gpu_usage,
+                description=dream_component.component.description,
+                prompt=dream_component.prompt,
+                lm_service_id=lm_service_id,
+            )
+            new_components.append(component)
+
+        new_virtual_assistant = crud.create_virtual_assistant(
+            db,
+            user.id,
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
+            new_dist.name,
+            payload.display_name,
+            payload.description,
+            new_components,
+        )
+
+    return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
 
-@assistant_dists_router.get("/public", status_code=status.HTTP_200_OK)
-async def get_list_of_public_distributions(db: Session = Depends(get_db)) -> List[schemas.VirtualAssistant]:
+@assistant_dists_router.get("/public_templates", status_code=status.HTTP_200_OK)
+async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -> List[schemas.VirtualAssistantRead]:
     """
     Lists public Dream distributions
     """
-    # distributions = list_dists(DREAM_ROOT_PATH)
-    # valid_distributions = []
-    #
-    # for dist in distributions:
-    #     if dist.name.split("_")[-1] != "private" and dist.name not in INVISIBLE_DIST_NAMES:
-    #         valid_distributions.append(_dist_to_dist_model_short(dist))
     public_dists = []
 
-    for dist in crud.get_all_public_virtual_assistants(db):
-        if dist.name not in ["universal_prompted_assistant", "deepy_assistant", "dream_persona_openai_prompted"]:
-            public_dists.append(schemas.VirtualAssistant.from_orm(dist))
+    for dist in crud.get_all_public_templates_virtual_assistants(db):
+        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
+            public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
 
-@assistant_dists_router.get("/private", status_code=status.HTTP_200_OK)
-async def get_list_of_private_distributions(
-    user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
-) -> List[schemas.VirtualAssistant]:
+@assistant_dists_router.get("/user_owned", status_code=status.HTTP_200_OK)
+async def get_list_of_private_virtual_assistants(
+    user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+) -> List[schemas.VirtualAssistantRead]:
     """
     Lists private Dream distributions
 
@@ -201,25 +147,17 @@ async def get_list_of_private_distributions(
 
     -``token``: auth token
     """
-    # distributions = list_dists(DREAM_ROOT_PATH)
-    # valid_distributions = []
-    #
-    # for dist in distributions:
-    #     if dist.name.split("_")[-1] == "private" and dist.name not in INVISIBLE_DIST_NAMES:
-    #         valid_distributions.append(_dist_to_dist_model_short(dist))
-    #
-    # return valid_distributions
-    public_dists = []
+    private_dists = []
 
-    for dist in crud.get_all_private_virtual_assistants(db, user.id):
-        if dist.name not in ["universal_prompted_assistant", "deepy_assistant", "dream_persona_openai_prompted"]:
-            public_dists.append(schemas.VirtualAssistant.from_orm(dist))
+    for dist in crud.get_all_user_virtual_assistants(db, user.id):
+        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
+            private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
-    return public_dists
+    return private_dists
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK)
-async def get_dist_by_name(dist_name: str) -> AssistantDistModelShort:
+async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(get_db)) -> schemas.VirtualAssistantRead:
     """
     Returns existing dist with the given name
 
@@ -228,17 +166,25 @@ async def get_dist_by_name(dist_name: str) -> AssistantDistModelShort:
     -``dist_name``: name of the distribution
     """
     try:
-        dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{DREAM_ROOT_PATH}/{dist_name}' not found")
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
 
-    return _dist_to_dist_model_short(dream_dist)
+    try:
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found locally")
+
+    return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
 
 @assistant_dists_router.patch("/{dist_name}", status_code=status.HTTP_200_OK)
-async def patch_dist_by_name(
-    dist_name: str, payload: EditAssistantDistModel, user: str = Depends(verify_token)
-) -> AssistantDistModelShort:
+async def patch_virtual_assistant_by_name(
+    dist_name: str,
+    payload: schemas.VirtualAssistantUpdate,
+    user: str = Depends(verify_token),
+    db: Session = Depends(get_db),
+) -> schemas.VirtualAssistantRead:
     """
     Updates existing dist with edited name and/or description
 
@@ -256,22 +202,30 @@ async def patch_dist_by_name(
 
     -``description``: new assistant dist description
     """
-    dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-    if payload.display_name:
-        dream_dist.pipeline_conf.display_name = payload.display_name
+        if payload.display_name:
+            dream_dist.pipeline_conf.display_name = payload.display_name
+            virtual_assistant = crud.update_virtual_assistant_metadata_by_name(
+                db, virtual_assistant.name, display_name=payload.display_name
+            )
 
-    if payload.description:
-        dream_dist.pipeline_conf.description = payload.description
+        if payload.description:
+            dream_dist.pipeline_conf.description = payload.description
+            virtual_assistant = crud.update_virtual_assistant_metadata_by_name(
+                db, virtual_assistant.name, description=payload.description
+            )
 
-    dream_dist.save(overwrite=True)
+        dream_dist.save(overwrite=True)
 
-    return _dist_to_dist_model_short(dream_dist)
+    return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_dist_by_name(
-    dist_name: str, user: schemas.User = Depends(verify_token), db: Session = Depends(get_db)
+async def delete_virtual_assistant_by_name(
+    dist_name: str, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):
     """
     Deletes existing dist
@@ -284,22 +238,25 @@ async def delete_dist_by_name(
 
     -``dist_name``: name of the distribution
     """
-    try:
-        dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-        dream_dist.delete()
-    except FileNotFoundError:
-        pass
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
 
-    crud.delete_virtual_assistant_by_name(db, dist_name)
+        try:
+            dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+            dream_dist.delete()
+        except FileNotFoundError:
+            pass
+
+        crud.delete_virtual_assistant_by_name(db, dist_name)
 
 
 @assistant_dists_router.post("/{dist_name}/clone", status_code=status.HTTP_201_CREATED)
 async def clone_dist(
     dist_name: str,
-    payload: CloneAssistantDistModel,
-    user: schemas.User = Depends(verify_token),
+    payload: schemas.VirtualAssistantCreate,
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
-) -> schemas.VirtualAssistant:
+) -> schemas.VirtualAssistantRead:
     """
     Clones new distribution from an existing one
 
@@ -317,136 +274,190 @@ async def clone_dist(
 
     -``description``: new assistant dist description
     """
-    dream_dist = AssistantDist.from_name(dist_name, DREAM_ROOT_PATH)
+    with db.begin():
+        original_virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / original_virtual_assistant.source)
 
-    new_name = _generate_name_from_display_name(payload.display_name)
-    new_dist = dream_dist.clone(new_name, payload.display_name, payload.description)
-    new_dist.save(overwrite=False)
+        new_name = generate_unique_name()
+        original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
+            db, original_virtual_assistant.id, "_prompted_skill"
+        )
+        existing_prompted_skills = []
 
-    original_dist_db_row = crud.get_virtual_assistant_by_name(db, dist_name)
-    new_dist_db_row = crud.create_virtual_assistant(
-        db,
-        original_dist_db_row.id,
-        user.id,
-        str(new_dist.dist_path),
-        new_dist.name,
-        payload.display_name,
-        payload.description,
+        for skill in original_prompted_skills:
+            existing_prompted_skill = {
+                "name": skill.component.name,
+                "port": dream_dist.pipeline.skills[skill.component.name].service.environment.get("SERVICE_PORT"),
+                "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
+                "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
+                "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
+                "description": dream_dist.pipeline.skills[skill.component.name].component.description,
+            }
+            existing_prompted_skills.append(existing_prompted_skill)
+
+        new_dist = dream_dist.clone(
+            new_name,
+            payload.display_name,
+            user.email,
+            payload.description,
+            existing_prompted_skills,
+        )
+        new_dist.save(overwrite=False)
+
+        new_components = []
+        for group, name, dream_component in new_dist.pipeline.iter_components():
+            service = crud.create_service(
+                db, dream_component.service.service.name, str(dream_component.service.config_dir)
+            )
+
+            if dream_component.lm_service:
+                lm_service_id = crud.get_lm_service_by_name(db, urlparse(dream_component.lm_service).hostname).id
+            else:
+                lm_service_id = None
+
+            component = crud.create_component(
+                db,
+                service_id=service.id,
+                source=str(dream_component.component_file),
+                name=dream_component.component.name,
+                display_name=dream_component.component.display_name,
+                component_type=dream_component.component.component_type,
+                is_customizable=dream_component.component.is_customizable,
+                author_id=user.id,
+                ram_usage=dream_component.component.ram_usage,
+                group=dream_component.component.group,
+                endpoint=dream_component.component.endpoint,
+                model_type=dream_component.component.model_type,
+                gpu_usage=dream_component.component.gpu_usage,
+                description=dream_component.component.description,
+                prompt=dream_component.prompt,
+                lm_service_id=lm_service_id,
+            )
+            new_components.append(component)
+
+        new_virtual_assistant = crud.create_virtual_assistant(
+            db,
+            user.id,
+            str(new_dist.dist_path.relative_to(settings.db.dream_root_path)),
+            new_dist.name,
+            payload.display_name,
+            payload.description,
+            new_components,
+            cloned_from_id=original_virtual_assistant.id,
+        )
+
+    return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
+
+
+def _virtual_assistant_component_model_to_schema(virtual_assistant_component: models.VirtualAssistantComponent):
+    return schemas.VirtualAssistantComponentRead(
+        id=virtual_assistant_component.id,
+        component_id=virtual_assistant_component.component_id,
+        name=virtual_assistant_component.component.name,
+        display_name=virtual_assistant_component.component.display_name,
+        component_type=virtual_assistant_component.component.component_type,
+        model_type=virtual_assistant_component.component.model_type,
+        is_customizable=virtual_assistant_component.component.is_customizable,
+        author=virtual_assistant_component.component.author,
+        description=virtual_assistant_component.component.description,
+        ram_usage=virtual_assistant_component.component.ram_usage,
+        gpu_usage=virtual_assistant_component.component.gpu_usage,
+        prompt=virtual_assistant_component.component.prompt,
+        lm_service=virtual_assistant_component.component.lm_service,
+        date_created=virtual_assistant_component.component.date_created,
+        is_enabled=virtual_assistant_component.is_enabled,
     )
-    crud.create_deployment_from_copy(db, original_dist_db_row.id, new_dist_db_row.id)
-
-    # return _dist_to_dist_model_short(new_dist)
-    return schemas.VirtualAssistant.from_orm(new_dist_db_row)
 
 
-# @assistant_dists_router.put("/{dist_name}", status_code=status.HTTP_200_OK)
-# async def replace_dist(dist_name: str, replacement: AssistantDistModel, token: str = Depends(verify_token)) -> None:
-#     """
-#     Replaces distribution dist_name (assistant_dists/dist_name) with the *replacement_dist_name* distribution
-#
-#     Args:
-#         dist_name: name of distribution to be replaced
-#         replacement: replacement AssistantDist
-#         token:
-#     """
-#     replacement = _distmodel_to_dist(replacement)
-#     replacement.name = dist_name
-#
-#     replacement.save(overwrite=True)
-#     return _dist_to_distmodel(replacement)
-#
-#
-# @assistant_dists_router.get("/{dist_name}/{config_name}")
-# async def get_config_by_name(
-#     dist_name: str, config_name: DreamConfigLiteral, token: str = Depends(verify_token)
-# ) -> AnyConfigClass:
-#     """
-#     Returns config (pydantic model)
-#     """
-#     dream_dist_obj = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     config: AnyConfigClass = getattr(dream_dist_obj, config_name)
-#     return config
-#
-#
-# @assistant_dists_router.put("/{dist_name}/{config_name}", status_code=status.HTTP_201_CREATED)
-# async def replace_config_of_dist(
-#     dist_name: str,
-#     config_name: DreamConfigLiteral,
-#     new_config: AssistantDistConfigsImport,
-#     token: str = Depends(verify_token),
-# ):
-#     """
-#     Edits distribution with name=dist_name by adding new_config
-#     """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#
-#     # Example of logic:
-#     # dream_dist.pipeline_conf = new_config.data.pipeline_conf  -- dist.pipeline_conf = json.data.pipeline_conf
-#     setattr(dream_dist, config_name, getattr(new_config.data, config_name))
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)
+@assistant_dists_router.get("/{dist_name}/components", status_code=status.HTTP_200_OK)
+async def get_virtual_assistant_components(dist_name: str, db: Session = Depends(get_db)):
+    grouped_components = {}
+    for va_component in crud.get_virtual_assistant_components_by_name(db, dist_name):
+        if va_component.component.group not in grouped_components:
+            grouped_components[va_component.component.group] = []
+
+        grouped_components[va_component.component.group].append(
+            _virtual_assistant_component_model_to_schema(va_component)
+        )
+
+    return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 
-@assistant_dists_router.get("/{dist_name}/components/", status_code=status.HTTP_200_OK)
-async def get_dist_components(dist_name: str):
-    try:
-        dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Virtual assistant '{DREAM_ROOT_PATH}/{dist_name}' not found")
-
-    return _pipeline_to_dist_component_response(dist.pipeline)
-
-
-@assistant_dists_router.post("/{dist_name}/publish/", status_code=status.HTTP_204_NO_CONTENT)
-async def publish_dist(dist_name: str, user: dict = Depends(verify_token)):
-    dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-
-    emailer.send_publish_request_to_moderators(user["email"], dist.name)
-    emailer.send_publish_request_to_owner(user["email"], dist_name)
-    logger.info(f"Sent publish request")
-
-
-@assistant_dists_router.post("/{dist_name}/chat/", status_code=status.HTTP_200_OK)
-async def chat_dist(dist_name: str, payload: AssistantDistChatRequest):
-    await sleep(3)
-
-    return AssistantDistChatResponse(text="Lorem ipsum dolores est")
-
-
-@assistant_dists_router.get("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def get_dist_prompt(dist_name: str, user: dict = Depends(verify_token), db: Session = Depends(get_db)):
-    prompt = crud.get_deployment_prompt_by_virtual_assistant_name(db, dist_name)
-    return schemas.Prompt(text=prompt)
-
-
-@assistant_dists_router.post("/{dist_name}/prompt", status_code=status.HTTP_200_OK)
-async def set_dist_prompt(
-    dist_name: str, payload: schemas.Prompt, user: dict = Depends(verify_token), db: Session = Depends(get_db)
+@assistant_dists_router.post("/{dist_name}/components", status_code=status.HTTP_201_CREATED)
+async def add_virtual_assistant_component(
+    dist_name: str, payload: schemas.CreateVirtualAssistantComponentRequest, db: Session = Depends(get_db)
 ):
-    deployment = crud.set_deployment_prompt_by_virtual_assistant_name(db, dist_name, payload.text)
-    return schemas.Deployment.from_orm(deployment)
+    """"""
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+
+        virtual_assistant_component = crud.create_virtual_assistant_component(
+            db, virtual_assistant.id, payload.component_id
+        )
+        dream_dist.add_generative_prompted_skill(
+            DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
+        )
+        dream_dist.save(overwrite=True, generate_configs=True)
+
+    return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
 
-@assistant_dists_router.get("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def get_dist_lm_service(dist_name: str, user: dict = Depends(verify_token), db: Session = Depends(get_db)):
-    try:
-        lm_service = crud.get_deployment_lm_service_by_virtual_assistant_name(db, dist_name)
-    except ValueError:
-        raise HTTPException(status_code=404, detail=f"No deployments for virtual assistant {dist_name}")
+@assistant_dists_router.patch(
+    "/{dist_name}/components/{virtual_assistant_component_id}", status_code=status.HTTP_200_OK
+)
+async def patch_virtual_assistant_component(
+    dist_name: str, virtual_assistant_component_id: int, db: Session = Depends(get_db)
+):
+    """"""
 
-    return schemas.LmService.from_orm(lm_service)
+
+@assistant_dists_router.delete(
+    "/{dist_name}/components/{virtual_assistant_component_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_virtual_assistant_component(
+    dist_name: str, virtual_assistant_component_id: int, db: Session = Depends(get_db)
+):
+    """"""
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+
+        virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
+        dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
+        dream_dist.save(overwrite=True, generate_configs=True)
+
+        crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
 
-@assistant_dists_router.post("/{dist_name}/lm_service", status_code=status.HTTP_200_OK)
-async def set_dist_lm_service(
+@assistant_dists_router.post("/{dist_name}/publish", status_code=status.HTTP_204_NO_CONTENT)
+async def publish_dist(
     dist_name: str,
-    payload: schemas.SetLmServiceRequest,
-    user: dict = Depends(verify_token),
+    payload: schemas.PublishRequestCreate,
+    background_tasks: BackgroundTasks,
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ):
-    deployment = crud.set_deployment_lm_service_by_virtual_assistant_name(db, dist_name, payload.name)
-    return schemas.Deployment.from_orm(deployment)
+    with db.begin():
+        virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
+        dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+
+        if payload.visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
+            crud.delete_publish_request(db, virtual_assistant.id)
+            virtual_assistant = crud.update_virtual_assistant_by_name(db, dist_name, private_visibility=payload.visibility)
+        elif payload.visibility.__class__ == enums.VirtualAssistantPublicVisibility:
+            crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
+            moderators = crud.get_users_by_role(db, 2)
+
+            background_tasks.add_task(
+                send_publish_request_created_emails,
+                owner_email=user.email,
+                moderator_emails=[m.email for m in moderators],
+                virtual_assistant_name=virtual_assistant.name,
+                virtual_assistant_display_name=virtual_assistant.display_name,
+            )
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

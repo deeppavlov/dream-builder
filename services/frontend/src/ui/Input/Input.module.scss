@@ -66,7 +66,7 @@
   border-radius: 12px;
   padding: 7px 24px 7px 24px;
   outline: none;
-  background-color: $bcgrnd2;
+  background-color: $bcgrnd1;
   @include b2;
 
   &::placeholder {
@@ -76,14 +76,12 @@
 
   &:hover {
     border-color: $primary1;
-    background-color: $bcgrnd1;
   }
 
   &:focus {
     box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
     border-color: $primary1;
     color: $text1;
-    background-color: $bcgrnd1;
   }
 
   &:disabled {

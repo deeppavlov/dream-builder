@@ -9,11 +9,17 @@
     &:nth-child(2) {
       padding-left: 0;
     }
+    &:first-child {
+      padding-left: 24px;
+    }
+    &:last-child {
+      padding-right: 24px;
+    }
     border: none;
     text-align: start;
     background: #fff;
     color: #313030;
-    padding: 0px 24px;
+    padding: 0px 12px;
     .fillIcon {
       fill: rgba(0, 0, 0, 0.7);
       @include icon_size_24;
@@ -32,7 +38,8 @@
   display: flex;
   align-items: start;
   max-height: 64px;
-  min-width: 460px;
+  width: 460px;
+  max-width: fit-content;
   color: rgba(0, 0, 0, 0.7);
   @include b3;
   .tooltips {
@@ -51,9 +58,9 @@
   flex-direction: row;
   align-items: center;
   gap: 4px;
+  min-width: 115px;
   img {
-    width: 24px;
-    height: 24px;
+    @include icon_size_24;
     border-radius: 50%;
   }
   svg {
@@ -67,6 +74,7 @@
     align-items: center;
     color: #3300ff;
     @include b3;
+    width: 100%;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -78,6 +86,7 @@
   display: flex;
   flex-direction: column;
   white-space: nowrap;
+  width: 170px;
   max-width: 170px;
   .botName {
     color: rgba(0, 0, 0, 0.7);
@@ -112,4 +121,24 @@
   flex-direction: row;
   align-items: center;
   gap: 24px;
+}
+@media (max-width: 1280px) {
+  .description {
+    width: 190px;
+  }
+}
+@media (max-width: 1440px) {
+  .description {
+    width: 300px;
+  }
+}
+@media (min-width: 1600px) {
+  .description {
+    width: 600px;
+  }
+}
+@media (min-width: 1920px) {
+  .description {
+    width: 900px;
+  }
 }

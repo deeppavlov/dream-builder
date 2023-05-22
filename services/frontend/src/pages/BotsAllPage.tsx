@@ -1,48 +1,61 @@
-import { useState } from 'react'
-import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { getPublicDists } from '../services/getPublicDists'
+import { AssistantModal } from '../components/AssistantModal/AssistantModal'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
+import { DistList } from '../components/DistList/DistList'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Main } from '../components/Main/Main'
+import { SignInModal } from '../components/SignInModal/SignInModal'
+import { useDisplay } from '../context/DisplayContext'
+import { useAssistants } from '../hooks/useAssistants'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { DistList } from '../components/DistList/DistList'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import { useDisplay } from '../context/DisplayContext'
 import { consts } from '../utils/consts'
 
 export const BotsAllPage = () => {
-  const { data, error, isLoading } = useQuery('publicDists', getPublicDists)
-  const { options, dispatch } = useDisplay()
+  const { fetchPublicDists } = useAssistants()
+  const publicDists = fetchPublicDists()
+  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   return (
     <>
-      {/* <Topbar viewHandler={viewHandler} type='main' /> */}
-      <Main>
-        <Wrapper
-          title='Public Virtual Assistants & Chatbots'
-          amount={data?.length}>
-          <Loader isLoading={isLoading} />
-          <ErrorHandler error={error} />
-          {isTableView ? (
-            <Table>
-              <DistList view='table' dists={data} type='public' />
-            </Table>
+      <Main sidebar fullWidth>
+        <Wrapper title='Public Templates' amount={publicDists?.data?.length}>
+          {publicDists?.error ? (
+            <ErrorHandler error={publicDists.error} />
           ) : (
-            <Container gridForCards>
-              <DistList view='cards' dists={data} type='public' size='big' />
-            </Container>
+            <>
+              {isTableView ? (
+                <Table assistants>
+                  <DistList
+                    view='table'
+                    dists={publicDists?.data}
+                    type='public'
+                  />
+                </Table>
+              ) : (
+                <Container gridForCards heightAuto>
+                  {publicDists?.isLoading && (
+                    <CardsLoader cardsCount={6} type='bot' />
+                  )}
+                  <DistList
+                    view='cards'
+                    dists={publicDists?.data}
+                    type='public'
+                    size='big'
+                  />
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

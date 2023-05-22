@@ -65,3 +65,36 @@
     }
   }
 }
+.left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.annotation {
+  @include b2;
+  color: $text1;
+}
+.annotation.subWrapper {
+  @include t3;
+  padding: 0;
+}
+.header.annotationFlex {
+  justify-content: space-between;
+  gap: 16px;
+}
+.forCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 350px;
+  max-width: 450px;
+  &:hover {
+    background-color: #fff;
+    cursor: pointer;
+  }
+}
+.subWrapper {
+  background-color: #fff;
+  padding: 16px 16px;
+  padding: 16px 16px;
+  border: none;
+}

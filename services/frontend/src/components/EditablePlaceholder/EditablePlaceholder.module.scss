@@ -1,0 +1,22 @@
+.editablePlaceholder {
+  min-height: 197px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  textarea {
+    @include b3;
+  }
+}
+
+.btns {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 12px;
+  top: 100%;
+  left: 100%;
+  transform: translate(-100%, -12px);
+}

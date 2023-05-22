@@ -7,15 +7,26 @@
   flex-direction: column;
   gap: 12px;
 }
+
+.header {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  mark {
+    @include b1;
+  }
+}
+
 .distribution {
   @include t3;
   color: $text3;
-  margin-top: 8px;
-  margin-bottom: 12px;
 }
 
 .textarea {
-  max-height: 25rem;
+  overflow: hidden;
+  padding: 0 3px;
 }
 
 .btns {

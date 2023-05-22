@@ -1,26 +1,46 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import toast from 'react-hot-toast'
+import { useParams } from 'react-router'
+import { VisibilityStatus } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
+import { useAssistants } from '../../hooks/useAssistants'
+import { useComponent } from '../../hooks/useComponent'
+import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
-import { getComponentsGroup } from '../../services/getComponentsGroup'
+import { toasts } from '../../mapping/toasts'
+import { ICreateComponent, TDistVisibility } from '../../types/types'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Table } from '../../ui/Table/Table'
 import { consts } from '../../utils/consts'
+import { trigger } from '../../utils/events'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SkillList } from '../SkillList/SkillList'
 import s from './SkillsListModal.module.scss'
+
+interface IAddPublicSkill {
+  display_name: string
+  description: string
+}
 
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { options } = useDisplay()
-  const { data: skillsList } = useQuery(
-    'skills',
-    () => getComponentsGroup('skills'),
+  const { name: distName } = useParams()
+  const { deleteDeployment } = useDeploy()
+  const { getDist, changeVisibility } = useAssistants()
+  const { getGroupComponents, create } = useComponent()
+  const assistant = getDist({ distName: distName! })
+  const { data: skillsList } = getGroupComponents(
     {
-      enabled: isOpen,
-    }
+      distName: distName || '',
+      group: 'skills',
+      component_type: 'Generative',
+      author_id: 1,
+    },
+    { enabled: isOpen }
   )
   const rightSidepanelIsActive = options.get(consts.RIGHT_SP_IS_ACTIVE)
   const position = {
@@ -34,14 +54,44 @@ export const SkillsListModal = () => {
       width: '95%',
     },
   }
-  const handleEventUpdate = () => {
-    setIsOpen(!isOpen)
+  const cx = classNames.bind(s)
+
+  const handleClose = () => {
+    setIsOpen(false)
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
-  const okHandler = () => setIsOpen(!isOpen)
+  const handleOk = () => setIsOpen(prev => !prev)
+
+  const handleAdd = (skill: ICreateComponent) => {
+    const assistantId = assistant?.data?.deployment?.id!
+    toast.promise(
+      create.mutateAsync(
+        { data: skill, distName: distName || '', type: 'skills' },
+        {
+          onSuccess: () => {
+            assistant?.data?.deployment?.state === 'UP' &&
+              deleteDeployment.mutateAsync(assistantId).then(() => {
+                // unpublish /
+                const name = assistant?.data?.name!
+                const visibility = VisibilityStatus.PRIVATE as TDistVisibility
+
+                assistant?.data?.publish_state !== null &&
+                  changeVisibility.mutateAsync({ name, visibility }) 
+              })
+
+            handleClose()
+          },
+        }
+      ),
+      toasts.addComponent
+    )
+  }
+
+  const handleEventUpdate = () => setIsOpen(true)
 
   useObserver('SkillsListModal', handleEventUpdate)
-  const cx = classNames.bind(s)
+
   return (
     <>
       {skillsList && (
@@ -50,6 +100,7 @@ export const SkillsListModal = () => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           customStyles={position}
+          handleClose={handleClose}
         >
           <div
             className={cx(
@@ -61,17 +112,21 @@ export const SkillsListModal = () => {
             <Table
               second='Type'
               withoutDate={rightSidepanelIsActive}
-              addButton={<AddButton forTable fromScratch />}
+              addButton={
+                <AddButton forTable fromScratch onAddRequest={handleClose} />
+              }
             >
               <SkillList
+                handleAdd={handleAdd}
                 skills={skillsList}
                 view={'table'}
                 forModal
+                type='public'
                 withoutDate={rightSidepanelIsActive}
               />
             </Table>
             <div className={s.footer}>
-              <Button theme='primary' props={{ onClick: okHandler }}>
+              <Button theme='primary' props={{ onClick: handleOk }}>
                 OK
               </Button>
             </div>

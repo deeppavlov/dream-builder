@@ -1,58 +1,76 @@
-import { useState } from 'react'
-import { useQuery } from 'react-query'
 import { Toaster } from 'react-hot-toast'
-import { getPrivateDists } from '../services/getPrivateDists'
-import { dateToUTC } from '../utils/dateToUTC'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { Main } from '../components/Main/Main'
-import { Topbar } from '../components/Topbar/Topbar'
-import { timeToUTC } from '../utils/timeToUTC'
-import { useAuth } from '../context/AuthProvider'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
+import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
+import { DistList } from '../components/DistList/DistList'
+import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
+import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
 import { ShareModal } from '../components/ShareModal/ShareModal'
-import { Loader } from '../components/Loader/Loader'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { DistList } from '../components/DistList/DistList'
-import { AddButton } from '../ui/AddButton/AddButton'
+import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
+import { useAssistants } from '../hooks/useAssistants'
+import { AddButton } from '../ui/AddButton/AddButton'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
-  const { data, error, isLoading } = useQuery('privateDists', getPrivateDists)
-  const { options, dispatch } = useDisplay()
+  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { fetchPrivateDists } = useAssistants()
+  const privateDists = fetchPrivateDists()
 
   return (
     <>
-      <Main>
+      <Main sidebar fullWidth>
         <Wrapper
-          title='Your Virtual Assistants & Chatbots'
-          amount={data?.length}>
-          <Loader isLoading={isLoading} />
-          <ErrorHandler error={error} />
-          {isTableView ? (
-            <Table
-              addButton={
-                <AddButton
-                  forTable
-                  disabled={!auth?.user}
-                  text='Create From Scratch'
-                />
-              }>
-              <DistList view='table' dists={data} type='your' />
-            </Table>
+          primary
+          title='Your Assistants'
+          amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
+          // fullHeight
+        >
+          {privateDists?.error ? (
+            <ErrorHandler error={privateDists?.error} />
           ) : (
-            <Container gridForCards>
-              <AddButton forGrid />
-              <DistList view='cards' dists={data} type='your' size='big' />
-            </Container>
+            <>
+              {isTableView ? (
+                <Table
+                  assistants
+                  addButton={
+                    <AddButton
+                      forTable
+                      disabled={!auth?.user}
+                      text='Create From Scratch'
+                    />
+                  }
+                >
+                  <DistList
+                    view='table'
+                    dists={privateDists?.data}
+                    type='your'
+                  />
+                </Table>
+              ) : (
+                <Container gridForCards heightAuto>
+                  <AddButton forGrid />
+                  {privateDists?.isLoading && (
+                    <CardsLoader cardsCount={6} type='bot' />
+                  )}
+                  <DistList
+                    view='cards'
+                    dists={privateDists?.data}
+                    type='your'
+                    size='big'
+                  />
+                </Container>
+              )}
+            </>
           )}
         </Wrapper>
         <BaseSidePanel />
@@ -61,6 +79,7 @@ export const UsersBotsPage = () => {
         <DeleteAssistantModal />
         <ShareModal />
         <Modal />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

@@ -15,23 +15,45 @@
 
   [role='tablist'] {
     display: flex;
-    padding: 0 24px;
+    padding: 0 60px 0 24px;
     gap: 24px;
+    overflow: hidden;
+    height: 100%;
   }
 
   [role='tab'] {
     padding: 8px 0;
     color: $text3;
     cursor: pointer;
+    max-width: 100%;
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
 
-    &[aria-selected='true'] {
-      border-bottom: 2px solid $primary1;
-      margin-bottom: -1px;
-      color: $text1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:has([aria-selected='true']) {
+      padding-bottom: 0;
+      height: 100%;
     }
 
     &[data-disabled='true'] {
       opacity: 0.3;
     }
+  }
+
+  [role='name'] {
+    @include b1;
+    color: $text1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  [aria-selected='true'] {
+    border-bottom: 2px solid $primary1;
+    color: $text1;
   }
 }

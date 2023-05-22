@@ -40,20 +40,35 @@
   &:hover {
     .container {
       border-color: $primary1;
-      background-color: $bcgrnd1;
     }
     .resizer path {
       stroke: $primary1;
     }
   }
 
-  &:has(.field:disabled) {
+  &:not(.placeholder):has(.field:disabled) {
     .label {
       color: $text3;
       opacity: 0.3;
     }
+
     .resizer {
       display: none !important;
+    }
+
+    .container {
+      background-color: $bcgrnd3;
+      color: $text3;
+      border-color: $text3;
+
+      opacity: 0.3;
+    }
+
+    .field {
+      resize: none;
+      &::placeholder {
+        color: $text3;
+      }
     }
   }
 }
@@ -88,28 +103,12 @@
   border: 1px solid $text3;
   border-radius: 12px;
   padding: 8px 0;
-  background-color: $bcgrnd2;
+  background-color: $bcgrnd1;
 
   &:focus-within {
     box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
     border-color: $primary1;
     color: $text1;
-    background-color: $bcgrnd1;
-  }
-
-  &:has(.field:disabled) {
-    background-color: $bcgrnd3;
-    color: $text3;
-    border-color: $text3;
-
-    opacity: 0.3;
-
-    .filed {
-      resize: none;
-      &::placeholder {
-        color: $text3;
-      }
-    }
   }
 }
 
@@ -177,5 +176,19 @@
 
   path {
     stroke: $text3;
+  }
+}
+
+.placeholder {
+  .title {
+    @include t4;
+  }
+  .container {
+    background-color: $bcgrnd2;
+
+    &:hover,
+    &:focus-within {
+      background-color: $bcgrnd1;
+    }
   }
 }

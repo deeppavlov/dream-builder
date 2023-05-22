@@ -1,22 +1,20 @@
-import { useState } from 'react'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { Container } from '../ui/Container/Container'
+import { useQuery } from 'react-query'
+import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { Main } from '../components/Main/Main'
 import { SkillCard } from '../components/SkillCard/SkillCard'
 import { SkillListItem } from '../components/SkillListItem/SkillListItem'
-import { Table } from '../ui/Table/Table'
-import { Topbar } from '../components/Topbar/Topbar'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { useQuery } from 'react-query'
-import { getSkillList } from '../services/getSkillsList'
-import { dateToUTC } from '../utils/dateToUTC'
-import { timeToUTC } from '../utils/timeToUTC'
 import { SkillModal } from '../components/SkillModal/SkillModal'
 import { useAuth } from '../context/AuthProvider'
-import { SkillType } from '../types/types'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import { useDisplay } from '../context/DisplayContext'
+import { getSkillList } from '../services/getSkillsList'
+import { SkillType } from '../types/types'
+import { Container } from '../ui/Container/Container'
+import { Table } from '../ui/Table/Table'
+import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { dateToUTC } from '../utils/dateToUTC'
+import { timeToUTC } from '../utils/timeToUTC'
 
 interface skill_list {
   assistant_dist: string
@@ -49,12 +47,13 @@ export const SkillsAllPage = () => {
   return (
     <>
       {/* <Topbar viewHandler={viewHandler} type='main' /> */}
-      <Main>
+      <Main sidebar>
         {!isTableView ? (
           <Wrapper title='Public Skills' amount={skillsData?.length}>
             <Container
               display='grid'
-              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'>
+              gridTemplateColumns='repeat(auto-fit, minmax(275px, 1fr))'
+            >
               {isSkillsLoading && <>{'Loading...'}</>}
               {skillsData?.map((skill: skill_list, i: number) => {
                 const dateCreated = dateToUTC(skill.metadata.date_created)

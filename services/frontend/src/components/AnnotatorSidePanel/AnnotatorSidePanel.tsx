@@ -81,7 +81,7 @@ const AnnotatorSidePanel = ({
             </div>
             <div className={cx('author')}>
               <img src={DeepPavlovLogo} alt='Author' />
-              <span>{author}</span>
+              <span>{author.fullname}</span>
             </div>
             <ul className={cx('table')}>
               <li className={cx('table-item')}>

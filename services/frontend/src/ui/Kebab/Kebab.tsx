@@ -31,7 +31,6 @@ export const Kebab: FC<KebabProps> = ({
         'data-tooltip-id': tooltipId,
       }}>
       <div
-        onClick={stopPropagation}
         className={cx('kebab', type, disabled && 'disabled')}>
         <KebabLogo />
       </div>

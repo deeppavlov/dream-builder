@@ -1,12 +1,6 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import {
-  Outlet,
-  useLocation,
-  useMatch,
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
+import { Outlet, useMatch, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -72,16 +66,12 @@ export const EditorPage = () => {
   //   // )
   // }, [isError])
 
-  // const match = useMatch(RoutesList.editor.skills)
-  // console.log('RoutesList.editor.skills = ', RoutesList.editor.skills)
-  // console.log('match = ', match)
-
   return (
     <>
       <Sidebar>
         <Container layoutForTabs>
           <SkillsTab
-            isActive={Boolean(useMatch(RoutesList.editor.skills) )}
+            isActive={Boolean(useMatch(RoutesList.editor.skills.slice(0, -1)))}
           />
           <IntegrationTab
             isActive={Boolean(useMatch(RoutesList.editor.integration))}

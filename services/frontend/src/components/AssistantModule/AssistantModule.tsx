@@ -82,7 +82,7 @@ export const AssistantModule: FC<Props> = () => {
 
     isDeployed &&
       toast.promise(
-        deleteDeployment.mutateAsync(bot?.deployment?.id!, {
+        deleteDeployment.mutateAsync(bot!, {
           onSuccess: () => {
             const visibility: TDistVisibility =
               VisibilityStatus.PRIVATE as TDistVisibility
@@ -102,10 +102,7 @@ export const AssistantModule: FC<Props> = () => {
       )
 
     error &&
-      toast.promise(
-        deleteDeployment.mutateAsync(bot?.deployment?.id!),
-        toasts.deleteDeployment
-      )
+      toast.promise(deleteDeployment.mutateAsync(bot), toasts.deleteDeployment)
   }
   const handleShare = () => {
     trigger('ShareModal', { bot })

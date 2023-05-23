@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
+import store from 'store2'
 import { deleteDeploy } from '../services/deleteDeploy'
 import { getDeploy } from '../services/getDeploy'
 import { getDeployments } from '../services/getDeployments'
@@ -29,10 +30,11 @@ export const useDeploy = () => {
     },
   })
   const deleteDeployment = useMutation({
-    mutationFn: (deployment_id: number) => {
-      return deleteDeploy(deployment_id)
+    mutationFn: (bot: BotInfoInterface) => {
+      return deleteDeploy(bot?.deployment?.id || bot) // '|| bot' for draft page
     },
-    onSuccess: () => {
+    onSuccess: (_, variables: BotInfoInterface) => {
+      store.remove(variables?.name + '_session') // delete existing dialog session because of agent reload
       queryClient.invalidateQueries('dist')
       queryClient?.invalidateQueries('deployments')
     },

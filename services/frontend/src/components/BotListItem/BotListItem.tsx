@@ -1,17 +1,17 @@
 import DB from '@assets/icons/logo.png'
-import { FC, useId } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router-dom'
+import { FC,useId } from 'react'
+import { useQuery,useQueryClient } from 'react-query'
+import { generatePath,useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import {
-  PublishRequestsStatus,
-  VisibilityStatus,
+PublishRequestsStatus,
+VisibilityStatus
 } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -48,13 +48,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
   const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
   const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
-  // const publishState = !bot?.publish_state
-  //   ? type === 'your' && bot?.visibility
-  //   : onModeration
-  //   ? 'On Moderation'
-  //   : published
-  //   ? 'Public Template'
-  //   : bot?.visibility
+
 
   const publishState = onModeration
     ? 'On Moderation'
@@ -66,7 +60,8 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     ? 'Private'
     : null
 
-  const isDeepyPavlova = import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES
+  const isDeepyPavlova =
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.sub
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
 
   const handleBotListItemClick = () => {

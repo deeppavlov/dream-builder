@@ -8,7 +8,7 @@ import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
-import { ISkill } from '../../types/types'
+import { ISkill, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import s from './DeleteSkillModal.module.scss'
@@ -23,7 +23,7 @@ export const DeleteSkillModal = () => {
   const { deleteComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
 
-  const assistant = getDist({ distName: distName! })
+  const { data: bot } = getDist({ distName: distName! })
 
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
@@ -33,8 +33,7 @@ export const DeleteSkillModal = () => {
   const deleteSkill = async () => {
     if (!skill?.id) return
 
-    const assistantId = assistant?.data?.deployment?.id!
-    const isDeployed = assistant?.data?.deployment?.state === 'UP' //FIX
+    const isDeployed = bot?.deployment?.state === 'UP' //FIX
 
     await toast.promise(
       deleteComponent.mutateAsync(
@@ -48,15 +47,15 @@ export const DeleteSkillModal = () => {
           onSuccess: () => {
             isDeployed &&
               deleteDeployment
-                .mutateAsync(assistantId)
+                .mutateAsync(bot)
                 .then(() => {
                   queryClient.invalidateQueries('dist')
                 })
                 .then(() => {
                   // unpublish
-                  const name = assistant?.data?.name!
-                  const visibility = VisibilityStatus.PRIVATE
-                  const publishState = assistant?.data?.publish_state !== null
+                  const name = bot?.name
+                  const visibility = VisibilityStatus.PRIVATE as TDistVisibility
+                  const publishState = bot.publish_state !== null
                   publishState &&
                     changeVisibility.mutateAsync({ name, visibility }) //FIX
                 })

@@ -1,11 +1,11 @@
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect,useRef,useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
 import { useQuery } from 'react-query'
-import { generatePath, useNavigate, useParams } from 'react-router'
+import { generatePath,useNavigate,useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
@@ -14,7 +14,7 @@ import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import { ISkill, LM_Service } from '../../types/types'
+import { ISkill,LM_Service } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
@@ -55,7 +55,7 @@ const SkillPromptModal = () => {
   const nav = useNavigate()
   const { getDist } = useAssistants()
   const { deleteDeployment } = useDeploy()
-  const dist = distName ? getDist({ distName }).data : null
+  const bot = distName ? getDist({ distName }).data : null
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -150,8 +150,9 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
-            if (dist?.deployment?.state === 'UP') { //FIX
-              deleteDeployment.mutateAsync(dist?.deployment?.id!)
+            if (bot?.deployment?.state === 'UP') {
+              //FIX
+              deleteDeployment.mutateAsync(bot!)
             } else return
           }),
         {

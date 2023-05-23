@@ -33,7 +33,7 @@ export const SkillsListModal = () => {
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
   const { getGroupComponents, create } = useComponent()
-  const assistant = getDist({ distName: distName! })
+  const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
       distName: distName || '',
@@ -62,20 +62,19 @@ export const SkillsListModal = () => {
   const handleOk = () => handleClose()
 
   const handleAdd = (skill: ICreateComponent) => {
-    const assistantId = assistant?.data?.deployment?.id!
     toast.promise(
       create.mutateAsync(
         { data: skill, distName: distName || '', type: 'skills' },
         {
           onSuccess: () => {
-            assistant?.data?.deployment?.state === 'UP' &&
-              deleteDeployment.mutateAsync(assistantId).then(() => {
+            bot?.deployment?.state === 'UP' &&
+              deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish /
-                const name = assistant?.data?.name!
+                const name = bot?.name!
                 const visibility = VisibilityStatus.PRIVATE as TDistVisibility
 
-                assistant?.data?.publish_state !== null &&
-                  changeVisibility.mutateAsync({ name, visibility }) 
+                bot?.publish_state !== null &&
+                  changeVisibility.mutateAsync({ name, visibility })
               })
 
             handleClose()

@@ -2,14 +2,12 @@ import classNames from 'classnames/bind'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { RotatingLines } from 'react-loader-spinner'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import {
   DUMMY_SKILL,
   OPEN_AI_LM,
   TOOLTIP_DELAY,
-  VisibilityStatus,
 } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { useDisplay } from '../../context/DisplayContext'
@@ -24,6 +22,7 @@ import { getUserId } from '../../services/getUserId'
 import {
   BotInfoInterface,
   ChatForm,
+  ChatHistory,
   IDialogError,
   TDialogError,
 } from '../../types/types'
@@ -31,10 +30,13 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
+import { getAvailableDialogSession } from '../../utils/getAvailableDialogSession'
 import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
+import { DummyAlert } from '../DummyAlert/DummyAlert'
+import { Loader } from '../Loader/Loader'
 import SvgIcon from '../SvgIcon/SvgIcon'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './DialogSidePanel.module.scss'
@@ -50,7 +52,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { deploy, deleteDeployment } = useDeploy()
   const { data: bot } = getDist({ distName: dist?.name, refetchOnMount: true })
   const { data: user } = useQuery(['user'], () => getUserId())
-  const { send, renew, session, message, history } = useChat()
+  const {
+    send,
+    renew,
+    session,
+    message,
+    history,
+    setSession,
+    remoteAssistantHistory,
+  } = useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
   const auth = useAuth()
 
@@ -103,9 +113,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     refetchOnMount: false,
     enabled: bot?.deployment?.id !== undefined,
     onSuccess(data) {
-      data?.state === 'UP' &&
+      if (data?.state === 'UP') {
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
-      queryClient.invalidateQueries('privateDists')
+        queryClient.invalidateQueries('privateDists')
+      }
       if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
         //FIX
         setTimeout(() => {
@@ -116,7 +127,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           type: 'deploy',
           msg: 'The assistant build failed, please try again later.',
         })
-        queryClient.invalidateQueries('privateDist')
+        // queryClient.invalidateQueries('privateDists')
       }
     },
   }) //TODO transfer to useDeploy & add necessary conditions of invalidation
@@ -128,7 +139,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   }
 
   // panel state
-  const deployPanel = bot?.deployment?.state == null //костыль
+  const deployPanel = bot?.deployment?.state == null //FIX
   const awaitDeployPanel =
     bot?.deployment?.state !== 'UP' && //FIX
     bot?.deployment &&
@@ -150,7 +161,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         openai_api_key: apiKey ?? undefined,
       },
       {
-        onError: () => setError('chat'),
+        // onError: () => setError('chat'),
       }
     )
     reset()
@@ -162,22 +173,6 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
-  const handleTryAgain = () => {
-    toast.promise(
-      deleteDeployment
-        .mutateAsync(bot?.deployment?.id!)
-        .then(() => {
-          setErrorPanel(null)
-        })
-        .finally(() => {
-          setErrorPanel(null)
-          queryClient.invalidateQueries('privateDists')
-          queryClient.invalidateQueries('dist')
-        }),
-      toasts.deleteDeployment
-    )
-  }
-
   const handleDeploy = () => {
     toast.promise(
       deploy.mutateAsync(bot?.name!, {
@@ -187,17 +182,28 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     )
   }
   // hooks
-  // useObserver('RenewChat', handleRenewClick)
-  useChatScroll(chatRef, [history, message])
+  useChatScroll(chatRef, [history, message, remoteAssistantHistory])
 
   // проверяем настройки
   useEffect(() => {
     bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
   }, [user?.id, bot])
 
-  // обновляем диалоговую сессию
+  // get existing dialog session || create new
   useEffect(() => {
-    readyToGetSession && renew.mutateAsync(bot?.name!)
+    const availableSession =
+      readyToGetSession && getAvailableDialogSession(bot?.name)
+
+    availableSession
+      ? remoteAssistantHistory
+          .mutateAsync(availableSession?.id)
+          .then(() => {
+            setSession(availableSession)
+          })
+          .finally(() => {
+            setSession(availableSession) //FIX
+          })
+      : readyToGetSession && renew.mutateAsync(bot?.name!)
   }, [bot?.deployment?.state])
 
   const dispatchTrigger = (isOpen: boolean) => {
@@ -205,7 +211,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       type: 'set',
       option: {
         id: consts.CHAT_SP_IS_ACTIVE,
-        value: isOpen ? bot?.id : null,
+        value: isOpen ? bot : null,
       },
     })
   }
@@ -218,14 +224,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   return (
     <div id='assistantDialogPanel' className={s.container}>
       <SidePanelHeader>
-        <>
-          <ul role='tablist'>
-            <li role='tab' key='Dialog'>
-              <span aria-selected>Chat:</span>
-              <span role='name'>&nbsp;{bot?.display_name}</span>
-            </li>
-          </ul>
-        </>
+        <ul role='tablist'>
+          <li role='tab' key='Dialog'>
+            <span aria-selected>Chat:</span>
+            <span role='name'>&nbsp;{bot?.display_name}</span>
+          </li>
+        </ul>
       </SidePanelHeader>
       <div className={cx('dialogSidePanel', errorPanel && 'error')}>
         {errorPanel && (
@@ -237,29 +241,20 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 Enter your personal access token here
               </Link>
             )}
-            {bot?.author?.id !== 1 &&
-              bot?.visibility !== VisibilityStatus.PUBLIC_TEMPLATE && (
-                <Button theme='error' props={{ onClick: handleTryAgain }}>
-                  Try again
-                </Button>
-              )}
           </>
         )}
         {awaitDeployPanel && (
           <div className={s.await}>
-            <RotatingLines
-              strokeColor='grey'
-              strokeWidth='5'
-              animationDuration='0.75'
-              width='64'
-              visible={true}
-            />
+            <Loader />
             <p className={s.notification}>
               Please wait till assistant launching
+              <br />
+              <br />
+              This may take a few minutes.
+              <br />
+              <br />
+              {status?.data?.state + '...'}
             </p>
-            <p className={s.notification}>This may take a few minutes.</p>
-            <p className={s.notification}>{status?.data?.state + '...'}</p>
-            <br />
           </div>
         )}
         {!errorPanel && deployPanel && (
@@ -285,6 +280,35 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         {chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
+              {remoteAssistantHistory?.isLoading &&
+              !remoteAssistantHistory?.error ? (
+                <div className={s.loaderWrapper}>
+                  <Loader />
+                </div>
+              ) : (
+                remoteAssistantHistory?.data?.map(
+                  (block: ChatHistory, i: number) => {
+                    return (
+                      <div
+                        key={`${block?.author == 'bot'}${i}`}
+                        className={cx(
+                          'chat__container',
+                          block?.author == 'bot' && 'chat__container_bot'
+                        )}
+                      >
+                        <span
+                          className={cx(
+                            'chat__message',
+                            block?.author == 'bot' && 'chat__message_bot'
+                          )}
+                        >
+                          {block?.text}
+                        </span>
+                      </div>
+                    )
+                  }
+                )
+              )}
               {history?.map((block, i: number) => (
                 <div
                   key={`${block?.author == 'bot'}${i}`}
@@ -318,28 +342,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 </>
               )}
             </div>
-            {hereIsDummy && (
-              <div className={s.dummyContainer}>
-                <div className={s.dummy}>
-                  <span className={s.line} />
-                  <div className={s.message}>
-                    <div className={s.circle}>
-                      {/* TODO: Change SVG ReactComponent to our SvgComponent */}
-                      <SvgIcon iconName='attention' />
-                    </div>
-                    <p>
-                      Something went wrong.
-                      <br />
-                      Restart the system.
-                    </p>
-                  </div>
-                  <span className={s.line} />
-                </div>
-              </div>
-            )}
+            {hereIsDummy && <DummyAlert />}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
-                className={s.dialogSidePanel__textarea}
+                className={s.textarea}
                 placeholder='Type...'
                 {...register('message', {
                   required: validationSchema.global.required,
@@ -351,7 +357,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 <Button
                   theme='secondary'
                   props={{
-                    "data-tooltip-id":'renew',
+                    'data-tooltip-id': 'renew',
                     disabled: renew.isLoading,
                     onClick: handleRenewClick,
                   }}

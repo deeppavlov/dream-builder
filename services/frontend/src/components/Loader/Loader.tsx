@@ -1,10 +1,14 @@
 import { FC } from 'react'
-import s from './Loader.module.scss'
+import { RotatingLines } from 'react-loader-spinner'
 
-interface Props {
-  isLoading: boolean
-}
-
-export const Loader: FC<Props> = ({ isLoading }) => {
-  return <>{isLoading && <div className={s.loader}>Loading...</div>}</>
+export const Loader: FC = () => {
+  return (
+    <RotatingLines
+      strokeColor='grey'
+      strokeWidth='5'
+      animationDuration='0.75'
+      width='64'
+      visible={true}
+    />
+  )
 }

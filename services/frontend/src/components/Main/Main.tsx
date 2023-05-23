@@ -9,6 +9,7 @@ interface Props {
   editor?: boolean
   draggable?: boolean
   fullWidth?: boolean
+  column?: boolean
 }
 
 export const Main: FC<Props> = ({
@@ -17,6 +18,7 @@ export const Main: FC<Props> = ({
   editor,
   draggable,
   fullWidth,
+  column,
 }) => {
   let cx = classNames.bind(s)
   const contentWrapper = useRef<HTMLDivElement>(null)
@@ -29,7 +31,8 @@ export const Main: FC<Props> = ({
         'main',
         sidebar && 'sidebar',
         editor && 'editor',
-        fullWidth && 'fullWidth'
+        fullWidth && 'fullWidth',
+        column && 'column'
       )}
     >
       {children}

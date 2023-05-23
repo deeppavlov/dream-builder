@@ -9,7 +9,9 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { trigger } from '../../utils/events'
 import { validationSchema } from '../../utils/validationSchema'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -44,6 +46,7 @@ export const AssistantModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
@@ -60,32 +63,37 @@ export const AssistantModal = () => {
   const name = bot?.name!
 
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
-    action === 'create' &&
-      toast.promise(create.mutateAsync(data), {
-        loading: 'Creating...',
-        success: 'Success!',
-        error: 'Something went wrong...',
-      })
-    action === 'clone' &&
-      toast
-        .promise(clone.mutateAsync({ data, name }), {
-          loading: 'Cloning...',
+    switch (action) {
+      case 'create':
+        toast.promise(create.mutateAsync(data), {
+          loading: 'Creating...',
           success: 'Success!',
           error: 'Something went wrong...',
         })
-        .then(() => {
-          closeModal()
-        })
-    action === 'edit' &&
-      toast
-        .promise(rename.mutateAsync({ data, name }), {
-          loading: 'Renaming...',
-          success: 'Success!',
-          error: 'Something went wrong...',
-        })
-        .then(() => {
-          closeModal()
-        })
+        break
+      case 'clone':
+        toast.promise(
+          clone.mutateAsync({ data, name }, { onSuccess: closeModal }),
+          {
+            loading: 'Cloning...',
+            success: 'Success!',
+            error: 'Something went wrong...',
+          }
+        )
+        break
+      case 'edit':
+        toast.promise(
+          rename.mutateAsync({ data, name }, { onSuccess: closeModal }),
+          {
+            loading: 'Renaming...',
+            success: 'Success!',
+            error: 'Something went wrong...',
+          }
+        )
+        break
+      default:
+        break
+    }
   }
 
   useOnKey(handleSubmit(onFormSubmit), 'Enter')
@@ -162,7 +170,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
             >
-              Use
+              Create
             </Button>
           )}
           {action === 'edit' && (

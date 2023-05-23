@@ -15,11 +15,11 @@ import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { dateToUTC } from '../utils/dateToUTC'
-import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
+import { sortByISO8601 } from '../utils/sortByISO8601'
 
 type IHandler = (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
 
-function filterStack(arr: any) {
+function filterStack(arr: IDeploymentState[]) {
   const excludedValues = [
     'universal_prompted_assistant',
     'multiskill_ai_assistant',
@@ -33,7 +33,7 @@ function filterStack(arr: any) {
     'deeppavlov_assistant',
   ]
   return arr?.filter(
-    (obj: any) => !excludedValues.includes(obj.virtual_assistant.name)
+    obj => !excludedValues.includes(obj.virtual_assistant.name)
   )
 }
 
@@ -41,8 +41,10 @@ export const DraftPage = () => {
   const { requests, confirm, decline } = useAdmin()
   const { deployments, deleteDeployment } = useDeploy()
 
-  const filtered: IDeploymentState[] = filterStack(deployments?.data)
-  const sortedRequest = sortDistsByISO8601(requests)
+  const filteredDeployment = filterStack(deployments?.data!)
+
+  const sortedDeployment = sortByISO8601(filteredDeployment)
+  const sortedRequest = sortByISO8601(requests!)
 
   const cardClickHandler = () => {}
   const handleApprove: IHandler = (e, id) => {
@@ -82,7 +84,11 @@ export const DraftPage = () => {
             })}
           </Container>
         </Wrapper>
-        <Wrapper fitScreen title='Deployments' amount={filtered?.length}>
+        <Wrapper
+          fitScreen
+          title='Deployments'
+          amount={sortedDeployment?.length > 0 ? sortedDeployment?.length : ''}
+        >
           {deployments?.isLoading && (
             <div
               style={{
@@ -100,7 +106,7 @@ export const DraftPage = () => {
             </div>
           )}
           <Container gridForDeploys>
-            {filtered?.map((deployment, i: number) => {
+            {sortedDeployment?.map((deployment, i: number) => {
               return (
                 <div key={i}>
                   <Wrapper>
@@ -112,7 +118,7 @@ export const DraftPage = () => {
                         justifyContent: 'space-between',
                         width: '100%',
                         gap: '8px',
-                        maxHeight: '200px',
+                        height: '250px',
                       }}
                     >
                       <span style={{ overflow: 'hidden' }}>

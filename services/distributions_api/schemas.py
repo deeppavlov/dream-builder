@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Literal
+from typing import Optional, List, Literal, Union
 
 from deeppavlov_dreamtools.distconfigs.generics import (
     COMPONENT_TYPES,
@@ -8,7 +8,9 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 )
 from pydantic import BaseModel, Field, validator, EmailStr
 
-PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
+from database import enums
+
+# PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
 
 
 class BaseOrmModel(BaseModel):
@@ -51,7 +53,7 @@ class DeploymentBaseRead(BaseOrmModel):
     chat_host: str
     chat_port: Optional[int]
     date_created: datetime
-    state: Optional[str]
+    state: Optional[enums.DeploymentState]
     error: Optional[dict]
     date_state_updated: Optional[datetime]
     stack_id: Optional[int]
@@ -106,27 +108,22 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     display_name: str
     description: str
     date_created: datetime
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
-    publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
+    publish_state: Optional[enums.PublishRequestState]
     cloned_from_id: Optional[int]
     required_api_keys: Optional[List[ApiKeyRead]]
     # clones: List[VirtualAssistant]
 
     @classmethod
     def from_orm(cls, obj):
-        try:
-            if obj.publish_request.is_confirmed is None:
-                obj.visibility = "private"
-                obj.publish_state = "in_progress"
-            elif obj.publish_request.is_confirmed:
-                obj.visibility = obj.publish_request.visibility
-                obj.publish_state = "confirmed"
+        if obj.publish_request:
+            obj.publish_state = obj.publish_request.state
+            if obj.publish_request.state == enums.PublishRequestState.APPROVED:
+                obj.visibility = obj.publish_request.public_visibility
             else:
-                obj.visibility = "private"
-                obj.publish_state = "rejected"
-        except AttributeError:
-            obj.visibility = "private"
-            obj.publish_state = None
+                obj.visibility = obj.private_visibility
+        else:
+            obj.visibility = obj.private_visibility
 
         required_api_keys = []
         for c in obj.components:
@@ -211,6 +208,7 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
+    active_skill: Optional[str]
 
 
 # class UserApiToken(BaseOrmModel):
@@ -245,7 +243,7 @@ class PublishRequestRead(BaseOrmModel):
     virtual_assistant: VirtualAssistantRead
     user: UserRead
     slug: str
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    public_visibility: enums.VirtualAssistantPublicVisibility
     date_created: datetime
     is_confirmed: Optional[bool]
     reviewed_by_user: Optional[UserRead]
@@ -253,7 +251,7 @@ class PublishRequestRead(BaseOrmModel):
 
 
 class PublishRequestCreate(BaseOrmModel):
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
 
 
 class DialogSessionRead(BaseOrmModel):

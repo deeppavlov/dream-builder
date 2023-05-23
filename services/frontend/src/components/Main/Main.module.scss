@@ -16,7 +16,12 @@
   &.editor {
     flex-direction: row;
   }
-  &.fullWidth{
+  &.fullWidth {
     flex-direction: row;
   }
+}
+.column {
+  display: flex;
+
+  flex-direction: column;
 }

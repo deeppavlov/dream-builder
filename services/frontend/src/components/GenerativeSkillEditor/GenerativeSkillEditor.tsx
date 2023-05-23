@@ -1,4 +1,3 @@
-import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
 import { generatePath, Link, useNavigate, useParams } from 'react-router-dom'
@@ -9,12 +8,11 @@ import { SkillAvailabilityType } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import { trigger } from '../../utils/events'
 import getTokensLength from '../../utils/getTokensLength'
-import IntentList from '../IntentList/IntentList'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import DumbSkillSP from '../SkillSidePanel/DumbSkillSP'
 import s from './GenerativeSkillEditor.module.scss'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import { trigger } from '../../utils/events'
 
 interface Props {
   component_id: number
@@ -92,29 +90,16 @@ const GenerativeSkillEditor = ({
               {skill?.lm_service?.display_name || 'Empty'}
             </span>
           </li>
+          <li className={s.item}>
+            <Link to={RoutesList.profile} className={s.link}>
+              Enter your personal access token here
+            </Link>
+          </li>
+          <li className={cx('item', 'big-item')}>
+            <span className={cx('table-name')}>Prompt:</span>
+            <p className={cx('value', 'prompt')}>{skill?.prompt || 'Empty'}</p>
+          </li>
         </ul>
-        <Link to={RoutesList.profile} className={s.link}>
-          Enter your personal access token here
-        </Link>
-        <div className={cx('prompt-block')}>
-          <div className={cx('prompt-header')}>
-            <span className={cx('label')}>Prompt:</span>
-            <span className={cx('label', 'count')}>
-              {tokensLength}/{skill?.lm_service?.max_tokens} tokens
-            </span>
-          </div>
-          <IntentList>
-            <div
-              className={cx('prompt')}
-              onClick={isCustomizable && triggerEditModal}
-            >
-              {skill?.prompt}
-              <button>
-                <EditPencilIcon className={cx('edit-pencil')} />
-              </button>
-            </div>
-          </IntentList>
-        </div>
         <SidePanelButtons>
           <Button
             theme='primary'

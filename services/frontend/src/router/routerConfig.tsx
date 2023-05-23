@@ -5,6 +5,7 @@ import { DraftPage } from '../pages/DraftPage'
 import { EditorPage } from '../pages/Editor/EditorPage'
 import SkillEditorPage from '../pages/Editor/SkillEditorPage'
 import SkillsPage from '../pages/Editor/SkillsPage'
+import ErrorPage from '../pages/ErrorPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import Root from '../pages/Root'
@@ -22,6 +23,7 @@ export const RouterConfig: CustomRouteConfig[] = [
   {
     path: '/',
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: RoutesList.start,
@@ -31,9 +33,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         path: RoutesList.botsAll,
         element: <BotsAllPage />,
         handle: {
-          crumb: () => [
-            <Link to={RoutesList.botsAll}>Public Templates</Link>,
-          ],
+          crumb: () => [<Link to={RoutesList.botsAll}>Public Templates</Link>],
         },
       },
       {
@@ -136,6 +136,10 @@ export const RouterConfig: CustomRouteConfig[] = [
   {
     path: RoutesList.code,
     element: <GoogleAuthPage />,
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
   // Dev pages
   {

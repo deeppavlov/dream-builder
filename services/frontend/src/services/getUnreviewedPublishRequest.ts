@@ -1,6 +1,7 @@
+import { IPublicationRequest } from '../types/types'
 import { privateApi } from './axiosConfig'
 
-export async function getPublishRequest() {
+export async function getPublishRequest(): Promise<IPublicationRequest[]> {
   try {
     const { data } = await privateApi.get(`/admin/publish_request/unreviewed`)
     return data

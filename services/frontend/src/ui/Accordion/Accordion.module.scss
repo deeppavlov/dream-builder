@@ -67,4 +67,8 @@
   &.description {
     max-width: 100%;
   }
+  &.details {
+    @extend .description;
+    @include b3;  
+  }
 }

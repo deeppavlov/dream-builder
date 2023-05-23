@@ -7,7 +7,7 @@ from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
-from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerState, DeployerError
+from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerError
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.logger import logger
 from requests.adapters import HTTPAdapter, Retry
@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
-from database import crud
+from database import crud, enums
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
@@ -99,7 +99,7 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
     db = next(get_db())
     with db.begin():
         if agent_is_up:
-            crud.update_deployment(db, deployment_id, state="UP")
+            crud.update_deployment(db, deployment_id, state=enums.DeploymentState.UP)
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
@@ -137,11 +137,11 @@ async def create_deployment(
                 crud.update_deployment(
                     db,
                     deployment.id,
-                    state=DeployerState.BUILDING_IMAGE,
+                    state=enums.DeploymentState.BUILDING_IMAGE,
                     error=DeployerError(
-                        state=DeployerState.BUILDING_IMAGE,
+                        state=enums.DeploymentState.BUILDING_IMAGE.value,
                         exc=Exception(f"Oh no! Something bad happened during deployment"),
-                    ),
+                    ).dict(),
                 )
             db.commit()
         except IntegrityError:
@@ -168,7 +168,7 @@ async def get_stack_ports():
     return swarm_client.get_used_ports()
 
 
-@deployments_router.get("/{deployment_id}", status_code=status.HTTP_200_OK)
+@deployments_router.get("/{deployment_id}", status_code=status.HTTP_200_OK, response_model=schemas.DeploymentRead)
 async def get_deployment(
     deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
 ):

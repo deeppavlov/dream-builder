@@ -85,9 +85,20 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table assistants>
-              <DistList view='table' dists={privateDists?.data} type='your' />
-            </Table>
+            <>
+              <Table
+                assistants
+                addButton={
+                  privateDists?.data?.length === 0 || !auth?.user ? (
+                    <Placeholder type='table'>
+                      You assistants will appear here
+                    </Placeholder>
+                  ) : undefined
+                }
+              >
+                <DistList view='table' dists={privateDists?.data} type='your' />
+              </Table>
+            </>
           ) : (
             <Container>
               <Slider privateAssistants>
@@ -103,12 +114,9 @@ export const BotsPage = () => {
                     type='your'
                   />
                 )}
-                {privateDists?.data?.length === 0 && (
+                {privateDists?.data?.length === 0 || !auth?.user ? (
                   <Placeholder>You assistants will appear here</Placeholder>
-                )}
-                {!auth?.user && (
-                  <Placeholder>Your assistants will appear here</Placeholder>
-                )}
+                ) : null}
               </Slider>
             </Container>
           )}

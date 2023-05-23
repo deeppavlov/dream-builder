@@ -43,7 +43,8 @@ export interface IAuthor {
   sub: string
 }
 
-export type TModals =
+export type TEvents =
+  | 'TRIGGER_RIGHT_SP_EVENT'
   | 'ShareModal'
   | 'SignInModal'
   | 'AreYouSureModal'
@@ -67,7 +68,7 @@ export type TModals =
   | 'FreezeSkillModal'
   | 'ConfirmApiTokenUpdate'
 
-export type TDistVisibility = 'unlisted' | 'private' | 'public_template'
+export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
 export type TDeploymentState =
   | null
@@ -86,6 +87,14 @@ export interface IDeployment {
   date_state_updated: any
   id: number
   state: TDeploymentState
+  error: {
+    state: string
+    message: string
+    exception: string
+  }
+}
+export interface IDeploymentStatus extends IDeployment {
+  virtual_assistant: BotInfoInterface
 }
 type TKey = {
   base_url: string
@@ -105,7 +114,7 @@ export interface BotInfoInterface {
   gpu_usage: string
   disk_usage: string
   visibility: TDistVisibility
-  publish_state: null | 'confirmed' | 'in_progress'
+  publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
 }
@@ -166,6 +175,14 @@ export interface DistListProps {
   type: BotAvailabilityType
   size?: BotCardSize
 }
+
+export interface ICreateComponent {
+  display_name: string
+  description: string
+  lm_service_id?: number
+  prompt?: string
+}
+
 export interface SkillListProps {
   skills: ISkill[]
   view: ViewType
@@ -174,7 +191,7 @@ export interface SkillListProps {
   forGrid?: boolean
   forModal?: boolean
   withoutDate?: boolean
-  addFunc?: (distName: string, id: number) => void
+  handleAdd?: (skill: ICreateComponent) => void
 }
 export interface SettingKey {
   name: string
@@ -212,6 +229,7 @@ export interface LM_Service {
   max_tokens: number
   description: string
   project_url: string
+  api_key: string | null
 }
 
 export interface ISkill extends IStackElement {
@@ -226,7 +244,12 @@ export interface SessionConfig {
   virtual_assistant_id: number
 }
 
-export type ChatHistory = { text: string; author: 'bot' | 'me' }
+export type ChatHistory = {
+  active_skill?: ISkill
+  text: string
+  author: 'bot' | 'me'
+  hidden?: boolean
+}
 
 export type Message = { message: string }
 export type ChatPanelType = 'bot' | 'skill'
@@ -280,7 +303,10 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
+
 export type AssistantFormValues = { display_name: string; description: string }
+
+export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 
 export interface IApiService {
   base_url: string
@@ -296,7 +322,7 @@ export interface IUserApiKey {
 }
 
 export interface IPostChat {
-  hidden?:boolean
+  hidden?: boolean
   dialog_session_id: number
   text: string
   prompt?: string
@@ -352,5 +378,7 @@ export interface IPublicationRequest {
   slug: string
   user: IAuthor
   virtual_assistant: BotInfoInterface
-  visibility: 'public_template' | 'private' | 'unlisted'
+  visibility: 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK'
 }
+
+export type TErrorStatus = 401 | 404 | 500 | 503

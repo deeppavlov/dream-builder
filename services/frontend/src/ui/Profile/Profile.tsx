@@ -1,9 +1,14 @@
 import { ReactComponent as ArrowDown } from '@assets/icons/arrow_down_topbar.svg'
+import { FC } from 'react'
 import { useAuth } from '../../context/AuthProvider'
 import { ProfileContextMenu } from '../ProfileContextMenu/ProfileContextMenu'
 import s from './Profile.module.scss'
 
-export const Profile = () => {
+interface Props {
+  auth: any
+}
+
+export const Profile: FC<Props> = () => {
   const auth = useAuth()
   const tooltipId = 'profile'
   return (

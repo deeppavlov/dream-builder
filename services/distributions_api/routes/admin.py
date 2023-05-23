@@ -44,7 +44,7 @@ async def confirm_publish_request(
     db: Session = Depends(get_db),
 ) -> schemas.PublishRequestRead:
     with db.begin():
-        publish_request = crud.confirm_publish_request(db, publish_request_id, user.id)
+        publish_request = crud.approve_publish_request(db, publish_request_id, user.id)
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,
@@ -63,7 +63,7 @@ async def decline_publish_request(
     db: Session = Depends(get_db),
 ) -> schemas.PublishRequestRead:
     with db.begin():
-        publish_request = crud.decline_publish_request(db, publish_request_id, user.id)
+        publish_request = crud.reject_publish_request(db, publish_request_id, user.id)
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,

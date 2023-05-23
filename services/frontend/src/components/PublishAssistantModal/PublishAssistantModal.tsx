@@ -1,17 +1,26 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import {
+  PublishRequestsStatus,
+  VisibilityStatus,
+} from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
-import { BotInfoInterface, TDistVisibility } from '../../types/types'
+import { visibility } from '../../mapping/visibility'
+import {
+  BotInfoInterface,
+  TDistVisibility,
+  Visibility,
+} from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { RadioButton } from '../../ui/RadioButton/RadioButton'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import s from './PublishAssistantModal.module.scss'
 
-type Visibility = 'public_template' | 'private' | 'unlisted' | null
 interface FormValues {
   hide: boolean
   visibility: Visibility
@@ -22,7 +31,7 @@ export const PublishAssistantModal = () => {
   const [newValue, setNewValue] = useState<Visibility>()
   const { name: distName } = useParams()
   const isEditor = distName !== undefined && distName.length > 0
-
+  const queryClient = useQueryClient()
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
   const { changeVisibility } = useAssistants()
@@ -39,21 +48,30 @@ export const PublishAssistantModal = () => {
     const visibility = data?.visibility!
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
-    
+
     visibility !== currentVisibilityStatus ||
-    bot?.publish_state == 'in_progress'
+    bot?.publish_state == PublishRequestsStatus.IN_REVIEW
       ? toast
           .promise(
-            changeVisibility.mutateAsync({
-              name,
-              visibility,
-              inEditor: isEditor,
-              deploymentState,
-            }),
+            changeVisibility.mutateAsync(
+              {
+                name,
+                visibility,
+                inEditor: isEditor,
+                deploymentState,
+              },
+              {
+                onSuccess: () => {
+                  currentVisibilityStatus ===
+                    VisibilityStatus.PUBLIC_TEMPLATE &&
+                    queryClient.invalidateQueries('public_dists')
+                },
+              }
+            ),
             {
               loading: 'Loading...',
               success:
-                visibility === 'public_template'
+                visibility === VisibilityStatus.PUBLIC_TEMPLATE
                   ? 'Submitted For Review!'
                   : 'Success!',
               error: 'Something went wrong...',
@@ -72,34 +90,12 @@ export const PublishAssistantModal = () => {
     setNewValue(() => null)
   }
   useObserver('PublishAssistantModal', handleEventUpdate)
-  const visibility = [
-    {
-      id: 'Private',
-      response: 'private',
-      description: 'Private (only you can see it)',
-    },
-    {
-      id: 'Unlisted',
-      response: 'unlisted',
-      description:
-        'Unlisted (only those you’ve shared the direct link can see it)',
-    },
-    {
-      id: 'Public',
-      response: 'public_template',
-      description: 'Public Template (everyone can see it and re-use it)',
-    },
-  ]
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
-          <p className={s.annotation}>
-            Sharing Assistants with OpenAI models is temporarily disabled. In
-            the future, we hope to remove this limitation.
-          </p>
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
@@ -137,7 +133,9 @@ export const PublishAssistantModal = () => {
                 disabled: changeVisibility?.isLoading,
               }}
             >
-              {newValue === 'public_template' ? 'Publish' : ' Save'}
+              {newValue === VisibilityStatus.PUBLIC_TEMPLATE
+                ? 'Publish'
+                : ' Save'}
             </Button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 from typing import List
 
+import aiohttp
 from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component, DreamComponent
 from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
@@ -13,6 +14,20 @@ from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
+
+
+async def generate_prompt_goals(prompt_goals_url: str, prompt: str, openai_api_token):
+    data = {
+        "prompts": [prompt],
+        "openai_api_keys": [openai_api_token],
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(prompt_goals_url, json=data) as response:
+            response_data = await response.json()
+    goals = response_data[0]
+
+    return goals
 
 
 @components_router.get("", status_code=status.HTTP_200_OK)
@@ -42,7 +57,6 @@ async def create_component(
             prompted_skill_port,
             lm_service.name,
             lm_service.default_port,
-            f"gunicorn --workers=1 server:app -b 0.0.0.0:{prompted_skill_port} --reload",
         )
 
         prompted_component_name = generate_unique_name()
@@ -112,7 +126,12 @@ async def patch_component(
         if payload.description:
             dream_component.component.description = payload.description
         if payload.prompt:
-            dream_component.prompt = payload.prompt
+            goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
+            goals_lm_service_url = f"http://{goals_lm_service.name}:{goals_lm_service.default_port}/generate_goals"
+            dream_component.update_prompt(
+                payload.prompt,
+                await generate_prompt_goals(goals_lm_service_url, payload.prompt, settings.app.default_openai_api_key)
+            )
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
             dream_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"

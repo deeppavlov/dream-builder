@@ -64,6 +64,7 @@ async def create_virtual_assistant(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }
@@ -292,6 +293,7 @@ async def clone_dist(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }

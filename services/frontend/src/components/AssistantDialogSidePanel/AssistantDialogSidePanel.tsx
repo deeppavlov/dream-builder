@@ -186,7 +186,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
-    bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
+    readyToGetSession && bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
   }, [user?.id, bot])
 
   // get existing dialog session || create new

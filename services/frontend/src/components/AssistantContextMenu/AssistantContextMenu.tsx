@@ -58,7 +58,7 @@ const AssistantContextMenu: FC<Props> = ({
 
   const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
 
-  const handleShareBtnClick = () => trigger('ShareModal', { bot })
+  const handleShareBtnClick = () => trigger('ShareAssistantModal', { bot })
 
   const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
 

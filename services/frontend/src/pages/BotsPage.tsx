@@ -11,8 +11,9 @@ import { Modal } from '../components/Modal/Modal'
 import { Placeholder } from '../components/PlaceHolder/PlaceHolder'
 import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
+import { ShareAssistantModal } from '../components/ShareAssistantModal/ShareAssistantModal'
 import { SignInModal } from '../components/SignInModal/SignInModal'
+import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
 import { useAssistants } from '../hooks/useAssistants'
@@ -23,7 +24,6 @@ import { Slider } from '../ui/Slider/Slider'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
-import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 
 export const BotsPage = () => {
   const { options } = useDisplay()
@@ -54,7 +54,9 @@ export const BotsPage = () => {
                   assistants
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
-                  {publicDists?.isLoading && <TableRowsLoader rowsCount={4} colCount={6} />}
+                  {publicDists?.isLoading && (
+                    <TableRowsLoader rowsCount={4} colCount={6} />
+                  )}
                   <DistList
                     view='table'
                     dists={publicDists?.data}
@@ -100,7 +102,9 @@ export const BotsPage = () => {
                   ) : undefined
                 }
               >
-                {publicDists?.isLoading && <TableRowsLoader rowsCount={2} colCount={6} />}
+                {publicDists?.isLoading && (
+                  <TableRowsLoader rowsCount={2} colCount={6} />
+                )}
                 <DistList view='table' dists={privateDists?.data} type='your' />
               </Table>
             </>
@@ -130,7 +134,7 @@ export const BotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
-        <ShareModal />
+        <ShareAssistantModal />
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />

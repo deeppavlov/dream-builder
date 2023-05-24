@@ -19,9 +19,9 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { ToastCopySucces } from '../Toasts/Toasts'
-import s from './ShareModal.module.scss'
+import s from './ShareAssistantModal.module.scss'
 
-export const ShareModal = () => {
+export const ShareAssistantModal = () => {
   const [bot, setBot] = useState<string>('not yet')
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
@@ -45,7 +45,7 @@ export const ShareModal = () => {
     })
   }
 
-  useObserver('ShareModal', handleEventUpdate)
+  useObserver('ShareAssistantModal', handleEventUpdate)
   useEffect(() => {
     reset({
       link: `https://assistants.deepdream.builders/?assistant=${bot}`,

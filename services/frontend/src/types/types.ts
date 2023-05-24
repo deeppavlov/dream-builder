@@ -45,7 +45,7 @@ export interface IAuthor {
 
 export type TEvents =
   | 'TRIGGER_RIGHT_SP_EVENT'
-  | 'ShareModal'
+  | 'ShareAssistantModal'
   | 'SignInModal'
   | 'AreYouSureModal'
   | 'RenewChat'

@@ -1,6 +1,6 @@
-import { FC, useEffect } from 'react'
+import { FC,useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate,useParams } from 'react-router-dom'
 import { VisibilityStatus } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
@@ -105,7 +105,7 @@ export const AssistantModule: FC<Props> = () => {
       toast.promise(deleteDeployment.mutateAsync(bot), toasts.deleteDeployment)
   }
   const handleShare = () => {
-    trigger('ShareModal', { bot })
+    trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
     if (!auth?.user)

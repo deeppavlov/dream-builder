@@ -9,7 +9,7 @@ import { DeleteSkillModal } from '../../components/DeleteSkillModal/DeleteSkillM
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareModal } from '../../components/ShareModal/ShareModal'
+import { ShareAssistantModal } from '../../components/ShareAssistantModal/ShareAssistantModal'
 import { DeepyHelperTab } from '../../components/Sidebar/components/DeepyHelperTab'
 import { IntegrationTab } from '../../components/Sidebar/components/IntegrationTab'
 import { SettingsTab } from '../../components/Sidebar/components/SettingsTab'
@@ -106,7 +106,7 @@ export const EditorPage = () => {
       <IntentCatcherModal />
       <IntentResponderModal />
       <SignInModal />
-      <ShareModal />
+      <ShareAssistantModal />
       <DeleteSkillModal />
       <SkillModal />
     </>

@@ -9,7 +9,7 @@ import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { Modal } from '../components/Modal/Modal'
 import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
+import { ShareAssistantModal } from '../components/ShareAssistantModal/ShareAssistantModal'
 import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../context/AuthProvider'
 import { useDisplay } from '../context/DisplayContext'
@@ -81,7 +81,7 @@ export const UsersBotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
-        <ShareModal />
+        <ShareAssistantModal />
         <Modal />
         <DeployNotificationModal />
       </Main>

@@ -4,6 +4,7 @@ $color2: #3300ff;
 .label {
   width: 100%;
   display: flex;
+
   align-items: center;
   gap: 10px;
   @include b3;
@@ -18,7 +19,7 @@ $color2: #3300ff;
 
     input {
       background-color: $text6 !important;
-      box-shadow: inset 0 0 0 calc(1.5 / 16) + rem $color1;
+      box-shadow: inset 0 0 0 calc(1.5 / 20) + rem $color1;
       border-color: $text6 !important;
     }
   }
@@ -27,7 +28,7 @@ $color2: #3300ff;
 
     input {
       background-color: $color2 !important;
-      box-shadow: inset 0 0 0 calc(1.5 / 16) + rem $color1;
+      box-shadow: inset 0 0 0 calc(1.5 / 20) + rem $color1;
       border-color: $color2 !important;
     }
   }
@@ -40,17 +41,17 @@ $color2: #3300ff;
     appearance: none;
     -webkit-appearance: none;
     border-radius: 100%;
-    border: calc(1.5 / 16) + rem solid $text2;
+    border: calc(1.5 / 20) + rem solid $text2;
     min-width: 20px;
     max-width: 20px;
     min-height: 20px;
     max-height: 20px;
     transition: all 150ms ease;
+    
     cursor: pointer;
-
     &:checked {
       background-color: $color2;
-      box-shadow: inset 0 0 0 calc(1.5 / 16) + rem $color1;
+      box-shadow: inset 0 0 0 calc(1.5 / 20) + rem $color1;
       border-color: $color2;
     }
 

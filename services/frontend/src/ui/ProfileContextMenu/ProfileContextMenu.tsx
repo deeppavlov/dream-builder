@@ -1,8 +1,7 @@
-import { useNavigate } from 'react-router-dom'
 import BaseContextMenu from '../../components/BaseContextMenu/BaseContextMenu'
 import ContextMenuButton from '../../components/ContextMenuButton/ContextMenuButton'
 import { logout } from '../../context/AuthProvider'
-import { RoutesList } from '../../router/RoutesList'
+import { trigger } from '../../utils/events'
 
 interface Props {
   tooltipId: string
@@ -10,9 +9,8 @@ interface Props {
 }
 
 export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
-  const nav = useNavigate()
+  const handleProfileClick = () => trigger('AccessTokensModal', {})
 
-  const handleProfileClick = () => nav(RoutesList.profile)
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
@@ -22,7 +20,12 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
         handleClick={handleProfileClick}
       />
       <hr />
-      <ContextMenuButton type='logout' theme='dark' name='Log out' handleClick={logout} />
+      <ContextMenuButton
+        type='logout'
+        theme='dark'
+        name='Log out'
+        handleClick={logout}
+      />
     </BaseContextMenu>
   )
 }

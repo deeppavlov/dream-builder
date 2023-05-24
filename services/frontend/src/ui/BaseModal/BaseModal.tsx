@@ -11,6 +11,7 @@ export interface BaseModalInterface {
   customStyles?: Modal.Styles
   children?: React.ReactNode
   skillsListModal?: boolean
+  tokensModal?: boolean
   type?: string
 }
 
@@ -21,6 +22,7 @@ const BaseModal: FC<BaseModalInterface> = ({
   customStyles,
   children,
   skillsListModal,
+  tokensModal,
   type,
 }) => {
   const styles: Modal.Styles = {
@@ -66,7 +68,7 @@ const BaseModal: FC<BaseModalInterface> = ({
   return isOpen ? (
     <Modal style={styles} isOpen={isOpen} onRequestClose={closeModal}>
       <div
-        className={cx('baseModal', skillsListModal && 'skillsListModal')}
+        className={cx('baseModal', skillsListModal && 'skillsListModal', tokensModal && 'tokensModal')}
         data-modal-type={type}
       >
         <button onClick={closeModal}>

@@ -2,7 +2,6 @@ export const RoutesList = {
   start: '/',
   botsAll: '/allbots',
   yourBots: '/yourbots',
-  profile: '/profile',
   code: '/code',
   editor: {
     default: '/:name',

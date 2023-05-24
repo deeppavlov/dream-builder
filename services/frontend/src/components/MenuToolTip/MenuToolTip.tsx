@@ -1,9 +1,8 @@
 import { useQueryClient } from 'react-query'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { VISIBILITY_STATUS } from '../../constants/constants'
 import { usePreview } from '../../context/PreviewProvider'
 import { mockSkills } from '../../mocks/database/mockSkills'
-import { RoutesList } from '../../router/RoutesList'
 import { BotInfoInterface, TTopbar } from '../../types/types'
 import { trigger } from '../../utils/events'
 import BaseContextMenu from '../BaseContextMenu/BaseContextMenu'
@@ -17,14 +16,11 @@ interface Props {
 
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
-  const navigate = useNavigate()
   const { name: distName } = useParams()
   const queryState = useQueryClient().getQueryState(['dist', distName])
   const dist = queryState?.data as BotInfoInterface | undefined
 
-  const handleWelcomeClick = () => {
-    navigate(RoutesList.profile)
-  }
+  const handleWelcomeClick = () => {}
   const handleRenameClick = () => {
     trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
   }

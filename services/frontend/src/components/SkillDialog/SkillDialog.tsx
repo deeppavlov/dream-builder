@@ -3,16 +3,15 @@ import classNames from 'classnames/bind'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
-import { Link } from 'react-router-dom'
 import { DEBUG_DIST, OPEN_AI_LM } from '../../constants/constants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
-import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
 import { ChatForm, IDialogError, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
+import { trigger } from '../../utils/events'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
@@ -124,13 +123,18 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     }, 1000)
   }
 
+  const handleCheckChatSettings = () => {
+    checkIsChatSettings(user?.id)
+  }
+
+  const handleEnterTokentClick = () => trigger('AccessTokensModal', {})
+
   // hooks
   useOnlyOnMount(() => renewDialogSession())
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
-  useEffect(() => {
-    checkIsChatSettings(user?.id)
-  }, [skill, user?.id])
+  useEffect(() => handleCheckChatSettings(), [skill, user?.id])
+  useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   return (
     <form
@@ -143,9 +147,11 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
           <span className={s.alertName}>Error!</span>
           <p className={s.alertDesc}>{error.msg}</p>
           {error.type === 'api-key' && (
-            <Link className={s.link} to={RoutesList.profile}>
-              Enter your personal access token here
-            </Link>
+            <div className={s.link}>
+              <Button theme='ghost' props={{ onClick: handleEnterTokentClick }}>
+                Enter your personal access token here
+              </Button>
+            </div>
           )}
           <Button
             theme='error'

@@ -3,13 +3,13 @@ import { BotsAllPage } from '../pages/BotsAllPage'
 import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
 import { EditorPage } from '../pages/Editor/EditorPage'
+import { IntegrationPage } from '../pages/Editor/IntegrationPage'
 import SkillEditorPage from '../pages/Editor/SkillEditorPage'
 import SkillsPage from '../pages/Editor/SkillsPage'
 import ErrorPage from '../pages/ErrorPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
-import { ProfilePage } from '../pages/ProfilePage'
 import Root from '../pages/Root'
-import {  SandboxPage } from '../pages/SandboxPage'
+import { SandboxPage } from '../pages/SandboxPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
@@ -18,7 +18,6 @@ import { consts } from '../utils/consts'
 import { AdminRoute } from './AdminRoute'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
-import { IntegrationPage } from '../pages/Editor/IntegrationPage'
 
 export const RouterConfig: CustomRouteConfig[] = [
   {
@@ -130,19 +129,6 @@ export const RouterConfig: CustomRouteConfig[] = [
             },
           },
         ],
-      },
-      {
-        path: RoutesList.profile,
-        element: (
-          <PrivateRoute>
-            <ProfilePage />
-          </PrivateRoute>
-        ),
-        handle: {
-          crumb: () => [
-            <Link to={RoutesList.profile}>Connected Services</Link>,
-          ],
-        },
       },
     ],
   },

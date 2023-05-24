@@ -51,7 +51,7 @@ export const Button = ({
       {...props}
     >
       {theme === 'tertiary' && <PlusIcon className={s.button__icon} />}
-      {theme === 'ghost' && <RightIcon className={s.button__icon} />}
+      {/* {theme === 'ghost' && <RightIcon className={s.button__icon} />} */}
       {children}
     </button>
   )

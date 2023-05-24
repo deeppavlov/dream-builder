@@ -1,18 +1,18 @@
 import classNames from 'classnames/bind'
-import { matchPath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Gear } from '../../../assets/icons/gear.svg'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
-import { RoutesList } from '../../../router/RoutesList'
+import { useDisplay } from '../../../context/DisplayContext'
+import { consts } from '../../../utils/consts'
+import { trigger } from '../../../utils/events'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import s from './SettingsTab.module.scss'
 
 export const SettingsTab = () => {
-  const isActive = matchPath(RoutesList.profile, location.pathname)
+  const { options } = useDisplay()
+  const isActive = options.get(consts.SETTINGS_MODAL_IS_ACTIVE)
   let cx = classNames.bind(s)
 
-  const navigate = useNavigate()
-
-  const settingsClickHandler = () => navigate('/profile')
+  const settingsClickHandler = () => trigger('AccessTokensModal', {})
 
   return (
     <button

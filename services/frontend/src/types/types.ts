@@ -67,6 +67,8 @@ export type TEvents =
   | 'DeleteSkillModal'
   | 'FreezeSkillModal'
   | 'ConfirmApiTokenUpdate'
+  | 'AccessTokensModal'
+  | 'AccessTokensChanged'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 

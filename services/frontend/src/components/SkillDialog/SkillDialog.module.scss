@@ -129,9 +129,12 @@
 }
 
 .link {
-  text-decoration: underline;
-  align-self: flex-end;
-  text-underline-offset: 3px;
+  margin-bottom: 24px;
+  button {
+    padding: 0;
+    min-height: fit-content;
+    height: fit-content;
+  }
 }
 
 .start,
@@ -144,13 +147,6 @@
   justify-content: center;
   text-align: center;
   @include b3;
-
-  button {
-    @include large_btn;
-    @include lnks_n_btns3;
-    @include primary_btn;
-    @include btn_primary_behavior;
-  }
 }
 .alertName {
   @include t2;
@@ -163,7 +159,4 @@
 }
 .error {
   color: #ff3b30;
-  button {
-    background-color: #ff3b30;
-  }
 }

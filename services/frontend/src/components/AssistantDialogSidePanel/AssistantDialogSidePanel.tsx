@@ -3,7 +3,6 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQuery, useQueryClient } from 'react-query'
-import { Link } from 'react-router-dom'
 import {
   DEPLOY_STATUS,
   DUMMY_SKILL,
@@ -16,8 +15,8 @@ import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { useDeploy } from '../../hooks/useDeploy'
+import { useObserver } from '../../hooks/useObserver'
 import { toasts } from '../../mapping/toasts'
-import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { getUserId } from '../../services/getUserId'
 import {
@@ -31,6 +30,7 @@ import Button from '../../ui/Button/Button'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
+import { trigger } from '../../utils/events'
 import { getAvailableDialogSession } from '../../utils/getAvailableDialogSession'
 import { getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
@@ -186,13 +186,19 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       toasts.deploy
     )
   }
+  const handleCheckChatSettings = () => {
+    readyToGetSession && bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
+  }
+  const handleEnterTokentClick = () => trigger('AccessTokensModal', {})
+
   // hooks
   useChatScroll(chatRef, [history, message, remoteAssistantHistory])
 
   // проверяем настройки
   useEffect(() => {
-    readyToGetSession && bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
+    handleCheckChatSettings()
   }, [user?.id, bot])
+  useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new
   useEffect(() => {
@@ -242,9 +248,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             <span className={s.alertName}>Error!</span>
             <p className={s.alertDesc}>{errorPanel.msg}</p>
             {errorPanel.type === 'api-key' && (
-              <Link className={s.link} to={RoutesList.profile}>
-                Enter your personal access token here
-              </Link>
+              <div className={s.link}>
+                <Button
+                  theme='ghost'
+                  props={{ onClick: handleEnterTokentClick }}
+                >
+                  Enter your personal access token here
+                </Button>
+              </div>
             )}
           </>
         )}

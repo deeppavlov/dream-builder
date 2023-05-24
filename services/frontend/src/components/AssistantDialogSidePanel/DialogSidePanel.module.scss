@@ -93,25 +93,19 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-
-  button {
-    @include large_btn;
-    @include lnks_n_btns3;
-    @include primary_btn;
-    @include btn_primary_behavior;
-  }
 }
 .alertName {
   @include t2;
 }
+.alertDesc {
+  @include b3;
+}
+
 .runTest {
   margin-top: 24px;
 }
 .error {
   color: #ff3b30;
-  button {
-    background-color: #ff3b30;
-  }
 }
 .deployPanel {
   width: 100%;
@@ -154,25 +148,15 @@
   }
 }
 .link {
-  text-decoration: underline;
-  align-self: flex-end;
-  text-underline-offset: 3px;
-}
-.alertName {
-  @include t2;
-}
-.alertDesc {
-  @include b3;
-}
-.runTest {
-  margin-top: 24px;
-}
-.error {
-  color: #ff3b30;
+  margin-bottom: 24px;
   button {
-    background-color: #ff3b30;
+    padding: 0;
+    min-height: fit-content;
+    height: fit-content;
   }
 }
+
+
 
 .loaderWrapper {
   display: flex;

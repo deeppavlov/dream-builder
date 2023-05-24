@@ -5,7 +5,6 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import { consts } from '../../utils/consts'
 import { AccessTokensModule } from '../AccessTokensModule/AccessTokensModule'
 import { ConfirmApiTokenUpdate } from '../ConfirmApiTokenUpdate/ConfirmApiTokenUpdate'
-import s from './AccessTokensModal.module.scss'
 
 export const AccessTokensModal = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -27,10 +26,13 @@ export const AccessTokensModal = () => {
 
   return (
     <>
-      <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} tokensModal>
-        <div className={s.tokensModal}>
-          <AccessTokensModule />
-        </div>
+      <BaseModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        tokensModal
+        customStyles={{ overlay: { top: 64 } }}
+      >
+        <AccessTokensModule />
       </BaseModal>
       <ConfirmApiTokenUpdate />
     </>

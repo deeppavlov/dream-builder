@@ -58,8 +58,8 @@ export const AccessTokensModule = () => {
   const handleRemoveBtnClick = (token_id: number) => {
     toast
       .promise(deleteToken(token_id), {
-        loading: 'Deleting...',
-        success: 'Success!',
+        loading: 'Removing...',
+        success: 'Successfully removed!',
         error: 'Something went wrong...',
       })
       .finally(() => handleChanges())

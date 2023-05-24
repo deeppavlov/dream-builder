@@ -1,118 +1,116 @@
-import { useState } from 'react'
-import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
-import { trigger } from '../../utils/events'
+import { useState } from 'react'
 import Button from '../../ui/Button/Button'
+import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
+import { trigger } from '../../utils/events'
+import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
+import BaseLink from '../BaseLink/BaseLink'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
+import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
-import IntentList from '../IntentList/IntentList'
-import BaseLink from '../BaseLink/BaseLink'
-import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
-import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
-import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
-import { Annotator } from '../../types/types'
 import s from './IntentCatcherSidePanel.module.scss'
 
 const intentsMock: IntentListItemInterface[] = [
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Want_pizza',
     about: 'want pizza, wanna pizza, love pizza, like pizza...',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Hello',
     about: 'Hey, Hello, Hi',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Yes',
     about: 'yes, yeah, alright, ok',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'No',
     about: 'No, Nope, Do not do it',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Help',
     about: 'sos, help, help me',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Stop',
     about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Cancel',
     about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Fallback',
     about: 'Fallback',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Bye',
     about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Stop',
     about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Cancel',
     about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Fallback',
     about: 'Fallback',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Bye',
     about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Stop',
     about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Cancel',
     about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Fallback',
     about: 'Fallback',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '1',
     name: 'Bye',
     about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
@@ -169,7 +167,8 @@ const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
             props={{
               onClick: handleAddIntentBtnClick,
               disabled: isTraining || disabled,
-            }}>
+            }}
+          >
             <PlusIcon />
             Add Intent
           </Button>
@@ -197,7 +196,8 @@ const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
           <SidePanelStatus
             status='default'
             title='Sorry, training is not yet available.'
-            desc='Stay tuned for the upcoming updates!'>
+            desc='Stay tuned for the upcoming updates!'
+          >
             <Button theme='secondary' props={{ onClick: handleCloseBtnClick }}>
               Close
             </Button>
@@ -219,7 +219,8 @@ const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
             <div className={s.training__btns}>
               <Button
                 theme='secondary'
-                props={{ onClick: handleCancelTrainBtnClick }}>
+                props={{ onClick: handleCancelTrainBtnClick }}
+              >
                 Cancel
               </Button>
             </div>
@@ -235,15 +236,18 @@ const IntentCatcherSidePanel = ({ annotator, activeTab, disabled }: Props) => {
             }.`}
             desc='Do you want to replace the original Intent Catcher with this
           model?'
-            detailsLink='#'>
+            detailsLink='#'
+          >
             <Button
               theme='secondary'
-              props={{ onClick: handleCancelTrainBtnClick }}>
+              props={{ onClick: handleCancelTrainBtnClick }}
+            >
               Cancel
             </Button>
             <Button
               theme='primary'
-              props={{ disabled: trainingResponse?.status === 'error' }}>
+              props={{ disabled: trainingResponse?.status === 'error' }}
+            >
               Replace
             </Button>
           </SidePanelStatus>

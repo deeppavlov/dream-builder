@@ -1,5 +1,4 @@
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
-import { nanoid } from 'nanoid'
 import { ISkill } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
@@ -15,43 +14,43 @@ import s from './IntentResponderSidePanel.module.scss'
 
 export const intentsMock: IntentListItemInterface[] = [
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Exit',
     about: 'Bye-bye!',
     status: 'error',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Exit',
     about: 'Bye-bye!',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: "what_time | don't_understand",
     about: 'Sorry, I might sound confusing, I am still ...',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Bye',
     about: 'Bye, See you, Goodbye, See ya',
     status: 'success',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Stop',
     about: 'stop, stop it, let it stop',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Cancel',
     about: 'Cancel, cancel it',
     status: 'warning',
   },
   {
-    id: nanoid(8),
+    id: '0',
     name: 'Fallback',
     about: 'Fallback',
     status: 'success',

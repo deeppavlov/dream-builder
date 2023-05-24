@@ -335,6 +335,7 @@ async def clone_dist(
                 gpu_usage=dream_component.component.gpu_usage,
                 description=dream_component.component.description,
                 prompt=dream_component.prompt,
+                prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
             )
             new_components.append(component)

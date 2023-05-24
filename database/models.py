@@ -142,6 +142,8 @@ class LmService(Base):
     api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
     api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
 
+    is_active = Column(Boolean, nullable=False)
+
 
 class Deployment(Base):
     __tablename__ = "deployment"
@@ -249,6 +251,7 @@ class Component(Base):
     endpoint = Column(String)
 
     prompt = Column(String, nullable=True)
+    prompt_goals = Column(String, nullable=True)
     lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
     lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
 
@@ -330,7 +333,12 @@ def pre_populate_publish_request(target, connection, **kw):
 
 @listens_for(LmService.__table__, "after_create")
 def pre_populate_lm_service(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "lm_service.tsv", target, connection)
+    _pre_populate_from_tsv(
+        settings.db.initial_data_dir / "lm_service.tsv",
+        target,
+        connection,
+        map_value_types={"is_active": lambda x: bool(int(x))},
+    )
 
 
 @listens_for(Deployment.__table__, "after_create")

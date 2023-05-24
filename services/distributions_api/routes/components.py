@@ -71,8 +71,8 @@ async def create_component(
             payload.description,
         )
 
-        prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")["prompt"]
-        prompted_component.prompt = prompt
+        prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
+        prompted_component.update_prompt(prompt["prompt"], prompt["goals"])
         prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
@@ -91,7 +91,8 @@ async def create_component(
             model_type=prompted_component.component.model_type,
             gpu_usage=prompted_component.component.gpu_usage,
             description=prompted_component.component.description,
-            prompt=prompt,
+            prompt=prompted_component.prompt,
+            prompt_goals=prompted_component.prompt_goals,
             lm_service_id=lm_service.id,
         )
         return schemas.ComponentRead.from_orm(component)
@@ -109,14 +110,7 @@ async def patch_component(
     component_id: int, payload: schemas.ComponentUpdate, db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:
     with db.begin():
-        component = crud.update_component(
-            db,
-            component_id,
-            display_name=payload.display_name,
-            description=payload.description,
-            prompt=payload.prompt,
-            lm_service_id=payload.lm_service_id,
-        )
+        component = crud.get_component(db, component_id)
         dream_component = DreamComponent.from_file(
             settings.db.dream_root_path / component.source, settings.db.dream_root_path
         )
@@ -125,19 +119,30 @@ async def patch_component(
             dream_component.component.display_name = payload.display_name
         if payload.description:
             dream_component.component.description = payload.description
+        prompt_goals = None
         if payload.prompt:
             goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
             goals_lm_service_url = f"http://{goals_lm_service.name}:{goals_lm_service.default_port}/generate_goals"
-            dream_component.update_prompt(
-                payload.prompt,
-                await generate_prompt_goals(goals_lm_service_url, payload.prompt, settings.app.default_openai_api_key)
+            prompt_goals = await generate_prompt_goals(
+                goals_lm_service_url, payload.prompt, settings.app.default_openai_api_key
             )
+            dream_component.update_prompt(payload.prompt, prompt_goals)
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
             dream_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
             dream_component.lm_config = lm_service.default_generative_config
 
         dream_component.save_configs()
+
+        component = crud.update_component(
+            db,
+            component_id,
+            display_name=payload.display_name,
+            description=payload.description,
+            prompt=payload.prompt,
+            prompt_goals=prompt_goals,
+            lm_service_id=payload.lm_service_id,
+        )
 
     return schemas.ComponentRead.from_orm(component)
 

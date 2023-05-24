@@ -47,13 +47,8 @@ const DumbSkillSP = ({
       ),
   })
   const { name: distName } = useParams()
-  // const nameForComponentType = componentTypeMap[skill?.component_type!]
-  // const nameForModelType = modelTypeMap[skill?.model_type!]
-  // const srcForComponentType = srcForIcons(nameForComponentType)
-  // const srcForModelType = srcForIcons(nameForModelType)
-  let cx = classNames.bind(s)
 
-  // const handleAddSkillBtnClick = () => trigger('CreateSkillModal' as any, skill)
+  let cx = classNames.bind(s)
 
   const handleRenameBtnClick = () =>
     trigger('SkillModal', { action: 'edit', skill })
@@ -119,25 +114,6 @@ const DumbSkillSP = ({
                 </>
               )}
             </li>
-
-            {/* {skill?.component_type && (
-              <li className={s.item}>
-                <span className={cx('table-name')}>Component Type:</span>
-                <span className={cx('value', nameForComponentType)}>
-                  <img className={s.logo} src={srcForComponentType} />
-                  <span>{skill?.component_type}</span>
-                </span>
-              </li>
-            )}
-            <li className={s.item}>
-              <span className={cx('table-name')}>Model Type:</span>
-              <span className={cx('value', nameForModelType)}>
-                <img className={s.logo} src={srcForModelType} />
-                <span className={cx(nameForModelType)}>
-                  {skill?.model_type}
-                </span>
-              </span>
-            </li> */}
             {skill?.lm_service?.display_name && (
               <li className={s.item}>
                 <span className={cx('table-name')}>Model:</span>
@@ -160,27 +136,6 @@ const DumbSkillSP = ({
               visibility={visibility}
             />
           </li>
-          {/* <div className={s.btns}>
-            <div data-tip data-tooltip-id={'skillAddTo' + tooltipId}>
-              <Button
-                theme='primary'
-                props={{
-                  disabled: isPreview,
-                  onClick: handleAddSkillBtnClick,
-                }}
-              >
-                Add to ...
-              </Button>
-            </div>
-          </div>
-
-          {(isPreview || !auth?.user) && (
-            <BaseToolTip
-              delayShow={TOOLTIP_DELAY}
-              id={'skillAddTo' + tooltipId}
-              content='You need to clone the virtual assistant to edit'
-            />
-          )} */}
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}

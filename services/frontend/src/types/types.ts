@@ -15,19 +15,6 @@ export interface ITokens {
   token: string
 }
 
-export interface IAPIToken {
-  id: number
-  name: string
-  description: string
-  base_url: string
-}
-
-export interface IPostUserToken {
-  user_id: number
-  api_token_id: number
-  token_value: string
-}
-
 export interface IPreviewContext {
   isPreview: boolean
   setIsPreview: (isPreview: boolean) => void
@@ -129,20 +116,6 @@ export interface BotCardProps {
   disabled: boolean
 }
 
-export interface IComponent {
-  name: string
-  display_name: string
-  author: string
-  component_type: ComponentType
-  model_type: ModelType
-  description: string
-  date_created: string | Date | number
-  execution_time: string | number | null
-  gpu_usage: string | number | null
-  ram_usage: string | number | null
-  is_customizable: boolean
-}
-
 export interface ResourcesInterface {
   ram: string
   gpu: string
@@ -165,13 +138,7 @@ export interface IContextMenu {
   isPreview: boolean
   isCustomizable: boolean
 }
-export interface IAnnotator {
-  name: string
-  author: string
-  authorImg: string
-  type: string
-  desc: string
-}
+
 export interface DistListProps {
   view: ViewType
   dists: BotInfoInterface[]
@@ -254,8 +221,6 @@ export type ChatHistory = {
   hidden?: boolean
 }
 
-export type Message = { message: string }
-export type ChatPanelType = 'bot' | 'skill'
 export type SkillCardSize = BotCardSize
 
 export type CustomRouteConfig = RouteObject & { crumb?: string }
@@ -297,8 +262,6 @@ export type StackType =
   | 'skill_selectors'
   | 'skills'
 
-export type BotVisabilityType = 'Public' | 'Unlisted'
-
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
@@ -331,11 +294,6 @@ export interface IPostChat {
   prompt?: string
   lm_service_id?: number
   openai_api_key?: string
-}
-
-export interface IEditComponent {
-  display_name: string
-  description: string
 }
 
 export type TComponents = {

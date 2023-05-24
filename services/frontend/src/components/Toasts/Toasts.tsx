@@ -1,4 +1,4 @@
-import { ReactComponent as SuccesSVG } from '../../assets/icons/succes.svg'
+import { ReactComponent as SuccesSVG } from '../../assets/icons/success.svg'
 import s from './Toasts.module.scss'
 
 const BaseToast = ({ children }: any) => {

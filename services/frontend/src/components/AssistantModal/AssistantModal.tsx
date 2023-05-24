@@ -96,7 +96,7 @@ export const AssistantModal = () => {
     }
   }
 
-  useOnKey(handleSubmit(onFormSubmit), 'Enter')
+  useOnKey(handleSubmit(onFormSubmit), 'Enter') //FIX
 
   useObserver('AssistantModal', handleEventUpdate)
 

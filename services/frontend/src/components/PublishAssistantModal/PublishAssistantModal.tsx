@@ -100,21 +100,21 @@ export const PublishAssistantModal = () => {
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              {visibility.map((type, id) => {
+              {visibility.map((type, i) => {
                 return (
                   <RadioButton
                     props={{
                       ...register('visibility'),
-                      defaultChecked: type?.response === bot?.visibility,
+                      defaultChecked: type?.id === bot?.visibility,
                       onChange: e => {
                         setNewValue(e?.currentTarget?.value as TDistVisibility)
                       },
                     }}
-                    key={id}
-                    name={type.response}
-                    id={type.id}
-                    htmlFor={type.id}
-                    value={type.response}
+                    key={i}
+                    name={type.id}
+                    id={type.name}
+                    htmlFor={type.name}
+                    value={type.id}
                   >
                     {type.description}
                   </RadioButton>

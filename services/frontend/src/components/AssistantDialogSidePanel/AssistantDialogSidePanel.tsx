@@ -40,7 +40,7 @@ import { DummyAlert } from '../DummyAlert/DummyAlert'
 import { Loader } from '../Loader/Loader'
 import SvgIcon from '../SvgIcon/SvgIcon'
 import TextLoader from '../TextLoader/TextLoader'
-import s from './DialogSidePanel.module.scss'
+import s from './AssistantDialogSidePanel.module.scss'
 
 interface Props {
   dist: BotInfoInterface
@@ -146,11 +146,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //FIX
   const awaitDeployPanel =
-    bot?.deployment?.state !== DEPLOY_STATUS.UP && //FIX
+    bot?.deployment?.state !== DEPLOY_STATUS.UP && 
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP //FIX
+  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP 
 
   // handlers
   const handleSend = (data: ChatForm) => {

@@ -184,37 +184,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
               )}
             </ul>
           </div>
-
-          {/* <div className={s.controls}>
-        <div className={s.left}>
-          <DialogButton active>
-            <DialogTextIcon />
-          </DialogButton>
-          <DialogButton>
-            <DialogMicrophoneIcon />
-          </DialogButton>
-          <div className={s.download}>
-            <DialogButton>
-              <DownloadDialogIcon />
-            </DialogButton>
-          </div>
-        </div>
-        <div className={s.right}>
-          <Button
-            small
-            theme='secondary'
-            withIcon
-            props={{
-              onClick: handleRenewClick,
-            }}
-          >
-            <div className={s['right-container']} data-tooltip-id='renew'>
-              <Renew />
-            </div>
-          </Button>
-        </div>
-      </div> */}
-
           <div className={s.bottom}>
             <div className={s['textarea-container']}>
               <textarea

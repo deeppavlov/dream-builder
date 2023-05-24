@@ -1,9 +1,9 @@
 import { ReactComponent as CalendarIcon } from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import { FC, useId } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router-dom'
-import { DEPLOY_STATUS, VISIBILITY_STATUS } from '../../constants/constants'
+import { FC,useId } from 'react'
+import { useQuery,useQueryClient } from 'react-query'
+import { generatePath,useNavigate } from 'react-router-dom'
+import { DEPLOY_STATUS,VISIBILITY_STATUS } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
@@ -30,10 +30,16 @@ export const AssistantCard: FC<BotCardProps> = ({
   const navigate = useNavigate()
   const tooltipId = useId()
   const { options } = useDisplay()
+  const queryClient = useQueryClient()
+  
   const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const activeChat = options.get(consts.CHAT_SP_IS_ACTIVE)
+
   const infoSPId = `info_${bot.id}`
   const isActive =
-    infoSPId === activeAssistantId || bot.id === activeAssistantId
+    infoSPId === activeAssistantId ||
+    bot.id === activeAssistantId ||
+    bot.id === activeChat?.id
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
@@ -84,17 +90,11 @@ export const AssistantCard: FC<BotCardProps> = ({
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
-      : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
-          state: {
-            preview: false,
-            distName: bot?.name,
-            displayName: bot?.display_name,
-          },
-        })
+      : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))
     e.stopPropagation()
   }
 
-  const queryClient = useQueryClient()
+
 
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],

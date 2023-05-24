@@ -3,10 +3,7 @@ import classNames from 'classnames/bind'
 import { FC, useId } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
-import {
-  PublishRequestsStatus,
-  VisibilityStatus,
-} from '../../constants/constants'
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
@@ -41,9 +38,9 @@ export const AssistantCard: FC<BotCardProps> = ({
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
 
-  const isPublished = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
-  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
-  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
+  const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
+  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
   const publishState = onModeration
     ? 'On Moderation'
@@ -94,14 +91,6 @@ export const AssistantCard: FC<BotCardProps> = ({
             displayName: bot?.display_name,
           },
         })
-
-    // `/${bot?.name}/skills`, {
-    //   state: {
-    //     preview: false,
-    //     distName: bot?.name,
-    //     displayName: bot?.display_name,
-    //   },
-    // })
     e.stopPropagation()
   }
 
@@ -114,13 +103,17 @@ export const AssistantCard: FC<BotCardProps> = ({
     enabled:
       bot?.deployment?.id !== undefined &&
       type !== 'public' &&
-      bot?.deployment?.state !== 'UP',
+      bot?.deployment?.state !== DEPLOY_STATUS.UP,
     onSuccess(data) {
-      if (data?.state === 'UP') {
+      if (data?.state === DEPLOY_STATUS.UP) {
         queryClient.invalidateQueries('privateDists')
         queryClient.invalidateQueries(['dist', bot?.name])
       }
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+      if (
+        data?.state !== DEPLOY_STATUS.UP &&
+        data?.state !== null &&
+        data?.error == null
+      ) {
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
         }, 5000)

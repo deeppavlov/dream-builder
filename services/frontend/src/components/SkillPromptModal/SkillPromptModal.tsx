@@ -1,11 +1,11 @@
 import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
-import { useEffect,useRef,useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
 import { useQuery } from 'react-query'
-import { generatePath,useNavigate,useParams } from 'react-router'
+import { generatePath, useNavigate, useParams } from 'react-router'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
@@ -14,7 +14,7 @@ import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
 import { RoutesList } from '../../router/RoutesList'
 import { getAllLMservices } from '../../services/getAllLMservices'
-import { ISkill,LM_Service } from '../../types/types'
+import { ISkill, LM_Service } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import { TextArea } from '../../ui/TextArea/TextArea'
@@ -27,6 +27,7 @@ import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
+import { DEPLOY_STATUS } from '../../constants/constants'
 
 interface Props {
   skill?: ISkill
@@ -150,7 +151,7 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
-            if (bot?.deployment?.state === 'UP') {
+            if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
               //FIX
               deleteDeployment.mutateAsync(bot!)
             } else return

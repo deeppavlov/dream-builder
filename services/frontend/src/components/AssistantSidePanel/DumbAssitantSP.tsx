@@ -3,8 +3,8 @@ import { useEffect, useId } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import DB from '../../assets/icons/logo.png'
 import {
-  PublishRequestsStatus,
-  VisibilityStatus,
+  PUBLISH_REQUEST_STATUS,
+  VISIBILITY_STATUS,
 } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
@@ -16,11 +16,11 @@ import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
+import { getAssistantState } from '../../utils/getAssistantState'
 import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import EditPencilButton from '../EditPencilButton/EditPencilButton'
 import { SmallTag } from '../SmallTag/SmallTag'
 import s from './DumbAssitantSP.module.scss'
-import { getAssistantState } from '../../utils/getAssistantState'
 
 interface Props {
   bot: BotInfoInterface
@@ -40,10 +40,10 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { name: distName } = useParams()
   const { dispatch } = useDisplay()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
-  const isPublic = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
-  const isPublished = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+  const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
   const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
@@ -93,8 +93,8 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
-  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
+  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
+  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
   const publishState = onModeration
     ? 'On Moderation'
     : isPublished
@@ -150,7 +150,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
               </div>
               <SmallTag
                 theme={
-                  bot?.publish_state === PublishRequestsStatus.IN_REVIEW
+                  bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
                     ? 'validating'
                     : bot?.visibility
                 }
@@ -162,47 +162,6 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
           <div className={s.scroll}>
             <div className={s.container}>
               <p className={s.desc}>{bot?.description}</p>
-              {/* <div className={s.accordions}>
-            <Loader isLoading={isComponentsLoading} />
-            {components &&
-              Object.keys(components).map((group: string, id: number) => (
-                <Accordion
-                  key={id}
-                  title={capitalizeTitle(group)}
-                  group={group as StackType}
-                  rounded>
-                  {group == 'skill_selectors' &&
-                    components?.skill_selectors?.length == 0 && (
-                      <div className={s.accordionItem}>All Skills</div>
-                    )}
-                  {group !== 'skill_selectors' &&
-                    components[group]?.length == 0 && (
-                      <div className={s.accordionItem}>None</div>
-                    )}
-                  {components[group].map((item: ISkill, id: number) => (
-                    <div key={id} className={s.accordionItem}>
-                      {group === 'skills' && (
-                        <img
-                          className={s.icon}
-                          src={srcForIcons(
-                            componentTypeMap[item?.component_type || '']
-                          )}
-                        />
-                      )}
-                      {isAnnotator(group) && (
-                        <img
-                          className={s.icon}
-                          src={srcForIcons(
-                            modelTypeMap[item?.model_type || '']
-                          )}
-                        />
-                      )}
-                      {item?.display_name}
-                    </div>
-                  ))}
-                </Accordion>
-              ))}
-          </div> */}
             </div>
           </div>
           <div className={s.btns}>

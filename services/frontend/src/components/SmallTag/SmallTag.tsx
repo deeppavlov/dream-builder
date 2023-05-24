@@ -4,8 +4,8 @@ import { ReactComponent as DoneIcon } from '@assets/icons/done.svg'
 import { ReactComponent as PublicIcon } from '@assets/icons/eye.svg'
 import { ReactComponent as PrivateIcon } from '@assets/icons/private_eye.svg'
 import classNames from 'classnames/bind'
-import React, { FC } from 'react'
-import { VisibilityStatus } from '../../constants/constants'
+import React,{ FC } from 'react'
+import { VISIBILITY_STATUS } from '../../constants/constants'
 import s from './SmallTag.module.scss'
 
 type Theme =
@@ -43,11 +43,11 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         return <DoneIcon className={s.icon} />
       case 'validating':
         return <LoaderIcon className={s.icon} />
-      case VisibilityStatus.PUBLIC_TEMPLATE:
+      case VISIBILITY_STATUS.PUBLIC_TEMPLATE:
         return <PublicIcon className={s.icon} />
-      case VisibilityStatus.UNLISTED_LINK:
+      case VISIBILITY_STATUS.UNLISTED_LINK:
         return <PublicIcon className={s.icon} />
-      case VisibilityStatus.PRIVATE:
+      case VISIBILITY_STATUS.PRIVATE:
         return <PrivateIcon className={s.icon} />
       default:
         break

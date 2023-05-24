@@ -1,17 +1,18 @@
 import DB from '@assets/icons/logo.png'
-import { FC,useId } from 'react'
-import { useQuery,useQueryClient } from 'react-query'
-import { generatePath,useNavigate } from 'react-router-dom'
+import { FC, useId } from 'react'
+import { useQuery, useQueryClient } from 'react-query'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from '../../assets/icons/clone.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
 import {
-PublishRequestsStatus,
-VisibilityStatus
+  DEPLOY_STATUS,
+  PUBLISH_REQUEST_STATUS,
+  VISIBILITY_STATUS,
 } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
-import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
@@ -22,15 +23,19 @@ import AssistantContextMenu from '../AssistantContextMenu/AssistantContextMenu'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import { SmallTag } from '../SmallTag/SmallTag'
-import s from './BotListItem.module.scss'
+import s from './AssistantListItem.module.scss'
 
-interface BotListItemProps {
+interface AssistantListItemProps {
   type: BotAvailabilityType
   bot: BotInfoInterface
   disabled?: boolean
 }
 
-export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
+export const AssistantListItem: FC<AssistantListItemProps> = ({
+  type,
+  bot,
+  disabled,
+}) => {
   const navigate = useNavigate()
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
@@ -41,14 +46,13 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
-  const onModeration = bot?.publish_state === PublishRequestsStatus.IN_REVIEW
-  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
-  const deployed = bot?.deployment?.state === 'UP' //FIX
+  const onModeration = bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
+  const published = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+  const deployed = bot?.deployment?.state === DEPLOY_STATUS.UP //FIX
   const deploying =
     !deployed && bot?.deployment?.state !== null && bot?.deployment !== null
-  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
-  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
-
+  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
+  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
   const publishState = onModeration
     ? 'On Moderation'
@@ -64,7 +68,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.sub
   const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
 
-  const handleBotListItemClick = () => {
+  const handleAssistantListItemClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: activeAssistantId !== infoSPId,
       children: (
@@ -111,13 +115,17 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
     enabled:
       bot?.deployment?.id !== undefined &&
       type !== 'public' &&
-      bot?.deployment?.state !== 'UP', //FIX
+      bot?.deployment?.state !== DEPLOY_STATUS.UP, //FIX
     onSuccess(data) {
       console.log('bot?.deployment?.id = ', bot?.deployment?.id)
-      data?.state === 'UP' && //FIX
+      data?.state === DEPLOY_STATUS.UP && //FIX
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
 
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+      if (
+        data?.state !== DEPLOY_STATUS.UP &&
+        data?.state !== null &&
+        data?.error == null
+      ) {
         //FIX
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
@@ -130,7 +138,7 @@ export const BotListItem: FC<BotListItemProps> = ({ type, bot, disabled }) => {
   return (
     <tr
       className={s.tr}
-      onClick={handleBotListItemClick}
+      onClick={handleAssistantListItemClick}
       data-active={isActive}
     >
       <td className={s.td}>

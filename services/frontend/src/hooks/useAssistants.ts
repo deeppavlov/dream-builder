@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router-dom'
-import { VisibilityStatus } from '../constants/constants'
+import { useMutation,useQuery,useQueryClient } from 'react-query'
+import { generatePath,useNavigate } from 'react-router-dom'
+import { VISIBILITY_STATUS } from '../constants/constants'
 import { useAuth } from '../context/AuthProvider'
 import { RoutesList } from '../router/RoutesList'
 import { cloneAssistantDist } from '../services/cloneAssistantDist'
@@ -12,10 +12,10 @@ import { postAssistantDist } from '../services/postAssistanDist'
 import { publishAssistantDist } from '../services/publishUsersAssistantDist'
 import { renameAssistantDist } from '../services/renameAssistantDist'
 import {
-  AssistantFormValues,
-  BotInfoInterface,
-  TDeploymentState,
-  TDistVisibility,
+AssistantFormValues,
+BotInfoInterface,
+TDeploymentState,
+TDistVisibility
 } from '../types/types'
 import { useDeploy } from './useDeploy'
 
@@ -102,7 +102,7 @@ export const useAssistants = () => {
 
   const changeVisibility = useMutation({
     onMutate: ({ name, visibility, deploymentState }) => {
-      if (visibility !== VisibilityStatus.PRIVATE && !deploymentState) {
+      if (visibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
         deploy.mutateAsync(name)
       }
     },
@@ -110,7 +110,7 @@ export const useAssistants = () => {
       publishAssistantDist(name, visibility),
     onSuccess: (_, { name, visibility, inEditor }) => {
       const requestToPublicTemplate =
-        visibility === VisibilityStatus.PUBLIC_TEMPLATE
+        visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
       if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
       if (inEditor) queryClient.invalidateQueries([DIST, name])

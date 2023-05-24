@@ -2,7 +2,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { VisibilityStatus } from '../../constants/constants'
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
@@ -33,7 +33,7 @@ export const DeleteSkillModal = () => {
   const deleteSkill = async () => {
     if (!skill?.id) return
 
-    const isDeployed = bot?.deployment?.state === 'UP' //FIX
+    const isDeployed = bot?.deployment?.state === DEPLOY_STATUS.UP //FIX
 
     await toast.promise(
       deleteComponent.mutateAsync(
@@ -54,7 +54,8 @@ export const DeleteSkillModal = () => {
                 .then(() => {
                   // unpublish
                   const name = bot?.name
-                  const visibility = VisibilityStatus.PRIVATE as TDistVisibility
+                  const visibility =
+                    VISIBILITY_STATUS.PRIVATE as TDistVisibility
                   const publishState = bot.publish_state !== null
                   publishState &&
                     changeVisibility.mutateAsync({ name, visibility }) //FIX

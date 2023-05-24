@@ -19,7 +19,7 @@ import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
-import { VisibilityStatus } from '../../constants/constants'
+import { VISIBILITY_STATUS } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -41,7 +41,7 @@ export const EditorPage = () => {
   useEffect(() => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
-      setIsPreview(dist?.visibility === VisibilityStatus.PUBLIC_TEMPLATE)
+      setIsPreview(dist?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE)
       dispatch({
         type: 'set',
         option: {

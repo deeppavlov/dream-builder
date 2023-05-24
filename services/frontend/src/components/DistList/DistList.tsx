@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthProvider'
 import { DistListProps } from '../../types/types'
 import { sortByISO8601 } from '../../utils/sortByISO8601'
 import { AssistantCard } from '../AssistantCard/AssistantCard'
-import { BotListItem } from '../BotListItem/BotListItem'
+import { AssistantListItem } from '../AssistantListItem/AssistantListItem'
 
 export const DistList: FC<DistListProps> = ({ view, dists, type, size }) => {
   const auth = useAuth()
@@ -13,7 +13,12 @@ export const DistList: FC<DistListProps> = ({ view, dists, type, size }) => {
     <>
       {sortByISO8601(dists)?.map((bot, i: number) => {
         return view == 'table' ? (
-          <BotListItem key={i} bot={bot} type={type} disabled={disabled} />
+          <AssistantListItem
+            key={i}
+            bot={bot}
+            type={type}
+            disabled={disabled}
+          />
         ) : (
           <AssistantCard
             key={i}

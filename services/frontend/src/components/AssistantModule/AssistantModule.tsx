@@ -1,7 +1,7 @@
-import { FC,useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useNavigate,useParams } from 'react-router-dom'
-import { VisibilityStatus } from '../../constants/constants'
+import { useNavigate, useParams } from 'react-router-dom'
+import { VISIBILITY_STATUS } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -39,9 +39,9 @@ export const AssistantModule: FC<Props> = () => {
   const error =
     bot?.deployment?.error !== null && bot?.deployment?.error !== undefined
 
-  const published = bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
-  const privateAssistant = bot?.visibility === VisibilityStatus.PRIVATE
-  const unlistedAssistant = bot?.visibility === VisibilityStatus.UNLISTED_LINK
+  const published = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
+  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
   const publishState = onModeration
     ? 'On Moderation'
@@ -63,7 +63,7 @@ export const AssistantModule: FC<Props> = () => {
       children: (
         <AssistantSidePanel
           type={
-            bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+            bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
               ? 'public'
               : 'your'
           } //FIX
@@ -85,8 +85,8 @@ export const AssistantModule: FC<Props> = () => {
         deleteDeployment.mutateAsync(bot!, {
           onSuccess: () => {
             const visibility: TDistVisibility =
-              VisibilityStatus.PRIVATE as TDistVisibility
-            if (bot?.visibility !== VisibilityStatus.PRIVATE) {
+              VISIBILITY_STATUS.PRIVATE as TDistVisibility
+            if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
               changeVisibility.mutateAsync(
                 { name: bot?.name || '', visibility },
                 {
@@ -188,7 +188,7 @@ export const AssistantModule: FC<Props> = () => {
             <Button
               props={{
                 onClick: handleShare,
-                disabled: bot?.visibility == VisibilityStatus.PRIVATE,
+                disabled: bot?.visibility == VISIBILITY_STATUS.PRIVATE,
               }}
               withIcon
               theme='tertiary2'

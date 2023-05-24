@@ -1,6 +1,6 @@
 import { useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
-import { VisibilityStatus } from '../../constants/constants'
+import { VISIBILITY_STATUS } from '../../constants/constants'
 import { usePreview } from '../../context/PreviewProvider'
 import { mockSkills } from '../../mocks/database/mockSkills'
 import { RoutesList } from '../../router/RoutesList'
@@ -84,7 +84,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
             name='Share'
             type='share'
             disabled={
-              dist?.visibility === VisibilityStatus.PRIVATE || isPreview
+              dist?.visibility === VISIBILITY_STATUS.PRIVATE || isPreview
             }
             handleClick={handleShareClick}
           />

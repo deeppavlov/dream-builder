@@ -4,8 +4,8 @@ import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import {
-  PublishRequestsStatus,
-  VisibilityStatus,
+  PUBLISH_REQUEST_STATUS,
+  VISIBILITY_STATUS,
 } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
@@ -35,7 +35,7 @@ export const PublishAssistantModal = () => {
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
   const { changeVisibility } = useAssistants()
-  const currentVisibilityStatus = bot?.visibility
+  const currentVISIBILITY_STATUS = bot?.visibility
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data?.detail.bot)
@@ -49,8 +49,8 @@ export const PublishAssistantModal = () => {
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
 
-    visibility !== currentVisibilityStatus ||
-    bot?.publish_state == PublishRequestsStatus.IN_REVIEW
+    visibility !== currentVISIBILITY_STATUS ||
+    bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
       ? toast
           .promise(
             changeVisibility.mutateAsync(
@@ -62,8 +62,8 @@ export const PublishAssistantModal = () => {
               },
               {
                 onSuccess: () => {
-                  currentVisibilityStatus ===
-                    VisibilityStatus.PUBLIC_TEMPLATE &&
+                  currentVISIBILITY_STATUS ===
+                    VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
                     queryClient.invalidateQueries('public_dists')
                 },
               }
@@ -71,7 +71,7 @@ export const PublishAssistantModal = () => {
             {
               loading: 'Loading...',
               success:
-                visibility === VisibilityStatus.PUBLIC_TEMPLATE
+                visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
                   ? 'Submitted For Review!'
                   : 'Success!',
               error: 'Something went wrong...',
@@ -133,7 +133,7 @@ export const PublishAssistantModal = () => {
                 disabled: changeVisibility?.isLoading,
               }}
             >
-              {newValue === VisibilityStatus.PUBLIC_TEMPLATE
+              {newValue === VISIBILITY_STATUS.PUBLIC_TEMPLATE
                 ? 'Publish'
                 : ' Save'}
             </Button>

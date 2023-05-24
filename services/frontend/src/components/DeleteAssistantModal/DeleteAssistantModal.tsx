@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router-dom'
-import { VisibilityStatus } from '../../constants/constants'
+import { VISIBILITY_STATUS } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { RoutesList } from '../../router/RoutesList'
@@ -51,8 +51,8 @@ export const DeleteAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
       <div className={s.deleteAssistantModal}>
         <h4>
-          {bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE &&
-            'Your assistant will be removed from public templates.'}{' '}
+          {bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
+            'Your assistant will be removed from public templates.'}
           Do you really want to delete <mark>{bot?.display_name}</mark> Virtual
           Assistant?
         </h4>

@@ -1,19 +1,17 @@
-import { useEffect, useState } from 'react'
-import classNames from 'classnames/bind'
-import Modal from 'react-modal'
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
-import { SkillInfoInterface } from '../../types/types'
-import { subscribe, unsubscribe } from '../../utils/events'
-import { Wrapper } from '../../ui/Wrapper/Wrapper'
-import { Table } from '../../ui/Table/Table'
-import { BotListItem } from '../BotListItem/BotListItem'
-import { dateToUTC } from '../../utils/dateToUTC'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { timeToUTC } from '../../utils/timeToUTC'
+import classNames from 'classnames/bind'
+import { useState } from 'react'
+import Modal from 'react-modal'
 import { useQuery } from 'react-query'
-import { getPublicDists } from '../../services/getPublicDists'
-import s from './ChooseBotModal.module.scss'
 import { useObserver } from '../../hooks/useObserver'
+import { getPublicDists } from '../../services/getPublicDists'
+import { Table } from '../../ui/Table/Table'
+import { Wrapper } from '../../ui/Wrapper/Wrapper'
+import { dateToUTC } from '../../utils/dateToUTC'
+import { timeToUTC } from '../../utils/timeToUTC'
+import { AssistantListItem } from '../AssistantListItem/AssistantListItem'
+import s from './ChooseBotModal.module.scss'
 
 const ChooseBotModal = () => {
   let cx = classNames.bind(s)
@@ -70,7 +68,8 @@ const ChooseBotModal = () => {
         },
       }}
       isOpen={isOpen}
-      onRequestClose={closeModal}>
+      onRequestClose={closeModal}
+    >
       <div className={cx('chooseBotModal')}>
         <button onClick={closeModal}>
           <CloseIcon className={cx('close')} />
@@ -94,7 +93,7 @@ const ChooseBotModal = () => {
                 const dateCreated = dateToUTC(new Date(date_created))
                 const time = timeToUTC(new Date(date_created))
                 return (
-                  <BotListItem
+                  <AssistantListItem
                     key={i}
                     routingName={name}
                     name={display_name}

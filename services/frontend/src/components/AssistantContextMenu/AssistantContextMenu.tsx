@@ -1,12 +1,12 @@
 import { FC } from 'react'
-import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { generatePath,useNavigate,useParams } from 'react-router-dom'
 import {
-  PublishRequestsStatus,
-  VisibilityStatus,
+  PUBLISH_REQUEST_STATUS,
+VISIBILITY_STATUS
 } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
 import { RoutesList } from '../../router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
+import { BotAvailabilityType,BotInfoInterface } from '../../types/types'
 import { trigger } from '../../utils/events'
 import { AssistantDialogSidePanel } from '../AssistantDialogSidePanel/AssistantDialogSidePanel'
 import AssistantSidePanel from '../AssistantSidePanel/AssistantSidePanel'
@@ -48,7 +48,7 @@ const AssistantContextMenu: FC<Props> = ({
 
   const handleRenameBtnClick = () => {
     const isPublicTemplate =
-      bot?.visibility === VisibilityStatus.PUBLIC_TEMPLATE
+      bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
     if (isPublicTemplate)
       return trigger('PublicToPrivateModal', { bot, action: 'rename' })
@@ -97,7 +97,7 @@ const AssistantContextMenu: FC<Props> = ({
           />
           <ContextMenuButton
             disabled={
-              bot?.visibility === VisibilityStatus.PRIVATE || !isDeployed
+              bot?.visibility === VISIBILITY_STATUS.PRIVATE || !isDeployed
             }
             name='Share'
             type='share'
@@ -110,7 +110,7 @@ const AssistantContextMenu: FC<Props> = ({
           />
           <hr />
           <ContextMenuButton
-            disabled={bot?.publish_state == PublishRequestsStatus.IN_REVIEW}
+            disabled={bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW}
             name='Rename'
             type='edit'
             handleClick={handleRenameBtnClick}

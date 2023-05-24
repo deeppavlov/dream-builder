@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import {
+  DEPLOY_STATUS,
   DUMMY_SKILL,
   OPEN_AI_LM,
   TOOLTIP_DELAY,
@@ -113,11 +114,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     refetchOnMount: false,
     enabled: bot?.deployment?.id !== undefined,
     onSuccess(data) {
-      if (data?.state === 'UP') {
+      if (data?.state === DEPLOY_STATUS.UP) {
         queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
         queryClient.invalidateQueries('privateDists')
       }
-      if (data?.state !== 'UP' && data?.state !== null && data?.error == null) {
+      if (
+        data?.state !== DEPLOY_STATUS.UP &&
+        data?.state !== null &&
+        data?.error == null
+      ) {
         //FIX
         setTimeout(() => {
           queryClient.invalidateQueries('deploy', data?.id)
@@ -141,11 +146,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //FIX
   const awaitDeployPanel =
-    bot?.deployment?.state !== 'UP' && //FIX
+    bot?.deployment?.state !== DEPLOY_STATUS.UP && //FIX
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === 'UP' //FIX
+  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP //FIX
 
   // handlers
   const handleSend = (data: ChatForm) => {

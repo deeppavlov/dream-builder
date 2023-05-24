@@ -2,7 +2,7 @@ import classNames from 'classnames/bind'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router'
-import { VisibilityStatus } from '../../constants/constants'
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
@@ -67,11 +67,11 @@ export const SkillsListModal = () => {
         { data: skill, distName: distName || '', type: 'skills' },
         {
           onSuccess: () => {
-            bot?.deployment?.state === 'UP' &&
+            bot?.deployment?.state === DEPLOY_STATUS.UP &&
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish /
                 const name = bot?.name!
-                const visibility = VisibilityStatus.PRIVATE as TDistVisibility
+                const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
 
                 bot?.publish_state !== null &&
                   changeVisibility.mutateAsync({ name, visibility })

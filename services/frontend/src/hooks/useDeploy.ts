@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation,useQuery,useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import store from 'store2'
 import { deleteDeploy } from '../services/deleteDeploy'
@@ -6,6 +6,7 @@ import { getDeploy } from '../services/getDeploy'
 import { getDeployments } from '../services/getDeployments'
 import { postDeploy } from '../services/postDeploy'
 import { BotInfoInterface } from '../types/types'
+import { DEPLOY_STATUS } from './../constants/constants'
 
 export const useDeploy = () => {
   const queryClient = useQueryClient()
@@ -49,11 +50,11 @@ export const useDeploy = () => {
       refetchOnMount: false,
       enabled: bot?.deployment?.id !== undefined,
       onSuccess(data) {
-        data?.state === 'UP' && //FIX
+        data?.state === DEPLOY_STATUS.UP && //FIX
           queryClient.invalidateQueries(['dist', data?.virtual_assistant?.name])
 
         if (
-          data?.state !== 'UP' && //FIX
+          data?.state !== DEPLOY_STATUS.UP && //FIX
           data?.state !== null &&
           data?.error == null
         ) {

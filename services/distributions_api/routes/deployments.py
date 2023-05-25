@@ -57,9 +57,6 @@ def ping_deployed_agent(host: str, port: int, retries: int = 10, backoff_factor:
 
 
 def run_deployer(dist: AssistantDist, deployment_id: int):
-    """
-    celery_app.tasks.ignore_result stands for caching the result in broker
-    """
     now = datetime.now()
     logger.info(f"Deployment background task for {dist.name} started")
 

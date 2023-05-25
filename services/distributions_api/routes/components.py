@@ -56,7 +56,7 @@ async def create_component(
             prompted_skill_name,
             prompted_skill_port,
             lm_service.name,
-            lm_service.default_port,
+            lm_service.port,
         )
 
         prompted_component_name = generate_unique_name()
@@ -73,7 +73,7 @@ async def create_component(
 
         prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
         prompted_component.update_prompt(prompt["prompt"], prompt["goals"])
-        prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+        prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
         component = crud.create_component(
@@ -122,14 +122,14 @@ async def patch_component(
         prompt_goals = None
         if payload.prompt:
             goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
-            goals_lm_service_url = f"http://{goals_lm_service.name}:{goals_lm_service.default_port}/generate_goals"
+            goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
             prompt_goals = await generate_prompt_goals(
                 goals_lm_service_url, payload.prompt, settings.app.default_openai_api_key
             )
             dream_component.update_prompt(payload.prompt, prompt_goals)
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
-            dream_component.lm_service = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+            dream_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
             dream_component.lm_config = lm_service.default_generative_config
 
         dream_component.save_configs()

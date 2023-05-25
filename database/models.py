@@ -130,7 +130,8 @@ class LmService(Base):
     id = Column(Integer, index=True, primary_key=True)
 
     name = Column(String, nullable=False)
-    default_port = Column(Integer, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
     default_generative_config = Column(String, nullable=True)
     display_name = Column(String, nullable=False)
     size = Column(String)

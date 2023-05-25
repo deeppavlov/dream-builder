@@ -117,6 +117,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                 "endpoint",
                 # "build_args",
                 "prompt",
+                "prompt_goals",
                 "lm_service_id",
                 "date_created",
             ]
@@ -147,7 +148,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     ]
                 )
 
-            prompt = None
+            prompt = prompt_goals = None
             lm_service_id = None
             if component["name"].endswith("prompted_skill"):
 
@@ -159,7 +160,8 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                         lm_service_id = lm_service_row["id"]
 
                     prompt_file = service_env_card["PROMPT_FILE"]
-                    prompt = utils.load_json(dream_root / prompt_file)["prompt"]
+                    prompt_data = utils.load_json(dream_root / prompt_file)
+                    prompt, prompt_goals = prompt_data["prompt"], prompt_data["goals"]
 
             all_components[str(component_path.relative_to(dream_root))] = current_component_id
             current_component_id += 1
@@ -182,6 +184,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     all_services[component["service"]],
                     component["endpoint"],
                     prompt,
+                    prompt_goals,
                     lm_service_id,
                     component["date_created"],
                 ]

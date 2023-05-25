@@ -82,7 +82,6 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
     all_services = {}
     all_components = {}
 
-    logger.info(f"Reading secret settings file: {initial_file}")
     initial_secret = read_xlsx_file(initial_file)
 
     for table_name in ["role", "google_user", "lm_service", "api_key"]:
@@ -278,9 +277,10 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
                 current_assistant_dist_id += 1
 
-    logger.info(f"Finished creating initial data tsv files in {output_dir}")
-
 
 if __name__ == "__main__":
     args = parse_args()
+
+    logger.info(f"Generating initial data\nDream path: {args.dream}\nSecret settings file: {args.initial_file}")
     run(args.dream, args.initial_file, args.output_dir)
+    logger.info(f"Finished creating initial data tsv files in {args.output_dir}")

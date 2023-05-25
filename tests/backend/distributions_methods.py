@@ -1,3 +1,4 @@
+import pytest
 import requests
 from services.distributions_api import schemas as models
 from .config import (
@@ -16,7 +17,7 @@ class UserMethods:
 
     # assistant_dists
 
-    def create_virtual_assistant(self, name):
+    def create_virtual_assistant(self, name, description="TestBot"):
         dist_response = requests.post(
             url=f"{assistant_dists_endpoint}",
             headers={
@@ -25,7 +26,7 @@ class UserMethods:
                 "Content-Type": "application/json",
             },
             json={"display_name": name,
-                  "description": "TestBot"
+                  "description": description
                   },
         )
         assert dist_response.status_code == 201, dist_response.json()
@@ -67,7 +68,7 @@ class UserMethods:
 
     def get_list_of_public_va(self):
         public_dist_names_list = []
-        public_dist_list = requests.get(assistant_dists_endpoint + "public_templates")
+        public_dist_list = requests.get(assistant_dists_endpoint + "/public_templates")
         assert public_dist_list.status_code == 200, public_dist_list.json()
         for public_dist in public_dist_list.json():
             public_dist_names_list.append(public_dist["name"])
@@ -77,7 +78,7 @@ class UserMethods:
 
     def get_list_of_private_va(self, created_va_name):
         private_dist_list = requests.get(
-            url=assistant_dists_endpoint + "user_owned",
+            url=assistant_dists_endpoint + "/user_owned",
             headers={
                 "accept": "*/*",
                 "token": auth_token,
@@ -91,7 +92,7 @@ class UserMethods:
         assert created_va_name in private_dist_names
 
     def get_va_by_name(self, name):
-        get_dist_response = requests.get(assistant_dists_endpoint + name)
+        get_dist_response = requests.get(assistant_dists_endpoint + "/" + name)
         assert get_dist_response.status_code == 200, get_dist_response.json()
         assert models.VirtualAssistantRead.parse_obj(get_dist_response.json()), get_dist_response.json()
         assert get_dist_response.json()["name"] == name, \
@@ -106,18 +107,18 @@ class UserMethods:
 
     def delete_va_by_name(self, name):
         delete_response = requests.delete(
-            url=assistant_dists_endpoint + name,
+            url=assistant_dists_endpoint + "/" + name,
             headers={
                 "accept": "*/*",
                 "token": auth_token,
             },
         )
         assert delete_response.status_code == 204, \
-            f"Validation error while test_get_va_by_name {delete_response.json()}"
+            f"Validation error while delete_va_by_name {delete_response.json()}"
 
     def patch_va_by_name(self, name):
         patch_dist_response = requests.patch(
-            url=assistant_dists_endpoint + name,
+            url=assistant_dists_endpoint + "/" + name,
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -131,7 +132,7 @@ class UserMethods:
 
     def clone_va(self, name):
         clone_dist_response = requests.post(
-            url=assistant_dists_endpoint + name + "/clone",
+            url=assistant_dists_endpoint + "/" + name + "/clone",
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -166,7 +167,7 @@ class UserMethods:
         return clone_dist_response.json()
 
     def get_va_components(self, name):
-        get_dist_components_response = requests.get(url=assistant_dists_endpoint + name + "/components/",
+        get_dist_components_response = requests.get(url=assistant_dists_endpoint + "/" + name + "/components",
                                                     headers={
                                                         'accept': 'application/json',
                                                     }
@@ -177,7 +178,7 @@ class UserMethods:
         return get_dist_components_response.json()
 
     def add_va_component(self, name, component_id):
-        get_dist_components_response = requests.post(url=assistant_dists_endpoint + name + "/components/",
+        get_dist_components_response = requests.post(url=assistant_dists_endpoint + "/" + name + "/components",
                                                      headers={
                                                          'accept': 'application/json',
                                                          'Content-Type': 'application/json',
@@ -193,7 +194,7 @@ class UserMethods:
         #    "Error while test_get_public_dist_components_by_name"
 
     def delete_va_component(self, name, component_id):
-        delete_va_component_response = requests.delete(url=assistant_dists_endpoint + name + "/components/" +
+        delete_va_component_response = requests.delete(url=assistant_dists_endpoint + "/" + name + "/components/" +
                                                            str(component_id),
                                                        headers={
                                                            'accept': '*/*',
@@ -201,11 +202,23 @@ class UserMethods:
                                                        )
         assert delete_va_component_response.status_code == 204, delete_va_component_response.json()
 
-    def patch_va_component(self, name, component_id):
-        get_dist_components_response = requests.patch(url=assistant_dists_endpoint + name + "/components/" +
+    def patch_va_component(self,
+                           name,
+                           component_id,
+                           display_name="string",
+                           description="string",
+                           prompt="string",
+                           lm_service_id=1):
+        get_dist_components_response = requests.patch(url=assistant_dists_endpoint + "/" + name + "/components/" +
                                                           str(component_id),
                                                       headers={
                                                           'accept': 'application/json',
+                                                      },
+                                                      json={
+                                                          "display_name": display_name,
+                                                          "description": description,
+                                                          "prompt": prompt,
+                                                          "lm_service_id": lm_service_id
                                                       }
                                                       )
         assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
@@ -213,7 +226,7 @@ class UserMethods:
         #    "Error while patch_va_component"
 
     def publish_va(self, name, visibility):
-        response = requests.post(url=assistant_dists_endpoint + name + '/publish/',
+        response = requests.post(url=assistant_dists_endpoint + "/" + name + '/publish',
                                  headers={
                                      'accept': '*/*',
                                      'token': auth_token,
@@ -225,68 +238,11 @@ class UserMethods:
                                  )
         assert response.status_code == 204, response.json()
 
-    # def get_dist_prompt(self, name):
-    #    get_prompt_response = requests.get(
-    #        url=assistant_dists_endpoint + name + "/prompt/",
-    #        headers={
-    #            "accept": "application/json",
-    #            "token": auth_token,
-    #        },
-    #    )
-    #    assert get_prompt_response.status_code == 200, get_prompt_response.json()
-    #    assert models.Prompt.parse_obj(get_prompt_response.json()), \
-    #        "Validation error while get_dist_prompt"
-    #
-    # def set_dist_prompt(self, name):
-    #    prompt = "new_prompt_string"
-    #    set_prompt_response = requests.post(
-    #        url=assistant_dists_endpoint + name + "/prompt/",
-    #        headers={
-    #            "accept": "application/json",
-    #            "token": auth_token,
-    #            "Content-Type": "application/json",
-    #        },
-    #        json={
-    #            "text": prompt,
-    #        },
-    #    )
-    #    assert set_prompt_response.status_code == 200, set_prompt_response.json()
-    #    assert models.Deployment.parse_obj(set_prompt_response.json()), \
-    #        "Validation error while set_dist_prompt"
-    #    assert set_prompt_response.json()["prompt"] == prompt
-
-    # def get_dist_lm_service(self, name):
-    #    get_lm_service_response = requests.get(
-    #        url=assistant_dists_endpoint + name + "/lm_service/",
-    #        headers={
-    #            "accept": "application/json",
-    #            "token": auth_token,
-    #        },
-    #    )
-    #    assert get_lm_service_response.status_code == 200, get_lm_service_response.json()
-    #    assert models.LmService.parse_obj(get_lm_service_response.json()), \
-    #        "Validation error while get_dist_lm_service"
-    #
-    # def set_dist_lm_service(self, name, lm_service_name):
-    #    set_lm_service_response = requests.post(
-    #        url=assistant_dists_endpoint + name + "/lm_service/",
-    #        headers={
-    #            "accept": "application/json",
-    #            "token": auth_token,
-    #        },
-    #        json={
-    #            "name": lm_service_name
-    #        }
-    #    )
-    #    assert set_lm_service_response.status_code == 200, set_lm_service_response.json()
-    #    assert models.LmService.parse_obj(set_lm_service_response.json()), \
-    #        "Validation error while set_dist_lm_service"
-
     def debug_template(self, name):
         template_file_path = "template_file_path"
         owner_address = "owner_address"
         get_debug_template_response = requests.get(
-            url=assistant_dists_endpoint + "/templates" + "template_file_path",
+            url=assistant_dists_endpoint + "/templates" + "/template_file_path",
             headers={
                 'accept': 'application/json',
             },
@@ -311,7 +267,7 @@ class UserMethods:
                 "Validation error while test_get_public_dist_components_by_name"
         return get_list_of_components_response.json()
 
-    def create_component(self):
+    def create_component(self, display_name='string', description='string', lm_service_id=1, prompt='string'):
         get_dist_components_response = requests.post(components_endpoint,
                                                      headers={
                                                          'accept': 'application/json',
@@ -331,7 +287,7 @@ class UserMethods:
         return get_dist_components_response.json()
 
     def get_component(self, component_id):
-        get_dist_components_response = requests.get(url=components_endpoint + str(component_id),
+        get_dist_components_response = requests.get(url=components_endpoint + "/" + str(component_id),
                                                     headers={
                                                         'accept': 'application/json',
                                                     }
@@ -339,10 +295,10 @@ class UserMethods:
         assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
         assert models.ComponentRead.parse_obj(get_dist_components_response.json()), \
             "Validation error while test_get_public_dist_components_by_name"
-        return get_dist_components_response.json()["id"]
+        return get_dist_components_response.json()
 
     def delete_component(self, component_id):
-        get_dist_components_response = requests.delete(url=components_endpoint + str(component_id),
+        get_dist_components_response = requests.delete(url=components_endpoint + "/" + str(component_id),
                                                        headers={
                                                            'accept': '*/*',
                                                            'token': auth_token,
@@ -350,18 +306,24 @@ class UserMethods:
                                                        )
         assert get_dist_components_response.status_code == 204, get_dist_components_response.json()
 
-    def patch_component(self, component_id):
-        get_dist_components_response = requests.patch(url=components_endpoint + str(component_id),
+    def patch_component(self,
+                        component_id,
+                        display_name="string",
+                        description="string",
+                        prompt="string",
+                        lm_service_id=1
+                        ):
+        get_dist_components_response = requests.patch(url=components_endpoint + "/" + str(component_id),
                                                       headers={
                                                           'accept': 'application/json',
                                                           'token': auth_token,
                                                           'Content-Type': 'application/json',
                                                       },
                                                       json={
-                                                          'display_name': 'string',
-                                                          'description': 'string',
-                                                          'prompt': 'string',
-                                                          'lm_service_id': 2,
+                                                          'display_name': display_name,
+                                                          'description': description,
+                                                          'prompt': prompt,
+                                                          'lm_service_id': lm_service_id,
                                                       }
                                                       )
         assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
@@ -369,7 +331,7 @@ class UserMethods:
             "Validation error while test_get_public_dist_components_by_name"
 
     def get_list_of_group_components(self, group_name):
-        get_dist_components_response = requests.get(url=components_endpoint + "group/" + group_name,
+        get_dist_components_response = requests.get(url=components_endpoint + "/group/" + group_name,
                                                     headers={
                                                         'accept': 'application/json',
                                                     }
@@ -395,7 +357,7 @@ class UserMethods:
 
     def get_user_self(self):
         get_user_response = requests.get(
-            url=users_endpoint + "self",
+            url=users_endpoint + "/self",
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -407,7 +369,7 @@ class UserMethods:
 
     def get_user_by_id(self, user_id):
         get_user_by_id_response = requests.get(
-            url=users_endpoint + user_id,
+            url=users_endpoint + "/" + user_id,
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -415,60 +377,6 @@ class UserMethods:
         )
         assert get_user_by_id_response.status_code == 200, get_user_by_id_response.json()
         assert models.UserRead.parse_obj(get_user_by_id_response.json()), "Validation error while get_user_by_id"
-
-    # def get_user_api_tokens(self, user_id):
-    #    get_user_api_tokens_response = requests.get(
-    #        url=users_endpoint + user_id + "/settings/api_tokens/",
-    #        headers={
-    #            'accept': 'application/json',
-    #            'token': auth_token,
-    #        }
-    #    )
-    #    assert get_user_api_tokens_response.status_code == 200, get_user_api_tokens_response.json()
-    #    for user_api_token in get_user_api_tokens_response.json():
-    #        assert models.UserApiToken.parse_obj(user_api_token), \
-    #            "Validation error while get_user_by_api_tokens"
-    #    return get_user_api_tokens_response.json()[0]["id"]
-    #
-    # def create_or_update_user_api_token(self, user_id, token_value):
-    #    api_token_id = 1
-    #    update_user_api_token_response = requests.post(
-    #        url=users_endpoint + user_id + "/settings/api_tokens/",
-    #        headers={
-    #            "accept": "application/json",
-    #            "token": auth_token,
-    #            "Content-Type": "application/json",
-    #        },
-    #        json={
-    #            "api_token_id": api_token_id,
-    #            "token_value": token_value,
-    #        },
-    #    )
-    #    assert update_user_api_token_response.status_code == 201, update_user_api_token_response.json()
-    #    assert models.UserApiToken.parse_obj(update_user_api_token_response.json()), \
-    #        "Validation error while create_or_update_user_api_token"
-    #
-    # def get_user_api_token(self, user_id, user_api_token_id):
-    #    get_user_api_token_response = requests.get(
-    #        url=users_endpoint + user_id + "/settings/api_tokens/" + str(user_api_token_id),
-    #        headers={
-    #            'accept': 'application/json',
-    #            'token': auth_token,
-    #        }
-    #    )
-    #    assert get_user_api_token_response.status_code == 201, get_user_api_token_response.json()
-    #    assert models.UserApiToken.parse_obj(get_user_api_token_response.json()), \
-    #        "Validation error while get_user_api_token"
-    #
-    # def delete_user_api_token(self, user_id, user_api_token_id):
-    #    get_user_api_token_response = requests.delete(
-    #        url=users_endpoint + user_id + "/settings/api_tokens/" + str(user_api_token_id),
-    #        headers={
-    #            'accept': 'application/json',
-    #            'token': auth_token,
-    #        }
-    #    )
-    #    assert get_user_api_token_response.status_code == 201, get_user_api_token_response.json()
 
     # api_tokens
     def get_all_api_keys(self):
@@ -520,7 +428,7 @@ class UserMethods:
 
     def get_dialog_sessions(self, dialog_session_id):
         get_dialog_response = requests.get(
-            url=dialog_sessions_endpoint + str(dialog_session_id),
+            url=dialog_sessions_endpoint + "/" + str(dialog_session_id),
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -532,7 +440,7 @@ class UserMethods:
 
     def send_dialog_session_message(self, dialog_session_id):
         send_message_response = requests.post(
-            url=dialog_sessions_endpoint + str(dialog_session_id) + "/chat",
+            url=dialog_sessions_endpoint + "/" + str(dialog_session_id) + "/chat",
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -548,9 +456,33 @@ class UserMethods:
         assert send_message_response.json()["active_skill"] != "dummy_skill", \
             "Dummy skill answers"
 
+    def send_dialog_session_message_various_lm(self, dialog_session_id, lm_service_id):
+        send_message_response = requests.post(
+            url=dialog_sessions_endpoint + "/" + str(dialog_session_id) + "/chat",
+            headers={
+                "accept": "application/json",
+                "token": auth_token,
+                "Content-Type": "application/json",
+            },
+            json={
+                "text": "Hello! What is your name?",
+                "prompt": "TASK:  You are a chatbot that can only answers questions below. "
+                          "FAQ: What is your name? My name is Paul.",
+                "lm_service_id": lm_service_id,
+                "openai_api_key": "string"
+            },
+        )
+        assert send_message_response.status_code == 201, send_message_response.json()
+        assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
+            "Validation error while test_send_dialog_session_message"
+        assert send_message_response.json()["active_skill"] != "dummy_skill", \
+            "Dummy skill answers"
+        assert "Paul" in send_message_response.json()["text"], \
+            "Skill answers incorrectly"
+
     def get_dialog_session_history(self, dialog_session_id):
         get_dialog_history_response = requests.get(
-            url=dialog_sessions_endpoint + str(dialog_session_id) + "/history",
+            url=dialog_sessions_endpoint + "/" + str(dialog_session_id) + "/history",
             headers={
                 "accept": "application/json",
                 "token": auth_token,
@@ -563,7 +495,8 @@ class UserMethods:
 
     def get_all_lm_services(self):
         lm_services_list_response = requests.get(
-            url=lm_services_endpoint, headers={"accept": "application/json"}
+            url=lm_services_endpoint,
+            headers={"accept": "application/json"}
         )
         assert lm_services_list_response.status_code == 200, lm_services_list_response.json()
         for lm_service in lm_services_list_response.json():
@@ -607,21 +540,21 @@ class DeploymentsMethods:
 
     def get_stacks(self):
         deployment_response = requests.get(
-            url=deployments_endpoint + "stacks",
+            url=deployments_endpoint + "/stacks",
             headers={
                 'accept': 'application/json'})
         assert deployment_response.status_code == 200, deployment_response.json()
 
     def get_stack_ports(self):
         deployment_response = requests.get(
-            url=deployments_endpoint + "stack_ports",
+            url=deployments_endpoint + "/stack_ports",
             headers={
                 'accept': 'application/json'})
         assert deployment_response.status_code == 200, deployment_response.json()
 
     def get_deployment(self, deployment_id):
         deployment_response = requests.get(
-            url=deployments_endpoint + str(deployment_id),
+            url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
                 'token': auth_token})
@@ -630,7 +563,7 @@ class DeploymentsMethods:
 
     def delete_deployment(self, deployment_id):
         deployment_response = requests.delete(
-            url=deployments_endpoint + str(deployment_id),
+            url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': '*/*',
                 'token': auth_token,
@@ -639,7 +572,7 @@ class DeploymentsMethods:
 
     def patch_deployment(self, deployment_id):
         deployment_response = requests.patch(
-            url=deployments_endpoint + str(deployment_id),
+            url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
                 'token': auth_token,
@@ -648,7 +581,7 @@ class DeploymentsMethods:
 
     def delete_stack(self, stack_id):
         deployment_response = requests.delete(
-            url=deployments_endpoint + "stacks/" + str(stack_id),
+            url=deployments_endpoint + "/stacks/" + str(stack_id),
             headers={
                 'accept': 'application/json',
             })
@@ -674,7 +607,7 @@ class AdminMethods:
 
     def get_unreviewed_publish_requests(self):
         response = requests.get(
-            url=admin_endpoint + "unreviewed",
+            url=admin_endpoint + "/unreviewed",
             headers={
                 'accept': 'application/json',
                 'token': auth_token,
@@ -687,7 +620,7 @@ class AdminMethods:
 
     def confirm_publish_request(self, publish_request_id):
         response = requests.post(
-            url=admin_endpoint + str(publish_request_id) + "/confirm",
+            url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
             headers={
                 'accept': 'application/json',
                 'token': auth_token,
@@ -699,7 +632,7 @@ class AdminMethods:
 
     def decline_publish_request(self, publish_request_id):
         response = requests.post(
-            url=admin_endpoint + str(publish_request_id) + "/decline",
+            url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
             headers={
                 'accept': 'application/json',
                 'token': auth_token,

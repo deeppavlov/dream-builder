@@ -1,7 +1,9 @@
 from pydantic import BaseModel, BaseSettings
 from pathlib import Path
 from services.auth_api.models import UserCreate, UserValidScheme
-#from database import models
+
+
+# from database import models
 
 
 class LocalUrlSettings(BaseModel):
@@ -58,17 +60,10 @@ auth_token = settings_test.auth.test_token
 settings_url = settings_test.localurl
 settings_db = settings_test.localdb
 
-# config for test_auth
-
-
-auth_endpoint = f"{settings_url.auth_api}/"
-auth_refresh_token = "1refresh_token"
-
-
 # config for test_db
 
 
-#def clean_testdb(db: Session):
+# def clean_testdb(db: Session):
 #    db.query(models.DialogSession).delete(synchronize_session="fetch")
 #    db.query(models.PublishRequest).delete(synchronize_session="fetch")
 #    db.query(models.UserApiToken).delete(synchronize_session="fetch")
@@ -82,7 +77,7 @@ auth_refresh_token = "1refresh_token"
 #    db.commit()
 #
 #
-#def clean_testdata_wo_user(db: Session, email):
+# def clean_testdata_wo_user(db: Session, email):
 #    google_user_id = db.query(models.GoogleUser.id).filter(models.GoogleUser.email == email).first()[0]
 #    va_id_list = db.query(models.VirtualAssistant.id).filter(models.VirtualAssistant.author_id == google_user_id).all()
 #    for va_id in va_id_list:
@@ -106,7 +101,7 @@ auth_refresh_token = "1refresh_token"
 #    db.close()
 #
 #
-#def clean_all_testdata(db: Session, email):
+# def clean_all_testdata(db: Session, email):
 #    clean_testdata_wo_user(db, email)
 #    google_user_id = db.query(models.GoogleUser.id).filter(models.GoogleUser.email == email).first()[0]
 #    db.query(models.UserValid).filter(models.UserValid.user_id == google_user_id).delete(synchronize_session="fetch")
@@ -155,7 +150,6 @@ json_uservalid_updated = f"""{{
                                }}"""
 uservalid_user_updated = UserValidScheme.parse_raw(json_uservalid_updated)
 
-
 va_data = {
     "cloned_from_id": None,
     "author_id": 1,
@@ -176,21 +170,27 @@ public_va_names = ["ai_faq_assistant",
                    "deepy_assistant",
                    ]
 
+lm_service_id_list = [1, 2, 3, 4, 5, 6]
 
+# config for test_auth
+
+
+auth_endpoint = f"{settings_url.auth_api}"
+auth_refresh_token = "1refresh_token"
 
 # config for test_distribution
 
 
 base_url_distributions_api = settings_url.distributions_api
 
-assistant_dists_endpoint = f"{base_url_distributions_api}/assistant_dists/"
-components_endpoint = f"{base_url_distributions_api}/components/"
-users_endpoint = f"{base_url_distributions_api}/users/"
-api_keys_endpoint = f"{base_url_distributions_api}/api_keys/"
-dialog_sessions_endpoint = f"{base_url_distributions_api}/dialog_sessions/"
-deployments_endpoint = f"{base_url_distributions_api}/deployments/"
-lm_services_endpoint = f"{base_url_distributions_api}/lm_services/"
-admin_endpoint = f"{base_url_distributions_api}/admin/publish_request/"
+assistant_dists_endpoint = f"{base_url_distributions_api}/assistant_dists"
+components_endpoint = f"{base_url_distributions_api}/components"
+users_endpoint = f"{base_url_distributions_api}/users"
+api_keys_endpoint = f"{base_url_distributions_api}/api_keys"
+dialog_sessions_endpoint = f"{base_url_distributions_api}/dialog_sessions"
+deployments_endpoint = f"{base_url_distributions_api}/deployments"
+lm_services_endpoint = f"{base_url_distributions_api}/lm_services"
+admin_endpoint = f"{base_url_distributions_api}/admin/publish_request"
 
 
 def create_counter(title: str):

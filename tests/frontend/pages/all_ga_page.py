@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 from locators.locators import AllGAPageLocators
+from tests.config import public_va_name, users_email, skill_name, generative_model
 import time
 
 
@@ -80,8 +81,7 @@ class AllGAPage(BasePage):
         button.click()
 
     def get_share_link(self):
-        link = self.browser.find_element(*AllGAPageLocators.SHARE_LINK).text
-        print(f'share_link = {link}')
+        link = self.browser.find_element(*AllGAPageLocators.SHARE_LINK).get_attribute("value")
         return link
 
     def click_kebab_your_a_visibility(self):
@@ -104,6 +104,10 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.SAVE_BUTTON_VISIBILITY_MW)
         button.click()
 
+    def publish_visibility(self):
+        button = self.browser.find_element(*AllGAPageLocators.PUBLISH_BUTTON_VISIBILITY_MW)
+        button.click()
+
     def click_kebab_your_a_rename(self):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_RENAME)
         button.click()
@@ -123,7 +127,7 @@ class AllGAPage(BasePage):
     def enter_name_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
         textarea.click()
-        textarea.send_keys("New VA name")
+        textarea.send_keys(f"{public_va_name}")
 
     def enter_description_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)

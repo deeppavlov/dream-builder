@@ -24,7 +24,7 @@ class SkillEditorPage(BasePage):
     def enter_new_prompt(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
-        textarea.send_keys("new_prompt")
+        textarea.send_keys("TASK: Your name is Sale Assistant. You were made by Eelon Mask. You work with sales specialists and you help them do sales.")
 
     def click_save_button(self):
         button = self.browser.find_element(*SkillEditorPageLocators.SAVE_BUTTON)
@@ -41,6 +41,9 @@ class SkillEditorPage(BasePage):
 
     def check_bot_message(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE)
+        #i'm haven't openAI key -> answers dummy skill
+        #print(f'textarea.text = {textarea.text}')
+        #assert "Sale Assistant" in textarea.text
 
     def restart_dialog(self):
         button = self.browser.find_element(*SkillEditorPageLocators.RESTART_DIALOG_BUTTON)

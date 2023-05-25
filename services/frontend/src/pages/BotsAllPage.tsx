@@ -1,4 +1,5 @@
 import { Toaster } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
@@ -16,15 +17,18 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 export const BotsAllPage = () => {
+  const { options } = useDisplay()
+  const { t } = useTranslation()
   const { fetchPublicDists } = useAssistants()
   const publicDists = fetchPublicDists()
-  const { options } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
-
   return (
     <>
       <Main sidebar fullWidth>
-        <Wrapper title='Public Templates' amount={publicDists?.data?.length}>
+        <Wrapper
+          title={t('wrapper.title.public_assistants')}
+          amount={publicDists?.data?.length}
+        >
           {publicDists?.error ? (
             <ErrorHandler error={publicDists.error} />
           ) : (

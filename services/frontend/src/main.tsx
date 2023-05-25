@@ -7,6 +7,7 @@ import { DisplayProvider } from './context/DisplayContext'
 import { PreviewProvider } from './context/PreviewProvider'
 import { prepare } from './mocks/prepare'
 import { router } from './router/Router'
+import './i18n'
 
 const queryClient = new QueryClient()
 

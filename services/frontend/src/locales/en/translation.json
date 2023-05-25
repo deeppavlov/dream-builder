@@ -1,0 +1,61 @@
+{
+  "wrapper": {
+    "title": {
+      "public_assistants": "Create your assistant",
+      "your_assistants": "Your assistants"
+    },
+    "btns": { "show_all": "Show&nbsp;All" },
+    "annotation": {},
+    "subwrapper": "Recommended Templates"
+  },
+  "placeholder": {
+    "table": "Your assistants will appear here",
+    "cards": "Your assistants will appear here"
+  },
+  "table": {
+    "name": "Name",
+    "author": "Author",
+    "description": "Description",
+    "visibility": "Visibility",
+    "date": "Created",
+    "actions": "Actions"
+  },
+  "topbar": {},
+  "sidebar": {},
+  "menus": {
+    "left": { "about": "About" },
+    "profile": { "log_out": "Log Out" }
+  },
+  "modals": {
+    "tokens": {
+      "header": "Personal access tokens",
+      "body": "Personal access tokens allow your AI Assistants to use third-party services like OpenAI, GNews, News API, etc. You can always remove these tokens here if you want to stop use of the services they provide access to by your AI Assistants, or you can revoke these tokens in their respective services. Do not give out your personal access tokens to anybody you don't want to access your files.",
+      "input": {
+        "label": "Add a new personal access token:",
+        "placeholder": "Enter token..."
+      },
+      "dropbox": {
+        "label": "Choose service:",
+        "placeholder": "Choose service..."
+      },
+      "logic": {
+        "creating": "Creating...",
+        "token_created": "Successfully created!",
+        "token_updated": "Successfully created!",
+        "token_canceled": "Successfully cancelled!",
+        "no_found_token": "No tokens found.",
+        "no_found_service": "Not find Service or User id"
+      },
+      "btn": { "remove": "Remove", "confirm": "" }
+    }
+  },
+  "sidepanels": {},
+  "tooltips": {},
+  "ui": {
+    "input": {
+      "enter": "Enter",
+      "error": {}
+    }
+  },
+  "validation": { "empty": "This field can’t be empty" }
+}

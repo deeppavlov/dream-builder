@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
 import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSidePanel'
 import { AssistantCard } from '../../components/AssistantCard/AssistantCard'
@@ -83,43 +82,43 @@ const notificMock: NotificationCardProps[] = [
   },
 ]
 
-const intentItemsMock: IntentListItemInterface[] = [
-  {
-    id: nanoid(8),
-    name: 'Yes',
-    about: 'yes, yeah, alright, ok',
-    status: 'default',
-  },
-  {
-    id: nanoid(8),
-    name: 'Want_pizza',
-    about: 'want pizza, wanna pizza, love pizza, like pizza...',
-    status: 'error',
-  },
-  {
-    id: nanoid(8),
-    name: "what_time | don't_understand Sorry, I might sound confusing, I am still ...",
-    about: 'Sorry, I might sound confusing, I am still ...',
-    status: 'warning',
-  },
-  {
-    id: nanoid(8),
-    name: 'Fallback',
-    about: 'Fallback',
-    status: 'success',
-  },
-  {
-    id: nanoid(8),
-    name: 'What is the preparatory course?',
-    about: 'The preparatory course is a special educational ',
-  },
-  {
-    id: nanoid(8),
-    name: 'Fallback',
-    about: 'Fallback',
-    disabled: true,
-  },
-]
+// const intentItemsMock: IntentListItemInterface[] = [
+  // {
+  //   id: nanoid(8),
+  //   name: 'Yes',
+  //   about: 'yes, yeah, alright, ok',
+  //   status: 'default',
+  // },
+  // {
+  //   id: nanoid(8),
+  //   name: 'Want_pizza',
+  //   about: 'want pizza, wanna pizza, love pizza, like pizza...',
+  //   status: 'error',
+  // },
+  // {
+  //   id: nanoid(8),
+  //   name: "what_time | don't_understand Sorry, I might sound confusing, I am still ...",
+  //   about: 'Sorry, I might sound confusing, I am still ...',
+  //   status: 'warning',
+  // },
+  // {
+  //   id: nanoid(8),
+  //   name: 'Fallback',
+  //   about: 'Fallback',
+  //   status: 'success',
+  // },
+  // {
+  //   id: nanoid(8),
+  //   name: 'What is the preparatory course?',
+  //   about: 'The preparatory course is a special educational ',
+  // },
+  // {
+  //   id: nanoid(8),
+  //   name: 'Fallback',
+  //   about: 'Fallback',
+  //   disabled: true,
+  // },
+// ]
 
 const mockSkill: ISkill = {
   name: 'name_of_the_skill_1',
@@ -524,7 +523,7 @@ export const TestPage = () => {
               onClick: () =>
                 trigger('IntentCatcherModal', {
                   intent: {
-                    id: nanoid(8),
+                    // id: nanoid(8),
                     name: 'want_pizza',
                     examples: [
                       'want pizza',
@@ -549,7 +548,7 @@ export const TestPage = () => {
                 trigger('IntentResponderModal', {
                   intents: [
                     {
-                      id: nanoid(8),
+                      // id: nanoid(8),
                       name: 'yes',
                       type: 'custom',
                     },
@@ -566,7 +565,7 @@ export const TestPage = () => {
                 trigger('IntentResponderModal', {
                   intents: [
                     {
-                      id: nanoid(8),
+                      // id: nanoid(8),
                       name: 'yes',
                       type: 'custom',
                       responses: [
@@ -983,7 +982,7 @@ export const TestPage = () => {
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>IntentListItem</span>
-        {intentItemsMock.map(({ name, about, status, disabled }, i) => (
+        {/* {intentItemsMock.map(({ name, about, status, disabled }, i) => (
           <div key={name + i} className={s.testPage__component}>
             <span>{disabled ? 'disabled' : status ?? 'no status'}</span>
             <IntentListItem
@@ -994,12 +993,12 @@ export const TestPage = () => {
               disabled={disabled}
             />
           </div>
-        ))}
+        ))} */}
       </div>
       <div className={s.testPage__block}>
         <span className={s['testPage__block-name']}>IntentList</span>
         <IntentList>
-          {intentItemsMock.map(({ id, name, about, disabled, status }, i) => (
+          {/* {intentItemsMock.map(({ id, name, about, disabled, status }, i) => (
             <IntentListItem
               key={id}
               id={id}
@@ -1008,7 +1007,7 @@ export const TestPage = () => {
               disabled={disabled}
               status={status}
             />
-          ))}
+          ))} */}
         </IntentList>
       </div>
       <div className={s.testPage__component}>

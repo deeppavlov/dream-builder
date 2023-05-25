@@ -6,6 +6,7 @@ import {
   useController,
   UseFormSetError,
 } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { checkIfEmptyString } from '../../utils/formValidate'
 import Button from '../Button/Button'
 import s from './Input.module.scss'
@@ -51,6 +52,7 @@ export const Input: FC<InputProps> = ({
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const inputId = props?.id ?? useId()
   let cx = classNames.bind(s)
+  const { t } = useTranslation()
 
   // Hide Enter button everytime, when form submitted successfully
   const handleFormSubmit = () => {
@@ -99,7 +101,7 @@ export const Input: FC<InputProps> = ({
         {withEnterButton && (
           <div className={cx('submit', isEnter && 'submit-active')}>
             <Button theme='tertiary' small props={{ type: 'submit' }}>
-              Enter
+              {t('ui.input.enter')}
             </Button>
           </div>
         )}

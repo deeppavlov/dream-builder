@@ -1,4 +1,5 @@
 import { Toaster } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
@@ -33,12 +34,14 @@ export const BotsPage = () => {
   const publicDists = fetchPublicDists()
   const privateDists = fetchPrivateDists()
 
+  const { t } = useTranslation()
+
   return (
     <>
       <Main sidebar>
         <Wrapper
           subWrapper
-          title='Create your Assistant '
+          title={t('wrapper.title.public_assistants')}
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
@@ -82,7 +85,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Assistants'
+          title={t('wrapper.title.your_assistants')}
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&
@@ -97,7 +100,7 @@ export const BotsPage = () => {
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>
-                      Your assistants will appear here
+                      {t('placeholder.table')}
                     </Placeholder>
                   ) : undefined
                 }
@@ -124,7 +127,7 @@ export const BotsPage = () => {
                   />
                 )}
                 {privateDists?.data?.length === 0 || !auth?.user ? (
-                  <Placeholder>Your assistants will appear here</Placeholder>
+                  <Placeholder>{t('placeholder.cards')}</Placeholder>
                 ) : null}
               </Slider>
             </Container>

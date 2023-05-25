@@ -19,20 +19,21 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
+import { useTranslation } from 'react-i18next'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
   const { options } = useDisplay()
+  const { t } = useTranslation()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
   const { fetchPrivateDists } = useAssistants()
   const privateDists = fetchPrivateDists()
-
   return (
     <>
       <Main sidebar fullWidth>
         <Wrapper
           primary
-          title='Your Assistants'
+          title={t('wrapper.title.your_assistants')}
           amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
           // fullHeight
         >

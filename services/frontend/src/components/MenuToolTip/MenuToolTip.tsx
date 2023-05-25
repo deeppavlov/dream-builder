@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { VISIBILITY_STATUS } from '../../constants/constants'
@@ -16,9 +17,11 @@ interface Props {
 
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
+
   const { name: distName } = useParams()
   const queryState = useQueryClient().getQueryState(['dist', distName])
   const dist = queryState?.data as BotInfoInterface | undefined
+  const { t } = useTranslation()
 
   const handleWelcomeClick = () => {}
   const handleRenameClick = () => {
@@ -33,14 +36,14 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const handleDeleteClick = () => {
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
-  const handleShareClick = () => trigger('ShareModal', distName)
+  const handleShareClick = () => trigger('ShareAssistantModal', distName)
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
         type='about'
         linkTo='http://deepdream.builders'
-        name='About'
+        name={t('menus.left.about')}
       />
       {type === 'editor' && (
         <>

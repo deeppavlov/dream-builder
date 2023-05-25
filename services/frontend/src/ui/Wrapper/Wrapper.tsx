@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from '../../assets/icons/close.svg'
 import { Badge } from '../../components/Badge/Badge'
@@ -53,7 +54,7 @@ export const Wrapper: FC<Props> = ({
   const isStorable = closable && id
   const isCustomClose = onClose && closable
   let cx = classNames.bind(s)
-
+  const { t } = useTranslation()
   const handleClose = (e: React.MouseEvent) => {
     if (isStorable)
       localStorage.setItem(`${id}_is_visible`.toUpperCase(), 'false')
@@ -103,7 +104,9 @@ export const Wrapper: FC<Props> = ({
                     <div className={s.btns_area}>
                       {showAll && (
                         <Link to={linkTo!}>
-                          <button className={s.ghost_btn}>Show&nbsp;All</button>
+                          <button className={s.ghost_btn}>
+                            {t('wrapper.btns.show_all')}
+                          </button>
                         </Link>
                       )}
                       <span className={s.amount}>{amount || '...'}</span>
@@ -120,13 +123,15 @@ export const Wrapper: FC<Props> = ({
             <div className={cx('wrapper', 'subWrapper')}>
               <div className={s.header}>
                 <p className={cx('annotation', 'subWrapper')}>
-                  Recommended Templates
+                  {t('wrapper.subwrapper')}
                 </p>
                 {amount && (
                   <div className={s.btns_area}>
                     {showAll && (
                       <Link to={linkTo!}>
-                        <button className={s.ghost_btn}>Show&nbsp;All</button>
+                        <button className={s.ghost_btn}>
+                          {t('wrapper.btns.show_all')}
+                        </button>
                       </Link>
                     )}
                     <span className={s.amount}>{amount || '...'}</span>

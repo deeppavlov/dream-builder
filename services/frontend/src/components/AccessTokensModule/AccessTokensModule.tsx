@@ -2,7 +2,9 @@ import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import { toasts } from '../../mapping/toasts'
 import { getTokens } from '../../services/getTokens'
 import { getUserId } from '../../services/getUserId'
 import { IApiService, IUserApiKey } from '../../types/types'
@@ -19,6 +21,7 @@ interface FormValues {
 }
 
 export const AccessTokensModule = () => {
+  const { t } = useTranslation()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { data: api_services } = useQuery<IApiService[]>(['api_services'], () =>
     getTokens()
@@ -44,7 +47,7 @@ export const AccessTokensModule = () => {
     new Promise((resolve, reject) => {
       const isTokens = tokens !== undefined && tokens !== null
 
-      if (!isTokens) return reject('No tokens found.')
+      if (!isTokens) return reject(t('modals.tokens.logic.no_found_token'))
       setTokens(prev => {
         const newState =
           prev?.filter(({ api_service }) => api_service.id !== token_id) ?? prev
@@ -57,11 +60,7 @@ export const AccessTokensModule = () => {
 
   const handleRemoveBtnClick = (token_id: number) => {
     toast
-      .promise(deleteToken(token_id), {
-        loading: 'Removing...',
-        success: 'Successfully removed!',
-        error: 'Something went wrong...',
-      })
+      .promise(deleteToken(token_id), toasts.deleteToken)
       .finally(() => handleChanges())
   }
 
@@ -76,7 +75,7 @@ export const AccessTokensModule = () => {
         saveTokens(newState)
         return newState
       })
-      resolve('Successfully created!')
+      resolve(t('modals.tokens.logic.token_updated'))
     })
 
   const createUserToken = (data: FormValues) =>
@@ -87,7 +86,8 @@ export const AccessTokensModule = () => {
       const isService = service !== undefined
       const isUserId = user?.id !== undefined
 
-      if (!isService || !isUserId) return reject('Not find Service or User id')
+      if (!isService || !isUserId)
+        return reject(t('modals.tokens.logic.service_no_found'))
 
       const newToken: IUserApiKey = {
         api_service: service,
@@ -103,9 +103,9 @@ export const AccessTokensModule = () => {
           serviceName: data.service,
           onContinue: () => {
             updateToken(apiTokenIndex, newToken)
-            resolve('Successfully updated!')
+            resolve(t('modals.tokens.logic.token_updated'))
           },
-          onCancel: () => resolve('Successfully cancelled!'),
+          onCancel: () => resolve(t('modals.tokens.logic.token_canceled')),
         })
         return
       }
@@ -118,13 +118,13 @@ export const AccessTokensModule = () => {
         return newState
       })
 
-      resolve('Successfully created!')
+      resolve(t('modals.tokens.logic.token_created'))
     })
 
   const onSubmit = (data: FormValues) => {
     toast
       .promise(createUserToken(data), {
-        loading: 'Creating...',
+        loading: t('modals.tokens.logic.creating'),
         success: data => `${data}`,
         error: data => `${data}`,
       })
@@ -136,27 +136,20 @@ export const AccessTokensModule = () => {
 
   return (
     <div className={s.module}>
-      <h5 className={s.title}>Personal access tokens</h5>
-      <p className={s.annotations}>
-        Personal access tokens allow your AI Assistants to use third-party
-        services like OpenAI, GNews, News API, etc. You can always remove these
-        tokens here if you want to stop use of the services they provide access
-        to by your AI Assistants, or you can revoke these tokens in their
-        respective services. Do not give out your personal access tokens to
-        anybody you don't want to access your files.
-      </p>
+      <h5 className={s.title}>{t('modals.tokens.header')}</h5>
+      <p className={s.annotations}>{t('modals.tokens.body')}</p>
       <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
         <Input
           name='token'
-          label='Add a new personal access token:'
+          label={t('modals.tokens.input.label')}
           control={control}
           withEnterButton
           rules={{ required: validationSchema.global.required }}
-          props={{ placeholder: 'Assistive text' }}
+          props={{ placeholder: t('modals.tokens.input.placeholder') }}
         />
         <SkillDropboxSearch
           name='service'
-          label='Choose service:'
+          label={t('modals.tokens.dropbox.label')}
           list={
             api_services?.map(s => ({
               id: s.id.toString(),
@@ -165,7 +158,7 @@ export const AccessTokensModule = () => {
           }
           control={control}
           rules={{ required: true }}
-          props={{ placeholder: 'Choose service' }}
+          props={{ placeholder: t('modals.tokens.dropbox.placeholder') }}
         />
       </form>
       {tokens && (
@@ -179,7 +172,7 @@ export const AccessTokensModule = () => {
                   className={s.remove}
                   onClick={() => handleRemoveBtnClick(api_service.id)}
                 >
-                  Remove
+                  {t('modals.tokens.btn.remove')}
                 </button>
               </div>
             </li>

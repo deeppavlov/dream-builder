@@ -52,7 +52,7 @@ export const DeleteAssistantModal = () => {
       <div className={s.deleteAssistantModal}>
         <h4>
           {bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
-            'Your assistant will be removed from public templates.'}
+            'Your assistant will be removed from public templates. '}
           Do you really want to delete <mark>{bot?.display_name}</mark> Virtual
           Assistant?
         </h4>

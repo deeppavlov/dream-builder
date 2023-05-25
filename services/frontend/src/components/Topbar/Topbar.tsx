@@ -8,6 +8,7 @@ import { BurgerMenu } from '../../ui/BurgerMenu/BurgerMenu'
 import { Profile } from '../../ui/Profile/Profile'
 import { consts } from '../../utils/consts'
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton'
+import { SwitchLanguageButton } from '../SwitchLanguageButton/SwitchLanguageButton'
 import { Display } from './components/Display'
 import { Test } from './components/Test'
 import s from './Topbar.module.scss'
@@ -34,6 +35,7 @@ export const Topbar = () => {
       </div>
       <div className={s.btns_area}>
         {isTableViewSwitcher && <Display />}
+        <SwitchLanguageButton />
         {isEditor && <Test />}
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
       </div>

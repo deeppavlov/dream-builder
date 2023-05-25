@@ -343,3 +343,16 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+
+
+export enum ELOCALES_KEY {
+  en = 'en',
+  ru = 'ru',
+}
+export enum ELOCALES_TITLE {
+  EN = 'EN',
+  RU = 'RU',
+}
+export type TLocales = {
+  [key in ELOCALES_KEY]: { title: ELOCALES_TITLE }
+}

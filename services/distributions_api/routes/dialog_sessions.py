@@ -141,7 +141,7 @@ async def send_dialog_session_message(
 
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
-            lm_service_url = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+            lm_service_url = f"http://{lm_service.name}:{lm_service.port}/respond"
         else:
             lm_service_url = None
 

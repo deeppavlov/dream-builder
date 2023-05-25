@@ -21,8 +21,7 @@ from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 import services.distributions_api.tasks.tasks as tasks
-
-# from services.distributions_api.tasks.tasks import app as celery_app
+from celery.result import AsyncResult
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
@@ -234,8 +233,4 @@ async def delete_stack(stack_id: int, task_id: str):
 
 @deployments_router.get("/task/{task_id}")
 async def get_task_status(task_id: str):
-    result = tasks.app.AsyncResult(task_id)
-    task_status = result.status
-    if result.status == "PENDING":
-        task_status = "Task state is unknown"
-    return {"status": task_status}
+    return tasks.get_task_status(task_id)

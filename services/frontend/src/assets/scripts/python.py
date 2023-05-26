@@ -5,7 +5,7 @@ import requests
 def create_dialog_session(assistant_name):
     url = 'https://hostname/api/dialog_sessions'
     payload = {
-        'virtual_assistant_name': 'assistant_name',
+        'virtual_assistant_name': assistant_name,
     }
 
     response = requests.post(url, json=payload)
@@ -41,7 +41,7 @@ def get_dialog_session_history(dialog_session_id):
 
 # Usage example
 
-assistant_name = 'assistantName'
+assistant_name = 'assistantName' # assistant must be builded
 your_message = 'What is machine learning??'
 openai_api_key = 'your-api-key'
 

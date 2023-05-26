@@ -53,15 +53,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { deploy, deleteDeployment } = useDeploy()
   const { data: bot } = getDist({ distName: dist?.name, refetchOnMount: true })
   const { data: user } = useQuery(['user'], () => getUserId())
-  const {
-    send,
-    renew,
-    session,
-    message,
-    history,
-    setSession,
-    remoteAssistantHistory,
-  } = useChat()
+  const { send, renew, session, message, history, setSession, remoteHistory } =
+    useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
   const auth = useAuth()
 
@@ -146,11 +139,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //FIX
   const awaitDeployPanel =
-    bot?.deployment?.state !== DEPLOY_STATUS.UP && 
+    bot?.deployment?.state !== DEPLOY_STATUS.UP &&
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP 
+  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP
 
   // handlers
   const handleSend = (data: ChatForm) => {
@@ -192,7 +185,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleEnterTokentClick = () => trigger('AccessTokensModal', {})
 
   // hooks
-  useChatScroll(chatRef, [history, message, remoteAssistantHistory])
+  useChatScroll(chatRef, [history, message, remoteHistory])
 
   // проверяем настройки
   useEffect(() => {
@@ -206,7 +199,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       readyToGetSession && getAvailableDialogSession(bot?.name)
 
     availableSession
-      ? remoteAssistantHistory
+      ? remoteHistory
           .mutateAsync(availableSession?.id)
           .then(() => {
             setSession(availableSession)
@@ -269,7 +262,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               This may take a few minutes.
               <br />
               <br />
-              {status?.data?.state + '...'}
+              {status?.data?.state && status?.data?.state + '...'}
             </p>
           </div>
         )}
@@ -296,34 +289,36 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         {chatPanel && (
           <>
             <div className={s.chat} ref={chatRef}>
-              {remoteAssistantHistory?.isLoading &&
-              !remoteAssistantHistory?.error ? (
+              {remoteHistory?.isLoading && !remoteHistory?.error ? (
                 <div className={s.loaderWrapper}>
                   <Loader />
                 </div>
               ) : (
-                remoteAssistantHistory?.data?.map(
-                  (block: ChatHistory, i: number) => {
-                    return (
-                      <div
-                        key={`${block?.author == 'bot'}${i}`}
+                remoteHistory?.data?.map((block: ChatHistory, i: number) => {
+                  return (
+                    <div
+                      key={`${block?.author == 'bot'}${i}`}
+                      className={cx(
+                        'chat__container',
+                        block?.author == 'bot' && 'chat__container_bot'
+                      )}
+                    >
+                      <span
                         className={cx(
-                          'chat__container',
-                          block?.author == 'bot' && 'chat__container_bot'
+                          'chat__message',
+                          block?.author == 'bot' && 'chat__message_bot'
                         )}
                       >
-                        <span
-                          className={cx(
-                            'chat__message',
-                            block?.author == 'bot' && 'chat__message_bot'
-                          )}
-                        >
-                          {block?.text}
-                        </span>
-                      </div>
-                    )
-                  }
-                )
+                        {block?.text}
+                        {/* {block?.author === 'bot' && (
+                            <span className={s.skill}>
+                              Skill: {block?.active_skill?.display_name}
+                            </span>
+                          )} */}
+                      </span>
+                    </div>
+                  )
+                })
               )}
               {history?.map((block, i: number) => (
                 <div
@@ -374,7 +369,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   theme='secondary'
                   props={{
                     'data-tooltip-id': 'renew',
-                    disabled: renew.isLoading,
+                    disabled: renew.isLoading || send?.isLoading,
                     onClick: handleRenewClick,
                   }}
                 >

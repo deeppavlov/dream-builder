@@ -28,6 +28,8 @@ export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
   const curl = activeTab === API_CALL_TAB.CURL
   const node = activeTab === API_CALL_TAB.NODE
   const python = activeTab === API_CALL_TAB.PYTHON
+  
+  const language = node ? 'js' : curl ? 'bash' : python ? 'python' : 'js'
 
   const script = curl
     ? curlTemplate
@@ -45,7 +47,6 @@ export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
   }
 
   const formattedScript = format(script!)
-  console.log('rerender')
   const handleCopyCode = () => {
     navigator.clipboard.writeText(preCodeRef?.current?.props?.children)
     toast.custom(<ToastCopySucces />, {
@@ -54,7 +55,6 @@ export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
       duration: 1000,
     })
   }
-
   return (
     <div className={s.container}>
       <div className={s.btnContainer}>
@@ -66,7 +66,7 @@ export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
       </div>
       <SyntaxHighlighter
         customStyle={{ margin: '0px', borderRadius: '12px' }}
-        language={node ? 'js' : curl ? 'bash' : python ? 'python' : 'js'}
+        language={language}
         style={nightOwl}
         ref={preCodeRef}
       >

@@ -5,7 +5,7 @@ import requests
 def create_dialog_session(assistant_name):
     url = 'https://hostname/api/dialog_sessions'
     payload = {
-        'virtual_assistant_name': 'assistantName',
+        'virtual_assistant_name': 'assistant_name',
     }
 
     response = requests.post(url, json=payload)

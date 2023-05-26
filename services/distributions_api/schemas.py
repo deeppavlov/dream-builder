@@ -46,7 +46,7 @@ class LmServiceRead(BaseOrmModel):
     description: str
     project_url: str
     api_key: Optional[ApiKeyRead]
-    is_active: bool
+    is_maintained: bool
 
 
 class DeploymentBaseRead(BaseOrmModel):

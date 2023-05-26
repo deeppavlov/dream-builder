@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 // Endpoint 1: Create dialog session
 const createDialogSession = async () => {
-  const url = 'http://hostname/api/dialog_sessions'
+  const url = 'https://hostname/api/dialog_sessions'
   const payload = {
     virtual_assistant_name: 'assistantName',
   }
@@ -22,7 +22,7 @@ const sendChatMessage = async (
   yourMessage,
   openaiApiKey
 ) => {
-  const url = `http://hostname/api/dialog_sessions/${dialogSessionId}/chat`
+  const url = `https://hostname/api/dialog_sessions/${dialogSessionId}/chat`
   const payload = {
     text: yourMessage,
     openai_api_key: openaiApiKey,
@@ -39,7 +39,7 @@ const sendChatMessage = async (
 
 // Endpoint 3: Get dialog session history
 const getDialogSessionHistory = async dialogSessionId => {
-  const url = `http://hostname/api/dialog_sessions/${dialogSessionId}/history`
+  const url = `https://hostname/api/dialog_sessions/${dialogSessionId}/history`
   const response = await fetch(url)
   const data = await response.json()
   // Handle the response data as needed

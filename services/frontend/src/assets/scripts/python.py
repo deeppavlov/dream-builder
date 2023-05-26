@@ -16,7 +16,7 @@ def create_dialog_session(assistant_name):
 
 
 # Endpoint 2: Send a chat message
-def send_chat_message(dialog_session_id, your_message, openai_api_key='string'):
+def send_chat_message(dialog_session_id, your_message, openai_api_key):
     url = f'https://hostname/api/dialog_sessions/{str(dialog_session_id)}/chat'
     payload = {
         'text': your_message,
@@ -41,7 +41,7 @@ def get_dialog_session_history(dialog_session_id):
 
 # Usage example
 
-assistant_name = 'ai_faq_assistant'
+assistant_name = 'assistantName'
 your_message = 'What is machine learning??'
 openai_api_key = 'your-api-key'
 

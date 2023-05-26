@@ -40,7 +40,7 @@ export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
   const format = (template: string) => {
     const hostName = api.defaults.baseURL
     return template
-      .replaceAll('http://hostname/api/', hostName!)
+      .replaceAll('https://hostname/api/', hostName!)
       .replace('assistantName', assistantId)
   }
 

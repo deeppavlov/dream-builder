@@ -10,8 +10,8 @@ import SvgIcon from '../../components/SvgIcon/SvgIcon'
 import { SwitchViewButton } from '../../components/SwitchViewButton/SwitchViewButton'
 import TableRowsLoader from '../../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../../context/AuthProvider'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useComponent } from '../../hooks/useComponent'
 import { AddButton } from '../../ui/AddButton/AddButton'
 import Button from '../../ui/Button/Button'
@@ -24,11 +24,11 @@ import { trigger } from '../../utils/events'
 const SkillsPage = () => {
   const auth = useAuth()
   const { name } = useParams()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const { isPreview } = usePreview()
   const { getAllComponents } = useComponent()
-  const components = getAllComponents(name || '', {refetchOnMount: true})
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const components = getAllComponents(name || '', { refetchOnMount: true })
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
   const handleReadFirst = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })

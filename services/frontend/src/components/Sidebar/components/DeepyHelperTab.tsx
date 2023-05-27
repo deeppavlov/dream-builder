@@ -2,7 +2,7 @@ import classNames from 'classnames/bind'
 import { useState } from 'react'
 import DeepyHelperIcon from '../../../assets/icons/deeppavlov_logo_round.svg'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
-import { useDisplay } from '../../../context/DisplayContext'
+import { useUIOptions } from '../../../context/UIOptionsContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
 import { TRIGGER_LEFT_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
@@ -14,8 +14,8 @@ import s from './DeepyHelperTab.module.scss'
 export const HELPER_TAB_ID = 'helperTab'
 
 export const DeepyHelperTab = () => {
-  const { options } = useDisplay()
-  const copilotIsActive = options.get(consts.COPILOT_SP_IS_ACTIVE)
+  const { UIOptions } = useUIOptions()
+  const copilotIsActive = UIOptions[consts.COPILOT_SP_IS_ACTIVE]
   const [hintIsVisited, setHintIsVisited] = useState<boolean>(
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
       true

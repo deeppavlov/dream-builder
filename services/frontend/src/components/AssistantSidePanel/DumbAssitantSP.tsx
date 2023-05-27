@@ -6,8 +6,8 @@ import {
   PUBLISH_REQUEST_STATUS,
   VISIBILITY_STATUS,
 } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import useTabsManager from '../../hooks/useTabsManager'
 import { RoutesList } from '../../router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
@@ -38,7 +38,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   })
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
@@ -80,12 +80,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const dispatchTrigger = (isOpen: boolean) => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_ASSISTANT_SP_ID,
-        value: isOpen ? `info_${bot?.id}` : null,
-      },
+    setUIOption({
+      name: consts.ACTIVE_ASSISTANT_SP_ID,
+      value: isOpen ? `info_${bot?.id}` : null,
     })
   }
 

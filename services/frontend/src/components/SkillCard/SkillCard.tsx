@@ -3,8 +3,8 @@ import classNames from 'classnames/bind'
 import React, { FC, useId, useState } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { RoutesList } from '../../router/RoutesList'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
@@ -36,9 +36,9 @@ export const SkillCard: FC<SkillCardProps> = ({
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
   const tooltipId = useId()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const { name: distRoutingName } = useParams()
-  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const isActive = skill.id === activeSKillId
   const nav = useNavigate()
   const nameForComponentType = componentTypeMap[skill?.component_type!]

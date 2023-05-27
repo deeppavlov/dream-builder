@@ -1,8 +1,8 @@
 import classNames from 'classnames/bind'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import useTabsManager, { TabList } from '../../hooks/useTabsManager'
 import { ISkill, SkillAvailabilityType } from '../../types/types'
 import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
@@ -30,7 +30,7 @@ const DumbSkillSP = ({
   const [properties, editor] = ['Properties', 'Editor']
   const isEditor = children !== undefined
   const { isPreview } = usePreview()
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const isCustomizable =
     skill?.is_customizable && !isPreview && visibility !== 'public'
   const [tabsInfo, setTabsInfo] = useTabsManager({
@@ -54,12 +54,9 @@ const DumbSkillSP = ({
     trigger('SkillModal', { action: 'edit', skill })
 
   const dispatchTrigger = (isOpen: boolean) =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_SKILL_SP_ID,
-        value: isOpen ? skill?.id : null,
-      },
+    setUIOption({
+      name: consts.ACTIVE_SKILL_SP_ID,
+      value: isOpen ? skill?.id : null,
     })
 
   useEffect(() => {

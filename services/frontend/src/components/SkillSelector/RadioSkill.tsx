@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { IStackElement } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
 import { RadioButton, RadioButtonProps } from '../../ui/RadioButton/RadioButton'
@@ -20,8 +20,8 @@ export const RadioSkill = ({
   defaultChecked,
   htmlFor,
 }: Props) => {
-  const { options } = useDisplay()
-  const activeSkillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const { UIOptions } = useUIOptions()
+  const activeSkillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const cleanTitle = capitalizeTitle(skill.display_name)
   const tooltipId = useId()
 

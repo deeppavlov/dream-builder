@@ -54,9 +54,8 @@ export const RouterConfig: CustomRouteConfig[] = [
         handle: {
           crumb: (params: any, options?: any) => {
             const path = generatePath(RoutesList.editor.default, params)
-            const display_name = options?.get(
-              consts.ACTIVE_ASSISTANT
-            )?.display_name
+            const display_name =
+              options?.[consts.ACTIVE_ASSISTANT]?.display_name
             return [
               display_name && <CrumbForEditor />,
               display_name && <Link to={path}>{display_name}</Link>,
@@ -110,9 +109,8 @@ export const RouterConfig: CustomRouteConfig[] = [
             loader: ({ params }) => params,
             handle: {
               crumb: (params: any, options?: any) => {
-                const display_name = options?.get(
-                  consts.EDITOR_ACTIVE_SKILL
-                )?.display_name
+                const display_name =
+                  options?.[consts.EDITOR_ACTIVE_SKILL]?.display_name
                 return [
                   <Link to={generatePath(RoutesList.editor.default, params)}>
                     Skills

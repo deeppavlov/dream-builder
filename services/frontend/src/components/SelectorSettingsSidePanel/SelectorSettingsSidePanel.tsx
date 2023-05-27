@@ -1,16 +1,16 @@
+import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
 import { useEffect, useId } from 'react'
 import { useForm } from 'react-hook-form'
-import { ReactComponent as QuestionIcon } from '@assets/icons/question.svg'
-import { ISkill, IStackElement, SettingKey } from '../../types/types'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import useTabsManager from '../../hooks/useTabsManager'
+import { IStackElement, SettingKey } from '../../types/types'
 import Button from '../../ui/Button/Button'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import SidePanelButtons from '../../ui/SidePanelButtons/SidePanelButtons'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
 import SidePanelName from '../../ui/SidePanelName/SidePanelName'
+import { consts } from '../../utils/consts'
 import { SettingsList } from '../SettingsList/SettingsList'
 import s from './SelectorSettingsSidePanel.module.scss'
-import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
 
 export interface SelectorSettings {
   skill: IStackElement
@@ -37,7 +37,7 @@ const SelectorSettingsSidePanel = ({
         ])
       : new Map([[properties, { name: properties }]]),
   })
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const settingsId = useId()
   const {
     register,
@@ -57,12 +57,9 @@ const SelectorSettingsSidePanel = ({
   }, [settings])
 
   const dispatchTrigger = (isOpen: boolean) =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_SKILL_SP_ID,
-        value: isOpen ? skill.name : null,
-      },
+    setUIOption({
+      name: consts.ACTIVE_SKILL_SP_ID,
+      value: isOpen ? skill.name : null,
     })
 
   useEffect(() => {

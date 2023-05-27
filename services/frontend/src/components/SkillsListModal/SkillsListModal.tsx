@@ -3,7 +3,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
@@ -28,7 +28,7 @@ interface IAddPublicSkill {
 
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
@@ -43,7 +43,7 @@ export const SkillsListModal = () => {
     },
     { enabled: isOpen }
   )
-  const rightSidepanelIsActive = options.get(consts.RIGHT_SP_IS_ACTIVE)
+  const rightSidepanelIsActive = UIOptions[consts.RIGHT_SP_IS_ACTIVE]
   const position = {
     overlay: {
       top: 64,

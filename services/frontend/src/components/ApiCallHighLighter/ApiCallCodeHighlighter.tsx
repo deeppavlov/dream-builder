@@ -6,7 +6,7 @@ import curlTemplate from '../../assets/scripts/curl.bash?raw'
 import nodeTemplate from '../../assets/scripts/node.js?raw'
 import pythonTemplate from '../../assets/scripts/python.py?raw'
 import { API_CALL_TAB } from '../../constants/constants'
-import { TApiCallType, useDisplay } from '../../context/DisplayContext'
+import { TApiCallType, useUIOptions } from '../../context/UIOptionsContext'
 import { api } from '../../services/axiosConfig'
 import Button from '../../ui/Button/Button'
 import { consts } from '../../utils/consts'
@@ -20,10 +20,10 @@ interface Props {
 }
 
 export const ApiCallCodeHighlighter: FC<Props> = ({ assistantId }) => {
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const preCodeRef = useRef<HTMLPreElement>(null)
 
-  const activeTab: TApiCallType = options.get(consts.API_CALL_ACTIVE_TAB)
+  const activeTab: TApiCallType = UIOptions[consts.API_CALL_ACTIVE_TAB]
 
   const curl = activeTab === API_CALL_TAB.CURL
   const node = activeTab === API_CALL_TAB.NODE

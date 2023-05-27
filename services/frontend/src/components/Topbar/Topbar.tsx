@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthProvider'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { TTopbar } from '../../types/types'
 import { Breadcrumbs } from '../../ui/Breadcrumbs/Breadcrumbs'
 import { BurgerMenu } from '../../ui/BurgerMenu/BurgerMenu'
@@ -16,11 +16,11 @@ export const Topbar = () => {
   const auth = useAuth()
   const user = auth?.user
   const { name } = useParams()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const type: TTopbar = name !== undefined ? 'editor' : 'main'
   const isEditor = type === 'editor'
-  const editorActiveTab = options.get(consts.EDITOR_ACTIVE_TAB)
-  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
+  const editorActiveTab = UIOptions[consts.EDITOR_ACTIVE_TAB]
+  const skillEditorIsActive = UIOptions[consts.EDITOR_ACTIVE_SKILL]
   const isTableViewSwitcher = isEditor
     ? editorActiveTab == 'Architecture' && !skillEditorIsActive
     : location.pathname !== '/profile'
@@ -28,7 +28,7 @@ export const Topbar = () => {
 
   return (
     <div className={cx('topbar', isEditor && 'editor', !user && 'gapForBtns')}>
-      <BurgerMenu type={type} dist={options.get(consts.ACTIVE_ASSISTANT)} />
+      <BurgerMenu type={type} dist={UIOptions[consts.ACTIVE_ASSISTANT]} />
       <div className={s.logo_area}>
         <Breadcrumbs />
       </div>

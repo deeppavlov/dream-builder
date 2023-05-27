@@ -1,18 +1,28 @@
 import classNames from 'classnames/bind'
 import { ReactComponent as Gear } from '../../../assets/icons/gear.svg'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
-import { useDisplay } from '../../../context/DisplayContext'
+import { useAuth } from '../../../context/AuthProvider'
+import { useUIOptions } from '../../../context/UIOptionsContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import s from './SettingsTab.module.scss'
 
 export const SettingsTab = () => {
-  const { options } = useDisplay()
-  const isActive = options.get(consts.SETTINGS_MODAL_IS_ACTIVE)
+  const auth = useAuth()
+  const isAuthorized = Boolean(auth?.user)
+  const { UIOptions } = useUIOptions()
+  const isActive = UIOptions[consts.SETTINGS_MODAL_IS_ACTIVE]
   let cx = classNames.bind(s)
 
-  const settingsClickHandler = () => trigger('AccessTokensModal', {})
+  const settingsClickHandler = () => {
+    if (!isAuthorized)
+      return trigger('SignInModal', {
+        requestModal: { name: 'AccessTokensModal' },
+      })
+
+    trigger('AccessTokensModal', {})
+  }
 
   return (
     <button

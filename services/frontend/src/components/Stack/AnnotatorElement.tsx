@@ -1,12 +1,12 @@
-import { FC, useId, useState } from 'react'
 import classNames from 'classnames/bind'
+import { FC, useId, useState } from 'react'
+import { useUIOptions } from '../../context/UIOptionsContext'
+import { modelTypeMap } from '../../mapping/modelTypeMap'
 import { IStackElement } from '../../types/types'
 import { Kebab } from '../../ui/Kebab/Kebab'
-import { modelTypeMap } from '../../mapping/modelTypeMap'
-import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
-import { srcForIcons } from '../../utils/srcForIcons'
-import { useDisplay } from '../../context/DisplayContext'
 import { consts } from '../../utils/consts'
+import { srcForIcons } from '../../utils/srcForIcons'
+import AnnotatorStackToolTip from '../AnnotatorStackToolTip/AnnotatorStackToolTip'
 import s from './AnnotatorElement.module.scss'
 
 interface AnnotatorProps {
@@ -21,9 +21,9 @@ export const AnnotatorElement: FC<AnnotatorProps> = ({
   name,
 }) => {
   const [disabled, setDisabled] = useState<boolean>(true)
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const isActive =
-    options.get(consts.ACTIVE_ANNOTATOR_SP_ID) === name + annotator.name
+    UIOptions[consts.ACTIVE_ANNOTATOR_SP_ID] === name + annotator.name
   const tooltipId = useId()
   const cx = classNames.bind(s)
 

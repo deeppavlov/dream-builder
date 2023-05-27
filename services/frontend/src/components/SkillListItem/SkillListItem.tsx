@@ -3,8 +3,8 @@ import { FC, useId } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from '../../assets/icons/add.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit_pencil.svg'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { RoutesList } from '../../router/RoutesList'
 import {
@@ -43,10 +43,10 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const tooltipId = useId()
   const { isPreview } = usePreview()
   const { name: distRoutingName } = useParams()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const nav = useNavigate()
-  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 

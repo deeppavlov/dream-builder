@@ -6,7 +6,8 @@ import { toast } from 'react-hot-toast'
 import Modal from 'react-modal'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
-import { useDisplay } from '../../context/DisplayContext'
+import { DEPLOY_STATUS } from '../../constants/constants'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
@@ -27,7 +28,6 @@ import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
-import { DEPLOY_STATUS } from '../../constants/constants'
 
 interface Props {
   skill?: ISkill
@@ -50,8 +50,8 @@ const SkillPromptModal = () => {
   const [selectedService, setSelectedService] = useState<LM_Service | null>(
     null
   )
-  const { options, dispatch } = useDisplay()
-  const leftSidePanelIsActive = options.get(consts.LEFT_SP_IS_ACTIVE)
+  const { UIOptions, setUIOption } = useUIOptions()
+  const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const modalRef = useRef(null)
   const nav = useNavigate()
   const { getDist } = useAssistants()
@@ -190,21 +190,15 @@ const SkillPromptModal = () => {
   }, [skill])
 
   useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.EDITOR_ACTIVE_SKILL,
-        value: isOpen ? skill : null,
-      },
+    setUIOption({
+      name: consts.EDITOR_ACTIVE_SKILL,
+      value: isOpen ? skill : null,
     })
 
     return () => {
-      dispatch({
-        type: 'set',
-        option: {
-          id: consts.EDITOR_ACTIVE_SKILL,
-          value: null,
-        },
+      setUIOption({
+        name: consts.EDITOR_ACTIVE_SKILL,
+        value: null,
       })
       reset({})
     }
@@ -333,7 +327,8 @@ const SkillPromptModal = () => {
                     theme='primary'
                     props={{
                       type: 'submit',
-                      disabled: updateComponent.isLoading || isSubmitting,
+                      disabled:
+                        updateComponent.isLoading || isSubmitting || !isDirty,
                     }}
                   >
                     Save

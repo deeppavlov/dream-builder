@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
 import { DEEPY_ASSISTANT, TOOLTIP_DELAY } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
 import { ChatForm, ChatHistory } from '../../types/types'
@@ -34,7 +34,7 @@ export const CopilotSidePanel = () => {
   } = useChat()
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
   const cx = classNames.bind(s)
@@ -66,12 +66,9 @@ export const CopilotSidePanel = () => {
   // hooks
 
   const dispatchTrigger = (isOpen: boolean) =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.COPILOT_SP_IS_ACTIVE,
-        value: isOpen,
-      },
+    setUIOption({
+      name: consts.COPILOT_SP_IS_ACTIVE,
+      value: isOpen,
     })
 
   useEffect(() => {

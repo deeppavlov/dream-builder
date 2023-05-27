@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import store from 'store2'
 import { DEEPY_ASSISTANT } from '../constants/constants'
-import { useDisplay } from '../context/DisplayContext'
+import { useUIOptions } from '../context/UIOptionsContext'
 import { getDialogSession } from '../services/getDialogSession'
 import { getHistory } from '../services/getHistory'
 import { renewDialog } from '../services/renewDialog'
@@ -13,9 +13,9 @@ import { consts } from '../utils/consts'
 import { ChatHistory } from './../types/types'
 
 export const useChat = () => {
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
-  const bot = options.get(consts.CHAT_SP_IS_ACTIVE)
+  const bot = UIOptions[consts.CHAT_SP_IS_ACTIVE]
   const [session, setSession] = useState<SessionConfig | null>(null)
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
@@ -24,15 +24,15 @@ export const useChat = () => {
   const [deepySession, setDeepySession] = useState<SessionConfig>(
     store('deepySession')
   )
-  
+
   const [isDeepy, setIsDeepy] = useState<boolean>(
-    Boolean(deepySession?.id) && options.get(consts.COPILOT_SP_IS_ACTIVE) //FIX!!!
+    Boolean(deepySession?.id) && UIOptions[consts.COPILOT_SP_IS_ACTIVE] //FIX!!!
   )
 
   const checkAvailableSession = useMutation({
     mutationFn: (data: number) => getDialogSession(data),
   })
-  
+
   const renew = useMutation({
     onMutate: data => {
       store(data + '_session') ? store.remove(data + '_session') : null
@@ -75,7 +75,7 @@ export const useChat = () => {
       store.remove(variables + '_session')
     },
   })
-  
+
   const send = useMutation({
     onMutate: ({ text, hidden }: IPostChat) => {
       setMessage(text)
@@ -104,7 +104,7 @@ export const useChat = () => {
     () => getHistory(deepySession?.id),
     {
       enabled:
-        Boolean(deepySession?.id) && options.get(consts.COPILOT_SP_IS_ACTIVE),
+        Boolean(deepySession?.id) && UIOptions[consts.COPILOT_SP_IS_ACTIVE],
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       retry: 1,

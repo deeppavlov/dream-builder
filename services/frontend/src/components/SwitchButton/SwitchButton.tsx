@@ -1,34 +1,30 @@
 import classNames from 'classnames/bind'
 import { INTEGRATION_ACTIVE_TAB } from '../../constants/constants'
-import { TIntegrationTabType, useDisplay } from '../../context/DisplayContext'
+import {
+  TIntegrationTabType,
+  useUIOptions,
+} from '../../context/UIOptionsContext'
 import { consts } from '../../utils/consts'
 import s from './SwitchButton.module.scss'
 
 export const SwitchButton = () => {
   const cx = classNames.bind(s)
 
-  const { options, dispatch } = useDisplay()
+  const { UIOptions, setUIOption } = useUIOptions()
 
-  const activeTab: TIntegrationTabType = options.get(
-    consts.INTEGRATION_ACTIVE_TAB
-  )
+  const activeTab: TIntegrationTabType =
+    UIOptions[consts.INTEGRATION_ACTIVE_TAB]
 
   const webChatHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.INTEGRATION_ACTIVE_TAB,
-        value: INTEGRATION_ACTIVE_TAB.CHAT,
-      },
+    setUIOption({
+      name: consts.INTEGRATION_ACTIVE_TAB,
+      value: INTEGRATION_ACTIVE_TAB.CHAT,
     })
   }
   const APICallHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.INTEGRATION_ACTIVE_TAB,
-        value: INTEGRATION_ACTIVE_TAB.API,
-      },
+    setUIOption({
+      name: consts.INTEGRATION_ACTIVE_TAB,
+      value: INTEGRATION_ACTIVE_TAB.API,
     })
   }
   return (

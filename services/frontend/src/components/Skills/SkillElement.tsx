@@ -2,7 +2,7 @@ import classNames from 'classnames/bind'
 import { FC, useId, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useComponent } from '../../hooks/useComponent'
 import { componentTypeMap } from '../../mapping/componentTypeMap'
 import { ISkill } from '../../types/types'
@@ -20,8 +20,8 @@ interface SkillProps {
 export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
   const [disabled] = useState<boolean>(false)
   const skillRef = useRef(null)
-  const { options } = useDisplay()
-  const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
+  const { UIOptions } = useUIOptions()
+  const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   let tooltipId = useId()
   const cx = classNames.bind(s)
   const { name: distName } = useParams()

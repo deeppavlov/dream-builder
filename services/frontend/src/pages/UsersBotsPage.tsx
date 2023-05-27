@@ -12,7 +12,7 @@ import { PublishAssistantModal } from '../components/PublishAssistantModal/Publi
 import { ShareAssistantModal } from '../components/ShareAssistantModal/ShareAssistantModal'
 import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../context/AuthProvider'
-import { useDisplay } from '../context/DisplayContext'
+import { useUIOptions } from '../context/UIOptionsContext'
 import { useAssistants } from '../hooks/useAssistants'
 import { AddButton } from '../ui/AddButton/AddButton'
 import { Container } from '../ui/Container/Container'
@@ -22,8 +22,8 @@ import { consts } from '../utils/consts'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const { fetchPrivateDists } = useAssistants()
   const privateDists = fetchPrivateDists()
 

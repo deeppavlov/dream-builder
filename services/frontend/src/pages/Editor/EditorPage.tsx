@@ -20,15 +20,15 @@ import { SkillModal } from '../../components/SkillModal/SkillModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
 import { VISIBILITY_STATUS } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { RoutesList } from '../../router/RoutesList'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
 
 export const EditorPage = () => {
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const { name } = useParams()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
@@ -42,12 +42,9 @@ export const EditorPage = () => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
       setIsPreview(dist?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE)
-      dispatch({
-        type: 'set',
-        option: {
-          id: consts.ACTIVE_ASSISTANT,
-          value: dist,
-        },
+      setUIOption({
+        name: consts.ACTIVE_ASSISTANT,
+        value: dist,
       })
     }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useObserver } from '../../hooks/useObserver'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import { consts } from '../../utils/consts'
@@ -8,18 +8,12 @@ import { ConfirmApiTokenUpdate } from '../ConfirmApiTokenUpdate/ConfirmApiTokenU
 
 export const AccessTokensModal = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
 
   const handleEventUpdate = () => setIsOpen(true)
 
   useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.SETTINGS_MODAL_IS_ACTIVE,
-        value: isOpen,
-      },
-    })
+    setUIOption({ name: consts.SETTINGS_MODAL_IS_ACTIVE, value: isOpen })
   }, [isOpen])
 
   useObserver('AccessTokensModal', handleEventUpdate)

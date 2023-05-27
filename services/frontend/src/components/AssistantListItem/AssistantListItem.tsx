@@ -9,7 +9,7 @@ import {
   PUBLISH_REQUEST_STATUS,
   VISIBILITY_STATUS,
 } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { RoutesList } from '../../router/RoutesList'
 import { getDeploy } from '../../services/getDeploy'
 import { BotAvailabilityType, BotInfoInterface } from '../../types/types'
@@ -40,9 +40,9 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   const infoSPId = `info_${bot.id}`
-  const activeAssistantId = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 

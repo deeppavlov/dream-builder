@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'
-import classNames from 'classnames/bind'
-import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
 import DeepPavlovLogo from '@assets/icons/deeppavlov_logo_round.svg'
-import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
-import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { ReactComponent as EditPencilIcon } from '@assets/icons/edit_pencil.svg'
+import classNames from 'classnames/bind'
+import React, { useEffect } from 'react'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import useTabsManager from '../../hooks/useTabsManager'
-import { IStackElement } from '../../types/types'
 import { modelTypeMap } from '../../mapping/modelTypeMap'
+import { IStackElement } from '../../types/types'
+import SidePanelHeader from '../../ui/SidePanelHeader/SidePanelHeader'
+import { consts } from '../../utils/consts'
 import s from './AnnotatorSidePanel.module.scss'
 
 interface Props {
@@ -38,16 +38,13 @@ const AnnotatorSidePanel = ({
     ),
   })
   const nameForModelType = modelTypeMap[model_type ?? '']
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   let cx = classNames.bind(s)
 
   const dispatchTrigger = (isOpen: boolean) =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_ANNOTATOR_SP_ID,
-        value: isOpen ? name + annotator.name : null,
-      },
+    setUIOption({
+      name: consts.ACTIVE_ANNOTATOR_SP_ID,
+      value: isOpen ? name + annotator.name : null,
     })
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
-import { useDisplay } from '../context/DisplayContext'
+import { useUIOptions } from '../context/UIOptionsContext'
 import { useAssistants } from '../hooks/useAssistants'
 import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
@@ -18,8 +18,8 @@ import { consts } from '../utils/consts'
 export const BotsAllPage = () => {
   const { fetchPublicDists } = useAssistants()
   const publicDists = fetchPublicDists()
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
   return (
     <>

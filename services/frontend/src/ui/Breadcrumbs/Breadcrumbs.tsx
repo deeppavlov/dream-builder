@@ -1,10 +1,11 @@
+
 import { ReactComponent as HomeIcon } from '@assets/icons/home.svg'
 import classNames from 'classnames/bind'
 import React from 'react'
 import { useMatches } from 'react-router-dom'
 import BaseToolTip from '../../components/BaseToolTip/BaseToolTip'
 import TopbarButton from '../../components/TopbarButton/TopbarButton'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import s from './Breadcrumbs.module.scss'
 
 interface IHandle {
@@ -13,14 +14,14 @@ interface IHandle {
 
 export const Breadcrumbs = () => {
   const matches = useMatches()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
   let crumbs = matches
     // Filter routes with crumbs
     .filter(match => Boolean((match.handle as IHandle)?.crumb))
     // Setting data to route crumbs
     .map(({ handle, data: paramsData }) => {
       const { crumb } = handle as IHandle
-      return crumb!(paramsData as string, options as any)
+      return crumb!(paramsData as string, UIOptions as any)
     })
     .flat()
   let cx = classNames.bind(s)

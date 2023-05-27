@@ -1,21 +1,18 @@
 import { TOOLTIP_DELAY } from '../../../constants/constants'
-import { useDisplay } from '../../../context/DisplayContext'
+import { useUIOptions } from '../../../context/UIOptionsContext'
 import { consts } from '../../../utils/consts'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import SvgIcon from '../../SvgIcon/SvgIcon'
 import s from './Display.module.scss'
 
 export const Display = () => {
-  const { options, dispatch } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions, setUIOption } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
   const changeView = () =>
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.IS_TABLE_VIEW,
-        value: !isTableView,
-      },
+    setUIOption({
+      name: consts.IS_TABLE_VIEW,
+      value: !isTableView,
     })
 
   return (

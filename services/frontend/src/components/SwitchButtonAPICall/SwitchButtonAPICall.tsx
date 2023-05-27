@@ -1,41 +1,35 @@
 import classNames from 'classnames/bind'
 import { API_CALL_TAB } from '../../constants/constants'
-import { TIntegrationTabType, useDisplay } from '../../context/DisplayContext'
+import {
+  TIntegrationTabType,
+  useUIOptions,
+} from '../../context/UIOptionsContext'
 import { consts } from '../../utils/consts'
 import s from './SwitchButtonAPICall.module.scss'
 
 export const SwitchButtonAPICall = () => {
   const cx = classNames.bind(s)
 
-  const { options, dispatch } = useDisplay()
+  const { UIOptions, setUIOption } = useUIOptions()
 
-  const activeTab: TIntegrationTabType = options.get(consts.API_CALL_ACTIVE_TAB)
+  const activeTab: TIntegrationTabType = UIOptions[consts.API_CALL_ACTIVE_TAB]
 
   const curlHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.API_CALL_ACTIVE_TAB,
-        value: API_CALL_TAB.CURL,
-      },
+    setUIOption({
+      name: consts.API_CALL_ACTIVE_TAB,
+      value: API_CALL_TAB.CURL,
     })
   }
   const nodeHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.API_CALL_ACTIVE_TAB,
-        value: API_CALL_TAB.NODE,
-      },
+    setUIOption({
+      name: consts.API_CALL_ACTIVE_TAB,
+      value: API_CALL_TAB.NODE,
     })
   }
   const pythonHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.API_CALL_ACTIVE_TAB,
-        value: API_CALL_TAB.PYTHON,
-      },
+    setUIOption({
+      name: consts.API_CALL_ACTIVE_TAB,
+      value: API_CALL_TAB.PYTHON,
     })
   }
   return (

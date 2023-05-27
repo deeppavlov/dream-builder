@@ -6,16 +6,16 @@ import { Main } from '../../components/Main/Main'
 import { SwitchButton } from '../../components/SwitchButton/SwitchButton'
 import { WebChatCodeHighlighter } from '../../components/WebChatCodeHighlighter/WebChatCodeHighlighter'
 import { INTEGRATION_ACTIVE_TAB } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { Container } from '../../ui/Container/Container'
 import { Wrapper } from '../../ui/Wrapper/Wrapper'
 import { consts } from '../../utils/consts'
 
 export const IntegrationPage = () => {
   const { name } = useParams()
-  const { options } = useDisplay()
+  const { UIOptions } = useUIOptions()
 
-  const activeTab = options.get(consts.INTEGRATION_ACTIVE_TAB)
+  const activeTab = UIOptions[consts.INTEGRATION_ACTIVE_TAB]
   const webChat = activeTab === INTEGRATION_ACTIVE_TAB.CHAT
   const apiCall = activeTab === INTEGRATION_ACTIVE_TAB.API
 

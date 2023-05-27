@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { consts } from '../../utils/consts'
 import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './SwitchViewButton.module.scss'
@@ -7,26 +7,20 @@ import s from './SwitchViewButton.module.scss'
 export const SwitchViewButton = () => {
   const cx = classNames.bind(s)
 
-  const { options, dispatch } = useDisplay()
+  const { UIOptions, setUIOption } = useUIOptions()
 
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
   const cardViewHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.IS_TABLE_VIEW,
-        value: true,
-      },
+    setUIOption({
+      name: consts.IS_TABLE_VIEW,
+      value: true,
     })
   }
   const listViewHandler = () => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.IS_TABLE_VIEW,
-        value: false,
-      },
+    setUIOption({
+      name: consts.IS_TABLE_VIEW,
+      value: false,
     })
   }
   return (

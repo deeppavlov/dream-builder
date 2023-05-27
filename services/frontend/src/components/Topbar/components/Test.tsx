@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
-import { useDisplay } from '../../../context/DisplayContext'
+import { useUIOptions } from '../../../context/UIOptionsContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
 import { AssistantDialogSidePanel } from '../../AssistantDialogSidePanel/AssistantDialogSidePanel'
@@ -10,9 +10,9 @@ import SvgIcon from '../../SvgIcon/SvgIcon'
 import s from './Test.module.scss'
 
 export const Test = () => {
-  const { options } = useDisplay()
-  const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
-  const activePanel = options.get(consts.CHAT_SP_IS_ACTIVE)
+  const { UIOptions } = useUIOptions()
+  const activeAssistant = UIOptions[consts.ACTIVE_ASSISTANT]
+  const activePanel = UIOptions[consts.CHAT_SP_IS_ACTIVE]
   const cx = classNames.bind(s)
 
   const handleBtnClick = () => {

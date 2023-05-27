@@ -15,7 +15,7 @@ import { ShareAssistantModal } from '../components/ShareAssistantModal/ShareAssi
 import { SignInModal } from '../components/SignInModal/SignInModal'
 import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
 import { useAuth } from '../context/AuthProvider'
-import { useDisplay } from '../context/DisplayContext'
+import { useUIOptions } from '../context/UIOptionsContext'
 import { useAssistants } from '../hooks/useAssistants'
 import { RoutesList } from '../router/RoutesList'
 import { AddButton } from '../ui/AddButton/AddButton'
@@ -26,8 +26,8 @@ import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
 
 export const BotsPage = () => {
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const auth = useAuth()
   const { fetchPublicDists, fetchPrivateDists } = useAssistants()
   const publicDists = fetchPublicDists()

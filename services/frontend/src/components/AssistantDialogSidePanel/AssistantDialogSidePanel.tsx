@@ -10,7 +10,7 @@ import {
   TOOLTIP_DELAY,
 } from '../../constants/constants'
 import { useAuth } from '../../context/AuthProvider'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
@@ -106,7 +106,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const { handleSubmit, register, reset } = useForm<ChatForm>()
 
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
 
   const status = useQuery({
     queryKey: ['deploy', bot?.deployment?.id],
@@ -146,11 +146,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // panel state
   const deployPanel = bot?.deployment?.state == null //FIX
   const awaitDeployPanel =
-    bot?.deployment?.state !== DEPLOY_STATUS.UP && 
+    bot?.deployment?.state !== DEPLOY_STATUS.UP &&
     bot?.deployment &&
     bot?.deployment?.state !== null
   const chatPanel = !awaitDeployPanel && !deployPanel && !errorPanel
-  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP 
+  const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP
 
   // handlers
   const handleSend = (data: ChatForm) => {
@@ -218,12 +218,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   }, [bot?.deployment?.state])
 
   const dispatchTrigger = (isOpen: boolean) => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.CHAT_SP_IS_ACTIVE,
-        value: isOpen ? bot : null,
-      },
+    setUIOption({
+      name: consts.CHAT_SP_IS_ACTIVE,
+      value: isOpen ? bot : null,
     })
   }
 

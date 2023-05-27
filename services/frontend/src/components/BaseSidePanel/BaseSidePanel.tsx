@@ -1,6 +1,6 @@
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import React, { FC, useEffect, useState } from 'react'
-import { useDisplay } from '../../context/DisplayContext'
+import { useUIOptions } from '../../context/UIOptionsContext'
 import { useObserver } from '../../hooks/useObserver'
 import SidePanel from '../../ui/SidePanel/SidePanel'
 import { consts } from '../../utils/consts'
@@ -39,7 +39,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
   const [isOpen, setIsOpen] = useState<boolean>(Boolean(propIsOpen))
   const [isClosable, setIsClosable] = useState<boolean>(propsIsClosable)
   const [content, setContent] = useState<React.ReactNode>(children)
-  const { dispatch } = useDisplay()
+  const { setUIOption } = useUIOptions()
   const observedEventName =
     transition === 'left' ? TRIGGER_LEFT_SP_EVENT : TRIGGER_RIGHT_SP_EVENT
 
@@ -67,12 +67,9 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
   useEffect(() => {
     const side = transition === 'left' ? 'LEFT' : 'RIGHT'
 
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts[`${side}_SP_IS_ACTIVE`],
-        value: isOpen,
-      },
+    setUIOption({
+      name: consts[`${side}_SP_IS_ACTIVE`],
+      value: isOpen,
     })
   }, [isOpen])
 

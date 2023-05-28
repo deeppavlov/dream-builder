@@ -47,6 +47,7 @@
 
 .baseModal.tokensModal {
   background-color: $bcgrnd3;
-  width: 80vw;
+  max-width: 1100px;
+  width: max-content;
   // height: 80vh;
 }

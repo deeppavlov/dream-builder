@@ -15,9 +15,9 @@
     "^context/(.*)$",
     "^constants/(.*)$",
     "^mapping/(.*)$",
+    "^api/(.*)$",
     "^hooks/(.*)$",
     "^utils/(.*)$",
-    "^services/(.*)$",
     "^ui/(.*)$",
     "^components/(.*)$",
     "^[./]"

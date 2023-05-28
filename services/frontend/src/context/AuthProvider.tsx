@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { authApi } from '../services/axiosConfig'
-import { getGoogleOAuthURL } from '../services/getGoogleOAuthUrl'
 import {
   IBeforeLoginModal,
   ITokens,
   UserContext,
   UserInterface,
-} from '../types/types'
-import { trigger } from '../utils/events'
+} from 'types/types'
+import { authApi } from 'api/axiosConfig'
+import { getGoogleOAuthURL } from 'api/user'
+import { trigger } from 'utils/events'
 
 export const deleteLocalStorageUser = () => localStorage.removeItem('user')
 

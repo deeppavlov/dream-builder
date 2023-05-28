@@ -1,19 +1,16 @@
+import { useDisplay } from 'context'
 import { Toaster } from 'react-hot-toast'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
-import { DistList } from '../components/DistList/DistList'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Main } from '../components/Main/Main'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
-import { useDisplay } from '../context/DisplayContext'
-import { useAssistants } from '../hooks/useAssistants'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { consts } from '../utils/consts'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { DistList } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import {
+  AssistantModal,
+  DeployNotificationModal,
+  SignInModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const BotsAllPage = () => {
   const { fetchPublicDists } = useAssistants()

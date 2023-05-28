@@ -1,15 +1,11 @@
+import { useDisplay } from 'context'
 import { useParams } from 'react-router-dom'
-import { ApiCallCodeHighlighter } from '../../components/ApiCallHighLighter/ApiCallCodeHighlighter'
-import { AssistantModule } from '../../components/AssistantModule/AssistantModule'
-import { Details } from '../../components/Details/Details'
-import { Main } from '../../components/Main/Main'
-import { SwitchButton } from '../../components/SwitchButton/SwitchButton'
-import { WebChatCodeHighlighter } from '../../components/WebChatCodeHighlighter/WebChatCodeHighlighter'
-import { INTEGRATION_ACTIVE_TAB } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
-import { Container } from '../../ui/Container/Container'
-import { Wrapper } from '../../ui/Wrapper/Wrapper'
-import { consts } from '../../utils/consts'
+import { INTEGRATION_ACTIVE_TAB } from 'constants/constants'
+import { consts } from 'utils/consts'
+import { SwitchButton } from 'components/Buttons'
+import { ApiCallCode, WebChatCode } from 'components/CodeHighlighters'
+import { AssistantModule } from 'components/Modules'
+import { Container, Details, Main, Wrapper } from 'components/UI'
 
 export const IntegrationPage = () => {
   const { name } = useParams()
@@ -36,8 +32,8 @@ export const IntegrationPage = () => {
         <Wrapper fitScreen title='Integration' btns={<SwitchButton />}>
           <Details>{chatDescription}</Details>
           <Container column>
-            {webChat && <WebChatCodeHighlighter assistantId={name!} />}
-            {apiCall && <ApiCallCodeHighlighter assistantId={name!} />}
+            {webChat && <WebChatCode assistantId={name!} />}
+            {apiCall && <ApiCallCode assistantId={name!} />}
           </Container>
         </Wrapper>
       </Main>

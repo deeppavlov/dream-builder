@@ -1,19 +1,18 @@
 import {
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
-import { consts } from '../utils/consts'
+import { TApiCallType, TIntegrationTabType } from 'types/types'
+import { consts } from 'utils/consts'
 
 type TOptionValue = any
 
 type TOptionsMap = Map<string, TOptionValue>
 
 type TAction = 'reset' | 'set' | 'delete'
-export type TIntegrationTabType = 'CHAT' | 'API'
-export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 
 interface IAction {
   type: TAction
@@ -73,7 +72,7 @@ const displayReducer = (options: TOptionsMap, action: IAction): TOptionsMap => {
 
 export const DisplayProvider = ({ children }: Props) => {
   const [options, dispatch] = useReducer(displayReducer, initialOptions)
-  const computed = {}
+  // const computed = {}
   const value = useMemo(() => ({ options, dispatch }), [options])
 
   return (

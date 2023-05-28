@@ -1,25 +1,16 @@
+import { useAuth, useDisplay } from 'context'
 import { useParams } from 'react-router-dom'
-import { AssistantModule } from '../../components/AssistantModule/AssistantModule'
-import { TRIGGER_RIGHT_SP_EVENT } from '../../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../../components/CardsLoader/CardsLoader'
-import { ErrorHandler } from '../../components/ErrorHandler/ErrorHandler'
-import { Main } from '../../components/Main/Main'
-import ReadFirstSidePanel from '../../components/ReadFirstSidepanel/ReadFisrstSidePanel'
-import { SkillList } from '../../components/SkillList/SkillList'
-import SvgIcon from '../../components/SvgIcon/SvgIcon'
-import { SwitchViewButton } from '../../components/SwitchViewButton/SwitchViewButton'
-import TableRowsLoader from '../../components/TableRowsLoader/TableRowsLoader'
-import { useAuth } from '../../context/AuthProvider'
-import { useDisplay } from '../../context/DisplayContext'
-import { usePreview } from '../../context/PreviewProvider'
-import { useComponent } from '../../hooks/useComponent'
-import { AddButton } from '../../ui/AddButton/AddButton'
-import Button from '../../ui/Button/Button'
-import { Container } from '../../ui/Container/Container'
-import { Table } from '../../ui/Table/Table'
-import { Wrapper } from '../../ui/Wrapper/Wrapper'
-import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
+import { usePreview } from 'context/PreviewProvider'
+import { useComponent } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { trigger } from 'utils/events'
+import { AddButton, Button, SwitchViewButton } from 'components/Buttons'
+import { SkillList, SvgIcon } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import { AssistantModule } from 'components/Modules'
+import { ReadFirstSidePanel } from 'components/Panels'
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 const SkillsPage = () => {
   const auth = useAuth()
@@ -27,7 +18,7 @@ const SkillsPage = () => {
   const { options } = useDisplay()
   const { isPreview } = usePreview()
   const { getAllComponents } = useComponent()
-  const components = getAllComponents(name || '', {refetchOnMount: true})
+  const components = getAllComponents(name || '', { refetchOnMount: true })
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 
   const handleReadFirst = () =>

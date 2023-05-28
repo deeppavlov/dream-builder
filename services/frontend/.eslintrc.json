@@ -14,8 +14,8 @@
   "plugins": [
     "react",
     "@typescript-eslint",
-    "no-relative-import-paths",
-    "unused-imports"
+    "no-relative-import-paths"
+    // "unused-imports"
   ],
   "rules": {
     "no-relative-import-paths/no-relative-import-paths": [

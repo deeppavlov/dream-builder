@@ -53,7 +53,7 @@ export type TEvents =
   | 'CreateSkillDistModal'
   | 'DeleteSkillModal'
   | 'FreezeSkillModal'
-  | 'ConfirmApiTokenUpdate'
+  | 'ConfirmApiTokenUpdateModal'
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
 
@@ -185,9 +185,6 @@ export interface IStackElement {
   date_created: string | Date
   description: string
   is_customizable: boolean
-  ram_usage: string
-  gpu_usage: string
-  execution_time: string
 }
 
 export interface LM_Service {
@@ -344,3 +341,5 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TIntegrationTabType = 'CHAT' | 'API'
+export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'

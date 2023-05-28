@@ -52,6 +52,7 @@
     "babel-loader": "^8.2.5",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-jsconfig": "^1.1.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-no-relative-import-paths": "^1.5.2",
     "eslint-plugin-prettier": "^4.2.1",

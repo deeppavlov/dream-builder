@@ -1,31 +1,35 @@
+import { useDisplay } from 'context'
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Outlet, useMatch, useParams } from 'react-router-dom'
-import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
-import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
-import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeleteSkillModal } from '../../components/DeleteSkillModal/DeleteSkillModal'
-import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
-import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
-import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareAssistantModal } from '../../components/ShareAssistantModal/ShareAssistantModal'
-import { DeepyHelperTab } from '../../components/Sidebar/components/DeepyHelperTab'
-import { IntegrationTab } from '../../components/Sidebar/components/IntegrationTab'
-import { SettingsTab } from '../../components/Sidebar/components/SettingsTab'
-import { SkillsTab } from '../../components/Sidebar/components/SkillsTab'
-import { Sidebar } from '../../components/Sidebar/Sidebar'
-import { SignInModal } from '../../components/SignInModal/SignInModal'
-import { SkillModal } from '../../components/SkillModal/SkillModal'
-import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
-import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
-import { VISIBILITY_STATUS } from '../../constants/constants'
-import { useDisplay } from '../../context/DisplayContext'
-import { usePreview } from '../../context/PreviewProvider'
-import { useAssistants } from '../../hooks/useAssistants'
-import { RoutesList } from '../../router/RoutesList'
-import { Container } from '../../ui/Container/Container'
-import { consts } from '../../utils/consts'
+import { RoutesList } from 'router/RoutesList'
+import { usePreview } from 'context/PreviewProvider'
+import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import {
+  AreYouSureModal,
+  AssistantModal,
+  DeleteAssistantModal,
+  DeleteSkillModal,
+  IntentCatcherModal,
+  IntentResponderModal,
+  PublishAssistantModal,
+  ShareAssistantModal,
+  SignInModal,
+  SkillModal,
+  SkillQuitModal,
+  SkillsListModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Container } from 'components/UI'
+import { Sidebar } from 'components/Widgets'
+import {
+  DeepyHelperTab,
+  IntegrationTab,
+  SettingsTab,
+  SkillsTab,
+} from 'components/Widgets/Sidebar'
 
 export const EditorPage = () => {
   const { dispatch } = useDisplay()

@@ -1,10 +1,10 @@
+import { useDisplay } from 'context'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Main } from '../../components/Main/Main'
-import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
-import { useDisplay } from '../../context/DisplayContext'
-import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
+import { consts } from 'utils/consts'
+import { trigger } from 'utils/events'
+import { SkillPromptModal } from 'components/Modals'
+import { Main } from 'components/UI'
 
 const SkillEditorPage = () => {
   const { options } = useDisplay()

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import crud, models, enums
+from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -17,6 +18,17 @@ from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
+
+dream_git = GitManager(
+    settings.git.local_path,
+    settings.git.username,
+    settings.git.remote_access_token,
+    settings.git.remote_source_url,
+    settings.git.remote_source_branch,
+    settings.git.remote_copy_url,
+    # settings.git.remote_copy_branch,
+    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
+)
 
 
 def send_publish_request_created_emails(
@@ -77,7 +89,13 @@ async def create_virtual_assistant(
             payload.description,
             existing_prompted_skills,
         )
-        new_dist.save()
+        new_dist.save(generate_configs=True)
+        dream_git.commit_and_push(
+            user.id,
+            1,
+            str(settings.db.dream_root_path / "assistant_dists"),
+            str(settings.db.dream_root_path / "components"),
+        )
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -449,7 +467,9 @@ async def publish_dist(
 
         if payload.visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
             crud.delete_publish_request(db, virtual_assistant.id)
-            virtual_assistant = crud.update_virtual_assistant_by_name(db, dist_name, private_visibility=payload.visibility)
+            virtual_assistant = crud.update_virtual_assistant_by_name(
+                db, dist_name, private_visibility=payload.visibility
+            )
         elif payload.visibility.__class__ == enums.VirtualAssistantPublicVisibility:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)

@@ -1,14 +1,12 @@
-import asyncio
 from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
-from botocore.exceptions import BotoCoreError
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerError
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.logger import logger
 from requests.adapters import HTTPAdapter, Retry
 from sqlalchemy.exc import IntegrityError
@@ -20,8 +18,7 @@ from database import crud, enums
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
-import services.distributions_api.tasks.tasks as tasks
-from celery.result import AsyncResult
+# import services.deployment_worker.tasks.tasks as tasks
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 

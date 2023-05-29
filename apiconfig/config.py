@@ -56,6 +56,22 @@ class DeployerSettings(BaseModel):
     default_prefix: str
 
 
+# class StorageSettings(BaseModel):
+#     region_name: str
+#     aws_access_key_id: str
+#     aws_secret_access_key: str
+
+
+class GitSettings(BaseModel):
+    local_path: Path
+    username: str
+    remote_access_token: str
+    remote_source_url: str
+    remote_source_branch: str
+    remote_copy_url: str
+    remote_copy_branch: str
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings
@@ -63,6 +79,8 @@ class Settings(BaseSettings):
     auth: AuthSettings
     smtp: SmtpSettings
     deployer: DeployerSettings
+    # storage: StorageSettings
+    git: GitSettings
 
     class Config:
         env_file = ".env"

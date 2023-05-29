@@ -12,3 +12,4 @@ Jinja2==3.1.2
 celery~=5.2.7
 flower~=1.2.0
 redis~=4.5.5
+gitpython

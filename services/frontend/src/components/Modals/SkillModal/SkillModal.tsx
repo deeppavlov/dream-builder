@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useParams } from 'react-router-dom'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { RoutesList } from 'router/RoutesList'
 import { ISkill } from 'types/types'
 import { useComponent } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
@@ -26,6 +27,7 @@ export const SkillModal = () => {
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const { name: distName } = useParams()
+  const nav = useNavigate()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
@@ -62,7 +64,17 @@ export const SkillModal = () => {
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },
-        { onSuccess: closeModal }
+        {
+          onSuccess: skill => {
+            closeModal()
+            nav(
+              generatePath(RoutesList.editor.skillEditor, {
+                name: distName || '',
+                skillId: (skill?.component_id ?? skill?.id)?.toString(),
+              })
+            )
+          },
+        }
       ),
       {
         loading: 'Creating...',

@@ -161,7 +161,7 @@ export const CopilotSidePanel = () => {
           <textarea
             onKeyDown={handleKeyDown}
             className={s.textarea}
-            placeholder='Type...'
+            placeholder='Describe here your use case and Deepy will help you to generate a prompt for it.'
             {...register('message', {
               required: validationSchema.global.required,
             })}

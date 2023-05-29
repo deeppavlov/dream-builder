@@ -1,20 +1,18 @@
-import { generatePath, Link } from 'react-router-dom'
-import { BotsAllPage } from '../pages/BotsAllPage'
-import { BotsPage } from '../pages/BotsPage'
-import { DraftPage } from '../pages/DraftPage'
-import { EditorPage } from '../pages/Editor/EditorPage'
-import { IntegrationPage } from '../pages/Editor/IntegrationPage'
-import SkillEditorPage from '../pages/Editor/SkillEditorPage'
-import SkillsPage from '../pages/Editor/SkillsPage'
-import ErrorPage from '../pages/ErrorPage'
-import { GoogleAuthPage } from '../pages/GoogleAuthPage'
-import Root from '../pages/Root'
-import { SandboxPage } from '../pages/SandboxPage'
-import { TestPage } from '../pages/TestPage/TestPage'
-import { UsersBotsPage } from '../pages/UsersBotsPage'
-import { CustomRouteConfig } from '../types/types'
-import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
-import { consts } from '../utils/consts'
+import { AdminPage } from 'pages/AdminPage'
+import { BotsAllPage } from 'pages/BotsAllPage'
+import { BotsPage } from 'pages/BotsPage'
+import { EditorPage } from 'pages/Editor/EditorPage'
+import { IntegrationPage } from 'pages/Editor/IntegrationPage'
+import SkillEditorPage from 'pages/Editor/SkillEditorPage'
+import SkillsPage from 'pages/Editor/SkillsPage'
+import ErrorPage from 'pages/ErrorPage'
+import { GoogleAuthPage } from 'pages/GoogleAuthPage'
+import Root from 'pages/Root'
+import { UsersBotsPage } from 'pages/UsersBotsPage'
+import { Link, generatePath } from 'react-router-dom'
+import { CustomRouteConfig } from 'types/types'
+import { consts } from 'utils/consts'
+import { CrumbForEditor } from 'components/Widgets/Topbar/components/Breadcrumbs/CrumbForEditor'
 import { AdminRoute } from './AdminRoute'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
@@ -139,29 +137,12 @@ export const RouterConfig: CustomRouteConfig[] = [
     element: <ErrorPage />,
   },
   // Dev pages
+
   {
-    path: RoutesList.test,
+    path: RoutesList.admin,
     element: (
       <AdminRoute>
-        <TestPage />
-      </AdminRoute>
-    ),
-    handle: 'Test Page',
-  },
-  {
-    path: RoutesList.draft,
-    element: (
-      <AdminRoute>
-        <DraftPage />
-      </AdminRoute>
-    ),
-    handle: 'Its For Crumbs',
-  },
-  {
-    path: RoutesList.sandbox,
-    element: (
-      <AdminRoute>
-        <SandboxPage />
+        <AdminPage />
       </AdminRoute>
     ),
     handle: 'Its For Crumbs',

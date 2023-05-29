@@ -1,14 +1,12 @@
 import {
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
-import { consts } from '../utils/consts'
-
-export type TIntegrationTabType = 'CHAT' | 'API'
-export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
+import { TApiCallType, TIntegrationTabType } from 'types/types'
+import { consts } from 'utils/consts'
 
 type TOptionValue = any
 

@@ -1,29 +1,31 @@
+import { useAuth, useUIOptions } from 'context'
 import { Toaster } from 'react-hot-toast'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
-import { DistList } from '../components/DistList/DistList'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Main } from '../components/Main/Main'
-import { Modal } from '../components/Modal/Modal'
-import { Placeholder } from '../components/PlaceHolder/PlaceHolder'
-import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
-import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareAssistantModal } from '../components/ShareAssistantModal/ShareAssistantModal'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import TableRowsLoader from '../components/TableRowsLoader/TableRowsLoader'
-import { useAuth } from '../context/AuthProvider'
-import { useUIOptions } from '../context/UIOptionsContext'
-import { useAssistants } from '../hooks/useAssistants'
-import { RoutesList } from '../router/RoutesList'
-import { AddButton } from '../ui/AddButton/AddButton'
-import { Container } from '../ui/Container/Container'
-import { Slider } from '../ui/Slider/Slider'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { consts } from '../utils/consts'
+import { RoutesList } from 'router/RoutesList'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { AddButton } from 'components/Buttons'
+import { DistList } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import {
+  AssistantModal,
+  DeleteAssistantModal,
+  DeployNotificationModal,
+  Modal,
+  PublicToPrivateModal,
+  PublishAssistantModal,
+  ShareAssistantModal,
+  SignInModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import {
+  Container,
+  ErrorHandler,
+  Main,
+  Placeholder,
+  Slider,
+  Table,
+  Wrapper,
+} from 'components/UI'
 
 export const BotsPage = () => {
   const { UIOptions } = useUIOptions()

@@ -1,25 +1,26 @@
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { Annotators } from '../../components/Annotators/Annotators'
-import { CandidateAnnotators } from '../../components/CandidateAnnotators/CandidateAnnotators'
-import { Loader } from '../../components/Loader/Loader'
-import { Main } from '../../components/Main/Main'
-import { ResponseAnnotators } from '../../components/ResponseAnnotators/ResponseAnnotators'
-import { ResponseSelector } from '../../components/ResponseSelector/ResponseSelector'
-import { Skills } from '../../components/Skills/Skills'
-import { SkillSelector } from '../../components/SkillSelector/SkillSelector'
-import { getComponents } from '../../services/getComponents'
+import { getComponents } from 'api/components'
+import {
+  Annotators,
+  CandidateAnnotators,
+  ResponseAnnotators,
+  ResponseSelector,
+  SkillSelector,
+  Skills,
+} from 'components/Stacks'
+import { Main } from 'components/UI'
 
 const ArchitecturePage = () => {
   const { name } = useParams()
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(['components', name], () => getComponents(name!), {
-    refetchOnWindowFocus: false,
-    enabled: name?.length! > 0,
-  })
+  const { data: components } = useQuery(
+    ['components', name],
+    () => getComponents(name!),
+    {
+      refetchOnWindowFocus: false,
+      enabled: name?.length! > 0,
+    }
+  )
 
   const annotators = components?.annotators
   const candidateAnnotators = components?.candidate_annotators
@@ -30,7 +31,6 @@ const ArchitecturePage = () => {
 
   return (
     <Main sidebar editor draggable>
-      <Loader isLoading={isComponentsLoading} />
       <Annotators annotators={annotators} />
       <SkillSelector skillSelectors={skillSelectors} />
       <Skills skills={skills} />

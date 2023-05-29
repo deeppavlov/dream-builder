@@ -2,7 +2,7 @@ import {
   CustomEventListener as EListener,
   CustomEventName as EName,
   TEvents,
-} from '../types/types'
+} from 'types/types'
 
 function subscribe(eventName: EName, listener: EListener) {
   document.addEventListener(eventName, listener)

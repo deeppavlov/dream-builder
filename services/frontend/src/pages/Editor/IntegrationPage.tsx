@@ -22,14 +22,19 @@ export const IntegrationPage = () => {
   const webChatDescription =
     'Web Chat: add the code below and paste it into your website to embed the chat widget'
   const apiCallDescription = 'Dialog API: API Call Examples'
+
+  const chatDescription = webChat
+    ? webChatDescription
+    : apiCall
+    ? apiCallDescription
+    : ''
+
   return (
     <>
       <Main sidebar>
         <AssistantModule />
         <Wrapper fitScreen title='Integration' btns={<SwitchButton />}>
-          <Details>
-            {webChat ? webChatDescription : apiCall ? apiCallDescription : ''}
-          </Details>
+          <Details>{chatDescription}</Details>
           <Container column>
             {webChat && <WebChatCodeHighlighter assistantId={name!} />}
             {apiCall && <ApiCallCodeHighlighter assistantId={name!} />}

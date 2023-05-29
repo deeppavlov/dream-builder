@@ -41,16 +41,11 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
         type: 'dist-name',
         msg: 'The name of the assistant was not found.',
       })
-
-    renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {
-      // onSuccess: () =>
-      // console.log('A new dialog session was successfully created!'),
-    })
+    renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {})
   }
 
   const checkIsChatSettings = (userId: number) => {
     if (userId === undefined || userId === null) return
-    // console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
     const isPrompt = skill?.prompt !== undefined

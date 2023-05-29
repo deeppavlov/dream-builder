@@ -16,6 +16,7 @@ type ToastKeys =
   | 'addComponent'
   | 'confirmRequest'
   | 'declineRequest'
+  | 'updateComponent'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -66,12 +67,17 @@ export const toasts: Toasts = {
     error: 'Something went wrong...',
   },
   confirmRequest: {
-    loading: 'approve...',
+    loading: 'Approve...',
     success: 'Success!',
     error: 'Something went wrong...',
   },
   declineRequest: {
-    loading: 'decline...',
+    loading: 'Decline...',
+    success: 'Success!',
+    error: 'Something went wrong...',
+  },
+  updateComponent: {
+    loading: 'Saving...',
     success: 'Success!',
     error: 'Something went wrong...',
   },

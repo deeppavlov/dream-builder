@@ -13,6 +13,7 @@ import { useComponent } from '../../hooks/useComponent'
 import { useDeploy } from '../../hooks/useDeploy'
 import { useObserver } from '../../hooks/useObserver'
 import { useQuitConfirmation } from '../../hooks/useQuitConfirmation'
+import { toasts } from '../../mapping/toasts'
 import { RoutesList } from '../../router/RoutesList'
 import { getAllLMservices } from '../../services/getAllLMservices'
 import { ISkill, LM_Service } from '../../types/types'
@@ -74,18 +75,11 @@ const SkillPromptModal = () => {
 
   const servicesList = createMap(services)
   const dropboxArray =
-    services
-      ?.map((service: LM_Service) => ({
-        id: service?.name,
-        name: service?.display_name,
-      }))
-      ?.concat([
-        {
-          id: 'rmt_with_2m_tokens',
-          name: 'Open-Assistant SFT-1 12B RMT (with 2M tokens)',
-          disabled: true,
-        },
-      ]) || []
+    services?.map((service: LM_Service) => ({
+      id: service?.name,
+      name: service?.display_name,
+      disabled: !service?.is_maintained,
+    })) || []
 
   const {
     handleSubmit,
@@ -152,15 +146,10 @@ const SkillPromptModal = () => {
           })
           .then(() => {
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
-              //FIX
               deleteDeployment.mutateAsync(bot!)
             } else return
           }),
-        {
-          loading: 'Saving...',
-          success: 'Success!',
-          error: 'Something went wrong...',
-        }
+        toasts.updateComponent
       )
       .then(() => trigger('RenewChat', {}))
   }

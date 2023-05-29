@@ -108,3 +108,14 @@
   padding: 16px 16px;
   border: none;
 }
+
+@media (height < 915px) {
+  .wrapper.fitScreen.forTable {
+    min-height: 70%;
+  }
+}
+@media (height < 872px) {
+  .wrapper.fitScreen.forTable {
+    min-height: 88%;
+  }
+}

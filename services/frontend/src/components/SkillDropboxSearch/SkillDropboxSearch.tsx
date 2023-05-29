@@ -1,10 +1,10 @@
+import { useObserver } from '../../hooks/useObserver'
+import s from './SkillDropboxSearch.module.scss'
 import { ReactComponent as ArrowDownIcon } from '@assets/icons/arrow_down.svg'
 import { ReactComponent as LoupeIcon } from '@assets/icons/loupe.svg'
 import classNames from 'classnames/bind'
 import React, { useRef, useState } from 'react'
 import { Control, RegisterOptions, useController } from 'react-hook-form'
-import { useObserver } from '../../hooks/useObserver'
-import s from './SkillDropboxSearch.module.scss'
 
 interface Item {
   id: string
@@ -16,7 +16,7 @@ interface Props {
   list: Item[]
   name: string
   control: Control<any>
-  defaultValue?: string
+  selectedItemId?: string
   rules?: RegisterOptions
   isOpen?: boolean
   label?: string
@@ -29,7 +29,7 @@ interface Props {
 const SkillDropboxSearch = ({
   name,
   control,
-  defaultValue,
+  selectedItemId,
   rules,
   isOpen: propIsOpen,
   list,
@@ -39,11 +39,17 @@ const SkillDropboxSearch = ({
   withoutSearch,
   small,
 }: Props) => {
+  const getActiveItem = (id: string) => list?.find(item => item.id === id)
+
   const {
     field,
     fieldState: { error },
-  } = useController({ name, control, rules, defaultValue })
-
+  } = useController({
+    name,
+    control,
+    rules,
+    defaultValue: selectedItemId ? getActiveItem(selectedItemId) : undefined,
+  })
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
   const dropboxRef = useRef<HTMLDivElement | null>(null)
   let cx = classNames.bind(s)
@@ -62,7 +68,7 @@ const SkillDropboxSearch = ({
   }
 
   const handleItemClick = (item: Item) => {
-    field.onChange(item.name)
+    field.onChange(getActiveItem(item.id) ?? undefined)
     setIsOpen(false)
   }
 
@@ -87,7 +93,7 @@ const SkillDropboxSearch = ({
         <input
           {...props}
           {...field}
-          value={field.value || ''}
+          value={field.value?.name || ''}
           className={s.input}
           readOnly
         />
@@ -101,7 +107,7 @@ const SkillDropboxSearch = ({
               key={i}
               className={cx(
                 'item',
-                item.name === field.value && 'activeItem',
+                item.id === field.value?.id && 'activeItem',
                 item?.disabled && 'disabled'
               )}
               onClick={() => !item?.disabled && handleItemClick(item)}

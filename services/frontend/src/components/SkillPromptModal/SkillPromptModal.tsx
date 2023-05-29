@@ -1,11 +1,3 @@
-import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
-import classNames from 'classnames/bind'
-import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import Modal from 'react-modal'
-import { useQuery } from 'react-query'
-import { generatePath, useNavigate, useParams } from 'react-router'
 import { DEPLOY_STATUS } from '../../constants/constants'
 import { useUIOptions } from '../../context/UIOptionsContext'
 import { useAssistants } from '../../hooks/useAssistants'
@@ -29,14 +21,22 @@ import { HELPER_TAB_ID } from '../Sidebar/components/DeepyHelperTab'
 import SkillDialog from '../SkillDialog/SkillDialog'
 import SkillDropboxSearch from '../SkillDropboxSearch/SkillDropboxSearch'
 import s from './SkillPromptModal.module.scss'
+import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
+import classNames from 'classnames/bind'
+import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import Modal from 'react-modal'
+import { useQuery } from 'react-query'
+import { generatePath, useNavigate, useParams } from 'react-router'
 
-interface Props {
+interface ITriggerProps {
   skill?: ISkill
   isOpen?: boolean
 }
 
-interface FormValues {
-  model: string
+interface IFormValues {
+  model: { id: string; name: string; disabled: boolean }
   prompt: string
 }
 
@@ -44,39 +44,27 @@ const SkillPromptModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
-  const { data: skill } =
-    distName && skillId
-      ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })
-      : null
-  const [selectedService, setSelectedService] = useState<LM_Service | null>(
-    null
-  )
-  const { UIOptions, setUIOption } = useUIOptions()
-  const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
-  const modalRef = useRef(null)
-  const nav = useNavigate()
-  const { getDist } = useAssistants()
   const { deleteDeployment } = useDeploy()
+  const { UIOptions, setUIOption } = useUIOptions()
+  const { getDist } = useAssistants()
+  const nav = useNavigate()
+  const isUrlParams = distName && skillId
+  const skill = isUrlParams
+    ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })?.data
+    : null
   const bot = distName ? getDist({ distName }).data : null
+  const [selectedModel, setSelectedModel] = useState<LM_Service | null>(null)
+  const modalRef = useRef(null)
+  const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
     refetchOnWindowFocus: false,
   })
 
-  const createMap = (array: LM_Service[]) => {
-    const map = new Map<string, LM_Service>()
-    array?.forEach((object: LM_Service) => {
-      const { display_name } = object
-      map.set(display_name, { ...object })
-    })
-    return map
-  }
-
-  const servicesList = createMap(services)
   const dropboxArray =
     services?.map((service: LM_Service) => ({
-      id: service?.name,
+      id: service?.id?.toString(),
       name: service?.display_name,
       disabled: !service?.is_maintained,
     })) || []
@@ -88,19 +76,15 @@ const SkillPromptModal = () => {
     getValues,
     control,
     watch,
-    formState: { dirtyFields, isSubmitting },
-  } = useForm<FormValues>({
+    formState: { dirtyFields, isSubmitting, isDirty },
+  } = useForm<IFormValues>({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: {
-      model: skill?.lm_service?.display_name,
-      prompt: skill?.prompt,
-    },
+    defaultValues: { model: skill?.lm_service, prompt: skill?.prompt },
   })
-  const model = getValues().model
-  const skillModelTip = servicesList.get(model)?.description
-  const skillModelLink = servicesList.get(model)?.project_url
-  const isDirty = Boolean(dirtyFields?.prompt || dirtyFields?.model)
+  const modelTip = selectedModel?.description
+  const modelLink = selectedModel?.project_url
+  // const isDirty = Boolean(dirtyFields?.prompt || dirtyFields?.model)
 
   const clearStates = () => {
     setIsOpen(false)
@@ -112,7 +96,7 @@ const SkillPromptModal = () => {
     clearStates()
   }
 
-  const handleEventUpdate = (data: { detail: Props }) => {
+  const handleEventUpdate = (data: { detail: ITriggerProps }) => {
     const isRequestToClose =
       data.detail.isOpen !== undefined && !data.detail.isOpen
 
@@ -124,10 +108,11 @@ const SkillPromptModal = () => {
     })
   }
 
-  const handleSave = ({ prompt, model }: FormValues) => {
-    const service = servicesList.get(model)?.id
+  const handleSave = ({ prompt, model }: IFormValues) => {
+    const isSkill = skill !== undefined && skill !== null
+    const isModel = selectedModel !== undefined && selectedModel !== null
 
-    if (skill === undefined || skill === null) return
+    if (!isSkill || !isModel) return
 
     const { component_id, id, description, display_name } = skill
 
@@ -138,8 +123,8 @@ const SkillPromptModal = () => {
             component_id: component_id ?? id,
             description,
             display_name,
-            lm_service_id: service!,
-            lm_service: services?.find((s: LM_Service) => s.id === service), // FIX IT!
+            lm_service_id: selectedModel?.id!,
+            lm_service: selectedModel, // FIX IT!
             prompt: prompt,
             distName: distName || '',
             type: 'skills',
@@ -154,7 +139,7 @@ const SkillPromptModal = () => {
       .then(() => trigger('RenewChat', {}))
   }
 
-  const onFormSubmit = (data: FormValues) => {
+  const onFormSubmit = (data: IFormValues) => {
     const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
     if (isDirty) handleSave(data)
   }
@@ -163,32 +148,35 @@ const SkillPromptModal = () => {
 
   // Update selected LM for TextArea tokenizer
   useEffect(() => {
-    setSelectedService(
-      services?.find((s: LM_Service) => s?.display_name === model)
+    if (!isOpen) return
+    const selectedService = services?.find(
+      ({ id }) => id.toString() === getValues().model?.id?.toString()
     )
-  }, [watch(['model'])])
+    setSelectedModel(selectedService ?? null)
+  }, [watch(['model']), isOpen])
+
+  useEffect(() => {}, [watch('prompt')])
 
   useEffect(() => {
-    reset(
-      {
-        model: getValues().model ?? skill?.lm_service?.display_name,
-        prompt: skill?.prompt,
-      },
-      { keepDirty: false }
-    )
-  }, [skill])
+    const { EDITOR_ACTIVE_SKILL } = consts
 
-  useEffect(() => {
-    setUIOption({
-      name: consts.EDITOR_ACTIVE_SKILL,
-      value: isOpen ? skill : null,
-    })
+    if (isOpen)
+      reset(
+        {
+          model: {
+            id: skill?.lm_service?.id?.toString(),
+            name: skill?.lm_service?.display_name,
+            disabled: false,
+          },
+          prompt: skill?.prompt,
+        },
+        { keepDirty: false }
+      )
+
+    setUIOption({ name: EDITOR_ACTIVE_SKILL, value: isOpen ? skill : null })
 
     return () => {
-      setUIOption({
-        name: consts.EDITOR_ACTIVE_SKILL,
-        value: null,
-      })
+      setUIOption({ name: EDITOR_ACTIVE_SKILL, value: null })
       reset({})
     }
   }, [skill, isOpen])
@@ -252,13 +240,14 @@ const SkillPromptModal = () => {
                 <div className={s.top}>
                   <SkillDropboxSearch
                     name='model'
+                    label='Choose model:'
                     control={control}
                     rules={{ required: true }}
-                    defaultValue={skill?.lm_service?.display_name}
-                    label='Choose model:'
-                    list={dropboxArray}
+                    selectedItemId={skill?.lm_service?.id?.toString()}
                     props={{ placeholder: 'Choose model' }}
+                    list={dropboxArray}
                     fullWidth
+                    withoutSearch
                   />
                   {skill?.lm_service?.display_name && (
                     <div>
@@ -268,13 +257,13 @@ const SkillPromptModal = () => {
                         isActive
                       >
                         <p className={s.tip}>
-                          <span>{skillModelTip}</span>
+                          <span>{modelTip}</span>
                           <a
-                            href={skillModelLink}
+                            href={modelLink}
                             target='_blank'
                             rel='noopener noreferrer'
                           >
-                            {skillModelLink}
+                            {modelLink}
                           </a>
                         </p>
                       </Accordion>
@@ -285,7 +274,7 @@ const SkillPromptModal = () => {
                   name='prompt'
                   label='Enter prompt:'
                   countType='tokenizer'
-                  tokenizerModel={selectedService?.display_name as any}
+                  tokenizerModel={selectedModel?.display_name as any}
                   defaultValue={skill?.prompt}
                   withCounter
                   fullHeight
@@ -294,9 +283,9 @@ const SkillPromptModal = () => {
                   rules={{
                     required: validationSchema.global.required,
                     maxLength:
-                      selectedService?.max_tokens &&
+                      selectedModel?.max_tokens &&
                       validationSchema.skill.prompt.maxLength(
-                        selectedService?.max_tokens
+                        selectedModel?.max_tokens
                       ),
                   }}
                   triggerField={triggerField}

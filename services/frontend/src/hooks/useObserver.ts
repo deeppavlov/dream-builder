@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { TEvents } from '../types/types'
 import { subscribe, unsubscribe } from '../utils/events'
+import { useEffect } from 'react'
 
 export const useObserver = (
   eventName: TEvents,

@@ -32,3 +32,7 @@ export const API_CALL_TAB = {
   NODE: 'NODE',
   PYTHON: 'PYTHON',
 }
+// TODO rename & implement everywhere
+export const PUBLIC_DISTS = 'publicDists'
+export const PRIVATE_DISTS = 'privateDists'
+export const DIST = 'dist'

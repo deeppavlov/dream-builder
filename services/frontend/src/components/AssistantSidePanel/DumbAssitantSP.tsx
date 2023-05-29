@@ -125,7 +125,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <span className={s.name}>{bot?.display_name}</span>
             {!isPublic && (
               <EditPencilButton
-                disabled={!isCustomizable || isDeploying}
+                disabled={!isCustomizable}
                 onClick={handleRenameBtnClick}
               />
             )}

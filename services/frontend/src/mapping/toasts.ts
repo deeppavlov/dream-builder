@@ -5,18 +5,19 @@ interface ToastSettings {
 }
 
 type ToastKeys =
-  | 'deleteToken'
-  | 'deleteDeployment'
   | 'deploy'
-  | 'createAssistant'
+  | 'deleteDeployment'
   | 'cloneAssistant'
+  | 'createAssistant'
   | 'renameAssistant'
-  | 'deleteComponent'
-  | 'createComponent'
+  | 'deleteAssistant'
   | 'addComponent'
+  | 'createComponent'
+  | 'deleteComponent'
+  | 'updateComponent'
   | 'confirmRequest'
   | 'declineRequest'
-  | 'updateComponent'
+  | 'deleteToken'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -48,6 +49,11 @@ export const toasts: Toasts = {
   },
   renameAssistant: {
     loading: 'Renaming...',
+    success: 'Success!',
+    error: 'Something went wrong...',
+  },
+  deleteAssistant: {
+    loading: 'Deleting...',
     success: 'Success!',
     error: 'Something went wrong...',
   },

@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { useOnKey } from '../../hooks/useOnKey'
+import { toasts } from '../../mapping/toasts'
 import { AssistantFormValues, BotInfoInterface } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
@@ -65,30 +66,18 @@ export const AssistantModal = () => {
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     switch (action) {
       case 'create':
-        toast.promise(create.mutateAsync(data), {
-          loading: 'Creating...',
-          success: 'Success!',
-          error: 'Something went wrong...',
-        })
+        toast.promise(create.mutateAsync(data), toasts.createAssistant)
         break
       case 'clone':
         toast.promise(
           clone.mutateAsync({ data, name }, { onSuccess: closeModal }),
-          {
-            loading: 'Cloning...',
-            success: 'Success!',
-            error: 'Something went wrong...',
-          }
+          toasts.cloneAssistant
         )
         break
       case 'edit':
         toast.promise(
           rename.mutateAsync({ data, name }, { onSuccess: closeModal }),
-          {
-            loading: 'Renaming...',
-            success: 'Success!',
-            error: 'Something went wrong...',
-          }
+          toasts.renameAssistant
         )
         break
       default:

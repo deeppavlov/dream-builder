@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { generatePath,useNavigate } from 'react-router-dom'
+import { useQueryClient } from 'react-query'
+import { generatePath, useNavigate } from 'react-router-dom'
 import { VISIBILITY_STATUS } from '../../constants/constants'
 import { useAssistants } from '../../hooks/useAssistants'
 import { useObserver } from '../../hooks/useObserver'
 import { RoutesList } from '../../router/RoutesList'
-import { BotInfoInterface,TDistVisibility } from '../../types/types'
+import { BotInfoInterface, TDistVisibility } from '../../types/types'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { trigger } from '../../utils/events'
@@ -23,7 +24,7 @@ export const PublicToPrivateModal = () => {
     setAction(detail?.action)
     setIsOpen(!isOpen)
   }
-
+  const queryClient = useQueryClient()
   const { changeVisibility } = useAssistants()
   const handleCancelClick = () => setIsOpen(false)
 
@@ -37,21 +38,13 @@ export const PublicToPrivateModal = () => {
           setIsOpen(false)
         })
         .then(() => {
-          navigate(
-            generatePath(RoutesList.editor.skills, { name: bot?.name! }),
-            {
-              state: {
-                preview: false,
-                distName: bot?.name,
-                displayName: bot?.display_name,
-              },
-            }
-          )
+          navigate(generatePath(RoutesList.editor.skills, { name: bot?.name! }))
         })
     action === 'rename' &&
       changeVisibility
         .mutateAsync({ name, visibility })
         .then(() => {
+          queryClient.invalidateQueries('publicDists')
           setIsOpen(false)
         })
         .then(() => {

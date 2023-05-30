@@ -1,4 +1,4 @@
-import { logout } from 'context/AuthProvider'
+import { logout } from 'api/user'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'

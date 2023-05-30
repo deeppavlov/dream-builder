@@ -1,4 +1,4 @@
-import { login } from 'context/AuthProvider'
+import { login } from 'api/user'
 import { Button } from 'components/Buttons'
 
 const GoogleSignInButton = () => {

@@ -2,12 +2,12 @@ import classNames from 'classnames/bind'
 import { useState } from 'react'
 import GoogleLogo from 'assets/images/GoogleLogo.svg'
 import { IBeforeLoginModal } from 'types/types'
+import { login } from 'api/user'
+import { useObserver } from 'hooks/useObserver'
 import {
   clearBeforeLoginModal,
-  login,
   saveBeforeLoginModal,
-} from 'context/AuthProvider'
-import { useObserver } from 'hooks/useObserver'
+} from 'utils/beforeSignInManager'
 import { BaseModal } from 'components/Modals'
 import s from './SignInModal.module.scss'
 

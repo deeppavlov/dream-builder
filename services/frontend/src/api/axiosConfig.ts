@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { getAccessToken, logout, setAccessToken } from 'context/AuthProvider'
-import { updateAccessToken } from './user'
+import { getAccessToken, setAccessToken } from 'utils/localStorageUser'
+import { logout, updateAccessToken } from './user'
 
 const { MODE } = import.meta.env
 

@@ -8,7 +8,26 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr(), chunkSplitPlugin(), wasm(), tsconfigPaths()],
+  plugins: [
+    react(),
+    svgr(),
+    chunkSplitPlugin(),
+    wasm(),
+    tsconfigPaths(),
+    // Handle cyclic dependencies
+    {
+      name: 'singleHMR',
+      handleHotUpdate({ modules }) {
+        modules.map(m => {
+          m.importedModules = new Set()
+          m.importers = new Set()
+        })
+
+        return modules
+      },
+    },
+  ],
+
   css: {
     preprocessorOptions: {
       scss: { additionalData: `@import "./src/styles/index";` },

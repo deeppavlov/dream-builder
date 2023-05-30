@@ -6,7 +6,8 @@
   "editor.codeActionsOnSave": [
     "source.formatDocument",
     "source.fixAll.eslint",
-    "source.organizeImports"
+    "source.organizeImports",
+    "source.sortMembers"
   ],
   "prettier.trailingComma": "es5"
 }

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { useParams } from 'react-router'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { ICreateComponent, IStackElement, TDistVisibility } from 'types/types'
+import { ICreateComponent, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
@@ -27,7 +27,7 @@ export const SkillsListModal = () => {
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
   const { getGroupComponents, create } = useComponent()
-  const nav = useNavigate()
+  const navigate = useNavigate()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
@@ -73,7 +73,7 @@ export const SkillsListModal = () => {
               })
 
             handleClose()
-            nav(
+            navigate(
               generatePath(RoutesList.editor.skillEditor, {
                 name: distName || '',
                 skillId: (skill?.component_id ?? skill?.id)?.toString(),

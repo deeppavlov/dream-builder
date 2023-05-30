@@ -11,16 +11,6 @@
     "sourceType": "module",
     "node": true
   },
-  "plugins": [
-    "react",
-    "@typescript-eslint",
-    "no-relative-import-paths"
-    // "unused-imports"
-  ],
-  "rules": {
-    "no-relative-import-paths/no-relative-import-paths": [
-      "warn",
-      { "allowSameFolder": true, "rootDir": "src" }
-    ]
-  }
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {}
 }

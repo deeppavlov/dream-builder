@@ -33,7 +33,7 @@ export const BotsAllPage = () => {
                   )}
                   <DistList
                     view='table'
-                    dists={publicDists?.data}
+                    dists={publicDists?.data!}
                     type='public'
                   />
                 </Table>
@@ -44,7 +44,7 @@ export const BotsAllPage = () => {
                   )}
                   <DistList
                     view='cards'
-                    dists={publicDists?.data}
+                    dists={publicDists?.data!}
                     type='public'
                     size='big'
                   />

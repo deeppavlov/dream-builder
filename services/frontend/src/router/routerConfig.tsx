@@ -10,12 +10,12 @@ import { GoogleAuthPage } from 'pages/GoogleAuthPage'
 import Root from 'pages/Root'
 import { UsersBotsPage } from 'pages/UsersBotsPage'
 import { Link, generatePath } from 'react-router-dom'
+import { AdminRoute } from 'router/AdminRoute'
+import { PrivateRoute } from 'router/PrivateRoute'
+import { RoutesList } from 'router/RoutesList'
 import { CustomRouteConfig } from 'types/types'
 import { consts } from 'utils/consts'
 import { CrumbForEditor } from 'components/Widgets/Topbar/components/Breadcrumbs/CrumbForEditor'
-import { AdminRoute } from './AdminRoute'
-import { PrivateRoute } from './PrivateRoute'
-import { RoutesList } from './RoutesList'
 
 export const RouterConfig: CustomRouteConfig[] = [
   {

@@ -33,6 +33,9 @@ export const useDeploy = () => {
     },
   })
   const deleteDeployment = useMutation({
+    onMutate: bot => {
+      console.log('bot = ', bot)
+    },
     mutationFn: (bot: BotInfoInterface) => {
       return deleteDeploy(bot?.deployment?.id)
     },

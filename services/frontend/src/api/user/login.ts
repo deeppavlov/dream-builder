@@ -1,5 +1,5 @@
+import { getGoogleOAuthURL } from 'api/user/getGoogleOAuthUrl'
 import { saveBeforeLoginLocation } from 'utils/beforeSignInManager'
-import { getGoogleOAuthURL } from './getGoogleOAuthUrl'
 
 export const login = () => {
   saveBeforeLoginLocation()

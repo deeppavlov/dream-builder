@@ -56,6 +56,7 @@ export type TEvents =
   | 'ConfirmApiTokenUpdateModal'
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
+  | 'PublishWarningModal'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 

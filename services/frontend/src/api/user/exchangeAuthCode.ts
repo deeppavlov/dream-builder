@@ -20,7 +20,7 @@ export const exchangeAuthCode = async (code: string) => {
   await authApi
     .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
     .then(({ data }) => setLocalStorageUser(data))
-    .catch(e => console.log('ExchangeAuthCode failed!'))
+    .catch(() => console.log('ExchangeAuthCode failed!'))
 
   const beforeLoginUrl =
     getBeforeLoginLocation() ?? getClearUrl(location.origin)

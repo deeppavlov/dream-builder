@@ -16,6 +16,10 @@ import { Container, Main, Wrapper } from 'components/UI'
 import { Sidebar, Topbar } from 'components/Widgets'
 
 type IHandler = (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+type IHandlerStop = (
+  e: React.MouseEvent<HTMLButtonElement>,
+  deployment: IDeploymentState
+) => void
 
 function filterStack(arr: IDeploymentState[]) {
   const excludedValues = [
@@ -57,16 +61,24 @@ export const AdminPage = () => {
     e.stopPropagation()
   }
 
-  const handleStop: IHandler = (e, id) => {
-    console.log('id = ', id)
-    // toast.promise(deleteDeployment.mutateAsync(id), toasts.deleteDeployment) //FIX
+  const handleStop: IHandlerStop = (e, deployment) => {
+    const assistantWithoutDeploymentField = deployment.virtual_assistant
+
+    const { virtual_assistant, ...deploymentField } = deployment
+
+    const assistant = { ...assistantWithoutDeploymentField, ...deploymentField }
+
+    toast.promise(
+      deleteDeployment.mutateAsync(assistant),
+      toasts.deleteDeployment
+    )
     e.stopPropagation()
   }
 
   return (
     <>
       <Topbar />
-      <Sidebar />
+      <Sidebar></Sidebar>
       <Main sidebar>
         <Wrapper fitScreen title='Publication Requests'>
           <Container gridForRequests>
@@ -158,11 +170,7 @@ export const AdminPage = () => {
                         <Button
                           theme='primary'
                           props={{
-                            onClick: e =>
-                              handleStop(e, {
-                                ...deployment?.virtual_assistant!,
-                                deployment: { deployment },
-                              }),
+                            onClick: e => handleStop(e, deployment),
                             disabled: deleteDeployment?.isLoading,
                           }}
                         >
@@ -178,6 +186,7 @@ export const AdminPage = () => {
         </Wrapper>
       </Main>
       <BaseSidePanel />
+
       <Toaster />
     </>
   )

@@ -14,7 +14,6 @@ from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
-from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
@@ -90,12 +89,7 @@ async def create_virtual_assistant(
             existing_prompted_skills,
         )
         new_dist.save(generate_configs=True)
-        dream_git.commit_and_push(
-            user.id,
-            1,
-            str(settings.db.dream_root_path / "assistant_dists"),
-            str(settings.db.dream_root_path / "components"),
-        )
+        dream_git.commit_and_push(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -201,7 +195,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 async def patch_virtual_assistant_by_name(
     dist_name: str,
     payload: schemas.VirtualAssistantUpdate,
-    user: str = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
@@ -238,6 +232,7 @@ async def patch_virtual_assistant_by_name(
             )
 
         dream_dist.save(overwrite=True)
+        dream_git.commit_and_push(user.id, 1)
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
@@ -263,6 +258,7 @@ async def delete_virtual_assistant_by_name(
         try:
             dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
             dream_dist.delete()
+            dream_git.commit_and_push(user.id, 1)
         except FileNotFoundError:
             pass
 
@@ -325,6 +321,7 @@ async def clone_dist(
             existing_prompted_skills,
         )
         new_dist.save(overwrite=False)
+        dream_git.commit_and_push(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -422,6 +419,7 @@ async def add_virtual_assistant_component(
             DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
         )
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.commit_and_push(1, 1)
 
     return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
@@ -449,6 +447,7 @@ async def delete_virtual_assistant_component(
         virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
         dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.commit_and_push(1, 1)
 
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
@@ -495,29 +494,3 @@ async def debug_template(template_file_path: str, owner_address: str, dist_name:
     }
 
     return _TemplateResponse(template, template_kwargs)
-
-
-# @assistant_dists_router.get("/{dist_name}/components/{component_group}")
-# async def get_config_services_by_group(dist_name: str, component_group: str, token: str = Depends(verify_token)):
-#     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     return list(_component_to_component_short(c) for c in dist.iter_components(component_group))
-#
-#
-# @assistant_dists_router.post("/{dist_name}/add_service/", status_code=status.HTTP_201_CREATED)
-# async def add_service_to_dist(dist_name: str, service_name: str, port: int, token: str = Depends(verify_token)):
-#     """ """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     dream_dist.add_service(name=service_name, port=port)
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)
-#
-#
-# @assistant_dists_router.post("/{dist_name}/remove_service", status_code=status.HTTP_200_OK)
-# async def remove_service_from_dist(dist_name: str, service_name: str, token: str = Depends(verify_token)):
-#     """ """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     dream_dist.remove_service(service_name, inplace=True)
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)

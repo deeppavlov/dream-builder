@@ -9,11 +9,23 @@ from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import crud
+from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
+
+dream_git = GitManager(
+    settings.git.local_path,
+    settings.git.username,
+    settings.git.remote_access_token,
+    settings.git.remote_source_url,
+    settings.git.remote_source_branch,
+    settings.git.remote_copy_url,
+    # settings.git.remote_copy_branch,
+    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
+)
 
 
 async def generate_prompt_goals(prompt_goals_url: str, prompt: str, openai_api_token):
@@ -74,6 +86,7 @@ async def create_component(
         prompt = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
         prompted_component.update_prompt(prompt["prompt"], prompt["goals"])
         prompted_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
+        dream_git.commit_and_push(user.id, 1)
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
         component = crud.create_component(
@@ -95,7 +108,8 @@ async def create_component(
             prompt_goals=prompted_component.prompt_goals,
             lm_service_id=lm_service.id,
         )
-        return schemas.ComponentRead.from_orm(component)
+
+    return schemas.ComponentRead.from_orm(component)
 
 
 @components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
@@ -133,6 +147,7 @@ async def patch_component(
             dream_component.lm_config = lm_service.default_generative_config
 
         dream_component.save_configs()
+        dream_git.commit_and_push(1, 1)
 
         component = crud.update_component(
             db,

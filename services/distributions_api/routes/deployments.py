@@ -1,100 +1,25 @@
-from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
 import requests.exceptions
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
-from deeppavlov_dreamtools.deployer.swarm import SwarmDeployer, DeployerError
+from deeppavlov_dreamtools.deployer.swarm import DeployerError
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.logger import logger
-from requests.adapters import HTTPAdapter, Retry
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
 from database import crud, enums
+from deployment_queue import tasks
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
-# import services.deployment_worker.tasks.tasks as tasks
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
 swarm_client = SwarmClient(settings.deployer.portainer_url, settings.deployer.portainer_key)
-
-# deployer = Deployer(settings.deployer.portainer_key)
-
-
-def get_user_services(dist: AssistantDist):
-    services = dist.compose_override.config.services.keys()
-    user_services = [service for service in services if service.endswith("-prompted-skill")]
-    user_services.append("agent")
-    if "prompt-selector" in services:
-        user_services.append("prompt-selector")
-    return user_services
-
-
-def ping_deployed_agent(host: str, port: int, retries: int = 10, backoff_factor: float = 1.7):
-    with requests.Session() as session:
-        retries = Retry(
-            total=retries,
-            backoff_factor=backoff_factor,
-            # status_forcelist=[500, 502, 503, 504],
-        )
-        session.mount("http://", HTTPAdapter(max_retries=retries))
-
-        response = session.get(f"{host}:{port}/ping", timeout=100)
-        response_json = response.json()
-
-        logger.info(f"AGENT RESPONSE {response_json}")
-        if response_json == "pong":
-            return True
-
-
-def run_deployer(dist: AssistantDist, deployment_id: int):
-    now = datetime.now()
-    logger.info(f"Deployment background task for {dist.name} started")
-
-    db = next(get_db())
-    with db.begin():
-        logger.info(f"Checking available ports")
-        port = crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
-        logger.info(f"Found available port {port}")
-        crud.update_deployment(db, deployment_id, chat_port=port)
-
-    deployer = SwarmDeployer(
-        user_identifier=dist.name,
-        registry_addr=settings.deployer.registry_url,
-        user_services=get_user_services(dist),
-        deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
-        portainer_url=settings.deployer.portainer_url,
-        portainer_key=settings.deployer.portainer_key,
-        default_prefix=settings.deployer.default_prefix,
-    )
-
-    for state, updates, err in deployer.deploy(dist):
-        db = next(get_db())
-        with db.begin():
-            if err:
-                err = err.dict()
-                logger.error(
-                    f"Deployment background task for {dist.name} failed after {datetime.now() - now} with {err}"
-                )
-            else:
-                logger.info(f"Deployment background task state changed to {state}")
-
-            deployment = crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
-
-    agent_is_up = ping_deployed_agent(deployment.chat_host, deployment.chat_port)
-
-    db = next(get_db())
-    with db.begin():
-        if agent_is_up:
-            crud.update_deployment(db, deployment_id, state=enums.DeploymentState.UP)
-
-    logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
 @deployments_router.get("", status_code=status.HTTP_200_OK)
@@ -141,14 +66,15 @@ async def create_deployment(
             db.rollback()
             raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
 
-    task_id = None
-    if not payload.error:
-        task_id = tasks.run_deployer_task.delay(
-            dist=dream_dist,
-            deployment_id=deployment.id,
-        ).id
+        task_id = None
+        if not payload.error:
+            task_id = tasks.run_deployer_task.delay(
+                dist=dream_dist,
+                deployment_id=deployment.id,
+            ).id
+            deployment = crud.update_deployment(db, deployment.id, task_id=task_id)
 
-    return {"task_id": task_id, **schemas.DeploymentRead.from_orm(deployment).__dict__}
+    return schemas.DeploymentRead.from_orm(deployment)
 
 
 @deployments_router.get("/stacks")

@@ -72,6 +72,16 @@ class GitSettings(BaseModel):
     remote_copy_branch: str
 
 
+class CelerySettings(BaseModel):
+    broker: str
+    backend: str
+
+
+class RedisSettings(BaseModel):
+    host: str
+    port: int
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings
@@ -81,6 +91,8 @@ class Settings(BaseSettings):
     deployer: DeployerSettings
     # storage: StorageSettings
     git: GitSettings
+    celery: CelerySettings
+    redis: RedisSettings
 
     class Config:
         env_file = ".env"

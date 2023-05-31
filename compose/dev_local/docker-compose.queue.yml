@@ -7,34 +7,36 @@ services:
       - "6379:6379"
     restart: always
 
-  celery_worker:
+  deployment_worker:
     env_file: [ ../.envs/.env.dev.local ]
     restart: on-failure
     build:
       context: ../..
-      dockerfile: ./services/distributions_api/Dockerfile
-    command: celery -A services.distributions_api.tasks.tasks:app worker --loglevel=info --uid=1
+      dockerfile: ./services/deployment_worker/Dockerfile
+#    command: celery -A services.distributions_api.tasks.tasks:app worker --loglevel=info --uid=1
     volumes:
-      - ../../services/distributions_api:/src/services/distributions_api
-      - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
-    depends_on:
-      - redis
-
-
-  flower:
-    env_file: [ ../.envs/.env.dev.local ]
-    restart: on-failure
-    build:
-      context: ../..
-      dockerfile: ./services/distributions_api/Dockerfile
-    volumes:
-      - ../../services/distributions_api:/src/services/distributions_api
       - ../../database:/src/database
-      - ../../apiconfig:/src/apiconfig
-    command: celery -A services.distributions_api.tasks.tasks flower --port=5555 # --basic_auth=name:pass
-    ports:
-      - 5555:5555
-    depends_on:
-      - redis
-      - celery_worker
+      - ../../git_storage:/src/git_storage
+      - ../../deployment_queue:/src/deployment_queue
+      - ../../services/deployment_worker:/src/services/deployment_worker
+#    depends_on:
+#      - redis
+
+#
+#  flower:
+#    env_file: [ ../.envs/.env.dev.local ]
+#    restart: on-failure
+#    build:
+#      context: ../..
+#      dockerfile: ./services/distributions_api/Dockerfile
+#    volumes:
+#      - ../../services/distributions_api:/src/services/distributions_api
+#      - ../../database:/src/database
+#      - ../../apiconfig:/src/apiconfig
+#    command: celery -A services.distributions_api.tasks.tasks flower --port=5555 # --basic_auth=name:pass
+#    ports:
+#      - 5555:5555
+#    depends_on:
+#      - redis
+#      - celery_worker

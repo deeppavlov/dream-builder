@@ -66,15 +66,16 @@ services:
         DREAM_ROOT_PATH: /dream
         DREAM_BRANCH: dev
         PORT: 6998
-    depends_on:
-      - auth-api
+#    depends_on:
+#      - auth-api
     ports:
       - "6978:6998"
     volumes:
       - ../../services/distributions_api:/src/services/distributions_api
-      - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../database:/src/database
       - ../../git_storage:/src/git_storage
+      - ../../deployment_queue:/src/deployment_queue
       - ~/.aws:/root/.aws
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:

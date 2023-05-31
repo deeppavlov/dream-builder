@@ -48,6 +48,17 @@ class GitManager:
 
         self.copy_branch = self.set_branch()
 
+        self.commit_dirs = [
+            "annotators",
+            "assistant_dists",
+            "common",
+            "components",
+            "response_selectors",
+            "services",
+            "skill_selectors",
+            "skills",
+        ]
+
     def load_local_path(self):
         return Repo(self.local_path)
 
@@ -70,8 +81,9 @@ class GitManager:
         remote_copy.fetch()
         return remote_copy
 
-    # def push_to_remote_origin(self):
-    #     self.repo.remote().push(refspec=self.remote_source_branch)
+    def pull_copy_remote_origin(self):
+        self.remote_copy.pull(refspec=self.remote_copy_branch)
+
     def commit(self, user_id: int, change_id: int, *files):
         index = self.repo.index
         index.add(files)
@@ -85,8 +97,9 @@ class GitManager:
             pass
         self.remote_copy.push(refspec=self.remote_copy_branch)
 
-    def commit_and_push(self, user_id: int, change_id: int, *files):
-        self.commit(user_id, change_id, *files)
+    def commit_and_push(self, user_id: int, change_id: int):
+        paths = [str(self.local_path / dir_name) for dir_name in self.commit_dirs]
+        self.commit(user_id, change_id, *paths)
         self.push_to_copy_remote_origin()
 
 

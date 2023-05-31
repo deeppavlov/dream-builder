@@ -92,6 +92,7 @@ class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
     prompt: Optional[str]
+    prompt_goals: Optional[str]
     lm_service_id: Optional[int]
 
 

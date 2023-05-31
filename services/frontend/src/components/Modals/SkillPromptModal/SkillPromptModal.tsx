@@ -180,9 +180,11 @@ const SkillPromptModal = () => {
     activeElement: modalRef,
     availableSelectors: [
       `#${HELPER_TAB_ID}`,
-      `#sp_left`,
-      `#testDialog`,
-      `#assistantDialogPanel`,
+      '#sp_left',
+      '#testDialog',
+      '#assistantDialogPanel',
+      '#accessTokensModal',
+      '#settingsTab',
     ],
     isActive: isOpen && isDirty,
     quitHandler: closeModal,
@@ -199,103 +201,92 @@ const SkillPromptModal = () => {
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >
-      <div
-        className={cx(
-          'skillPromptModal',
-          leftSidePanelIsActive && 'withSidePanel'
-        )}
-        ref={modalRef}
-      >
-        <Wrapper closable onClose={closeModal}>
-          <div className={s.container}>
-            <form
-              onSubmit={handleSubmit(onFormSubmit)}
-              className={cx('editor')}
-            >
-              <div className={s.header}>
-                {skill?.display_name ?? 'Current Skill'}: Editor
-              </div>
-              <div className={s['editor-container']}>
-                <div className={s.top}>
-                  <SkillDropboxSearch
-                    name='model'
-                    label='Choose model:'
-                    control={control}
-                    rules={{ required: true }}
-                    selectedItemId={skill?.lm_service?.id?.toString()}
-                    props={{ placeholder: 'Choose model' }}
-                    list={dropboxArray}
-                    fullWidth
-                    withoutSearch
-                  />
-                  {skill?.lm_service?.display_name && (
-                    <div>
-                      <Accordion
-                        title='Model Details:'
-                        type='description'
-                        isActive
-                      >
-                        <p className={s.tip}>
-                          <span>{modelTip}</span>
-                          <a
-                            href={modelLink}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                          >
-                            {modelLink}
-                          </a>
-                        </p>
-                      </Accordion>
-                    </div>
-                  )}
-                </div>
-                <TextArea
-                  name='prompt'
-                  label='Enter prompt:'
-                  countType='tokenizer'
-                  tokenizerModel={selectedModel?.display_name as any}
-                  defaultValue={skill?.prompt}
-                  withCounter
-                  fullHeight
-                  resizable={false}
-                  control={control}
-                  rules={{
-                    required: validationSchema.global.required,
-                    maxLength:
-                      selectedModel?.max_tokens &&
-                      validationSchema.skill.prompt.maxLength(
-                        selectedModel?.max_tokens
-                      ),
-                  }}
-                  triggerField={triggerField}
-                  props={{
-                    placeholder:
-                      "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
-                  }}
-                />
-              </div>
-              <div className={s.bottom}>
-                <div className={s.btns}>
-                  <Button
-                    theme='primary'
-                    props={{
-                      type: 'submit',
-                      disabled:
-                        updateComponent.isLoading || isSubmitting || !isDirty,
-                    }}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </div>
-            </form>
-
-            <div className={s.dialog}>
-              <SkillDialog isDebug distName={distName} skill={skill} />
+      <Wrapper closable onClose={closeModal}>
+        <div className={s.container}>
+          <form onSubmit={handleSubmit(onFormSubmit)} className={cx('editor')}>
+            <div className={s.header}>
+              {skill?.display_name ?? 'Current Skill'}: Editor
             </div>
+            <div className={s['editor-container']}>
+              <div className={s.top}>
+                <SkillDropboxSearch
+                  name='model'
+                  label='Choose model:'
+                  control={control}
+                  rules={{ required: true }}
+                  selectedItemId={skill?.lm_service?.id?.toString()}
+                  props={{ placeholder: 'Choose model' }}
+                  list={dropboxArray}
+                  fullWidth
+                  withoutSearch
+                />
+                {skill?.lm_service?.display_name && (
+                  <div>
+                    <Accordion
+                      title='Model Details:'
+                      type='description'
+                      isActive
+                    >
+                      <p className={s.tip}>
+                        <span>{modelTip}</span>
+                        <a
+                          href={modelLink}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                        >
+                          {modelLink}
+                        </a>
+                      </p>
+                    </Accordion>
+                  </div>
+                )}
+              </div>
+              <TextArea
+                name='prompt'
+                label='Enter prompt:'
+                countType='tokenizer'
+                tokenizerModel={selectedModel?.display_name as any}
+                defaultValue={skill?.prompt}
+                withCounter
+                fullHeight
+                resizable={false}
+                control={control}
+                rules={{
+                  required: validationSchema.global.required,
+                  maxLength:
+                    selectedModel?.max_tokens &&
+                    validationSchema.skill.prompt.maxLength(
+                      selectedModel?.max_tokens
+                    ),
+                }}
+                triggerField={triggerField}
+                props={{
+                  placeholder:
+                    "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
+                }}
+              />
+            </div>
+            <div className={s.bottom}>
+              <div className={s.btns}>
+                <Button
+                  theme='primary'
+                  props={{
+                    type: 'submit',
+                    disabled:
+                      updateComponent.isLoading || isSubmitting || !isDirty,
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+          </form>
+
+          <div className={s.dialog}>
+            <SkillDialog isDebug distName={distName} skill={skill} />
           </div>
-        </Wrapper>
-      </div>
+        </div>
+      </Wrapper>
     </Modal>
   )
 }

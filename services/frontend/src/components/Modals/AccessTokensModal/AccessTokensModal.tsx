@@ -4,6 +4,7 @@ import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
 import { BaseModal, ConfirmApiTokenUpdate } from 'components/Modals'
 import { AccessTokensModule } from 'components/Modules'
+import s from './AccessTokensModal.module.scss'
 
 export const AccessTokensModal = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,7 +20,12 @@ export const AccessTokensModal = () => {
 
   return (
     <>
-      <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <BaseModal
+        id='accessTokensModal'
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        modalClassName={s.accessTokensModal}
+      >
         <AccessTokensModule />
       </BaseModal>
       <ConfirmApiTokenUpdate />

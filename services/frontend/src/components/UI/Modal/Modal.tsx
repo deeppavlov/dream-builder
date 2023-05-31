@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import s from './Modal.module.scss'
 
 export interface IModalProps {
+  id?: string
   modalClassName?: string
   backdropClassName?: string
   children?: React.ReactNode
@@ -15,6 +16,7 @@ export interface IModalProps {
 }
 
 const Modal = ({
+  id,
   backdropClassName,
   modalClassName,
   children,
@@ -45,9 +47,10 @@ const Modal = ({
 
     setContent(
       <div
+        id={id}
         ref={backdropRef}
         onClick={e => closeOnBackdropClick && handleBackdropClick(e)}
-        className={cx('backdrop', backdropClassName)}
+        className={cx(backdropClassName, 'backdrop')}
         {...rest}
       >
         <div ref={modalRef} className={modalClassName}>
@@ -55,7 +58,7 @@ const Modal = ({
         </div>
       </div>
     )
-  }, [isVisible])
+  }, [isVisible, children])
 
   useEffect(() => {
     const isRequestToOpen = !isVisible && isOpen

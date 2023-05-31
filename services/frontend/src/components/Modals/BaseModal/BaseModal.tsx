@@ -30,7 +30,7 @@ const BaseModal = ({
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
-      modalClassName={cx('baseModal', modalClassName)}
+      modalClassName={cx(modalClassName, 'baseModal')}
       isRelativeToParent={false}
       {...rest}
     >

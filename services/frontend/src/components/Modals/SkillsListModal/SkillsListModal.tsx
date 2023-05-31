@@ -95,13 +95,12 @@ export const SkillsListModal = () => {
       setIsOpen={setIsOpen}
       handleClose={handleClose}
       modalClassName={s.modal}
+      backdropClassName={cx(
+        'backdrop',
+        rightSidepanelIsActive && 'withRightSidePanel'
+      )}
     >
-      <div
-        className={cx(
-          'container',
-          rightSidepanelIsActive && 'withRightSidePanel'
-        )}
-      >
+      <div className={s.container}>
         <div className={s.header}>Choose Skill</div>
         <Table
           second='Type'

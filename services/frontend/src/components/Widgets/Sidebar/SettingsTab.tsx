@@ -25,6 +25,7 @@ export const SettingsTab = () => {
 
   return (
     <button
+      id='settingsTab'
       data-tooltip-id='sidebar_settings'
       onClick={settingsClickHandler}
       className={cx('settings', isActive && 'active')}

@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: width 0.3s linear;
   .header {
     @include t1;
   }
@@ -14,8 +13,15 @@
     justify-content: flex-end;
   }
 }
+
+.backdrop {
+  top: 64px;
+  height: calc(100% - 64px);
+  transition: width 0.3s linear;
+}
+
 .withRightSidePanel {
-  width: calc(80vw - 400px);
+  width: calc(100% - 368px);
 }
 
 .modal {

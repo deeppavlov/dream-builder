@@ -36,11 +36,10 @@ export const EditorPage = () => {
   const { name } = useParams()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const { data: dist } = getDist({
-    distName: name!,
-    useErrorBoundary: true,
-    refetchOnMount: true,
-  })
+  const { data: dist } = getDist(
+    { distName: name! },
+    { useErrorBoundary: true, refetchOnMount: true }
+  )
 
   useEffect(() => {
     // Setting mode to Preview by default

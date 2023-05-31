@@ -294,10 +294,6 @@ const SkillPromptModal = () => {
               </div>
               <div className={s.bottom}>
                 <div className={s.btns}>
-                  <Button theme='tertiary-round' props={{ disabled: true }}>
-                    <HistoryIcon />
-                    History
-                  </Button>
                   <Button
                     theme='primary'
                     props={{

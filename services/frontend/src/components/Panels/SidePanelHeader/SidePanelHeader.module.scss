@@ -5,13 +5,8 @@
   border-bottom: 1px solid $bcgrnd3;
   display: flex;
   @include t2;
-  padding: 13px 24px;
   align-items: center;
   gap: 8px;
-
-  &:has([role='tablist']) {
-    padding: 0;
-  }
 
   [role='tablist'] {
     display: flex;

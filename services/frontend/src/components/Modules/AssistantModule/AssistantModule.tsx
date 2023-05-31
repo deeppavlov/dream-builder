@@ -15,18 +15,16 @@ import { AssistantSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Container, Details, SmallTag, Wrapper } from 'components/UI'
 
-interface Props {}
-
-export const AssistantModule: FC<Props> = () => {
+export const AssistantModule = () => {
   const { name } = useParams()
   const { isPreview } = usePreview()
   const navigate = useNavigate()
   const auth = useAuth()
   const { getDist, changeVisibility } = useAssistants()
-  const { data: bot, isFetched } = getDist({
-    distName: name!,
-    refetchOnMount: true,
-  })
+  const { data: bot, isFetched } = getDist(
+    { distName: name! },
+    { refetchOnMount: true }
+  )
   const { deploy, deleteDeployment, checkDeployStatus } = useDeploy()
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
 

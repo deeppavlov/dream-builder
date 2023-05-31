@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import store from 'store2'
-import { BotInfoInterface, TDistVisibility, Visibility } from 'types/types'
+import { BotInfoInterface, Visibility } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { visibility } from 'mapping/visibility'
 import { useAssistants } from 'hooks/api'
@@ -22,15 +22,20 @@ interface FormValues {
 export const PublishAssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
-  const [newValue, setNewValue] = useState<Visibility>()
+  const isPushAlert = store('publishAlert')
   const { name: distName } = useParams()
   const isEditor = distName !== undefined && distName.length > 0
   const queryClient = useQueryClient()
-  const { register, handleSubmit, reset, getValues, watch } =
-    useForm<FormValues>()
-
+  const { register, handleSubmit, reset, setValue, watch } =
+    useForm<FormValues>({
+      defaultValues: {
+        visibility: bot?.visibility,
+        publishAlert: isPushAlert,
+      },
+    })
+  const selectedVisibility = watch('visibility')
   const { changeVisibility } = useAssistants()
-  const currentVisibility = bot?.visibility
+  const assistantVisibility = bot?.visibility
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data?.detail.bot)
@@ -47,10 +52,12 @@ export const PublishAssistantModal = () => {
     console.log(store('publishAlert'))
     console.log('visibility = ', visibility)
 
+    store('publishAlert', data.publishAlert)
+
     if (visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE) {
       trigger('PublishWarningModal', { bot })
     }
-    visibility !== currentVisibility ||
+    visibility !== assistantVisibility ||
     visibility !== VISIBILITY_STATUS.PUBLIC_TEMPLATE ||
     bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
       ? toast
@@ -64,7 +71,7 @@ export const PublishAssistantModal = () => {
               },
               {
                 onSuccess: () => {
-                  currentVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
+                  assistantVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
                     queryClient.invalidateQueries('publicDists')
                 },
               }
@@ -85,15 +92,21 @@ export const PublishAssistantModal = () => {
   }
 
   const closeModal = () => {
-    reset({ visibility: null })
-    setIsOpen(prev => !prev)
-    setBot(() => null)
-    setNewValue(() => null)
+    reset()
+    setIsOpen(false)
+    setBot(null)
   }
-  useObserver('PublishAssistantModal', handleEventUpdate)
 
+  useEffect(() => {
+    const isVisibility = bot?.visibility !== undefined
+
+    if (isVisibility) setValue('visibility', bot?.visibility)
+    setValue('publishAlert', isPushAlert)
+  }, [bot?.visibility, isPushAlert])
+
+  useObserver('PublishAssistantModal', handleEventUpdate)
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
+    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
           <h4>Change who can see your Assistant?</h4>
@@ -105,11 +118,7 @@ export const PublishAssistantModal = () => {
                 return (
                   <RadioButton
                     props={{
-                      ...register('visibility'),
-                      defaultChecked: type?.id === bot?.visibility,
-                      onChange: e => {
-                        setNewValue(e?.currentTarget?.value as TDistVisibility)
-                      },
+                      ...register('visibility', { required: true }),
                     }}
                     key={i}
                     name={type.id}
@@ -125,12 +134,8 @@ export const PublishAssistantModal = () => {
             <Checkbox
               theme='secondary'
               name='alertMessage'
-              label='Don’t show allert message again'
-              props={{
-                ...register('publishAlert'),
-                defaultChecked: !store('publishAlert'),
-                onChange: () => store('publishAlert', watch('publishAlert')),
-              }}
+              label='Don’t show alert message again'
+              props={{ ...register('publishAlert') }}
             />
           </div>
           <div className={s.btns}>
@@ -144,7 +149,7 @@ export const PublishAssistantModal = () => {
                 disabled: changeVisibility?.isLoading,
               }}
             >
-              {newValue === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+              {selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
                 ? 'Publish'
                 : ' Save'}
             </Button>

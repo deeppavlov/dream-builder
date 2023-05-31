@@ -9,7 +9,6 @@ export interface RadioButtonProps {
   htmlFor: string
   value: string
   disabled?: boolean
-  defaultChecked?: boolean
   tooltipId?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
 }
@@ -21,7 +20,7 @@ export const RadioButton: FC<RadioButtonProps> = ({
   value,
   tooltipId,
   disabled,
-  defaultChecked,
+  // defaultChecked,
   props,
 }) => {
   const cx = classNames.bind(s)
@@ -36,7 +35,6 @@ export const RadioButton: FC<RadioButtonProps> = ({
         name={name}
         type='radio'
         disabled={disabled}
-        defaultChecked={defaultChecked}
         value={value}
         className={s.radio}
         {...props}

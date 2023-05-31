@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { ISkill } from 'types/types'
+import { toasts } from 'mapping/toasts'
 import { useComponent } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { validationSchema } from 'utils/validationSchema'
@@ -33,7 +34,7 @@ export const SkillModal = () => {
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
   const descriptionMaxLenght = 500
-
+  console.log('foo = ')
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
@@ -50,7 +51,7 @@ export const SkillModal = () => {
   }) => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-
+    console.log('detail = ', action, create)
     // Reset values and errors states
     reset({
       [NAME_ID]: skill?.display_name,
@@ -61,6 +62,7 @@ export const SkillModal = () => {
   const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
+    console.log('data = ', data)
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },
@@ -76,11 +78,7 @@ export const SkillModal = () => {
           },
         }
       ),
-      {
-        loading: 'Creating...',
-        success: 'Success!',
-        error: 'Something went wrong...',
-      }
+      toasts.createComponent
     )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
@@ -108,7 +106,7 @@ export const SkillModal = () => {
   }
 
   useObserver('SkillModal', handleEventUpdate)
-
+  console.log('action,skill = ', action, skill)
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>

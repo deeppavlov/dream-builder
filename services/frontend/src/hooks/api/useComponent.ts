@@ -10,6 +10,7 @@ import {
 import {
   addComponent,
   cloneComponent,
+  createComponent,
   deleteComoponent,
   editComponent,
   getComponent as fetchComponent,
@@ -122,7 +123,16 @@ export const useComponent = () => {
       updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })
-
+  const create = useMutation({
+    onMutate: () => {
+      // console.log('data = ', data)
+    },
+    mutationFn: ({ data }: ICreate) => createComponent(data),
+    onSuccess: ({ id }: IStackElement, { distName, type }) => {
+      // console.log('id = ', id)
+      addComponentToDist.mutateAsync({ distName, id: id, type })
+    },
+  })
   const clone = useMutation({
     onMutate: (data: ICloneComponent) => {
       console.log('data = ', data.skill)
@@ -241,6 +251,7 @@ export const useComponent = () => {
     addComponentToDist,
     deleteComponent,
     clone,
+    create,
     edit,
   }
 }

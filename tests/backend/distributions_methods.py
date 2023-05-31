@@ -9,7 +9,9 @@ from .config import (
     dialog_sessions_endpoint,
     deployments_endpoint,
     admin_endpoint,
-    auth_token, lm_services_endpoint,
+    lm_services_endpoint,
+    auth_token,
+    openai_token
 )
 
 
@@ -310,7 +312,7 @@ class UserMethods:
                         component_id,
                         display_name="string",
                         description="string",
-                        prompt="string",
+                        prompt="Your ",
                         lm_service_id=1
                         ):
         get_dist_components_response = requests.patch(url=components_endpoint + "/" + str(component_id),
@@ -453,7 +455,7 @@ class UserMethods:
         assert send_message_response.status_code == 201, send_message_response.json()
         assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
             "Validation error while test_send_dialog_session_message"
-        assert send_message_response.json()["active_skill"] != "dummy_skill", \
+        assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
             "Dummy skill answers"
 
     def send_dialog_session_message_various_lm(self, dialog_session_id, lm_service_id):
@@ -469,14 +471,15 @@ class UserMethods:
                 "prompt": "TASK:  You are a chatbot that can only answers questions below. "
                           "FAQ: What is your name? My name is Paul.",
                 "lm_service_id": lm_service_id,
-                "openai_api_key": "string"
+                "openai_api_key": openai_token
             },
         )
         assert send_message_response.status_code == 201, send_message_response.json()
         assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
             "Validation error while test_send_dialog_session_message"
-        assert send_message_response.json()["active_skill"] != "dummy_skill", \
+        assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
             "Dummy skill answers"
+        print(f'send_message_response.json() = {send_message_response.json()}')
         assert "Paul" in send_message_response.json()["text"], \
             "Skill answers incorrectly"
 

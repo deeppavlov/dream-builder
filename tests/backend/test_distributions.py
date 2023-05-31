@@ -110,8 +110,7 @@ class TestDistributions:
 
         user.delete_va_by_name(va_name)
 
-
-    #VA COMPONENTS
+    # VA COMPONENTS
 
     @qase.title(f"{counter()}. test_get_public_va_components_by_name")
     def test_get_public_va_components_by_name(self):
@@ -220,29 +219,11 @@ class TestDistributions:
         user = UserMethods()
         user.get_list_of_components()
 
-    @qase.title(f"{counter()}. test_create_component")
-    def test_create_component(self):
-        user = UserMethods()
-        component_id = user.create_component()["id"]
-        user.delete_component(component_id)
-
-    @qase.title(f"{counter()}. test_get_component")
-    def test_get_component(self):
+    @qase.title(f"{counter()}. test_create_get_patch_delete_component")
+    def test_create_get_patch_delete_component(self):
         user = UserMethods()
         component_id = user.create_component()["id"]
         user.get_component(component_id)
-        user.delete_component(component_id)
-
-    @qase.title(f"{counter()}. test_delete_component")
-    def test_delete_component(self):
-        user = UserMethods()
-        component_id = user.create_component()["id"]
-        user.delete_component(component_id)
-
-    @qase.title(f"{counter()}. test_patch_component")
-    def test_patch_component(self):
-        user = UserMethods()
-        component_id = user.create_component()["id"]
         user.patch_component(component_id)
         user.delete_component(component_id)
 
@@ -251,7 +232,6 @@ class TestDistributions:
         group_name = "Generative"
         user = UserMethods()
         user.get_list_of_group_components(group_name)
-
 
     # USERS
 
@@ -298,15 +278,38 @@ class TestDistributions:
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    #@pytest.mark.atom
-    #@pytest.mark.parametrize('lm_service_id', lm_service_id_list)
-    #@qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm")
-    #def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm(self, lm_service_id):
-    #    va_name = "universal_prompted_assistant"
-    #    user = UserMethods()
-    #    dialog_session_id = user.create_dialog_sessions(va_name)["id"]
-    #    user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
-    #    user.get_dialog_session_history(dialog_session_id)
+    @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm")
+    def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm(self, lm_service_id):
+        va_name = "universal_prompted_assistant"
+        user = UserMethods()
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
+        user.get_dialog_session_history(dialog_session_id)
+#
+    @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
+    @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
+    def test_build_assistant_on_various_lm(self, lm_service_id):
+        va_name = "universal_prompted_assistant"
+        user = UserMethods()
+        va_name = user.create_virtual_assistant(va_name)["name"]
+        default_component = user.get_va_components(va_name)["skills"]
+#
+        for component in default_component:
+            if component['component_type'] == 'Generative':
+                component_id = component['component_id']
+                user.patch_component(component_id=component_id,
+                                     lm_service_id=lm_service_id,
+                                     prompt="TASK:  You are a chatbot that can only answers questions below. "
+                                            "FAQ: What is your name? My name is Paul.")
+#
+        deploy = DeploymentsMethods()
+        deploy.create_deployment(va_name)
+        time.sleep(60)
+#
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
+        user.get_dialog_session_history(dialog_session_id)
 
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_created_from_scratch_va")
     def test_get_dialog_session_history_with_created_from_scratch_va(self):
@@ -344,7 +347,6 @@ class TestDistributions:
 
         deploy.delete_deployment(deployment_id)
 
-
     # LM_SERVICES
 
     @qase.title(f"{counter()}. test_get_all_lm_services")
@@ -352,7 +354,7 @@ class TestDistributions:
         user = UserMethods()
         user.get_all_lm_services()
 
-   # DEPLOYMENTS
+    # DEPLOYMENTS
 
     @qase.title(f"{counter()}. test_get_stacks")
     def test_get_stacks(self):
@@ -381,13 +383,12 @@ class TestDistributions:
         time.sleep(60)
         deploy.delete_deployment(deployment_id)
 
-    #@pytest.mark.atom
-    #@pytest.mark.parametrize("stack_id", range(578, 699))
-    #@qase.title(f"{counter()}. test_delete_stack")
-    #def test_delete_stack(self, stack_id):
+    # @pytest.mark.atom
+    # @pytest.mark.parametrize("stack_id", range(578, 699))
+    # @qase.title(f"{counter()}. test_delete_stack")
+    # def test_delete_stack(self, stack_id):
     #    deploy = DeploymentsMethods()
     #    deploy.delete_stack(stack_id)
-
 
     # ADMIN
 
@@ -437,12 +438,9 @@ class TestDistributions:
         publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
         admin.decline_publish_request(publish_request_id)
 
-
-    #LM_SERVICE
-
+    # LM_SERVICE
 
     @qase.title(f"{counter()}. get_all_lm_services")
     def test_get_all_lm_services(self):
         user = UserMethods()
         va = user.get_all_lm_services()
-

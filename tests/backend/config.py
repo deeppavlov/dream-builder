@@ -37,6 +37,7 @@ class DatabaseSettings(BaseModel):
 class AuthSettings(BaseModel):
     google_client_id: str
     test_token: str
+    openai_token: str
     sub: str
     chat_url: str
 
@@ -56,6 +57,7 @@ class Settings(BaseSettings):
 
 settings_test = Settings()
 auth_token = settings_test.auth.test_token
+openai_token = settings_test.auth.openai_token
 # remove 'local' if we run tests not locally
 settings_url = settings_test.localurl
 settings_db = settings_test.localdb
@@ -170,7 +172,7 @@ public_va_names = ["ai_faq_assistant",
                    "deepy_assistant",
                    ]
 
-lm_service_id_list = [1, 2, 3, 4, 5, 6]
+lm_service_id_list = [2, 3, 4, 7]
 
 # config for test_auth
 

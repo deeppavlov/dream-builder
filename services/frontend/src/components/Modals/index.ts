@@ -4,7 +4,7 @@ import { AssistantModal } from './AssistantModal/AssistantModal'
 import BaseModal from './BaseModal/BaseModal'
 import ChooseBotModal from './ChooseBotModal/ChooseBotModal'
 import { ConfirmApiTokenUpdate } from './ConfirmApiTokenUpdateModal/ConfirmApiTokenUpdateModal'
-import { CreateGenerativeSkillModal } from './CreateGenerativeSkillModal/CreateGenerativeSkillModal'
+import { CongratsModal } from './CongratsModal/CongratsModal'
 import CreateSkillDistModal from './CreateSkillDistModal/CreateSkillDistModal'
 import { DeleteAssistantModal } from './DeleteAssistantModal/DeleteAssistantModal'
 import { DeleteSkillModal } from './DeleteSkillModal/DeleteSkillModal'
@@ -12,7 +12,6 @@ import { DeployNotificationModal } from './DeployModal/DeployNotificationModal'
 import { FreezeSkillModal } from './FreezeSkillModal/FreezeSkillModal'
 import IntentCatcherModal from './IntentCatcherModal/IntentCatcherModal'
 import IntentResponderModal from './IntentResponderModal/IntentResponderModal'
-import { Modal } from './Modal/Modal'
 import { PublicToPrivateModal } from './PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from './PublishAssistantModal/PublishAssistantModal'
 import { ShareAssistantModal } from './ShareAssistantModal/ShareAssistantModal'
@@ -26,7 +25,6 @@ export {
   AccessTokensModal,
   AreYouSureModal,
   AssistantModal,
-  CreateGenerativeSkillModal,
   CreateSkillDistModal,
   DeleteAssistantModal,
   DeleteSkillModal,
@@ -34,7 +32,7 @@ export {
   FreezeSkillModal,
   IntentCatcherModal,
   IntentResponderModal,
-  Modal,
+  CongratsModal,
   PublicToPrivateModal,
   PublishAssistantModal,
   ShareAssistantModal,

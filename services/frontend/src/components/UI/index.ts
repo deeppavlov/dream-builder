@@ -7,6 +7,7 @@ import { EditablePlaceholder } from './EditablePlaceholder/EditablePlaceholder'
 import { ErrorHandler } from './ErrorHandler/ErrorHandler'
 import Hint from './Hint/Hint'
 import { Main } from './Main/Main'
+import Modal from './Modal/Modal'
 import PageErrorHandler from './PageErrorHandler/PageErrorHandler'
 import { Placeholder } from './PlaceHolder/PlaceHolder'
 import SkillTaskPlaceholder from './SkillTaskPlaceholder/SkillTaskPlaceholder'
@@ -34,4 +35,5 @@ export {
   Table,
   ToastCopySucces,
   Wrapper,
+  Modal,
 }

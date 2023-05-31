@@ -29,7 +29,7 @@ export const SkillQuitModal = () => {
   useObserver('SkillQuitModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} type='quit'>
+    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} data-modal-type='quit'>
       <div className={s.skillQuitModal}>
         <h4>Do you want to close skill editing page?</h4>
         <span className={s.desc}>

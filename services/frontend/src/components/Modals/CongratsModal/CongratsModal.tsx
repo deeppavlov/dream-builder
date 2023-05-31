@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useObserver } from 'hooks/useObserver'
 import { BaseModal } from 'components/Modals'
-import s from './Modal.module.scss'
+import s from './CongratsModal.module.scss'
 
-export const Modal = () => {
+export const CongratsModal = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const closeModal = () => {

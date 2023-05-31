@@ -1,10 +1,8 @@
-import { ReactComponent as HistoryIcon } from '@assets/icons/history.svg'
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
-import Modal from 'react-modal'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
@@ -23,7 +21,7 @@ import { Accordion, SkillDropboxSearch } from 'components/Dropdowns'
 import { TextArea } from 'components/Inputs'
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Wrapper } from 'components/UI'
+import { Modal, Wrapper } from 'components/UI'
 import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
 import s from './SkillPromptModal.module.scss'
 
@@ -193,29 +191,13 @@ const SkillPromptModal = () => {
   return (
     <Modal
       isOpen={isOpen}
-      style={{
-        overlay: {
-          top: 64,
-          right: 0,
-          left: 80,
-          position: 'fixed',
-          background: 'transparent',
-          zIndex: 0,
-        },
-        content: {
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 0,
-          transform: 'none',
-          height: '100%',
-          width: '100%',
-          border: 'none',
-          background: 'none',
-          borderRadius: 0,
-          padding: 0,
-        },
-      }}
+      backdropClassName={s.backdrop}
+      modalClassName={cx(
+        'skillPromptModal',
+        leftSidePanelIsActive && 'withSidePanel'
+      )}
+      modalRef={modalRef}
+      closeOnBackdropClick={false}
     >
       <div
         className={cx(

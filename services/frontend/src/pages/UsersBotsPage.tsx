@@ -7,9 +7,9 @@ import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import {
   AssistantModal,
+  CongratsModal,
   DeleteAssistantModal,
   DeployNotificationModal,
-  Modal,
   PublishAssistantModal,
   ShareAssistantModal,
 } from 'components/Modals'
@@ -78,7 +78,7 @@ export const UsersBotsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareAssistantModal />
-        <Modal />
+        <CongratsModal />
         <DeployNotificationModal />
       </Main>
       <Toaster />

@@ -8,9 +8,9 @@ import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import {
   AssistantModal,
+  CongratsModal,
   DeleteAssistantModal,
   DeployNotificationModal,
-  Modal,
   PublicToPrivateModal,
   PublishAssistantModal,
   ShareAssistantModal,
@@ -138,7 +138,7 @@ export const BotsPage = () => {
         <DeleteAssistantModal />
         <ShareAssistantModal />
         <PublicToPrivateModal />
-        <Modal />
+        <CongratsModal />
         <SignInModal />
         <DeployNotificationModal />
       </Main>

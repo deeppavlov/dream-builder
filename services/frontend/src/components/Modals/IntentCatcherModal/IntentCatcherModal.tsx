@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Modal from 'react-modal'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as IntentErrorCircle } from 'assets/icons/intent_error_circle.svg'
@@ -9,7 +8,7 @@ import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
 import { ExpandableDropdownn } from 'components/Dropdowns'
 import { Input, TextArea } from 'components/Inputs'
-import { SmallTag } from 'components/UI'
+import { Modal, SmallTag } from 'components/UI'
 import s from './IntentCatcherModal.module.scss'
 
 interface Props {
@@ -117,14 +116,7 @@ const IntentCatcherModal = ({ intent }: Props) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
-      // contentLabel='Intet Modal'
-      className={s.intentModal}
-      style={{
-        overlay: {
-          zIndex: 5,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        },
-      }}
+      modalClassName={s.intentModal}
     >
       <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
         <div className={s.intentModal__header}>

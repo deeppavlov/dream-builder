@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Modal from 'react-modal'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as TrashIcon } from 'assets/icons/trash_icon.svg'
 import { useObserver } from 'hooks/useObserver'
@@ -7,6 +6,7 @@ import { Button } from 'components/Buttons'
 import { DropboxSearch, ExpandableDropdownn } from 'components/Dropdowns'
 import { Input, TextArea } from 'components/Inputs'
 import { intentsMock } from 'components/Panels/IntentResponderSidePanel/IntentResponderSidePanel'
+import { Modal } from 'components/UI'
 import s from './IntentResponderModal.module.scss'
 
 export interface IntentInterface {
@@ -84,14 +84,7 @@ const IntentResponderModal = ({ intents, activeIntentId }: Props) => {
       <Modal
         isOpen={isOpen}
         onRequestClose={closeModal}
-        contentLabel='Intet Modal'
-        className={s.intentModal}
-        style={{
-          overlay: {
-            zIndex: 5,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        }}
+        modalClassName={s.intentModal}
       >
         <form className={s.intentModal__form} onSubmit={handleFormSubmit}>
           <div className={s.intentModal__header}>

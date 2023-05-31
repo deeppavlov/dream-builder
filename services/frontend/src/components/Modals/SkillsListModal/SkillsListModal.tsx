@@ -91,11 +91,10 @@ export const SkillsListModal = () => {
 
   return (
     <BaseModal
-      skillsListModal
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      customStyles={position}
       handleClose={handleClose}
+      modalClassName={s.modal}
     >
       <div
         className={cx(

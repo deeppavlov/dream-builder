@@ -19,12 +19,7 @@ export const AccessTokensModal = () => {
 
   return (
     <>
-      <BaseModal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        tokensModal
-        customStyles={{ overlay: { top: 64 } }}
-      >
+      <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
         <AccessTokensModule />
       </BaseModal>
       <ConfirmApiTokenUpdate />

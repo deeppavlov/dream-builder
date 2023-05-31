@@ -43,8 +43,8 @@ export const ConfirmApiTokenUpdate = () => {
     <BaseModal
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      type='quit'
       handleClose={() => onCancel && onCancel()}
+      data-modal-type='quit'
     >
       <div className={s.confirmApiTokenUpdate}>
         <h4>

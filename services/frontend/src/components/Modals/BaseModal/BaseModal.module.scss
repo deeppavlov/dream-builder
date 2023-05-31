@@ -1,8 +1,9 @@
 .baseModal {
   min-width: 624px;
-  max-width: 80vw;
-  max-height: 83vh;
+  max-width: 80%;
+  max-height: 80%;
   width: fit-content;
+  height: fit-content;
   background-color: $bcgrnd1;
   border-radius: 24px;
   padding: 48px 64px;
@@ -18,36 +19,22 @@
     background-color: transparent;
     color: $primary1;
   }
+}
 
-  // a {
-  //   display: inline-block;
-  //   text-decoration: underline;
-  //   text-underline-offset: 6px;
-  //   text-decoration-thickness: 2px;
-  //   text-decoration-color: $text1;
-  //   color: $text1;
-  // }
+.close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 24px;
+  cursor: pointer;
 
-  .close {
-    position: absolute;
-    top: 20px;
-    right: 24px;
-    width: 24px;
-    cursor: pointer;
-
-    path {
-      stroke: $text3;
-    }
+  path {
+    stroke: $text3;
   }
 }
-.baseModal.skillsListModal {
-  background-color: #f0f0f3;
-  padding: 24px;
-}
 
-.baseModal.tokensModal {
-  background-color: $bcgrnd3;
-  max-width: 1100px;
-  width: max-content;
-  // height: 80vh;
-}
+// .baseModal.skillsListModal {
+//   background-color: #f0f0f3;
+//   padding: 24px;
+//   max-width: 100%;
+// }

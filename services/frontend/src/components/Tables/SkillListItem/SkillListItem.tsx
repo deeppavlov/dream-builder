@@ -57,15 +57,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    const { display_name, description, prompt, lm_service } = skill
-
-    handleAdd &&
-      handleAdd({
-        display_name,
-        description,
-        prompt,
-        lm_service_id: lm_service?.id,
-      })
+    handleAdd && handleAdd(skill)
   }
   const handleEditClick = (e: React.MouseEvent) => {
     if (skill.component_type === ('Generative' as any)) {

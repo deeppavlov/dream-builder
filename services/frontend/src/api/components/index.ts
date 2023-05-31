@@ -1,5 +1,5 @@
 import { addComponent } from './addComponent'
-import { createComponent } from './createComponent'
+import { cloneComponent } from './cloneComponent'
 import { deleteComoponent } from './deleteComponent'
 import { editComponent } from './editComponent'
 import { getAllLMservices } from './getAllLMservices'
@@ -10,7 +10,7 @@ import { patchComponent } from './patchComponent'
 
 export {
   addComponent,
-  createComponent,
+  cloneComponent,
   deleteComoponent,
   editComponent,
   getAllLMservices,

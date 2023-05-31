@@ -154,6 +154,12 @@ export interface ICreateComponent {
   prompt?: string
 }
 
+export interface ICloneComponent {
+  skill: ISkill
+  distName: string
+  type: StackType
+}
+
 export interface SkillListProps {
   skills: ISkill[]
   view: ViewType
@@ -162,7 +168,7 @@ export interface SkillListProps {
   forGrid?: boolean
   forModal?: boolean
   withoutDate?: boolean
-  handleAdd?: (skill: ICreateComponent) => void
+  handleAdd?: (skill: ISkill) => void
 }
 export interface SettingKey {
   name: string

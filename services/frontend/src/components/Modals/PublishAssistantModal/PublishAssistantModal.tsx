@@ -1,14 +1,16 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import store from 'store2'
 import { BotInfoInterface, TDistVisibility, Visibility } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { visibility } from 'mapping/visibility'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
-import { Button, RadioButton } from 'components/Buttons'
+import { trigger } from 'utils/events'
+import { Button, Checkbox, RadioButton } from 'components/Buttons'
 import { BaseToolTip } from 'components/Menus'
 import { BaseModal } from 'components/Modals'
 import s from './PublishAssistantModal.module.scss'
@@ -42,7 +44,14 @@ export const PublishAssistantModal = () => {
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
 
+    console.log(store('publishAlert'))
+    console.log('visibility = ', visibility)
+
+    if (visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE) {
+      trigger('PublishWarningModal', { bot })
+    }
     visibility !== currentVisibility ||
+    visibility !== VISIBILITY_STATUS.PUBLIC_TEMPLATE ||
     bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
       ? toast
           .promise(
@@ -82,7 +91,7 @@ export const PublishAssistantModal = () => {
     setNewValue(() => null)
   }
   useObserver('PublishAssistantModal', handleEventUpdate)
-  // console.log('store() = ', store('publishAlert'))
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={closeModal}>
       <div className={s.publishAssistantModal}>
@@ -113,19 +122,16 @@ export const PublishAssistantModal = () => {
                 )
               })}
             </div>
-            {/* <Checkbox
+            <Checkbox
               theme='secondary'
               name='alertMessage'
               label='Don’t show allert message again'
               props={{
                 ...register('publishAlert'),
-                defaultChecked: store('publishAlert'),
-                onChange: e => {
-                  console.log(watch('publishAlert'))
-                  store('publishAlert', getValues('publishAlert'))
-                },
+                defaultChecked: !store('publishAlert'),
+                onChange: () => store('publishAlert', watch('publishAlert')),
               }}
-            /> */}
+            />
           </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>

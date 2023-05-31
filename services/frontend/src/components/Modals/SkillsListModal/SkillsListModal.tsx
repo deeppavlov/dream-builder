@@ -1,24 +1,25 @@
-import classNames from 'classnames/bind'
-import { useUIOptions } from 'context'
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { useNavigate, useParams } from 'react-router'
-import { generatePath } from 'react-router-dom'
-import { RoutesList } from 'router/RoutesList'
-import { ICreateComponent, TDistVisibility } from 'types/types'
-import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import { toasts } from 'mapping/toasts'
-import { useAssistants, useComponent, useDeploy } from 'hooks/api'
-import { useObserver } from 'hooks/useObserver'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { AddButton, Button } from 'components/Buttons'
-import { SkillList } from 'components/Helpers'
-import { TableRowsLoader } from 'components/Loaders'
-import { BaseModal } from 'components/Modals'
-import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Table } from 'components/UI'
-import s from './SkillsListModal.module.scss'
+import classNames from 'classnames/bind';
+import { useUIOptions } from 'context';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router';
+import { generatePath } from 'react-router-dom';
+import { RoutesList } from 'router/RoutesList';
+import { ISkill, TDistVisibility } from 'types/types';
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants';
+import { toasts } from 'mapping/toasts';
+import { useAssistants, useComponent, useDeploy } from 'hooks/api';
+import { useObserver } from 'hooks/useObserver';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import { AddButton, Button } from 'components/Buttons';
+import { SkillList } from 'components/Helpers';
+import { TableRowsLoader } from 'components/Loaders';
+import { BaseModal } from 'components/Modals';
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel';
+import { Table } from 'components/UI';
+import s from './SkillsListModal.module.scss';
+
 
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -26,7 +27,7 @@ export const SkillsListModal = () => {
   const { name: distName } = useParams()
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
-  const { getGroupComponents, create } = useComponent()
+  const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
@@ -56,18 +57,18 @@ export const SkillsListModal = () => {
 
   const handleOk = () => handleClose()
 
-  const handleAdd = (skill: ICreateComponent) => {
+  const handleAdd = (skill: ISkill) => {
+    console.log('skill = ', skill)
     toast.promise(
-      create.mutateAsync(
-        { data: skill, distName: distName || '', type: 'skills' },
+      clone.mutateAsync(
+        { skill: skill, distName: distName!, type: 'skills' },
         {
-          onSuccess: skill => {
+          onSuccess: (skill: ISkill) => {
             bot?.deployment?.state === DEPLOY_STATUS.UP &&
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish /
                 const name = bot?.name!
                 const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
-
                 bot?.publish_state !== null &&
                   changeVisibility.mutateAsync({ name, visibility })
               })

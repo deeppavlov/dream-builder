@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import {
-  ICreateComponent,
+  ICloneComponent,
   IStackElement,
   LM_Service,
   PostDistParams,
@@ -9,7 +9,7 @@ import {
 } from 'types/types'
 import {
   addComponent,
-  createComponent,
+  cloneComponent,
   deleteComoponent,
   editComponent,
   getComponent as fetchComponent,
@@ -37,12 +37,6 @@ interface IAdd {
 
 interface IDelete extends IAdd {
   component_id: number
-}
-
-interface ICreate {
-  distName: string
-  data: ICreateComponent
-  type: StackType
 }
 
 interface IEdit {
@@ -129,13 +123,18 @@ export const useComponent = () => {
     },
   })
 
-  const create = useMutation({
-    onMutate: () => {
-      // console.log('data = ', data)
+  const clone = useMutation({
+    onMutate: (data: ICloneComponent) => {
+      console.log('data = ', data.skill)
     },
-    mutationFn: ({ data }: ICreate) => createComponent(data),
+    mutationFn: (data: ICloneComponent) =>
+      cloneComponent(data.skill.id, {
+        display_name: data.skill.display_name,
+        description: data.skill.description,
+        prompt: data.skill.prompt!,
+      }),
     onSuccess: ({ id }: IStackElement, { distName, type }) => {
-      // console.log('id = ', id)
+      console.log('data = ', id, distName, type)
       addComponentToDist.mutateAsync({ distName, id: id, type })
     },
   })
@@ -241,7 +240,7 @@ export const useComponent = () => {
     updateComponent,
     addComponentToDist,
     deleteComponent,
-    create,
+    clone,
     edit,
   }
 }

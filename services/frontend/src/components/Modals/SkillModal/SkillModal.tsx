@@ -34,7 +34,7 @@ export const SkillModal = () => {
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
   const descriptionMaxLenght = 500
-  console.log('foo = ')
+
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
@@ -51,7 +51,7 @@ export const SkillModal = () => {
   }) => {
     setAction(action ?? 'create')
     setSkill(skill ?? null)
-    console.log('detail = ', action, create)
+
     // Reset values and errors states
     reset({
       [NAME_ID]: skill?.display_name,
@@ -106,7 +106,7 @@ export const SkillModal = () => {
   }
 
   useObserver('SkillModal', handleEventUpdate)
-  console.log('action,skill = ', action, skill)
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>

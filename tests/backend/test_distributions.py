@@ -278,6 +278,7 @@ class TestDistributions:
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
 
+    @pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm(self, lm_service_id):
@@ -287,6 +288,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 #
+    @pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
     def test_build_assistant_on_various_lm(self, lm_service_id):
@@ -304,12 +306,14 @@ class TestDistributions:
                                             "FAQ: What is your name? My name is Paul.")
 #
         deploy = DeploymentsMethods()
-        deploy.create_deployment(va_name)
-        time.sleep(60)
+        deployment_id = deploy.create_deployment(va_name)["id"]
+        time.sleep(80)
 #
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
+
+        deploy.delete_deployment(deployment_id)
 
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_created_from_scratch_va")
     def test_get_dialog_session_history_with_created_from_scratch_va(self):
@@ -329,6 +333,7 @@ class TestDistributions:
 
         deploy.delete_deployment(deployment_id)
 
+    @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self):
         name = public_va_names[0]
@@ -339,7 +344,7 @@ class TestDistributions:
 
         deploy = DeploymentsMethods()
         deployment_id = deploy.create_deployment(va_name)["id"]
-        time.sleep(70)
+        time.sleep(80)
 
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message(dialog_session_id)

@@ -58,7 +58,6 @@ export const PublishAssistantModal = () => {
       trigger('PublishWarningModal', { bot })
     }
     visibility !== assistantVisibility ||
-    visibility !== VISIBILITY_STATUS.PUBLIC_TEMPLATE ||
     bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
       ? toast
           .promise(
@@ -131,12 +130,12 @@ export const PublishAssistantModal = () => {
                 )
               })}
             </div>
-            <Checkbox
+            {/* <Checkbox
               theme='secondary'
               name='alertMessage'
               label='Don’t show alert message again'
               props={{ ...register('publishAlert') }}
-            />
+            /> */}
           </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>

@@ -35,6 +35,7 @@ import { Loader, TextLoader } from 'components/Loaders'
 import { BaseToolTip } from 'components/Menus'
 import { SidePanelButtons, SidePanelHeader } from 'components/Panels'
 import { DummyAlert } from 'components/UI'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantDialogSidePanel.module.scss'
 
 interface Props {
@@ -46,7 +47,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { data: bot } = getDist({ distName: dist?.name, refetchOnMount: true })
+  const { data: bot } = getDist(
+    { distName: dist?.name },
+    { refetchOnMount: true }
+  )
   const { data: user } = useQuery(['user'], () => getUserId())
   const { send, renew, session, message, history, setSession, remoteHistory } =
     useChat()
@@ -184,6 +188,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
+    if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+
     handleCheckChatSettings()
   }, [user?.id, bot])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])

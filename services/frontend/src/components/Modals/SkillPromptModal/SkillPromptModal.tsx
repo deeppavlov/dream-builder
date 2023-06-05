@@ -204,7 +204,7 @@ const SkillPromptModal = () => {
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >
-      <Wrapper closable onClose={() => closeModal}>
+      <Wrapper closable onClose={() => closeModal()}>
         <div className={s.container}>
           <form onSubmit={handleSubmit(onFormSubmit)} className={cx('editor')}>
             <div className={s.header}>
@@ -247,7 +247,6 @@ const SkillPromptModal = () => {
               <TextArea
                 name='prompt'
                 label='Enter prompt:'
-                countType='tokenizer'
                 tokenizerModel={selectedModel?.display_name as any}
                 defaultValue={skill?.prompt}
                 withCounter

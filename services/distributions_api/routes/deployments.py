@@ -6,6 +6,7 @@ from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from deeppavlov_dreamtools.deployer.swarm import DeployerError
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.logger import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -41,6 +42,10 @@ async def create_deployment(
     db: Session = Depends(get_db),
 ):
     with db.begin():
+        deployment = crud.get_deployment_by_virtual_assistant_name(db, payload.virtual_assistant_name)
+        if deployment:
+            raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
+
         virtual_assistant = crud.get_virtual_assistant_by_name(db, payload.virtual_assistant_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.save(overwrite=True, generate_configs=True)
@@ -49,29 +54,21 @@ async def create_deployment(
         host = f"http://{parsed_url.hostname}"
         # port = crud.get_available_deployment_port(db)
 
-        try:
-            deployment = crud.create_deployment(db, virtual_assistant.id, host)
-            if payload.error:
-                crud.update_deployment(
-                    db,
-                    deployment.id,
-                    state=enums.DeploymentState.BUILDING_IMAGE,
-                    error=DeployerError(
-                        state=enums.DeploymentState.BUILDING_IMAGE.value,
-                        exc=Exception(f"Oh no! Something bad happened during deployment"),
-                    ).dict(),
-                )
-            db.commit()
-        except IntegrityError:
-            db.rollback()
-            raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
+        deployment = crud.create_deployment(db, virtual_assistant.id, host)
+        if payload.error:
+            deployment = crud.update_deployment(
+                db,
+                deployment.id,
+                state=enums.DeploymentState.BUILDING_IMAGE,
+                error=DeployerError(
+                    state=enums.DeploymentState.BUILDING_IMAGE.value,
+                    exc=Exception(f"Oh no! Something bad happened during deployment"),
+                ).dict(),
+            )
 
         task_id = None
         if not payload.error:
-            task_id = tasks.run_deployer_task.delay(
-                dist=dream_dist,
-                deployment_id=deployment.id,
-            ).id
+            task_id = tasks.run_deployer_task.delay(deployment_id=deployment.id).id
             deployment = crud.update_deployment(db, deployment.id, task_id=task_id)
 
     return schemas.DeploymentRead.from_orm(deployment)
@@ -119,10 +116,7 @@ async def patch_deployment(
 
         deployment = crud.update_deployment(db, deployment_id, state="STARTED")
 
-        new_task_id = tasks.run_deployer_task.delay(
-            dist=dream_dist,
-            deployment_id=deployment.id,
-        )
+        new_task_id = tasks.run_deployer_task.delay(deployment_id=deployment.id)
 
     return {"task_id": new_task_id, **schemas.DeploymentRead.from_orm(deployment).__dict__}
 

@@ -14,8 +14,8 @@ def _default_agent_user_id_prefix():
 
 class AppSettings(BaseModel):
     default_openai_api_key: str
+    agent_user_id_prefix: str
     add_cors_middleware: Optional[bool] = False
-    agent_user_id_prefix: Optional[str] = Field(default_factory=_default_agent_user_id_prefix)
 
 
 class UrlSettings(BaseModel):

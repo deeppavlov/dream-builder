@@ -126,11 +126,17 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
 
-@app.task(bind=True, track_started=True)
+@app.task(bind=True, track_started=True, queue="deployments")
 def run_deployer_task(*args, **kwargs):
-    logger.warning(f"Task started with {args}, {kwargs}")
+    logger.warning(f"Task started with {kwargs['deployment_id']}")
+
     dream_git.pull_copy_remote_origin()
-    run_deployer(*args, **kwargs)
+
+    with SessionLocal() as db:
+        deployment = crud.get_deployment(db, kwargs["deployment_id"])
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
+
+    run_deployer(dream_dist, kwargs["deployment_id"])
 
 
 def get_task_status(task_id: str):

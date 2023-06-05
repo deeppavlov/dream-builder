@@ -24,6 +24,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && \
     apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+RUN git config --global user.name "deepypavlova"
+RUN git config --global user.email "publisher@deepdream.builders"
+
 RUN git clone -b $DREAM_BRANCH https://github.com/deeppavlov/dream.git $DREAM_ROOT_PATH
 
 COPY services/distributions_api/requirements.txt /src/requirements.txt

@@ -92,7 +92,8 @@ class GitManager:
 
     def push_to_copy_remote_origin(self):
         try:
-            self.remote_copy.fetch(refspec=self.remote_copy_branch)
+            # self.remote_copy.fetch(refspec=self.remote_copy_branch)
+            self.pull_copy_remote_origin()
         except GitCommandError:
             pass
         self.remote_copy.push(refspec=self.remote_copy_branch)

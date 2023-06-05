@@ -1,6 +1,8 @@
 FROM python:3.10.5-slim-buster
 
 ENV PYTHONPATH=/src:$PYTHONPATH
+ENV AWS_CONFIG_FILE=/.aws/config
+ENV AWS_SHARED_CREDENTIALS_FILE=/.aws/credentials
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       awscli \
@@ -22,9 +24,11 @@ RUN pip install --no-cache-dir -r /src/requirements.txt
 #COPY services/deployment_worker /src/services/deployment_worker
 #COPY log_config.yml /src/log_config.yml
 
-RUN mkdir -p /dream
 RUN useradd -ms /bin/bash deepypavlova
-RUN chown -R deepypavlova:deepypavlova /dream
+RUN mkdir -p /dream && \
+	chown -R deepypavlova:1600400037 /dream && \
+	mkdir -p /.aws && \
+	chown -R deepypavlova:1600400037 /.aws
 USER deepypavlova
 
 RUN git config --global user.name "deepypavlova"

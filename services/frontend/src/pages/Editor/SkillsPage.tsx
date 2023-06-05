@@ -3,13 +3,10 @@ import { useParams } from 'react-router-dom'
 import { usePreview } from 'context/PreviewProvider'
 import { useComponent } from 'hooks/api'
 import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { AddButton, Button, SwitchViewButton } from 'components/Buttons'
-import { SkillList, SvgIcon } from 'components/Helpers'
+import { AddButton, SwitchViewButton } from 'components/Buttons'
+import { SkillList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import { AssistantModule } from 'components/Modules'
-import { ReadFirstSidePanel } from 'components/Panels'
-import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 const SkillsPage = () => {
@@ -21,8 +18,8 @@ const SkillsPage = () => {
   const components = getAllComponents(name || '', { refetchOnMount: true })
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
-  const handleReadFirst = () =>
-    trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })
+  // const handleReadFirst = () =>
+  //   trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })
 
   return (
     <Main sidebar column>
@@ -33,7 +30,7 @@ const SkillsPage = () => {
         annotation='Your AI assistant is multi-skill which means that at each step in the conversation your Assistant picks the skill to create the response.'
         btns={
           <Container>
-            {!isPreview && (
+            {/* {!isPreview && (
               <Button
                 withIcon
                 theme='tertiary2'
@@ -42,7 +39,7 @@ const SkillsPage = () => {
                 <SvgIcon iconName={'attention'} />
                 Read First!
               </Button>
-            )}
+            )} */}
             <SwitchViewButton />
           </Container>
         }

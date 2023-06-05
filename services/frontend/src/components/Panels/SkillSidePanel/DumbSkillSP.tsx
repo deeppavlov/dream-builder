@@ -1,7 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { useEffect } from 'react'
-import { useParams } from 'react-router'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import useTabsManager, { TabList } from 'hooks/useTabsManager'
@@ -9,7 +8,6 @@ import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { EditPencilButton } from 'components/Buttons'
 import SidePanelHeader from 'components/Panels/SidePanelHeader/SidePanelHeader'
-import { SkillTaskPlaceholder } from 'components/UI'
 import s from './DumbSkillSP.module.scss'
 
 interface Props {
@@ -46,8 +44,6 @@ const DumbSkillSP = ({
           : [[properties, { name: properties }]]
       ),
   })
-  const { name: distName } = useParams()
-
   let cx = classNames.bind(s)
 
   const handleRenameBtnClick = () =>
@@ -124,7 +120,7 @@ const DumbSkillSP = ({
             <span className={cx('table-name')}>Description:</span>
             <p className={s.value}>{skill?.description}</p>
           </li>
-          <li className={cx('item', 'big-item')}>
+          {/* <li className={cx('item', 'big-item')}>
             <SkillTaskPlaceholder
               skill={skill}
               value={skill?.description}
@@ -132,7 +128,7 @@ const DumbSkillSP = ({
               activeTab={tabsInfo.activeTabId as any}
               visibility={visibility}
             />
-          </li>
+          </li> */}
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}

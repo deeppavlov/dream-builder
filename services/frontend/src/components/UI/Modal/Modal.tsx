@@ -50,7 +50,7 @@ const Modal = ({
         id={id}
         ref={backdropRef}
         onClick={e => closeOnBackdropClick && handleBackdropClick(e)}
-        className={cx(backdropClassName, 'backdrop')}
+        className={cx('backdrop', backdropClassName)}
         {...rest}
       >
         <div ref={modalRef} className={modalClassName}>

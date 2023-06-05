@@ -1,12 +1,11 @@
 import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
-import { Link, generatePath, useNavigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { useComponent } from 'hooks/api'
 import { trigger } from 'utils/events'
-import getTokensLength from 'utils/getTokensLength'
 import { Button } from 'components/Buttons'
 import { SidePanelButtons, SidePanelName } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
@@ -42,8 +41,9 @@ const GenerativeSkillEditor = ({
     [properties, { name: properties }],
     [editor, { name: 'Details', disabled: !isCustomizable }],
   ])
-  const [tokensLength, setTokensLength] = useState(0)
   let cx = classNames.bind(s)
+
+  const handleEnterTokenClick = () => trigger('AccessTokensModal', {})
 
   const triggerEditModal = () => {
     const isDistName = name !== undefined && name.length > 0
@@ -57,16 +57,6 @@ const GenerativeSkillEditor = ({
       )
     }
   }
-
-  useEffect(() => {
-    const isLMService = !!skill?.lm_service?.display_name
-    const isPrompt = !!skill?.prompt
-
-    if (!isLMService && !isPrompt) return
-    setTokensLength(
-      getTokensLength(skill?.lm_service?.display_name, skill?.prompt)
-    )
-  }, [])
 
   // Close SidePanel if the skill was deleted
   useEffect(() => {
@@ -89,10 +79,10 @@ const GenerativeSkillEditor = ({
               {skill?.lm_service?.display_name || 'Empty'}
             </span>
           </li>
-          <li className={s.item}>
-            <Link to={RoutesList.profile} className={s.link}>
+          <li className={cx('item', 'link')}>
+            <Button theme='ghost' props={{ onClick: handleEnterTokenClick }}>
               Enter your personal access token here
-            </Link>
+            </Button>
           </li>
           <li className={cx('item', 'big-item')}>
             <span className={cx('table-name')}>Prompt:</span>

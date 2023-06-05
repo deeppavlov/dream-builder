@@ -24,6 +24,7 @@ interface Props {
   fullWidth?: boolean
   withoutSearch?: boolean
   small?: boolean
+  onSelectItem?: (id: string) => void
 }
 
 const SkillDropboxSearch = ({
@@ -38,6 +39,7 @@ const SkillDropboxSearch = ({
   fullWidth,
   withoutSearch,
   small,
+  onSelectItem,
 }: Props) => {
   const getActiveItem = (id: string) => list?.find(item => item.id === id)
 
@@ -69,6 +71,7 @@ const SkillDropboxSearch = ({
 
   const handleItemClick = (item: Item) => {
     field.onChange(getActiveItem(item.id) ?? undefined)
+    onSelectItem && onSelectItem(item.id)
     setIsOpen(false)
   }
 

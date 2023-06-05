@@ -122,7 +122,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     checkIsChatSettings(user?.id)
   }
 
-  const handleEnterTokentClick = () => trigger('AccessTokensModal', {})
+  const handleEnterTokenClick = () => trigger('AccessTokensModal', {})
 
   // hooks
   useOnlyOnMount(() => renewDialogSession())
@@ -143,7 +143,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
           <p className={s.alertDesc}>{error.msg}</p>
           {error.type === 'api-key' && (
             <div className={s.link}>
-              <Button theme='ghost' props={{ onClick: handleEnterTokentClick }}>
+              <Button theme='ghost' props={{ onClick: handleEnterTokenClick }}>
                 Enter your personal access token here
               </Button>
             </div>

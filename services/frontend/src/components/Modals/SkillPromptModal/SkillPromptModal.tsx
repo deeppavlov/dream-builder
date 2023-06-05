@@ -77,17 +77,20 @@ const SkillPromptModal = () => {
     reValidateMode: 'onChange',
     defaultValues: { model: skill?.lm_service, prompt: skill?.prompt },
   })
-  const modelTip = selectedModel?.description
-  const modelLink = selectedModel?.project_url
-  // const isDirty = Boolean(dirtyFields?.prompt || dirtyFields?.model)
 
   const clearStates = () => {
     setIsOpen(false)
     nav(generatePath(RoutesList.editor.skills, { name: distName || '' }))
   }
 
-  const closeModal = () => {
-    if (isDirty) return trigger('SkillQuitModal', { handleQuit: clearStates })
+  const closeModal = (continueExit?: Function) => {
+    if (isDirty)
+      return trigger('SkillQuitModal', {
+        handleQuit: () => {
+          if (continueExit) return continueExit()
+          clearStates()
+        },
+      })
     clearStates()
   }
 
@@ -150,7 +153,7 @@ const SkillPromptModal = () => {
     setSelectedModel(selectedService ?? null)
   }, [watch(['model']), isOpen])
 
-  useEffect(() => {}, [watch('prompt')])
+  useEffect(() => {}, [watch(['prompt'])])
 
   useEffect(() => {
     const { EDITOR_ACTIVE_SKILL } = consts
@@ -201,7 +204,7 @@ const SkillPromptModal = () => {
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >
-      <Wrapper closable onClose={closeModal}>
+      <Wrapper closable onClose={() => closeModal}>
         <div className={s.container}>
           <form onSubmit={handleSubmit(onFormSubmit)} className={cx('editor')}>
             <div className={s.header}>
@@ -220,7 +223,7 @@ const SkillPromptModal = () => {
                   fullWidth
                   withoutSearch
                 />
-                {skill?.lm_service?.display_name && (
+                {selectedModel && (
                   <div>
                     <Accordion
                       title='Model Details:'
@@ -228,13 +231,13 @@ const SkillPromptModal = () => {
                       isActive
                     >
                       <p className={s.tip}>
-                        <span>{modelTip}</span>
+                        <span>{selectedModel?.description}</span>
                         <a
-                          href={modelLink}
+                          href={selectedModel?.project_url}
                           target='_blank'
                           rel='noopener noreferrer'
                         >
-                          {modelLink}
+                          {selectedModel?.project_url}
                         </a>
                       </p>
                     </Accordion>

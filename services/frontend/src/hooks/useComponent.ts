@@ -1,74 +1,239 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useParams } from 'react-router-dom'
-import { addComponent } from '../services/addComponent'
-import {
-  createComponent,
-  InfoForNewComponent,
-} from '../services/createComponent'
+import { addComponent as postComponent } from '../services/addComponent'
+import { createComponent } from '../services/createComponent'
 import { deleteComoponent } from '../services/deleteComponent'
-import { ComponentData, editComponent } from '../services/editComponent'
+import { editComponent } from '../services/editComponent'
+import { getComponent as fetchComponent } from '../services/getComponent'
 import { getComponents } from '../services/getComponents'
-import { ISkill } from '../types/types'
+import { getComponentsGroup } from '../services/getComponentsGroup'
+import {
+  IPatchComponentParams,
+  patchComponent,
+} from '../services/patchComponent'
+import {
+  ICreateComponent,
+  IStackElement,
+  LM_Service,
+  PostDistParams,
+  StackType,
+  TComponents,
+} from '../types/types'
 
-export const useComponent = (distName: string) => {
-  const { name: nameFromURL } = useParams()
+interface IGet {
+  distName: string
+  id: number
+  type: StackType
+}
+
+interface IAdd {
+  distName: string
+  id: number
+  type: StackType
+}
+
+interface IDelete extends IAdd {
+  component_id: number
+}
+
+interface ICreate {
+  distName: string
+  data: ICreateComponent
+  type: StackType
+}
+
+interface IEdit {
+  distName: string
+  component_id: number
+  type: StackType
+  data: PostDistParams
+}
+
+interface ICachedComponent {
+  distName: string
+  id: number
+  type: StackType
+  data: IStackElement | null
+}
+
+interface IUpdate extends IPatchComponentParams {
+  distName: string
+  type: StackType
+  lm_service: LM_Service
+}
+
+interface IGetGroup {
+  distName: string
+  group: StackType
+  component_type?: string
+  author_id?: number
+}
+
+export const useComponent = () => {
   const queryClient = useQueryClient()
+  const ALL_COMPONENTS = 'all_components'
+  const COMPONENT = 'component'
 
-  const addSkill = useMutation({
-    mutationFn: (variables: { distName: string; id: number }) => {
-      return addComponent(variables.distName, variables.id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('components')
-    },
+  const getAllComponents = (distName: string) =>
+    useQuery<TComponents>(
+      [ALL_COMPONENTS, distName],
+      () => getComponents(distName),
+      {
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        enabled: distName?.length! > 0,
+        initialData: () =>
+          getAllFetchedComponents(distName, ALL_COMPONENTS) as TComponents,
+      }
+    )
+
+  const getGroupComponents = (
+    { distName, group, component_type, author_id }: IGetGroup,
+    { enabled }: { enabled?: boolean }
+  ) =>
+    useQuery<IStackElement[]>(
+      [group, distName],
+      () => getComponentsGroup({ group, component_type, author_id }),
+      {
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        enabled: enabled ?? distName?.length! > 0,
+        initialData: () =>
+          getAllFetchedComponents(distName, group) as IStackElement[],
+      }
+    )
+
+  const getComponent = ({ distName, id, type }: IGet) =>
+    useQuery([COMPONENT, distName, id], () => fetchComponent(id), {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      initialData: () => getFetchedComponent({ distName, id, type }),
+    })
+
+  const addComponentToDist = useMutation({
+    mutationFn: ({ distName, id }: IAdd) => postComponent(distName, id),
+    onSuccess: () => queryClient.invalidateQueries([ALL_COMPONENTS]),
   })
 
   const deleteComponent = useMutation({
-    mutationFn: (variables: { distName: string; id: number }) => {
-      return deleteComoponent(variables.distName, variables.id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('components')
+    mutationFn: ({ distName, id }: IDelete) => deleteComoponent(distName, id),
+    onSuccess: (_, { type, distName, component_id }) => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+      queryClient.invalidateQueries([type, distName])
+      updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })
 
   const create = useMutation({
-    mutationFn: (info: InfoForNewComponent) => {
-      return createComponent(info)
+    onMutate: data => {
+      console.log('data = ', data)
     },
-    onSuccess: (data: ISkill) => {
-      const id = data?.id
-      addSkill.mutateAsync({ distName: nameFromURL || '', id }).then(() => {
-        queryClient.invalidateQueries('components')
-      })
-    },
-  })
-  const edit = useMutation({
-    mutationFn: (variables: { data: ComponentData; id: number }) => {
-      return editComponent(variables?.data, variables?.id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('components')
+    mutationFn: ({ data }: ICreate) => createComponent(data),
+    onSuccess: ({ id }: IStackElement, { distName, type }) => {
+      console.log('id = ', id)
+      addComponentToDist.mutateAsync({ distName, id: id, type })
     },
   })
 
-  const {
-    isLoading: isComponentsLoading,
-    error: componentsError,
-    data: components,
-  } = useQuery(
-    ['components', nameFromURL],
-    () => getComponents(nameFromURL || distName),
-    {
-      refetchOnWindowFocus: false,
-      enabled: nameFromURL?.length! > 0 || distName.length > 0,
+  const edit = useMutation({
+    mutationFn: ({ component_id, data }: IEdit) =>
+      editComponent(data, component_id),
+    onSuccess: (data: IStackElement, { component_id, distName, type }) => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+      updateCachedComponent({ id: component_id, distName, type, data })
+    },
+  })
+
+  const updateComponent = useMutation({
+    mutationFn: (variables: IUpdate) => patchComponent(variables),
+    onSuccess: (
+      data: IStackElement,
+      { component_id, distName, lm_service, type }
+    ) => {
+      //fix lm_service on patchComponent endpoint not return from backend
+      updateCachedComponent({
+        id: component_id,
+        distName,
+        type,
+        data: { ...data, lm_service } as IStackElement,
+      })
+    },
+  })
+
+  const updateCachedComponent = ({
+    distName,
+    id,
+    type,
+    data,
+  }: ICachedComponent) => {
+    const isCachedComponent =
+      queryClient.getQueryData([COMPONENT, distName, id]) !== undefined
+
+    if (isCachedComponent) {
+      queryClient.setQueryData<IStackElement | undefined>(
+        [COMPONENT, distName, id],
+        old => {
+          const isComparable = old && data
+
+          if (!isComparable) return undefined
+          return Object.assign({}, old, data)
+        }
+      )
     }
-  )
+
+    queryClient.setQueryData<TComponents | undefined>(
+      [ALL_COMPONENTS, distName],
+      old => {
+        if (old) {
+          const oldIndex = old[type].findIndex(el => el.component_id === id)
+          const isOldExist = oldIndex > -1
+          const oldComponent = old[type][oldIndex]
+          const newState = old[type]
+
+          if (isOldExist)
+            newState[oldIndex] = Object.assign({}, oldComponent, data)
+
+          return Object.assign({}, old, { [type]: newState })
+        }
+      }
+    )
+  }
+
+  const getAllFetchedComponents = (
+    distName: string,
+    group: StackType | typeof ALL_COMPONENTS
+  ) =>
+    queryClient.getQueryData<TComponents | IStackElement[] | undefined>([
+      group,
+      distName,
+    ])
+
+  const getFetchedComponent = ({ distName, id, type }: IGet) => {
+    const component = queryClient.getQueryData<IStackElement | undefined>([
+      COMPONENT,
+      distName,
+      id,
+    ])
+    const allComponents =
+      queryClient.getQueryData<TComponents | undefined>([
+        ALL_COMPONENTS,
+        distName,
+      ])?.[type] || []
+    const groupComponents =
+      queryClient.getQueryData<IStackElement[] | undefined>([type, distName]) ||
+      []
+    const result = [component, ...allComponents, ...groupComponents]?.find(
+      el => (el?.component_id ?? el?.id) === id
+    )
+
+    return result
+  }
+
   return {
-    components,
-    isComponentsLoading,
-    componentsError,
-    addSkill,
+    getAllComponents,
+    getGroupComponents,
+    getComponent,
+    updateComponent,
+    addComponentToDist,
     deleteComponent,
     create,
     edit,

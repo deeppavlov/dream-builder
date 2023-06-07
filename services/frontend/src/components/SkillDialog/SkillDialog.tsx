@@ -11,24 +11,17 @@ import { useObserver } from '../../hooks/useObserver'
 import { useOnlyOnMount } from '../../hooks/useOnMount'
 import { RoutesList } from '../../router/RoutesList'
 import { getUserId } from '../../services/getUserId'
-import { ChatForm, ISkill } from '../../types/types'
+import { ChatForm, IDialogError, ISkill } from '../../types/types'
 import Button from '../../ui/Button/Button'
 import { checkLMIsOpenAi, getLSApiKeyByName } from '../../utils/getLSApiKeys'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import TextLoader from '../TextLoader/TextLoader'
 import s from './SkillDialog.module.scss'
 
-type TDialogError = 'lm-service' | 'prompt' | 'api-key' | 'dist-name'
-
-interface IDialogError {
-  type: TDialogError
-  msg: string
-}
-
 interface Props {
   isDebug: boolean
   distName: string | undefined
-  skill?: ISkill | null
+  skill: ISkill | null
 }
 
 const SkillDialog = ({ isDebug, distName, skill }: Props) => {
@@ -51,20 +44,22 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
       })
 
     renew.mutateAsync(isDebug ? DEBUG_DIST : distName!, {
-      onSuccess: () =>
-        console.log('A new dialog session was successfully created!'),
+      // onSuccess: () =>
+      // console.log('A new dialog session was successfully created!'),
     })
   }
 
-  const checkIsChatSettings = () => {
-    console.log('Start checking dialog settings...')
+  const checkIsChatSettings = (userId: number) => {
+    if (userId === undefined || userId === null) return
+    // console.log('Start checking dialog settings...')
     setError(null)
     const isLMServiceId = skill?.lm_service?.id !== undefined
     const isPrompt = skill?.prompt !== undefined
     const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
 
     if (skillHasOpenAiLM) {
-      const openaiApiKey = getLSApiKeyByName(user?.id, OPEN_AI_LM)
+      const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
+
       const isApiKey =
         openaiApiKey !== null &&
         openaiApiKey !== undefined &&
@@ -100,7 +95,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
 
   // handlers
   const handleSend = ({ message }: ChatForm) => {
-    const isChatSettings = checkIsChatSettings()
+    const isChatSettings = checkIsChatSettings(user?.id)
 
     if (!isChatSettings) return
 
@@ -124,7 +119,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   const handleRetryBtnClick = () => {
     setIsChecking(true)
     setTimeout(() => {
-      checkIsChatSettings()
+      checkIsChatSettings(user?.id)
       setIsChecking(false)
     }, 1000)
   }
@@ -134,8 +129,8 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
   useEffect(() => {
-    checkIsChatSettings()
-  }, [skill])
+    checkIsChatSettings(user?.id)
+  }, [skill, user?.id])
 
   return (
     <form

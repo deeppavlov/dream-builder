@@ -3,17 +3,27 @@ import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, JSON, TypeDecorator, VARCHAR, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    JSON,
+    TypeDecorator,
+    VARCHAR,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import insert, JSONB
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext import mutable
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql import expression
+from sqlalchemy.sql import expression, sqltypes
 from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
-from database import utils
+from database import utils, enums
 from database.core import Base
 
 
@@ -105,6 +115,7 @@ class ApiKey(Base):
 
     id = Column(Integer, index=True, primary_key=True)
     name = Column(String)
+    display_name = Column(String)
     description = Column(String)
     base_url = Column(String)
 
@@ -114,7 +125,7 @@ class VirtualAssistant(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id"))
+    cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
     author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
@@ -124,8 +135,16 @@ class VirtualAssistant(Base):
     name = Column(String, unique=True, nullable=False)
     display_name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    private_visibility = Column(
+        sqltypes.Enum(enums.VirtualAssistantPrivateVisibility),
+        nullable=False,
+        server_default=enums.VirtualAssistantPrivateVisibility.PRIVATE.value,
+    )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
+    components = relationship(
+        "VirtualAssistantComponent", uselist=True, back_populates="virtual_assistant", passive_deletes=True
+    )
     publish_request = relationship(
         "PublishRequest", uselist=False, back_populates="virtual_assistant", passive_deletes=True
     )
@@ -138,13 +157,21 @@ class LmService(Base):
     id = Column(Integer, index=True, primary_key=True)
 
     name = Column(String, nullable=False)
-    default_port = Column(Integer, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
+    default_generative_config = Column(String, nullable=True)
     display_name = Column(String, nullable=False)
     size = Column(String)
     gpu_usage = Column(String)
     max_tokens = Column(Integer)
     description = Column(String)
     project_url = Column(String)
+
+    api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
+    api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
+
+    is_hosted = Column(Boolean, nullable=False)
+    is_maintained = Column(Boolean, nullable=False)
 
 
 class Deployment(Base):
@@ -158,13 +185,13 @@ class Deployment(Base):
     virtual_assistant = relationship("VirtualAssistant", uselist=False, foreign_keys="Deployment.virtual_assistant_id")
 
     chat_host = Column(String, nullable=False)
-    chat_port = Column(Integer, nullable=False)
+    chat_port = Column(Integer, nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     stack_id = Column(Integer, nullable=True)
     date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
-    state = Column(String, nullable=True)
+    state = Column(sqltypes.Enum(enums.DeploymentState), nullable=True)
     error = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
 
 
@@ -184,10 +211,13 @@ class PublishRequest(Base):
     user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
-    visibility = Column(String, nullable=False)  # unlisted, public_template, public
+    public_visibility = Column(sqltypes.Enum(enums.VirtualAssistantPublicVisibility), nullable=False)
+    state = Column(
+        sqltypes.Enum(enums.PublishRequestState),
+        nullable=False,
+        server_default=enums.PublishRequestState.IN_REVIEW.value,
+    )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-
-    is_confirmed = Column(Boolean, nullable=True)
 
     reviewed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
     reviewed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
@@ -250,6 +280,7 @@ class Component(Base):
     endpoint = Column(String)
 
     prompt = Column(String, nullable=True)
+    prompt_goals = Column(String, nullable=True)
     lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
     lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
 
@@ -326,17 +357,20 @@ def pre_populate_virtual_assistant(target, connection, **kw):
 
 @listens_for(PublishRequest.__table__, "after_create")
 def pre_populate_publish_request(target, connection, **kw):
-    _pre_populate_from_tsv(
-        settings.db.initial_data_dir / "publish_request.tsv",
-        target,
-        connection,
-        map_value_types={"is_confirmed": lambda x: bool(int(x))},
-    )
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "publish_request.tsv", target, connection)
 
 
 @listens_for(LmService.__table__, "after_create")
 def pre_populate_lm_service(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "lm_service.tsv", target, connection)
+    _pre_populate_from_tsv(
+        settings.db.initial_data_dir / "lm_service.tsv",
+        target,
+        connection,
+        map_value_types={
+            "is_hosted": lambda x: bool(int(x)),
+            "is_maintained": lambda x: bool(int(x)),
+        },
+    )
 
 
 @listens_for(Deployment.__table__, "after_create")

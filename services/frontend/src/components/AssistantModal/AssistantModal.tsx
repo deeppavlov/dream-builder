@@ -9,7 +9,9 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import Button from '../../ui/Button/Button'
 import { Input } from '../../ui/Input/Input'
 import { TextArea } from '../../ui/TextArea/TextArea'
+import { trigger } from '../../utils/events'
 import { validationSchema } from '../../utils/validationSchema'
+import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantModal.module.scss'
 
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
@@ -30,6 +32,9 @@ export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
+  const isEditing = action === 'edit'
+  const isCloning = action === 'clone'
+  const isCreateFromScratch = action === 'create'
 
   const { handleSubmit, control, reset, getValues } =
     useForm<AssistantFormValues>({ mode: 'all' })
@@ -41,6 +46,7 @@ export const AssistantModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
+    trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
@@ -56,38 +62,38 @@ export const AssistantModal = () => {
 
   const name = bot?.name!
 
-  // async function submit() {
-  //   const succeed = await handleSubmit(onFormSubmit)()
-  //   return succeed
-  // }
-
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
-    action === 'create' &&
-      toast.promise(create.mutateAsync(data), {
-        loading: 'Creating...',
-        success: 'Success!',
-        error: 'Something Went Wrong...',
-      })
-    action === 'clone' &&
-      toast
-        .promise(clone.mutateAsync({ data, name }), {
-          loading: 'Cloning...',
+    switch (action) {
+      case 'create':
+        toast.promise(create.mutateAsync(data), {
+          loading: 'Creating...',
           success: 'Success!',
-          error: 'Something Went Wrong...',
+          error: 'Something went wrong...',
         })
-        .then(() => {
-          closeModal()
-        })
-    action === 'edit' &&
-      toast
-        .promise(rename.mutateAsync({ data, name }), {
-          loading: 'Renaming...',
-          success: 'Success!',
-          error: 'Something Went Wrong...',
-        })
-        .then(() => {
-          closeModal()
-        })
+        break
+      case 'clone':
+        toast.promise(
+          clone.mutateAsync({ data, name }, { onSuccess: closeModal }),
+          {
+            loading: 'Cloning...',
+            success: 'Success!',
+            error: 'Something went wrong...',
+          }
+        )
+        break
+      case 'edit':
+        toast.promise(
+          rename.mutateAsync({ data, name }, { onSuccess: closeModal }),
+          {
+            loading: 'Renaming...',
+            success: 'Success!',
+            error: 'Something went wrong...',
+          }
+        )
+        break
+      default:
+        break
+    }
   }
 
   useOnKey(handleSubmit(onFormSubmit), 'Enter')
@@ -97,29 +103,21 @@ export const AssistantModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
-        <div>
-          {action === 'create' && <h4>Create a new Virtual Assistant</h4>}
-          {action === 'clone' && (
-            <h4>
-              Use Template Of <mark>{bot?.display_name}</mark>
-            </h4>
+        <div className={s.header}>
+          <h4>
+            {isCloning && 'Create new assistant from:'}
+            {isEditing && 'Edit assistant:'}
+            {isCreateFromScratch && 'Create new assistant from scratch'}
+          </h4>
+          {!isCreateFromScratch && (
+            <mark>
+              {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
+            </mark>
           )}
-          {action === 'edit' && <h4>Rename Assistant</h4>}
           <div className={s.distribution}>
-            {action === 'clone' && (
-              <div>Enter Name And Description For Your Virtual Assistant</div>
-            )}
-            {action === 'create' && (
-              <div>
-                You are creating a new Virtual Assistant from{' '}
-                <mark>scratch</mark>
-              </div>
-            )}
-            {action === 'edit' && (
-              <div>
-                You are renaming: <mark>{bot?.display_name}</mark>
-              </div>
-            )}
+            {`${
+              isEditing ? 'Change' : 'Enter'
+            } name and description for your assistant`}
           </div>
         </div>
         <Input
@@ -150,7 +148,7 @@ export const AssistantModal = () => {
             props={{
               placeholder:
                 'Describe your Virtual Assistant ability, where you can use it and for what purpose',
-              rows: 3,
+              rows: 6,
             }}
           />
         </div>
@@ -172,7 +170,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
             >
-              Use
+              Create
             </Button>
           )}
           {action === 'edit' && (

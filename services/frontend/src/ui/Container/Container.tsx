@@ -9,7 +9,9 @@ interface ContainerProps {
   layoutForTabs?: boolean
   overflowForAddButton?: boolean
   scroll?: boolean
-  gridForRequests?:boolean
+  gridForRequests?: boolean
+  gridForDeploys?: boolean
+  overflowVisible?: boolean
 }
 
 export const Container = ({
@@ -20,6 +22,8 @@ export const Container = ({
   layoutForTabs,
   scroll,
   gridForRequests,
+  gridForDeploys,
+  overflowVisible,
 }: ContainerProps) => {
   const cx = classNames.bind(s)
   return (
@@ -31,7 +35,9 @@ export const Container = ({
         layoutForTabs && 'layoutForTabs',
         overflowForAddButton && 'overflowForAddButton',
         scroll && 'scroll',
-        gridForRequests && 'gridForRequests'
+        gridForRequests && 'gridForRequests',
+        gridForDeploys && 'gridForDeploys',
+        overflowVisible && 'overflowVisible'
       )}
     >
       {children}

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Literal
+from typing import Optional, List, Literal, Union
 
 from deeppavlov_dreamtools.distconfigs.generics import (
     COMPONENT_TYPES,
@@ -8,7 +8,9 @@ from deeppavlov_dreamtools.distconfigs.generics import (
 )
 from pydantic import BaseModel, Field, validator, EmailStr
 
-PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
+from database import enums
+
+# PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
 
 
 class BaseOrmModel(BaseModel):
@@ -26,60 +28,12 @@ class UserRead(BaseOrmModel):
     family_name: Optional[str]
 
 
-class DeploymentBaseRead(BaseOrmModel):
+class ApiKeyRead(BaseOrmModel):
     id: int
-    chat_host: str
-    chat_port: int
-    date_created: datetime
-    state: Optional[str]
-    error: Optional[dict]
-    date_state_updated: Optional[datetime]
-
-
-class VirtualAssistantBaseRead(BaseOrmModel):
-    id: int
-    author: UserRead
-    source: str
     name: str
     display_name: str
     description: str
-    date_created: datetime
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
-    publish_state: Optional[Literal["confirmed", "rejected", "in_progress"]]
-    cloned_from_id: Optional[int]
-    # clones: List[VirtualAssistant]
-
-    @classmethod
-    def from_orm(cls, obj):
-        try:
-            if obj.publish_request.is_confirmed is None:
-                obj.visibility = "private"
-                obj.publish_state = "in_progress"
-            elif obj.publish_request.is_confirmed:
-                obj.visibility = obj.publish_request.visibility
-                obj.publish_state = "confirmed"
-            else:
-                obj.visibility = "private"
-                obj.publish_state = "rejected"
-        except AttributeError:
-            obj.visibility = "private"
-            obj.publish_state = None
-
-        return super().from_orm(obj)
-
-
-class VirtualAssistantRead(VirtualAssistantBaseRead):
-    deployment: Optional[DeploymentBaseRead]
-
-
-class VirtualAssistantCreate(BaseModel):
-    display_name: str
-    description: str
-
-
-class VirtualAssistantUpdate(BaseModel):
-    display_name: Optional[str]
-    description: Optional[str]
+    base_url: str
 
 
 class LmServiceRead(BaseOrmModel):
@@ -91,6 +45,19 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
+    api_key: Optional[ApiKeyRead]
+    is_maintained: bool
+
+
+class DeploymentBaseRead(BaseOrmModel):
+    id: int
+    chat_host: str
+    chat_port: Optional[int]
+    date_created: datetime
+    state: Optional[enums.DeploymentState]
+    error: Optional[dict]
+    date_state_updated: Optional[datetime]
+    stack_id: Optional[int]
 
 
 class ComponentRead(BaseOrmModel):
@@ -105,7 +72,8 @@ class ComponentRead(BaseOrmModel):
     ram_usage: Optional[str]
     gpu_usage: Optional[str]
     prompt: Optional[str]
-    lm_service_id: Optional[int]
+    prompt_goals: Optional[str]
+    lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
@@ -124,6 +92,7 @@ class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
     prompt: Optional[str]
+    prompt_goals: Optional[str]
     lm_service_id: Optional[int]
 
 
@@ -132,6 +101,59 @@ class ComponentUpdate(BaseModel):
     description: Optional[str]
     prompt: Optional[str]
     lm_service_id: Optional[int]
+
+
+class VirtualAssistantBaseRead(BaseOrmModel):
+    id: int
+    author: UserRead
+    source: str
+    name: str
+    display_name: str
+    description: str
+    date_created: datetime
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
+    publish_state: Optional[enums.PublishRequestState]
+    cloned_from_id: Optional[int]
+    required_api_keys: Optional[List[ApiKeyRead]]
+    # clones: List[VirtualAssistant]
+
+    @classmethod
+    def from_orm(cls, obj):
+        if obj.publish_request:
+            obj.publish_state = obj.publish_request.state
+            if obj.publish_request.state == enums.PublishRequestState.APPROVED:
+                obj.visibility = obj.publish_request.public_visibility
+            else:
+                obj.visibility = obj.private_visibility
+        else:
+            obj.visibility = obj.private_visibility
+
+        required_api_keys = []
+        for c in obj.components:
+            try:
+                api_key = c.component.lm_service.api_key
+                if api_key:
+                    required_api_keys.append(api_key)
+            except AttributeError:
+                pass
+
+        obj.required_api_keys = required_api_keys
+
+        return super().from_orm(obj)
+
+
+class VirtualAssistantRead(VirtualAssistantBaseRead):
+    deployment: Optional[DeploymentBaseRead]
+
+
+class VirtualAssistantCreate(BaseModel):
+    display_name: str
+    description: str
+
+
+class VirtualAssistantUpdate(BaseModel):
+    display_name: Optional[str]
+    description: Optional[str]
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):
@@ -167,7 +189,7 @@ class VirtualAssistantComponentPipelineRead(BaseModel):
     skills: List[VirtualAssistantComponentRead]
     candidate_annotators: List[VirtualAssistantComponentRead]
     response_selectors: List[VirtualAssistantComponentRead]
-    response_annotators: List[VirtualAssistantComponentRead]
+    response_annotators: Optional[List[VirtualAssistantComponentRead]]
 
 
 class DialogSessionCreate(BaseModel):
@@ -183,18 +205,13 @@ class DialogChatMessageCreate(BaseModel):
 
 class DialogChatMessageRead(BaseModel):
     text: str
+    active_skill: ComponentRead
 
 
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
-
-
-class ApiKeys(BaseOrmModel):
-    id: int
-    name: str
-    description: str
-    base_url: str
+    active_skill: Optional[str]
 
 
 # class UserApiToken(BaseOrmModel):
@@ -220,7 +237,8 @@ class DeploymentRead(DeploymentBaseRead):
 
 
 class DeploymentCreate(BaseModel):
-    virtual_assistant_id: int
+    virtual_assistant_name: str
+    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):
@@ -228,7 +246,7 @@ class PublishRequestRead(BaseOrmModel):
     virtual_assistant: VirtualAssistantRead
     user: UserRead
     slug: str
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    public_visibility: enums.VirtualAssistantPublicVisibility
     date_created: datetime
     is_confirmed: Optional[bool]
     reviewed_by_user: Optional[UserRead]
@@ -236,11 +254,11 @@ class PublishRequestRead(BaseOrmModel):
 
 
 class PublishRequestCreate(BaseOrmModel):
-    visibility: PUBLISH_REQUEST_VISIBILITY_CHOICES
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
 
 
 class DialogSessionRead(BaseOrmModel):
     id: int
-    user_id: int
+    user_id: Optional[int]
     deployment: DeploymentRead
     is_active: bool

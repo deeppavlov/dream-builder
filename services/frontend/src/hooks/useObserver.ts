@@ -1,10 +1,8 @@
 import { useEffect } from 'react'
-import { subscribe, unsubscribe } from '../utils/events'
+import { TEvents } from '../types/types'
+import { subscribe,unsubscribe } from '../utils/events'
 
-export const useObserver = (
-  eventName: string,
-  callback: (data: any) => void
-) => {
+export const useObserver = (eventName: TEvents, callback: (data: any) => void) => {
   useEffect(() => {
     subscribe(eventName, callback)
     return () => unsubscribe(eventName, callback)

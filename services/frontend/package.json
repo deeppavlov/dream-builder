@@ -7,11 +7,13 @@
     "dev": "vite --host --mode development",
     "msw": "vite --host --mode msw",
     "prod": "vite --host --mode production",
-    "build": "vite build --moe production",
+    "stage": "vite --host --mode stage",
+    "build": "vite build --mode production",
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.6",
+    "awesome-debounce-promise": "^2.1.0",
     "axios": "^1.2.1",
     "classnames": "^2.3.2",
     "esbuild": "^0.17.11",

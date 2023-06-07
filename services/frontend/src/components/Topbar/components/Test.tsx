@@ -1,39 +1,41 @@
-import Play from '../../../assets/icons/test.svg'
+import classNames from 'classnames/bind'
 import { TOOLTIP_DELAY } from '../../../constants/constants'
 import { useDisplay } from '../../../context/DisplayContext'
 import { consts } from '../../../utils/consts'
 import { trigger } from '../../../utils/events'
+import { AssistantDialogSidePanel } from '../../AssistantDialogSidePanel/AssistantDialogSidePanel'
 import { TRIGGER_RIGHT_SP_EVENT } from '../../BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
-import DialogSidePanel from '../../DialogSidePanel/DialogSidePanel'
+import SvgIcon from '../../SvgIcon/SvgIcon'
 import s from './Test.module.scss'
 
 export const Test = () => {
   const { options } = useDisplay()
   const activeAssistant = options.get(consts.ACTIVE_ASSISTANT)
+  const activePanel = options.get(consts.ACTIVE_ASSISTANT_SP_ID)
+  const cx = classNames.bind(s)
 
   const handleBtnClick = () => {
-    trigger(TRIGGER_RIGHT_SP_EVENT, {
-      children: (
-        <DialogSidePanel
-          debug={false}
-          key='chat_with_assistant'
-          chatWith='bot'
-          start
-          dist={activeAssistant}
-        />
-      ),
-    })
+    activeAssistant &&
+      trigger(TRIGGER_RIGHT_SP_EVENT, {
+        children: (
+          <AssistantDialogSidePanel
+            key='chat_with_assistant'
+            dist={activeAssistant}
+          />
+        ),
+      })
   }
 
   return (
-    <button data-tooltip-id='chatWithBot' className={s.test}>
-      <img
-        src={Play}
-        alt='Chat with your bot'
-        className={s.test}
-        onClick={handleBtnClick}
-      />
+    <button
+      id='testDialog' // for quitConfirmation
+      data-tooltip-id='chatWithBot'
+      className={cx('test', activePanel && 'active')}
+      onClick={handleBtnClick}
+    >
+      <SvgIcon iconName={'chat'} />
+      <p>Chat&nbsp;with&nbsp;Assistant</p>
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='chatWithBot'

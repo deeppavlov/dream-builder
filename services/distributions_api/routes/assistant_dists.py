@@ -2,12 +2,13 @@ from typing import List
 from urllib.parse import urlparse
 
 from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
+from deeppavlov_dreamtools.distconfigs.components import DreamComponent
 from deeppavlov_dreamtools.utils import generate_unique_name
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud, models
+from database import crud, models, enums
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -30,7 +31,7 @@ def send_publish_request_created_emails(
     emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
 
 
-@assistant_dists_router.post("/", status_code=status.HTTP_201_CREATED)
+@assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_virtual_assistant(
     payload: schemas.VirtualAssistantCreate,
     user: schemas.UserRead = Depends(verify_token),
@@ -63,6 +64,7 @@ async def create_virtual_assistant(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }
@@ -291,6 +293,7 @@ async def clone_dist(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }
@@ -332,6 +335,7 @@ async def clone_dist(
                 gpu_usage=dream_component.component.gpu_usage,
                 description=dream_component.component.description,
                 prompt=dream_component.prompt,
+                prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
             )
             new_components.append(component)
@@ -393,11 +397,13 @@ async def add_virtual_assistant_component(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        # TODO add dream_dist.add_component(...)
-
         virtual_assistant_component = crud.create_virtual_assistant_component(
             db, virtual_assistant.id, payload.component_id
         )
+        dream_dist.add_generative_prompted_skill(
+            DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
+        )
+        dream_dist.save(overwrite=True, generate_configs=True)
 
     return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
@@ -422,7 +428,9 @@ async def delete_virtual_assistant_component(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        # TODO add dream_dist.remove_component(...)
+        virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
+        dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
+        dream_dist.save(overwrite=True, generate_configs=True)
 
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
@@ -439,11 +447,10 @@ async def publish_dist(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, dist_name)
         dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        if payload.visibility == "private":
+        if payload.visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
             crud.delete_publish_request(db, virtual_assistant.id)
-        elif payload.visibility == "unlisted":
-            crud.create_publish_request_autoconfirm(db, virtual_assistant.id, user.id, virtual_assistant.name)
-        else:
+            virtual_assistant = crud.update_virtual_assistant_by_name(db, dist_name, private_visibility=payload.visibility)
+        elif payload.visibility.__class__ == enums.VirtualAssistantPublicVisibility:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)
 

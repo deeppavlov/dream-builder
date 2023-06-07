@@ -9,9 +9,9 @@
 .gridForCards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
-  overflow: visible; // ???
+  // overflow: visible; // ???
 }
-.gridForRequests{
+.gridForRequests {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
@@ -29,7 +29,19 @@
 .overflowForAddButton {
   overflow: visible;
 }
-.scroll {overflow: scroll;
-  // display: flex;
-  // flex-direction: row; 
+.scroll {
+  // overflow: scroll;
+  width: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.gridForDeploys {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+.overflowVisible {
+  overflow: visible;
 }

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: start;
-  min-width: 280px;
+  min-width: 275px;
   max-width: 280px;
   border: 1px solid $text3;
   border-radius: 12px;
@@ -10,24 +10,22 @@
   overflow: hidden;
   @include min_max_height;
   @include bot-card_behavior;
-
   .header {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     max-height: 40px;
     min-height: 40px;
     width: 100%;
     padding: 8px 16px;
     background-color: $bcgrnd5;
     color: $text1;
-    margin-bottom: 8px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     @include t4;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    .deployment {
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
   .body {
@@ -35,43 +33,26 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+    padding: 16px;
   }
-  .author {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $text1;
-    @include t4;
-
-    img {
-      @include icon_size_24;
-      border-radius: 50%;
-    }
-  }
-
   .block {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 0 16px;
   }
-
   .desc {
+    height: 88px;
+    max-height: 88px;
     color: $text2;
-
-    @include b3;
     @include hide_text;
-    max-height: 110px;
-    height: 110px;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 4; 
+    @include b3;
   }
-
   .dateAndVersion {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
   .date {
     display: flex;
     align-items: center;
@@ -92,7 +73,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 16px 16px 16px;
     gap: 12px;
     .container {
       width: 100%;
@@ -103,21 +83,15 @@
   }
 }
 
-.separator {
-  @include separator;
-}
-
 .tooltips {
   @include tooltip;
   @include tooltip_for_description;
 }
 .your {
   position: relative;
-  // min-width: 350px; //this style broke grid on 'yourbots' page
-  // max-width: 350px;
   @include min_max_height;
-  .header {position: relative;
-    
+  .header {
+    position: relative;
     background-color: $purple;
     color: $text4;
   }
@@ -158,16 +132,16 @@
     }
   }
   .block {
-    gap: 8px;
+    gap: 4px;
   }
 }
 .small {
-  min-width: 280px;
+  min-width: 275px;
   max-width: 280px;
   @include min_max_height;
   .desc {
-    max-height: 110px;
-    -webkit-line-clamp: 5;
+    max-height: 88px;
+    -webkit-line-clamp: 4;
   }
 }
 .big {

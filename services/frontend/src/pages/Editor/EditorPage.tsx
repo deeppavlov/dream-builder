@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { useQuery } from 'react-query'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AreYouSureModal } from '../../components/AreYouSureModal/AreYouSureModal'
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../../components/BaseSidePanel/BaseSidePanel'
@@ -17,69 +16,55 @@ import { SkillsTab } from '../../components/Sidebar/components/SkillsTab'
 import { Sidebar } from '../../components/Sidebar/Sidebar'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
-import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from '../../components/SkillsListModal/SkillsListModal'
 import { useDisplay } from '../../context/DisplayContext'
 import { usePreview } from '../../context/PreviewProvider'
 import { useAssistants } from '../../hooks/useAssistants'
-import { getComponents } from '../../services/getComponents'
 import { Container } from '../../ui/Container/Container'
 import { consts } from '../../utils/consts'
-import { trigger } from '../../utils/events'
+import { VisibilityStatus } from '../../constants/constants'
 
 export const EditorPage = () => {
-  const { options, dispatch } = useDisplay()
-  const skillEditorIsActive = options.get(consts.EDITOR_ACTIVE_SKILL)
-  const { name, skillId } = useParams()
+  const { dispatch } = useDisplay()
+  const { name } = useParams()
+  const { state } = useLocation()
   const { setIsPreview } = usePreview()
   const { getDist } = useAssistants()
-  const dist = name ? getDist(name).data : null
-
-  const components = useQuery(
-    ['components', name],
-    () => getComponents(name!),
-    {
-      refetchOnWindowFocus: false,
-      enabled: name?.length! > 0,
-    }
-  )
-
-  const skillById = components?.data?.skills?.find(
-    (s: any) => s?.name === skillId
-  )
+  const nav = useNavigate()
+  const {
+    data: dist,
+    error: errorResponse,
+    isError,
+  } = getDist({ distName: name!, useErrorBoundary: true })
 
   useEffect(() => {
     // Setting mode to Preview by default
     if (dist !== undefined && dist !== null) {
-      setIsPreview(dist?.visibility === 'public_template')
+      setIsPreview(dist?.visibility === VisibilityStatus.PUBLIC_TEMPLATE)
+      dispatch({
+        type: 'set',
+        option: {
+          id: consts.ACTIVE_ASSISTANT,
+          value: dist,
+        },
+      })
     }
+
     return () => setIsPreview(true)
   }, [dist])
 
-  // TODO: FIX
   useEffect(() => {
-    if (skillId && skillById && !skillEditorIsActive) {
-      return trigger('SkillPromptModal', { skill: skillById })
-    }
+    const error = (errorResponse as any)?.response as Response
 
-    if (skillId && skillById && skillEditorIsActive) {
-      return trigger('SkillPromptModal', { isOpen: true, skill: skillById })
-    }
+    if (error?.status === undefined) return
+    console.log('aboba')
 
-    if (skillId === undefined && skillEditorIsActive)
-      trigger('SkillPromptModal', { isOpen: false })
-  }, [skillId, skillById])
-
-  useEffect(() => {
-    dispatch({
-      type: 'set',
-      option: {
-        id: consts.ACTIVE_ASSISTANT,
-        value: dist,
-      },
-    })
-  }, [dist])
+    // return nav(
+    //   generatePath(RoutesList.error, { statusCode: error.status.toString() }),
+    //   { state: Object.assign({}, state, { error }), replace: true }
+    // )
+  }, [isError])
 
   return (
     <>
@@ -104,13 +89,10 @@ export const EditorPage = () => {
         </Container>
       </Sidebar>
       <Outlet />
-
       <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
-
       <AreYouSureModal />
-      <SkillPromptModal />
       <SkillQuitModal />
       <Toaster />
       <PublishAssistantModal />
@@ -122,7 +104,6 @@ export const EditorPage = () => {
       <ShareModal />
       <DeleteSkillModal />
       <SkillModal />
-      {/* <CreateGenerativeSkillModal /> */}
     </>
   )
 }

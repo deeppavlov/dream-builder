@@ -1,6 +1,6 @@
 import Calendar from '@assets/icons/calendar.svg'
 import classNames from 'classnames/bind'
-import React, { FC, useEffect, useId, useState } from 'react'
+import React, { FC, useId, useState } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
@@ -13,10 +13,10 @@ import { Kebab } from '../../ui/Kebab/Kebab'
 import { consts } from '../../utils/consts'
 import { dateToUTC } from '../../utils/dateToUTC'
 import { trigger } from '../../utils/events'
-import { srcForIcons } from '../../utils/srcForIcons'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
 import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import SkillCardToolTip from '../SkillCardToolTip/SkillCardToolTip'
+import SvgIcon from '../SvgIcon/SvgIcon'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
@@ -41,6 +41,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const activeSKillId = options.get(consts.ACTIVE_SKILL_SP_ID)
   const isActive = skill.id === activeSKillId
   const nav = useNavigate()
+  const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -52,9 +53,10 @@ export const SkillCard: FC<SkillCardProps> = ({
     e.stopPropagation()
     triggerSkillSidePanel({
       skill,
-      type,
+      visibility: type,
       activeTab: 'Properties',
       isOpen: !isActive,
+      distName: distRoutingName || '',
     })
   }
 
@@ -68,27 +70,21 @@ export const SkillCard: FC<SkillCardProps> = ({
       nav(
         generatePath(RoutesList.editor.skillEditor, {
           name: distRoutingName as string,
-          skillId: skill.name,
+          skillId: skill.component_id,
         } as any)
       )
       e.stopPropagation()
       return
     }
 
-    triggerSkillSidePanel({ skill, type, activeTab: 'Editor' })
+    triggerSkillSidePanel({
+      skill,
+      visibility: type,
+      activeTab: 'Editor',
+      distName: distRoutingName || '',
+    })
     e.stopPropagation()
   }
-  const nameForComponentType = componentTypeMap[skill?.component_type!]
-  const srcForComponentType = srcForIcons(nameForComponentType)
-
-  // useEffect(() => {
-  //   triggerSkillSidePanel({
-  //     skill,
-  //     type,
-  //     activeTab: 'Properties',
-  //     isOpen: isActive,
-  //   })
-  // }, [skill])
 
   return (
     <div
@@ -103,26 +99,18 @@ export const SkillCard: FC<SkillCardProps> = ({
     >
       <div className={s.header}>
         <p className={s.botName}>{skill?.display_name ?? '------'} </p>
-        {/* {type == 'your' && (
-          <ToggleButton disabled={isPreview} handleToggle={handleToggle} />
-        )} */}
       </div>
       <div className={s.body}>
         <div className={s.top}>
           <div className={s.type}>
-            <img className={s.typeLogo} src={srcForComponentType} />
+            <SvgIcon
+              iconName={nameForComponentType}
+              svgProp={{ className: s.typeLogo }}
+            />
             <p className={cx('typeText', nameForComponentType)}>
               {skill?.component_type ?? '------'}
             </p>
           </div>
-          {/* <div className={s.name}>
-            <img className={s.companyLogo} src={skill?.author?.picture} />
-            <p className={s.companyName}>
-              {skill?.author.fullname == 'DeepPavlov'
-                ? 'Dr. Xandra Smith'
-                : skill?.author.fullname}
-            </p>
-          </div> */}
           <div
             className={s.description}
             data-tip
@@ -131,15 +119,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.descriptionText}>
               {skill?.description ?? 'Empty'}
             </div>
-            {/* <BaseToolTip
-              delayShow={TOOLTIP_DELAY}
-              id={'skillCardDesc' + tooltipId}
-              content={skill?.description}
-              theme='description'
-            /> */}
           </div>
-
-          <span className={s.separator} />
           <div className={s.info}>
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />

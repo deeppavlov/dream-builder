@@ -1,16 +1,16 @@
-import { nanoid } from 'nanoid'
 import { ReactComponent as PlusIcon } from '@assets/icons/plus_icon.svg'
+import { nanoid } from 'nanoid'
+import { ISkill } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
 import SidePanelStatus from '../../ui/SidePanelStatus/SidePanelStatus'
 import { trigger } from '../../utils/events'
-import { ISkill } from '../../types/types'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import IntentList from '../IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from '../IntentListItem/IntentListItem'
-import SkillSidePanel from '../SkillSidePanel/SkillSidePanel'
+import SkillSidePanel from '../SkillSidePanel/DumbSkillSP'
 import s from './IntentResponderSidePanel.module.scss'
 
 export const intentsMock: IntentListItemInterface[] = [

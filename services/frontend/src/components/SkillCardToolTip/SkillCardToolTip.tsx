@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useParams } from 'react-router-dom'
 import { ISkill } from '../../types/types'
 import { trigger } from '../../utils/events'
 import triggerSkillSidePanel from '../../utils/triggerSkillSidePanel'
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
+  const { name } = useParams()
   // const handleEditBtnClick = () => {
   //   if (skill.component_type === 'Generative') {
   //     trigger('SkillPromptModal', { skill })
@@ -22,7 +24,11 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   // }
 
   const handlePropertiesBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Properties' })
+    triggerSkillSidePanel({
+      skill,
+      activeTab: 'Properties',
+      distName: name || '',
+    })
 
   const handleRenameBtnClick = () => {
     trigger('SkillModal', { action: 'edit', skill })

@@ -22,6 +22,7 @@ from apiconfig.config import (
     GITHUB_URL_USERINFO,
 )
 from services.auth_api import schemas
+from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
 from services.auth_api.models import UserCreate, User, UserValidScheme, GithubUserCreate, GithubUser
 
 router = APIRouter(prefix="/auth")
@@ -82,11 +83,11 @@ def validate_email(email: str, db: Session) -> None:
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
     if not crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
-        crud.add_google_user(db, user)
-        return User(**data)
+        return UserRead.from_orm(crud.add_google_user(db, user))
 
-    user = crud.get_user_by_email(db, data["email"]).__dict__
-    return User(**user, name=user["fullname"])
+    user = crud.get_user_by_sub(db, data["sub"])
+    user = crud.update_user(db, user.id, **data)
+    return UserRead.from_orm(user)
 
 
 async def _fetch_gh_user_info_by_access_token(token: str):
@@ -137,12 +138,15 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     """
     if token == settings.auth.test_token:
         return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
 
         validate_aud(data["aud"])
         validate_email(data["email"], db)
-        user = crud.get_user_by_email(db, data["email"])
+        user = crud.get_user_by_sub(db, data["sub"])
+        # user = crud.update_user(db, user.id, **data)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -180,9 +184,8 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    save_user(user_info, db)
-    user = User(**user_info)
-    del user.sub
+    user = save_user(user_info, db)
+    # del user.sub
 
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
 

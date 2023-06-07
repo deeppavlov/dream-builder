@@ -1,13 +1,13 @@
+import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
 import React, { FC, useEffect, useId, useState } from 'react'
 import {
   Control,
   RegisterOptions,
   useController,
-  UseFormSetError,
+  UseFormTrigger,
 } from 'react-hook-form'
 import { ReactComponent as TextAreaLogo } from '../../assets/icons/textarea.svg'
-import useDebouncedValue from '../../hooks/useDebouncedValue'
 import { LanguageModel } from '../../types/types'
 import { checkIfEmptyString } from '../../utils/formValidate'
 import getTokensLength from '../../utils/getTokensLength'
@@ -18,6 +18,7 @@ interface TextAreaProps {
   label?: string | JSX.Element
   about?: string | JSX.Element
   countType?: 'tokenizer' | 'character'
+  theme?: 'placeholder'
   tokenizerModel?: LanguageModel
   props?: React.TextareaHTMLAttributes<HTMLTextAreaElement>
   withCounter?: boolean
@@ -28,8 +29,37 @@ interface TextAreaProps {
   control: Control<any>
   name: string
   rules?: RegisterOptions
-  setError?: UseFormSetError<any>
+  triggerField?: UseFormTrigger<any>
 }
+
+interface IValidateTokens {
+  value: string
+  tokenizerModel?: LanguageModel
+  maxLength: {
+    value: number
+    message: string
+  }
+  setLength: (length: number) => void
+  setIsCounting: (isCounting: boolean) => void
+}
+
+const validateTokens = AwesomeDebouncePromise(
+  async ({
+    value,
+    tokenizerModel,
+    maxLength,
+    setLength,
+    setIsCounting,
+  }: IValidateTokens) => {
+    const length = getTokensLength(tokenizerModel, value)
+    const isMaxLength = length > maxLength?.value
+
+    setLength(length)
+    setIsCounting(false)
+    return isMaxLength ? maxLength.message : undefined
+  },
+  500
+)
 
 export const TextArea: FC<TextAreaProps> = ({
   label,
@@ -45,7 +75,8 @@ export const TextArea: FC<TextAreaProps> = ({
   control,
   name,
   rules,
-  setError,
+  theme,
+  triggerField,
 }) => {
   const isTokenizer = countType === 'tokenizer'
   const {
@@ -56,21 +87,25 @@ export const TextArea: FC<TextAreaProps> = ({
     name,
     control,
     rules: isTokenizer
-      ? Object.assign(
-          {},
-          rules,
-          { maxLength: undefined },
-          rules?.required ? { validate: checkIfEmptyString } : {}
-        )
+      ? Object.assign({}, rules, {
+          maxLength: undefined,
+          validate: (value: string) =>
+            validateTokens({
+              value,
+              tokenizerModel,
+              maxLength,
+              setLength,
+              setIsCounting,
+            }),
+        })
+      : rules?.required
+      ? Object.assign({}, rules, { validate: checkIfEmptyString })
       : rules,
     defaultValue,
   })
   const maxLength = rules?.maxLength as { value: number; message: string }
-  const value = isTokenizer
-    ? useDebouncedValue(field.value || '', 500)
-    : field.value || ''
   const [length, setLength] = useState(0)
-  const [isTyping, setIsTyping] = useState(false)
+  const [isCounting, setIsCounting] = useState(false)
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const textAreaId = props?.id ?? useId()
@@ -94,8 +129,7 @@ export const TextArea: FC<TextAreaProps> = ({
     field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
-
-    if (isTokenizer) setIsTyping(true)
+    if (isTokenizer) setIsCounting(true)
   }
 
   // Hide Enter button everytime, when form submitted successfully
@@ -110,30 +144,31 @@ export const TextArea: FC<TextAreaProps> = ({
     if (withEnterButton && formState) handleFormSubmit()
   }, [withEnterButton && formState?.isSubmitSuccessful])
 
-  // Calculate tokens length
   useEffect(() => {
-    if (countType !== 'tokenizer') return setLength(value.length)
-    const length = getTokensLength(tokenizerModel, value)
-    const isMaxLength = maxLength && setError && length > maxLength?.value
+    if (!isTokenizer) setLength(field.value?.length ?? 0)
+  }, [field.value])
 
-    setLength(length)
-    setIsTyping(false)
-    if (isMaxLength) setError(name, maxLength)
-  }, [value, tokenizerModel])
+  useEffect(() => {
+    const isCheckable = triggerField && tokenizerModel && maxLength?.value
+
+    if (!isCheckable) return
+    triggerField(name)
+    setIsCounting(true)
+  }, [triggerField, tokenizerModel, maxLength?.value])
 
   return (
     <div
-      className={cx('textArea', fullHeight && 'fullHeight')}
+      className={cx('textArea', fullHeight && 'fullHeight', theme)}
       data-active={isActive}
       data-error={error !== undefined}
     >
       {(label || withCounter) && (
-        <label htmlFor={textAreaId} className={s.label}>
+        <label htmlFor={textAreaId} className={cx('label', 'header')}>
           {label && <span className={s.title}>{label}</span>}
           {withCounter && maxLength?.value && (
             <span className={s.counter}>
               {length}
-              {isTokenizer && isTyping && '+ counting...'}/{maxLength?.value}
+              {isTokenizer && isCounting && '+ counting...'}/{maxLength?.value}
               {isTokenizer && ` token${suffixes.get(pr.select(length))}`}
             </span>
           )}

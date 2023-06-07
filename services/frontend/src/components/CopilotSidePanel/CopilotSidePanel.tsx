@@ -1,10 +1,11 @@
+import { ReactComponent as Renew } from '@assets/icons/renew.svg'
 import classNames from 'classnames/bind'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import DeepyHelperIcon from '../../assets/icons/deeppavlov_logo_round.svg'
-import { DEEPY_ASSISTANT } from '../../constants/constants'
+import { DEEPY_ASSISTANT, TOOLTIP_DELAY } from '../../constants/constants'
 import { useDisplay } from '../../context/DisplayContext'
 import { useChat } from '../../hooks/useChat'
 import { useChatScroll } from '../../hooks/useChatScroll'
@@ -16,6 +17,7 @@ import { consts } from '../../utils/consts'
 import { сopyToClipboard } from '../../utils/copyToClipboard'
 import { submitOnEnter } from '../../utils/submitOnEnter'
 import { validationSchema } from '../../utils/validationSchema'
+import BaseToolTip from '../BaseToolTip/BaseToolTip'
 import TextLoader from '../TextLoader/TextLoader'
 import { ToastCopySucces } from '../Toasts/Toasts'
 import s from './CopilotSidePanel.module.scss'
@@ -30,9 +32,9 @@ export const CopilotSidePanel = () => {
     history,
     deepySession,
   } = useChat()
+
   const { handleSubmit, register, reset } = useForm<ChatForm>()
   const { dispatch } = useDisplay()
-
   const chatRef = useRef<HTMLDivElement>(null)
   const messageRef = useRef<HTMLSpanElement>(null)
   const cx = classNames.bind(s)
@@ -46,7 +48,9 @@ export const CopilotSidePanel = () => {
       duration: 1000,
     })
   }
-
+  const handleRenewClick = () => {
+    renew.mutateAsync(DEEPY_ASSISTANT)
+  }
   const handleKeyDown = (e: React.KeyboardEvent) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
@@ -60,11 +64,6 @@ export const CopilotSidePanel = () => {
   }
 
   // hooks
-  useEffect(() => {
-    !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
-  }, [])
-
-  useChatScroll(chatRef, [remoteHistory?.data, message, history])
 
   const dispatchTrigger = (isOpen: boolean) =>
     dispatch({
@@ -76,9 +75,15 @@ export const CopilotSidePanel = () => {
     })
 
   useEffect(() => {
+    !deepySession?.id && renew.mutateAsync(DEEPY_ASSISTANT)
+  }, [])
+
+  useEffect(() => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
+
+  useChatScroll(chatRef, [remoteHistory?.data, message, history])
 
   const historyList = history?.map((block: ChatHistory, i: number) => (
     <div
@@ -89,6 +94,7 @@ export const CopilotSidePanel = () => {
       )}
     >
       <span
+        style={{ display: block?.hidden ? 'none' : ' ' }}
         ref={messageRef}
         onClick={handleMessageClick}
         className={cx(
@@ -100,28 +106,6 @@ export const CopilotSidePanel = () => {
       </span>
     </div>
   ))
-  const remoteHistoryList = remoteHistory?.data?.map(
-    (block: ChatHistory, i: number) => (
-      <div
-        key={`${block?.author == 'bot'}${i}`}
-        className={cx(
-          'chat__container',
-          block?.author == 'bot' && 'chat__container_bot'
-        )}
-      >
-        <span
-          ref={messageRef}
-          onClick={handleMessageClick}
-          className={cx(
-            'chat__message',
-            block?.author == 'bot' && 'chat__message_bot'
-          )}
-        >
-          {block?.text}
-        </span>
-      </div>
-    )
-  )
   return (
     <div className={s.container}>
       <div className={s.dialogSidePanel}>
@@ -144,10 +128,32 @@ export const CopilotSidePanel = () => {
               />
             </div>
           ) : (
-            remoteHistoryList
+            remoteHistory?.data?.map((block: ChatHistory, i: number) => {
+              if (i > 0)
+                return (
+                  <div
+                    key={`${block?.author == 'bot'}${i}`}
+                    className={cx(
+                      'chat__container',
+                      block?.author == 'bot' && 'chat__container_bot'
+                    )}
+                  >
+                    <span
+                      ref={messageRef}
+                      onClick={handleMessageClick}
+                      className={cx(
+                        'chat__message',
+                        block?.author == 'bot' && 'chat__message_bot'
+                      )}
+                    >
+                      {block?.text}
+                    </span>
+                  </div>
+                )
+            })
           )}
           {historyList}
-          {send?.isLoading && (
+          {send?.isLoading && !remoteHistory.isLoading && (
             <div className={cx('chat__container', 'chat__container_bot')}>
               <span
                 onClick={handleMessageClick}
@@ -170,6 +176,20 @@ export const CopilotSidePanel = () => {
           />
           <input type='submit' hidden />
           <SidePanelButtons>
+            <Button
+              theme='secondary'
+              props={{
+                disabled: renew?.isLoading || send?.isLoading,
+                onClick: handleRenewClick,
+              }}
+            >
+              <BaseToolTip
+                delayShow={TOOLTIP_DELAY}
+                id='renew'
+                content='Restart Dialog'
+              />
+              <Renew data-tooltip-id='renew' />
+            </Button>
             <Button
               theme='primary'
               props={{

@@ -50,8 +50,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
    */
   const updateState = (data: { detail: BaseSidePanel }) => {
     const { isClosable, children } = data.detail
-    const requestToClose =
-      data.detail?.isOpen !== undefined && !data.detail?.isOpen
+    const requestToClose = data.detail?.isOpen === false
 
     if (isClosable !== undefined) {
       setIsClosable(isClosable)
@@ -60,8 +59,7 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
     if (requestToClose) return handleClose()
 
     setContent(children)
-
-    if (!isOpen) setIsOpen(true)
+    setIsOpen(true)
   }
 
   useObserver(observedEventName, updateState)

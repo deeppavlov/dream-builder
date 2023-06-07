@@ -4,49 +4,49 @@ import AnnotatorSidePanel from '../../components/AnnotatorSidePanel/AnnotatorSid
 import { AssistantModal } from '../../components/AssistantModal/AssistantModal'
 import BaseLink from '../../components/BaseLink/BaseLink'
 import {
-  BaseSidePanel,
-  TRIGGER_RIGHT_SP_EVENT,
+BaseSidePanel,
+TRIGGER_RIGHT_SP_EVENT
 } from '../../components/BaseSidePanel/BaseSidePanel'
 import { BotCard } from '../../components/BotCard/BotCard'
 import ChooseBotModal from '../../components/ChooseBotModal/ChooseBotModal'
 import { CopilotSidePanel } from '../../components/CopilotSidePanel/CopilotSidePanel'
 
+import { AssistantDialogSidePanel } from '../../components/AssistantDialogSidePanel/AssistantDialogSidePanel'
 import DumbAssistantSP from '../../components/AssistantSidePanel/DumbAssitantSP'
 import CreateSkillDistModal from '../../components/CreateSkillDistModal/CreateSkillDistModal'
 import { DeleteAssistantModal } from '../../components/DeleteAssistantModal/DeleteAssistantModal'
-import DialogSidePanel from '../../components/DialogSidePanel/DialogSidePanel'
 import FAQSidePanel from '../../components/FAQSidePanel/FAQSidePanel'
 import GenerativeSkillEditor from '../../components/GenerativeSkillEditor/GenerativeSkillEditor'
 import IntentCatcherModal from '../../components/IntentCatcherModal/IntentCatcherModal'
 import IntentCatcherSidePanel from '../../components/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import IntentList from '../../components/IntentList/IntentList'
-import IntentListItem, {
-  IntentListItemInterface,
+import IntentListItem,{
+IntentListItemInterface
 } from '../../components/IntentListItem/IntentListItem'
 import IntentResponderModal from '../../components/IntentResponderModal/IntentResponderModal'
 import IntentResponderSidePanel from '../../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import NotificationCard, {
-  NotificationCardProps,
+import NotificationCard,{
+NotificationCardProps
 } from '../../components/NotificationCard/NotificationCard'
 import NotificationsSidePanel from '../../components/NotificationsSidePanel/NotificationsSidePanel'
 import { PublishAssistantModal } from '../../components/PublishAssistantModal/PublishAssistantModal'
 import ResourcesSidePanel from '../../components/ResourcesSidePanel/ResourcesSidePanel'
 import ResourcesTable from '../../components/ResourcesTable/ResourcesTable'
-import SelectorSettingsSidePanel, {
-  SelectorSettings,
+import SelectorSettingsSidePanel,{
+SelectorSettings
 } from '../../components/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 import { SignInModal } from '../../components/SignInModal/SignInModal'
 import { SkillCard } from '../../components/SkillCard/SkillCard'
 import { SkillModal } from '../../components/SkillModal/SkillModal'
 import SkillPromptModal from '../../components/SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from '../../components/SkillQuitModal/SkillQuitModal'
-import SkillSidePanel from '../../components/SkillSidePanel/SkillSidePanel'
+import SkillSidePanel from '../../components/SkillSidePanel/DumbSkillSP'
 import { SmallTag } from '../../components/SmallTag/SmallTag'
 import {
-  BotInfoInterface,
-  ISkill,
-  IStackElement,
-  TotalResourcesInterface,
+BotInfoInterface,
+ISkill,
+IStackElement,
+TotalResourcesInterface
 } from '../../types/types'
 import { Accordion } from '../../ui/Accordion/Accordion'
 import Button from '../../ui/Button/Button'
@@ -476,7 +476,7 @@ export const TestPage = () => {
             SkillModal (edit)
           </Button>
         </div>
-        <div className={s.testPage__component}>
+        {/* <div className={s.testPage__component}>
           <span>SkillPromptModal</span>
           <Button theme='primary' props={{ onClick: () => {} }}>
             SkillPromptModal (add)
@@ -489,7 +489,7 @@ export const TestPage = () => {
           >
             SkillPromptModal (edit)
           </Button>
-        </div>
+        </div> */}
         <div className={s.testPage__component}>
           <span>CreateSkillDistModal</span>
           <Button
@@ -737,7 +737,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(TRIGGER_RIGHT_SP_EVENT, {
-                  children: <DialogSidePanel key={0} start />,
+                  children: <AssistantDialogSidePanel key={0} start />,
                 })
               },
             }}
@@ -749,7 +749,7 @@ export const TestPage = () => {
             props={{
               onClick: () => {
                 trigger(TRIGGER_RIGHT_SP_EVENT, {
-                  children: <DialogSidePanel key={1} />,
+                  children: <AssistantDialogSidePanel key={1} />,
                 })
               },
             }}
@@ -1222,7 +1222,7 @@ export const TestPage = () => {
       <PublishAssistantModal />
       <DeleteAssistantModal />
       <SkillModal />
-      <SkillPromptModal />
+      {/* <SkillPromptModal /> */}
       <SkillQuitModal />
       <CreateSkillDistModal />
       <ChooseBotModal />

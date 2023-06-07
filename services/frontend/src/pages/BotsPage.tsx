@@ -3,7 +3,7 @@ import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
 import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -48,6 +48,7 @@ export const BotsPage = () => {
             <>
               {isTableView ? (
                 <Table
+                  assistants
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
                   <DistList
@@ -75,7 +76,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Assistants'
+          title='Your Assistants'
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&
@@ -84,11 +85,22 @@ export const BotsPage = () => {
           linkTo={RoutesList.yourBots}
         >
           {isTableView ? (
-            <Table fourth='Visibility'>
-              <DistList view='table' dists={privateDists?.data} type='your' />
-            </Table>
+            <>
+              <Table
+                assistants
+                addButton={
+                  privateDists?.data?.length === 0 || !auth?.user ? (
+                    <Placeholder type='table'>
+                      You assistants will appear here
+                    </Placeholder>
+                  ) : undefined
+                }
+              >
+                <DistList view='table' dists={privateDists?.data} type='your' />
+              </Table>
+            </>
           ) : (
-            <Container overflowForAddButton>
+            <Container>
               <Slider privateAssistants>
                 {auth?.user && privateDists?.isLoading && (
                   <CardsLoader cardsCount={6} />
@@ -102,12 +114,9 @@ export const BotsPage = () => {
                     type='your'
                   />
                 )}
-                {privateDists?.data?.length === 0 && (
+                {privateDists?.data?.length === 0 || !auth?.user ? (
                   <Placeholder>You assistants will appear here</Placeholder>
-                )}
-                {!auth?.user && (
-                  <Placeholder>You assistants will appear here</Placeholder>
-                )}
+                ) : null}
               </Slider>
             </Container>
           )}
@@ -120,7 +129,7 @@ export const BotsPage = () => {
         <PublicToPrivateModal />
         <Modal />
         <SignInModal />
-        <DeployModalNotification />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

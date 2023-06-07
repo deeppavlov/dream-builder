@@ -3,23 +3,27 @@ import { BotsAllPage } from '../pages/BotsAllPage'
 import { BotsPage } from '../pages/BotsPage'
 import { DraftPage } from '../pages/DraftPage'
 import { EditorPage } from '../pages/Editor/EditorPage'
+import SkillEditorPage from '../pages/Editor/SkillEditorPage'
 import SkillsPage from '../pages/Editor/SkillsPage'
+import ErrorPage from '../pages/ErrorPage'
 import { GoogleAuthPage } from '../pages/GoogleAuthPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import Root from '../pages/Root'
+import { SanboxPage } from '../pages/SanboxPage'
 import { TestPage } from '../pages/TestPage/TestPage'
 import { UsersBotsPage } from '../pages/UsersBotsPage'
 import { CustomRouteConfig } from '../types/types'
 import { CrumbForEditor } from '../ui/Breadcrumbs/CrumbForEditor'
 import { consts } from '../utils/consts'
+import { AdminRoute } from './AdminRoute'
 import { PrivateRoute } from './PrivateRoute'
 import { RoutesList } from './RoutesList'
-import { SanboxPage } from '../pages/SanboxPage'
 
 export const RouterConfig: CustomRouteConfig[] = [
   {
     path: '/',
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: RoutesList.start,
@@ -29,9 +33,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         path: RoutesList.botsAll,
         element: <BotsAllPage />,
         handle: {
-          crumb: () => [
-            <Link to={RoutesList.botsAll}>Assistant Templates</Link>,
-          ],
+          crumb: () => [<Link to={RoutesList.botsAll}>Public Templates</Link>],
         },
       },
       {
@@ -85,33 +87,34 @@ export const RouterConfig: CustomRouteConfig[] = [
                 </Link>,
               ],
             },
-
-            children: [
-              {
-                path: RoutesList.editor.skillEditor,
-                element: <SkillsPage />,
-                loader: ({ params }) => params,
-                handle: {
-                  crumb: (params: any, options?: any) => {
-                    const display_name = options?.get(
-                      consts.EDITOR_ACTIVE_SKILL
-                    )?.display_name
-                    return [
-                      display_name && (
-                        <Link
-                          to={generatePath(
-                            RoutesList.editor.skillEditor,
-                            params
-                          )}
-                        >
-                          {display_name}
-                        </Link>
-                      ),
-                    ]
-                  },
-                },
+          },
+          {
+            path: RoutesList.editor.skillEditor,
+            element: (
+              <PrivateRoute>
+                <SkillEditorPage />
+              </PrivateRoute>
+            ),
+            loader: ({ params }) => params,
+            handle: {
+              crumb: (params: any, options?: any) => {
+                const display_name = options?.get(
+                  consts.EDITOR_ACTIVE_SKILL
+                )?.display_name
+                return [
+                  <Link to={generatePath(RoutesList.editor.default, params)}>
+                    Skills
+                  </Link>,
+                  display_name && (
+                    <Link
+                      to={generatePath(RoutesList.editor.skillEditor, params)}
+                    >
+                      {display_name}
+                    </Link>
+                  ),
+                ]
               },
-            ],
+            },
           },
         ],
       },
@@ -134,20 +137,36 @@ export const RouterConfig: CustomRouteConfig[] = [
     path: RoutesList.code,
     element: <GoogleAuthPage />,
   },
+  {
+    path: '*',
+    element: <ErrorPage />,
+  },
   // Dev pages
   {
     path: RoutesList.test,
-    element: <TestPage />,
+    element: (
+      <AdminRoute>
+        <TestPage />
+      </AdminRoute>
+    ),
     handle: 'Test Page',
   },
   {
     path: RoutesList.draft,
-    element: <DraftPage />,
+    element: (
+      <AdminRoute>
+        <DraftPage />
+      </AdminRoute>
+    ),
     handle: 'Its For Crumbs',
   },
   {
     path: RoutesList.sandbox,
-    element: <SanboxPage />,
+    element: (
+      <AdminRoute>
+        <SanboxPage />
+      </AdminRoute>
+    ),
     handle: 'Its For Crumbs',
   },
 ]

@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 from typing import Optional, List
 
+from fastapi.logger import logger
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from database import models, enums
 from apiconfig.config import settings
 from database import models
 from database.models import GoogleUser, UserValid, ApiKey
@@ -51,6 +53,16 @@ def get_user_by_email(db: Session, email: str) -> models.GoogleUser:
 
 def get_users_by_role(db: Session, role_id: int) -> [models.GoogleUser]:
     return db.scalars(select(models.GoogleUser).filter_by(role_id=role_id)).all()
+
+
+def update_user(db: Session, id: int, **kwargs) -> models.GoogleUser:
+    kwargs = {k: v for k, v in kwargs.items() if k in models.GoogleUser.__table__.columns.keys()}
+
+    user = db.scalar(update(models.GoogleUser).filter_by(id=id).values(**kwargs).returning(models.GoogleUser))
+    if not user:
+        raise ValueError(f"GoogleUser with id={id} does not exist")
+
+    return user
 
 
 # USER VALID
@@ -146,8 +158,10 @@ def get_all_public_templates_virtual_assistants(db: Session) -> [models.VirtualA
     return db.scalars(
         select(models.VirtualAssistant).where(
             and_(
-                models.VirtualAssistant.publish_request.has(visibility="public_template"),
-                models.VirtualAssistant.publish_request.has(is_confirmed=True),
+                models.VirtualAssistant.publish_request.has(
+                    public_visibility=enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE
+                ),
+                models.VirtualAssistant.publish_request.has(state=enums.PublishRequestState.APPROVED),
             )
         )
     ).all()
@@ -188,6 +202,12 @@ def create_virtual_assistant(
     return new_virtual_assistant
 
 
+def update_virtual_assistant_by_name(db: Session, name: str, **kwargs):
+    return db.scalar(
+        update(models.VirtualAssistant).where(models.VirtualAssistant.name == name).values(**kwargs).returning(models.VirtualAssistant)
+    )
+
+
 def update_virtual_assistant_metadata_by_name(db: Session, name: str, **kwargs) -> models.VirtualAssistant:
     values = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -226,10 +246,14 @@ def get_all_components(db: Session) -> [models.Component]:
     return db.scalars(select(models.Component)).all()
 
 
-def get_components_by_group_name(db: Session, group: str, component_type: str = None) -> [models.Component]:
+def get_components_by_group_name(
+    db: Session, group: str, component_type: str = None, author_id: int = None
+) -> [models.Component]:
     filters = {"group": group}
     if component_type:
         filters["component_type"] = component_type
+    if author_id:
+        filters["author_id"] = author_id
 
     return db.scalars(select(models.Component).filter_by(**filters)).all()
 
@@ -250,6 +274,7 @@ def create_component(
     gpu_usage: Optional[str] = None,
     description: Optional[str] = None,
     prompt: Optional[str] = None,
+    prompt_goals: Optional[str] = None,
     lm_service_id: Optional[int] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
@@ -275,6 +300,7 @@ def create_component(
             group=group,
             endpoint=endpoint,
             prompt=prompt,
+            prompt_goals=prompt_goals,
             lm_service_id=lm_service_id,
             # build_args=build_args,
             # compose_override=compose_override,
@@ -308,6 +334,29 @@ def get_next_available_component_port(db: Session, range_min: int = 8000, range_
 
 
 # VIRTUAL ASSISTANT COMPONENT
+def get_virtual_assistant_component(
+    db: Session, virtual_assistant_component_id: int
+) -> [models.VirtualAssistantComponent]:
+    return db.get(models.VirtualAssistantComponent, virtual_assistant_component_id)
+
+
+def get_virtual_assistant_component_by_component_name(
+    db: Session, virtual_assistant_id: int, component_name: str
+) -> models.VirtualAssistantComponent:
+    va_component = db.scalar(
+        select(models.VirtualAssistantComponent).filter(
+            and_(
+                models.VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
+                models.VirtualAssistantComponent.component.has(name=component_name),
+            )
+        )
+    )
+    if not va_component:
+        raise ValueError(f"Component with name={component_name} does not exist")
+
+    return va_component
+
+
 def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> [models.VirtualAssistantComponent]:
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
@@ -374,40 +423,54 @@ def get_all_publish_requests(db: Session):
 
 def get_unreviewed_publish_requests(db: Session):
     return db.scalars(
-        select(models.PublishRequest).filter(
-            models.PublishRequest.is_confirmed == None, models.PublishRequest.reviewed_by_user_id == None
-        )
+        select(models.PublishRequest).filter(models.PublishRequest.state == enums.PublishRequestState.IN_REVIEW)
     ).all()
 
 
-def confirm_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+def approve_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
     return db.scalar(
         update(models.PublishRequest)
         .filter(models.PublishRequest.id == id)
-        .values(is_confirmed=True, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .values(
+            state=enums.PublishRequestState.APPROVED,
+            reviewed_by_user_id=reviewed_by_user_id,
+            date_reviewed=datetime.utcnow(),
+        )
         .returning(models.PublishRequest)
     )
 
 
-def decline_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
+def reject_publish_request(db: Session, id: int, reviewed_by_user_id: int) -> models.PublishRequest:
     return db.scalar(
         update(models.PublishRequest)
         .filter(models.PublishRequest.id == id)
-        .values(is_confirmed=False, reviewed_by_user_id=reviewed_by_user_id, date_reviewed=datetime.utcnow())
+        .values(
+            state=enums.PublishRequestState.REJECTED,
+            reviewed_by_user_id=reviewed_by_user_id,
+            date_reviewed=datetime.utcnow(),
+        )
         .returning(models.PublishRequest)
     )
 
 
-def create_publish_request(db: Session, virtual_assistant_id: int, user_id: int, slug: str, visibility: str):
+def create_publish_request(
+    db: Session,
+    virtual_assistant_id: int,
+    user_id: int,
+    slug: str,
+    public_visibility: enums.VirtualAssistantPublicVisibility,
+):
     return db.scalar(
         insert(models.PublishRequest)
-        .values(virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, visibility=visibility)
+        .values(
+            virtual_assistant_id=virtual_assistant_id, user_id=user_id, slug=slug, public_visibility=public_visibility
+        )
         .on_conflict_do_update(
             index_elements=[models.PublishRequest.slug],
             set_=dict(
-                visibility=visibility,
+                public_visibility=public_visibility,
                 date_created=datetime.utcnow(),
-                is_confirmed=None,
+                state=enums.PublishRequestState.IN_REVIEW,
                 reviewed_by_user_id=None,
                 date_reviewed=None,
             ),
@@ -447,8 +510,12 @@ def delete_publish_request(db: Session, virtual_assistant_id: int):
 
 
 # DIALOG SESSION
-def get_dialog_session(db: Session, dialog_session_id: int) -> Optional[models.DialogSession]:
-    return db.get(models.DialogSession, dialog_session_id)
+def get_dialog_session(db: Session, dialog_session_id: int):
+    dialog_session = db.get(models.DialogSession, dialog_session_id)
+    if not dialog_session:
+        raise ValueError(f"Dialog session {dialog_session_id} does not exist")
+
+    return dialog_session
 
 
 def get_debug_assistant_chat_url(db: Session) -> str:
@@ -458,9 +525,9 @@ def get_debug_assistant_chat_url(db: Session) -> str:
 
 
 def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str) -> models.DialogSession:
-    virtual_assistant = db.scalar(select(models.VirtualAssistant).filter_by(name=virtual_assistant_name))
+    virtual_assistant = get_virtual_assistant_by_name(db, virtual_assistant_name)
 
-    db.scalar(
+    invalidated_sessions = db.scalars(
         update(models.DialogSession)
         .where(
             and_(
@@ -470,7 +537,9 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
         )
         .values(is_active=False)
         .returning(models.DialogSession)
-    )
+    ).all()
+    logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
+
     dialog_session = db.scalar(
         insert(models.DialogSession)
         .values(user_id=user_id, deployment_id=virtual_assistant.deployment.id, is_active=True)
@@ -492,8 +561,12 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
 
 
 # LM SERVICE
-def get_all_lm_services(db: Session) -> [models.LmService]:
-    return db.scalars(select(models.LmService)).all()
+def get_all_lm_services(db: Session, hosted_only: bool = True) -> [models.LmService]:
+    filter_kwargs = {}
+    if hosted_only:
+        filter_kwargs["is_hosted"] = True
+
+    return db.scalars(select(models.LmService).filter_by(**filter_kwargs)).all()
 
 
 def get_lm_service(db: Session, id: int) -> Optional[models.LmService]:
@@ -505,10 +578,12 @@ def get_lm_service_by_name(db: Session, name: str) -> Optional[models.LmService]
 
 
 # DEPLOYMENT
-def get_available_deployment_port(db: Session, range_min: int = 4500, range_max: int = 4999):
+def get_available_deployment_port(db: Session, range_min: int = 4550, range_max: int = 4999, exclude: list = None):
     used_ports = db.scalars(
         select(models.Deployment.chat_port).filter(models.Deployment.chat_port.between(range_min, range_max))
     ).all()
+    if exclude:
+        used_ports += exclude
 
     first_available_port = None
 
@@ -523,8 +598,21 @@ def get_available_deployment_port(db: Session, range_min: int = 4500, range_max:
     return first_available_port
 
 
-def get_deployment(db: Session, id: int) -> Optional[models.Deployment]:
-    return db.get(models.Deployment, id)
+def get_deployment(db: Session, id: int):
+    deployment = db.get(models.Deployment, id)
+
+    if not deployment:
+        raise ValueError(f"No deployments with id = {id}")
+
+    return deployment
+
+
+def get_all_deployments(db: Session, state: str = None) -> [models.Deployment]:
+    select_stmt = select(models.Deployment)
+    if state:
+        select_stmt.filter_by(state=state)
+
+    return db.scalars(select_stmt).all()
 
 
 def get_deployment_by_virtual_assistant_name(db: Session, name: str) -> models.Deployment:
@@ -542,7 +630,7 @@ def create_deployment(
     db: Session,
     virtual_assistant_id: int,
     chat_host: str,
-    chat_port: int,
+    chat_port: int = None,
 ) -> models.Deployment:
     deployment = db.scalar(
         insert(models.Deployment)
@@ -550,6 +638,7 @@ def create_deployment(
             virtual_assistant_id=virtual_assistant_id,
             chat_host=chat_host,
             chat_port=chat_port,
+            state="STARTED",
         )
         .returning(models.Deployment)
     )

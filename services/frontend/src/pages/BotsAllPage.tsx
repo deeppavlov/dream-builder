@@ -2,7 +2,7 @@ import { Toaster } from 'react-hot-toast'
 import { AssistantModal } from '../components/AssistantModal/AssistantModal'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeployModalNotification } from '../components/DeployModal/DeployModalNotification'
+import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
 import { DistList } from '../components/DistList/DistList'
 import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
 import { Main } from '../components/Main/Main'
@@ -13,7 +13,6 @@ import { Container } from '../ui/Container/Container'
 import { Table } from '../ui/Table/Table'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { consts } from '../utils/consts'
-import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
 
 export const BotsAllPage = () => {
   const { fetchPublicDists } = useAssistants()
@@ -24,13 +23,13 @@ export const BotsAllPage = () => {
   return (
     <>
       <Main sidebar fullWidth>
-        <Wrapper title='Assistant Templates' amount={publicDists?.data?.length}>
+        <Wrapper title='Public Templates' amount={publicDists?.data?.length}>
           {publicDists?.error ? (
             <ErrorHandler error={publicDists.error} />
           ) : (
             <>
               {isTableView ? (
-                <Table>
+                <Table assistants>
                   <DistList
                     view='table'
                     dists={publicDists?.data}
@@ -44,7 +43,7 @@ export const BotsAllPage = () => {
                   )}
                   <DistList
                     view='cards'
-                    dists={sortDistsByISO8601(publicDists?.data)}
+                    dists={publicDists?.data}
                     type='public'
                     size='big'
                   />
@@ -56,7 +55,7 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
-        <DeployModalNotification />
+        <DeployNotificationModal />
       </Main>
       <Toaster />
     </>

@@ -6,7 +6,7 @@ import { consts } from '../../../utils/consts'
 import BaseToolTip from '../../BaseToolTip/BaseToolTip'
 import s from './Display.module.scss'
 
-export const Display = ({ viewHandler }: any) => {
+export const Display = () => {
   const { options, dispatch } = useDisplay()
   const isTableView = options.get(consts.IS_TABLE_VIEW)
 

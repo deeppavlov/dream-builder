@@ -1,5 +1,6 @@
 import { CSSProperties, FC, useId } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import { RotatingLines } from 'react-loader-spinner'
 import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
 import BaseToolTip from '../components/BaseToolTip/BaseToolTip'
 import { Main } from '../components/Main/Main'
@@ -8,79 +9,67 @@ import { Topbar } from '../components/Topbar/Topbar'
 import { TOOLTIP_DELAY } from '../constants/constants'
 import { useAdmin } from '../hooks/useAdmin'
 import { useDeploy } from '../hooks/useDeploy'
-import { BotInfoInterface, IAuthor } from '../types/types'
+import { toasts } from '../mapping/toasts'
+import { IDeploymentState, RequestProps } from '../types/types'
 import Button from '../ui/Button/Button'
 import { Container } from '../ui/Container/Container'
 import { Wrapper } from '../ui/Wrapper/Wrapper'
 import { dateToUTC } from '../utils/dateToUTC'
-import { sortDistsByISO8601 } from '../utils/sortDistsByISO8601'
+import { sortByISO8601 } from '../utils/sortByISO8601'
 
-interface RequestProps {
-  cardClickHandler: () => void
-  r: {
-    id: number
-    date_created: Date | null
-    date_reviewed: Date | null
-    is_confirmed: boolean | null
-    reviewed_by_user: string | null
-    visibility: 'public_template' | 'private' | 'unlisted'
-    slug: string
-    user: IAuthor
-    virtual_assistant: BotInfoInterface
-  }
-  confirm: any
-  decline: any
-  handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
-  handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+type IHandler = (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+
+function filterStack(arr: IDeploymentState[]) {
+  const excludedValues = [
+    'universal_prompted_assistant',
+    'multiskill_ai_assistant',
+    'ai_faq_assistant',
+    'fashion_stylist_assistant',
+    'marketing_assistant',
+    'fairytale_assistant',
+    'nutrition_assistant',
+    'deepy_assistant',
+    'life_coaching_assistant',
+    'deeppavlov_assistant',
+  ]
+  return arr?.filter(
+    obj => !excludedValues.includes(obj.virtual_assistant.name)
+  )
 }
 
 export const DraftPage = () => {
   const { requests, confirm, decline } = useAdmin()
+  const { deployments, deleteDeployment } = useDeploy()
 
-  const cardClickHandler = () => {
-    console.log('cardClicked')
-  }
+  const filteredDeployment = filterStack(deployments?.data!)
 
-  const handleApprove = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    id: number
-  ) => {
-    toast.promise(confirm.mutateAsync(id), {
-      loading: 'approve...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+  const sortedDeployment = sortByISO8601(filteredDeployment)
+  const sortedRequest = sortByISO8601(requests!)
 
+  const cardClickHandler = () => {}
+  const handleApprove: IHandler = (e, id) => {
+    toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)
     e.stopPropagation()
   }
 
-  const handleDecline = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    id: number
-  ) => {
-    toast.promise(decline.mutateAsync(id), {
-      loading: 'decline...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+  const handleDecline: IHandler = (e, id) => {
+    toast.promise(decline.mutateAsync(id), toasts.declineRequest)
     e.stopPropagation()
   }
-  const { stacks, deleteStack } = useDeploy()
-  const handleStop = (id: number) => {
-    toast.promise(deleteStack.mutateAsync(id), {
-      loading: 'delete stack...',
-      success: 'Success!',
-      error: 'Something Went Wrong...',
-    })
+
+  const handleStop: IHandler = (e, id) => {
+    toast.promise(deleteDeployment.mutateAsync(id), toasts.deleteDeployment)
+    e.stopPropagation()
   }
+
   return (
     <>
       <Topbar />
       <Sidebar />
       <Main sidebar>
         <Wrapper fitScreen title='Publication Requests'>
-          <Container gridForRequests scroll>
-            {sortDistsByISO8601(requests)?.map((r: any, i: number) => {
+          <Container gridForRequests>
+            {sortedRequest?.map((r, i: number) => {
               return (
                 <Request
                   confirm={confirm}
@@ -95,31 +84,75 @@ export const DraftPage = () => {
             })}
           </Container>
         </Wrapper>
-        <Wrapper fitScreen title='Deployment State'>
-          <Container gridForRequests>
-            {stacks?.data?.map((stack: any, i: number) => {
+        <Wrapper
+          fitScreen
+          title='Deployments'
+          amount={sortedDeployment?.length > 0 ? sortedDeployment?.length : ''}
+        >
+          {deployments?.isLoading && (
+            <div
+              style={{
+                alignSelf: 'center',
+                justifySelf: 'center',
+              }}
+            >
+              <RotatingLines
+                strokeColor='grey'
+                strokeWidth='5'
+                animationDuration='0.75'
+                width='64'
+                visible={true}
+              />
+            </div>
+          )}
+          <Container gridForDeploys>
+            {sortedDeployment?.map((deployment, i: number) => {
               return (
                 <div key={i}>
                   <Wrapper>
                     <div
                       style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'start',
                         justifyContent: 'space-between',
                         width: '100%',
+                        gap: '8px',
+                        height: '250px',
                       }}
                     >
-                      <span style={{ overflow: 'hidden' }}>id:{stack?.Id}</span>
-                      <span>{stack?.Name}</span>
+                      <span style={{ overflow: 'hidden' }}>
+                        id:{deployment?.id}
+                      </span>
+                      <span>name:{deployment?.virtual_assistant?.name}</span>
+                      <span>
+                        display name:
+                        {deployment?.virtual_assistant?.display_name}
+                      </span>
+                      <span>
+                        author:{deployment?.virtual_assistant?.author?.fullname}
+                      </span>
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        data-tooltip-id={
+                          deployment?.id + deployment?.virtual_assistant?.name
+                        }
+                      >
+                        <BaseToolTip
+                          delayShow={50}
+                          id={
+                            deployment?.id + deployment?.virtual_assistant?.name
+                          }
+                          content={deployment?.virtual_assistant?.description}
+                        />
+                        description
+                      </span>
                       <div className=''>
                         <Button
                           theme='primary'
                           props={{
-                            onClick: () => {
-                              handleStop(stack?.Id)
-                            },
-                            disabled: deleteStack?.isLoading,
+                            onClick: e => handleStop(e, deployment?.id),
+                            disabled: deleteDeployment?.isLoading,
                           }}
                         >
                           Stop
@@ -129,7 +162,7 @@ export const DraftPage = () => {
                   </Wrapper>
                 </div>
               )
-            })}{' '}
+            })}
           </Container>
         </Wrapper>
       </Main>
@@ -206,9 +239,7 @@ const Request: FC<RequestProps> = ({
             <Button
               theme='primary'
               props={{
-                onClick: e => {
-                  handleApprove(e, r.id)
-                },
+                onClick: e => handleApprove(e, r.id),
                 disabled: confirm?.isLoading,
               }}
             >
@@ -216,9 +247,7 @@ const Request: FC<RequestProps> = ({
             </Button>
             <Button
               props={{
-                onClick: e => {
-                  handleDecline(e, r.id)
-                },
+                onClick: e => handleDecline(e, r.id),
                 disabled: decline?.isLoading,
               }}
               theme='secondary'

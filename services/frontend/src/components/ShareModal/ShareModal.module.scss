@@ -86,11 +86,4 @@
   flex-direction: column;
   width: 100%
 }
-.link {
-  @include b2;
-  text-decoration: underline;
-  align-self: flex-end;
-  color: $text5;
-  text-underline-offset: 3px;
-  text-decoration-color: $text5;
-}
+

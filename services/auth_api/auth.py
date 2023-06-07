@@ -35,6 +35,7 @@ flow.redirect_uri = settings.auth.redirect_uri
 github_params = settings.github_auth_client_info
 # example: https://github.com/login/oauth/authorize?client_id=1337&client_secret=1453
 github_auth_url_with_params = f"{GITHUB_AUTH_URL}?{urlencode(github_params)}"
+GITHUB = "github"
 
 
 def get_db():
@@ -107,7 +108,6 @@ def validate_date(user: GithubUserValid):
         raise ValueError("Token has expired")
 
 
-@router.get("/gh_token", status_code=status.HTTP_200_OK)
 async def validate_gh(token: str = Header(), db: Session = Depends(get_db)):
     """
     """
@@ -127,10 +127,8 @@ async def validate_gh(token: str = Header(), db: Session = Depends(get_db)):
     # )
 
 
-
-
 @router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
+async def validate_jwt(token: str = Header(), auth_type: str = Header(), db: Session = Depends(get_db)):
     """
     Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
     Check is carried out via `_fetch_user_info_by_access_token` function
@@ -138,6 +136,9 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     """
     if token == settings.auth.test_token:
         return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+
+    if auth_type == GITHUB:
+        return await validate_gh(token, db)
 
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
@@ -163,7 +164,7 @@ async def logout(refresh_token: str = Header(), github_access_token: str = Heade
 
 
 @router.post("/exchange_authcode")
-async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> dict[str, str]:
+async def exchange_authcode(auth_code: str, auth_type: str = Header(), db: Session = Depends(get_db)) -> dict[str, str]:
     """
     Exchanges authorization code for access token
 
@@ -177,6 +178,9 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
+    if auth_type == GITHUB:
+        return await exchange_github_code(auth_code, db)
+
     try:
         flow.fetch_token(code=auth_code)
     except ValueError as e:
@@ -228,7 +232,6 @@ async def github_auth():
     return RedirectResponse(github_auth_url_with_params)
 
 
-@router.get("/exchange_github")
 async def exchange_github_code(code: str, db: Session = Depends(get_db)):
     code_params = settings.github_auth_client_info.update({"code": code})
     endpoint = f"{GITHUB_TOKENINFO}?{urlencode(code_params)}"

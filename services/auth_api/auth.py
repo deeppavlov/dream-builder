@@ -154,7 +154,11 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
-async def logout(refresh_token: str = Header(), auth_type: str = Header(), db: Session = Depends(get_db)) -> None:
+async def logout(refresh_token: str = Header(), github_access_token: str = Header(), db: Session = Depends(get_db)) -> None:
+    if github_access_token:
+        crud.set_github_users_access_token_invalid(db, github_access_token)
+        return
+
     crud.set_users_refresh_token_invalid(db, refresh_token)
 
 

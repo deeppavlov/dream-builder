@@ -12,7 +12,7 @@ from database import models
 from database.models import GoogleUser, UserValid, ApiKey
 
 
-# USER
+# GOOGLE
 def get_all_users(db: Session) -> [models.GoogleUser]:
     return db.scalars(select(GoogleUser)).all()
 
@@ -65,7 +65,7 @@ def update_user(db: Session, id: int, **kwargs) -> models.GoogleUser:
     return user
 
 
-# USER VALID
+# GOOGLE USER VALID
 def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:
     db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
     db.add(db_user)
@@ -737,3 +737,10 @@ def add_github_uservalid(db: Session, github_id: str, access_token: str) -> mode
     db.commit()
     db.refresh(user_valid)
     return user_valid
+
+
+def set_github_users_access_token_invalid(db: Session, access_token: str) -> None:
+    db.query(models.GithubUserValid).\
+        filter(models.GithubUserValid.access_token == access_token).\
+        update({"is_valid": False})
+    db.commit()

@@ -13,6 +13,7 @@ import {
   VISIBILITY_STATUS,
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
+import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -36,6 +37,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   disabled,
 }) => {
   const navigate = useNavigate()
+  const { refetchDist } = useAssistants()
   const tooltipId = useId()
   const dateCreated = dateToUTC(new Date(bot?.date_created))
   const time = timeToUTC(new Date(bot?.date_created))
@@ -118,7 +120,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
     onSuccess(data) {
       console.log('bot?.deployment?.id = ', bot?.deployment?.id)
       data?.state === DEPLOY_STATUS.UP && //FIX
-        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+        refetchDist.mutateAsync(bot?.name!)
 
       if (
         data?.state !== DEPLOY_STATUS.UP &&
@@ -127,7 +129,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
       ) {
         //FIX
         setTimeout(() => {
-          queryClient.invalidateQueries('deploy', data?.id)
+          queryClient.invalidateQueries(['deploy', data?.id])
         }, 5000)
       } else if (data?.error !== null) {
         console.log('error')

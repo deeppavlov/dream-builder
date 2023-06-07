@@ -9,10 +9,9 @@ interface Props {
   name: string
   disabled?: boolean
   type: BotAvailabilityType
-  fromEditor?: boolean
 }
 
-const AssistantSidePanel = ({ name, disabled, type, fromEditor }: Props) => {
+const AssistantSidePanel = ({ name, disabled, type }: Props) => {
   const { getDist } = useAssistants()
   const { data: dist } = getDist({ distName: name })
 
@@ -21,14 +20,7 @@ const AssistantSidePanel = ({ name, disabled, type, fromEditor }: Props) => {
     if (!dist) trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }, [dist])
 
-  return (
-    <DumbAssistantSP
-      // fromEditor={fromEditor}
-      bot={dist!}
-      disabled={disabled}
-      type={type}
-    />
-  )
+  return <DumbAssistantSP bot={dist!} disabled={disabled} type={type} />
 }
 
 export default AssistantSidePanel

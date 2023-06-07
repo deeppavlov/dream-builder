@@ -8,6 +8,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotCardProps } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
+import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -29,6 +30,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   const tooltipId = useId()
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
+  const { refetchDist } = useAssistants()
 
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const activeChat = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -102,8 +104,8 @@ export const AssistantCard: FC<BotCardProps> = ({
       bot?.deployment?.state !== DEPLOY_STATUS.UP,
     onSuccess(data) {
       if (data?.state === DEPLOY_STATUS.UP) {
-        queryClient.invalidateQueries('privateDists')
-        queryClient.invalidateQueries(['dist', bot?.name])
+        queryClient.invalidateQueries(['privateDists'])
+        refetchDist.mutateAsync(bot?.name)
       }
       if (
         data?.state !== DEPLOY_STATUS.UP &&
@@ -111,7 +113,7 @@ export const AssistantCard: FC<BotCardProps> = ({
         data?.error == null
       ) {
         setTimeout(() => {
-          queryClient.invalidateQueries('deploy', data?.id)
+          queryClient.invalidateQueries(['deploy', data?.id])
         }, 5000)
       } else if (data?.error !== null) {
         console.log('error')

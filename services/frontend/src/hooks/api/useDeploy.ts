@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import store from 'store2'
 import { BotInfoInterface } from 'types/types'
-import { DEPLOY_STATUS } from 'constants/constants'
+import { DEPLOY_STATUS, DIST } from 'constants/constants'
 import {
   deleteDeploy,
   getDeploy,
@@ -24,9 +24,9 @@ export const useDeploy = () => {
     mutationFn: (virtual_assistant_name: string) => {
       return startDeploy(virtual_assistant_name)
     },
-    onSuccess: data => {
-      queryClient.invalidateQueries('privateDists')
-      queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
+    onSuccess: (_, name) => {
+      queryClient.invalidateQueries(['privateDists'])
+      queryClient.invalidateQueries([DIST, name])
     },
     onError: data => {
       console.log('error = ', data)
@@ -41,8 +41,8 @@ export const useDeploy = () => {
     },
     onSuccess: (_, variables: BotInfoInterface) => {
       store.remove(variables?.name + '_session') // delete existing dialog session because of agent reload
-      queryClient.invalidateQueries('dist')
-      queryClient?.invalidateQueries('deployments')
+      queryClient.invalidateQueries([DIST, variables?.name])
+      queryClient?.invalidateQueries(['deployments'])
     },
     onError: data => {
       console.log('error = ', data)
@@ -56,7 +56,7 @@ export const useDeploy = () => {
       enabled: bot?.deployment?.id !== undefined,
       onSuccess(data) {
         data?.state === DEPLOY_STATUS.UP && //FIX
-          queryClient.invalidateQueries(['dist', data?.virtual_assistant?.name])
+          queryClient.invalidateQueries([DIST, bot?.name])
 
         if (
           data?.state !== DEPLOY_STATUS.UP && //FIX
@@ -64,7 +64,7 @@ export const useDeploy = () => {
           data?.error == null
         ) {
           setTimeout(() => {
-            queryClient.invalidateQueries('deploy', data?.id)
+            queryClient.invalidateQueries(['deploy', data?.id])
           }, 5000)
         } else if (data?.error !== null) {
           console.log('error')

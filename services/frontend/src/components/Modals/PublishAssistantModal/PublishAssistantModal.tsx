@@ -71,7 +71,7 @@ export const PublishAssistantModal = () => {
               {
                 onSuccess: () => {
                   assistantVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
-                    queryClient.invalidateQueries('publicDists')
+                    queryClient.invalidateQueries(['publicDists'])
                 },
               }
             ),

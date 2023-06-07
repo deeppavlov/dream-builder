@@ -36,7 +36,7 @@ interface IClone {
 interface IRename extends IClone {}
 
 interface IGetDist {
-  distName: string
+  distName: string | undefined
 }
 
 interface IGetDistOptions {
@@ -54,6 +54,7 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
+
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
   const fetchPrivateDists = () =>
@@ -63,20 +64,21 @@ export const useAssistants = () => {
     const isRetry = options?.retry !== undefined
 
     return useQuery<BotInfoInterface>({
-      queryKey: ['dist', distName],
-      queryFn: () => getAssistant(distName),
+      queryKey: [DIST, distName],
+      queryFn: () => getAssistant(distName!),
       refetchOnMount: Boolean(options?.refetchOnMount),
       refetchOnWindowFocus: true,
-      initialData: () => getFetchedDist(distName),
+      initialData: () => getCachedDist(distName!),
       useErrorBoundary: options?.useErrorBoundary,
       retry: isRetry ? options?.retry : 0,
+      enabled: !!distName,
     })
   }
 
   const rename = useMutation({
     mutationFn: ({ name, data }: IRename) => renameAssistant(name, data),
     onSuccess: (_, { name }) => {
-      queryClient.invalidateQueries('dist')
+      queryClient.invalidateQueries([DIST, name])
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
@@ -145,7 +147,22 @@ export const useAssistants = () => {
       )
   }
 
-  const getFetchedDist = (name: string) => {
+  const refetchDist = useMutation({
+    mutationFn: (name: string) => getAssistant(name),
+    onSuccess: (dist, name) => {
+      queryClient.setQueryData<BotInfoInterface | null>([DIST, name], dist)
+    },
+  })
+
+  const getCachedDist = (name: string) => {
+    const cachedDist = queryClient.getQueryData<BotInfoInterface | undefined>([
+      DIST,
+      name,
+    ])
+    const isCachedDist = cachedDist !== undefined && cachedDist !== null
+
+    if (isCachedDist) return cachedDist
+
     const publicDists =
       queryClient.getQueryData<BotInfoInterface[] | undefined>([
         PUBLIC_DISTS,
@@ -154,13 +171,10 @@ export const useAssistants = () => {
       queryClient.getQueryData<BotInfoInterface[] | undefined>([
         PRIVATE_DISTS,
       ]) || []
-    const dist = queryClient.getQueryData<BotInfoInterface | undefined>([
-      DIST,
-      name,
-    ])
-    const result = [dist, ...publicDists, ...privateDists]?.find(
+    const result = [...publicDists, ...privateDists]?.find(
       dist => dist?.name === name
     )
+
     return result
   }
 
@@ -173,5 +187,6 @@ export const useAssistants = () => {
     create,
     clone,
     deleteDist,
+    refetchDist,
   }
 }

@@ -45,7 +45,7 @@ export const DeleteAssistantModal = () => {
     toast
       .promise(deleteDist.mutateAsync(bot?.name!), toasts.deleteAssistant)
       .then(() => {
-        assistantIsPublic && queryClient.invalidateQueries('publicDists')
+        assistantIsPublic && queryClient.invalidateQueries(['publicDists'])
       })
       .finally(() => handleClose())
   }

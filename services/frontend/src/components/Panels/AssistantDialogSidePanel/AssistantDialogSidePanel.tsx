@@ -45,7 +45,7 @@ interface Props {
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // queries
   const queryClient = useQueryClient()
-  const { getDist } = useAssistants()
+  const { getDist, refetchDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
   const { data: bot } = getDist(
     { distName: dist?.name },
@@ -107,8 +107,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     enabled: bot?.deployment?.id !== undefined,
     onSuccess(data) {
       if (data?.state === DEPLOY_STATUS.UP) {
-        queryClient.invalidateQueries('dist', data?.virtual_assistant?.name)
-        queryClient.invalidateQueries('privateDists')
+        refetchDist.mutateAsync(bot?.name!)
+        queryClient.invalidateQueries(['privateDists'])
       }
       if (
         data?.state !== DEPLOY_STATUS.UP &&
@@ -117,14 +117,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       ) {
         //FIX
         setTimeout(() => {
-          queryClient.invalidateQueries('deploy', data?.id)
+          queryClient.invalidateQueries(['deploy', data?.id])
         }, 5000)
       } else if (data?.error !== null) {
         setErrorPanel({
           type: 'deploy',
           msg: 'The assistant build failed, please try again later.',
         })
-        // queryClient.invalidateQueries('privateDists')
+        // queryClient.invalidateQueries(['privateDists'])
       }
     },
   }) //TODO transfer to useDeploy & add necessary conditions of invalidation

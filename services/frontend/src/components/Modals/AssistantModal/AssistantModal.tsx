@@ -52,7 +52,6 @@ export const AssistantModal = () => {
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
-
     reset({
       [NAME_ID]: data?.detail?.bot?.display_name,
       [DESC_ID]: data?.detail?.bot?.description,
@@ -89,7 +88,12 @@ export const AssistantModal = () => {
   useObserver('AssistantModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
+    <BaseModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      handleClose={closeModal}
+      onRequestClose={closeModal}
+    >
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div className={s.header}>
           <h4>
@@ -111,7 +115,6 @@ export const AssistantModal = () => {
         <Input
           label='Name'
           name={NAME_ID}
-          defaultValue={getValues().display_name}
           control={control}
           rules={{
             required: validationSchema.global.required,
@@ -125,7 +128,6 @@ export const AssistantModal = () => {
           <TextArea
             name={DESC_ID}
             control={control}
-            defaultValue={getValues().description}
             label='Description'
             withCounter
             rules={{

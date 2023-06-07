@@ -1,9 +1,9 @@
 import { mockSkills } from 'mocks/database/mockSkills'
-import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { BotInfoInterface, TTopbar } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants } from 'hooks/api'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
@@ -17,8 +17,8 @@ interface Props {
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
-  const queryState = useQueryClient().getQueryState(['dist', distName])
-  const dist = queryState?.data as BotInfoInterface | undefined
+  const { getDist } = useAssistants()
+  const dist = getDist({ distName })?.data
 
   const handleWelcomeClick = () => {}
   const handleRenameClick = () => {

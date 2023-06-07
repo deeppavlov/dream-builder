@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
@@ -15,13 +14,10 @@ export const DeleteSkillModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
-
-  const queryClient = useQueryClient()
   const { getDist } = useAssistants()
   const { deleteComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-
-  const { data: bot } = getDist({ distName: distName! })
+  const { data: bot } = getDist({ distName })
 
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
@@ -44,20 +40,14 @@ export const DeleteSkillModal = () => {
         {
           onSuccess: () => {
             isDeployed &&
-              deleteDeployment
-                .mutateAsync(bot)
-                .then(() => {
-                  queryClient.invalidateQueries('dist')
-                })
-                .then(() => {
-                  // unpublish
-                  const name = bot?.name
-                  const visibility =
-                    VISIBILITY_STATUS.PRIVATE as TDistVisibility
-                  const publishState = bot.publish_state !== null
-                  publishState &&
-                    changeVisibility.mutateAsync({ name, visibility }) //FIX
-                })
+              deleteDeployment.mutateAsync(bot).then(() => {
+                // unpublish
+                const name = bot?.name
+                const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+                const publishState = bot.publish_state !== null
+                publishState &&
+                  changeVisibility.mutateAsync({ name, visibility }) //FIX
+              })
           },
         }
       ),

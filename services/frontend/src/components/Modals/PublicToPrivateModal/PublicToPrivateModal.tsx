@@ -44,7 +44,7 @@ export const PublicToPrivateModal = () => {
       changeVisibility
         .mutateAsync({ name, visibility })
         .then(() => {
-          queryClient.invalidateQueries('publicDists')
+          queryClient.invalidateQueries(['publicDists'])
           setIsOpen(false)
         })
         .then(() => {

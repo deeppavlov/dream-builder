@@ -31,40 +31,38 @@ export const Table: FC<TableProps> = ({
   assistants,
 }) => {
   return (
-    <>
-      <div className={s.scroll}>
-        <table className={s.table}>
-          <thead className={s.thead}>
-            <tr>
-              {checkbox && (
-                <th className={s.checkboxArea}>
-                  <Checkbox />
-                  <button>
-                    <Arrow />
-                  </button>
-                </th>
-              )}
-              <th className={s.th}>{first ? first : 'Name'}</th>
-              <th className={s.th}>{second ? second : 'Author'}</th>
-              <th className={s.th}>{third ? third : 'Description'}</th>
-              {assistants && (
-                <th className={s.th}>{fourth ? fourth : 'Visibility'}</th>
-              )}
-
-              {!withoutDate && (
-                <th className={s.th}>{fifth ? fifth : 'Created'}</th>
-              )}
-              <th className={s.th}>{sixth ? sixth : 'Actions'}</th>
-            </tr>
-          </thead>
-          {addButton}
-          <tbody className={s.body}>
-            {React.Children.map(children, child =>
-              cloneElement(<>{child}</>, { checkbox })
+    <div className={s.scroll}>
+      <table className={s.table}>
+        <thead className={s.thead}>
+          <tr>
+            {checkbox && (
+              <th className={s.checkboxArea}>
+                <Checkbox />
+                <button>
+                  <Arrow />
+                </button>
+              </th>
             )}
-          </tbody>
-        </table>
-      </div>
-    </>
+            <th className={s.th}>{first ? first : 'Name'}</th>
+            <th className={s.th}>{second ? second : 'Author'}</th>
+            <th className={s.th}>{third ? third : 'Description'}</th>
+            {assistants && (
+              <th className={s.th}>{fourth ? fourth : 'Visibility'}</th>
+            )}
+
+            {!withoutDate && (
+              <th className={s.th}>{fifth ? fifth : 'Created'}</th>
+            )}
+            <th className={s.th}>{sixth ? sixth : 'Actions'}</th>
+          </tr>
+        </thead>
+        {addButton}
+        <tbody className={s.body}>
+          {React.Children.map(children, child =>
+            cloneElement(<>{child}</>, { checkbox })
+          )}
+        </tbody>
+      </table>
+    </div>
   )
 }

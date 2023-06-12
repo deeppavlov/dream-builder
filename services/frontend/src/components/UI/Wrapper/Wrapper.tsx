@@ -119,9 +119,7 @@ export const Wrapper: FC<Props> = ({
           {subWrapper && (
             <div className={cx('wrapper', 'subWrapper')}>
               <div className={s.header}>
-                <p className={cx('annotation', 'subWrapper')}>
-                  Recommended Templates
-                </p>
+                <p className={s.annotation}>Recommended Templates</p>
                 {amount && (
                   <div className={s.btns_area}>
                     {showAll && (

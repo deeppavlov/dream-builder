@@ -24,7 +24,19 @@
     }
 
     .subWrapper {
+      padding: 12px;
       overflow: hidden;
+
+      tbody:last-child td,
+      th {
+        &:first-child {
+          padding-left: 12px !important;
+        }
+
+        &:last-child {
+          padding-right: 12px !important;
+        }
+      }
     }
   }
   &.limiter {
@@ -84,12 +96,8 @@
   align-items: center;
 }
 .annotation {
-  @include b2;
-  color: $text1;
-}
-.annotation.subWrapper {
   @include t3;
-  padding: 0;
+  color: $text3;
 }
 .header.annotationFlex {
   justify-content: space-between;

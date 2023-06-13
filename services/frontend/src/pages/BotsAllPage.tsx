@@ -1,24 +1,22 @@
+import { useUIOptions } from 'context'
 import { Toaster } from 'react-hot-toast'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
-import { DistList } from '../components/DistList/DistList'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Main } from '../components/Main/Main'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import { useDisplay } from '../context/DisplayContext'
-import { useAssistants } from '../hooks/useAssistants'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { consts } from '../utils/consts'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { DistList } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import {
+  AssistantModal,
+  DeployNotificationModal,
+  SignInModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const BotsAllPage = () => {
   const { fetchPublicDists } = useAssistants()
   const publicDists = fetchPublicDists()
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
   return (
     <>
@@ -30,9 +28,12 @@ export const BotsAllPage = () => {
             <>
               {isTableView ? (
                 <Table assistants>
+                  {publicDists?.isLoading && (
+                    <TableRowsLoader rowsCount={6} colCount={6} />
+                  )}
                   <DistList
                     view='table'
-                    dists={publicDists?.data}
+                    dists={publicDists?.data!}
                     type='public'
                   />
                 </Table>
@@ -43,7 +44,7 @@ export const BotsAllPage = () => {
                   )}
                   <DistList
                     view='cards'
-                    dists={publicDists?.data}
+                    dists={publicDists?.data!}
                     type='public'
                     size='big'
                   />

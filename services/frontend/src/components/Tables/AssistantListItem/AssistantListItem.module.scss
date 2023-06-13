@@ -1,0 +1,142 @@
+.tr {
+  border-top: 1px solid #f0f0f3;
+  height: 64px;
+
+  .td {
+    &:nth-child(2) {
+      padding-left: 0;
+    }
+    &:first-child {
+      padding-left: 24px;
+    }
+    &:last-child {
+      padding-right: 24px;
+    }
+    border: none;
+    text-align: start;
+    background: #fff;
+    color: #313030;
+    padding: 0px 12px;
+    .fillIcon {
+      fill: rgba(0, 0, 0, 0.7);
+      @include icon_size_24;
+    }
+    .strokeIcon {
+      stroke: rgba(0, 0, 0, 0.7);
+      @include icon_size_24;
+    }
+  }
+  .checkboxArea {
+    background: #fff;
+    padding-left: 24px;
+  }
+}
+.description {
+  display: flex;
+  align-items: start;
+  max-height: 64px;
+  width: 100%;
+  max-width: fit-content;
+  color: rgba(0, 0, 0, 0.7);
+  @include b3;
+  .tooltips {
+    @include tooltip;
+    @include tooltip_for_description;
+  }
+  max-height: 44px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.author {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  
+  img {
+    @include icon_size_24;
+    border-radius: 50%;
+  }
+  svg {
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    max-height: 24px;
+  }
+  p {
+    display: flex;
+    align-items: center;
+    color: #3300ff;
+    @include b3;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.name {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  width: 170px;
+  max-width: 170px;
+  .botName {
+    color: rgba(0, 0, 0, 0.7);
+    @include t4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .params {
+    flex-wrap: nowrap;
+    color: rgba(0, 0, 0, 0.7);
+    @include b5;
+  }
+}
+.date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: fit-content;
+  padding-top: 12px;
+  .ddmmyyyy {
+    white-space: nowrap;
+    color: rgba(0, 0, 0, 0.7);
+    @include t4;
+  }
+  .time {
+    @include b4;
+    color: rgba(0, 0, 0, 0.7);
+  }
+}
+.btns_area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+// @media (max-width: 1280px) {
+//   .description {
+//     width: 190px;
+//   }
+// }
+// @media (max-width: 1440px) {
+//   .description {
+//     width: 300px;
+//   }
+// }
+// @media (min-width: 1600px) {
+//   .description {
+//     width: 600px;
+//   }
+// }
+// @media (min-width: 1920px) {
+//   .description {
+//     width: 900px;
+//   }
+// }

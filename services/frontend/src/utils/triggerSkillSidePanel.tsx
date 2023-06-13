@@ -1,8 +1,7 @@
-import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
-import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
-import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { ISkill, SkillAvailabilityType } from '../types/types'
+import { ISkill, SkillAvailabilityType } from 'types/types'
+import { GenerativeSkillEditor } from 'components/Modules'
+import { IntentResponderSidePanel, SkillSidePanel } from 'components/Panels'
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { trigger } from './events'
 
 interface Props {

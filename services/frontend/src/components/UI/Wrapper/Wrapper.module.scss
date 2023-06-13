@@ -1,0 +1,133 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  width: 100%;
+  border-radius: 20px;
+  border: 2px solid $text3;
+  padding: 24px;
+  gap: 16px;
+  background-color: $bcgrnd3;
+  &.fullHeight {
+    height: 100%;
+  }
+  &.fitScreen {
+    min-height: 392px;
+    height: 100%; //500px;
+    flex: 1 1 auto;
+    overflow: hidden;
+
+    &.forTable {
+      min-height: 65%;
+    }
+
+    .subWrapper {
+      padding: 12px;
+      overflow: hidden;
+
+      tbody:last-child td,
+      th {
+        &:first-child {
+          padding-left: 12px !important;
+        }
+
+        &:last-child {
+          padding-right: 12px !important;
+        }
+      }
+    }
+  }
+  &.limiter {
+    max-height: 550px; //нужно найти другой способ
+    flex: 0 0 auto;
+  }
+  &.primary {
+    border-color: $purple;
+  }
+  &.skills {
+    border-color: $orange;
+  }
+  .close {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    svg {
+      cursor: pointer;
+      stroke: #1f35ff4d;
+      @include icon_size_24;
+      @include btn_close_behavior;
+    }
+  }
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    .title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      @include t1;
+    }
+    .btns_area {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      min-width: fit-content;
+      .ghost_btn {
+        padding: 7px 12px;
+        @include ghost_btn;
+        @include btn_ghost_behavior;
+      }
+      .amount {
+        color: rgba(0, 0, 0, 0.9);
+        @include t2;
+      }
+    }
+  }
+}
+.left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.annotation {
+  @include t3;
+  color: $text3;
+}
+.header.annotationFlex {
+  justify-content: space-between;
+  gap: 16px;
+}
+.forCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 350px;
+  max-width: 450px;
+  &:hover {
+    background-color: #fff;
+    cursor: pointer;
+  }
+}
+.subWrapper {
+  @include t3;
+  color: $text3;
+  background-color: #fff;
+  padding: 16px 16px;
+  border: none;
+}
+
+@media (height < 915px) {
+  .wrapper.fitScreen.forTable {
+    min-height: 70%;
+  }
+}
+@media (height < 872px) {
+  .wrapper.fitScreen.forTable {
+    min-height: 88%;
+  }
+}

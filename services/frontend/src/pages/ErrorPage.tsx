@@ -1,5 +1,5 @@
-import { useRouteError } from 'react-router'
-import PageErrorHandler from '../components/PageErrorHandler/PageErrorHandler'
+import { useRouteError } from 'react-router-dom'
+import { PageErrorHandler } from 'components/UI'
 
 const ErrorPage = () => {
   let error = useRouteError() as any

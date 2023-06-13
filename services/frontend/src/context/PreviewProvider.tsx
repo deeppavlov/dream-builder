@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { IPreviewContext } from '../types/types'
+import { IPreviewContext } from 'types/types'
 
 interface ProviderProps {
   children?: ReactNode

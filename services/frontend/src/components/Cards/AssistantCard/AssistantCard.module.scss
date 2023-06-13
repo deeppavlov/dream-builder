@@ -1,0 +1,150 @@
+.assistantCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  min-width: 275px;
+  max-width: 280px;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  background-color: $bcgrnd1;
+  overflow: hidden;
+  @include min_max_height;
+  @include bot-card_behavior;
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-height: 40px;
+    min-height: 40px;
+    width: 100%;
+    padding: 8px 16px;
+    background-color: $bcgrnd5;
+    color: $text1;
+    white-space: nowrap;
+    @include t4;
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 16px;
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .desc {
+    height: 88px;
+    max-height: 88px;
+    color: $text2;
+    @include hide_text;
+    -webkit-line-clamp: 4; 
+    @include b3;
+  }
+  .dateAndVersion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $text2;
+    @include b3;
+
+    svg {
+      @include icon_size_24;
+    }
+  }
+
+  .resources {
+    padding: 0 16px;
+  }
+
+  .btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    .container {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      flex-direction: row;
+    }
+  }
+}
+
+.tooltips {
+  @include tooltip;
+  @include tooltip_for_description;
+}
+.your {
+  position: relative;
+  @include min_max_height;
+  .header {
+    position: relative;
+    background-color: $purple;
+    color: $text4;
+  }
+  .header.deploying {
+    span {
+      z-index: 10;
+    }
+    background: linear-gradient(
+        0deg,
+        rgba(112, 0, 255, 0.4),
+        rgba(112, 0, 255, 0.4)
+      ),
+      #ffffff;
+    position: relative;
+    z-index: 2;
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: $purple;
+      top: 0;
+      left: 0;
+      animation: indeterminateAnimation 10s infinite linear;
+      z-index: 0;
+      transform-origin: 0% 50%;
+    }
+    @keyframes indeterminateAnimation {
+      0% {
+        transform: translateX(0) scaleX(0);
+      }
+      50% {
+        transform: translateX(0) scaleX(1);
+      }
+      100% {
+        transform: translateX(100%) scaleX(1);
+      }
+    }
+  }
+  .block {
+    gap: 4px;
+  }
+}
+.small {
+  min-width: 275px;
+  max-width: 280px;
+  @include min_max_height;
+  .desc {
+    max-height: 88px;
+    -webkit-line-clamp: 4;
+  }
+}
+.big {
+  max-width: 344px;
+  @include min_max_height;
+}

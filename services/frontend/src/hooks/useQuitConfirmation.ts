@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 interface Props {
   activeElement: React.RefObject<HTMLElement>
-  quitHandler: () => void
+  quitHandler: (continueExit: Function) => void
   isActive: boolean
   availableSelectors?: string[]
 }
@@ -12,10 +12,19 @@ export const useQuitConfirmation = ({
   quitHandler,
   isActive,
   availableSelectors,
-  
 }: Props) => {
+  const addClickEventListener = () =>
+    window.addEventListener('click', handleWindowClick, true)
+
+  const removeClickEventListener = () =>
+    window.removeEventListener('click', handleWindowClick, true)
+
+  const continueExit = (e: MouseEvent) => {
+    removeClickEventListener()
+    e.target?.dispatchEvent(new (e as any).constructor(e.type, e))
+  }
+
   const handleWindowClick = (e: MouseEvent) => {
-    
     const quitModals = [
       ...document.querySelectorAll('[data-modal-type="quit"]'),
     ]
@@ -38,16 +47,14 @@ export const useQuitConfirmation = ({
     if (!isQuitModal && isOutsideElement) {
       e.preventDefault()
       e.stopPropagation()
-      quitHandler()
+      quitHandler(() => continueExit(e))
     }
   }
-  useEffect(() => {
-    if (isActive) {
-      window.addEventListener('click', handleWindowClick, true)
-    } else {
-      window.removeEventListener('click', handleWindowClick, true)
-    }
 
-    return () => window.removeEventListener('click', handleWindowClick, true)
+  useEffect(() => {
+    if (isActive) addClickEventListener()
+    else removeClickEventListener()
+
+    return () => removeClickEventListener()
   }, [isActive])
 }

@@ -1,0 +1,44 @@
+.settings {
+  position: relative;
+  cursor: pointer;
+  width: $sidebar-width;
+  @include sidebar_btn_height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    cursor: pointer;
+    fill: #8d96b5;
+    @include icon_size_24;
+  }
+
+  &:hover,
+  &:active {
+    @extend .active;
+  }
+}
+
+.active {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    background-color: $yellow;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+
+  &:hover {
+    &::before {
+      background-color: $text5;
+    }
+  }
+
+  svg {
+    fill: $text5;
+  }
+}

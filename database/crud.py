@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
+from fastapi.logger import logger
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -271,6 +272,7 @@ def create_component(
     gpu_usage: Optional[str] = None,
     description: Optional[str] = None,
     prompt: Optional[str] = None,
+    prompt_goals: Optional[str] = None,
     lm_service_id: Optional[int] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
@@ -296,6 +298,7 @@ def create_component(
             group=group,
             endpoint=endpoint,
             prompt=prompt,
+            prompt_goals=prompt_goals,
             lm_service_id=lm_service_id,
             # build_args=build_args,
             # compose_override=compose_override,
@@ -522,7 +525,7 @@ def get_debug_assistant_chat_url(db: Session) -> str:
 def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_name: str) -> models.DialogSession:
     virtual_assistant = get_virtual_assistant_by_name(db, virtual_assistant_name)
 
-    db.scalar(
+    invalidated_sessions = db.scalars(
         update(models.DialogSession)
         .where(
             and_(
@@ -532,7 +535,9 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
         )
         .values(is_active=False)
         .returning(models.DialogSession)
-    )
+    ).all()
+    logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
+
     dialog_session = db.scalar(
         insert(models.DialogSession)
         .values(user_id=user_id, deployment_id=virtual_assistant.deployment.id, is_active=True)
@@ -554,8 +559,12 @@ def update_dialog_session(db: Session, dialog_session_id: int, agent_dialog_id: 
 
 
 # LM SERVICE
-def get_all_lm_services(db: Session) -> [models.LmService]:
-    return db.scalars(select(models.LmService)).all()
+def get_all_lm_services(db: Session, hosted_only: bool = True) -> [models.LmService]:
+    filter_kwargs = {}
+    if hosted_only:
+        filter_kwargs["is_hosted"] = True
+
+    return db.scalars(select(models.LmService).filter_by(**filter_kwargs)).all()
 
 
 def get_lm_service(db: Session, id: int) -> Optional[models.LmService]:

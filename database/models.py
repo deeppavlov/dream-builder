@@ -130,7 +130,9 @@ class LmService(Base):
     id = Column(Integer, index=True, primary_key=True)
 
     name = Column(String, nullable=False)
-    default_port = Column(Integer, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
+    default_generative_config = Column(String, nullable=True)
     display_name = Column(String, nullable=False)
     size = Column(String)
     gpu_usage = Column(String)
@@ -140,6 +142,9 @@ class LmService(Base):
 
     api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
     api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
+
+    is_hosted = Column(Boolean, nullable=False)
+    is_maintained = Column(Boolean, nullable=False)
 
 
 class Deployment(Base):
@@ -248,6 +253,7 @@ class Component(Base):
     endpoint = Column(String)
 
     prompt = Column(String, nullable=True)
+    prompt_goals = Column(String, nullable=True)
     lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
     lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
 
@@ -324,17 +330,20 @@ def pre_populate_virtual_assistant(target, connection, **kw):
 
 @listens_for(PublishRequest.__table__, "after_create")
 def pre_populate_publish_request(target, connection, **kw):
-    _pre_populate_from_tsv(
-        settings.db.initial_data_dir / "publish_request.tsv",
-        target,
-        connection,
-        map_value_types={"is_confirmed": lambda x: bool(int(x))},
-    )
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "publish_request.tsv", target, connection)
 
 
 @listens_for(LmService.__table__, "after_create")
 def pre_populate_lm_service(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "lm_service.tsv", target, connection)
+    _pre_populate_from_tsv(
+        settings.db.initial_data_dir / "lm_service.tsv",
+        target,
+        connection,
+        map_value_types={
+            "is_hosted": lambda x: bool(int(x)),
+            "is_maintained": lambda x: bool(int(x)),
+        },
+    )
 
 
 @listens_for(Deployment.__table__, "after_create")

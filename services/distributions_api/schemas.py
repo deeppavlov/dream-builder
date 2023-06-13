@@ -46,6 +46,7 @@ class LmServiceRead(BaseOrmModel):
     description: str
     project_url: str
     api_key: Optional[ApiKeyRead]
+    is_maintained: bool
 
 
 class DeploymentBaseRead(BaseOrmModel):
@@ -71,6 +72,7 @@ class ComponentRead(BaseOrmModel):
     ram_usage: Optional[str]
     gpu_usage: Optional[str]
     prompt: Optional[str]
+    prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
@@ -90,6 +92,7 @@ class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
     prompt: Optional[str]
+    prompt_goals: Optional[str]
     lm_service_id: Optional[int]
 
 
@@ -208,6 +211,7 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
+    active_skill: Optional[str]
 
 
 # class UserApiToken(BaseOrmModel):

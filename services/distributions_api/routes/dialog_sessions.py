@@ -76,8 +76,9 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
                 author = "bot"
 
             text = utterance["text"]
+            active_skill = utterance.get("active_skill")
 
-            history.append({"author": author, "text": text})
+            history.append({"author": author, "text": text, "active_skill": active_skill})
 
     return history
 
@@ -140,7 +141,7 @@ async def send_dialog_session_message(
 
         if payload.lm_service_id:
             lm_service = crud.get_lm_service(db, payload.lm_service_id)
-            lm_service_url = f"http://{lm_service.name}:{lm_service.default_port}/respond"
+            lm_service_url = f"http://{lm_service.name}:{lm_service.port}/respond"
         else:
             lm_service_url = None
 

@@ -64,6 +64,7 @@ async def create_virtual_assistant(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }
@@ -292,6 +293,7 @@ async def clone_dist(
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
+                "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
                 "description": dream_dist.pipeline.skills[skill.component.name].component.description,
             }
@@ -333,6 +335,7 @@ async def clone_dist(
                 gpu_usage=dream_component.component.gpu_usage,
                 description=dream_component.component.description,
                 prompt=dream_component.prompt,
+                prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
             )
             new_components.append(component)

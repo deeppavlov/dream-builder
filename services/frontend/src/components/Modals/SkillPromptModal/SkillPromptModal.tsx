@@ -224,24 +224,18 @@ const SkillPromptModal = () => {
                   withoutSearch
                 />
                 {selectedModel && (
-                  <div>
-                    <Accordion
-                      title='Model Details:'
-                      type='description'
-                      isActive
-                    >
-                      <p className={s.tip}>
-                        <span>{selectedModel?.description}</span>
-                        <a
-                          href={selectedModel?.project_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        >
-                          {selectedModel?.project_url}
-                        </a>
-                      </p>
-                    </Accordion>
-                  </div>
+                  <Accordion title='Model Details:' type='description' isActive>
+                    <p className={s.tip}>
+                      <span>{selectedModel?.description}</span>
+                      <a
+                        href={selectedModel?.project_url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                      >
+                        {selectedModel?.project_url}
+                      </a>
+                    </p>
+                  </Accordion>
                 )}
               </div>
               <TextArea
@@ -249,6 +243,7 @@ const SkillPromptModal = () => {
                 label='Enter prompt:'
                 tokenizerModel={selectedModel?.display_name as any}
                 defaultValue={skill?.prompt}
+                countType='tokenizer'
                 withCounter
                 fullHeight
                 resizable={false}
@@ -264,7 +259,7 @@ const SkillPromptModal = () => {
                 triggerField={triggerField}
                 props={{
                   placeholder:
-                    "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
+                    "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space",
                 }}
               />
             </div>

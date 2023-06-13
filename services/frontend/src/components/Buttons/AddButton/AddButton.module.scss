@@ -31,25 +31,21 @@
   left: 0;
   top: 60px;
   z-index: 1;
+
   .td {
     border: none;
-    height: 64px;
     background: #ffffff;
-    color: #313030;
-    padding: 16px 12px;
+    padding: 0 12px 12px 0 !important;
   }
-  gap: 32px;
-  height: 64px;
-  padding: 12px;
+
   .forTable {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 0px 24px;
     gap: 10px;
     width: 100%;
-    height: 48px;
+    height: 36px;
     background: #e6e8f0;
     border-radius: 8px;
     @include btn_add-bot-card_behavior(8);

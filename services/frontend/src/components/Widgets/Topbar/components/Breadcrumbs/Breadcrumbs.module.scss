@@ -23,6 +23,9 @@
   cursor: pointer;
   margin: 1px 8px;
 
+  max-width: 250px; //FIX
+  overflow: hidden;
+  text-overflow: ellipsis;
   &:hover {
     color: $primary1;
     border-bottom: 1px solid $primary1;

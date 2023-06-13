@@ -8,14 +8,14 @@
   flex-direction: row;
   text-align: start;
   gap: 8px;
-  @include lnks_n_btns5;
   color: $text1;
   cursor: pointer;
   z-index: 11;
+  @include lnks_n_btns5;
 
-  &:has(.link) {
-    padding: 0;
-  }
+  // &:has(.link) {
+  //   padding: 0;
+  // }
 
   &:hover {
     background-color: $bcgrnd3;
@@ -41,14 +41,13 @@
 .link {
   width: 100%;
   height: 100%;
-  padding: 12px;
+  padding: 0;
   display: flex;
   flex-direction: row;
   text-align: start;
   justify-content: flex-start;
   gap: 8px;
 }
-
 .dark {
   .icon path {
     stroke: $text2;

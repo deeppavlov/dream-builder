@@ -354,6 +354,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             {hereIsDummy && <DummyAlert />}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
+                spellCheck='false'
                 className={s.textarea}
                 placeholder='Type...'
                 {...register('message', {

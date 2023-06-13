@@ -31,6 +31,7 @@ const SmallInput = ({
         value={value}
         disabled={disabled}
         onChange={handleInputChange}
+        spellCheck='false'
       />
     </label>
   )

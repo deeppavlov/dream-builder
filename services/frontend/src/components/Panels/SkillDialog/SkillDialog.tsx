@@ -186,6 +186,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
                 rows={4}
                 placeholder='Type...'
                 {...register('message')}
+                spellCheck='false'
               />
             </div>
 

@@ -95,6 +95,7 @@ export const Input: FC<InputProps> = ({
           onBlur={handleBlur}
           onChange={handleChange}
           className={cx('field', big && 'big')}
+          spellCheck='false'
         />
         {withEnterButton && (
           <div className={cx('submit', isEnter && 'submit-active')}>

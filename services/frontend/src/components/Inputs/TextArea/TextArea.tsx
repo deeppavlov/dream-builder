@@ -185,6 +185,7 @@ export const TextArea: FC<TextAreaProps> = ({
           onBlur={handleBlur}
           onChange={handleChange}
           className={s.field}
+          spellCheck='false'
         >
           {field.value}
         </textarea>

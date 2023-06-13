@@ -159,6 +159,7 @@ export const CopilotSidePanel = () => {
 
         <form onSubmit={handleSubmit(handleSend)}>
           <textarea
+            spellCheck='false'
             onKeyDown={handleKeyDown}
             className={s.textarea}
             placeholder='Describe here your use case and Deepy will help you to generate a prompt for it.'

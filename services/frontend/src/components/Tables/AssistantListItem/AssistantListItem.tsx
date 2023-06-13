@@ -67,7 +67,11 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
   const isDeepyPavlova =
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.sub
-  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
+  const author = isDeepyPavlova
+    ? 'Dream Builder Team'
+    : bot?.author?.fullname
+    ? bot?.author?.fullname
+    : bot?.author?.given_name + ' ' + bot?.author?.family_name
 
   const handleAssistantListItemClick = () => {
     trigger(TRIGGER_RIGHT_SP_EVENT, {
@@ -136,6 +140,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
       }
     },
   })
+
   return (
     <tr
       className={s.tr}

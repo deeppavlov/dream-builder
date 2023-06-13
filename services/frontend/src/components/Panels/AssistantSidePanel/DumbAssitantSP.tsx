@@ -42,7 +42,11 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
   const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
-  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.fullname!
+  const author = isDeepyPavlova
+    ? 'Dream Builder Team'
+    : bot?.author?.fullname
+    ? bot?.author?.fullname
+    : bot?.author?.given_name + ' ' + bot?.author?.family_name
 
   const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const { name } = useParams()

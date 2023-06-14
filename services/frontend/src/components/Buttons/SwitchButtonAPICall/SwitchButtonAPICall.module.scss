@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  .switch {
+    padding: 12px;
+    gap: 4px;
+    border: 1px solid $text3;
+    background-color: $bcgrnd1;
+    color: $text2;
+    @include lnks_n_btns3;
+    color: rgba(0, 0, 0, 0.7);
+    &.left {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+      border-right: none;
+    }
+    &.middle {
+      &.leftActive {
+        border-left: 1px solid $text5;
+      }
+      &.rightActive {
+        border-right: 1px solid $text5;
+      }
+    }
+    &.right {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      border-left: none;
+    }
+
+    svg {
+      stroke: $text2;
+      @include icon_size_24;
+    }
+    &:hover,
+    &:focus-visible,
+    &.active {
+      svg {
+        stroke: $text5;
+      }
+      border-color: $text5;
+      color: $text5;
+    }
+  }
+}

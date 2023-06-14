@@ -1,28 +1,25 @@
+import { useAuth, useUIOptions } from 'context'
 import { Toaster } from 'react-hot-toast'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
-import { DistList } from '../components/DistList/DistList'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Main } from '../components/Main/Main'
-import { Modal } from '../components/Modal/Modal'
-import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
-import { useAuth } from '../context/AuthProvider'
-import { useDisplay } from '../context/DisplayContext'
-import { useAssistants } from '../hooks/useAssistants'
-import { AddButton } from '../ui/AddButton/AddButton'
-import { Container } from '../ui/Container/Container'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { consts } from '../utils/consts'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { AddButton } from 'components/Buttons'
+import { DistList } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import {
+  AssistantModal,
+  CongratsModal,
+  DeleteAssistantModal,
+  DeployNotificationModal,
+  PublishAssistantModal,
+  ShareAssistantModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const UsersBotsPage = () => {
   const auth = useAuth()
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const { fetchPrivateDists } = useAssistants()
   const privateDists = fetchPrivateDists()
 
@@ -50,6 +47,9 @@ export const UsersBotsPage = () => {
                     />
                   }
                 >
+                  {privateDists?.isLoading && (
+                    <TableRowsLoader rowsCount={6} colCount={6} />
+                  )}
                   <DistList
                     view='table'
                     dists={privateDists?.data}
@@ -77,8 +77,8 @@ export const UsersBotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
-        <ShareModal />
-        <Modal />
+        <ShareAssistantModal />
+        <CongratsModal />
         <DeployNotificationModal />
       </Main>
       <Toaster />

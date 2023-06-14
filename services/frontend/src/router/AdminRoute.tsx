@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import store from 'store2'
-import { UserInterface } from '../types/types'
+import { UserInterface } from 'types/types'
 
 export const AdminRoute = ({ children }: any) => {
   // If not admin redirect to main page

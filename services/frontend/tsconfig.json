@@ -15,11 +15,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "noImplicitAny": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "baseUrl": "./src",
+    "importsNotUsedAsValues": "remove"
   },
   "include": ["src", "config.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "plugins": [{ "name": "typescript-plugin-css-modules" }],
-  
+  "plugins": [{ "name": "typescript-plugin-css-modules" }]
 }

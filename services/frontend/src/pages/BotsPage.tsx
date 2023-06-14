@@ -1,32 +1,35 @@
+import { useAuth, useUIOptions } from 'context'
 import { Toaster } from 'react-hot-toast'
-import { AssistantModal } from '../components/AssistantModal/AssistantModal'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import CardsLoader from '../components/CardsLoader/CardsLoader'
-import { DeleteAssistantModal } from '../components/DeleteAssistantModal/DeleteAssistantModal'
-import { DeployNotificationModal } from '../components/DeployModal/DeployNotificationModal'
-import { DistList } from '../components/DistList/DistList'
-import { ErrorHandler } from '../components/ErrorHandler/ErrorHandler'
-import { Main } from '../components/Main/Main'
-import { Modal } from '../components/Modal/Modal'
-import { Placeholder } from '../components/PlaceHolder/PlaceHolder'
-import { PublicToPrivateModal } from '../components/PublicToPrivateModal/PublicToPrivateModal'
-import { PublishAssistantModal } from '../components/PublishAssistantModal/PublishAssistantModal'
-import { ShareModal } from '../components/ShareModal/ShareModal'
-import { SignInModal } from '../components/SignInModal/SignInModal'
-import { useAuth } from '../context/AuthProvider'
-import { useDisplay } from '../context/DisplayContext'
-import { useAssistants } from '../hooks/useAssistants'
-import { RoutesList } from '../router/RoutesList'
-import { AddButton } from '../ui/AddButton/AddButton'
-import { Container } from '../ui/Container/Container'
-import { Slider } from '../ui/Slider/Slider'
-import { Table } from '../ui/Table/Table'
-import { Wrapper } from '../ui/Wrapper/Wrapper'
-import { consts } from '../utils/consts'
+import { RoutesList } from 'router/RoutesList'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { AddButton } from 'components/Buttons'
+import { DistList } from 'components/Helpers'
+import { CardsLoader, TableRowsLoader } from 'components/Loaders'
+import {
+  AssistantModal,
+  CongratsModal,
+  DeleteAssistantModal,
+  DeployNotificationModal,
+  PublicToPrivateModal,
+  PublishAssistantModal,
+  ShareAssistantModal,
+  SignInModal,
+} from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import {
+  Container,
+  ErrorHandler,
+  Main,
+  Placeholder,
+  Slider,
+  Table,
+  Wrapper,
+} from 'components/UI'
 
 export const BotsPage = () => {
-  const { options } = useDisplay()
-  const isTableView = options.get(consts.IS_TABLE_VIEW)
+  const { UIOptions } = useUIOptions()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const auth = useAuth()
   const { fetchPublicDists, fetchPrivateDists } = useAssistants()
   const publicDists = fetchPublicDists()
@@ -41,6 +44,8 @@ export const BotsPage = () => {
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
+          fitScreen={isTableView}
+          table
         >
           {publicDists?.error ? (
             <ErrorHandler error={publicDists?.error} />
@@ -51,6 +56,9 @@ export const BotsPage = () => {
                   assistants
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
+                  {publicDists?.isLoading && (
+                    <TableRowsLoader rowsCount={4} colCount={6} />
+                  )}
                   <DistList
                     view='table'
                     dists={publicDists?.data}
@@ -91,11 +99,14 @@ export const BotsPage = () => {
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>
-                      You assistants will appear here
+                      Your assistants will appear here
                     </Placeholder>
                   ) : undefined
                 }
               >
+                {publicDists?.isLoading && (
+                  <TableRowsLoader rowsCount={2} colCount={6} />
+                )}
                 <DistList view='table' dists={privateDists?.data} type='your' />
               </Table>
             </>
@@ -115,7 +126,7 @@ export const BotsPage = () => {
                   />
                 )}
                 {privateDists?.data?.length === 0 || !auth?.user ? (
-                  <Placeholder>You assistants will appear here</Placeholder>
+                  <Placeholder>Your assistants will appear here</Placeholder>
                 ) : null}
               </Slider>
             </Container>
@@ -125,9 +136,9 @@ export const BotsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
-        <ShareModal />
+        <ShareAssistantModal />
         <PublicToPrivateModal />
-        <Modal />
+        <CongratsModal />
         <SignInModal />
         <DeployNotificationModal />
       </Main>

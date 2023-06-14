@@ -1,9 +1,8 @@
 import { Outlet, useParams } from 'react-router-dom'
-import { BaseSidePanel } from '../components/BaseSidePanel/BaseSidePanel'
-import { DeepyHelperTab } from '../components/Sidebar/components/DeepyHelperTab'
-import { SettingsTab } from '../components/Sidebar/components/SettingsTab'
-import { Sidebar } from '../components/Sidebar/Sidebar'
-import { Topbar } from '../components/Topbar/Topbar'
+import { AccessTokensModal } from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Sidebar, Topbar } from 'components/Widgets'
+import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
 
 const Root = () => {
   const { name } = useParams()
@@ -32,6 +31,7 @@ const Root = () => {
       )}
       <Outlet />
       <BaseSidePanel transition='left' />
+      <AccessTokensModal />
     </>
   )
 }

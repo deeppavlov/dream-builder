@@ -479,9 +479,9 @@ class UserMethods:
             "Validation error while test_send_dialog_session_message"
         assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
             "Dummy skill answers"
-        print(f'send_message_response.json() = {send_message_response.json()}')
         assert "Paul" in send_message_response.json()["text"], \
-            "Skill answers incorrectly"
+            f"Skill answers incorrectly, {send_message_response.json()['text']}, "\
+            f"{send_message_response.json()['active_skill']['name']}"
 
     def get_dialog_session_history(self, dialog_session_id):
         get_dialog_history_response = requests.get(

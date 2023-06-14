@@ -288,7 +288,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 #
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
     def test_build_assistant_on_various_lm(self, lm_service_id):
@@ -333,7 +333,7 @@ class TestDistributions:
 
         deploy.delete_deployment(deployment_id)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self):
         name = public_va_names[0]

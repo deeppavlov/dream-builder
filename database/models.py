@@ -130,7 +130,8 @@ class LmService(Base):
     id = Column(Integer, index=True, primary_key=True)
 
     name = Column(String, nullable=False)
-    default_port = Column(Integer, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
     default_generative_config = Column(String, nullable=True)
     display_name = Column(String, nullable=False)
     size = Column(String)
@@ -142,7 +143,8 @@ class LmService(Base):
     api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
     api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
 
-    is_active = Column(Boolean, nullable=False)
+    is_hosted = Column(Boolean, nullable=False)
+    is_maintained = Column(Boolean, nullable=False)
 
 
 class Deployment(Base):
@@ -337,7 +339,10 @@ def pre_populate_lm_service(target, connection, **kw):
         settings.db.initial_data_dir / "lm_service.tsv",
         target,
         connection,
-        map_value_types={"is_active": lambda x: bool(int(x))},
+        map_value_types={
+            "is_hosted": lambda x: bool(int(x)),
+            "is_maintained": lambda x: bool(int(x)),
+        },
     )
 
 

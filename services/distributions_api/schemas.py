@@ -46,7 +46,7 @@ class LmServiceRead(BaseOrmModel):
     description: str
     project_url: str
     api_key: Optional[ApiKeyRead]
-    is_active: bool
+    is_maintained: bool
 
 
 class DeploymentBaseRead(BaseOrmModel):
@@ -92,6 +92,7 @@ class ComponentCreate(BaseModel):
     display_name: str
     description: Optional[str]
     prompt: Optional[str]
+    prompt_goals: Optional[str]
     lm_service_id: Optional[int]
 
 

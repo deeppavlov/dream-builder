@@ -154,9 +154,18 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
                 if service_env_card and service_env_card.get("GENERATIVE_SERVICE_URL"):
                     lm_service, _, _ = utils.parse_connector_url(service_env_card["GENERATIVE_SERVICE_URL"])
-                    # if lm_service != "transformers-lm-llama7bru":
                     lm_service_row = find_row(initial_secret["lm_service"], key="name", value=lm_service)
                     if lm_service_row:
+                        if not lm_service_row["is_hosted"]:
+                            logger.error(
+                                f"{component_path} is using LLM service {lm_service_row['name']} "
+                                "which is no longer hosted!"
+                            )
+                        elif not lm_service_row["is_maintained"]:
+                            logger.warning(
+                                f"{component_path} is using LLM service {lm_service_row['name']} "
+                                "which is no longer maintained!"
+                            )
                         lm_service_id = lm_service_row["id"]
 
                     prompt_file = service_env_card["PROMPT_FILE"]
@@ -280,4 +289,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
 if __name__ == "__main__":
     args = parse_args()
+
+    logger.info(f"Generating initial data\nDream path: {args.dream}\nSecret settings file: {args.initial_file}")
     run(args.dream, args.initial_file, args.output_dir)
+    logger.info(f"Finished creating initial data tsv files in {args.output_dir}")

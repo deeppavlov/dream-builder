@@ -29,16 +29,7 @@ SessionLocal = init_db(
     settings.db.host,
     settings.db.port,
     settings.db.name,
-    # populate_initial_data=True,
 )
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 dream_git = GitManager(
@@ -86,12 +77,13 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
     now = datetime.now()
     logger.info(f"Deployment background task for {dist.name} started")
 
-    db = next(get_db())
-    with db.begin():
-        logger.info(f"Checking available ports")
-        port = crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
-        logger.info(f"Found available port {port}")
-        crud.update_deployment(db, deployment_id, chat_port=port)
+    with SessionLocal() as db:
+        with db.begin():
+            logger.info(f"Checking available ports")
+            port = crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
+            logger.info(f"Found available port {port}")
+            deployment = crud.update_deployment(db, deployment_id, chat_port=port)
+            chat_host, chat_port = deployment.chat_host, deployment.chat_port
 
     deployer = SwarmDeployer(
         user_identifier=dist.name,
@@ -104,24 +96,24 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
     )
 
     for state, updates, err in deployer.deploy(dist):
-        db = next(get_db())
+        with SessionLocal() as db:
+            with db.begin():
+                if err:
+                    err = err.dict()
+                    logger.error(
+                        f"Deployment background task for {dist.name} failed after {datetime.now() - now} with {err}"
+                    )
+                else:
+                    logger.info(f"Deployment background task state changed to {state}")
+
+                crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
+
+    agent_is_up = ping_deployed_agent(chat_host, chat_port)
+
+    with SessionLocal() as db:
         with db.begin():
-            if err:
-                err = err.dict()
-                logger.error(
-                    f"Deployment background task for {dist.name} failed after {datetime.now() - now} with {err}"
-                )
-            else:
-                logger.info(f"Deployment background task state changed to {state}")
-
-            deployment = crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
-
-    agent_is_up = ping_deployed_agent(deployment.chat_host, deployment.chat_port)
-
-    db = next(get_db())
-    with db.begin():
-        if agent_is_up:
-            crud.update_deployment(db, deployment_id, state=enums.DeploymentState.UP)
+            if agent_is_up:
+                crud.update_deployment(db, deployment_id, state=enums.DeploymentState.UP)
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
@@ -133,8 +125,9 @@ def run_deployer_task(*args, **kwargs):
     dream_git.pull_copy_remote_origin()
 
     with SessionLocal() as db:
-        deployment = crud.get_deployment(db, kwargs["deployment_id"])
-        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
+        with db.begin():
+            deployment = crud.get_deployment(db, kwargs["deployment_id"])
+            dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
 
     run_deployer(dream_dist, kwargs["deployment_id"])
 

@@ -82,7 +82,11 @@ class GitManager:
         return remote_copy
 
     def pull_copy_remote_origin(self):
-        self.remote_copy.pull(refspec=self.remote_copy_branch)
+        try:
+            self.remote_copy.pull(refspec=self.remote_copy_branch)
+        except GitCommandError:
+            # avoid fatal errors if remote_copy_branch does not exist
+            pass
 
     def commit(self, user_id: int, change_id: int, *files):
         index = self.repo.index
@@ -91,11 +95,7 @@ class GitManager:
         index.commit(commit_message)
 
     def push_to_copy_remote_origin(self):
-        try:
-            # self.remote_copy.fetch(refspec=self.remote_copy_branch)
-            self.pull_copy_remote_origin()
-        except GitCommandError:
-            pass
+        self.pull_copy_remote_origin()
         self.remote_copy.push(refspec=self.remote_copy_branch)
 
     def commit_and_push(self, user_id: int, change_id: int):

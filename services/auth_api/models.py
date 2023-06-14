@@ -40,7 +40,7 @@ class UserModel(UserBase):
 
 class GithubUserCreate(UserBase):
     email: Optional[EmailStr]
-    github_id: str
+    github_id: int
     picture: str
     name: str
 

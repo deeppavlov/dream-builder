@@ -703,7 +703,7 @@ def add_github_user(db: Session, user) -> models.GithubUser:
     return db_user
 
 
-def get_github_user_by_github_id(db: Session, github_id: str) -> models.GithubUser:
+def get_github_user_by_github_id(db: Session, github_id: int) -> models.GithubUser:
     return db.query(models.GithubUser).filter(models.GithubUser.github_id == github_id).first()
 
 
@@ -715,7 +715,7 @@ def get_github_uservalid_by_access_token(db: Session, access_token: str) -> mode
     )
 
 
-def add_github_uservalid(db: Session, github_id: str, access_token: str) -> models.GithubUserValid:
+def add_github_uservalid(db: Session, github_id: int, access_token: str) -> models.GithubUserValid:
     """
     `uservalid` should be of type services.auth_api.models.GithubUserValidScheme
     ```
@@ -728,7 +728,7 @@ def add_github_uservalid(db: Session, github_id: str, access_token: str) -> mode
     github_user = get_github_user_by_github_id(db, github_id)
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
     user_valid = models.GithubUserValid(
-        user_id=github_user.id,
+        github_id=github_user.id,
         access_token=access_token,
         is_valid=True,
         expire_date=expire_date,

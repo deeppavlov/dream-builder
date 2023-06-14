@@ -23,7 +23,7 @@ from apiconfig.config import (
 )
 from services.auth_api import schemas
 from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
-from services.auth_api.models import UserCreate, User, UserValidScheme, GithubUserCreate, GithubUser
+from services.auth_api.models import UserCreate, UserValidScheme, GithubUserCreate, GithubUser
 
 router = APIRouter(prefix="/auth")
 
@@ -119,12 +119,13 @@ async def validate_gh(token: str = Header(), db: Session = Depends(get_db)):
         user_info_from_github = await _fetch_gh_user_info_by_access_token(token=token)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    # TODO: return github user info
-    # return GithubUser(
-    #     id=uservalid_info_from_db.id,
-    #     github_id=user_info_from_github.id,
-    #     email=user_info_from_github.email,
-    # )
+    return GithubUser(
+        id=uservalid_info_from_db.id,
+        github_id=user_info_from_github.id,
+        email=user_info_from_github.email,
+        picture=user_info_from_github["avatar_url"],
+        name=user_info_from_github["name"]
+    )
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
@@ -232,18 +233,20 @@ async def github_auth():
     return RedirectResponse(github_auth_url_with_params)
 
 
+@router.get("/login")
 async def exchange_github_code(code: str, db: Session = Depends(get_db)):
-    code_params = settings.github_auth_client_info.update({"code": code})
-    endpoint = f"{GITHUB_TOKENINFO}?{urlencode(code_params)}"
+    auth_client_params = settings.github_auth_client_info
+    auth_client_params.update({"code": code})
+    endpoint = f"{GITHUB_TOKENINFO}?{urlencode(auth_client_params)}"
     response = requests.post(endpoint)
     access_token = parse_qs(response.text)["access_token"][0]
     user_data = requests.get(GITHUB_URL_USERINFO, headers={"Authorization": "Bearer " + access_token}).json()
     github_user_create = GithubUserCreate(
         email=user_data["email"],
-        github_id=user_data["github_id"],
+        github_id=int(user_data["id"]),
         picture=user_data["avatar_url"],
         name=user_data["name"],
     )
     crud.add_github_user(db, github_user_create)
-    crud.add_github_uservalid(db=db, github_id=user_data["github_id"], access_token=access_token)
+    crud.add_github_uservalid(db=db, github_id=int(user_data["id"]), access_token=access_token)
     return {"token": access_token, **github_user_create.__dict__}

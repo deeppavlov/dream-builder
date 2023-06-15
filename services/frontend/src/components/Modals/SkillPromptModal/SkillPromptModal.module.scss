@@ -6,30 +6,31 @@
   display: flex;
   height: 100%;
   width: 100%;
-  padding: 40px;
+  padding: 24px;
   background-color: transparent;
   transition: margin 0.3s linear;
+  overflow: hidden;
 }
 
 .container {
   display: flex;
-  grid-row: 2;
   height: 100%;
   width: 100%;
-  gap: 25px;
-}
-
-.dialog {
-  padding-top: 74px;
-  height: 100%;
 }
 
 .editor {
   display: flex;
   background-color: $bcgrnd3;
+  min-width: 725px;
   height: 100%;
-  width: 100%;
+  flex-grow: 1;
   flex-direction: column;
+
+  .top,
+  .middle,
+  .btns {
+    padding-right: 10px;
+  }
 }
 
 .withSidePanel {
@@ -51,10 +52,11 @@
 }
 
 .top {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: start;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 24px;
 
   a {
     width: fit-content;
@@ -69,10 +71,11 @@
   }
 }
 
-.bottom {
+.middle {
   display: flex;
-  flex-direction: column;
-  gap: 17px;
+  gap: 8px;
+  overflow: hidden;
+  height: 100%;
 }
 
 .tip {
@@ -96,6 +99,70 @@
   gap: 24px;
 }
 
-.history {
-  margin-right: auto;
+.resizer {
+  height: calc(100% + 32px);
+  transform: translateY(-16px);
+  padding-right: 10px;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.tabs-list {
+  display: flex;
+  padding-left: 12px;
+}
+
+.tab {
+  padding: 6px 12px;
+  @include lnks_n_btns5;
+  color: $text1;
+  background-color: $bcgrnd1;
+  border: 1px solid $text3;
+  border-bottom: none;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.blocks {
+  padding-bottom: 24px;
+}
+
+.blocks-label {
+  @include b3;
+  color: $text2;
+}
+
+.prompt {
+  width: 100%;
+  height: calc(100% + 24px);
+  transform: translateY(-24px);
+
+  .tabs-list {
+    transform: translateY(24px);
+  }
+}
+
+.close {
+  width: 44px;
+  height: 44px;
+  background: $bcgrnd1;
+  border: 2px solid $text3;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -22px;
+  left: 100%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  @include btn_close_behavior;
+
+  svg {
+    stroke: $text2;
+    @include icon_size_24;
+  }
 }

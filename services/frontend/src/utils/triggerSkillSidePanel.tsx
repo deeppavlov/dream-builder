@@ -1,7 +1,7 @@
 import { ISkill, SkillAvailabilityType } from 'types/types'
-import { GenerativeSkillEditor } from 'components/Modules'
 import { IntentResponderSidePanel, SkillSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import SkillDetailsSidePanel from 'components/Panels/SkillDetailsSidePanel/SkillDetailsSidePanel'
 import { trigger } from './events'
 
 interface Props {
@@ -61,7 +61,7 @@ const triggerSkillSidePanel = ({
       trigger(TRIGGER_RIGHT_SP_EVENT, {
         isOpen,
         children: (
-          <GenerativeSkillEditor
+          <SkillDetailsSidePanel
             key={key}
             component_id={component_id}
             distName={distName}

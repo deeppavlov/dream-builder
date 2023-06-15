@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
@@ -15,6 +15,7 @@ import { checkLMIsOpenAi, getLSApiKeyByName } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
+import SidePanelHeader from '../SidePanelHeader/SidePanelHeader'
 import s from './SkillDialog.module.scss'
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
   skill: ISkill | null
 }
 
-const SkillDialog = ({ isDebug, distName, skill }: Props) => {
+const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   const { send, renew, session, message, history } = useChat()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()
@@ -136,7 +137,15 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
       className={cx('dialog', error && 'error')}
+      ref={ref as any}
     >
+      <SidePanelHeader>
+        <ul role='tablist'>
+          <li role='tab' key='Dialog'>
+            <span aria-selected>Chat with this skill</span>
+          </li>
+        </ul>
+      </SidePanelHeader>
       {error && (
         <>
           <span className={s.alertName}>Error!</span>
@@ -211,6 +220,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
       )}
     </form>
   )
-}
+})
 
 export default SkillDialog

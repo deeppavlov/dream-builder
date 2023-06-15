@@ -112,6 +112,7 @@
   }
   .desc {
     @include b3;
+    padding: 8px 12px 0 12px;
   }
   .accordions {
     display: flex;

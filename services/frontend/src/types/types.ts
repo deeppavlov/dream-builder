@@ -350,3 +350,18 @@ export interface IPublicationRequest {
 export type TErrorStatus = 401 | 404 | 500 | 503
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
+
+export interface IPromptBlock {
+  category: string
+  color: string
+  block: string
+  template: string
+  examples: string
+  description: string
+  newLineAfter: boolean
+  newLineBefore: boolean
+  ChatGPT: boolean
+  'GPT-3.5': boolean
+  'Open-Assistant Pythia 12B': boolean
+  'GPT-JT 6B': boolean
+}

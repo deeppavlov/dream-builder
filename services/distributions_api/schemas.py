@@ -58,6 +58,7 @@ class DeploymentBaseRead(BaseOrmModel):
     error: Optional[dict]
     date_state_updated: Optional[datetime]
     stack_id: Optional[int]
+    task_id: Optional[str]
 
 
 class ComponentRead(BaseOrmModel):

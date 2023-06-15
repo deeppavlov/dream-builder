@@ -1,3 +1,10 @@
+.dumbSkillSP {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .properties {
   display: flex;
   flex-direction: column;
@@ -94,6 +101,10 @@
 
 .full-height {
   height: 100%;
+}
+
+.accardion-value {
+  padding: 8px 12px 0 12px;
 }
 
 .prompt {

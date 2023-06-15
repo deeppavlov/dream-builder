@@ -51,6 +51,7 @@ const validateTokens = AwesomeDebouncePromise(
     setLength,
     setIsCounting,
   }: IValidateTokens) => {
+    // console.log(value)
     const length = getTokensLength(tokenizerModel, value)
     const isMaxLength = length > maxLength?.value
 
@@ -126,9 +127,18 @@ export const TextArea: FC<TextAreaProps> = ({
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const isEmpty = e.target.value.length === 0
+
     field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
+
+    if (isEmpty) {
+      setLength(0)
+      setIsCounting(false)
+      return
+    }
+
     if (isTokenizer) setIsCounting(true)
   }
 

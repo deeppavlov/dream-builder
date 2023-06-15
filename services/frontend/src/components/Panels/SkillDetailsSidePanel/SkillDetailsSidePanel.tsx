@@ -10,7 +10,7 @@ import { Button } from 'components/Buttons'
 import { SidePanelButtons, SidePanelName } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import DumbSkillSP from 'components/Panels/SkillSidePanel/DumbSkillSP'
-import s from './GenerativeSkillEditor.module.scss'
+import s from './SkillDetailsSidePanel.module.scss'
 
 interface Props {
   component_id: number
@@ -19,7 +19,7 @@ interface Props {
   visibility?: SkillAvailabilityType
 }
 
-const GenerativeSkillEditor = ({
+const SkillDetailsSidePanel = ({
   component_id,
   distName,
   activeTab,
@@ -70,7 +70,7 @@ const GenerativeSkillEditor = ({
       activeTab={activeTab}
       visibility={visibility}
     >
-      <div className={cx('generativeSkillEditor')}>
+      <div className={s.skillDetailsSidePanel}>
         <SidePanelName>{skill?.display_name}</SidePanelName>
         <ul className={s.table}>
           <li className={s.item}>
@@ -102,4 +102,4 @@ const GenerativeSkillEditor = ({
   )
 }
 
-export default GenerativeSkillEditor
+export default SkillDetailsSidePanel

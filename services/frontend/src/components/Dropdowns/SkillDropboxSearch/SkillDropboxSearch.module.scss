@@ -4,7 +4,10 @@ $animation-delay: 300ms;
   position: relative;
   min-width: 310px;
   max-width: 310px;
+  width: 100%;
   height: fit-content;
+  cursor: pointer;
+
   &.small {
     min-width: 200px;
     max-width: 200px;
@@ -44,7 +47,7 @@ $animation-delay: 300ms;
 }
 
 .label {
-  @include b3;
+  @include t4;
 }
 
 .input {
@@ -54,7 +57,7 @@ $animation-delay: 300ms;
   background: transparent;
   height: 100%;
   width: 100%;
-  cursor: default;
+  cursor: pointer;
 }
 
 .search {
@@ -102,12 +105,19 @@ $animation-delay: 300ms;
   padding: 4px 16px;
   width: 100%;
   color: $text1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $primary1;
+  }
 }
 
 .activeItem,
-.item:active,
-.item:focus {
+.item:active {
   color: $primary1;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -126,4 +136,8 @@ $animation-delay: 300ms;
   100% {
     opacity: 1;
   }
+}
+
+.serviceIcon {
+  @include icon_size_24;
 }

@@ -7,6 +7,7 @@ import useTabsManager, { TabList } from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { EditPencilButton } from 'components/Buttons'
+import { Accordion } from 'components/Dropdowns'
 import SidePanelHeader from 'components/Panels/SidePanelHeader/SidePanelHeader'
 import s from './DumbSkillSP.module.scss'
 
@@ -61,7 +62,7 @@ const DumbSkillSP = ({
   }, [])
 
   return (
-    <>
+    <div id='skill_sp' className={s.dumbSkillSP}>
       <SidePanelHeader>
         <ul role='tablist'>
           {Array.from(tabsInfo.tabs).map(([id, tab]) => (
@@ -116,9 +117,21 @@ const DumbSkillSP = ({
               </li>
             )}
           </ul>
+          {skill?.lm_service?.description && (
+            <li className={cx('item', 'big-item')}>
+              <Accordion title='Model Details' rounded isActive>
+                <p className={cx('value', 'accardion-value')}>
+                  {skill?.lm_service?.description}
+                </p>
+              </Accordion>
+            </li>
+          )}
           <li className={cx('item', 'big-item')}>
-            <span className={cx('table-name')}>Description:</span>
-            <p className={s.value}>{skill?.description}</p>
+            <Accordion title='Description' rounded isActive>
+              <p className={cx('value', 'accardion-value')}>
+                {skill?.description}
+              </p>
+            </Accordion>
           </li>
           {/* <li className={cx('item', 'big-item')}>
             <SkillTaskPlaceholder
@@ -132,7 +145,7 @@ const DumbSkillSP = ({
         </div>
       )}
       {children && tabsInfo.activeTabId === editor && children}
-    </>
+    </div>
   )
 }
 

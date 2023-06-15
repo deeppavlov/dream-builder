@@ -7,7 +7,7 @@
   width: 100%;
   border-radius: 20px;
   border: 2px solid $text3;
-  padding: 24px;
+  padding: 16px;
   gap: 16px;
   background-color: $bcgrnd3;
   &.fullHeight {
@@ -53,11 +53,12 @@
     position: absolute;
     right: 12px;
     top: 12px;
+    @include btn_close_behavior;
+
     svg {
       cursor: pointer;
       stroke: #1f35ff4d;
       @include icon_size_24;
-      @include btn_close_behavior;
     }
   }
   .header {

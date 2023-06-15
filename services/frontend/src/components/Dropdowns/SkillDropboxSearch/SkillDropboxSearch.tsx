@@ -3,12 +3,15 @@ import React, { useRef, useState } from 'react'
 import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow_down.svg'
 import { ReactComponent as LoupeIcon } from 'assets/icons/loupe.svg'
+import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { useObserver } from 'hooks/useObserver'
+import { SvgIcon } from 'components/Helpers'
 import s from './SkillDropboxSearch.module.scss'
 
 interface Item {
   id: string
   name: string
+  display_name: string
   disabled?: boolean
 }
 
@@ -54,6 +57,7 @@ const SkillDropboxSearch = ({
   })
   const [isOpen, setIsOpen] = useState(propIsOpen !== undefined)
   const dropboxRef = useRef<HTMLDivElement | null>(null)
+  const serviceIconName = serviceCompanyMap?.[field.value?.name]
   let cx = classNames.bind(s)
 
   const handleClickOutside = (e: MouseEvent) => {
@@ -75,7 +79,7 @@ const SkillDropboxSearch = ({
     setIsOpen(false)
   }
 
-  useObserver('click', handleClickOutside)
+  useObserver('click' as any, handleClickOutside)
 
   return (
     <div
@@ -93,10 +97,16 @@ const SkillDropboxSearch = ({
 
       <div className={s.search} onClick={handleSearchClick}>
         {!withoutSearch && <LoupeIcon className={s.icon} />}
+        {withoutSearch && serviceIconName && (
+          <SvgIcon
+            iconName={serviceIconName}
+            svgProp={{ className: s.serviceIcon }}
+          />
+        )}
         <input
           {...props}
           {...field}
-          value={field.value?.name || ''}
+          value={field.value?.display_name || ''}
           className={s.input}
           readOnly
         />
@@ -105,9 +115,11 @@ const SkillDropboxSearch = ({
 
       <ul className={s.list}>
         {list?.map((item, i) => {
+          let serviceIconName = serviceCompanyMap?.[item?.name]
+
           return (
             <li
-              key={i}
+              key={`key-${i}`}
               className={cx(
                 'item',
                 item.id === field.value?.id && 'activeItem',
@@ -115,7 +127,13 @@ const SkillDropboxSearch = ({
               )}
               onClick={() => !item?.disabled && handleItemClick(item)}
             >
-              {item.name}
+              {serviceIconName && (
+                <SvgIcon
+                  iconName={serviceIconName}
+                  svgProp={{ className: s.serviceIcon }}
+                />
+              )}
+              <span>{item.display_name}</span>
             </li>
           )
         })}

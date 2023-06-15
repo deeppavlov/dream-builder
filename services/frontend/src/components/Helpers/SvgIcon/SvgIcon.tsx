@@ -2,7 +2,7 @@ import { useDynamicSvgImport } from 'hooks/useDynamicSVGImport'
 
 interface IProps {
   iconName: string
-  // wrapperStyle?: string
+  // wrapperClassName?: string
   svgProp?: React.SVGProps<SVGSVGElement>
 }
 

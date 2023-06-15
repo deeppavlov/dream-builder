@@ -140,13 +140,13 @@
   }
 }
 @mixin btn_close_behavior {
-  &:hover {
+  &:hover svg {
     stroke: #ff3333;
   }
-  &:active {
+  &:active svg {
     stroke: #190080;
   }
-  &:disabled {
+  &:disabled svg {
     opacity: 0.3;
   }
 }

@@ -160,7 +160,8 @@ export const AccessTokensModule = () => {
           list={
             api_services?.map(s => ({
               id: s.id.toString(),
-              name: s.display_name,
+              name: s.name,
+              display_name: s.display_name,
             })) || []
           }
           control={control}

@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
 
-from fastapi.logger import logger
 from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -202,7 +201,10 @@ def create_virtual_assistant(
 
 def update_virtual_assistant_by_name(db: Session, name: str, **kwargs):
     return db.scalar(
-        update(models.VirtualAssistant).where(models.VirtualAssistant.name == name).values(**kwargs).returning(models.VirtualAssistant)
+        update(models.VirtualAssistant)
+        .where(models.VirtualAssistant.name == name)
+        .values(**kwargs)
+        .returning(models.VirtualAssistant)
     )
 
 
@@ -536,7 +538,7 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
         .values(is_active=False)
         .returning(models.DialogSession)
     ).all()
-    logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
+    # logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
 
     dialog_session = db.scalar(
         insert(models.DialogSession)

@@ -18,33 +18,54 @@ export const ResizerLine = ({ resizableElementRef: ref }: IProps) => {
     if (!isElements) return
 
     setElement(ref.current)
+    resizerRef.current.addEventListener('touchstart', initResize, false)
     resizerRef.current.addEventListener('mousedown', initResize, false)
 
     return () => {
+      resizerRef.current?.removeEventListener('touchstart', initResize, false)
       resizerRef.current?.removeEventListener('mousedown', initResize, false)
     }
   }, [ref?.current, resizerRef?.current])
 
   const initResize = () => {
     setIsDragging(true)
-    window.addEventListener('mousemove', Resize, false)
+    window.addEventListener('mousemove', mouseResize, false)
     window.addEventListener('mouseup', stopResize, false)
+    window.addEventListener('touchmove', touchResize, false)
+    window.addEventListener('touchend', stopResize, false)
   }
 
-  const Resize = (e: MouseEvent) => {
+  const resize = (computedWidth: number) => {
     if (!element) return
-
-    var computedWidth = element.getBoundingClientRect().right - e.clientX - 20
 
     // if (draggedWidth < minWidth) return
 
     element.style.width = `${computedWidth}px`
   }
 
+  const mouseResize = (e: MouseEvent) => {
+    if (!element) return
+
+    var computedWidth = element.getBoundingClientRect().right - e?.clientX - 20
+
+    resize(computedWidth)
+  }
+
+  const touchResize = (e: TouchEvent) => {
+    if (!element) return
+
+    var computedWidth =
+      element.getBoundingClientRect().right - e?.targetTouches?.[0].clientX - 20
+
+    resize(computedWidth)
+  }
+
   const stopResize = () => {
     setIsDragging(false)
-    window.removeEventListener('mousemove', Resize, false)
+    window.removeEventListener('mousemove', mouseResize, false)
     window.removeEventListener('mouseup', stopResize, false)
+    window.removeEventListener('touchmove', touchResize, false)
+    window.removeEventListener('touchend', stopResize, false)
   }
 
   return (

@@ -235,12 +235,21 @@ async def github_auth():
 
 @router.get("/login")
 async def exchange_github_code(code: str, db: Session = Depends(get_db)):
-    auth_client_params = settings.github_auth_client_info
-    auth_client_params.update({"code": code})
-    endpoint = f"{GITHUB_TOKENINFO}?{urlencode(auth_client_params)}"
-    response = requests.post(endpoint)
-    access_token = parse_qs(response.text)["access_token"][0]
-    user_data = requests.get(GITHUB_URL_USERINFO, headers={"Authorization": "Bearer " + access_token}).json()
+    endpoint_to_fetch_user_info = _get_github_tokeninfo_endpoint(code)
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(endpoint_to_fetch_user_info) as response:
+            body = await response.text()
+
+        if _is_token_good(body):
+            access_token = parse_qs(body)["access_token"][0]
+        else:
+            raise HTTPException(status_code=400, detail="bad code")
+
+    async with aiohttp.ClientSession(headers={"Authorization": "Bearer " + access_token}) as session:
+        async with session.get(GITHUB_URL_USERINFO) as response:
+            user_data = await response.json()
+
     github_user_create = GithubUserCreate(
         email=user_data["email"],
         github_id=int(user_data["id"]),
@@ -250,3 +259,28 @@ async def exchange_github_code(code: str, db: Session = Depends(get_db)):
     crud.add_github_user(db, github_user_create)
     crud.add_github_uservalid(db=db, github_id=int(user_data["id"]), access_token=access_token)
     return {"token": access_token, **github_user_create.__dict__}
+
+
+def _is_token_good(response_text: str) -> bool:
+    """
+    GitHub returns 200 status code regardless of request success, so it is required to define success of request.
+
+    Example of success response body:
+    ```
+    access_token=token&scope=read%3Auser&token_type=bearer
+    ```
+    Example of bad response body:
+    ```
+    error=bad_verification_code&error_description=The+code+passed+is+incorrect+or+expired.&
+    error_uri=...
+    ```
+    """
+    success_indicator = "access_token="
+
+    return success_indicator in response_text
+
+
+def _get_github_tokeninfo_endpoint(code: str) -> str:
+    auth_client_params = settings.github_auth_client_info
+    auth_client_params.update({"code": code})
+    return f"{GITHUB_TOKENINFO}?{urlencode(auth_client_params)}"

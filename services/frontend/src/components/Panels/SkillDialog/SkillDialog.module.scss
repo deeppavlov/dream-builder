@@ -140,7 +140,10 @@
 
 .start,
 .error {
+  height: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   font-display: column;
   gap: 16px;
   padding: 40px;

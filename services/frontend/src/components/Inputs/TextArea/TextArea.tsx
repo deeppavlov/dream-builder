@@ -51,7 +51,6 @@ const validateTokens = AwesomeDebouncePromise(
     setLength,
     setIsCounting,
   }: IValidateTokens) => {
-    // console.log(value)
     const length = getTokensLength(tokenizerModel, value)
     const isMaxLength = length > maxLength?.value
 
@@ -127,19 +126,9 @@ export const TextArea: FC<TextAreaProps> = ({
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const isEmpty = e.target.value.length === 0
-
     field.onChange(e)
     setIsActive(true)
     setIsEnter(true)
-
-    if (isEmpty) {
-      setLength(0)
-      setIsCounting(false)
-      return
-    }
-
-    if (isTokenizer) setIsCounting(true)
   }
 
   // Hide Enter button everytime, when form submitted successfully
@@ -155,7 +144,15 @@ export const TextArea: FC<TextAreaProps> = ({
   }, [withEnterButton && formState?.isSubmitSuccessful])
 
   useEffect(() => {
-    if (!isTokenizer) setLength(field.value?.length ?? 0)
+    if (!isTokenizer) return setLength(field.value?.length ?? 0)
+    if (isTokenizer) setIsCounting(true)
+
+    const isEmpty = field.value?.length === 0
+
+    if (isEmpty) {
+      setLength(0)
+      setIsCounting(false)
+    }
   }, [field.value])
 
   useEffect(() => {

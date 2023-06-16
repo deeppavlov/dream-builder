@@ -136,7 +136,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={cx('dialog', error && 'error')}
+      className={cx('dialog')}
       ref={ref as any}
     >
       <SidePanelHeader>
@@ -146,8 +146,8 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
           </li>
         </ul>
       </SidePanelHeader>
-      {error && (
-        <>
+      {error?.type === 'api-key' && (
+        <div className={s.error}>
           <span className={s.alertName}>Error!</span>
           <p className={s.alertDesc}>{error.msg}</p>
           {error.type === 'api-key' && (
@@ -163,9 +163,9 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
           >
             Try again
           </Button>
-        </>
+        </div>
       )}
-      {!error && (
+      {error?.type !== 'api-key' && (
         <>
           <div className={s.container}>
             <ul ref={chatRef} className={s.chat}>
@@ -204,13 +204,14 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
                 theme='secondary'
                 props={{
                   onClick: handleRenewClick,
+                  disabled: send?.isLoading || !!error,
                 }}
               >
                 <Renew data-tooltip-id='renew' />
               </Button>
               <Button
                 theme='secondary'
-                props={{ disabled: send?.isLoading, type: 'submit' }}
+                props={{ disabled: send?.isLoading || !!error, type: 'submit' }}
               >
                 Send
               </Button>

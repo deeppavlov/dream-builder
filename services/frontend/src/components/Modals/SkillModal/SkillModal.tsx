@@ -39,6 +39,7 @@ export const SkillModal = () => {
     setIsOpen(false)
     setAction(null)
     setSkill(null)
+    reset()
   }
 
   /**

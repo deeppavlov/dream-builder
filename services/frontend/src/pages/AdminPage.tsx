@@ -66,7 +66,10 @@ export const AdminPage = () => {
 
     const { virtual_assistant, ...deploymentField } = deployment
 
-    const assistant = { ...assistantWithoutDeploymentField, ...deploymentField }
+    const assistant = {
+      ...assistantWithoutDeploymentField,
+      deployment: deploymentField,
+    }
 
     toast.promise(
       deleteDeployment.mutateAsync(assistant),

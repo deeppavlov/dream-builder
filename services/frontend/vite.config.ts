@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { chunkSplitPlugin } from 'vite-plugin-chunk-split'
 import svgr from 'vite-plugin-svgr'
+import topLevelAwait from 'vite-plugin-top-level-await'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -13,6 +14,7 @@ export default defineConfig({
     svgr(),
     chunkSplitPlugin(),
     wasm(),
+    topLevelAwait(),
     tsconfigPaths(),
     // Handle cyclic dependencies
     {

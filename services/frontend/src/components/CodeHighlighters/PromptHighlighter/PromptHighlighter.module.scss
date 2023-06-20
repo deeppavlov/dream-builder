@@ -1,0 +1,17 @@
+.highlights {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: transparent;
+  user-select: none;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  mark {
+    border-radius: 3px;
+    color: transparent;
+    background-color: #b1d5e5;
+  }
+}

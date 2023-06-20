@@ -280,7 +280,6 @@ const SkillPromptModal = () => {
                   />
                 </div>
               )}
-
               <TextArea
                 name='prompt'
                 label='Enter prompt:'
@@ -304,6 +303,14 @@ const SkillPromptModal = () => {
                   placeholder: 'Pick words you might use',
                   id: 'prompt-textarea',
                 }}
+                highlights={[
+                  { keyword: 'Act as', color: '#FFE9E4' },
+                  { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
+                  { keyword: 'TASK', color: '#FFFCE4' },
+                  { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
+                  { keyword: 'INSTRUCTION', color: '#E4FEFF' },
+                  { keyword: 'EXAMPLE', color: '#E4FEFF' },
+                ]}
               />
             </div>
             <div className={s.btns}>

@@ -1,5 +1,5 @@
 import { useAuth } from 'context'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TDistVisibility } from 'types/types'
@@ -63,7 +63,6 @@ export const AssistantModule = () => {
           } //FIX
           key={bot?.id}
           name={bot?.name!}
-          fromEditor
         />
       ),
     })

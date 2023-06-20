@@ -74,6 +74,7 @@ async def create_virtual_assistant(
                 "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "lm_config": dream_dist.pipeline.skills[skill.component.name].lm_config,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
                 "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
@@ -118,7 +119,9 @@ async def create_virtual_assistant(
                 gpu_usage=dream_component.component.gpu_usage,
                 description=dream_component.component.description,
                 prompt=dream_component.prompt,
+                prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
+                lm_config=dream_component.lm_config,
             )
             new_components.append(component)
 
@@ -306,6 +309,7 @@ async def clone_dist(
                 "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "lm_config": dream_dist.pipeline.skills[skill.component.name].lm_config,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
                 "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
@@ -352,6 +356,7 @@ async def clone_dist(
                 prompt=dream_component.prompt,
                 prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
+                lm_config=dream_component.lm_config,
             )
             new_components.append(component)
 

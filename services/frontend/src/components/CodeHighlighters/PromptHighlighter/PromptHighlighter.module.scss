@@ -5,9 +5,13 @@
   user-select: none;
   overflow: auto;
 
+  // Hide scrollbar for highlights div
   &::-webkit-scrollbar {
     display: none;
   }
+
+  -ms-overflow-style: none; /* IE 11 */
+  scrollbar-width: none; /* Firefox 64 */
 
   mark {
     border-radius: 3px;

@@ -1,5 +1,4 @@
 import { useAuth, useUIOptions } from 'context'
-import { Toaster } from 'react-hot-toast'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { AddButton } from 'components/Buttons'
@@ -81,7 +80,6 @@ export const UsersBotsPage = () => {
         <CongratsModal />
         <DeployNotificationModal />
       </Main>
-      <Toaster />
     </>
   )
 }

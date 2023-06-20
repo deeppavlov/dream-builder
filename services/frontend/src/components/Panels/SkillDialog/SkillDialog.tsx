@@ -90,8 +90,10 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
 
   // handlers
   const handleSend = ({ message }: ChatForm) => {
-    const isChatSettings = checkIsChatSettings(user?.id)
+    const isMessage = message.replace(/\s/g, '').length > 0
+    if (!isMessage) return
 
+    const isChatSettings = checkIsChatSettings(user?.id)
     if (!isChatSettings) return
 
     send.mutate({
@@ -194,7 +196,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
                 className={s.textarea}
                 rows={4}
                 placeholder='Type...'
-                {...register('message')}
+                {...register('message', { required: true })}
                 spellCheck='false'
               />
             </div>

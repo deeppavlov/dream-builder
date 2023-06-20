@@ -41,8 +41,11 @@
   background-color: $bcgrnd3;
   padding: 12px;
   border-radius: 12px 12px 0px 12px;
-  width: fit-content;
   align-self: flex-end;
+  max-width: 100%;
+  width: fit-content;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .bot {

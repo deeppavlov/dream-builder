@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -38,7 +38,8 @@ export const ShareAssistantModal = () => {
 
   const handleCopyBtnClick = () => {
     navigator.clipboard.writeText(url)
-    toast.custom(<ToastCopySucces />, {
+
+    toast.custom(t => (t.visible ? <ToastCopySucces /> : null), {
       position: 'top-center',
       id: 'copySucces',
       duration: 1000,
@@ -54,7 +55,6 @@ export const ShareAssistantModal = () => {
 
   return (
     <>
-      <Toaster />
       <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className={s.shareModal}>
           <div className={s.header}>Share It!</div>

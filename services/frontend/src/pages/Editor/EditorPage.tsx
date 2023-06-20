@@ -1,6 +1,5 @@
 import { useUIOptions } from 'context'
 import { useEffect } from 'react'
-import { Toaster } from 'react-hot-toast'
 import { Outlet, useMatch, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { usePreview } from 'context/PreviewProvider'
@@ -82,12 +81,10 @@ export const EditorPage = () => {
         </Container>
       </Sidebar>
       <Outlet />
-      <Toaster />
       <SkillsListModal />
       <BaseSidePanel />
       <AreYouSureModal />
       <SkillQuitModal />
-      <Toaster />
       <PublishAssistantModal />
       <DeleteAssistantModal />
       <AssistantModal />

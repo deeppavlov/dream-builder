@@ -1,5 +1,5 @@
 import { CSSProperties, FC, useId } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
@@ -189,8 +189,6 @@ export const AdminPage = () => {
         </Wrapper>
       </Main>
       <BaseSidePanel />
-
-      <Toaster />
     </>
   )
 }

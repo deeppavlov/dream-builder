@@ -63,7 +63,7 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
 
   const handleClick = () => {
     navigator.clipboard.writeText(preCodeRef?.current?.props?.children)
-    toast.custom(<ToastCopySucces />, {
+    toast.custom(t => (t.visible ? <ToastCopySucces /> : null), {
       position: 'top-center',
       id: 'copySucces',
       duration: 1000,

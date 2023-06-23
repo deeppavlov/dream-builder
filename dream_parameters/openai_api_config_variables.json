@@ -1,0 +1,45 @@
+{
+  "timeout": {
+    "type": "float",
+    "min_value": 0.5,
+    "max_value": null,
+    "default_value": 120.0,
+    "hint": "This parameter defines the maximum time to wait for a model to generate text."
+
+  },
+  "max_tokens": {
+    "type": "int",
+    "min_value": 4,
+    "max_value": null,
+    "default_value": 64,
+    "hint": "This parameter controls the maximum number of tokens to generate. It's important to note that the combined length of the text prompt and generated completion must not exceed the model's maximum context length."
+  },
+  "temperature": {
+    "type": "float",
+    "min_value": 0.0,
+    "max_value": 1.0,
+    "default_value": 0.4,
+    "hint": "This parameter controls the amount of randomness in the output, and can be adjusted to achieve different results. At lower temperatures, a model will tend to choose words with a higher probability of occurrence, which can be useful when you want the system to complete a sentence or phrase with a single correct answer."
+  },
+  "top_p": {
+    "type": "float",
+    "min_value": 0.0,
+    "max_value": 1.0,
+    "default_value": 1.0,
+    "hint": "This parameter is used for nucleus sampling, in which the model only takes into account the tokens with the highest probability mass (as determined by the top_p parameter)."
+  },
+  "frequency_penalty":  {
+    "type": "float",
+    "min_value": -2.0,
+    "max_value": 2.0,
+    "default_value": 0.0,
+    "hint": "This parameter is used to discourage the model from repeating the same words or phrases too frequently within the generated text. It is a value that is added to the log-probability of a token each time it occurs in the generated text. A higher frequency_penalty value will result in the model being more conservative in its use of repeated tokens."
+  },
+  "presence_penalty":  {
+    "type": "float",
+    "min_value": -2.0,
+    "max_value": 2.0,
+    "default_value": 0.0,
+    "hint": "This parameter is used to encourage the model to include a diverse range of tokens in the generated text. It is a value that is subtracted from the log-probability of a token each time it is generated. A higher presence_penalty value will result in the model being more likely to generate tokens that have not yet been included in the generated text."
+  }
+}

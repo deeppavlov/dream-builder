@@ -1,0 +1,60 @@
+{
+  "timeout": {
+    "type": "float",
+    "min_value": 0.5,
+    "max_value": null,
+    "default_value": 120.0,
+    "hint": "This parameter defines the maximum time to wait for a model to generate text."
+  },
+  "max_new_tokens": {
+    "type": "int",
+    "min_value": 4,
+    "max_value": null,
+    "default_value": 120,
+    "hint": "This parameter controls the maximum number of tokens to generate. It's important to note that the combined length of the text prompt and generated completion must not exceed the model's maximum context length."
+  },
+  "min_new_tokens": {
+    "type": "int",
+    "min_value": 4,
+    "max_value": null,
+    "default_value": 8,
+    "hint": "This parameter controls the minimum number of tokens to generate."
+  },
+  "top_p": {
+    "type": "float",
+    "min_value": 0.0,
+    "max_value": 1.0,
+    "default_value": 0.9,
+    "hint": "This parameter is used for nucleus sampling, in which the model only takes into account the tokens with the highest probability mass (as determined by the top_p parameter)."
+  },
+  "temperature": {
+    "type": "float",
+    "min_value": 0.0,
+    "max_value": 1.0,
+    "default_value": 0.9,
+    "hint": "This parameter controls the amount of randomness in the output, and can be adjusted to achieve different results. At lower temperatures, a model will tend to choose words with a higher probability of occurrence, which can be useful when you want the system to complete a sentence or phrase with a single correct answer."
+  },
+  "do_sample": {
+    "type": "choice",
+    "values": [
+      true,
+      false
+    ],
+    "default_value": true,
+    "hint": "If set to True, this parameter enables decoding strategies such as multinomial sampling, beam-search multinomial sampling, Top-K sampling and Top-p sampling. All these strategies select the next token from the probability distribution over the entire vocabulary with various strategy-specific adjustments."
+  },
+  "num_beams": {
+    "type": "int",
+    "min_value": 1,
+    "max_value": null,
+    "default_value": 1,
+    "hint": "By specifying a number of beams higher than 1, you are effectively switching from greedy search to beam search. This strategy evaluates several hypotheses at each time step and eventually chooses the hypothesis that has the overall highest probability for the entire sequence."
+  },
+  "num_return_sequences": {
+    "type": "int",
+    "min_value": 1,
+    "max_value": 3,
+    "default_value": 2,
+    "hint": "This parameter defines the number of generated texts. These texts separately will be used as response candidates."
+  }
+}

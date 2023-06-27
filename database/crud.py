@@ -276,7 +276,7 @@ def create_component(
     prompt: Optional[str] = None,
     prompt_goals: Optional[str] = None,
     lm_service_id: Optional[int] = None,
-    lm_config: Optional[int] = None,
+    lm_config: Optional[dict] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
     # compose_dev: Optional[dict] = None,

@@ -50,6 +50,8 @@ def get_db():
         db.close()
 
 
+
+
 async def _fetch_user_info_by_access_token(access_token: str) -> dict[str, str]:
     """
     Fetches user_info using access token by request to Google API
@@ -115,7 +117,7 @@ def validate_date(user: GithubUserValid):
         raise ValueError("Token has expired")
 
 
-async def validate_gh(token: str = Header(), db: Session = Depends(get_db)) -> User:
+async def validate_gh(token: str, db: Session = Depends(get_db)) -> User:
     """
     """
     try:
@@ -276,53 +278,46 @@ async def update_access_token(refresh_token: str, auth_type: Annotated[str | Non
     access_token = response["access_token"]
     return {"token": access_token}
 
-#
-# # TEST ONLY
-# @router.get("/github_auth")
-# async def github_auth():
-#     return RedirectResponse(github_auth_url_with_params)
-#
-#
-# @router.get("/login")
-# async def _exchange_github_code(code: str, db: Session = Depends(get_db)) -> UserToken:
-#     user_data, access_token = await _fetch_user_info_by_github_code(code)
-#
-#     github_id = user_data["id"]
-#
-#     github_user_create = GithubUserCreate(
-#         email=user_data["email"],
-#         github_id=github_id,
-#         picture=user_data["avatar_url"],
-#         name=user_data["name"] or user_data["login"],
-#     )
-#
-#     if crud.check_github_user_exists(db, github_id):
-#         general_user = crud.get_general_user_by_outer_id(db, github_id, GITHUB)
-#     else:
-#         general_user = crud.add_user(
-#             db=db,
-#             provider_name=GITHUB,
-#             outer_id=str(github_user_create.github_id),
-#             email=github_user_create.email,
-#             name=github_user_create.name,
-#             picture=github_user_create.picture,
-#         )
-#         crud.add_github_user(db, github_user_create, general_user.id)
-#
-#     crud.add_github_uservalid(
-#         db=db,
-#         user_id=general_user.id,
-#         access_token=access_token
-#     )
-#
-#     return UserToken(
-#         id=general_user.id,
-#         email=github_user_create.email,
-#         outer_id=github_user_create.github_id,
-#         picture=github_user_create.picture,
-#         name=github_user_create.name,
-#         token=access_token,
-#     )
+
+async def _exchange_github_code(code: str, db: Session = Depends(get_db)) -> UserToken:
+    user_data, access_token = await _fetch_user_info_by_github_code(code)
+
+    github_id = user_data["id"]
+
+    github_user_create = GithubUserCreate(
+        email=user_data["email"],
+        github_id=github_id,
+        picture=user_data["avatar_url"],
+        name=user_data["name"] or user_data["login"],
+    )
+
+    if crud.check_github_user_exists(db, github_id):
+        general_user = crud.get_general_user_by_outer_id(db, github_id, GITHUB)
+    else:
+        general_user = crud.add_user(
+            db=db,
+            provider_name=GITHUB,
+            outer_id=str(github_user_create.github_id),
+            email=github_user_create.email,
+            name=github_user_create.name,
+            picture=github_user_create.picture,
+        )
+        crud.add_github_user(db, github_user_create, general_user.id)
+
+    crud.add_github_uservalid(
+        db=db,
+        user_id=general_user.id,
+        access_token=access_token
+    )
+
+    return UserToken(
+        id=general_user.id,
+        email=github_user_create.email,
+        outer_id=github_user_create.github_id,
+        picture=github_user_create.picture,
+        name=github_user_create.name,
+        token=access_token,
+    )
 
 
 async def _fetch_user_info_by_github_code(code: str) -> tuple[dict[str, str], str]:

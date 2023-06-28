@@ -90,7 +90,7 @@ async def create_virtual_assistant(
             existing_prompted_skills,
         )
         new_dist.save(generate_configs=True)
-        dream_git.commit_and_push(user.id, 1)
+        dream_git.commit_all_files(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -235,7 +235,7 @@ async def patch_virtual_assistant_by_name(
             )
 
         dream_dist.save(overwrite=True)
-        dream_git.commit_and_push(user.id, 1)
+        dream_git.commit_all_files(user.id, 1)
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
@@ -261,7 +261,7 @@ async def delete_virtual_assistant_by_name(
         try:
             dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
             dream_dist.delete()
-            dream_git.commit_and_push(user.id, 1)
+            dream_git.commit_all_files(user.id, 1)
         except FileNotFoundError:
             pass
 
@@ -325,7 +325,7 @@ async def clone_dist(
             existing_prompted_skills,
         )
         new_dist.save(overwrite=False)
-        dream_git.commit_and_push(user.id, 1)
+        dream_git.commit_all_files(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -424,7 +424,7 @@ async def add_virtual_assistant_component(
             DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
         )
         dream_dist.save(overwrite=True, generate_configs=True)
-        dream_git.commit_and_push(1, 1)
+        dream_git.commit_all_files(1, 1)
 
     return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
@@ -452,7 +452,7 @@ async def delete_virtual_assistant_component(
         virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
         dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
         dream_dist.save(overwrite=True, generate_configs=True)
-        dream_git.commit_and_push(1, 1)
+        dream_git.commit_all_files(1, 1)
 
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 

@@ -94,6 +94,10 @@ class GitManager:
         commit_message = f"dream-api/{user_id}/{change_id}"
         index.commit(commit_message)
 
+    def commit_all_files(self, user_id: int, change_id: int):
+        paths = [str(self.local_path / dir_name) for dir_name in self.commit_dirs]
+        self.commit(user_id, change_id, *paths)
+
     def push_to_copy_remote_origin(self):
         self.pull_copy_remote_origin()
         self.remote_copy.push(refspec=self.remote_copy_branch)

@@ -14,6 +14,7 @@ from starlette import status
 from apiconfig.config import settings
 from database import crud, enums
 from deployment_queue import tasks
+from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
@@ -21,6 +22,17 @@ from services.distributions_api.security.auth import verify_token
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
 swarm_client = SwarmClient(settings.deployer.portainer_url, settings.deployer.portainer_key)
+
+dream_git = GitManager(
+    settings.git.local_path,
+    settings.git.username,
+    settings.git.remote_access_token,
+    settings.git.remote_source_url,
+    settings.git.remote_source_branch,
+    settings.git.remote_copy_url,
+    # settings.git.remote_copy_branch,
+    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
+)
 
 
 @deployments_router.get("", status_code=status.HTTP_200_OK)
@@ -49,6 +61,7 @@ async def create_deployment(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, payload.virtual_assistant_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.push_to_copy_remote_origin()
 
         parsed_url = urlparse(settings.deployer.portainer_url)
         host = f"http://{parsed_url.hostname}"
@@ -109,6 +122,7 @@ async def patch_deployment(
 
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.push_to_copy_remote_origin()
 
         if deployment.stack_id:
             swarm_client.delete_stack(deployment.stack_id)

@@ -48,6 +48,9 @@ services:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
+    depends_on:
+      - postgres
     deploy:
       resources:
         limits:
@@ -66,12 +69,14 @@ services:
         PORT: 6998
     depends_on:
       - auth-api
+      - postgres
     ports:
       - "6978:6998"
     volumes:
       - ../../services/distributions_api:/src/services/distributions_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
       - ~/.aws:/root/.aws
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:

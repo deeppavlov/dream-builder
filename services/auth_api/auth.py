@@ -1,18 +1,21 @@
+import random
 from datetime import datetime, timedelta
-from typing import Mapping
+from typing import Mapping, Annotated, Coroutine
 
 import aiohttp
 import requests
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status, Request
 from fastapi.responses import RedirectResponse
 from google.auth import jwt
 from google_auth_oauthlib.flow import Flow
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import Session
 from urllib.parse import urlencode, parse_qs
 
 import database.crud as crud
+import database.models
 from database.core import init_db
-from database.models import UserValid, GithubUserValid
+from database.models import GoogleUserValid, GithubUserValid, GeneralUser
 from apiconfig.config import (
     settings,
     URL_TOKENINFO,
@@ -21,7 +24,7 @@ from apiconfig.config import (
     GITHUB_TOKENINFO,
     GITHUB_URL_USERINFO,
 )
-from services.auth_api import schemas
+from services.shared.user import User, UserToken
 from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
 from services.auth_api.models import UserCreate, UserValidScheme, GithubUserCreate, GithubUser
 
@@ -29,13 +32,14 @@ router = APIRouter(prefix="/auth")
 
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
 
-flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
+flow: Flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
 flow.redirect_uri = settings.auth.redirect_uri
 
 github_params = settings.github_auth_client_info
 # example: https://github.com/login/oauth/authorize?client_id=1337&client_secret=1453
 github_auth_url_with_params = f"{GITHUB_AUTH_URL}?{urlencode(github_params)}"
 GITHUB = "github"
+GOOGLE = "google"
 
 
 def get_db():
@@ -77,66 +81,83 @@ def validate_aud(input_aud: str) -> None:
 
 
 def validate_email(email: str, db: Session) -> None:
-    if not crud.check_user_exists(db, email):
+    if not crud.check_google_user_exists(db, email):
         raise ValueError("User is not listed in the database")
 
 
-def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
-    if not crud.check_user_exists(db, data["email"]):
-        user = UserCreate(**data)
-        return UserRead.from_orm(crud.add_google_user(db, user))
-
-    user = crud.get_user_by_sub(db, data["sub"])
-    user = crud.update_user(db, user.id, **data)
-    return UserRead.from_orm(user)
-
+# def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
+#     if not crud.check_google_user_exists(db, data["email"]):
+#         user = UserCreate(**data)
+#         return UserRead.from_orm(crud.add_google_user(db, user))
+#
+#     user = crud.get_user_by_sub(db, data["sub"])
+#     user = crud.update_user(db, user.id, **data)
+#     return UserRead.from_orm(user)
+#
 
 async def _fetch_gh_user_info_by_access_token(token: str):
-    header = {"Authorizaton": "Bearer " + token}
+    header = {
+        "Authorization": "".join(["Bearer ", token]),
+    }
+    print(header)
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get(GITHUB_URL_USERINFO) as resp:
             response = await resp.json()
             resp_status = resp.status
     if resp_status != 200:
-        raise ValueError(f"Github token is bad. Response: {response}")
+        raise ValueError(f"Github token is bad. Response: {response, resp_status}")
 
     return response
 
 
 def validate_date(user: GithubUserValid):
-    if user.expire_date > datetime.now():
+    if datetime.now() > user.expire_date:
         raise ValueError("Token has expired")
 
 
-async def validate_gh(token: str = Header(), db: Session = Depends(get_db)):
+async def validate_gh(token: str = Header(), db: Session = Depends(get_db)) -> User:
     """
     """
-    if token == settings.auth.test_token:
-        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
     try:
         uservalid_info_from_db = crud.get_github_uservalid_by_access_token(db, token)
+        if not uservalid_info_from_db:
+            raise ValueError("The user with this token couldn't be found or token is not valid.")
+
         validate_date(uservalid_info_from_db)
         user_info_from_github = await _fetch_gh_user_info_by_access_token(token=token)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return GithubUser(
-        id=uservalid_info_from_db.id,
-        github_id=user_info_from_github.id,
-        email=user_info_from_github.email,
+
+    user_id = crud.get_general_user_by_outer_id(db, user_info_from_github["id"], GITHUB).id
+    return User(
+        id=user_id,
+        outer_id=user_info_from_github["id"],
+        email=user_info_from_github["email"],
         picture=user_info_from_github["avatar_url"],
-        name=user_info_from_github["name"]
+        name=user_info_from_github["name"] or user_info_from_github["login"]
     )
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)
-async def validate_jwt(token: str = Header(), auth_type: str = Header(), db: Session = Depends(get_db)):
+async def validate_jwt(token: str = Header(), auth_type: str = Header(default=None),
+                       db: Session = Depends(get_db)) -> User:
     """
+    `auth_type: Annotated[str | None, Header()] = None` means that auth_type header field is optional and may be None.
+
     Exchanges access token for user_info and validates it by aud, presence in userDB and expiration date or otherwise
     Check is carried out via `_fetch_user_info_by_access_token` function
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+        user: database.models.GoogleUser = crud.get_user_by_sub(db, "106152631136730592791")
+        name = user.fullname
+        return User(
+            id=user.user_id,
+            outer_id=user.sub,
+            email=user.email,
+            picture=user.picture,
+            name=name
+        )
 
     if auth_type == GITHUB:
         return await validate_gh(token, db)
@@ -146,26 +167,36 @@ async def validate_jwt(token: str = Header(), auth_type: str = Header(), db: Ses
 
         validate_aud(data["aud"])
         validate_email(data["email"], db)
-        user = crud.get_user_by_sub(db, data["sub"])
+        user: database.models.GoogleUser = crud.get_user_by_sub(db, data["sub"])
         # user = crud.update_user(db, user.id, **data)
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    return schemas.User.from_orm(user)
+    return User(
+        id=user.user_id,
+        outer_id=user.sub,
+        email=user.email,
+        picture=user.picture,
+        name=user.name or user.fullname
+    )
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
-async def logout(refresh_token: str = Header(), github_access_token: str = Header(), db: Session = Depends(get_db)) -> None:
-    if github_access_token:
-        crud.set_github_users_access_token_invalid(db, github_access_token)
-        return
-
-    crud.set_users_refresh_token_invalid(db, refresh_token)
+async def logout(token: str = Header(), auth_type: Annotated[str | None, Header()] = None,
+                 db: Session = Depends(get_db)) -> None:
+    """
+    refresh_token -> token
+    """
+    if auth_type == GITHUB:
+        crud.set_github_users_access_token_invalid(db, token)
+    else:
+        crud.set_users_refresh_token_invalid(db, token)
 
 
 @router.post("/exchange_authcode")
-async def exchange_authcode(auth_code: str, auth_type: str = Header(), db: Session = Depends(get_db)) -> dict[str, str]:
+async def exchange_authcode(auth_code: str, auth_type: str = Header(default=""),
+                            db: Session = Depends(get_db)) -> UserToken:
     """
     Exchanges authorization code for access token
 
@@ -180,8 +211,12 @@ async def exchange_authcode(auth_code: str, auth_type: str = Header(), db: Sessi
     8) post request to exchange the refresh token for access token
     """
     if auth_type == GITHUB:
-        return await exchange_github_code(auth_code, db)
+        return await _exchange_github_code(auth_code, db)
 
+    return await _exchange_google_code(auth_code, db)
+
+
+async def _exchange_google_code(auth_code: str, db: Session):
     try:
         flow.fetch_token(code=auth_code)
     except ValueError as e:
@@ -193,20 +228,35 @@ async def exchange_authcode(auth_code: str, auth_type: str = Header(), db: Sessi
     jwt_data = credentials._id_token
 
     user_info = jwt.decode(jwt_data, verify=False)
-    user = save_user(user_info, db)
-    # del user.sub
+
+    if crud.check_google_user_exists(db, user_info["sub"]):
+        general_user = crud.get_general_user_by_outer_id(db, user_info["sub"], GOOGLE)
+    else:
+        general_user = crud.add_user(
+                    db=db,
+                    provider_name=GOOGLE,
+                    outer_id=user_info["sub"],
+                    email=user_info["email"],
+                    name=user_info["name"],
+                    picture=user_info["picture"],
+                )
+        crud.add_google_user(db, UserCreate(**user_info), general_user.id)
 
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
 
-    user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
-    email = user_info["email"]
-    crud.add_user_to_uservalid(db, user_valid, email)
-    return {"token": access_token, "refresh_token": refresh_token, **user.dict()}
+    user_valid = UserValidScheme(user_id=general_user.id, refresh_token=refresh_token, is_valid=True,
+                                 expire_date=expire_date)
+    crud.add_user_to_uservalid(db, user_valid)
+    return UserToken(**User.from_orm(general_user).__dict__,
+                     token=access_token,
+                     refresh_token=refresh_token
+                     )
 
 
 @router.post("/update_token")
-async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
-    user: UserValid = crud.get_uservalid_by_refresh_token(db, refresh_token)
+async def update_access_token(refresh_token: str, auth_type: Annotated[str | None, Header()] = None,
+                              db: Session = Depends(get_db)) -> dict[str, str]:
+    user: GoogleUserValid = crud.get_uservalid_by_refresh_token(db, refresh_token)
 
     if not user:
         raise HTTPException(status_code=401, detail="User is not authenticated!")
@@ -226,15 +276,56 @@ async def update_access_token(refresh_token: str, db: Session = Depends(get_db))
     access_token = response["access_token"]
     return {"token": access_token}
 
+#
+# # TEST ONLY
+# @router.get("/github_auth")
+# async def github_auth():
+#     return RedirectResponse(github_auth_url_with_params)
+#
+#
+# @router.get("/login")
+# async def _exchange_github_code(code: str, db: Session = Depends(get_db)) -> UserToken:
+#     user_data, access_token = await _fetch_user_info_by_github_code(code)
+#
+#     github_id = user_data["id"]
+#
+#     github_user_create = GithubUserCreate(
+#         email=user_data["email"],
+#         github_id=github_id,
+#         picture=user_data["avatar_url"],
+#         name=user_data["name"] or user_data["login"],
+#     )
+#
+#     if crud.check_github_user_exists(db, github_id):
+#         general_user = crud.get_general_user_by_outer_id(db, github_id, GITHUB)
+#     else:
+#         general_user = crud.add_user(
+#             db=db,
+#             provider_name=GITHUB,
+#             outer_id=str(github_user_create.github_id),
+#             email=github_user_create.email,
+#             name=github_user_create.name,
+#             picture=github_user_create.picture,
+#         )
+#         crud.add_github_user(db, github_user_create, general_user.id)
+#
+#     crud.add_github_uservalid(
+#         db=db,
+#         user_id=general_user.id,
+#         access_token=access_token
+#     )
+#
+#     return UserToken(
+#         id=general_user.id,
+#         email=github_user_create.email,
+#         outer_id=github_user_create.github_id,
+#         picture=github_user_create.picture,
+#         name=github_user_create.name,
+#         token=access_token,
+#     )
 
-# TEST ONLY
-@router.get("/github_auth")
-async def github_auth():
-    return RedirectResponse(github_auth_url_with_params)
 
-
-@router.get("/login")
-async def exchange_github_code(code: str, db: Session = Depends(get_db)):
+async def _fetch_user_info_by_github_code(code: str) -> tuple[dict[str, str], str]:
     endpoint_to_fetch_user_info = _get_github_tokeninfo_endpoint(code)
 
     async with aiohttp.ClientSession() as session:
@@ -248,17 +339,9 @@ async def exchange_github_code(code: str, db: Session = Depends(get_db)):
 
     async with aiohttp.ClientSession(headers={"Authorization": "Bearer " + access_token}) as session:
         async with session.get(GITHUB_URL_USERINFO) as response:
-            user_data = await response.json()
+            user_data: dict = await response.json()
 
-    github_user_create = GithubUserCreate(
-        email=user_data["email"],
-        github_id=int(user_data["id"]),
-        picture=user_data["avatar_url"],
-        name=user_data["name"],
-    )
-    crud.add_github_user(db, github_user_create)
-    crud.add_github_uservalid(db=db, github_id=int(user_data["id"]), access_token=access_token)
-    return {"token": access_token, **github_user_create.__dict__}
+    return user_data, access_token
 
 
 def _is_token_good(response_text: str) -> bool:

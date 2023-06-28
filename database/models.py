@@ -1,4 +1,3 @@
-import json
 import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
@@ -9,21 +8,19 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
-    JSON,
-    TypeDecorator,
-    VARCHAR,
-    UniqueConstraint,
+    Sequence,
 )
-from sqlalchemy.dialects.postgresql import insert, JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.event import listens_for
-from sqlalchemy.ext import mutable
+from sqlalchemy.ext import mutable, hybrid
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import expression, sqltypes
 from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
-from database import utils, enums
+from database import enums
+from database.initial_data import utils
 from database.core import Base
 
 
@@ -49,10 +46,46 @@ class Role(Base):
     can_set_roles = Column(Boolean, nullable=False)
 
 
+class Provider(Base):
+    __tablename__ = "provider"
+
+    id = Column(Integer, primary_key=True, index=True)
+    service_name = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+
+
+class GeneralUser(Base):
+    """
+    outer_id is the identifier of the third-party auth provider.
+        For Google, it's sub, for GitHub - it's id (`github_id`)
+
+    user stands for GeneralUSER
+    """
+
+    __tablename__ = "user"
+
+    id = Column(Integer, Sequence("user_id_seq", start=3, increment=1), primary_key=True, index=True)
+    outer_id = Column(String)
+    provider_id = Column(Integer, ForeignKey("provider.id"), nullable=False)
+
+    google_user = relationship("GoogleUser", backref="user")
+    github_user = relationship("GithubUser", backref="user")
+
+    email = Column(String)
+    name = Column(String)
+    picture = Column(String)
+
+    virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
+    components = relationship("Component", back_populates="author", passive_deletes=True)
+    dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
+    # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
+
+
 class GoogleUser(Base):
     __tablename__ = "google_user"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     email = Column(String)
     sub = Column(String, unique=True)
 
@@ -67,18 +100,14 @@ class GoogleUser(Base):
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
-    virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
-    components = relationship("Component", back_populates="author", passive_deletes=True)
-    dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
-    # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
-
 
 class GithubUser(Base):
     __tablename__ = "github_user"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     email = Column(String, nullable=True)
-    github_id = Column(Integer, unique=True)
+    github_id = Column(String, unique=True)
     picture = Column(String(500), nullable=True)
     name = Column(String(100), nullable=True)
 
@@ -87,26 +116,27 @@ class GithubUser(Base):
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
-    # virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
-    # components = relationship("Component", back_populates="author", passive_deletes=True)
-    # dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
 
-
-class UserValid(Base):
+class GoogleUserValid(Base):
     __tablename__ = "user_valid"
 
     id = Column(Integer, index=True, primary_key=True)
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     refresh_token = Column(String, unique=True)
     is_valid = Column(Boolean, nullable=False)
     expire_date = Column(DateTime, nullable=False)
 
 
 class GithubUserValid(Base):
+    """
+    Even though the table fields are almost identical to UserValid (`user_valid`). It is recommended not to mix
+    those table as they used for different type of authorization.
+    """
+
     __tablename__ = "github_user_valid"
 
     id = Column(Integer, index=True, primary_key=True)
-    github_id = Column(Integer, ForeignKey("github_user.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     access_token = Column(String, unique=True)
     is_valid = Column(Boolean, nullable=False)
     expire_date = Column(DateTime, nullable=False)
@@ -130,8 +160,8 @@ class VirtualAssistant(Base):
     cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship(GoogleUser, back_populates="virtual_assistants")
+    author_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship(GeneralUser, back_populates="virtual_assistants")
 
     source = Column(String, nullable=False)
     name = Column(String, unique=True, nullable=False)
@@ -209,8 +239,8 @@ class PublishRequest(Base):
         "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
     )
 
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
-    user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
+    user_id = Column("user_id", Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    user = relationship("GeneralUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
     public_visibility = Column(sqltypes.Enum(enums.VirtualAssistantPublicVisibility), nullable=False)
@@ -221,8 +251,8 @@ class PublishRequest(Base):
     )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
-    reviewed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
-    reviewed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
+    reviewed_by_user_id = Column(Integer, ForeignKey("user.id"))
+    reviewed_by_user = relationship("GeneralUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
 
     date_reviewed = Column(DateTime, nullable=True)
 
@@ -267,8 +297,8 @@ class Component(Base):
     model_type = Column(String, nullable=True)
     is_customizable = Column(Boolean, nullable=False)
 
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship("GoogleUser", back_populates="components")
+    author_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship("GeneralUser", back_populates="components")
 
     description = Column(String, nullable=True)
 
@@ -308,8 +338,8 @@ class DialogSession(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
-    user = relationship("GoogleUser", uselist=False, foreign_keys="DialogSession.user_id")
+    user_id = Column("user_id", Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    user = relationship("GeneralUser", uselist=False, foreign_keys="DialogSession.user_id")
 
     deployment_id = Column(Integer, ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
     deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")
@@ -340,6 +370,16 @@ def pre_populate_role(target, connection, **kw):
         connection,
         map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
     )
+
+
+@listens_for(Provider.__table__, "after_create")
+def pre_populate_google_user(target, connection, **kw):
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "provider.tsv", target, connection)
+
+
+@listens_for(GeneralUser.__table__, "after_create")
+def pre_populate_google_user(target, connection, **kw):
+    _pre_populate_from_tsv(settings.db.initial_data_dir / "user.tsv", target, connection)
 
 
 @listens_for(GoogleUser.__table__, "after_create")

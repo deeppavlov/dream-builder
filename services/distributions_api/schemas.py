@@ -7,25 +7,17 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     check_memory_format,
 )
 from pydantic import BaseModel, Field, validator, EmailStr
+from services.shared.user import User
 
 from database import enums
 
 # PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
 
+UserRead = User
 
 class BaseOrmModel(BaseModel):
     class Config:
         orm_mode = True
-
-
-class UserRead(BaseOrmModel):
-    id: int
-    email: EmailStr
-    sub: str
-    picture: Optional[str]
-    fullname: Optional[str]
-    given_name: Optional[str]
-    family_name: Optional[str]
 
 
 class ApiKeyRead(BaseOrmModel):
@@ -67,7 +59,7 @@ class ComponentRead(BaseOrmModel):
     component_type: Optional[COMPONENT_TYPES]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
-    author: UserRead
+    author: User
     description: Optional[str]
     ram_usage: Optional[str]
     gpu_usage: Optional[str]

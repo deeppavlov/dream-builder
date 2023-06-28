@@ -2,6 +2,8 @@ import secrets
 import string
 from typing import Tuple
 
+import services.shared.user
+
 CYRILLIC_TO_LATIN = {
     "а": "a",
     "б": "b",
@@ -100,3 +102,10 @@ def names_from_display_name(display_name: str) -> Tuple[str, str]:
     random_id = secrets.token_hex(4)
 
     return f"{normalized_name_with_underscores}_{random_id}", f"{normalized_name_with_dashes}-{random_id}"
+
+
+def from_email(user: services.shared.user.User):
+    """
+    User may not have an email field. The function generates mockemail as a Kostyl
+    """
+    return user.email if user.email else f"{user.outer_id}@noemail.com"

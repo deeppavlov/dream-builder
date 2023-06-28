@@ -2,29 +2,32 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 
 from fastapi.logger import logger
-from sqlalchemy import select, update, and_, delete, func
+from sqlalchemy import select, update, and_, delete, func, cast, String
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import models, enums
 from apiconfig.config import settings
 from database import models
-from database.models import GoogleUser, UserValid, ApiKey
+from database.models import GoogleUser, GoogleUserValid, ApiKey, GeneralUser
+from database.utils import handle_unique_constraint
 
 
 # GOOGLE
 def get_all_users(db: Session) -> [models.GoogleUser]:
-    return db.scalars(select(GoogleUser)).all()
+    return db.scalars(select(GeneralUser)).all()
 
 
-def check_user_exists(db: Session, email) -> bool:
-    if db.query(GoogleUser).filter(GoogleUser.email == email).first():
+def check_google_user_exists(db: Session, sub: str) -> bool:
+    if db.query(GoogleUser).filter(GoogleUser.sub == sub).first():
         return True
     return False
 
 
-def add_google_user(db: Session, user) -> models.GoogleUser:
+@handle_unique_constraint
+def add_google_user(db: Session, user, user_id: int) -> models.GoogleUser:
     db_user = GoogleUser(
+        user_id=user_id,
         email=user.email,
         sub=user.sub,
         picture=user.picture,
@@ -40,7 +43,7 @@ def add_google_user(db: Session, user) -> models.GoogleUser:
 
 
 def get_user(db: Session, user_id: int) -> Optional[models.GoogleUser]:
-    return db.get(GoogleUser, user_id)
+    return db.get(GeneralUser, user_id)
 
 
 def get_user_by_sub(db: Session, sub: str) -> models.GoogleUser:
@@ -66,8 +69,8 @@ def update_user(db: Session, id: int, **kwargs) -> models.GoogleUser:
 
 
 # GOOGLE USER VALID
-def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:
-    db_user = UserValid(**user.dict(), user_id=get_user_by_email(db, email).id)
+def add_user_to_uservalid(db: Session, user) -> Optional[GoogleUserValid]:
+    db_user = GoogleUserValid(**user.dict())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -75,32 +78,32 @@ def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:
 
 
 def set_users_refresh_token_invalid(db: Session, refresh_token: str) -> None:
-    db.query(UserValid).filter(UserValid.refresh_token == refresh_token).update({"is_valid": False})
+    db.query(GoogleUserValid).filter(GoogleUserValid.refresh_token == refresh_token).update({"is_valid": False})
     db.commit()
 
 
-def get_uservalid_by_email(db: Session, email: str) -> Optional[UserValid]:
+def get_uservalid_by_email(db: Session, email: str) -> Optional[GoogleUserValid]:
     user = get_user_by_email(db, email)
     if not user:
         return None
     user_id = user.id
-    return db.query(UserValid).filter(UserValid.user_id == user_id, UserValid.is_valid == True).first()
+    return db.query(GoogleUserValid).filter(GoogleUserValid.user_id == user_id, GoogleUserValid.is_valid == True).first()
 
 
-def get_uservalid_by_refresh_token(db: Session, refresh_token: str) -> UserValid:
-    return db.query(UserValid).filter(UserValid.refresh_token == refresh_token, UserValid.is_valid == True).first()
+def get_uservalid_by_refresh_token(db: Session, refresh_token: str) -> GoogleUserValid:
+    return db.query(GoogleUserValid).filter(GoogleUserValid.refresh_token == refresh_token, GoogleUserValid.is_valid == True).first()
 
 
 def check_uservalid_exists(db: Session, email) -> bool:
     user = get_user_by_email(db, email)
-    if user and db.query(UserValid).filter(UserValid.id == user.id).first():
+    if user and db.query(GoogleUserValid).filter(GoogleUserValid.id == user.id).first():
         return True
     return False
 
 
 def update_users_refresh_token(db: Session, user, email: str):
     user_id = get_user_by_email(db, email).id
-    db.query(UserValid).filter(UserValid.id == user_id).update(
+    db.query(GoogleUserValid).filter(GoogleUserValid.id == user_id).update(
         {"refresh_token": user.refresh_token, "expire_date": user.expire_date}
     )
     db.commit()
@@ -677,7 +680,7 @@ def delete_deployment(db: Session, id: int, **kwargs):
 # GITHUB
 
 
-def add_github_user(db: Session, user) -> models.GithubUser:
+def add_github_user(db: Session, user, user_id: int) -> models.GithubUser:
     """
     `user` should be of type services.auth_api.models.GithubUserCreate
 
@@ -692,6 +695,7 @@ def add_github_user(db: Session, user) -> models.GithubUser:
     """
     db_user = models.GithubUser(
         email=user.email,
+        user_id=user_id,
         github_id=user.github_id,
         picture=user.picture,
         name=user.name,
@@ -703,8 +707,8 @@ def add_github_user(db: Session, user) -> models.GithubUser:
     return db_user
 
 
-def get_github_user_by_github_id(db: Session, github_id: int) -> models.GithubUser:
-    return db.query(models.GithubUser).filter(models.GithubUser.github_id == github_id).first()
+def get_github_user_by_github_id(db: Session, github_id: str) -> models.GithubUser:
+    return db.query(models.GithubUser).filter(models.GithubUser.github_id == cast(github_id, String)).first()
 
 
 def get_github_uservalid_by_access_token(db: Session, access_token: str) -> models.GithubUserValid:
@@ -715,7 +719,7 @@ def get_github_uservalid_by_access_token(db: Session, access_token: str) -> mode
     )
 
 
-def add_github_uservalid(db: Session, github_id: int, access_token: str) -> models.GithubUserValid:
+def add_github_uservalid(db: Session, user_id: int, access_token: str) -> models.GithubUserValid:
     """
     `uservalid` should be of type services.auth_api.models.GithubUserValidScheme
     ```
@@ -725,10 +729,9 @@ def add_github_uservalid(db: Session, github_id: int, access_token: str) -> mode
         expire_date: datetime
     ```
     """
-    github_user = get_github_user_by_github_id(db, github_id)
     expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
     user_valid = models.GithubUserValid(
-        github_id=github_user.id,
+        user_id=user_id,
         access_token=access_token,
         is_valid=True,
         expire_date=expire_date,
@@ -740,7 +743,48 @@ def add_github_uservalid(db: Session, github_id: int, access_token: str) -> mode
 
 
 def set_github_users_access_token_invalid(db: Session, access_token: str) -> None:
-    db.query(models.GithubUserValid).\
-        filter(models.GithubUserValid.access_token == access_token).\
-        update({"is_valid": False})
+    db.query(models.GithubUserValid).filter(models.GithubUserValid.access_token == access_token).update(
+        {"is_valid": False}
+    )
     db.commit()
+
+
+def check_github_user_exists(db: Session, github_id: str) -> bool:
+    if get_github_user_by_github_id(db, github_id):
+        return True
+    return False
+
+
+# GENERAL USER
+
+
+def get_provider_id_by_name(db: Session, service_name: str):
+    return db.query(models.Provider).filter(models.Provider.service_name == service_name).first().id
+
+
+@handle_unique_constraint
+def add_user(db: Session,
+             provider_name: str,
+             outer_id: str,
+             email: str,
+             name: str,
+             picture: str) -> models.GeneralUser:
+    provider_id = get_provider_id_by_name(db, provider_name)
+    user = models.GeneralUser(
+        provider_id=provider_id,
+        outer_id=outer_id,
+        email=email,
+        name=name,
+        picture=picture,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def get_general_user_by_outer_id(db: Session, outer_id: str, provider_name: str) -> models.GeneralUser:
+    provider_id = get_provider_id_by_name(db, provider_name)
+    gu = models.GeneralUser
+    return db.query(models.GeneralUser).where(gu.provider_id == provider_id, gu.outer_id == cast(outer_id, String)).first()
+

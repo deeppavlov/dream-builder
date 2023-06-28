@@ -12,6 +12,7 @@ from database import crud
 from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
+from services.distributions_api.utils import name_generator
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
@@ -84,7 +85,7 @@ async def create_component(
             f"http://{prompted_skill_container_name}:{prompted_skill_port}/respond",
             prompted_skill_name,
             payload.display_name,
-            user.email,
+            name_generator.from_email(user),
             payload.description,
         )
 

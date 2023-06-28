@@ -73,7 +73,7 @@ async def create_virtual_assistant(
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
-            user.email,
+            name_generator.from_email(user),
             payload.description,
             existing_prompted_skills,
         )
@@ -302,7 +302,7 @@ async def clone_dist(
         new_dist = dream_dist.clone(
             new_name,
             payload.display_name,
-            user.email,
+            name_generator.from_email(user),
             payload.description,
             existing_prompted_skills,
         )

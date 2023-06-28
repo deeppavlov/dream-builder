@@ -23,6 +23,7 @@ class UserRead(UserCreate):
 
 
 class UserValidScheme(UserBase):
+    user_id: int
     refresh_token: str
     is_valid: bool
     expire_date: datetime

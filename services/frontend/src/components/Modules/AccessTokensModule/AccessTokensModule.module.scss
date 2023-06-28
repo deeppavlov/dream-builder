@@ -1,0 +1,79 @@
+.module {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: start;
+  background-color: $bcgrnd3;
+}
+
+.title {
+  @include t1;
+}
+
+.annotations {
+  @include b1;
+}
+
+.add {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 16px;
+
+  input {
+    height: 48px;
+  }
+}
+
+.tokens {
+  margin-top: -24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.token {
+  @include b1;
+  width: 100%;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 0 12px;
+  background-color: $bcgrnd2;
+  color: $text1;
+}
+
+.tokenName {
+  @include hide_text;
+  width: 100%;
+  -webkit-line-clamp: 1;
+}
+
+.icon {
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  margin-right: 4px;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.validate {
+  @include b1;
+  color: $primary1;
+}
+
+.remove {
+  @include b1;
+  color: $red;
+}

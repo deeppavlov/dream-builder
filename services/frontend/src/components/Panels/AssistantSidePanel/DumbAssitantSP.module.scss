@@ -1,0 +1,165 @@
+.botInfoSidePanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  gap: 12px;
+  overflow: hidden;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 24px;
+  }
+  .name {
+    color: $text1;
+    @include t3;
+  }
+
+  .separator {
+    @include separator;
+  }
+
+  .dateAndVersion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $text2;
+    @include b3;
+
+    svg {
+      @include icon_size_24;
+    }
+  }
+
+  .topContainer {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 20px 0 24px;
+    margin-right: 4px;
+    width: 100%;
+  }
+  .scroll {
+    overflow: hidden;
+    overflow-y: overlay;
+    margin-right: 4px;
+
+    // &::-webkit-scrollbar {
+    //   width: 8px;
+    //   border-radius: 4px;
+    //   background: transparent;
+    // }
+
+    // &::-webkit-scrollbar-thumb {
+    //   background: $bcgrnd5;
+    //   border-radius: 4px;
+    // }
+  }
+
+  .container {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 20px 0 24px;
+    width: 100%;
+  }
+
+  .table {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: $text2;
+    @include b3;
+    li {
+      .tableCount {
+        color: $text1;
+      }
+      .type {
+        @include t4;
+      }
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  .author {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    @include b3;
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    img {
+      @include icon_size_24;
+      border-radius: 50%;
+    }
+  }
+  .desc {
+    @include b3;
+    padding: 8px 12px 0 12px;
+  }
+  .accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    .accordionItem {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      @include t3;
+      .icon {
+        @include icon_size_24;
+      }
+      svg {
+        @include icon_size_24;
+      }
+
+      &:not(:has(.icon)) {
+        padding-left: 32px;
+      }
+    }
+  }
+  .btns {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    padding: 0 24px;
+    align-self: end;
+    margin-top: auto;
+  }
+}
+
+.resourcesBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .name {
+    @include t3;
+    color: $text1;
+  }
+  .tableCount {
+    color: $text1;
+  }
+}

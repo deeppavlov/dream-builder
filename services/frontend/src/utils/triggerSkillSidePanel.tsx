@@ -1,8 +1,7 @@
-import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
-import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
-import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { ISkill, SkillAvailabilityType } from '../types/types'
+import { ISkill, SkillAvailabilityType } from 'types/types'
+import { IntentResponderSidePanel, SkillSidePanel } from 'components/Panels'
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import SkillDetailsSidePanel from 'components/Panels/SkillDetailsSidePanel/SkillDetailsSidePanel'
 import { trigger } from './events'
 
 interface Props {
@@ -62,7 +61,7 @@ const triggerSkillSidePanel = ({
       trigger(TRIGGER_RIGHT_SP_EVENT, {
         isOpen,
         children: (
-          <GenerativeSkillEditor
+          <SkillDetailsSidePanel
             key={key}
             component_id={component_id}
             distName={distName}

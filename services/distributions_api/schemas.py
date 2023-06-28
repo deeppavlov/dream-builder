@@ -50,6 +50,7 @@ class DeploymentBaseRead(BaseOrmModel):
     error: Optional[dict]
     date_state_updated: Optional[datetime]
     stack_id: Optional[int]
+    task_id: Optional[str]
 
 
 class ComponentRead(BaseOrmModel):
@@ -66,6 +67,7 @@ class ComponentRead(BaseOrmModel):
     prompt: Optional[str]
     prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
+    lm_config: Optional[dict]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
     @validator("ram_usage", "gpu_usage")
@@ -78,6 +80,7 @@ class ComponentGenerativeRead(BaseOrmModel):
     id: int
     prompt: Optional[str]
     lm_service: Optional[LmServiceRead]
+    lm_config: Optional[dict]
 
 
 class ComponentCreate(BaseModel):
@@ -86,6 +89,7 @@ class ComponentCreate(BaseModel):
     prompt: Optional[str]
     prompt_goals: Optional[str]
     lm_service_id: Optional[int]
+    lm_config: Optional[dict]
 
 
 class ComponentUpdate(BaseModel):
@@ -93,6 +97,7 @@ class ComponentUpdate(BaseModel):
     description: Optional[str]
     prompt: Optional[str]
     lm_service_id: Optional[int]
+    lm_config: Optional[dict]
 
 
 class VirtualAssistantBaseRead(BaseOrmModel):

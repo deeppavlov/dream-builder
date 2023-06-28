@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional, List
 
+from sqlalchemy import select, update, and_, delete, func
 from fastapi.logger import logger
 from sqlalchemy import select, update, and_, delete, func, cast, String
 from sqlalchemy.dialects.postgresql import insert
@@ -207,7 +208,10 @@ def create_virtual_assistant(
 
 def update_virtual_assistant_by_name(db: Session, name: str, **kwargs):
     return db.scalar(
-        update(models.VirtualAssistant).where(models.VirtualAssistant.name == name).values(**kwargs).returning(models.VirtualAssistant)
+        update(models.VirtualAssistant)
+        .where(models.VirtualAssistant.name == name)
+        .values(**kwargs)
+        .returning(models.VirtualAssistant)
     )
 
 
@@ -279,6 +283,7 @@ def create_component(
     prompt: Optional[str] = None,
     prompt_goals: Optional[str] = None,
     lm_service_id: Optional[int] = None,
+    lm_config: Optional[dict] = None,
     # build_args: Optional[dict] = None,
     # compose_override: Optional[dict] = None,
     # compose_dev: Optional[dict] = None,
@@ -305,6 +310,7 @@ def create_component(
             prompt=prompt,
             prompt_goals=prompt_goals,
             lm_service_id=lm_service_id,
+            lm_config=lm_config,
             # build_args=build_args,
             # compose_override=compose_override,
             # compose_dev=compose_dev,
@@ -541,7 +547,7 @@ def create_dialog_session_by_name(db: Session, user_id: int, virtual_assistant_n
         .values(is_active=False)
         .returning(models.DialogSession)
     ).all()
-    logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
+    # logger.info(f"Invalidated sessions: {', '.join(str(s.id) for s in invalidated_sessions)}")
 
     dialog_session = db.scalar(
         insert(models.DialogSession)

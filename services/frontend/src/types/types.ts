@@ -15,19 +15,6 @@ export interface ITokens {
   token: string
 }
 
-export interface IAPIToken {
-  id: number
-  name: string
-  description: string
-  base_url: string
-}
-
-export interface IPostUserToken {
-  user_id: number
-  api_token_id: number
-  token_value: string
-}
-
 export interface IPreviewContext {
   isPreview: boolean
   setIsPreview: (isPreview: boolean) => void
@@ -45,7 +32,7 @@ export interface IAuthor {
 
 export type TEvents =
   | 'TRIGGER_RIGHT_SP_EVENT'
-  | 'ShareModal'
+  | 'ShareAssistantModal'
   | 'SignInModal'
   | 'AreYouSureModal'
   | 'RenewChat'
@@ -66,7 +53,10 @@ export type TEvents =
   | 'CreateSkillDistModal'
   | 'DeleteSkillModal'
   | 'FreezeSkillModal'
-  | 'ConfirmApiTokenUpdate'
+  | 'ConfirmApiTokenUpdateModal'
+  | 'AccessTokensModal'
+  | 'AccessTokensChanged'
+  | 'PublishWarningModal'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
@@ -103,6 +93,7 @@ type TKey = {
   id: number
   name: string
 }
+
 export interface BotInfoInterface {
   id: number
   name: string
@@ -124,20 +115,6 @@ export interface BotCardProps {
   bot: BotInfoInterface
   size?: BotCardSize
   disabled: boolean
-}
-
-export interface IComponent {
-  name: string
-  display_name: string
-  author: string
-  component_type: ComponentType
-  model_type: ModelType
-  description: string
-  date_created: string | Date | number
-  execution_time: string | number | null
-  gpu_usage: string | number | null
-  ram_usage: string | number | null
-  is_customizable: boolean
 }
 
 export interface ResourcesInterface {
@@ -162,13 +139,7 @@ export interface IContextMenu {
   isPreview: boolean
   isCustomizable: boolean
 }
-export interface IAnnotator {
-  name: string
-  author: string
-  authorImg: string
-  type: string
-  desc: string
-}
+
 export interface DistListProps {
   view: ViewType
   dists: BotInfoInterface[]
@@ -183,6 +154,12 @@ export interface ICreateComponent {
   prompt?: string
 }
 
+export interface ICloneComponent {
+  skill: ISkill
+  distName: string
+  type: StackType
+}
+
 export interface SkillListProps {
   skills: ISkill[]
   view: ViewType
@@ -191,7 +168,7 @@ export interface SkillListProps {
   forGrid?: boolean
   forModal?: boolean
   withoutDate?: boolean
-  handleAdd?: (skill: ICreateComponent) => void
+  handleAdd?: (skill: ISkill) => void
 }
 export interface SettingKey {
   name: string
@@ -215,9 +192,6 @@ export interface IStackElement {
   date_created: string | Date
   description: string
   is_customizable: boolean
-  ram_usage: string
-  gpu_usage: string
-  execution_time: string
 }
 
 export interface LM_Service {
@@ -230,6 +204,7 @@ export interface LM_Service {
   description: string
   project_url: string
   api_key: string | null
+  is_maintained: boolean
 }
 
 export interface ISkill extends IStackElement {
@@ -251,8 +226,6 @@ export type ChatHistory = {
   hidden?: boolean
 }
 
-export type Message = { message: string }
-export type ChatPanelType = 'bot' | 'skill'
 export type SkillCardSize = BotCardSize
 
 export type CustomRouteConfig = RouteObject & { crumb?: string }
@@ -294,8 +267,6 @@ export type StackType =
   | 'skill_selectors'
   | 'skills'
 
-export type BotVisabilityType = 'Public' | 'Unlisted'
-
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
@@ -328,11 +299,6 @@ export interface IPostChat {
   prompt?: string
   lm_service_id?: number
   openai_api_key?: string
-}
-
-export interface IEditComponent {
-  display_name: string
-  description: string
 }
 
 export type TComponents = {
@@ -382,3 +348,20 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TIntegrationTabType = 'CHAT' | 'API'
+export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
+
+export interface IPromptBlock {
+  category: string
+  color: string
+  block: string
+  template: string
+  examples: string
+  description: string
+  newLineAfter: boolean
+  newLineBefore: boolean
+  ChatGPT: boolean
+  'GPT-3.5': boolean
+  'Open-Assistant Pythia 12B': boolean
+  'GPT-JT 6B': boolean
+}

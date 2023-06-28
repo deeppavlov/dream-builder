@@ -1,5 +1,3 @@
-import { RefObject } from 'react'
-
-export const сopyToClipboard = (ref: RefObject<HTMLElement>) => {
-  navigator.clipboard.writeText(ref?.current?.textContent!)
+export const сopyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text)
 }

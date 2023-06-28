@@ -9,14 +9,25 @@ from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import crud, models, enums
+from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import verify_token
-from services.distributions_api.utils import name_generator
 from services.distributions_api.utils.emailer import Emailer
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
+
+dream_git = GitManager(
+    settings.git.local_path,
+    settings.git.username,
+    settings.git.remote_access_token,
+    settings.git.remote_source_url,
+    settings.git.remote_source_branch,
+    settings.git.remote_copy_url,
+    # settings.git.remote_copy_branch,
+    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
+)
 
 
 def send_publish_request_created_emails(
@@ -63,6 +74,7 @@ async def create_virtual_assistant(
                 "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "lm_config": dream_dist.pipeline.skills[skill.component.name].lm_config,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
                 "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
@@ -77,7 +89,8 @@ async def create_virtual_assistant(
             payload.description,
             existing_prompted_skills,
         )
-        new_dist.save()
+        new_dist.save(generate_configs=True)
+        dream_git.commit_all_files(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -106,7 +119,9 @@ async def create_virtual_assistant(
                 gpu_usage=dream_component.component.gpu_usage,
                 description=dream_component.component.description,
                 prompt=dream_component.prompt,
+                prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
+                lm_config=dream_component.lm_config,
             )
             new_components.append(component)
 
@@ -183,7 +198,7 @@ async def get_virtual_assistant_by_name(dist_name: str, db: Session = Depends(ge
 async def patch_virtual_assistant_by_name(
     dist_name: str,
     payload: schemas.VirtualAssistantUpdate,
-    user: str = Depends(verify_token),
+    user: schemas.UserRead = Depends(verify_token),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
     """
@@ -220,6 +235,7 @@ async def patch_virtual_assistant_by_name(
             )
 
         dream_dist.save(overwrite=True)
+        dream_git.commit_all_files(user.id, 1)
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
@@ -245,6 +261,7 @@ async def delete_virtual_assistant_by_name(
         try:
             dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
             dream_dist.delete()
+            dream_git.commit_all_files(user.id, 1)
         except FileNotFoundError:
             pass
 
@@ -292,6 +309,7 @@ async def clone_dist(
                 "command": dream_dist.pipeline.skills[skill.component.name].service.service.compose.command,
                 "lm_service_model": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).hostname,
                 "lm_service_port": urlparse(dream_dist.pipeline.skills[skill.component.name].lm_service).port,
+                "lm_config": dream_dist.pipeline.skills[skill.component.name].lm_config,
                 "prompt": dream_dist.pipeline.skills[skill.component.name].prompt,
                 "prompt_goals": dream_dist.pipeline.skills[skill.component.name].prompt_goals,
                 "display_name": dream_dist.pipeline.skills[skill.component.name].component.display_name,
@@ -307,6 +325,7 @@ async def clone_dist(
             existing_prompted_skills,
         )
         new_dist.save(overwrite=False)
+        dream_git.commit_all_files(user.id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -337,6 +356,7 @@ async def clone_dist(
                 prompt=dream_component.prompt,
                 prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
+                lm_config=dream_component.lm_config,
             )
             new_components.append(component)
 
@@ -404,6 +424,7 @@ async def add_virtual_assistant_component(
             DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
         )
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.commit_all_files(1, 1)
 
     return _virtual_assistant_component_model_to_schema(virtual_assistant_component)
 
@@ -431,6 +452,7 @@ async def delete_virtual_assistant_component(
         virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
         dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
         dream_dist.save(overwrite=True, generate_configs=True)
+        dream_git.commit_all_files(1, 1)
 
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
@@ -449,7 +471,9 @@ async def publish_dist(
 
         if payload.visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
             crud.delete_publish_request(db, virtual_assistant.id)
-            virtual_assistant = crud.update_virtual_assistant_by_name(db, dist_name, private_visibility=payload.visibility)
+            virtual_assistant = crud.update_virtual_assistant_by_name(
+                db, dist_name, private_visibility=payload.visibility
+            )
         elif payload.visibility.__class__ == enums.VirtualAssistantPublicVisibility:
             crud.create_publish_request(db, virtual_assistant.id, user.id, virtual_assistant.name, payload.visibility)
             moderators = crud.get_users_by_role(db, 2)
@@ -475,29 +499,3 @@ async def debug_template(template_file_path: str, owner_address: str, dist_name:
     }
 
     return _TemplateResponse(template, template_kwargs)
-
-
-# @assistant_dists_router.get("/{dist_name}/components/{component_group}")
-# async def get_config_services_by_group(dist_name: str, component_group: str, token: str = Depends(verify_token)):
-#     dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     return list(_component_to_component_short(c) for c in dist.iter_components(component_group))
-#
-#
-# @assistant_dists_router.post("/{dist_name}/add_service/", status_code=status.HTTP_201_CREATED)
-# async def add_service_to_dist(dist_name: str, service_name: str, port: int, token: str = Depends(verify_token)):
-#     """ """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     dream_dist.add_service(name=service_name, port=port)
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)
-#
-#
-# @assistant_dists_router.post("/{dist_name}/remove_service", status_code=status.HTTP_200_OK)
-# async def remove_service_from_dist(dist_name: str, service_name: str, token: str = Depends(verify_token)):
-#     """ """
-#     dream_dist = AssistantDist.from_name(name=dist_name, dream_root=DREAM_ROOT_PATH)
-#     dream_dist.remove_service(service_name, inplace=True)
-#
-#     dream_dist.save(overwrite=True)
-#     return _dist_to_distmodel(dream_dist)

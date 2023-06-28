@@ -1,0 +1,12 @@
+.details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  color: $text2;
+  @include b2;
+
+  .body {
+    -webkit-line-clamp: 3;
+    @include hide_text;
+  }
+}

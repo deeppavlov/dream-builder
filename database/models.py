@@ -222,6 +222,7 @@ class Deployment(Base):
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     stack_id = Column(Integer, nullable=True)
+    task_id = Column(String, nullable=True)
     date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
     state = Column(sqltypes.Enum(enums.DeploymentState), nullable=True)
     error = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
@@ -315,6 +316,7 @@ class Component(Base):
     prompt_goals = Column(String, nullable=True)
     lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
     lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
+    lm_config = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

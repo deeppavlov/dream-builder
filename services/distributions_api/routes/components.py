@@ -110,7 +110,7 @@ async def create_component(
             user.email,
             payload.description,
         )
-        dream_git.commit_and_push(user.id, 1)
+        dream_git.commit_all_files(user.id, 1)
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
         component = crud.create_component(
@@ -180,7 +180,7 @@ async def patch_component(
                 )
 
         dream_component.save_configs()
-        dream_git.commit_and_push(1, 1)
+        dream_git.commit_all_files(1, 1)
 
         component = crud.update_component(
             db,

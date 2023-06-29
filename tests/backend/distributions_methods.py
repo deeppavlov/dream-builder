@@ -480,7 +480,7 @@ class UserMethods:
         assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
             "Dummy skill answers"
         assert "Paul" in send_message_response.json()["text"], \
-            f"Skill answers incorrectly, {send_message_response.json()['text']}, "\
+            f"Skill answers incorrectly, {send_message_response.json()['text']}, " \
             f"{send_message_response.json()['active_skill']['name']}"
 
     def get_dialog_session_history(self, dialog_session_id):
@@ -563,6 +563,7 @@ class DeploymentsMethods:
                 'token': auth_token})
         assert deployment_response.status_code == 200, deployment_response.json()
         assert models.DeploymentRead.parse_obj(deployment_response.json()), "Validation error while get_deployment"
+        return deployment_response.json()["task_id"]
 
     def delete_deployment(self, deployment_id):
         deployment_response = requests.delete(
@@ -573,12 +574,15 @@ class DeploymentsMethods:
             })
         assert deployment_response.status_code == 204, deployment_response.json()
 
-    def patch_deployment(self, deployment_id):
+    def patch_deployment(self, deployment_id, task_id):
         deployment_response = requests.patch(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
                 'token': auth_token,
+            },
+            params={
+                'task_id': task_id,
             })
         assert deployment_response.status_code == 200, deployment_response.json()
 

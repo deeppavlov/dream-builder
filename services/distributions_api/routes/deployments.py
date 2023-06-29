@@ -61,7 +61,7 @@ async def create_deployment(
         virtual_assistant = crud.get_virtual_assistant_by_name(db, payload.virtual_assistant_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.save(overwrite=True, generate_configs=True)
-        dream_git.push_to_copy_remote_origin()
+        dream_git.commit_and_push(user.id, 1)
 
         parsed_url = urlparse(settings.deployer.portainer_url)
         host = f"http://{parsed_url.hostname}"

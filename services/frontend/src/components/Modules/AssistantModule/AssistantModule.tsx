@@ -1,6 +1,7 @@
 import { useAuth } from 'context'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TDistVisibility } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
@@ -20,6 +21,7 @@ export const AssistantModule = () => {
   const { isPreview } = usePreview()
   const navigate = useNavigate()
   const auth = useAuth()
+  const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
@@ -38,13 +40,13 @@ export const AssistantModule = () => {
   const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
   const publishState = onModeration
-    ? 'On Moderation'
+    ? t('assistant_visibility.on_moderation')
     : published
-    ? 'Public Template'
+    ? t('assistant_visibility.public_template')
     : unlistedAssistant
-    ? 'Unlisted'
+    ? t('assistant_visibility.unlisted')
     : privateAssistant
-    ? 'Private'
+    ? t('assistant_visibility.private')
     : null
 
   const handleVisibility = () => {
@@ -135,7 +137,7 @@ export const AssistantModule = () => {
               props={{ onClick: handleDuplicate }}
             >
               <SvgIcon iconName='clone' />
-              Duplicate Assistant
+              {t('assistant_page.module.btns.duplicate')}
             </Button>
             {!isPreview && (
               <Button
@@ -149,25 +151,25 @@ export const AssistantModule = () => {
                 {!bot?.deployment && (
                   <>
                     <SvgIcon iconName='start' />
-                    Build Assistant
+                    {t('assistant_page.module.btns.build')}
                   </>
                 )}
                 {isDeploying && (
                   <>
                     <SvgIcon iconName='start' />
-                    Build Assistant
+                    {t('assistant_page.module.btns.build')}
                   </>
                 )}
                 {isDeployed && (
                   <>
                     <SvgIcon iconName='stop' />
-                    Stop Assistant
+                    {t('assistant_page.module.btns.stop')}
                   </>
                 )}
                 {error && (
                   <>
                     <SvgIcon iconName='restart' />
-                    Restart Assistant
+                    {t('assistant_page.module.btns.restart')}
                   </>
                 )}
               </Button>
@@ -198,7 +200,7 @@ export const AssistantModule = () => {
               }}
             >
               <SvgIcon iconName='publish' />
-              Visibility
+              {t('assistant_page.module.btns.visibility')}
             </Button>
           )}
         </Container>

@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import store from 'store2'
 import { BotInfoInterface, Visibility } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import { visibility } from 'mapping/visibility'
+import { getAssistantVisibility } from 'mapping/assistantVisibility'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
-import { Button, Checkbox, RadioButton } from 'components/Buttons'
+import { Button, RadioButton } from 'components/Buttons'
 import { BaseToolTip } from 'components/Menus'
 import { BaseModal } from 'components/Modals'
 import s from './PublishAssistantModal.module.scss'
@@ -20,6 +21,7 @@ interface FormValues {
   visibility: Visibility
 }
 export const PublishAssistantModal = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const isPushAlert = store('publishAlert')
@@ -35,6 +37,7 @@ export const PublishAssistantModal = () => {
     })
   const selectedVisibility = watch('visibility')
   const { changeVisibility } = useAssistants()
+  const visibilityList = getAssistantVisibility()
   const assistantVisibility = bot?.visibility
 
   const handleEventUpdate = (data: { detail: any }) => {
@@ -76,12 +79,12 @@ export const PublishAssistantModal = () => {
               }
             ),
             {
-              loading: 'Loading...',
+              loading: t('modals.publish_assistant.toasts.loading'),
               success:
                 visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-                  ? 'Submitted For Review!'
-                  : 'Success!',
-              error: 'Something went wrong...',
+                  ? t('modals.publish_assistant.toasts.submitted')
+                  : t('toasts.success'),
+              error: t('toasts.error'),
             }
           )
           .then(() => {
@@ -108,18 +111,19 @@ export const PublishAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.publishAssistantModal}>
         <div className={s.header}>
-          <h4>Change who can see your Assistant?</h4>
+          <h4>{t('modals.publish_assistant.header')}</h4>
         </div>
         <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
           <div className={s.body}>
             <div className={s.radio}>
-              {visibility.map((type, i) => {
+              {visibilityList.map(type => {
                 return (
                   <RadioButton
                     props={{
                       ...register('visibility', { required: true }),
                     }}
-                    key={i}
+                    tooltipId={type.id}
+                    key={type.id}
                     name={type.id}
                     id={type.name}
                     htmlFor={type.name}
@@ -139,7 +143,7 @@ export const PublishAssistantModal = () => {
           </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
-              No
+              {t('modals.publish_assistant.btns.no')}
             </Button>
             <Button
               theme='primary'
@@ -149,19 +153,21 @@ export const PublishAssistantModal = () => {
               }}
             >
               {selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-                ? 'Publish'
-                : ' Save'}
+                ? t('modals.publish_assistant.btns.publish')
+                : t('modals.publish_assistant.btns.save')}
             </Button>
           </div>
         </form>
       </div>
       <BaseToolTip
-        id='Public'
-        content='Everyone can clone and talk to your VA'
+        id={VISIBILITY_STATUS.PUBLIC_TEMPLATE}
+        content={t('modals.publish_assistant.tooltips.public')}
+        theme='small'
       />
       <BaseToolTip
-        id='Unlisted'
-        content={`Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category`}
+        id={VISIBILITY_STATUS.UNLISTED_LINK}
+        content={t('modals.publish_assistant.tooltips.unlisted')}
+        theme='small'
       />
     </BaseModal>
   )

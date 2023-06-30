@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { ISkill } from 'types/types'
 import { toasts } from 'mapping/toasts'
 import { useComponent } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
-import { validationSchema } from 'utils/validationSchema'
+import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
 import { Input, TextArea } from 'components/Inputs'
 import { BaseModal } from 'components/Modals'
@@ -24,12 +25,14 @@ interface SkillModalProps {
 }
 
 export const SkillModal = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const { name: distName } = useParams()
   const nav = useNavigate()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
+  const validationSchema = getValidationSchema()
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
@@ -94,9 +97,9 @@ export const SkillModal = () => {
       .promise(
         edit.mutateAsync({ data, component_id, distName, type: 'skills' }),
         {
-          loading: 'Renaming...',
-          success: 'Success!',
-          error: 'Something went wrong...',
+          loading: t('toasts.rename'),
+          success: t('toasts.success'),
+          error: t('toasts.error'),
         }
       )
       .then(() => closeModal())
@@ -112,25 +115,27 @@ export const SkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
-          {action == 'create' && <h4>Create a new generative skill</h4>}
-          {action == 'edit' && <h4>Rename skill</h4>}
+          {action == 'create' && (
+            <h4>{t('modals.skill.create_from_scratch.header')}</h4>
+          )}
+          {action == 'edit' && <h4>{t('modals.skill.edit.header')}</h4>}
           <div className={s.distribution}>
             {action == 'create' && (
               <div>
-                You are creating a skill that uses{' '}
-                <mark>large language models</mark>
+                <Trans i18nKey='modals.skill.create_from_scratch.subheader' />
               </div>
             )}
             {action == 'edit' && (
               <div>
-                You are renaming: <mark>{skill?.display_name}</mark>
+                {t('modals.skill.edit.subheader')}{' '}
+                <mark>{skill?.display_name}</mark>
               </div>
             )}
           </div>
         </div>
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Input
-            label='Name'
+            label={t('modals.skill.name_field.label')}
             name={NAME_ID}
             defaultValue={getValues()[NAME_ID]}
             control={control}
@@ -139,15 +144,14 @@ export const SkillModal = () => {
               pattern: validationSchema.global.regExpPattern,
             }}
             props={{
-              placeholder:
-                'A short name describing your Virtual Assistant’s skill',
+              placeholder: t('modals.skill.name_field.placeholder'),
             }}
           />
 
           <TextArea
+            label={t('modals.skill.desc_field.label')}
             name={DESC_ID}
             control={control}
-            label='Description'
             defaultValue={getValues()[DESC_ID]}
             withCounter
             rules={{
@@ -157,18 +161,17 @@ export const SkillModal = () => {
               pattern: validationSchema.global.regExpPattern,
             }}
             props={{
-              placeholder:
-                'Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose',
+              placeholder: t('modals.skill.desc_field.placeholder'),
               rows: 6,
             }}
           />
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: closeModal }}>
-              Cancel
+              {t('modals.skill.btns.cancel')}
             </Button>
             <Button theme='primary' props={{ type: 'submit' }}>
-              {action == 'create' && 'Create'}
-              {action == 'edit' && 'Save'}
+              {action == 'create' && t('modals.skill.btns.create')}
+              {action == 'edit' && t('modals.skill.btns.save')}
             </Button>
           </div>
         </form>

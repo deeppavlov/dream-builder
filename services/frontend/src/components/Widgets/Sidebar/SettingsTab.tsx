@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useAuth, useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as Gear } from 'assets/icons/gear.svg'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { consts } from 'utils/consts'
@@ -11,6 +12,7 @@ export const SettingsTab = () => {
   const auth = useAuth()
   const isAuthorized = Boolean(auth?.user)
   const { UIOptions } = useUIOptions()
+  const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
   const isActive = UIOptions[consts.SETTINGS_MODAL_IS_ACTIVE]
   let cx = classNames.bind(s)
 
@@ -34,7 +36,7 @@ export const SettingsTab = () => {
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='sidebar_settings'
-        content='Settings'
+        content={t('settings')}
         place='right'
       />
     </button>

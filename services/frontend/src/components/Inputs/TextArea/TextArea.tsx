@@ -114,7 +114,7 @@ export const TextArea: FC<TextAreaProps> = ({
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const textAreaId = props?.id ?? useId()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const pr = new Intl.PluralRules('ar-EG')
+  const pr = new Intl.PluralRules('ar-EG', { type: 'cardinal' })
   const suffixes = new Map([
     ['zero', 's'],
     ['one', ''],

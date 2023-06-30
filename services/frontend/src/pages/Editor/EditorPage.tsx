@@ -7,12 +7,9 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import {
-  AreYouSureModal,
   AssistantModal,
   DeleteAssistantModal,
   DeleteSkillModal,
-  IntentCatcherModal,
-  IntentResponderModal,
   PublishAssistantModal,
   ShareAssistantModal,
   SignInModal,
@@ -83,13 +80,10 @@ export const EditorPage = () => {
       <Outlet />
       <SkillsListModal />
       <BaseSidePanel />
-      <AreYouSureModal />
       <SkillQuitModal />
       <PublishAssistantModal />
       <DeleteAssistantModal />
       <AssistantModal />
-      <IntentCatcherModal />
-      <IntentResponderModal />
       <SignInModal />
       <ShareAssistantModal />
       <DeleteSkillModal />

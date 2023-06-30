@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import React, { FC, useId, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import Calendar from 'assets/icons/calendar.svg'
 import { RoutesList } from 'router/RoutesList'
@@ -30,6 +31,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   type,
   skill,
 }) => {
+  const { t } = useTranslation()
   const [disabled, setDisabled] = useState<boolean>(false)
   const dateCreated = dateToUTC(skill?.date_created)
   const { isPreview } = usePreview()
@@ -52,7 +54,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({
       skill,
       visibility: type,
-      activeTab: 'Properties',
+      activeTab: 'properties',
       isOpen: !isActive,
       distName: distRoutingName || '',
     })
@@ -78,7 +80,7 @@ export const SkillCard: FC<SkillCardProps> = ({
     triggerSkillSidePanel({
       skill,
       visibility: type,
-      activeTab: 'Editor',
+      activeTab: 'details',
       distName: distRoutingName || '',
     })
     e.stopPropagation()
@@ -137,7 +139,7 @@ export const SkillCard: FC<SkillCardProps> = ({
                   onClick: handleAddSkillBtnClick,
                 }}
               >
-                Add
+                {t('card_btns.add')}
               </Button>
             </div>
           ) : (
@@ -157,7 +159,7 @@ export const SkillCard: FC<SkillCardProps> = ({
                     disabled: disabled || isPreview || !skill?.is_customizable,
                   }}
                 >
-                  Edit
+                  {t('card_btns.edit')}
                 </Button>
               </div>
               <Kebab
@@ -178,7 +180,7 @@ export const SkillCard: FC<SkillCardProps> = ({
         <BaseToolTip
           delayShow={TOOLTIP_DELAY}
           id={'editSkill' + tooltipId}
-          content='You need to clone the virtual assistant to edit'
+          content={t('cards.skill.tooltips.clone_for_edit')}
           theme='small'
         />
       )}

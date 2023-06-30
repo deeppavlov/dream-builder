@@ -1,4 +1,5 @@
 import { useAuth, useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { AddButton } from 'components/Buttons'
@@ -6,9 +7,7 @@ import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import {
   AssistantModal,
-  CongratsModal,
   DeleteAssistantModal,
-  DeployNotificationModal,
   PublishAssistantModal,
   ShareAssistantModal,
 } from 'components/Modals'
@@ -16,6 +15,9 @@ import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const UsersBotsPage = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'your_assistants_page',
+  })
   const auth = useAuth()
   const { UIOptions } = useUIOptions()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
@@ -27,7 +29,7 @@ export const UsersBotsPage = () => {
       <Main sidebar fullWidth>
         <Wrapper
           primary
-          title='Your Assistants'
+          title={t('wrapper.title')}
           amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
           // fullHeight
         >
@@ -39,11 +41,7 @@ export const UsersBotsPage = () => {
                 <Table
                   assistants
                   addButton={
-                    <AddButton
-                      forTable
-                      disabled={!auth?.user}
-                      text='Create From Scratch'
-                    />
+                    <AddButton forTable fromScratch disabled={!auth?.user} />
                   }
                 >
                   {privateDists?.isLoading && (
@@ -77,8 +75,6 @@ export const UsersBotsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareAssistantModal />
-        <CongratsModal />
-        <DeployNotificationModal />
       </Main>
     </>
   )

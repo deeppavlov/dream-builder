@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
@@ -13,6 +14,9 @@ interface Props {
 }
 
 export const ConfirmApiTokenUpdate = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.confirm_api_key_update',
+  })
   const [isOpen, setIsOpen] = useState(false)
   const [serviceName, setServiceName] = useState<string | null>(null)
   const [onContinue, setOnContinue] = useState<Function | null>(null)
@@ -48,15 +52,17 @@ export const ConfirmApiTokenUpdate = () => {
     >
       <div className={s.confirmApiTokenUpdate}>
         <h4>
-          Do you want to update a <mark>{serviceName}</mark> token you have
-          already added?
+          <Trans
+            i18nKey='modals.confirm_api_key_update.header'
+            values={{ serviceName }}
+          />
         </h4>
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           <Button theme='primary' props={{ onClick: handleUpdateBtnClick }}>
-            Update
+            {t('btns.update')}
           </Button>
         </div>
       </div>

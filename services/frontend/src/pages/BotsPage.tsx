@@ -1,4 +1,5 @@
 import { useAuth, useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { RoutesList } from 'router/RoutesList'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
@@ -7,9 +8,7 @@ import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import {
   AssistantModal,
-  CongratsModal,
   DeleteAssistantModal,
-  DeployNotificationModal,
   PublicToPrivateModal,
   PublishAssistantModal,
   ShareAssistantModal,
@@ -27,6 +26,7 @@ import {
 } from 'components/UI'
 
 export const BotsPage = () => {
+  const { t } = useTranslation()
   const { UIOptions } = useUIOptions()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const auth = useAuth()
@@ -39,7 +39,7 @@ export const BotsPage = () => {
       <Main sidebar>
         <Wrapper
           subWrapper
-          title='Create your Assistant '
+          title={t('home_page.wrapper.title.public_assistants')}
           showAll
           amount={publicDists?.data?.length}
           linkTo={RoutesList.botsAll}
@@ -60,7 +60,7 @@ export const BotsPage = () => {
                   )}
                   <DistList
                     view='table'
-                    dists={publicDists?.data}
+                    dists={publicDists?.data!}
                     type='public'
                   />
                 </Table>
@@ -71,7 +71,7 @@ export const BotsPage = () => {
                     {publicDists?.isLoading && <CardsLoader cardsCount={6} />}
                     <DistList
                       view='cards'
-                      dists={publicDists?.data}
+                      dists={publicDists?.data!}
                       type='public'
                     />
                   </Slider>
@@ -83,7 +83,7 @@ export const BotsPage = () => {
         <Wrapper
           primary
           showAll
-          title='Your Assistants'
+          title={t('home_page.wrapper.title.your_assistants')}
           amount={
             auth?.user &&
             privateDists?.data?.length > 0 &&
@@ -98,7 +98,7 @@ export const BotsPage = () => {
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>
-                      Your assistants will appear here
+                      {t('your_assistants.empty_placeholder')}
                     </Placeholder>
                   ) : undefined
                 }
@@ -125,7 +125,9 @@ export const BotsPage = () => {
                   />
                 )}
                 {privateDists?.data?.length === 0 || !auth?.user ? (
-                  <Placeholder>Your assistants will appear here</Placeholder>
+                  <Placeholder>
+                    {t('your_assistants.empty_placeholder')}
+                  </Placeholder>
                 ) : null}
               </Slider>
             </Container>
@@ -137,9 +139,7 @@ export const BotsPage = () => {
         <DeleteAssistantModal />
         <ShareAssistantModal />
         <PublicToPrivateModal />
-        <CongratsModal />
         <SignInModal />
-        <DeployNotificationModal />
       </Main>
     </>
   )

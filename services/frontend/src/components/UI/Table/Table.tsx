@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, cloneElement } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as Arrow } from 'assets/icons/triangle_down.svg'
 import { Checkbox } from 'components/Buttons'
 import s from './Table.module.scss'
@@ -30,6 +31,8 @@ export const Table: FC<TableProps> = ({
   withoutDate,
   assistants,
 }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'assistant_table' })
+
   return (
     <div className={s.scroll}>
       <table className={s.table}>
@@ -43,17 +46,15 @@ export const Table: FC<TableProps> = ({
                 </button>
               </th>
             )}
-            <th className={s.th}>{first ? first : 'Name'}</th>
-            <th className={s.th}>{second ? second : 'Author'}</th>
-            <th className={s.th}>{third ? third : 'Description'}</th>
+            <th className={s.th}>{first ?? t('name')}</th>
+            <th className={s.th}>{second ?? t('author')}</th>
+            <th className={s.th}>{third ?? t('desc')}</th>
             {assistants && (
-              <th className={s.th}>{fourth ? fourth : 'Visibility'}</th>
+              <th className={s.th}>{fourth ?? t('visibility')}</th>
             )}
 
-            {!withoutDate && (
-              <th className={s.th}>{fifth ? fifth : 'Created'}</th>
-            )}
-            <th className={s.th}>{sixth ? sixth : 'Actions'}</th>
+            {!withoutDate && <th className={s.th}>{fifth ?? t('created')}</th>}
+            <th className={s.th}>{sixth ?? t('actions')}</th>
           </tr>
         </thead>
         {addButton}

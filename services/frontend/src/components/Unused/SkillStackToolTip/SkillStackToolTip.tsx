@@ -22,12 +22,12 @@ Props) => {
   const { name } = useParams()
 
   const handleEditBtnClick = () =>
-    triggerSkillSidePanel({ skill, activeTab: 'Editor', distName: name || '' })
+    triggerSkillSidePanel({ skill, activeTab: 'details', distName: name || '' })
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({
       skill,
-      activeTab: 'Properties',
+      activeTab: 'properties',
       distName: name || '',
     })
 

@@ -4,12 +4,12 @@ import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
 import { Accordion } from 'components/Dropdowns'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import SidePanelStatus from 'components/Panels/SidePanelStatus/SidePanelStatus'
 import SkillSidePanel from 'components/Panels/SkillSidePanel/SkillSidePanel'
 import IntentList from 'components/Unused/IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from 'components/Unused/IntentListItem/IntentListItem'
+import SidePanelStatus from 'components/Unused/SidePanelStatus/SidePanelStatus'
 import s from './IntentResponderSidePanel.module.scss'
 
 export const intentsMock: IntentListItemInterface[] = [

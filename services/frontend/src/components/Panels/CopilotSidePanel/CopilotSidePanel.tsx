@@ -3,6 +3,7 @@ import { useUIOptions } from 'context'
 import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import DeepyHelperIcon from 'assets/icons/deeppavlov_logo_round.svg'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
 import { ChatForm, ChatHistory } from 'types/types'
@@ -20,6 +21,7 @@ import { ToastCopySucces } from 'components/UI'
 import s from './CopilotSidePanel.module.scss'
 
 export const CopilotSidePanel = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'sidepanels.deepy' })
   const {
     sendToDeepy,
     deepyMessage,
@@ -158,7 +160,7 @@ export const CopilotSidePanel = () => {
             spellCheck='false'
             onKeyDown={handleKeyDown}
             className={s.textarea}
-            placeholder='Describe here your use case and Deepy will help you to generate a prompt for it.'
+            placeholder={t('message_field.placeholder')}
             {...register('message', { required: true })}
           />
           <input type='submit' hidden />
@@ -173,7 +175,7 @@ export const CopilotSidePanel = () => {
               <BaseToolTip
                 delayShow={TOOLTIP_DELAY}
                 id='renew'
-                content='Restart Dialog'
+                content={t('tooltips.dialog_renew')}
               />
               <Renew data-tooltip-id='renew' />
             </Button>
@@ -184,7 +186,7 @@ export const CopilotSidePanel = () => {
                 type: 'submit',
               }}
             >
-              Send
+              {t('btns.send')}
             </Button>
           </SidePanelButtons>
         </form>

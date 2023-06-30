@@ -1,17 +1,17 @@
 import { useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
-import {
-  AssistantModal,
-  DeployNotificationModal,
-  SignInModal,
-} from 'components/Modals'
+import { AssistantModal, SignInModal } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const BotsAllPage = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'public_templates_page',
+  })
   const { fetchPublicDists } = useAssistants()
   const publicDists = fetchPublicDists()
   const { UIOptions } = useUIOptions()
@@ -20,7 +20,7 @@ export const BotsAllPage = () => {
   return (
     <>
       <Main sidebar fullWidth>
-        <Wrapper title='Public Templates' amount={publicDists?.data?.length}>
+        <Wrapper title={t('wrapper.title')} amount={publicDists?.data?.length}>
           {publicDists?.error ? (
             <ErrorHandler error={publicDists.error} />
           ) : (
@@ -55,7 +55,6 @@ export const BotsAllPage = () => {
         <BaseSidePanel />
         <AssistantModal />
         <SignInModal />
-        <DeployNotificationModal />
       </Main>
     </>
   )

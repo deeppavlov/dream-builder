@@ -49,7 +49,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     triggerSkillSidePanel({
       skill,
       visibility: type,
-      activeTab: 'Properties',
+      activeTab: 'properties',
       isOpen: true,
       distName: distName || '',
     })
@@ -76,7 +76,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     triggerSkillSidePanel({
       skill,
       visibility: type,
-      activeTab: 'Editor',
+      activeTab: 'details',
       distName: distName || '',
     })
     e.stopPropagation()

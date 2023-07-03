@@ -772,16 +772,11 @@ def get_provider_id_by_name(db: Session, service_name: str):
 def add_user(db: Session,
              provider_name: str,
              outer_id: str,
-             email: str,
-             name: str,
-             picture: str) -> models.GeneralUser:
+             ) -> models.GeneralUser:
     provider_id = get_provider_id_by_name(db, provider_name)
     user = models.GeneralUser(
         provider_id=provider_id,
         outer_id=outer_id,
-        email=email,
-        name=name,
-        picture=picture,
     )
     db.add(user)
     db.commit()

@@ -58,8 +58,6 @@ class GeneralUser(Base):
     """
     outer_id is the identifier of the third-party auth provider.
         For Google, it's sub, for GitHub - it's id (`github_id`)
-
-    user stands for GeneralUSER
     """
 
     __tablename__ = "user"
@@ -68,12 +66,8 @@ class GeneralUser(Base):
     outer_id = Column(String)
     provider_id = Column(Integer, ForeignKey("provider.id"), nullable=False)
 
-    google_user = relationship("GoogleUser", backref="user")
-    github_user = relationship("GithubUser", backref="user")
-
-    email = Column(String)
-    name = Column(String)
-    picture = Column(String)
+    google_user = relationship("GoogleUser", backref="user", uselist=False)
+    github_user = relationship("GithubUser", backref="user", uselist=False)
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
     components = relationship("Component", back_populates="author", passive_deletes=True)

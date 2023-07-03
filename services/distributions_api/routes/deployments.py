@@ -17,7 +17,7 @@ from deployment_queue import tasks
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token
+from services.distributions_api.security.auth import get_current_user
 
 deployments_router = APIRouter(prefix="/api/deployments", tags=["deployments"])
 
@@ -38,7 +38,7 @@ dream_git = GitManager(
 @deployments_router.get("", status_code=status.HTTP_200_OK)
 async def get_deployments(
     state: str = None,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     with db.begin():
@@ -50,7 +50,7 @@ async def get_deployments(
 @deployments_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_deployment(
     payload: schemas.DeploymentCreate,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     with db.begin():
@@ -99,7 +99,7 @@ async def get_stack_ports():
 
 @deployments_router.get("/{deployment_id}", status_code=status.HTTP_200_OK, response_model=schemas.DeploymentRead)
 async def get_deployment(
-    deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+    deployment_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     with db.begin():
         try:
@@ -114,7 +114,7 @@ async def get_deployment(
 async def patch_deployment(
     deployment_id: int,
     task_id: str,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     with db.begin():
@@ -137,7 +137,7 @@ async def patch_deployment(
 
 @deployments_router.delete("/{deployment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_deployment(
-    deployment_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+    deployment_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     with db.begin():
         deployment = crud.get_deployment(db, deployment_id)

@@ -7,7 +7,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token
+from services.distributions_api.security.auth import get_current_user
 from services.distributions_api.utils.emailer import Emailer
 
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -24,14 +24,14 @@ def send_publish_request_reviewed_emails(owner_email: str, virtual_assistant_dis
 
 @admin_router.get("/publish_request", status_code=status.HTTP_200_OK)
 async def get_all_publish_requests(
-    user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+    user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> [schemas.PublishRequestRead]:
     return [schemas.PublishRequestRead.from_orm(pr) for pr in crud.get_all_publish_requests(db)]
 
 
 @admin_router.get("/publish_request/unreviewed", status_code=status.HTTP_200_OK)
 async def get_unreviewed_publish_requests(
-    user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+    user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> [schemas.PublishRequestRead]:
     return [schemas.PublishRequestRead.from_orm(pr) for pr in crud.get_unreviewed_publish_requests(db)]
 
@@ -40,7 +40,7 @@ async def get_unreviewed_publish_requests(
 async def confirm_publish_request(
     publish_request_id: int,
     background_tasks: BackgroundTasks,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.PublishRequestRead:
     with db.begin():
@@ -59,7 +59,7 @@ async def confirm_publish_request(
 async def decline_publish_request(
     publish_request_id: int,
     background_tasks: BackgroundTasks,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.PublishRequestRead:
     with db.begin():

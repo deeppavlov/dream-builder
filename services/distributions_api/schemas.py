@@ -18,10 +18,20 @@ class BaseOrmModel(BaseModel):
         orm_mode = True
 
 
+class RoleRead(BaseOrmModel):
+    id: int
+    name: str
+
+    can_view_private_assistants: bool
+    can_confirm_publish: bool
+    can_set_roles: bool
+
+
 class UserRead(BaseOrmModel):
     id: int
     email: EmailStr
     sub: str
+    role: RoleRead
     picture: Optional[str]
     fullname: Optional[str]
     given_name: Optional[str]
@@ -186,6 +196,23 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     def check_memory_format(cls, v):
         check_memory_format(v)
         return v
+
+    @classmethod
+    def from_orm(cls, obj):
+        obj.name = obj.component.name
+        obj.display_name = obj.component.display_name
+        obj.component_type = obj.component.component_type
+        obj.model_type = obj.component.model_type
+        obj.is_customizable = obj.component.is_customizable
+        obj.author = obj.component.author
+        obj.description = obj.component.description
+        obj.ram_usage = obj.component.ram_usage
+        obj.gpu_usage = obj.component.gpu_usage
+        obj.prompt = obj.component.prompt
+        obj.lm_service = obj.component.lm_service
+        obj.date_created = obj.component.date_created
+
+        return super().from_orm(obj)
 
 
 class VirtualAssistantComponentPipelineRead(BaseModel):

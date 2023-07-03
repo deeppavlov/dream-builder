@@ -1,13 +1,13 @@
 from typing import Optional
 
 import aiohttp
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 
 from apiconfig.config import settings
 from services.distributions_api import schemas
 
 
-async def verify_token(token: str = Header()) -> schemas.UserRead:
+async def get_current_user(token: str = Header()) -> schemas.UserRead:
     header = {"token": token}
 
     async with aiohttp.ClientSession(headers=header) as session:
@@ -20,7 +20,7 @@ async def verify_token(token: str = Header()) -> schemas.UserRead:
     return schemas.UserRead(**json_data)
 
 
-async def verify_token_or_none(token: Optional[str] = Header(default="")) -> Optional[schemas.UserRead]:
+async def get_current_user_or_none(token: Optional[str] = Header(default="")) -> Optional[schemas.UserRead]:
     header = {"token": token}
     user = None
 

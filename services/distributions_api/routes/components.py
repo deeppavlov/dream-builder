@@ -12,7 +12,7 @@ from database import crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token
+from services.distributions_api.security.auth import get_current_user
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
@@ -51,7 +51,7 @@ async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.
 async def create_component(
     payload: schemas.ComponentCreate,
     clone_from_id: Optional[int] = None,
-    user: schemas.UserRead = Depends(verify_token),
+    user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.ComponentRead:
     with db.begin():
@@ -205,7 +205,7 @@ async def get_component(component_id: int, db: Session = Depends(get_db)) -> sch
 
 @components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_component(
-    component_id: int, user: schemas.UserRead = Depends(verify_token), db: Session = Depends(get_db)
+    component_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     with db.begin():
         crud.delete_component(db, component_id)

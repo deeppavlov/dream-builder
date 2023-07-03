@@ -10,7 +10,7 @@ from apiconfig.config import settings
 from database import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import verify_token, verify_token_or_none
+from services.distributions_api.security.auth import get_current_user, get_current_user_or_none
 
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
 
@@ -86,7 +86,7 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 @dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
     payload: schemas.DialogSessionCreate,
-    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
+    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
     db: Session = Depends(get_db),
 ):
     """ """
@@ -107,7 +107,7 @@ async def create_dialog_session(
 @dialog_sessions_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
 async def get_dialog_session(
     dialog_session_id: int,
-    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
+    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
     db: Session = Depends(get_db),
 ):
     """ """
@@ -123,7 +123,7 @@ async def get_dialog_session(
 async def send_dialog_session_message(
     dialog_session_id: int,
     payload: schemas.DialogChatMessageCreate,
-    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
+    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
     db: Session = Depends(get_db),
 ):
     """
@@ -167,7 +167,7 @@ async def send_dialog_session_message(
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
 async def get_dialog_session_history(
     dialog_session_id: int,
-    user: Optional[schemas.UserRead] = Depends(verify_token_or_none),
+    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
     db: Session = Depends(get_db),
 ):
     """

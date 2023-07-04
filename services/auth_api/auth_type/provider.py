@@ -75,9 +75,6 @@ class GithubAuth(auth_type.OAuth):
                 db=db,
                 provider_name=self.PROVIDER_NAME,
                 outer_id=str(github_user_create.github_id),
-                email=github_user_create.email,
-                name=github_user_create.name,
-                picture=github_user_create.picture,
             )
             crud.add_github_user(db, github_user_create, general_user.id)
 

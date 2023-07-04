@@ -1,8 +1,5 @@
-import time
-
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base, DeclarativeMeta
-from sqlalchemy.exc import OperationalError
 
 # from database.scripts import register_initial_data_population
 
@@ -51,25 +48,15 @@ def init_db(
     session_callable = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     database = Database(Base, engine, session_callable)
-    retry_count = 0
-    MAX_RETRIES = 3
-    RETRY_DELAY_SEC = 2
-    while retry_count < MAX_RETRIES:
-        try:
-            if force_recreate:
-                print(f"Dropping all tables because force_recreate = {force_recreate}")
-                # Base.metadata.drop_all(bind=engine)
-                database.base.metadata.clear()
 
-            database.base.metadata.create_all(bind=engine, checkfirst=True)
-            break  # Successful initialization, break out of the retry loop
+    if force_recreate:
+        print(f"Dropping all tables because force_recreate = {force_recreate}")
+        # Base.metadata.drop_all(bind=engine)
+        database.base.metadata.clear()
 
-        except OperationalError as e:
-            retry_count += 1
-            print(f"Database initialization failed. Retrying ({retry_count}/{MAX_RETRIES})...")
-            time.sleep(RETRY_DELAY_SEC)
+    # if populate_initial_data:
+    #     register_initial_data_population()
 
-    if retry_count == MAX_RETRIES:
-        raise RuntimeError("Failed to initialize the database after multiple retries")
+    database.base.metadata.create_all(bind=engine, checkfirst=True)
 
     return database

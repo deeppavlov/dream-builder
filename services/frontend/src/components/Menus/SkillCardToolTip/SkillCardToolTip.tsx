@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { ISkill } from 'types/types'
 import { trigger } from 'utils/events'
@@ -14,19 +15,20 @@ interface Props {
 
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   const { name } = useParams()
+  const { t } = useTranslation('translation', { keyPrefix: 'ctx_menus.skill' })
   // const handleEditBtnClick = () => {
   //   if (skill.component_type === 'Generative') {
   //     trigger('SkillPromptModal', { skill })
   //     return
   //   }
 
-  //   triggerSkillSidePanel({ skill, activeTab: 'Editor' })
+  //   triggerSkillSidePanel({ skill, activeTab: 'details' })
   // }
 
   const handlePropertiesBtnClick = () =>
     triggerSkillSidePanel({
       skill,
-      activeTab: 'Properties',
+      activeTab: 'properties',
       distName: name || '',
     })
 
@@ -52,14 +54,14 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
       )} */}
       {skill.is_customizable && (
         <ContextMenuButton
-          name='Rename'
+          name={t('rename')}
           type='edit'
           disabled={isPreview}
           handleClick={handleRenameBtnClick}
         />
       )}
       <ContextMenuButton
-        name='Properties'
+        name={t('properties')}
         type='properties'
         handleClick={handlePropertiesBtnClick}
       />
@@ -70,7 +72,7 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
       /> */}
       <hr />
       <ContextMenuButton
-        name='Delete'
+        name={t('delete')}
         type='delete'
         disabled={isPreview || skill?.component_type !== ('Generative' as any)}
         handleClick={handleDeleteBtnClick}

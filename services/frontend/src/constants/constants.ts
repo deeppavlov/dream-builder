@@ -1,3 +1,5 @@
+import { ELOCALES_TITLE, TLocales } from 'types/types'
+
 export const DEBUG_DIST = 'universal_prompted_assistant'
 export const DEEPY_ASSISTANT = 'deepy_assistant'
 export const DUMMY_SKILL = 'dummy_skill'
@@ -36,3 +38,10 @@ export const API_CALL_TAB = {
 export const PUBLIC_DISTS = 'publicDists'
 export const PRIVATE_DISTS = 'privateDists'
 export const DIST = 'dist'
+
+export const I18N_STORE_KEY = 'i18nextLng'
+
+export const locales: TLocales = {
+  en: { title: ELOCALES_TITLE.EN },
+  ru: { title: ELOCALES_TITLE.RU },
+}

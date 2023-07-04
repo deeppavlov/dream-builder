@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-async-light'
 import scriptTemplate from 'assets/scripts/embed.js?raw'
@@ -59,6 +60,7 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
   const [previewScript, setPreviewScript] = useState(() =>
     getScript(assistantId, theme, adaptiveTheme, isDarkMode)
   )
+  const { t } = useTranslation()
   const preCodeRef = useRef<HTMLPreElement>(null)
 
   const handleClick = () => {
@@ -80,7 +82,7 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
       <div className={s.btnContainer}>
         <Button theme='tertiary2' props={{ onClick: handleClick }}>
           <SvgIcon iconName='copy' />
-          Copy Code
+          {t('assistant_page.integration_tab.wrapper.btns.copy_code')}
         </Button>
       </div>
       <SyntaxHighlighter

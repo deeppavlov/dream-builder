@@ -40,7 +40,7 @@ export const Accordion = ({
   }, [children, isActive])
 
   return (
-    <div>
+    <div className={s.container}>
       <div
         className={cx(
           'accordion',

@@ -1,6 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/arrow_right_link.svg'
 import { TErrorStatus } from 'types/types'
-import { errorMessages } from 'utils/errorMessages'
+import { getErrorMessage } from 'utils/getErrorMessage'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
 import s from './PageErrorHandler.module.scss'
@@ -10,7 +11,8 @@ interface IProps {
 }
 
 const PageErrorHandler = ({ status }: IProps) => {
-  const { title, message } = errorMessages[status]
+  const { t } = useTranslation()
+  const { title, message } = getErrorMessage(status)
   return (
     // Fix on SVG
     <div className={s.pageErrorHandler}>
@@ -24,7 +26,7 @@ const PageErrorHandler = ({ status }: IProps) => {
           <a href='/'>
             <Button theme='primary'>
               <LeftArrowIcon />
-              Back to home
+              {t('page_errors.btns.back_to_home')}
             </Button>
           </a>
         </div>

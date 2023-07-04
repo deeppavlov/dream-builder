@@ -3,14 +3,14 @@ import { ReactComponent as PlusIcon } from 'assets/icons/plus_icon.svg'
 import { IStackElement } from 'types/types'
 import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
-import { AnnotatorSidePanel } from 'components/Panels'
-import { SidePanelStatus } from 'components/Panels/'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import BaseLink from 'components/Unused/BaseLink/BaseLink'
 import IntentList from 'components/Unused/IntentList/IntentList'
 import IntentListItem, {
   IntentListItemInterface,
 } from 'components/Unused/IntentListItem/IntentListItem'
+import AnnotatorSidePanel from '../AnnotatorSidePanel/AnnotatorSidePanel'
+import SidePanelStatus from '../SidePanelStatus/SidePanelStatus'
 import s from './IntentCatcherSidePanel.module.scss'
 
 const intentsMock: IntentListItemInterface[] = [

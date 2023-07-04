@@ -7,11 +7,11 @@ import useTabsManager from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { Button } from 'components/Buttons'
 import {
-  SettingsList,
   SidePanelButtons,
   SidePanelHeader,
   SidePanelName,
 } from 'components/Panels'
+import { SettingsList } from '../SettingsList/SettingsList'
 import s from './SelectorSettingsSidePanel.module.scss'
 
 export interface SelectorSettings {

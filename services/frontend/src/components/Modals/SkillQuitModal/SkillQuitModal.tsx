@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
@@ -11,6 +12,9 @@ interface Props {
 }
 
 export const SkillQuitModal = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.skill_prompt_quit',
+  })
   const [isOpen, setIsOpen] = useState(false)
   const [handleQuit, setHandleQuit] = useState<Function | null>(null)
 
@@ -31,16 +35,14 @@ export const SkillQuitModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} data-modal-type='quit'>
       <div className={s.skillQuitModal}>
-        <h4>Do you want to close skill editing page?</h4>
-        <span className={s.desc}>
-          Your data won’t be saved, save it before closing.
-        </span>
+        <h4>{t('header')}</h4>
+        <span className={s.desc}>{t('subheader')}</span>
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           <Button theme='primary' props={{ onClick: handleCloseClick }}>
-            Close
+            {t('btns.close')}
           </Button>
         </div>
       </div>

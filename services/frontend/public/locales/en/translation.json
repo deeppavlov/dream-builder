@@ -1,0 +1,506 @@
+{
+  "home_page": {
+    "wrapper": {
+      "title": {
+        "public_assistants": "Create your assistant",
+        "your_assistants": "Your assistants"
+      },
+      "subwrapper": "Recommended Templates",
+      "links": {
+        "show_all": "Show All"
+      }
+    }
+  },
+
+  "public_templates_page": {
+    "wrapper": {
+      "title": "Public Templates"
+    }
+  },
+
+  "your_assistants_page": {
+    "wrapper": {
+      "title": "Your Assistants"
+    }
+  },
+
+  "assistant_page": {
+    "module": {
+      "btns": {
+        "duplicate": "Duplicate Assistant",
+        "build": "Build Assistant",
+        "stop": "Stop Assistant",
+        "restart": "Restart Assistant",
+        "visibility": "Visibility"
+      }
+    },
+    "skills_tab": {
+      "wrapper": {
+        "title": "Skills",
+        "annotation": "Your AI assistant is multi-skill which means that at each step in the conversation your Assistant picks the skill to create the response."
+      }
+    },
+    "integration_tab": {
+      "wrapper": {
+        "title": "Integration",
+        "tabs": {
+          "web_chat": "Web Chat",
+          "api_call": "API Call"
+        },
+        "annotation": {
+          "web_chat": "Web Chat: add the code below and paste it into your website to embed the chat widget",
+          "api_call": "Dialog API: API Call Examples"
+        },
+        "btns": {
+          "copy_code": "Copy Code"
+        }
+      }
+    }
+  },
+
+  "page_errors": {
+    "btns": {
+      "back_to_home": "Back to home"
+    },
+    "401": {
+      "title": "Hold up!",
+      "message": "Unauthorized!"
+    },
+    "404": {
+      "title": "Page not found!",
+      "message": "We couldn’t find the page you were looking for. The link you clicked may be broken or the page may have been removed or renamed!"
+    },
+    "500": {
+      "title": "Internal Server Error!",
+      "message": "The server has been deserted for a while. Please be patient or try again later."
+    },
+    "503": {
+      "title": "Sorry, we’re under maintenance!",
+      "message": "Hang on till we get the error fixed.  You may also refresh the page or try again later."
+    }
+  },
+
+  "modals": {
+    "access_api_keys": {
+      "header": "Personal access tokens",
+      "desc": "Personal access tokens allow your AI Assistants to use third-party services like OpenAI, GNews, News API, etc. You can always remove these tokens here if you want to stop use of the services they provide access to by your AI Assistants, or you can revoke these tokens in their respective services. Do not give out your personal access tokens to anybody you don't want to access your files.",
+      "token_field": {
+        "label": "Add a new personal access token:",
+        "placeholder": "Enter token..."
+      },
+      "service_dropbox": {
+        "label": "Choose service:",
+        "placeholder": "Choose service..."
+      },
+      "btns": {
+        "remove": "Remove"
+      },
+      "toasts": {
+        "token_creating": "Creating...",
+        "token_created": "Successfully created!",
+        "token_removing": "Removing...",
+        "token_removed": "Successfully removed!",
+        "token_updated": "Successfully updated!",
+        "token_canceled": "Successfully cancelled!",
+        "not_found_token": "Tokens not found.",
+        "not_found_service": "Not found Service or User id."
+      }
+    },
+    "assistant": {
+      "clone": {
+        "header": "Create new assistant from:"
+      },
+      "edit": {
+        "header": "Edit assistant:",
+        "subheader": "Change name and description for your assistant"
+      },
+      "create_from_scratch": {
+        "header": "Create new assistant from scratch"
+      },
+      "subheader": "Enter name and description for your assistant",
+      "name_field": {
+        "label": "Name",
+        "placeholder": "A short name describing your Virtual Assistant"
+      },
+      "desc_field": {
+        "label": "Description",
+        "placeholder": "Describe your Virtual Assistant ability, where you can use it and for what purpose"
+      },
+      "btns": {
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save"
+      },
+      "toasts": {
+        "create": "Creating...",
+        "clone": "Cloning..."
+      }
+    },
+    "confirm_api_key_update": {
+      "header": "Do you want to update a <mark>{{serviceName}}</mark> token you have already added?",
+      "btns": {
+        "cancel": "Cancel",
+        "update": "Update"
+      }
+    },
+    "delete_assistant": {
+      "header": "Do you really want to delete Assistant:",
+      "subheader": "This action can’t be undone.",
+      "public_subheader": "Your Assistant will be removed for the public templates.",
+      "btns": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "delete_skill": {
+      "header": "Do you really want to delete skill:",
+      "subheader": "This action can’t be undone.",
+      "btns": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "hide_public_assistant": {
+      "header": "Your assistant will be removed from public templates. Are you sure want to edit?",
+      "subheader": "",
+      "btns": {
+        "cancel": "Cancel",
+        "yes": "Yes"
+      }
+    },
+    "publish_assistant": {
+      "header": "Change who can see your Assistant?",
+      "subheader": "This action can’t be undone.",
+      "radio_btns": {
+        "private": "Private (only you can see it)",
+        "unlisted": "Unlisted (only those you’ve shared the direct link can see it)",
+        "public": "Public Template (everyone can see it and re-use it)"
+      },
+      "tooltips": {
+        "public": "Everyone can clone and talk to your VA",
+        "unlisted": "Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category"
+      },
+      "btns": {
+        "no": "No",
+        "publish": "Publish",
+        "save": "Save"
+      },
+      "toasts": {
+        "loading": "Loading...",
+        "submitted": "Submitted For Review!"
+      }
+    },
+    "share_assistant": {
+      "header": "Share it with your community!",
+      "content_to_share": "Check out this Generative Assistant I made with https://deepdream.builders/ !",
+      "separator_text": "or copy link",
+      "btns": {
+        "copy": "Copy",
+        "open_link": "Open in another tab"
+      }
+    },
+    "sign_in": {
+      "header": "To build your own <mark>Virtual Assistant</mark>, please sign in",
+      "btns": {
+        "sign_in": "Sign in"
+      }
+    },
+    "skill": {
+      "edit": {
+        "header": "Rename skill",
+        "subheader": "You are renaming:"
+      },
+      "create_from_scratch": {
+        "header": "Create a new generative skill",
+        "subheader": "You are creating a skill that uses <mark>large language models</mark>"
+      },
+      "name_field": {
+        "label": "Name",
+        "placeholder": "A short name describing your Virtual Assistant’s skill"
+      },
+      "desc_field": {
+        "label": "Description",
+        "placeholder": "Describe your Virtual Assistant’s skill ability, where you can use it and for what purpose"
+      },
+      "btns": {
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save"
+      }
+    },
+    "skill_prompt": {
+      "service_dropbox": {
+        "label": "Choose model:",
+        "placeholder": "Choose model"
+      },
+      "prompt_blocks": "Prompt blocks:",
+      "prompt_field": {
+        "label": "Enter prompt:",
+        "placeholder": "Pick words you might use"
+      },
+      "btns": {
+        "save": "Save"
+      }
+    },
+    "skill_prompt_quit": {
+      "header": "Do you want to close skill editing page?",
+      "subheader": "Your data won’t be saved, save it before closing.",
+      "btns": {
+        "cancel": "Cancel",
+        "close": "Close"
+      }
+    },
+    "choose_skill": {
+      "header": "Choose Skill",
+      "btns": {
+        "ok": "OK"
+      },
+      "toasts": {
+        "add": "Adding..."
+      }
+    }
+  },
+
+  "sidepanels": {
+    "skill_dialog": {
+      "tabs": {
+        "name": "Chat with this skill"
+      },
+      "error_header": "Error!",
+      "message_field": {
+        "placeholder": "Type..."
+      },
+      "btns": {
+        "retry": "Try again",
+        "send": "Send"
+      }
+    },
+    "assistant_dialog": {
+      "tabs": {
+        "name": "Chat:"
+      },
+      "deploy": {
+        "header": "Chat with AI Assistant",
+        "subheader": "In order to start chat with AI Assistant, it is necessary to build it",
+        "loading_wait_text": "Please wait till assistant launching",
+        "loading_time_text": "This may take a few minutes.",
+        "error": "The assistant build failed, please try again later."
+      },
+      "message_field": {
+        "placeholder": "Type..."
+      },
+      "skill_responder": "Skill:",
+      "btns": {
+        "build_assistant": "Build Assistant",
+        "send": "Send"
+      },
+      "toasts": {
+        "deploy_loading": "Loading...",
+        "sent_for_deploy": "Sent for deploy!"
+      }
+    },
+    "assistant": {
+      "accordions": {
+        "used_models": "Models used in this Assistant"
+      },
+      "btns": {
+        "more": "More",
+        "use": "Use",
+        "edit": "Edit"
+      }
+    },
+    "deepy": {
+      "first_msg_greeting": "hi deepy!",
+      "message_field": {
+        "placeholder": "Describe here your use case and Deepy will help you to generate a prompt for it."
+      },
+      "tooltips": {
+        "dialog_renew": "Restart Dialog"
+      },
+      "btns": {
+        "send": "Send"
+      }
+    },
+    "skill_details": {
+      "prompt": "Prompt:",
+      "generative_model": "Generative model:",
+      "btns": {
+        "edit": "Edit"
+      }
+    },
+    "skill_properties": {
+      "original_author": "Original author:",
+      "model": "Model:",
+      "accordions": {
+        "model_details": "Model Details"
+      }
+    }
+  },
+
+  "tooltips": {
+    "dialog_renew": "Start a new dialog"
+  },
+
+  "ribbons": {
+    "ready_for_chat": "Ready to chat",
+    "chat_error": "Error!"
+  },
+
+  "toasts": {
+    "success": "Success!",
+    "error": "Something went wrong...",
+    "delete": "Deleting...",
+    "copied": "Copied!",
+    "rename": "Renaming...",
+    "save": "Saving..."
+  },
+
+  "ctx_menus": {
+    "assistant": {
+      "chat": "Chat With Assistant",
+      "share": "Share",
+      "visibility": "Visibility",
+      "rename": "Rename",
+      "properties": "Properties",
+      "delete": "Delete",
+      "check_skills": "Check Skills"
+    },
+    "skill": {
+      "rename": "Rename",
+      "properties": "Properties",
+      "delete": "delete"
+    }
+  },
+
+  "tabs": {
+    "properties": "Properties",
+    "details": "Details"
+  },
+
+  "accordions": {
+    "desc": "Description"
+  },
+
+  "cards": {
+    "skill": {
+      "tooltips": {
+        "clone_for_edit": "You need to clone the virtual assistant to edit"
+      }
+    }
+  },
+
+  "card_btns": {
+    "use": "Use",
+    "edit": "Edit",
+    "add": "Add"
+  },
+
+  "topbar": {
+    "ctx_menus": {
+      "main_burger": {
+        "about": "About"
+      },
+      "assistant_burger": {
+        "welcome_guide": "Welcome guide",
+        "rename": "Rename",
+        "feedback": "Feedback",
+        "add_skills": "Add Skills",
+        "visibility": "Visibility",
+        "share": "Share",
+        "delete": "Delete"
+      },
+      "profile": {
+        "log_out": "Log Out"
+      }
+    },
+    "tooltips": {
+      "home": "Go to home page",
+      "table_view": "Change view type"
+    },
+    "btns": {
+      "chat_with_assistant": "Chat with Assistant",
+      "sign_in": "Sign in"
+    }
+  },
+
+  "breadcrumbs": {
+    "your_assistants": "Your assistants",
+    "public_templates": "Public Templates",
+    "skills": "Skills",
+    "integration": "Integration"
+  },
+
+  "sidebar": {
+    "tooltips": {
+      "skills": "Skills",
+      "integration": "Integration",
+      "settings": "Settings",
+      "deepy": "Ask Deepy if you need help with building your assistant"
+    }
+  },
+
+  "field_validation": {
+    "required": "This field can’t be empty",
+    "invalid": "Invalid data",
+    "desc_max": "Limit text description to {{max}} characters",
+    "prompt_max": "Limit prompt to {{max}} tokens"
+  },
+
+  "tokenizer": {
+    "count_label": "token",
+    "count_suffixes": {
+      "zero": "s",
+      "one": "",
+      "two": "s",
+      "few": "s",
+      "many": "s",
+      "other": "s"
+    }
+  },
+
+  "api_key": {
+    "required": {
+      "label": "Enter your personal access token for OpenAI to run your Generative AI Skill",
+      "link": "Enter your personal access token here"
+    }
+  },
+
+  "assistant_visibility": {
+    "on_moderation": "On Moderation",
+    "public_template": "Public Template",
+    "unlisted": "Unlisted",
+    "private": "Private"
+  },
+
+  "your_assistants": {
+    "empty_placeholder": "Your assistants will appear here"
+  },
+
+  "assistant_table": {
+    "name": "Name",
+    "author": "Author",
+    "desc": "Description",
+    "visibility": "Visibility",
+    "created": "Created",
+    "actions": "Actions",
+    "create_from_scratch_btn": "Create From Scratch"
+  },
+
+  "skill_table": {
+    "name": "Name",
+    "author": "Author",
+    "desc": "Description",
+    "type": "Type",
+    "created": "Created",
+    "actions": "Actions",
+    "create_from_scratch_btn": "Create From Scratch",
+    "add_btn": "Add Skill"
+  },
+
+  "assistants_not_loaded": {
+    "header": "Oops, something went wrong... Please try again later.",
+    "btns": {
+      "retry": "Retry"
+    }
+  }
+}

@@ -2,6 +2,7 @@ import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -22,6 +23,9 @@ import { ToastCopySucces } from 'components/UI'
 import s from './ShareAssistantModal.module.scss'
 
 export const ShareAssistantModal = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.share_assistant',
+  })
   const [bot, setBot] = useState<string>('not yet')
   const [isOpen, setIsOpen] = useState(false)
   const cx = classNames.bind(s)
@@ -33,8 +37,7 @@ export const ShareAssistantModal = () => {
     defaultValues: { link: bot },
   })
   const url = getValues('link')
-  const shareText =
-    'Check out this Generative Assistant I made with deepdream.builders! '
+  const shareText = t('content_to_share')
 
   const handleCopyBtnClick = () => {
     navigator.clipboard.writeText(url)
@@ -57,9 +60,8 @@ export const ShareAssistantModal = () => {
     <>
       <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className={s.shareModal}>
-          <div className={s.header}>Share It!</div>
+          <div className={s.header}>{t('header')}</div>
           <div className={s.main}>
-            <p className={s.text}>Share this with your community</p>
             <div className={s.icons}>
               <FacebookShareButton
                 quote={shareText}
@@ -88,7 +90,7 @@ export const ShareAssistantModal = () => {
               />
             </div>
           </div>
-          <p className={cx('text', 'lines')}>or copy link</p>
+          <p className={cx('text', 'lines')}>{t('separator_text')}</p>
           <div className={s.bottom}>
             <div className={s.footer}>
               <Input
@@ -98,12 +100,12 @@ export const ShareAssistantModal = () => {
                 props={{ readOnly: true }}
               />
               <Button props={{ onClick: handleCopyBtnClick }} theme='primary'>
-                Copy
+                {t('btns.copy')}
               </Button>
             </div>
             <a href={url} target='_blank' rel='noopener noreferrer'>
               <Button theme='secondary' long>
-                Open in another tab
+                {t('btns.open_link')}
               </Button>
             </a>
           </div>

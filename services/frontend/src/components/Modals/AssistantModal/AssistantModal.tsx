@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { AssistantFormValues, BotInfoInterface } from 'types/types'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { useOnKey } from 'hooks/useOnKey'
 import { trigger } from 'utils/events'
-import { validationSchema } from 'utils/validationSchema'
+import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
 import { Input, TextArea } from 'components/Inputs'
 import { BaseModal } from 'components/Modals'
@@ -29,15 +30,18 @@ interface IAssistantModal {
 }
 
 export const AssistantModal = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'modals.assistant' })
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
   const isEditing = action === 'edit'
   const isCloning = action === 'clone'
   const isCreateFromScratch = action === 'create'
+  const validationSchema = getValidationSchema()
 
-  const { handleSubmit, control, reset, getValues } =
-    useForm<AssistantFormValues>({ mode: 'all' })
+  const { handleSubmit, control, reset } = useForm<AssistantFormValues>({
+    mode: 'all',
+  })
 
   const { create, rename, clone } = useAssistants()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
@@ -97,23 +101,17 @@ export const AssistantModal = () => {
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div className={s.header}>
           <h4>
-            {isCloning && 'Create new assistant from:'}
-            {isEditing && 'Edit assistant:'}
-            {isCreateFromScratch && 'Create new assistant from scratch'}
+            {isCloning && t('clone.header')}
+            {isEditing && t('edit.header')}
+            {isCreateFromScratch && t('create_from_scratch.header')}
           </h4>
-          {!isCreateFromScratch && (
-            <mark>
-              {isEditing || isCloning ? `${bot?.display_name}` : 'Scratch'}
-            </mark>
-          )}
+          {!isCreateFromScratch && <mark>{bot?.display_name}</mark>}
           <div className={s.distribution}>
-            {`${
-              isEditing ? 'Change' : 'Enter'
-            } name and description for your assistant`}
+            {isEditing ? t('edit.subheader') : t('subheader')}
           </div>
         </div>
         <Input
-          label='Name'
+          label={t('name_field.label')}
           name={NAME_ID}
           control={control}
           rules={{
@@ -121,14 +119,14 @@ export const AssistantModal = () => {
             pattern: validationSchema.global.regExpPattern,
           }}
           props={{
-            placeholder: 'A short name describing your Virtual Assistant',
+            placeholder: t('name_field.placeholder'),
           }}
         />
         <div className={s.textarea}>
           <TextArea
+            label={t('desc_field.label')}
             name={DESC_ID}
             control={control}
-            label='Description'
             withCounter
             rules={{
               required: validationSchema.global.required,
@@ -136,8 +134,7 @@ export const AssistantModal = () => {
               pattern: validationSchema.global.regExpPattern,
             }}
             props={{
-              placeholder:
-                'Describe your Virtual Assistant ability, where you can use it and for what purpose',
+              placeholder: t('desc_field.placeholder'),
               rows: 6,
             }}
           />
@@ -145,14 +142,14 @@ export const AssistantModal = () => {
 
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: closeModal }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           {action === 'create' && (
             <Button
               theme='primary'
               props={{ type: 'submit', disabled: create?.isLoading }}
             >
-              Create
+              {t('btns.create')}
             </Button>
           )}
           {action === 'clone' && (
@@ -160,7 +157,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
             >
-              Create
+              {t('btns.create')}
             </Button>
           )}
           {action === 'edit' && (
@@ -168,7 +165,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: rename?.isLoading }}
             >
-              Save
+              {t('btns.save')}
             </Button>
           )}
         </div>

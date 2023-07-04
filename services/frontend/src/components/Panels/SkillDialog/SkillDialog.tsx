@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
 import { ChatForm, IDialogError, ISkill } from 'types/types'
@@ -15,6 +16,7 @@ import { checkLMIsOpenAi, getLSApiKeyByName } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
+import { BaseToolTip } from 'components/Menus'
 import SidePanelHeader from '../SidePanelHeader/SidePanelHeader'
 import s from './SkillDialog.module.scss'
 
@@ -25,6 +27,7 @@ interface Props {
 }
 
 const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
+  const { t } = useTranslation()
   const { send, renew, session, message, history } = useChat()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()
@@ -63,7 +66,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
       if (!isApiKey) {
         setError({
           type: 'api-key',
-          msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
+          msg: t('api_key.required.label'),
         })
         return false
       }
@@ -144,18 +147,20 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
       <SidePanelHeader>
         <ul role='tablist'>
           <li role='tab' key='Dialog'>
-            <span aria-selected>Chat with this skill</span>
+            <span aria-selected>{t('sidepanels.skill_dialog.tabs.name')}</span>
           </li>
         </ul>
       </SidePanelHeader>
       {error?.type === 'api-key' && (
         <div className={s.error}>
-          <span className={s.alertName}>Error!</span>
+          <span className={s.alertName}>
+            {t('sidepanels.skill_dialog.error_header')}
+          </span>
           <p className={s.alertDesc}>{error.msg}</p>
           {error.type === 'api-key' && (
             <div className={s.link}>
               <Button theme='ghost' props={{ onClick: handleEnterTokenClick }}>
-                Enter your personal access token here
+                {t('api_key.required.link')}
               </Button>
             </div>
           )}
@@ -163,7 +168,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
             theme='error'
             props={{ disabled: isChecking, onClick: handleRetryBtnClick }}
           >
-            Try again
+            {t('sidepanels.skill_dialog.btns.retry')}
           </Button>
         </div>
       )}
@@ -195,7 +200,9 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
               <textarea
                 className={s.textarea}
                 rows={4}
-                placeholder='Type...'
+                placeholder={t(
+                  'sidepanels.skill_dialog.message_field.placeholder'
+                )}
                 {...register('message', { required: true })}
                 spellCheck='false'
               />
@@ -207,17 +214,19 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
                 props={{
                   onClick: handleRenewClick,
                   disabled: send?.isLoading || !!error,
+                  'data-tooltip-id': 'renew',
                 }}
               >
-                <Renew data-tooltip-id='renew' />
+                <Renew />
               </Button>
               <Button
                 theme='secondary'
                 props={{ disabled: send?.isLoading || !!error, type: 'submit' }}
               >
-                Send
+                {t('sidepanels.skill_dialog.btns.send')}
               </Button>
             </div>
+            <BaseToolTip id='renew' content={t('tooltips.dialog_renew')} />
           </div>
         </>
       )}

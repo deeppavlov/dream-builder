@@ -1,6 +1,6 @@
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
-import React, { FC, useEffect, useId, useState } from 'react'
+import React, { FC, useEffect, useId, useRef, useState } from 'react'
 import {
   Control,
   RegisterOptions,
@@ -12,6 +12,8 @@ import { LanguageModel } from 'types/types'
 import { checkIfEmptyString } from 'utils/formValidate'
 import getTokensLength from 'utils/getTokensLength'
 import { Button } from 'components/Buttons'
+import { PromptHighlighter } from 'components/CodeHighlighters'
+import { IHighlights } from 'components/CodeHighlighters/PromptHighlighter/PromptHighlighter'
 import s from './TextArea.module.scss'
 
 interface TextAreaProps {
@@ -30,6 +32,7 @@ interface TextAreaProps {
   name: string
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
+  highlights?: IHighlights
 }
 
 interface IValidateTokens {
@@ -77,6 +80,7 @@ export const TextArea: FC<TextAreaProps> = ({
   rules,
   theme,
   triggerField,
+  highlights,
 }) => {
   const isTokenizer = countType === 'tokenizer'
   const {
@@ -109,6 +113,7 @@ export const TextArea: FC<TextAreaProps> = ({
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const textAreaId = props?.id ?? useId()
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const pr = new Intl.PluralRules('ar-EG')
   const suffixes = new Map([
     ['zero', 's'],
@@ -127,9 +132,9 @@ export const TextArea: FC<TextAreaProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     field.onChange(e)
+    if (props?.onChange) props.onChange(e)
     setIsActive(true)
     setIsEnter(true)
-    if (isTokenizer) setIsCounting(true)
   }
 
   // Hide Enter button everytime, when form submitted successfully
@@ -145,7 +150,15 @@ export const TextArea: FC<TextAreaProps> = ({
   }, [withEnterButton && formState?.isSubmitSuccessful])
 
   useEffect(() => {
-    if (!isTokenizer) setLength(field.value?.length ?? 0)
+    if (!isTokenizer) return setLength(field.value?.length ?? 0)
+    if (isTokenizer) setIsCounting(true)
+
+    const isEmpty = field.value?.length === 0
+
+    if (isEmpty) {
+      setLength(0)
+      setIsCounting(false)
+    }
   }, [field.value])
 
   useEffect(() => {
@@ -182,6 +195,7 @@ export const TextArea: FC<TextAreaProps> = ({
           {...props}
           {...field}
           id={textAreaId}
+          ref={textareaRef}
           onBlur={handleBlur}
           onChange={handleChange}
           className={s.field}
@@ -196,6 +210,15 @@ export const TextArea: FC<TextAreaProps> = ({
               Enter
             </Button>
           </div>
+        )}
+
+        {highlights && (
+          <PromptHighlighter
+            className={s.highlighter}
+            text={field.value}
+            textAreaRef={textareaRef}
+            highlights={highlights}
+          />
         )}
       </div>
 

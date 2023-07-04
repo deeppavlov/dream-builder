@@ -2,14 +2,20 @@ import { get_encoding } from '@dqbd/tiktoken'
 import { LanguageModel } from '../types/types'
 
 const getTokensLength = (lm: LanguageModel | undefined, value: string) => {
-  switch (lm) {
-    case 'ChatGPT':
-      return get_encoding('cl100k_base').encode(value).length
-    case 'GPT-3.5':
-      return get_encoding('p50k_base').encode(value).length
-    default:
-      return get_encoding('gpt2').encode(value).length
-  }
+  const encodingModels = new Map([
+    ['ChatGPT', 'cl100k_base'],
+    ['GPT-3.5', 'p50k_base'],
+  ])
+  const defaultEncodingModel = 'gpt2'
+  const currentEncodingModel: any = lm
+    ? encodingModels.get(lm) ?? defaultEncodingModel
+    : defaultEncodingModel
+  const encoding = get_encoding(currentEncodingModel)
+  const tokens = encoding.encode(value)
+
+  encoding.free()
+
+  return tokens.length
 }
 
 export default getTokensLength

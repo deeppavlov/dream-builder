@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
@@ -15,6 +15,7 @@ import { checkLMIsOpenAi, getLSApiKeyByName } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
+import SidePanelHeader from '../SidePanelHeader/SidePanelHeader'
 import s from './SkillDialog.module.scss'
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
   skill: ISkill | null
 }
 
-const SkillDialog = ({ isDebug, distName, skill }: Props) => {
+const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   const { send, renew, session, message, history } = useChat()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { handleSubmit, register, reset } = useForm<ChatForm>()
@@ -89,8 +90,10 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
 
   // handlers
   const handleSend = ({ message }: ChatForm) => {
-    const isChatSettings = checkIsChatSettings(user?.id)
+    const isMessage = message.replace(/\s/g, '').length > 0
+    if (!isMessage) return
 
+    const isChatSettings = checkIsChatSettings(user?.id)
     if (!isChatSettings) return
 
     send.mutate({
@@ -135,10 +138,18 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
     <form
       onSubmit={handleSubmit(handleSend)}
       onKeyDown={handleKeyDown}
-      className={cx('dialog', error && 'error')}
+      className={cx('dialog')}
+      ref={ref as any}
     >
-      {error && (
-        <>
+      <SidePanelHeader>
+        <ul role='tablist'>
+          <li role='tab' key='Dialog'>
+            <span aria-selected>Chat with this skill</span>
+          </li>
+        </ul>
+      </SidePanelHeader>
+      {error?.type === 'api-key' && (
+        <div className={s.error}>
           <span className={s.alertName}>Error!</span>
           <p className={s.alertDesc}>{error.msg}</p>
           {error.type === 'api-key' && (
@@ -154,9 +165,9 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
           >
             Try again
           </Button>
-        </>
+        </div>
       )}
-      {!error && (
+      {error?.type !== 'api-key' && (
         <>
           <div className={s.container}>
             <ul ref={chatRef} className={s.chat}>
@@ -185,7 +196,7 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
                 className={s.textarea}
                 rows={4}
                 placeholder='Type...'
-                {...register('message')}
+                {...register('message', { required: true })}
                 spellCheck='false'
               />
             </div>
@@ -195,13 +206,14 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
                 theme='secondary'
                 props={{
                   onClick: handleRenewClick,
+                  disabled: send?.isLoading || !!error,
                 }}
               >
                 <Renew data-tooltip-id='renew' />
               </Button>
               <Button
                 theme='secondary'
-                props={{ disabled: send?.isLoading, type: 'submit' }}
+                props={{ disabled: send?.isLoading || !!error, type: 'submit' }}
               >
                 Send
               </Button>
@@ -211,6 +223,6 @@ const SkillDialog = ({ isDebug, distName, skill }: Props) => {
       )}
     </form>
   )
-}
+})
 
 export default SkillDialog

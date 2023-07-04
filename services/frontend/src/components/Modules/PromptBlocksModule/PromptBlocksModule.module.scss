@@ -1,0 +1,56 @@
+.promptBlockModule {
+  min-width: 146px;
+  max-width: 146px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  padding: 12px 0;
+  border-radius: 12px;
+}
+
+.promptBlockModule,
+.block,
+.type {
+  border: 1px solid $text3;
+  background-color: $bcgrnd1;
+}
+
+.container {
+  overflow: auto;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.block {
+  width: 100%;
+  padding: 2px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 6px;
+  cursor: pointer;
+  @include b4;
+  color: $text1;
+}
+
+.type {
+  padding: 2px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  border-radius: 6px;
+  @include b4;
+}
+
+.text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

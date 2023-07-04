@@ -1,5 +1,5 @@
 import { CSSProperties, FC, useId } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
@@ -66,7 +66,10 @@ export const AdminPage = () => {
 
     const { virtual_assistant, ...deploymentField } = deployment
 
-    const assistant = { ...assistantWithoutDeploymentField, ...deploymentField }
+    const assistant = {
+      ...assistantWithoutDeploymentField,
+      deployment: deploymentField,
+    }
 
     toast.promise(
       deleteDeployment.mutateAsync(assistant),
@@ -186,8 +189,6 @@ export const AdminPage = () => {
         </Wrapper>
       </Main>
       <BaseSidePanel />
-
-      <Toaster />
     </>
   )
 }

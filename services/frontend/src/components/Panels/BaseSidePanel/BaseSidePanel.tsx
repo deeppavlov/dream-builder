@@ -84,7 +84,11 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
     >
       <div className={s.baseSidePanel} id={`sp_${transition}`}>
         {isClosable && (
-          <button className={s.close} onClick={handleClose}>
+          <button
+            id='base_sp_close_btn'
+            className={s.close}
+            onClick={handleClose}
+          >
             <CloseIcon />
           </button>
         )}

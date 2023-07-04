@@ -13,6 +13,7 @@ import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button, EditPencilButton } from 'components/Buttons'
+import { Accordion } from 'components/Dropdowns'
 import { AssistantContextMenu } from 'components/Menus'
 import { SidePanelHeader } from 'components/Panels'
 import { SmallTag } from 'components/UI'
@@ -152,7 +153,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
           </div>
           <div className={s.scroll}>
             <div className={s.container}>
-              <p className={s.desc}>{bot?.description}</p>
+              <Accordion title='Description' rounded isActive>
+                <p className={s.desc}>{bot?.description}</p>
+              </Accordion>
             </div>
           </div>
           <div className={s.btns}>

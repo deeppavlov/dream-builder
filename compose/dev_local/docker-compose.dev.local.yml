@@ -36,6 +36,7 @@ services:
       retries: 5
 
   auth-api:
+    restart: on-failure
     env_file: [ ../.envs/.env.dev.local ]
     build:
       context: ../..
@@ -57,6 +58,7 @@ services:
 
   distributions-api:
     env_file: [ ../.envs/.env.dev.local ]
+    restart: on-failure
     build:
       context: ../..
       dockerfile: ./services/distributions_api/Dockerfile
@@ -64,21 +66,64 @@ services:
         DREAM_ROOT_PATH: /dream
         DREAM_BRANCH: dev
         PORT: 6998
-    depends_on:
-      - auth-api
+#    depends_on:
+#      - auth-api
     ports:
       - "6978:6998"
     volumes:
       - ../../services/distributions_api:/src/services/distributions_api
-      - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
-      - ~/.aws:/root/.aws
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ../../database:/src/database
+      - ../../git_storage:/src/git_storage
+      - ../../deployment_queue:/src/deployment_queue
     deploy:
       resources:
         limits:
           memory: 512M
         reservations:
           memory: 512M
+
+  redis:
+    image: redis
+    ports:
+      - "6972:6379"
+    restart: always
+
+  deployment_worker:
+    env_file: [ ../.envs/.env.dev.local ]
+    restart: on-failure
+    user: deepypavlova:1600400037
+    build:
+      context: ../..
+      dockerfile: ./services/deployment_worker/Dockerfile
+#    command: celery -A services.distributions_api.tasks.tasks:app worker --loglevel=info --uid=1
+    volumes:
+      - ../../apiconfig:/src/apiconfig
+      - ../../database:/src/database
+      - ../../git_storage:/src/git_storage
+      - ../../deployment_queue:/src/deployment_queue
+      - ../../services/deployment_worker:/src/services/deployment_worker
+      - ~/.aws:/.aws
+      - /var/run/docker.sock:/var/run/docker.sock
+#    depends_on:
+#      - redis
+
+#
+#  flower:
+#    env_file: [ ../.envs/.env.dev.local ]
+#    restart: on-failure
+#    build:
+#      context: ../..
+#      dockerfile: ./services/distributions_api/Dockerfile
+#    volumes:
+#      - ../../services/distributions_api:/src/services/distributions_api
+#      - ../../database:/src/database
+#      - ../../apiconfig:/src/apiconfig
+#    command: celery -A services.distributions_api.tasks.tasks flower --port=5555 # --basic_auth=name:pass
+#    ports:
+#      - 5555:5555
+#    depends_on:
+#      - redis
+#      - celery_worker
 
 version: '3.7'

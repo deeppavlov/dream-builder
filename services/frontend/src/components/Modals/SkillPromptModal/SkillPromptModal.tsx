@@ -1,12 +1,12 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
-import { ISkill, LM_Service } from 'types/types'
+import { IPromptBlock, ISkill, LM_Service } from 'types/types'
 import { DEPLOY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
@@ -15,15 +15,20 @@ import { useObserver } from 'hooks/useObserver'
 import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
+import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { validationSchema } from 'utils/validationSchema'
 import { Button } from 'components/Buttons'
-import { Accordion, SkillDropboxSearch } from 'components/Dropdowns'
+import { SkillDropboxSearch } from 'components/Dropdowns'
+import { ResizerLine, SvgIcon } from 'components/Helpers'
 import { TextArea } from 'components/Inputs'
+import { PromptBlocksModule } from 'components/Modules'
+import getFormattedPrompt from 'components/Modules/PromptBlocksModule/getFormattedPrompt'
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
 import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
 import s from './SkillPromptModal.module.scss'
+import promptBlocksJson from './promptBuildingBlocks.json'
 
 interface ITriggerProps {
   skill?: ISkill
@@ -31,7 +36,12 @@ interface ITriggerProps {
 }
 
 interface IFormValues {
-  model: { id: string; name: string; disabled: boolean }
+  model: {
+    id: string
+    name: string
+    display_name: string
+    disabled: boolean
+  }
   prompt: string
 }
 
@@ -50,7 +60,11 @@ const SkillPromptModal = () => {
   const bot = distName ? getDist({ distName }).data : null
   const [selectedModel, setSelectedModel] = useState<LM_Service | null>(null)
   const modalRef = useRef(null)
+  const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
+  const promptBuildingBlocks = (
+    JSON.parse(JSON.stringify(promptBlocksJson)) as IPromptBlock[]
+  )?.filter(block => block[selectedModel?.display_name])
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -60,7 +74,8 @@ const SkillPromptModal = () => {
   const dropboxArray =
     services?.map((service: LM_Service) => ({
       id: service?.id?.toString(),
-      name: service?.display_name,
+      name: service?.name,
+      display_name: service?.display_name,
       disabled: !service?.is_maintained,
     })) || []
 
@@ -69,6 +84,7 @@ const SkillPromptModal = () => {
     reset,
     trigger: triggerField,
     getValues,
+    setValue,
     control,
     watch,
     formState: { dirtyFields, isSubmitting, isDirty },
@@ -137,6 +153,30 @@ const SkillPromptModal = () => {
       .then(() => trigger('RenewChat', {}))
   }
 
+  const handlePropertiesClick = () => {
+    triggerSkillSidePanel({
+      skill,
+      distName: distName!,
+      activeTab: 'Properties',
+    })
+  }
+
+  const handlePromptBlockSelect = async (block: IPromptBlock) => {
+    await new Promise(resolve => {
+      setValue(
+        'prompt',
+        getFormattedPrompt({ prompt: getValues('prompt'), block }),
+        { shouldDirty: true, shouldValidate: true }
+      )
+      resolve(true)
+    }).then(() => {
+      const textareaEl = document.querySelector('#prompt-textarea')
+
+      if (!textareaEl) return
+      textareaEl.scrollTop = textareaEl?.scrollHeight
+    })
+  }
+
   const onFormSubmit = (data: IFormValues) => {
     const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
     if (isDirty) handleSave(data)
@@ -163,7 +203,8 @@ const SkillPromptModal = () => {
         {
           model: {
             id: skill?.lm_service?.id?.toString(),
-            name: skill?.lm_service?.display_name,
+            name: skill?.lm_service?.name,
+            display_name: skill?.lm_service?.display_name,
             disabled: false,
           },
           prompt: skill?.prompt,
@@ -184,7 +225,9 @@ const SkillPromptModal = () => {
     availableSelectors: [
       `#${HELPER_TAB_ID}`,
       '#sp_left',
+      '#base_sp_close_btn',
       '#testDialog',
+      '#skill_sp',
       '#assistantDialogPanel',
       '#accessTokensModal',
       '#settingsTab',
@@ -204,51 +247,45 @@ const SkillPromptModal = () => {
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >
-      <Wrapper closable onClose={() => closeModal()}>
+      <Wrapper>
         <div className={s.container}>
-          <form onSubmit={handleSubmit(onFormSubmit)} className={cx('editor')}>
-            <div className={s.header}>
-              {skill?.display_name ?? 'Current Skill'}: Editor
+          <form onSubmit={handleSubmit(onFormSubmit)} className={s.editor}>
+            <div className={s.top}>
+              <SkillDropboxSearch
+                name='model'
+                label='Choose model:'
+                control={control}
+                rules={{ required: true }}
+                selectedItemId={skill?.lm_service?.id?.toString()}
+                props={{ placeholder: 'Choose model' }}
+                list={dropboxArray}
+                fullWidth
+                withoutSearch
+              />
+              <Button
+                withIcon
+                theme='tertiary2'
+                props={{ onClick: handlePropertiesClick }}
+              >
+                <SvgIcon iconName='properties' />
+              </Button>
             </div>
-            <div className={s['editor-container']}>
-              <div className={s.top}>
-                <SkillDropboxSearch
-                  name='model'
-                  label='Choose model:'
-                  control={control}
-                  rules={{ required: true }}
-                  selectedItemId={skill?.lm_service?.id?.toString()}
-                  props={{ placeholder: 'Choose model' }}
-                  list={dropboxArray}
-                  fullWidth
-                  withoutSearch
-                />
-                {selectedModel && (
-                  <div>
-                    <Accordion
-                      title='Model Details:'
-                      type='description'
-                      isActive
-                    >
-                      <p className={s.tip}>
-                        <span>{selectedModel?.description}</span>
-                        <a
-                          href={selectedModel?.project_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        >
-                          {selectedModel?.project_url}
-                        </a>
-                      </p>
-                    </Accordion>
-                  </div>
-                )}
-              </div>
+            <div className={s.middle}>
+              {promptBuildingBlocks?.length > 0 && (
+                <div className={cx('tabs', 'blocks')}>
+                  <span className={cx('blocks-label')}>Prompt blocks:</span>
+                  <PromptBlocksModule
+                    blocks={promptBuildingBlocks}
+                    handleSelect={handlePromptBlockSelect}
+                  />
+                </div>
+              )}
               <TextArea
                 name='prompt'
                 label='Enter prompt:'
                 tokenizerModel={selectedModel?.display_name as any}
                 defaultValue={skill?.prompt}
+                countType='tokenizer'
                 withCounter
                 fullHeight
                 resizable={false}
@@ -263,31 +300,45 @@ const SkillPromptModal = () => {
                 }}
                 triggerField={triggerField}
                 props={{
-                  placeholder:
-                    "Hello, I'm a SpaceX Starman made by brilliant engineering team at SpaceX to tell you about the future of humanity in space and",
+                  placeholder: 'Pick words you might use',
+                  id: 'prompt-textarea',
                 }}
+                highlights={[
+                  { keyword: 'Act as', color: '#FFE9E4' },
+                  { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
+                  { keyword: 'TASK', color: '#FFFCE4' },
+                  { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
+                  { keyword: 'INSTRUCTION', color: '#E4FEFF' },
+                  { keyword: 'EXAMPLE', color: '#E4FEFF' },
+                ]}
               />
             </div>
-            <div className={s.bottom}>
-              <div className={s.btns}>
-                <Button
-                  theme='primary'
-                  props={{
-                    type: 'submit',
-                    disabled:
-                      updateComponent.isLoading || isSubmitting || !isDirty,
-                  }}
-                >
-                  Save
-                </Button>
-              </div>
+            <div className={s.btns}>
+              <Button
+                theme='primary'
+                props={{
+                  type: 'submit',
+                  disabled:
+                    updateComponent.isLoading || isSubmitting || !isDirty,
+                }}
+              >
+                Save
+              </Button>
             </div>
           </form>
-
-          <div className={s.dialog}>
-            <SkillDialog isDebug distName={distName} skill={skill} />
+          <div className={s.resizer}>
+            <ResizerLine resizableElementRef={editorRef} />
           </div>
+          <SkillDialog
+            isDebug
+            distName={distName}
+            skill={skill}
+            ref={editorRef}
+          />
         </div>
+        <button className={s.close} type='button' onClick={() => closeModal()}>
+          <SvgIcon iconName='close' />
+        </button>
       </Wrapper>
     </Modal>
   )

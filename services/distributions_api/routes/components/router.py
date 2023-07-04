@@ -1,0 +1,95 @@
+from typing import List, Optional
+
+import aiohttp
+from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component, DreamComponent
+from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
+from deeppavlov_dreamtools.utils import generate_unique_name, load_json
+from fastapi import APIRouter, status, Depends
+from sqlalchemy.orm import Session
+
+from apiconfig.config import settings
+from database import crud
+from database.component.crud import get_all, get_by_group_name
+from git_storage.git_manager import GitManager
+from services.distributions_api import schemas, const
+from services.distributions_api.database_maker import get_db
+from services.distributions_api.routes.components import flows
+from services.distributions_api.routes.components.dependencies import (
+    get_component,
+    component_patch_permission,
+    component_delete_permission,
+)
+from services.distributions_api.security.auth import get_current_user
+
+components_router = APIRouter(prefix="/api/components", tags=["components"])
+
+dream_git = GitManager(
+    settings.git.local_path,
+    settings.git.username,
+    settings.git.remote_access_token,
+    settings.git.remote_source_url,
+    settings.git.remote_source_branch,
+    settings.git.remote_copy_url,
+    # settings.git.remote_copy_branch,
+    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
+)
+
+
+@components_router.get("", status_code=status.HTTP_200_OK)
+async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.ComponentRead]:
+    return [schemas.ComponentRead.from_orm(c) for c in get_all(db)]
+
+
+@components_router.post("", status_code=status.HTTP_201_CREATED)
+async def create_component(
+    payload: schemas.ComponentCreate,
+    clone_from_id: Optional[int] = None,
+    user: schemas.UserRead = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ComponentRead:
+    new_component = flows.create_component(db, payload, user, clone_from_id)
+    return new_component
+
+
+@components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
+async def get_component(
+    component: schemas.ComponentRead = Depends(get_component), db: Session = Depends(get_db)
+) -> schemas.ComponentRead:
+    return component
+
+
+@components_router.patch("/{component_id}", status_code=status.HTTP_200_OK)
+async def patch_component(
+    payload: schemas.ComponentUpdate,
+    component: schemas.ComponentRead = Depends(component_patch_permission),
+    db: Session = Depends(get_db),
+) -> schemas.ComponentRead:
+    new_component = await flows.patch_component(db, component, payload)
+    return new_component
+
+
+@components_router.get("/{component_id}/generative_config", status_code=status.HTTP_200_OK)
+async def get_component_generative_config(
+    component: schemas.ComponentRead = Depends(get_component), db: Session = Depends(get_db)
+) -> schemas.ComponentGenerativeRead:
+    return schemas.ComponentGenerativeRead(**component.dict())
+
+
+@components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_component(
+    component: schemas.ComponentRead = Depends(component_delete_permission), db: Session = Depends(get_db)
+):
+    flows.delete_component(db, component.id)
+
+
+@components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)
+async def get_list_of_group_components(
+    group_name: str, component_type: str = None, author_id: int = None, db: Session = Depends(get_db)
+) -> List[schemas.ComponentRead]:
+    group_components = []
+
+    for c in get_by_group_name(db, group_name, component_type, author_id):
+        if c.name not in const.INVISIBLE_COMPONENT_NAMES:
+            group_components.append(schemas.ComponentRead.from_orm(c))
+
+    return group_components

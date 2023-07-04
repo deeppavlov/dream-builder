@@ -1,5 +1,5 @@
 import { AccessTokensModule } from './AccessTokensModule/AccessTokensModule'
 import { AssistantModule } from './AssistantModule/AssistantModule'
-import GenerativeSkillEditor from './SkillEditorModule/GenerativeSkillEditor'
+import { PromptBlocksModule } from './PromptBlocksModule/PromptBlocksModule'
 
-export { AccessTokensModule, AssistantModule, GenerativeSkillEditor }
+export { AccessTokensModule, AssistantModule, PromptBlocksModule }

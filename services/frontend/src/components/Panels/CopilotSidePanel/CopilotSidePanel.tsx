@@ -12,7 +12,6 @@ import { useChatScroll } from 'hooks/useChatScroll'
 import { consts } from 'utils/consts'
 import { сopyToClipboard } from 'utils/copyToClipboard'
 import { submitOnEnter } from 'utils/submitOnEnter'
-import { validationSchema } from 'utils/validationSchema'
 import { Button } from 'components/Buttons'
 import { Loader, TextLoader } from 'components/Loaders'
 import { BaseToolTip } from 'components/Menus'
@@ -34,7 +33,6 @@ export const CopilotSidePanel = () => {
   const { setUIOption } = useUIOptions()
   const cx = classNames.bind(s)
   const chatRef = useRef<HTMLDivElement>(null)
-  const messageRef = useRef<HTMLSpanElement>(null)
 
   const sendDisabled = sendToDeepy?.isLoading || deepyRemoteHistory?.isLoading
   const renewDisabled = renewDeepySession?.isLoading || sendToDeepy?.isLoading
@@ -45,9 +43,9 @@ export const CopilotSidePanel = () => {
     sendToDeepy?.isLoading && !deepyRemoteHistory.isLoading
 
   // handlers
-  const handleMessageClick = () => {
-    сopyToClipboard(messageRef)
-    toast.custom(<ToastCopySucces />, {
+  const handleMessageClick = (message: string) => {
+    сopyToClipboard(message)
+    toast.custom(t => (t.visible ? <ToastCopySucces /> : null), {
       position: 'top-center',
       id: 'copySucces',
       duration: 1000,
@@ -58,6 +56,9 @@ export const CopilotSidePanel = () => {
   }
 
   const handleSend = (data: ChatForm) => {
+    const isMessage = data?.message.replace(/\s/g, '').length > 0
+    if (!isMessage) return
+
     const payload = { dialog_session_id: deepySession?.id, text: data?.message }
     sendToDeepy.mutateAsync(payload)
     reset()
@@ -111,8 +112,7 @@ export const CopilotSidePanel = () => {
                     )}
                   >
                     <span
-                      ref={messageRef}
-                      onClick={handleMessageClick}
+                      onClick={() => handleMessageClick(block?.text)}
                       className={cx(
                         'chat__message',
                         block?.author == 'bot' && 'chat__message_bot'
@@ -134,8 +134,7 @@ export const CopilotSidePanel = () => {
             >
               <span
                 style={{ display: block?.hidden ? 'none' : ' ' }}
-                ref={messageRef}
-                onClick={handleMessageClick}
+                onClick={() => handleMessageClick(block?.text)}
                 className={cx(
                   'chat__message',
                   block?.author == 'bot' && 'chat__message_bot'
@@ -147,10 +146,7 @@ export const CopilotSidePanel = () => {
           ))}
           {textLoaderActive && (
             <div className={cx('chat__container', 'chat__container_bot')}>
-              <span
-                onClick={handleMessageClick}
-                className={cx('chat__message', 'chat__message_bot')}
-              >
+              <span className={cx('chat__message', 'chat__message_bot')}>
                 <TextLoader />
               </span>
             </div>
@@ -163,9 +159,7 @@ export const CopilotSidePanel = () => {
             onKeyDown={handleKeyDown}
             className={s.textarea}
             placeholder='Describe here your use case and Deepy will help you to generate a prompt for it.'
-            {...register('message', {
-              required: validationSchema.global.required,
-            })}
+            {...register('message', { required: true })}
           />
           <input type='submit' hidden />
           <SidePanelButtons>

@@ -25,16 +25,8 @@ from sqlalchemy.types import DateTime
 from apiconfig.config import settings
 from database import utils, enums
 from database.core import Base
-
-
-class DateTimeUtcNow(expression.FunctionElement):
-    type = DateTime()
-    inherit_cache = True
-
-
-@compiles(DateTimeUtcNow, "postgresql")
-def pg_utcnow(element, compiler, **kwargs):
-    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
+from database.utils import DateTimeUtcNow, pre_populate_from_tsv
+from database.virtual_assistant.model import VirtualAssistant
 
 
 # https://stackoverflow.com/a/46016930
@@ -45,6 +37,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
 
+    can_view_private_assistants = Column(Boolean, nullable=False)
     can_confirm_publish = Column(Boolean, nullable=False)
     can_set_roles = Column(Boolean, nullable=False)
 
@@ -93,37 +86,6 @@ class ApiKey(Base):
     base_url = Column(String)
 
 
-class VirtualAssistant(Base):
-    __tablename__ = "virtual_assistant"
-
-    id = Column(Integer, index=True, primary_key=True)
-
-    cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
-    clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
-
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship(GoogleUser, back_populates="virtual_assistants")
-
-    source = Column(String, nullable=False)
-    name = Column(String, unique=True, nullable=False)
-    display_name = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    private_visibility = Column(
-        sqltypes.Enum(enums.VirtualAssistantPrivateVisibility),
-        nullable=False,
-        server_default=enums.VirtualAssistantPrivateVisibility.PRIVATE.value,
-    )
-    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-
-    components = relationship(
-        "VirtualAssistantComponent", uselist=True, back_populates="virtual_assistant", passive_deletes=True
-    )
-    publish_request = relationship(
-        "PublishRequest", uselist=False, back_populates="virtual_assistant", passive_deletes=True
-    )
-    deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant", passive_deletes=True)
-
-
 class LmService(Base):
     __tablename__ = "lm_service"
 
@@ -163,6 +125,7 @@ class Deployment(Base):
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
     stack_id = Column(Integer, nullable=True)
+    task_id = Column(String, nullable=True)
     date_state_updated = Column(DateTime, nullable=True, onupdate=DateTimeUtcNow())
     state = Column(sqltypes.Enum(enums.DeploymentState), nullable=True)
     error = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
@@ -227,39 +190,6 @@ class ServiceDeployment(Base):
     state = Column(String)
 
 
-class Component(Base):
-    __tablename__ = "component"
-
-    id = Column(Integer, index=True, primary_key=True)
-    source = Column(String, nullable=False, unique=True)
-    name = Column(String, nullable=False)
-    display_name = Column(String, nullable=False)
-    component_type = Column(String, nullable=True)
-    model_type = Column(String, nullable=True)
-    is_customizable = Column(Boolean, nullable=False)
-
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship("GoogleUser", back_populates="components")
-
-    description = Column(String, nullable=True)
-
-    ram_usage = Column(String, nullable=True)
-    gpu_usage = Column(String, nullable=True)
-
-    group = Column(String, nullable=False)
-
-    service_id = Column(Integer, ForeignKey("service.id", ondelete="CASCADE"), nullable=False)
-    service = relationship("Service", back_populates="components")
-    endpoint = Column(String)
-
-    prompt = Column(String, nullable=True)
-    prompt_goals = Column(String, nullable=True)
-    lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
-    lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
-
-    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-
-
 class VirtualAssistantComponent(Base):
     __tablename__ = "virtual_assistant_component"
 
@@ -291,51 +221,38 @@ class DialogSession(Base):
     is_active = Column(Boolean, nullable=False)
 
 
-def _pre_populate_from_tsv(
-    path: Union[Path, str],
-    target,
-    connection,
-    map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None,
-):
-    logging.warning(f"Pre-populating {target.name} from {path}")
-
-    for row in utils.iter_tsv_rows(path, map_value_types):
-        connection.execute(target.insert(), row)
-
-
 @listens_for(Role.__table__, "after_create")
 def pre_populate_role(target, connection, **kw):
-    _pre_populate_from_tsv(
+    pre_populate_from_tsv(
         settings.db.initial_data_dir / "role.tsv",
         target,
         connection,
-        map_value_types={"can_confirm_publish": lambda x: bool(int(x)), "can_set_roles": lambda x: bool(int(x))},
+        map_value_types={
+            "can_view_private_assistants": lambda x: bool(int(x)),
+            "can_confirm_publish": lambda x: bool(int(x)),
+            "can_set_roles": lambda x: bool(int(x)),
+        },
     )
 
 
 @listens_for(GoogleUser.__table__, "after_create")
 def pre_populate_google_user(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
+    pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
 
 
 @listens_for(ApiKey.__table__, "after_create")
 def pre_populate_api_key(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "api_key.tsv", target, connection)
-
-
-@listens_for(VirtualAssistant.__table__, "after_create")
-def pre_populate_virtual_assistant(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "virtual_assistant.tsv", target, connection)
+    pre_populate_from_tsv(settings.db.initial_data_dir / "api_key.tsv", target, connection)
 
 
 @listens_for(PublishRequest.__table__, "after_create")
 def pre_populate_publish_request(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "publish_request.tsv", target, connection)
+    pre_populate_from_tsv(settings.db.initial_data_dir / "publish_request.tsv", target, connection)
 
 
 @listens_for(LmService.__table__, "after_create")
 def pre_populate_lm_service(target, connection, **kw):
-    _pre_populate_from_tsv(
+    pre_populate_from_tsv(
         settings.db.initial_data_dir / "lm_service.tsv",
         target,
         connection,
@@ -348,31 +265,21 @@ def pre_populate_lm_service(target, connection, **kw):
 
 @listens_for(Deployment.__table__, "after_create")
 def pre_populate_deployment(target, connection, **kw):
-    _pre_populate_from_tsv(settings.db.initial_data_dir / "deployment.tsv", target, connection)
+    pre_populate_from_tsv(settings.db.initial_data_dir / "deployment.tsv", target, connection)
 
 
 @listens_for(Service.__table__, "after_create")
 def pre_populate_service(target, connection, **kw):
-    _pre_populate_from_tsv(
+    pre_populate_from_tsv(
         settings.db.initial_data_dir / "service.tsv",
         target,
         connection,
     )
 
 
-@listens_for(Component.__table__, "after_create")
-def pre_populate_component(target, connection, **kw):
-    _pre_populate_from_tsv(
-        settings.db.initial_data_dir / "component.tsv",
-        target,
-        connection,
-        map_value_types={"is_customizable": lambda x: bool(int(x))},
-    )
-
-
 @listens_for(VirtualAssistantComponent.__table__, "after_create")
 def pre_populate_virtual_assistant_component(target, connection, **kw):
-    _pre_populate_from_tsv(
+    pre_populate_from_tsv(
         settings.db.initial_data_dir / "virtual_assistant_component.tsv",
         target,
         connection,

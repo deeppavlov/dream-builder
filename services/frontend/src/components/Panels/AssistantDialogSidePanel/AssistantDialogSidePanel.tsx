@@ -28,7 +28,6 @@ import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
 import { getLSApiKeyByName } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
-import { validationSchema } from 'utils/validationSchema'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
 import { Loader, TextLoader } from 'components/Loaders'
@@ -145,12 +144,15 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const readyToGetSession = bot?.deployment?.state === DEPLOY_STATUS.UP
 
   // handlers
-  const handleSend = (data: ChatForm) => {
-    const isChatSettings = checkIsChatSettings(user?.id)
+  const handleSend = ({ message }: ChatForm) => {
+    const isMessage = message.replace(/\s/g, '').length > 0
+    if (!isMessage) return
 
+    const isChatSettings = checkIsChatSettings(user?.id)
     if (auth?.user && !isChatSettings) return
+
     const id = session?.id!
-    const message = data?.message!
+
     send.mutate(
       {
         dialog_session_id: id,
@@ -357,9 +359,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 spellCheck='false'
                 className={s.textarea}
                 placeholder='Type...'
-                {...register('message', {
-                  required: validationSchema.global.required,
-                })}
+                {...register('message', { required: true })}
               />
 
               <input type='submit' hidden />

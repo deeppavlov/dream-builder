@@ -1,5 +1,4 @@
 import { useAuth, useUIOptions } from 'context'
-import { Toaster } from 'react-hot-toast'
 import { RoutesList } from 'router/RoutesList'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
@@ -142,7 +141,6 @@ export const BotsPage = () => {
         <SignInModal />
         <DeployNotificationModal />
       </Main>
-      <Toaster />
     </>
   )
 }

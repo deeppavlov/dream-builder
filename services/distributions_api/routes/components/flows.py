@@ -134,49 +134,49 @@ async def patch_component(
     component: schemas.ComponentRead,
     component_update: schemas.ComponentUpdate,
 ) -> schemas.ComponentRead:
-    with db.begin_nested():
-        dream_component = DreamComponent.from_file(
-            settings.db.dream_root_path / component.source, settings.db.dream_root_path
+    dream_component = DreamComponent.from_file(
+        settings.db.dream_root_path / component.source, settings.db.dream_root_path
+    )
+
+    if component_update.display_name:
+        dream_component.component.display_name = component_update.display_name
+
+    if component_update.description:
+        dream_component.component.description = component_update.description
+
+    prompt_goals = None
+    if component_update.prompt:
+        goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
+        goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
+        prompt_goals = await generate_prompt_goals(
+            goals_lm_service_url, component_update.prompt, settings.app.default_openai_api_key
         )
+        dream_component.update_prompt(component_update.prompt, prompt_goals)
 
-        if component_update.display_name:
-            dream_component.component.display_name = component_update.display_name
-
-        if component_update.description:
-            dream_component.component.description = component_update.description
-
-        prompt_goals = None
-        if component_update.prompt:
-            goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
-            goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
-            prompt_goals = await generate_prompt_goals(
-                goals_lm_service_url, component_update.prompt, settings.app.default_openai_api_key
+    if component_update.lm_service_id:
+        lm_service = crud.get_lm_service(db, component_update.lm_service_id)
+        dream_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
+        if component_update.lm_config:
+            dream_component.lm_config = component_update.lm_config
+        else:
+            dream_component.lm_config = load_json(
+                settings.db.dream_root_path / "common" / "generative_configs" / lm_service.default_generative_config
             )
-            dream_component.update_prompt(component_update.prompt, prompt_goals)
 
-        if component_update.lm_service_id:
-            lm_service = crud.get_lm_service(db, component_update.lm_service_id)
-            dream_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
-            if component_update.lm_config:
-                dream_component.lm_config = component_update.lm_config
-            else:
-                dream_component.lm_config = load_json(
-                    settings.db.dream_root_path / "common" / "generative_configs" / lm_service.default_generative_config
-                )
+    dream_component.save_configs()
+    dream_git.commit_all_files(1, 1)
 
-        dream_component.save_configs()
-        dream_git.commit_all_files(1, 1)
-
-        component = update_by_id(
-            db,
-            component.id,
-            display_name=component_update.display_name,
-            description=component_update.description,
-            prompt=component_update.prompt,
-            prompt_goals=prompt_goals,
-            lm_service_id=component_update.lm_service_id,
-            lm_config=component_update.lm_config,
-        )
+    component = update_by_id(
+        db,
+        component.id,
+        display_name=component_update.display_name,
+        description=component_update.description,
+        prompt=component_update.prompt,
+        prompt_goals=prompt_goals,
+        lm_service_id=component_update.lm_service_id,
+        lm_config=component_update.lm_config,
+    )
+    db.commit()
 
     return schemas.ComponentRead.from_orm(component)
 

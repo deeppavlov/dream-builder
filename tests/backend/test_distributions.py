@@ -271,7 +271,7 @@ class TestDistributions:
         user.create_dialog_sessions_not_deployed(va_name)
 
     @pytest.mark.parametrize('va_name', public_va_names)
-    @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_va")
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va")
     def test_get_dialog_session_history_with_public_template_va(self, va_name):
         user = UserMethods()
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
@@ -371,6 +371,7 @@ class TestDistributions:
         deploy = DeploymentsMethods()
         deploy.get_stack_ports()
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self):
         name = va_data["name"]
@@ -381,11 +382,11 @@ class TestDistributions:
 
         deploy = DeploymentsMethods()
         deployment = deploy.create_deployment(va_name)
-        time.sleep(60)
+        time.sleep(80)
         deployment_id = deployment["id"]
-        deploy.get_deployment(deployment_id)
-        deploy.patch_deployment(deployment_id)
-        time.sleep(60)
+        task_id = deploy.get_deployment(deployment_id)
+        deploy.patch_deployment(deployment_id, task_id)
+        time.sleep(80)
         deploy.delete_deployment(deployment_id)
 
     # @pytest.mark.atom

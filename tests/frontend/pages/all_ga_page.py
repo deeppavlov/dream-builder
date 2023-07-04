@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 from locators.locators import AllGAPageLocators
-from tests.config import public_va_name, users_email, skill_name, generative_model
+from tests.config import public_va_name, users_email, skill_name, generative_model, your_va_name
+
 import time
 
 
@@ -23,9 +24,17 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_RIGHT_SCROLL_BUTTON)
         button.click()
 
+    def scroll_public_templates_left(self):
+        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_LEFT_SCROLL_BUTTON)
+        button.click()
+
     def click_kebab_public_template(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB)
         button.click()
+
+        WebDriverWait(self.browser, 2).until(
+            EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_KEBAB_CHAT)
+        )
 
     def click_kebab_public_template_chat(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB_CHAT)
@@ -40,8 +49,11 @@ class AllGAPage(BasePage):
         button.click()
 
     def click_use_template_modal_window(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
-        button.click()
+        WebDriverWait(self.browser, 4).until(
+            EC.element_to_be_clickable(AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
+        ).click()
+
+        #self.browser.execute_script('arguments[0].click()', AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
 
     def click_cancel_template_modal_window(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_CANCEL_BUTTON)
@@ -62,18 +74,31 @@ class AllGAPage(BasePage):
 
 
 
-    # PRIVATE
+    # YOUR
 
     def click_your_a_edit_button(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_EDIT_BUTTON)
-        button.click()
+        WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(AllGAPageLocators.YOUR_EDIT_BUTTON)
+        ).click()
 
     def click_kebab_your_a(self):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
         button.click()
 
+        WebDriverWait(self.browser, 2).until(
+            EC.visibility_of_element_located(AllGAPageLocators.YOUR_KEBAB_CHAT)
+        )
+
     def click_kebab_your_a_chat(self):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_CHAT)
+        button.click()
+
+    def click_kebab_your_a_delete(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_DELETE)
+        button.click()
+
+    def click_mw_your_a_delete(self):
+        button = self.browser.find_element(*AllGAPageLocators.YOUR_A_DELETE_MW_DELETE)
         button.click()
 
     def click_kebab_your_a_share(self):
@@ -116,10 +141,6 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_PROPERTIES)
         button.click()
 
-    def click_kebab_your_a_delete(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_PROPERTIES)
-        button.click()
-
     def click_create_from_scratch_button(self):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_BUTTON)
         button.click()
@@ -127,7 +148,12 @@ class AllGAPage(BasePage):
     def enter_name_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
         textarea.click()
-        textarea.send_keys(f"{public_va_name}")
+        textarea.send_keys(f"{your_va_name}")
+
+    def clear_name_in_create_va_mw(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
+        textarea.click()
+        textarea.clear()
 
     def enter_description_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
@@ -142,7 +168,25 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_CLOSE_BUTTON)
         button.click()
 
+    def check_building_is_done(self):
+        edit_button = WebDriverWait(self.browser, 90).until(
+            EC.visibility_of_element_located(AllGAPageLocators.READY_TO_CHAT)
+        )
 
+    def check_your_assistant_is_public(self):
+        edit_button = WebDriverWait(self.browser, 10).until(
+            EC.visibility_of_element_located(AllGAPageLocators.YOUR_ASSISTANT_IN_PUBLIC)
+        )
+
+    def check_your_assistant_public_wrap(self):
+        edit_button = WebDriverWait(self.browser, 10).until(
+            EC.visibility_of_element_located(AllGAPageLocators.YOUR_ASSISTANT_PUBLIC_TEMPLATE_WRAP)
+        )
+
+    def check_deepy_tooltip(self):
+        edit_button = WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(AllGAPageLocators.DEEPY_TOOLTIP)
+        )
 
 
 

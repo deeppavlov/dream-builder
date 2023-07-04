@@ -1,14 +1,17 @@
 from pydantic import BaseModel, BaseSettings
 from pathlib import Path
+from random_word import RandomWords
 
 
 class UrlSettings(BaseModel):
     frontend: str
     email: str
+    token: str
 
 
 class Settings(BaseSettings):
     url: UrlSettings
+
 
     class Config:
         env_file = (Path(__file__).parents[0] / ".env").absolute()
@@ -19,10 +22,13 @@ class Settings(BaseSettings):
 settings_test = Settings()
 
 url = settings_test.url.frontend
+admin_url = url+"admin"
 users_email = settings_test.url.email
+openai_token = settings_test.url.token
 
 generative_model = "ChatGPT"
 public_va_name = "Marketing Assistant"
+your_va_name = RandomWords().get_random_word()
 skill_name = "Marketing Skill"
 
 public_template_list = ["ai_faq_assistant"

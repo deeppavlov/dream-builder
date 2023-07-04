@@ -7,7 +7,7 @@ from locators.locators import BasePageLocators
 
 
 class BasePage:
-    def __init__(self, browser, url, timeout=10):
+    def __init__(self, browser, url, timeout=15):
         self.browser = browser
         self.url = url
         self.browser.implicitly_wait(timeout)
@@ -33,6 +33,26 @@ class BasePage:
     def click_home_button(self):
         button = self.browser.find_element(*BasePageLocators.HOME_BUTTON)
         button.click()
+
+    def click_deepy_button(self):
+        button = WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(BasePageLocators.DEEPY_BUTTON)
+        ).click()
+
+    def check_success_toast(self):
+        success_toast = WebDriverWait(self.browser, 25).until(
+            EC.text_to_be_present_in_element(BasePageLocators.SUCCESS_TOAST, "Success")
+        )
+
+    def check_submitted_toast(self):
+        success_toast = WebDriverWait(self.browser, 15).until(
+            EC.text_to_be_present_in_element(BasePageLocators.SUBMITTED_TOAST, "Submitted")
+        )
+
+    def check_success_toast_disappear(self):
+        success_toast = WebDriverWait(self.browser, 12).until(
+            EC.invisibility_of_element_located(BasePageLocators.SUCCESS_TOAST)
+        )
 
     def is_element_present(self, how, what):
         try:

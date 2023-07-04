@@ -172,7 +172,7 @@ public_va_names = ["ai_faq_assistant",
                    "deepy_assistant",
                    ]
 
-lm_service_id_list = [2, 3, 4, 7]
+lm_service_id_list = [2, 3, 4, 5, 6]
 
 # config for test_auth
 

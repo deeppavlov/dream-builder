@@ -11,7 +11,6 @@ from database import models, enums
 from apiconfig.config import settings
 from database import models
 from database.models import GoogleUser, GoogleUserValid, ApiKey, GeneralUser
-from database.utils import handle_unique_constraint
 
 
 # GOOGLE
@@ -25,7 +24,6 @@ def check_google_user_exists(db: Session, sub: str) -> bool:
     return False
 
 
-@handle_unique_constraint
 def add_google_user(db: Session, user, user_id: int) -> models.GoogleUser:
     db_user = GoogleUser(
         user_id=user_id,
@@ -41,7 +39,6 @@ def add_google_user(db: Session, user, user_id: int) -> models.GoogleUser:
     db.commit()
     db.refresh(db_user)
     return db_user
-
 
 def get_user(db: Session, user_id: int) -> Optional[models.GoogleUser]:
     return db.get(GeneralUser, user_id)
@@ -768,7 +765,6 @@ def get_provider_id_by_name(db: Session, service_name: str):
     return db.query(models.Provider).filter(models.Provider.service_name == service_name).first().id
 
 
-@handle_unique_constraint
 def add_user(db: Session,
              provider_name: str,
              outer_id: str,

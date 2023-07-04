@@ -50,23 +50,3 @@ def iter_tsv_rows(
                     named_row[column_name] = column_type(named_row[column_name])
 
             yield named_row
-
-
-def handle_unique_constraint(func: Callable) -> Callable:
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        db = kwargs.pop('db', None)  # Extract the 'db' argument from kwargs
-        if db is None:
-            db = args[0]
-            if not isinstance(db, Session):
-                raise ValueError("Missing session (db) argument")
-
-        try:
-            result = func(db=db, *args, **kwargs)
-            db.commit()
-            return result
-        except IntegrityError as e:
-            db.rollback()
-            raise ValueError(e)
-
-    return wrapper

@@ -63,7 +63,7 @@ class GeneralUser(Base):
     __tablename__ = "user"
 
     id = Column(Integer, Sequence("user_id_seq", start=3, increment=1), primary_key=True, index=True)
-    outer_id = Column(String)
+    outer_id = Column(String, unique=True)
     provider_id = Column(Integer, ForeignKey("provider.id"), nullable=False)
 
     google_user = relationship("GoogleUser", backref="user", uselist=False)

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import crud, models, enums
+from database.virtual_assistant.crud import get_all_public_templates, get_all_by_author
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
@@ -71,7 +72,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
     """
     public_dists = []
 
-    for dist in crud.get_all_public_templates_virtual_assistants(db):
+    for dist in get_all_public_templates(db):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
             public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
@@ -91,7 +92,7 @@ async def get_list_of_private_virtual_assistants(
     """
     private_dists = []
 
-    for dist in crud.get_all_user_virtual_assistants(db, user.id):
+    for dist in get_all_by_author(db, user.id):
         if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
             private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
@@ -231,7 +232,9 @@ async def patch_virtual_assistant_component(
     "/{dist_name}/components/{virtual_assistant_component_id}", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_virtual_assistant_component(
-    virtual_assistant_component_id: int, virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_patch_permission), db: Session = Depends(get_db)
+    virtual_assistant_component_id: int,
+    virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_patch_permission),
+    db: Session = Depends(get_db),
 ):
     """"""
     flows.delete_virtual_assistant_component(db, virtual_assistant, virtual_assistant_component_id)
@@ -239,7 +242,6 @@ async def delete_virtual_assistant_component(
 
 @assistant_dists_router.post("/{dist_name}/publish", status_code=status.HTTP_204_NO_CONTENT)
 async def publish_dist(
-    # dist_name: str,
     payload: schemas.PublishRequestCreate,
     background_tasks: BackgroundTasks,
     virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_patch_permission),

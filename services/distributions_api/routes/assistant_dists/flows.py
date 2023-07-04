@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from apiconfig.config import settings
 from database import crud, enums
 from database.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
+from database.component import crud as component_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 
@@ -79,7 +80,7 @@ def create_virtual_assistant(
             else:
                 lm_service_id = None
 
-            component = crud.create_component(
+            component = component_crud.create(
                 db,
                 service_id=service.id,
                 source=str(dream_component.component_file),
@@ -181,15 +182,18 @@ def delete_virtual_assistant_component(
         crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
 
 
-def publish_virtual_assistant(db: Session, virtual_assistant: schemas.VirtualAssistantRead, visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility], user_id: int):
+def publish_virtual_assistant(
+    db: Session,
+    virtual_assistant: schemas.VirtualAssistantRead,
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility],
+    user_id: int,
+):
     with db.begin():
         dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
             crud.delete_publish_request(db, virtual_assistant.id)
-            virtual_assistant = update_by_name(
-                db, dist.name, private_visibility=visibility
-            )
+            virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
         elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
             crud.create_publish_request(db, virtual_assistant.id, user_id, virtual_assistant.name, visibility)
             moderators = crud.get_users_by_role(db, 2)

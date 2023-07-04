@@ -6,6 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import models, enums
+from database.component.model import Component
 from database.models import GoogleUser, UserValid, ApiKey
 
 
@@ -150,101 +151,6 @@ def create_service(db: Session, name: str, source: str):
 
 
 # COMPONENT
-def get_component(db: Session, component_id: int) -> Optional[models.Component]:
-    return db.get(models.Component, component_id)
-
-
-def get_all_components(db: Session) -> [models.Component]:
-    return db.scalars(select(models.Component)).all()
-
-
-def get_components_by_group_name(
-    db: Session, group: str, component_type: str = None, author_id: int = None
-) -> [models.Component]:
-    filters = {"group": group}
-    if component_type:
-        filters["component_type"] = component_type
-    if author_id:
-        filters["author_id"] = author_id
-
-    return db.scalars(select(models.Component).filter_by(**filters)).all()
-
-
-def create_component(
-    db: Session,
-    service_id: int,
-    source: str,
-    name: str,
-    display_name: str,
-    component_type: str,
-    is_customizable: bool,
-    author_id: int,
-    ram_usage: str,
-    group: str,
-    endpoint: str,
-    model_type: Optional[str] = None,
-    gpu_usage: Optional[str] = None,
-    description: Optional[str] = None,
-    prompt: Optional[str] = None,
-    prompt_goals: Optional[str] = None,
-    lm_service_id: Optional[int] = None,
-    lm_config: Optional[dict] = None,
-    # build_args: Optional[dict] = None,
-    # compose_override: Optional[dict] = None,
-    # compose_dev: Optional[dict] = None,
-    # compose_proxy: Optional[dict] = None,
-) -> models.Component:
-    component = db.scalar(
-        insert(models.Component)
-        .values(
-            service_id=service_id,
-            source=source,
-            name=name,
-            display_name=display_name,
-            # container_name=container_name,
-            component_type=component_type,
-            model_type=model_type,
-            is_customizable=is_customizable,
-            author_id=author_id,
-            description=description,
-            ram_usage=ram_usage,
-            gpu_usage=gpu_usage,
-            # port=port,
-            group=group,
-            endpoint=endpoint,
-            prompt=prompt,
-            prompt_goals=prompt_goals,
-            lm_service_id=lm_service_id,
-            lm_config=lm_config,
-            # build_args=build_args,
-            # compose_override=compose_override,
-            # compose_dev=compose_dev,
-            # compose_proxy=compose_proxy,
-        )
-        .on_conflict_do_nothing(index_elements=[models.Component.source])
-        .returning(models.Component)
-    )
-    if not component:
-        component = db.scalar(select(models.Component).filter_by(source=source))
-
-    return component
-
-
-def update_component(db: Session, id: int, **kwargs) -> models.Component:
-    values = {k: v for k, v in kwargs.items() if v is not None}
-
-    return db.scalar(update(models.Component).filter_by(id=id).values(**values).returning(models.Component))
-
-
-def delete_component(db: Session, id: int):
-    db.execute(delete(models.Component).filter(models.Component.id == id))
-
-
-def get_next_available_component_port(db: Session, range_min: int = 8000, range_max: int = 8199):
-    last_used_component_port = db.scalar(
-        select(func.max(models.Component.port)).where(models.Component.port.between(range_min, range_max))
-    )
-    return last_used_component_port + 1
 
 
 # VIRTUAL ASSISTANT COMPONENT
@@ -280,7 +186,8 @@ def get_virtual_assistant_components(db: Session, virtual_assistant_id: int) -> 
 def get_virtual_assistant_components_by_name(
     db: Session, virtual_assistant_name: str
 ) -> [models.VirtualAssistantComponent]:
-    virtual_assistant = get_virtual_assistant_by_name(db, virtual_assistant_name)
+    from database.virtual_assistant.crud import get_by_name
+    virtual_assistant = get_by_name(db, virtual_assistant_name)
 
     return db.scalars(
         select(models.VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)
@@ -295,7 +202,7 @@ def get_virtual_assistant_components_with_component_name_like(
             and_(
                 models.VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
                 models.VirtualAssistantComponent.component.has(
-                    models.Component.name.like(f"%{component_name_pattern}")
+                    Component.name.like(f"%{component_name_pattern}")
                 ),
             )
         )
@@ -316,7 +223,7 @@ def create_virtual_assistant_component(
     )
 
 
-def create_virtual_assistant_components(db: Session, virtual_assistant_id: int, components: [models.Component]):
+def create_virtual_assistant_components(db: Session, virtual_assistant_id: int, components: [Component]):
     new_virtual_assistant_components = []
 
     for component in components:

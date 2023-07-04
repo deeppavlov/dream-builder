@@ -1,20 +1,18 @@
-from typing import List, Optional
+from typing import Union
+from urllib.parse import urlparse
 
 import aiohttp
-from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component, DreamComponent
+from deeppavlov_dreamtools import AssistantDist
+from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
 from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
-from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud
+from database import crud, enums
+from database.component.crud import update_by_id, delete_by_id, get_by_id, create
 from git_storage.git_manager import GitManager
-from services.distributions_api import schemas, const
-from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import get_current_user
-
-components_router = APIRouter(prefix="/api/components", tags=["components"])
+from services.distributions_api import schemas
 
 dream_git = GitManager(
     settings.git.local_path,
@@ -42,41 +40,35 @@ async def generate_prompt_goals(prompt_goals_url: str, prompt: str, openai_api_t
     return goals
 
 
-@components_router.get("", status_code=status.HTTP_200_OK)
-async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.ComponentRead]:
-    return [schemas.ComponentRead.from_orm(c) for c in crud.get_all_components(db)]
-
-
-@components_router.post("", status_code=status.HTTP_201_CREATED)
-async def create_component(
-    payload: schemas.ComponentCreate,
-    clone_from_id: Optional[int] = None,
-    user: schemas.UserRead = Depends(get_current_user),
-    db: Session = Depends(get_db),
-) -> schemas.ComponentRead:
+def create_component(
+    db: Session,
+    new_component: schemas.ComponentCreate,
+    user: schemas.UserRead,
+    clone_from_id: int = None,
+):
     with db.begin():
         lm_service = prompt = prompt_goals = lm_config = None
 
         if clone_from_id:
-            original_component = crud.get_component(db, clone_from_id)
+            original_component = get_by_id(db, clone_from_id)
             lm_service = original_component.lm_service
             prompt = original_component.prompt
             prompt_goals = original_component.prompt_goals
         else:
-            if payload.lm_service_id:
-                lm_service = crud.get_lm_service(db, payload.lm_service_id)
+            if new_component.lm_service_id:
+                lm_service = crud.get_lm_service(db, new_component.lm_service_id)
             else:
                 lm_service = crud.get_lm_service(db, 4)
 
-            if payload.prompt and payload.prompt_goals:
-                prompt = payload.prompt
-                prompt_goals = payload.prompt_goals
+            if new_component.prompt and new_component.prompt_goals:
+                prompt = new_component.prompt
+                prompt_goals = new_component.prompt_goals
             else:
                 prompt_data = load_json(settings.db.dream_root_path / "common/prompts/template_template.json")
                 prompt, prompt_goals = prompt_data["prompt"], prompt_data["goals"]
 
-            if payload.lm_config:
-                lm_config = payload.lm_config
+            if new_component.lm_config:
+                lm_config = new_component.lm_config
             else:
                 lm_config = load_json(
                     settings.db.dream_root_path / "common" / "generative_configs" / lm_service.default_generative_config
@@ -106,14 +98,14 @@ async def create_component(
             f"components/{prompted_component_name}.yml",
             f"http://{prompted_skill_container_name}:{prompted_skill_port}/respond",
             prompted_skill_name,
-            payload.display_name,
+            new_component.display_name,
             user.email,
-            payload.description,
+            new_component.description,
         )
         dream_git.commit_all_files(user.id, 1)
 
         service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
-        component = crud.create_component(
+        component = create(
             db,
             service_id=service.id,
             source=str(prompted_component.component_file),
@@ -137,43 +129,36 @@ async def create_component(
     return schemas.ComponentRead.from_orm(component)
 
 
-@components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
-async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentRead:
-    component = crud.get_component(db, component_id)
-
-    return schemas.ComponentRead.from_orm(component)
-
-
-@components_router.patch("/{component_id}", status_code=status.HTTP_200_OK)
 async def patch_component(
-    component_id: int, payload: schemas.ComponentUpdate, db: Session = Depends(get_db)
+    db: Session,
+    component: schemas.ComponentRead,
+    component_update: schemas.ComponentUpdate,
 ) -> schemas.ComponentRead:
-    with db.begin():
-        component = crud.get_component(db, component_id)
+    with db.begin_nested():
         dream_component = DreamComponent.from_file(
             settings.db.dream_root_path / component.source, settings.db.dream_root_path
         )
 
-        if payload.display_name:
-            dream_component.component.display_name = payload.display_name
+        if component_update.display_name:
+            dream_component.component.display_name = component_update.display_name
 
-        if payload.description:
-            dream_component.component.description = payload.description
+        if component_update.description:
+            dream_component.component.description = component_update.description
 
         prompt_goals = None
-        if payload.prompt:
+        if component_update.prompt:
             goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
             goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
             prompt_goals = await generate_prompt_goals(
-                goals_lm_service_url, payload.prompt, settings.app.default_openai_api_key
+                goals_lm_service_url, component_update.prompt, settings.app.default_openai_api_key
             )
-            dream_component.update_prompt(payload.prompt, prompt_goals)
+            dream_component.update_prompt(component_update.prompt, prompt_goals)
 
-        if payload.lm_service_id:
-            lm_service = crud.get_lm_service(db, payload.lm_service_id)
+        if component_update.lm_service_id:
+            lm_service = crud.get_lm_service(db, component_update.lm_service_id)
             dream_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
-            if payload.lm_config:
-                dream_component.lm_config = payload.lm_config
+            if component_update.lm_config:
+                dream_component.lm_config = component_update.lm_config
             else:
                 dream_component.lm_config = load_json(
                     settings.db.dream_root_path / "common" / "generative_configs" / lm_service.default_generative_config
@@ -182,43 +167,20 @@ async def patch_component(
         dream_component.save_configs()
         dream_git.commit_all_files(1, 1)
 
-        component = crud.update_component(
+        component = update_by_id(
             db,
-            component_id,
-            display_name=payload.display_name,
-            description=payload.description,
-            prompt=payload.prompt,
+            component.id,
+            display_name=component_update.display_name,
+            description=component_update.description,
+            prompt=component_update.prompt,
             prompt_goals=prompt_goals,
-            lm_service_id=payload.lm_service_id,
-            lm_config=payload.lm_config,
+            lm_service_id=component_update.lm_service_id,
+            lm_config=component_update.lm_config,
         )
 
     return schemas.ComponentRead.from_orm(component)
 
 
-@components_router.get("/{component_id}/generative_config", status_code=status.HTTP_200_OK)
-async def get_component(component_id: int, db: Session = Depends(get_db)) -> schemas.ComponentGenerativeRead:
-    component = crud.get_component(db, component_id)
-
-    return schemas.ComponentGenerativeRead.from_orm(component)
-
-
-@components_router.delete("/{component_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_component(
-    component_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
-):
+def delete_component(db: Session, component_id: int) -> None:
     with db.begin():
-        crud.delete_component(db, component_id)
-
-
-@components_router.get("/group/{group_name}", status_code=status.HTTP_200_OK)
-async def get_list_of_group_components(
-    group_name: str, component_type: str = None, author_id: int = None, db: Session = Depends(get_db)
-) -> List[schemas.ComponentRead]:
-    group_components = []
-
-    for c in crud.get_components_by_group_name(db, group_name, component_type, author_id):
-        if c.name not in const.INVISIBLE_COMPONENT_NAMES:
-            group_components.append(schemas.ComponentRead.from_orm(c))
-
-    return group_components
+        delete_by_id(db, component_id)

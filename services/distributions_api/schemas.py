@@ -73,6 +73,7 @@ class DeploymentBaseRead(BaseOrmModel):
 
 class ComponentRead(BaseOrmModel):
     id: int
+    source: str
     name: str
     display_name: str
     component_type: Optional[COMPONENT_TYPES]

@@ -6,7 +6,6 @@ from starlette import status
 from apiconfig.config import settings
 from database import enums
 from database.virtual_assistant.crud import get_by_name
-from database.virtual_assistant.model import VirtualAssistant
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import get_current_user, get_current_user_or_none

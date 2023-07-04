@@ -1,4 +1,4 @@
-import { api } from 'api/axiosConfig'
+import { privateApi } from 'api/axiosConfig'
 
 export interface IPatchComponentParams {
   component_id: number
@@ -16,7 +16,7 @@ export async function patchComponent({
   lm_service_id,
 }: IPatchComponentParams) {
   try {
-    const { data } = await api.patch(`components/${component_id}`, {
+    const { data } = await privateApi.patch(`components/${component_id}`, {
       ...{ display_name, description, prompt, lm_service_id },
     })
     return data

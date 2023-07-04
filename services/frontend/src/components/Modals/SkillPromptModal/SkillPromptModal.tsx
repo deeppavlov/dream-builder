@@ -260,6 +260,7 @@ const SkillPromptModal = () => {
                 props={{ placeholder: 'Choose model' }}
                 list={dropboxArray}
                 fullWidth
+                fullHeight
                 withoutSearch
               />
               <Button

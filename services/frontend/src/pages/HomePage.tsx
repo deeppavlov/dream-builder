@@ -25,7 +25,7 @@ import {
   Wrapper,
 } from 'components/UI'
 
-export const BotsPage = () => {
+export const HomePage = () => {
   const { t } = useTranslation()
   const { UIOptions } = useUIOptions()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]

@@ -1,14 +1,14 @@
 import { AdminPage } from 'pages/AdminPage'
-import { BotsAllPage } from 'pages/BotsAllPage'
-import { BotsPage } from 'pages/BotsPage'
 import { EditorPage } from 'pages/Editor/EditorPage'
 import { IntegrationPage } from 'pages/Editor/IntegrationPage'
 import SkillEditorPage from 'pages/Editor/SkillEditorPage'
 import SkillsPage from 'pages/Editor/SkillsPage'
 import ErrorPage from 'pages/ErrorPage'
 import { GoogleAuthPage } from 'pages/GoogleAuthPage'
+import { HomePage } from 'pages/HomePage'
+import { MyAssistantsPage } from 'pages/MyAssistantsPage'
+import { PublicTemplatesPage } from 'pages/PublicTemplatesPage'
 import Root from 'pages/Root'
-import { UsersBotsPage } from 'pages/UsersBotsPage'
 import { Link, generatePath } from 'react-router-dom'
 import { AdminRoute } from 'router/AdminRoute'
 import { PrivateRoute } from 'router/PrivateRoute'
@@ -25,11 +25,11 @@ export const RouterConfig: CustomRouteConfig[] = [
     children: [
       {
         path: RoutesList.start,
-        element: <BotsPage />,
+        element: <HomePage />,
       },
       {
         path: RoutesList.botsAll,
-        element: <BotsAllPage />,
+        element: <PublicTemplatesPage />,
         handle: {
           crumb: ({ t }: IRouterCrumb) => [
             <Link to={RoutesList.botsAll}>
@@ -42,7 +42,7 @@ export const RouterConfig: CustomRouteConfig[] = [
         path: RoutesList.yourBots,
         element: (
           <PrivateRoute>
-            <UsersBotsPage />
+            <MyAssistantsPage />
           </PrivateRoute>
         ),
         handle: {

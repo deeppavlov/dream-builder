@@ -14,7 +14,7 @@ import {
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
-export const UsersBotsPage = () => {
+export const MyAssistantsPage = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'your_assistants_page',
   })

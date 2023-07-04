@@ -8,7 +8,7 @@ import { AssistantModal, SignInModal } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
-export const BotsAllPage = () => {
+export const PublicTemplatesPage = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'public_templates_page',
   })

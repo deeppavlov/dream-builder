@@ -5,7 +5,7 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import DB from 'assets/icons/logo.png'
 import { RoutesList } from 'router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface } from 'types/types'
+import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { consts } from 'utils/consts'
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
@@ -126,7 +126,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <div className={s.dateAndVersion}>
               <div className={s.date}>
                 <CalendarIcon />
-                {dateToUTC(bot?.date_created)}
+                {dateToUTC(bot?.date_created, i18n.language as TLocale)}
               </div>
               <SmallTag
                 theme={

@@ -1,11 +1,17 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from 'assets/icons/add.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import { RoutesList } from 'router/RoutesList'
-import { ICreateComponent, ISkill, SkillAvailabilityType } from 'types/types'
+import {
+  ICreateComponent,
+  ISkill,
+  SkillAvailabilityType,
+  TLocale,
+} from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { componentTypeMap } from 'mapping/componentTypeMap'
 import { consts } from 'utils/consts'
@@ -32,8 +38,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   withoutDate,
   handleAdd,
 }) => {
-  const date = dateToUTC(skill?.date_created)
-  const time = timeToUTC(new Date(skill?.date_created))
+  const { i18n } = useTranslation()
+  const date = dateToUTC(skill?.date_created, i18n.language as TLocale)
+  const time = timeToUTC(
+    new Date(skill?.date_created),
+    i18n.language as TLocale
+  )
   // const [disabled, setDisabled] = useState<boolean>(false)
   const tooltipId = useId()
   const { isPreview } = usePreview()

@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import { RoutesList } from 'router/RoutesList'
-import { BotCardProps } from 'types/types'
+import { BotCardProps, TLocale } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
@@ -27,7 +27,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   size,
   disabled,
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const tooltipId = useId()
   const { UIOptions } = useUIOptions()
@@ -42,7 +42,10 @@ export const AssistantCard: FC<BotCardProps> = ({
     infoSPId === activeAssistantId ||
     bot.id === activeAssistantId ||
     bot.id === activeChat?.id
-  const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const dateCreated = dateToUTC(
+    new Date(bot?.date_created),
+    i18n.language as TLocale
+  )
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
 

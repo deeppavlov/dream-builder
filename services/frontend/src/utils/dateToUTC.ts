@@ -1,9 +1,18 @@
 import { format } from 'fecha'
+import { TLocale } from 'types/types'
 
-interface date_created {
-  date: string | number | Date
-}
+export const dateToUTC = (dateData: any, locale?: TLocale) => {
+  const date = new Date(dateData)
 
-export const dateToUTC = (date: any) => {
-  return format(new Date(date), 'mediumDate')
+  if (!locale || locale == 'en') return format(new Date(date), 'mediumDate')
+
+  const ruFormat = date
+    .toLocaleDateString('ru', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    })
+    .toString()
+
+  return ruFormat
 }

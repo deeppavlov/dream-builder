@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import Calendar from 'assets/icons/calendar.svg'
 import { RoutesList } from 'router/RoutesList'
-import { ISkill, SkillAvailabilityType } from 'types/types'
+import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { componentTypeMap } from 'mapping/componentTypeMap'
@@ -31,9 +31,9 @@ export const SkillCard: FC<SkillCardProps> = ({
   type,
   skill,
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [disabled, setDisabled] = useState<boolean>(false)
-  const dateCreated = dateToUTC(skill?.date_created)
+  const dateCreated = dateToUTC(skill?.date_created, i18n.language as TLocale)
   const { isPreview } = usePreview()
   const tooltipId = useId()
   const { UIOptions } = useUIOptions()

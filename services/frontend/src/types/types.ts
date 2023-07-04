@@ -382,3 +382,5 @@ export interface IRouterCrumb {
   ui: any
   t: any // i18n translation
 }
+
+export type TLocale = 'ru' | 'en'

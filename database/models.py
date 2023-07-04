@@ -12,7 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.event import listens_for
-from sqlalchemy.ext import mutable, hybrid
+from sqlalchemy.ext import mutable
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import expression, sqltypes

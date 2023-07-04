@@ -12,8 +12,7 @@ async def verify_token(token: str = Header(), auth_type: str = Header(default=""
         "token": token,
         "auth-type": auth_type
     }
-    auth_api = "http://auth-api:6999"
-    auth_url = f"{auth_api}/auth/token"
+    auth_url = f"{settings.url.auth_api}/auth/token"
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get(auth_url) as response:
             json_data = await response.json()

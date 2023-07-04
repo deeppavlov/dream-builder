@@ -7,10 +7,6 @@ from pydantic import BaseModel, BaseSettings, Field
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
 
-GITHUB_AUTH_URL = "https://github.com/login/oauth/authorize"
-GITHUB_TOKENINFO = "https://github.com/login/oauth/access_token"
-GITHUB_URL_USERINFO = "https://api.github.com/user"
-
 
 def _default_agent_user_id_prefix():
     return secrets.token_urlsafe(8)

@@ -11,7 +11,8 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from apiconfig.config import settings
-from database import crud, enums
+from database import enums
+from database.deployment import crud as deployment_crud
 from database.core import init_db
 from git_storage.git_manager import GitManager
 
@@ -80,9 +81,9 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
     with SessionLocal() as db:
         with db.begin():
             logger.info(f"Checking available ports")
-            port = crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
+            port = deployment_crud.get_available_deployment_port(db, exclude=list(swarm_client.get_used_ports().values()))
             logger.info(f"Found available port {port}")
-            deployment = crud.update_deployment(db, deployment_id, chat_port=port)
+            deployment = deployment_crud.update_by_id(db, deployment_id, chat_port=port)
             chat_host, chat_port = deployment.chat_host, deployment.chat_port
 
     deployer = SwarmDeployer(
@@ -106,14 +107,14 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
                 else:
                     logger.info(f"Deployment background task state changed to {state}")
 
-                crud.update_deployment(db, deployment_id, state=state, error=err, **updates)
+                deployment_crud.update_by_id(db, deployment_id, state=state, error=err, **updates)
 
     agent_is_up = ping_deployed_agent(chat_host, chat_port)
 
     with SessionLocal() as db:
         with db.begin():
             if agent_is_up:
-                crud.update_deployment(db, deployment_id, state=enums.DeploymentState.UP)
+                deployment_crud.update_by_id(db, deployment_id, state=enums.DeploymentState.UP)
 
     logger.info(f"Deployment background task for {dist.name} successfully finished after {datetime.now() - now}")
 
@@ -126,7 +127,7 @@ def run_deployer_task(*args, **kwargs):
 
     with SessionLocal() as db:
         with db.begin():
-            deployment = crud.get_deployment(db, kwargs["deployment_id"])
+            deployment = deployment_crud.get_by_id(db, kwargs["deployment_id"])
             dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / deployment.virtual_assistant.source)
 
     run_deployer(dream_dist, kwargs["deployment_id"])

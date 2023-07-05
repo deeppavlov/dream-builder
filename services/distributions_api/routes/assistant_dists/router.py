@@ -1,16 +1,12 @@
 from typing import List
-from urllib.parse import urlparse
 
-from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
-from deeppavlov_dreamtools.distconfigs.components import DreamComponent
-from deeppavlov_dreamtools.utils import generate_unique_name
-from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud, models, enums
+from database.user import crud as user_crud
 from database.virtual_assistant.crud import get_all_public_templates, get_all_by_author
-from git_storage.git_manager import GitManager
+from database.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -195,9 +191,12 @@ async def clone_dist(
 
 
 @assistant_dists_router.get("/{dist_name}/components", status_code=status.HTTP_200_OK)
-async def get_virtual_assistant_components(dist_name: str, db: Session = Depends(get_db)):
+async def get_virtual_assistant_components(
+    virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_view_permission),
+    db: Session = Depends(get_db),
+):
     grouped_components = {}
-    for va_component in crud.get_virtual_assistant_components_by_name(db, dist_name):
+    for va_component in virtual_assistant_component_crud.get_all_by_virtual_assistant_name(db, virtual_assistant.name):
         if va_component.component.group not in grouped_components:
             grouped_components[va_component.component.group] = []
 
@@ -253,7 +252,7 @@ async def publish_dist(
     background_tasks.add_task(
         send_publish_request_created_emails,
         owner_email=user.email,
-        moderator_emails=[m.email for m in crud.get_users_by_role(db, 2)],
+        moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
         virtual_assistant_name=virtual_assistant.name,
         virtual_assistant_display_name=virtual_assistant.display_name,
     )

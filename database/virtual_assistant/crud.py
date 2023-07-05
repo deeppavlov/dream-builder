@@ -1,16 +1,13 @@
-from sqlalchemy.orm import Session
-
-from database.component.model import Component
-from database.virtual_assistant.model import VirtualAssistant
-from datetime import datetime
 from typing import Optional, List
 
-from sqlalchemy import select, update, and_, delete, func
+from sqlalchemy import select, update, and_, delete
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database import models, enums, crud
-from database.component import crud as component_crud
+from database import enums
+from database.component.model import Component
+from database.virtual_assistant.model import VirtualAssistant
+from database.virtual_assistant_component import crud as virtual_assistant_component_crud
 
 
 def get_by_id(db: Session, id: int):
@@ -73,17 +70,14 @@ def create(
     # if cloned_from_id:
     #     original_components = get_components(db, cloned_from_id)
 
-    crud.create_virtual_assistant_components(db, new_virtual_assistant.id, components)
+    virtual_assistant_component_crud.create_many(db, new_virtual_assistant.id, components)
 
     return new_virtual_assistant
 
 
 def update_by_name(db: Session, name: str, **kwargs):
     return db.scalar(
-        update(VirtualAssistant)
-        .where(VirtualAssistant.name == name)
-        .values(**kwargs)
-        .returning(VirtualAssistant)
+        update(VirtualAssistant).where(VirtualAssistant.name == name).values(**kwargs).returning(VirtualAssistant)
     )
 
 
@@ -91,10 +85,7 @@ def update_metadata_by_name(db: Session, name: str, **kwargs) -> VirtualAssistan
     values = {k: v for k, v in kwargs.items() if v is not None}
 
     return db.scalar(
-        update(VirtualAssistant)
-        .where(VirtualAssistant.name == name)
-        .values(**values)
-        .returning(VirtualAssistant)
+        update(VirtualAssistant).where(VirtualAssistant.name == name).values(**values).returning(VirtualAssistant)
     )
 
 

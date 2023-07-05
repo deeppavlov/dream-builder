@@ -1,15 +1,10 @@
-from sqlalchemy.orm import Session
+from typing import Optional
 
-from database.component.model import Component
-from database.virtual_assistant.model import VirtualAssistant
-from datetime import datetime
-from typing import Optional, List
-
-from sqlalchemy import select, update, and_, delete, func
+from sqlalchemy import select, update, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database import models, enums
+from database.component.model import Component
 
 
 def get_by_id(db: Session, component_id: int) -> Optional[Component]:
@@ -20,9 +15,7 @@ def get_all(db: Session) -> [Component]:
     return db.scalars(select(Component)).all()
 
 
-def get_by_group_name(
-    db: Session, group: str, component_type: str = None, author_id: int = None
-) -> [Component]:
+def get_by_group_name(db: Session, group: str, component_type: str = None, author_id: int = None) -> [Component]:
     filters = {"group": group}
     if component_type:
         filters["component_type"] = component_type

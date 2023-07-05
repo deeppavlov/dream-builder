@@ -8,7 +8,6 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud
 from database.component.crud import get_all, get_by_group_name
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const
@@ -22,17 +21,6 @@ from services.distributions_api.routes.components.dependencies import (
 from services.distributions_api.security.auth import get_current_user
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
-
-dream_git = GitManager(
-    settings.git.local_path,
-    settings.git.username,
-    settings.git.remote_access_token,
-    settings.git.remote_source_url,
-    settings.git.remote_source_branch,
-    settings.git.remote_copy_url,
-    # settings.git.remote_copy_branch,
-    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
-)
 
 
 @components_router.get("", status_code=status.HTTP_200_OK)

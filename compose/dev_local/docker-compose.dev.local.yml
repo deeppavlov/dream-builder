@@ -89,7 +89,7 @@ services:
       - "6972:6379"
     restart: always
 
-  deployment_worker:
+  deployment-worker:
     env_file: [ ../.envs/.env.dev.local ]
     restart: on-failure
     user: deepypavlova:1600400037

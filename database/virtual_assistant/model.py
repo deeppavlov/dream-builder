@@ -1,31 +1,21 @@
-import json
-import logging
-from pathlib import Path
-from typing import Union, Dict, Type, Callable
-
 from sqlalchemy import (
-    Boolean,
     Column,
     Integer,
     String,
     ForeignKey,
-    JSON,
-    TypeDecorator,
-    VARCHAR,
-    UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import insert, JSONB
 from sqlalchemy.event import listens_for
-from sqlalchemy.ext import mutable
-from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql import expression, sqltypes
+from sqlalchemy.sql import sqltypes
 from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
-from database import utils, enums
+from database import enums
 from database.core import Base
+from database.deployment.model import Deployment
+from database.publish_request.model import PublishRequest
 from database.utils import DateTimeUtcNow, pre_populate_from_tsv
+from database.virtual_assistant_component.model import VirtualAssistantComponent
 
 
 class VirtualAssistant(Base):

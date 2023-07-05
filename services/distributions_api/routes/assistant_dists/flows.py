@@ -7,9 +7,13 @@ from deeppavlov_dreamtools.utils import generate_unique_name
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud, enums
-from database.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
+from database import enums
 from database.component import crud as component_crud
+from database.lm_service import crud as lm_service_crud
+from database.publish_request import crud as publish_request_crud
+from database.service import crud as service_crud
+from database.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
+from database.virtual_assistant_component import crud as virtual_assistant_component_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 
@@ -39,7 +43,7 @@ def create_virtual_assistant(
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / template_virtual_assistant.source)
 
         new_name = generate_unique_name()
-        original_prompted_skills = crud.get_virtual_assistant_components_with_component_name_like(
+        original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(
             db, template_virtual_assistant.id, "_prompted_skill"
         )
         existing_prompted_skills = []
@@ -71,12 +75,14 @@ def create_virtual_assistant(
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
-            service = crud.create_service(
+            service = service_crud.get_or_create(
                 db, dream_component.service.service.name, str(dream_component.service.config_dir)
             )
 
             if dream_component.lm_service:
-                lm_service_id = crud.get_lm_service_by_name(db, urlparse(dream_component.lm_service).hostname).id
+                lm_service_id = lm_service_crud.get_lm_service_by_name(
+                    db, urlparse(dream_component.lm_service).hostname
+                ).id
             else:
                 lm_service_id = None
 
@@ -158,7 +164,7 @@ def add_virtual_assistant_component(
     with db.begin():
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        virtual_assistant_component = crud.create_virtual_assistant_component(db, virtual_assistant.id, component_id)
+        virtual_assistant_component = virtual_assistant_component_crud.create(db, virtual_assistant.id, component_id)
         dream_dist.add_generative_prompted_skill(
             DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
         )
@@ -174,12 +180,12 @@ def delete_virtual_assistant_component(
     with db.begin():
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        virtual_assistant_component = crud.get_virtual_assistant_component(db, virtual_assistant_component_id)
+        virtual_assistant_component = virtual_assistant_component_crud.get_by_id(db, virtual_assistant_component_id)
         dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
         dream_dist.save(overwrite=True, generate_configs=True)
         dream_git.commit_all_files(1, 1)
 
-        crud.delete_virtual_assistant_component(db, virtual_assistant_component_id)
+        virtual_assistant_component_crud.delete_by_id(db, virtual_assistant_component_id)
 
 
 def publish_virtual_assistant(
@@ -192,8 +198,10 @@ def publish_virtual_assistant(
         dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
         if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
-            crud.delete_publish_request(db, virtual_assistant.id)
+            publish_request_crud.delete_publish_request(db, virtual_assistant.id)
             virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
         elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
-            crud.create_publish_request(db, virtual_assistant.id, user_id, virtual_assistant.name, visibility)
-            moderators = crud.get_users_by_role(db, 2)
+            publish_request_crud.create_publish_request(
+                db, virtual_assistant.id, user_id, virtual_assistant.name, visibility
+            )
+            # moderators = user_crud.get_by_role(db, 2)

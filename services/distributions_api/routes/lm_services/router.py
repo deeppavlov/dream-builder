@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 from starlette import status
 
-from database import crud
+from database.lm_service import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 

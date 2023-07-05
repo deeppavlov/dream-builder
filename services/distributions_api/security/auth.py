@@ -2,6 +2,7 @@ from typing import Optional
 
 import aiohttp
 from fastapi import Depends, Header, HTTPException
+from starlette import status
 
 from apiconfig.config import settings
 from services.distributions_api import schemas
@@ -30,5 +31,12 @@ async def get_current_user_or_none(token: Optional[str] = Header(default="")) ->
 
             if response.status == 200:
                 user = schemas.UserRead(**json_data)
+
+    return user
+
+
+async def get_admin_user(user: schemas.UserRead = Depends(get_current_user)) -> Optional[schemas.UserRead]:
+    if not user.role.name == "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires admin user")
 
     return user

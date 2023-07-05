@@ -9,8 +9,10 @@ from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud, enums
+from database import enums
 from database.component.crud import update_by_id, delete_by_id, get_by_id, create
+from database.service import crud as service_crud
+from database.lm_service import crud as lm_service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 
@@ -56,9 +58,9 @@ def create_component(
             prompt_goals = original_component.prompt_goals
         else:
             if new_component.lm_service_id:
-                lm_service = crud.get_lm_service(db, new_component.lm_service_id)
+                lm_service = lm_service_crud.get_lm_service(db, new_component.lm_service_id)
             else:
-                lm_service = crud.get_lm_service(db, 4)
+                lm_service = lm_service_crud.get_lm_service(db, 4)
 
             if new_component.prompt and new_component.prompt_goals:
                 prompt = new_component.prompt
@@ -104,7 +106,7 @@ def create_component(
         )
         dream_git.commit_all_files(user.id, 1)
 
-        service = crud.create_service(db, prompted_service.service.name, str(prompted_service.config_dir))
+        service = service_crud.get_or_create(db, prompted_service.service.name, str(prompted_service.config_dir))
         component = create(
             db,
             service_id=service.id,
@@ -146,7 +148,7 @@ async def patch_component(
 
     prompt_goals = None
     if component_update.prompt:
-        goals_lm_service = crud.get_lm_service_by_name(db, "openai-api-chatgpt")
+        goals_lm_service = lm_service_crud.get_lm_service_by_name(db, "openai-api-chatgpt")
         goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
         prompt_goals = await generate_prompt_goals(
             goals_lm_service_url, component_update.prompt, settings.app.default_openai_api_key
@@ -154,7 +156,7 @@ async def patch_component(
         dream_component.update_prompt(component_update.prompt, prompt_goals)
 
     if component_update.lm_service_id:
-        lm_service = crud.get_lm_service(db, component_update.lm_service_id)
+        lm_service = lm_service_crud.get_lm_service(db, component_update.lm_service_id)
         dream_component.lm_service = f"http://{lm_service.name}:{lm_service.port}/respond"
         if component_update.lm_config:
             dream_component.lm_config = component_update.lm_config

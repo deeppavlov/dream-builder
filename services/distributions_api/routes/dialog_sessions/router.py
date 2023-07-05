@@ -7,7 +7,10 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
-from database import crud
+from database.dialog_session import crud
+from database.virtual_assistant import crud as virtual_assistant_crud
+from database.lm_service import crud as lm_service_crud
+from database.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import get_current_user, get_current_user_or_none
@@ -135,12 +138,12 @@ async def send_dialog_session_message(
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 
-        virtual_assistant = crud.get_virtual_assistant(db, dialog_session.deployment.virtual_assistant_id)
+        virtual_assistant = virtual_assistant_crud.get_by_id(db, dialog_session.deployment.virtual_assistant_id)
 
         chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
 
         if payload.lm_service_id:
-            lm_service = crud.get_lm_service(db, payload.lm_service_id)
+            lm_service = lm_service_crud.get_lm_service(db, payload.lm_service_id)
             lm_service_url = f"http://{lm_service.name}:{lm_service.port}/respond"
         else:
             lm_service_url = None
@@ -155,7 +158,7 @@ async def send_dialog_session_message(
         )
 
         crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
-        active_va_component = crud.get_virtual_assistant_component_by_component_name(
+        active_va_component = virtual_assistant_component_crud.get_by_component_name(
             db, virtual_assistant.id, active_skill
         )
 

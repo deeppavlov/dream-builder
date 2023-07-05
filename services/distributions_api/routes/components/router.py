@@ -8,7 +8,6 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import crud
 from database.component.crud import get_all, get_by_group_name
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas, const

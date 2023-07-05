@@ -179,30 +179,39 @@ export const AssistantModule = () => {
       >
         <Container overflowVisible>
           <Details>{bot?.description!}</Details>
-          {!isPreview && (
-            <Button
-              props={{
-                onClick: handleShare,
-                disabled: bot?.visibility == VISIBILITY_STATUS.PRIVATE,
-              }}
-              withIcon
-              theme='tertiary2'
-            >
-              <SvgIcon iconName='share' />
-            </Button>
-          )}
-          {!isPreview && (
-            <Button
-              theme='tertiary2'
-              props={{
-                onClick: handleVisibility,
-                disabled: isDeploying,
-              }}
-            >
-              <SvgIcon iconName='publish' />
-              {t('assistant_page.module.btns.visibility')}
-            </Button>
-          )}
+          <div
+            style={{
+              minWidth: 489,
+              display: 'flex',
+              gap: 16,
+              justifyContent: 'flex-end',
+            }}
+          >
+            {!isPreview && (
+              <Button
+                props={{
+                  onClick: handleShare,
+                  disabled: bot?.visibility == VISIBILITY_STATUS.PRIVATE,
+                }}
+                withIcon
+                theme='tertiary2'
+              >
+                <SvgIcon iconName='share' />
+              </Button>
+            )}
+            {!isPreview && (
+              <Button
+                theme='tertiary2'
+                props={{
+                  onClick: handleVisibility,
+                  disabled: isDeploying,
+                }}
+              >
+                <SvgIcon iconName='publish' />
+                {t('assistant_page.module.btns.visibility')}
+              </Button>
+            )}
+          </div>
         </Container>
         <Container flexEnd>
           <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>

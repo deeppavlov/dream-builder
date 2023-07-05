@@ -2,8 +2,8 @@
   "home_page": {
     "wrapper": {
       "title": {
-        "public_assistants": "Create your assistant",
-        "your_assistants": "Your assistants"
+        "public_assistants": "Create your Assistant",
+        "your_assistants": "Your Assistants"
       },
       "subwrapper": "Recommended Templates",
       "links": {
@@ -37,7 +37,7 @@
     "skills_tab": {
       "wrapper": {
         "title": "Skills",
-        "annotation": "Your AI assistant is multi-skill which means that at each step in the conversation your Assistant picks the skill to create the response."
+        "annotation": "Your AI Assistant is multi-skill which means that at each step in the conversation your Assistant picks the skill to create the response."
       }
     },
     "integration_tab": {
@@ -108,16 +108,16 @@
     },
     "assistant": {
       "clone": {
-        "header": "Create new assistant from:"
+        "header": "Create new Assistant from:"
       },
       "edit": {
-        "header": "Edit assistant:",
-        "subheader": "Change name and description for your assistant"
+        "header": "Edit Assistant:",
+        "subheader": "Change name and description for your Assistant"
       },
       "create_from_scratch": {
-        "header": "Create new assistant from scratch"
+        "header": "Create new Assistant from scratch"
       },
-      "subheader": "Enter name and description for your assistant",
+      "subheader": "Enter name and description for your Assistant",
       "name_field": {
         "label": "Name",
         "placeholder": "A short name describing your Virtual Assistant"
@@ -161,7 +161,7 @@
       }
     },
     "hide_public_assistant": {
-      "header": "Your assistant will be removed from public templates. Are you sure want to edit?",
+      "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
       "subheader": "",
       "btns": {
         "cancel": "Cancel",
@@ -282,9 +282,9 @@
       "deploy": {
         "header": "Chat with AI Assistant",
         "subheader": "In order to start chat with AI Assistant, it is necessary to build it",
-        "loading_wait_text": "Please wait till assistant launching",
+        "loading_wait_text": "Please wait till Assistant launching",
         "loading_time_text": "This may take a few minutes.",
-        "error": "The assistant build failed, please try again later."
+        "error": "The Assistant build failed, please try again later."
       },
       "message_field": {
         "placeholder": "Type..."
@@ -384,7 +384,7 @@
   "cards": {
     "skill": {
       "tooltips": {
-        "clone_for_edit": "You need to clone the virtual assistant to edit"
+        "clone_for_edit": "You need to clone the virtual Assistant to edit"
       }
     }
   },
@@ -424,7 +424,7 @@
   },
 
   "breadcrumbs": {
-    "your_assistants": "Your assistants",
+    "your_assistants": "Your Assistants",
     "public_templates": "Public Templates",
     "skills": "Skills",
     "integration": "Integration"
@@ -435,7 +435,7 @@
       "skills": "Skills",
       "integration": "Integration",
       "settings": "Settings",
-      "deepy": "Ask Deepy if you need help with building your assistant"
+      "deepy": "Ask Deepy if you need help with building your Assistant"
     }
   },
 
@@ -473,7 +473,7 @@
   },
 
   "your_assistants": {
-    "empty_placeholder": "Your assistants will appear here"
+    "empty_placeholder": "Your Assistants will appear here"
   },
 
   "assistant_table": {

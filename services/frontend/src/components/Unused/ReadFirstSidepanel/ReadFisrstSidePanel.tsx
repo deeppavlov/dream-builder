@@ -14,7 +14,7 @@ import s from './ReadFirstSidePanel.module.scss'
 interface IProps {
   skill?: ISkill
   distName?: string
-  activeTab?: 'Properties' | 'Editor'
+  activeTab?: 'properties' | 'details'
   visibility?: SkillAvailabilityType
 }
 

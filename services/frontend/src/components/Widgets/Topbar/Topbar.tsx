@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { TTopbar } from 'types/types'
 import { consts } from 'utils/consts'
 import { GoogleSignInButton } from 'components/Buttons'
+import { SwitchLanguageButton } from 'components/Buttons/SwitchLanguageButton/SwitchLanguageButton'
 import { Profile } from 'components/Menus'
 import { BurgerMenu } from 'components/Menus/BurgerMenu/BurgerMenu'
 import s from './Topbar.module.scss'
@@ -33,6 +34,7 @@ export const Topbar = () => {
       </div>
       <div className={s.btns_area}>
         {isTableViewSwitcher && <Display />}
+        <SwitchLanguageButton />
         {isEditor && <Test />}
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
       </div>

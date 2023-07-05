@@ -1,6 +1,7 @@
 import { useUIOptions } from 'context'
 import { FC, useRef } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-async-light'
 import curlTemplate from 'assets/scripts/curl.bash?raw'
@@ -21,6 +22,7 @@ interface Props {
 
 export const ApiCallCode: FC<Props> = ({ assistantId }) => {
   const { UIOptions } = useUIOptions()
+  const { t } = useTranslation()
   const preCodeRef = useRef<HTMLPreElement>(null)
 
   const activeTab: TApiCallType = UIOptions[consts.API_CALL_ACTIVE_TAB]
@@ -61,7 +63,7 @@ export const ApiCallCode: FC<Props> = ({ assistantId }) => {
         <SwitchButtonAPICall />
         <Button theme='tertiary2' props={{ onClick: handleCopyCode }}>
           <SvgIcon iconName='copy' />
-          Copy Code
+          {t('assistant_page.integration_tab.wrapper.btns.copy_code')}
         </Button>
       </div>
       <SyntaxHighlighter

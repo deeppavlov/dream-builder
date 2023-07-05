@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 import { router } from 'router/Router'
+import './i18n'
 
 const queryClient = new QueryClient()
 

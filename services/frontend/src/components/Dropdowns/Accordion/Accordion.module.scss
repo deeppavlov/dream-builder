@@ -1,3 +1,7 @@
+.container {
+  width: 100%;
+}
+
 .accordion {
   @include t4;
   display: flex;

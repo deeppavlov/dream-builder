@@ -34,7 +34,6 @@ export type TEvents =
   | 'TRIGGER_RIGHT_SP_EVENT'
   | 'ShareAssistantModal'
   | 'SignInModal'
-  | 'AreYouSureModal'
   | 'RenewChat'
   | 'AssistantModal'
   | 'ChooseBotModal'
@@ -365,3 +364,23 @@ export interface IPromptBlock {
   'Open-Assistant Pythia 12B': boolean
   'GPT-JT 6B': boolean
 }
+
+export enum ELOCALES_KEY {
+  en = 'en',
+  ru = 'ru',
+}
+export enum ELOCALES_TITLE {
+  EN = 'EN',
+  RU = 'RU',
+}
+export type TLocales = {
+  [key in ELOCALES_KEY]: { title: ELOCALES_TITLE }
+}
+
+export interface IRouterCrumb {
+  params: any
+  ui: any
+  t: any // i18n translation
+}
+
+export type TLocale = 'ru' | 'en'

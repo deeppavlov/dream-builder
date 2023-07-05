@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { SkillAvailabilityType } from 'types/types'
@@ -15,7 +16,7 @@ import s from './SkillDetailsSidePanel.module.scss'
 interface Props {
   component_id: number
   distName: string
-  activeTab?: 'Properties' | 'Editor'
+  activeTab?: 'properties' | 'details'
   visibility?: SkillAvailabilityType
 }
 
@@ -25,6 +26,7 @@ const SkillDetailsSidePanel = ({
   activeTab,
   visibility,
 }: Props) => {
+  const { t } = useTranslation()
   const { getComponent } = useComponent()
   const { data: skill } = getComponent({
     id: component_id,
@@ -34,12 +36,11 @@ const SkillDetailsSidePanel = ({
   const { name } = useParams()
   const nav = useNavigate()
   const { isPreview } = usePreview()
-  const [properties, editor] = ['Properties', 'Editor']
   const isCustomizable =
     skill?.is_customizable && !isPreview && visibility !== 'public'
   const tabs = new Map([
-    [properties, { name: properties }],
-    [editor, { name: 'Details', disabled: !isCustomizable }],
+    ['properties', { name: t('tabs.properties') }],
+    ['details', { name: t('tabs.details'), disabled: !isCustomizable }],
   ])
   let cx = classNames.bind(s)
 
@@ -74,18 +75,22 @@ const SkillDetailsSidePanel = ({
         <SidePanelName>{skill?.display_name}</SidePanelName>
         <ul className={s.table}>
           <li className={s.item}>
-            <span className={cx('table-name')}>Generative model:</span>
+            <span className={cx('table-name')}>
+              {t('sidepanels.skill_details.generative_model')}
+            </span>
             <span className={s.value}>
               {skill?.lm_service?.display_name || 'Empty'}
             </span>
           </li>
           <li className={cx('item', 'link')}>
             <Button theme='ghost' props={{ onClick: handleEnterTokenClick }}>
-              Enter your personal access token here
+              {t('api_key.required.link')}
             </Button>
           </li>
           <li className={cx('item', 'big-item')}>
-            <span className={cx('table-name')}>Prompt:</span>
+            <span className={cx('table-name')}>
+              {t('sidepanels.skill_details.prompt')}
+            </span>
             <p className={cx('value', 'prompt')}>{skill?.prompt || 'Empty'}</p>
           </li>
         </ul>
@@ -94,7 +99,7 @@ const SkillDetailsSidePanel = ({
             theme='primary'
             props={{ onClick: isCustomizable && triggerEditModal }}
           >
-            Edit
+            {t('sidepanels.skill_details.btns.edit')}
           </Button>
         </SidePanelButtons>
       </div>

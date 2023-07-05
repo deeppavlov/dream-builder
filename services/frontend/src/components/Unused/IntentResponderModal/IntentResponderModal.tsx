@@ -5,8 +5,8 @@ import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
 import { DropboxSearch, ExpandableDropdownn } from 'components/Dropdowns'
 import { Input, TextArea } from 'components/Inputs'
-import { intentsMock } from 'components/Panels/IntentResponderSidePanel/IntentResponderSidePanel'
 import { Modal } from 'components/UI'
+import { intentsMock } from 'components/Unused/IntentResponderSidePanel/IntentResponderSidePanel'
 import s from './IntentResponderModal.module.scss'
 
 export interface IntentInterface {

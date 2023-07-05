@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import Add from 'assets/icons/+.svg'
 import { useAuth } from 'context/AuthProvider'
 import { usePreview } from 'context/PreviewProvider'
@@ -27,12 +28,13 @@ export const AddButton: FC<Props> = ({
 }) => {
   const auth = useAuth()
   const { isPreview } = usePreview()
+  const { t } = useTranslation('translation')
+  const isCreateScratchSkill = forSkills && fromScratch
   const cx = classNames.bind(s)
 
   const handleClick = () => {
-    const isCreateScratchAssistant = !forSkills && !fromScratch
-    const isCreateScratchSkill = fromScratch
-    const isAddPublicSkill = forSkills && !isPreview
+    const isCreateScratchAssistant = !forSkills
+    const isAddPublicSkill = forSkills && !fromScratch && !isPreview
     const scratchAssistant = { action: 'create' }
 
     if (onAddRequest) onAddRequest()
@@ -73,7 +75,12 @@ export const AddButton: FC<Props> = ({
         <td colSpan={6} className={s.td}>
           <button className={s.forTable} onClick={handleClick}>
             <img src={Add} />
-            <p>{text || 'Create From Scratch'}</p>
+            <p>
+              {text ??
+                (isCreateScratchSkill
+                  ? t('skill_table.create_from_scratch_btn')
+                  : t('assistant_table.create_from_scratch_btn'))}
+            </p>
           </button>
         </td>
       </tr>

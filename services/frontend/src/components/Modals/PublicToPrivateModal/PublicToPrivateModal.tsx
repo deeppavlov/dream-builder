@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
@@ -14,6 +15,9 @@ import s from './PublicToPrivateModal.module.scss'
 type ActionTypes = 'edit' | 'rename'
 
 export const PublicToPrivateModal = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.hide_public_assistant',
+  })
   const [isOpen, setIsOpen] = useState(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const [action, setAction] = useState<ActionTypes | null>(null)
@@ -57,16 +61,14 @@ export const PublicToPrivateModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publicToPrivateModal}>
-        <div className={s.header}>
-          Your assistant will be removed from public templates. Are you sure
-          want to edit?
-        </div>
+        <div className={s.header}>{t('header')}</div>
+        {t('subheader') && <div className={s.desc}>{t('subheader')}</div>}
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           <Button theme='error' props={{ onClick: handleYesClick }}>
-            Yes
+            {t('btns.yes')}
           </Button>
         </div>
       </div>

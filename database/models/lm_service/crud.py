@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from database.lm_service.model import LmService
+from database.models.lm_service.model import LmService
 
 
 def get_all_lm_services(db: Session, hosted_only: bool = True) -> [LmService]:

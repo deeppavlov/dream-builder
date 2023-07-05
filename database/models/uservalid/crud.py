@@ -2,8 +2,8 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from database.user import crud as user_crud
-from database.uservalid.model import UserValid
+from database.models.user import crud as user_crud
+from database.models.uservalid.model import UserValid
 
 
 def add_user_to_uservalid(db: Session, user, email: str) -> Optional[UserValid]:

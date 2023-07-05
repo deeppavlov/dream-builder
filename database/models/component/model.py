@@ -13,8 +13,6 @@ from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
 from database.core import Base
-from database.lm_service.model import LmService
-from database.service.model import Service
 from database.utils import DateTimeUtcNow, pre_populate_from_tsv
 
 

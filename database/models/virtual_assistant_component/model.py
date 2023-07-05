@@ -8,7 +8,6 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.orm import relationship
 
 from apiconfig.config import settings
-from database.component.model import Component
 from database.core import Base
 from database.utils import pre_populate_from_tsv
 

@@ -5,9 +5,9 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import enums
-from database.component.model import Component
-from database.virtual_assistant.model import VirtualAssistant
-from database.virtual_assistant_component import crud as virtual_assistant_component_crud
+from database.models.component.model import Component
+from database.models.virtual_assistant.model import VirtualAssistant
+from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 
 
 def get_by_id(db: Session, id: int):

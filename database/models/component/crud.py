@@ -4,7 +4,7 @@ from sqlalchemy import select, update, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.component.model import Component
+from database.models.component.model import Component
 
 
 def get_by_id(db: Session, component_id: int) -> Optional[Component]:

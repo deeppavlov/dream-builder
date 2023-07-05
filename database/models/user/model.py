@@ -10,10 +10,7 @@ from sqlalchemy.types import DateTime
 
 from apiconfig.config import settings
 from database.core import Base
-from database.dialog_session.model import DialogSession
-from database.role.model import Role
 from database.utils import DateTimeUtcNow, pre_populate_from_tsv
-from database.virtual_assistant.model import VirtualAssistant
 
 
 class GoogleUser(Base):

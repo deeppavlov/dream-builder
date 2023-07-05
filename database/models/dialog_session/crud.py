@@ -1,11 +1,9 @@
-from database.dialog_session.model import DialogSession
-
 from sqlalchemy import update, and_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.dialog_session.model import DialogSession
-from database.virtual_assistant import crud as virtual_assistant_crud
+from database.models.dialog_session.model import DialogSession
+from database.models.virtual_assistant import crud as virtual_assistant_crud
 
 
 def get_dialog_session(db: Session, dialog_session_id: int):

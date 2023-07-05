@@ -1,15 +1,9 @@
 from typing import List, Optional
 
-import aiohttp
-from deeppavlov_dreamtools.distconfigs.components import create_generative_prompted_skill_component, DreamComponent
-from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
-from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 
-from apiconfig.config import settings
-from database.component.crud import get_all, get_by_group_name
-from git_storage.git_manager import GitManager
+from database.models.component.crud import get_all, get_by_group_name
 from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.routes.components import flows

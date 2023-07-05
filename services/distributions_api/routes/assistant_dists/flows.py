@@ -4,16 +4,17 @@ from urllib.parse import urlparse
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.distconfigs.components import DreamComponent
 from deeppavlov_dreamtools.utils import generate_unique_name
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
 from database import enums
-from database.component import crud as component_crud
-from database.lm_service import crud as lm_service_crud
-from database.publish_request import crud as publish_request_crud
-from database.service import crud as service_crud
-from database.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
-from database.virtual_assistant_component import crud as virtual_assistant_component_crud
+from database.models.component import crud as component_crud
+from database.models.lm_service import crud as lm_service_crud
+from database.models.publish_request import crud as publish_request_crud
+from database.models.service import crud as service_crud
+from database.models.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
+from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 
@@ -38,7 +39,7 @@ def create_virtual_assistant(
     author_email: str,
     is_cloned: bool = False,
 ) -> schemas.VirtualAssistantRead:
-    with db.begin():
+    try:
         template_virtual_assistant = get_by_name(db, template_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / template_virtual_assistant.source)
 
@@ -118,7 +119,10 @@ def create_virtual_assistant(
             components=new_components,
             cloned_from_id=template_virtual_assistant.id if is_cloned else None,
         )
-
+    except IntegrityError:
+        db.rollback()
+    else:
+        db.commit()
         return schemas.VirtualAssistantRead.from_orm(new_virtual_assistant)
 
 
@@ -129,47 +133,49 @@ def patch_virtual_assistant(
     display_name: str = None,
     description: str = None,
 ) -> schemas.VirtualAssistantRead:
-    with db.begin():
-        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+    dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        if display_name:
-            dream_dist.pipeline_conf.display_name = display_name
-            virtual_assistant = update_metadata_by_name(db, virtual_assistant.name, display_name=display_name)
+    if display_name:
+        dream_dist.pipeline_conf.display_name = display_name
+        virtual_assistant = update_metadata_by_name(db, virtual_assistant.name, display_name=display_name)
 
-        if description:
-            dream_dist.pipeline_conf.description = description
-            virtual_assistant = update_metadata_by_name(db, virtual_assistant.name, description=description)
+    if description:
+        dream_dist.pipeline_conf.description = description
+        virtual_assistant = update_metadata_by_name(db, virtual_assistant.name, description=description)
 
-        dream_dist.save(overwrite=True)
-        dream_git.commit_all_files(user_id, 1)
+    db.commit()
+
+    dream_dist.save(overwrite=True)
+    dream_git.commit_all_files(user_id, 1)
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
 
 def delete_virtual_assistant(db: Session, virtual_assistant: schemas.VirtualAssistantRead, user_id: int) -> None:
-    with db.begin():
-        try:
-            dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
-            dream_dist.delete()
-            dream_git.commit_all_files(user_id, 1)
-        except FileNotFoundError:
-            pass
+    try:
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+        dream_dist.delete()
+        dream_git.commit_all_files(user_id, 1)
+    except FileNotFoundError:
+        pass
 
-        delete_by_name(db, virtual_assistant.name)
+    delete_by_name(db, virtual_assistant.name)
+    db.commit()
 
 
 def add_virtual_assistant_component(
     db: Session, virtual_assistant: schemas.VirtualAssistantRead, component_id: int
 ) -> schemas.VirtualAssistantComponentRead:
-    with db.begin():
-        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+    dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        virtual_assistant_component = virtual_assistant_component_crud.create(db, virtual_assistant.id, component_id)
-        dream_dist.add_generative_prompted_skill(
-            DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
-        )
-        dream_dist.save(overwrite=True, generate_configs=True)
-        dream_git.commit_all_files(1, 1)
+    virtual_assistant_component = virtual_assistant_component_crud.create(db, virtual_assistant.id, component_id)
+    db.commit()
+
+    dream_dist.add_generative_prompted_skill(
+        DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
+    )
+    dream_dist.save(overwrite=True, generate_configs=True)
+    dream_git.commit_all_files(1, 1)
 
     return schemas.VirtualAssistantComponentRead.from_orm(virtual_assistant_component)
 
@@ -177,15 +183,15 @@ def add_virtual_assistant_component(
 def delete_virtual_assistant_component(
     db: Session, virtual_assistant: schemas.VirtualAssistantRead, virtual_assistant_component_id: int
 ) -> None:
-    with db.begin():
-        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+    dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        virtual_assistant_component = virtual_assistant_component_crud.get_by_id(db, virtual_assistant_component_id)
-        dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
-        dream_dist.save(overwrite=True, generate_configs=True)
-        dream_git.commit_all_files(1, 1)
+    virtual_assistant_component = virtual_assistant_component_crud.get_by_id(db, virtual_assistant_component_id)
+    dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
+    dream_dist.save(overwrite=True, generate_configs=True)
+    dream_git.commit_all_files(1, 1)
 
-        virtual_assistant_component_crud.delete_by_id(db, virtual_assistant_component_id)
+    virtual_assistant_component_crud.delete_by_id(db, virtual_assistant_component_id)
+    db.commit()
 
 
 def publish_virtual_assistant(
@@ -194,14 +200,14 @@ def publish_virtual_assistant(
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility],
     user_id: int,
 ):
-    with db.begin():
-        dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+    dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-        if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
-            publish_request_crud.delete_publish_request(db, virtual_assistant.id)
-            virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
-        elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
-            publish_request_crud.create_publish_request(
-                db, virtual_assistant.id, user_id, virtual_assistant.name, visibility
-            )
-            # moderators = user_crud.get_by_role(db, 2)
+    if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
+        publish_request_crud.delete_publish_request(db, virtual_assistant.id)
+        virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
+    elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
+        publish_request_crud.create_publish_request(
+            db, virtual_assistant.id, user_id, virtual_assistant.name, visibility
+        )
+        # moderators = user_crud.get_by_role(db, 2)
+    db.commit()

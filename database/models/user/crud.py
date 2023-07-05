@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from database.user.model import GoogleUser
+from database.models.user.model import GoogleUser
 
 
 def get_all(db: Session) -> [GoogleUser]:

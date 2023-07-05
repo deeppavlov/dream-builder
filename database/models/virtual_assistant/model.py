@@ -12,10 +12,7 @@ from sqlalchemy.types import DateTime
 from apiconfig.config import settings
 from database import enums
 from database.core import Base
-from database.deployment.model import Deployment
-from database.publish_request.model import PublishRequest
 from database.utils import DateTimeUtcNow, pre_populate_from_tsv
-from database.virtual_assistant_component.model import VirtualAssistantComponent
 
 
 class VirtualAssistant(Base):

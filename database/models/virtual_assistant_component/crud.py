@@ -1,16 +1,11 @@
-from sqlalchemy.orm import Session
+from database.models.component.model import Component
 
-from database.component.model import Component
-from database.virtual_assistant.model import VirtualAssistant
-from datetime import datetime
-from typing import Optional, List
-
-from sqlalchemy import select, update, and_, delete, func
+from sqlalchemy import select, and_, delete
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.virtual_assistant_component.model import VirtualAssistantComponent
-from database.virtual_assistant import crud as virtual_assistant_crud
+from database.models.virtual_assistant_component.model import VirtualAssistantComponent
+from database.models.virtual_assistant import crud as virtual_assistant_crud
 
 
 def get_by_id(

@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, BackgroundTasks
-from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
-from database.publish_request import crud as publish_request_crud
+from database.models.publish_request import crud as publish_request_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import get_admin_user

@@ -1,7 +1,7 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from database.api_key.crud import get_all
+from database.models.api_key.crud import get_all
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 

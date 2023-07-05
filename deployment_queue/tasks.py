@@ -12,7 +12,7 @@ from urllib3 import Retry
 
 from apiconfig.config import settings
 from database import enums
-from database.deployment import crud as deployment_crud
+from database.models.deployment import crud as deployment_crud
 from database.core import init_db
 from git_storage.git_manager import GitManager
 

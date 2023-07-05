@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from database.api_key.model import ApiKey
+from database.models.api_key.model import ApiKey
 
 
 def get_by_id(db: Session, id: int):

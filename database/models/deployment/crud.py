@@ -1,11 +1,9 @@
-from database.deployment.model import Deployment
-
 from sqlalchemy import select, update, delete
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.deployment.model import Deployment
-from database.virtual_assistant import crud as virtual_assistant_crud
+from database.models.deployment.model import Deployment
+from database.models.virtual_assistant import crud as virtual_assistant_crud
 
 
 def get_by_id(db: Session, id: int):

@@ -4,9 +4,9 @@ from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database.user import crud as user_crud
-from database.virtual_assistant.crud import get_all_public_templates, get_all_by_author
-from database.virtual_assistant_component import crud as virtual_assistant_component_crud
+from database.models.user import crud as user_crud
+from database.models.virtual_assistant.crud import get_all_public_templates, get_all_by_author
+from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db
@@ -162,8 +162,8 @@ async def delete_virtual_assistant_by_name(
 
 @assistant_dists_router.post("/{dist_name}/clone", status_code=status.HTTP_201_CREATED)
 async def clone_dist(
-    dist_name: str,
     payload: schemas.VirtualAssistantCreate,
+    virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_view_permission),
     user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.VirtualAssistantRead:
@@ -185,7 +185,7 @@ async def clone_dist(
     -``description``: new assistant dist description
     """
     new_virtual_assistant = flows.create_virtual_assistant(
-        db, dist_name, payload.display_name, payload.description, user.id, user.email, is_cloned=True
+        db, virtual_assistant.name, payload.display_name, payload.description, user.id, user.email, is_cloned=True
     )
     return new_virtual_assistant
 

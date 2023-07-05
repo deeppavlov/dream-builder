@@ -5,9 +5,9 @@ from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database.component.crud import update_by_id, delete_by_id, get_by_id, create
-from database.lm_service import crud as lm_service_crud
-from database.service import crud as service_crud
+from database.models.component.crud import update_by_id, delete_by_id, get_by_id, create
+from database.models.lm_service import crud as lm_service_crud
+from database.models.service import crud as service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 

@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import enums
-from database.publish_request.model import PublishRequest
+from database.models.publish_request.model import PublishRequest
 
 
 def get_all_publish_requests(db: Session):

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.service.model import Service
+from database.models.service.model import Service
 
 
 def get_or_create(db: Session, name: str, source: str):

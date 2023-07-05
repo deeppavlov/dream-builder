@@ -5,7 +5,7 @@ from starlette import status
 from database.deployment.crud import get_all, get_by_id
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.security.auth import get_current_user, get_current_user_or_none
+from services.distributions_api.security.auth import get_current_user
 
 
 def get_deployment(deployment_id: int, db: Session = Depends(get_db)):

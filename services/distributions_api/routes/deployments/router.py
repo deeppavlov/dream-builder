@@ -1,13 +1,6 @@
 from typing import List
-from urllib.parse import urlparse
 
-import requests
-import requests.exceptions
-from deeppavlov_dreamtools import AssistantDist
-from deeppavlov_dreamtools.deployer.swarm import DeployerError
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.logger import logger
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 

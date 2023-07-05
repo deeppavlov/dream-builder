@@ -26,7 +26,9 @@ async def get_user_self(user: schemas.UserRead = Depends(get_current_user)):
 
 
 @users_router.get("/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user_by_id(user_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_user_by_id(
+    user_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
+):
     selected_user = crud.get_by_id(db, user_id)
 
     return schemas.UserRead.from_orm(selected_user)

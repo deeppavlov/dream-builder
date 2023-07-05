@@ -1,10 +1,8 @@
-from typing import Union
 from urllib.parse import urlparse
 
 import requests
 from deeppavlov_dreamtools import AssistantDist
-from deeppavlov_dreamtools.distconfigs.components import DreamComponent
-from deeppavlov_dreamtools.utils import generate_unique_name
+from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
@@ -15,7 +13,6 @@ from database.virtual_assistant import crud as virtual_assistant_crud
 from deployment_queue import tasks
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
-from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 
 swarm_client = SwarmClient(settings.deployer.portainer_url, settings.deployer.portainer_key)
 

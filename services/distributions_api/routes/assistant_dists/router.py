@@ -1,16 +1,12 @@
 from typing import List
-from urllib.parse import urlparse
 
-from deeppavlov_dreamtools.distconfigs.assistant_dists import AssistantDist
-from deeppavlov_dreamtools.distconfigs.components import DreamComponent
-from deeppavlov_dreamtools.utils import generate_unique_name
-from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
+from database.user import crud as user_crud
 from database.virtual_assistant.crud import get_all_public_templates, get_all_by_author
 from database.virtual_assistant_component import crud as virtual_assistant_component_crud
-from database.user import crud as user_crud
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
 from services.distributions_api.database_maker import get_db

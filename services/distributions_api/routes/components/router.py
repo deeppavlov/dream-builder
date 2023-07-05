@@ -22,17 +22,6 @@ from services.distributions_api.security.auth import get_current_user
 
 components_router = APIRouter(prefix="/api/components", tags=["components"])
 
-dream_git = GitManager(
-    settings.git.local_path,
-    settings.git.username,
-    settings.git.remote_access_token,
-    settings.git.remote_source_url,
-    settings.git.remote_source_branch,
-    settings.git.remote_copy_url,
-    # settings.git.remote_copy_branch,
-    f"{settings.git.remote_copy_branch}-{settings.app.agent_user_id_prefix}",
-)
-
 
 @components_router.get("", status_code=status.HTTP_200_OK)
 async def get_list_of_components(db: Session = Depends(get_db)) -> List[schemas.ComponentRead]:

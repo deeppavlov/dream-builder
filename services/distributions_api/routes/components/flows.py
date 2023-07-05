@@ -1,18 +1,13 @@
-from typing import Union
-from urllib.parse import urlparse
-
 import aiohttp
-from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
 from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
-from database import enums
 from database.component.crud import update_by_id, delete_by_id, get_by_id, create
-from database.service import crud as service_crud
 from database.lm_service import crud as lm_service_crud
+from database.service import crud as service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 

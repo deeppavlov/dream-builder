@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
-from database.deployment.crud import get_by_virtual_assistant_name, create, update_by_id, delete_by_id
-from database.virtual_assistant import crud as virtual_assistant_crud
+from database.models.deployment.crud import get_by_virtual_assistant_name, create, update_by_id, delete_by_id
+from database.models.virtual_assistant import crud as virtual_assistant_crud
 from deployment_queue import tasks
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
@@ -47,6 +47,7 @@ def create_deployment(db: Session, new_deployment: schemas.DeploymentCreate) -> 
 
     task_id = tasks.run_deployer_task.delay(deployment_id=deployment.id).id
     deployment = update_by_id(db, deployment.id, task_id=task_id)
+    db.commit()
 
     return schemas.DeploymentRead.from_orm(deployment)
 

@@ -10,12 +10,12 @@ from sqlalchemy.orm import Session
 
 
 from database.core import init_db
-from database.user import crud as user_crud
-from database.uservalid import crud as user_valid_crud
-from database.uservalid.model import UserValid
+from database.models.user import crud as user_crud
+from database.models.uservalid import crud as user_valid_crud
+from database.models.uservalid.model import UserValid
 from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api import schemas
-from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
+from services.auth_api.models import UserCreate, UserRead, UserValidScheme
 
 router = APIRouter(prefix="/auth")
 

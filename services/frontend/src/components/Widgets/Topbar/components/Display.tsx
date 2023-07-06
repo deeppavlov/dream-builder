@@ -1,4 +1,5 @@
 import { useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { consts } from 'utils/consts'
 import { SvgIcon } from 'components/Helpers'
@@ -6,6 +7,7 @@ import { BaseToolTip } from 'components/Menus'
 import s from './Display.module.scss'
 
 export const Display = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'topbar.tooltips' })
   const { UIOptions, setUIOption } = useUIOptions()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
@@ -25,7 +27,7 @@ export const Display = () => {
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='viewType'
-        content='Change View Type'
+        content={t('table_view')}
       />
     </button>
   )

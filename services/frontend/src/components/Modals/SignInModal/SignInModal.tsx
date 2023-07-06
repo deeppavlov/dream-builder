@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import GoogleLogo from 'assets/images/GoogleLogo.svg'
 import { IBeforeLoginModal } from 'types/types'
 import { login } from 'api/user'
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export const SignInModal = ({ msg: propsMsg }: Props) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'modals.sign_in' })
   const [isOpen, setIsOpen] = useState(false)
   const [msg, setMsg] = useState<MessageType | null>(propsMsg ?? null)
   let cx = classNames.bind(s)
@@ -44,15 +46,11 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
       <div className={cx('signInModal')}>
         <h4>
           {/* span tag styled as primary color marked text */}
-          {msg || (
-            <>
-              To build your own <span>Virtual Assistant</span>, please sign in
-            </>
-          )}
+          {msg || <Trans i18nKey='modals.sign_in.header' />}
         </h4>
         <button className={cx('sign-in-btn')} onClick={handleSignInBtnClick}>
           <img src={GoogleLogo} alt='Google' />
-          Sign in
+          {t('btns.sign_in')}
         </button>
       </div>
     </BaseModal>

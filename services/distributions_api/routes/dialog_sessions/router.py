@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
-from database.dialog_session import crud
-from database.lm_service import crud as lm_service_crud
-from database.virtual_assistant import crud as virtual_assistant_crud
-from database.virtual_assistant_component import crud as virtual_assistant_component_crud
+from database.models.dialog_session import crud
+from database.models.lm_service import crud as lm_service_crud
+from database.models.virtual_assistant import crud as virtual_assistant_crud
+from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import get_current_user_or_none

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
@@ -17,10 +18,12 @@ interface IDeleteAssistantModal {
 }
 
 export const DeleteAssistantModal = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.delete_assistant',
+  })
   const [isOpen, setIsOpen] = useState(false)
-
-  const queryClient = useQueryClient()
   const [bot, setBot] = useState<BotInfoInterface | null>()
+  const queryClient = useQueryClient()
   const { deleteDist } = useAssistants()
   const { name } = useParams()
   const navigate = useNavigate()
@@ -56,23 +59,22 @@ export const DeleteAssistantModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
       <div className={s.deleteAssistantModal}>
         <h4>
-          Do you really want to delete Assistant:
+          {t('header')}
           <br />
           <mark>{bot?.display_name}</mark>
         </h4>
         <span className={s.desc}>
-          This action can’t be undone.
+          {t('subheader')}
           <br />
-          {assistantIsPublic &&
-            'Your Assistant will be removed for the public templates.'}
+          {assistantIsPublic && t('public_subheader')}
         </span>
 
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: handleCancelBtnClick }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           <Button theme='error' props={{ onClick: handleDeleteBtnClick }}>
-            Delete
+            {t('btns.delete')}
           </Button>
         </div>
       </div>

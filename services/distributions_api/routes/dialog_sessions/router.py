@@ -12,7 +12,10 @@ from database.models.virtual_assistant import crud as virtual_assistant_crud
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
-from services.distributions_api.routes.dialog_sessions.dependencies import dialog_session_permission
+from services.distributions_api.routes.dialog_sessions.dependencies import (
+    dialog_session_permission,
+    dialog_session_create_permission,
+)
 from services.distributions_api.security.auth import get_current_user_or_none
 
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
@@ -88,8 +91,8 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 
 @dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
-    payload: schemas.DialogSessionCreate,
     user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
+    virtual_assistant: schemas.VirtualAssistantRead = Depends(dialog_session_create_permission),
     db: Session = Depends(get_db),
 ):
     """ """
@@ -98,11 +101,11 @@ async def create_dialog_session(
     else:
         user_id = None
 
-    with db.begin():
-        try:
-            dialog_session = crud.create_dialog_session_by_name(db, user_id, payload.virtual_assistant_name)
-        except ValueError as e:
-            raise HTTPException(status_code=404, detail=str(e))
+    try:
+        dialog_session = crud.create_dialog_session_by_name(db, user_id, virtual_assistant.name)
+        db.commit()
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
     return schemas.DialogSessionRead.from_orm(dialog_session)
 

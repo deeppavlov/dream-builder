@@ -23,7 +23,7 @@ class DialogSession(Base):
     deployment_id = Column(Integer, ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
     deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")
 
-    agent_dialog_id = Column(String)
+    agent_dialog_id = Column(String, nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
     is_active = Column(Boolean, nullable=False)

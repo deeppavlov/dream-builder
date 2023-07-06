@@ -3,6 +3,7 @@ import { useAuth, useUIOptions } from 'context'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import {
   BotInfoInterface,
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
+  const { t } = useTranslation()
   // queries
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
@@ -79,7 +81,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       if (!isApiKey && bot?.author?.id !== 1) {
         setErrorPanel({
           type: 'api-key',
-          msg: `Enter your personal access token for OpenAI to run your Generative AI Skill`,
+          msg: t('api_key.required.label'),
         })
         return false
       }
@@ -121,7 +123,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       } else if (data?.error !== null) {
         setErrorPanel({
           type: 'deploy',
-          msg: 'The assistant build failed, please try again later.',
+          msg: t('sidepanels.assistant_dialog.deploy.error'),
         })
         // queryClient.invalidateQueries(['privateDists'])
       }
@@ -130,7 +132,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const setError = (type: TDialogError) => {
     setErrorPanel({
       type: type,
-      msg: 'Something went wrong...',
+      msg: t('toasts.error'),
     })
   }
 
@@ -230,7 +232,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       <SidePanelHeader>
         <ul role='tablist'>
           <li role='tab' key='Dialog'>
-            <span aria-selected>Chat:</span>
+            <span aria-selected>
+              {t('sidepanels.assistant_dialog.tabs.name')}
+            </span>
             <span role='name'>&nbsp;{bot?.display_name}</span>
           </li>
         </ul>
@@ -246,7 +250,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   theme='ghost'
                   props={{ onClick: handleEnterTokentClick }}
                 >
-                  Enter your personal access token here
+                  {t('api_key.required.link')}
                 </Button>
               </div>
             )}
@@ -256,10 +260,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           <div className={s.await}>
             <Loader />
             <p className={s.notification}>
-              Please wait till assistant launching
+              {t('sidepanels.assistant_dialog.deploy.loading_wait_text')}
               <br />
               <br />
-              This may take a few minutes.
+              {t('sidepanels.assistant_dialog.deploy.loading_time_text')}
               <br />
               <br />
               {status?.data?.state && status?.data?.state + '...'}
@@ -269,10 +273,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         {!errorPanel && deployPanel && (
           <div className={s.deployPanel}>
             <div className={s.text}>
-              <h5 className={s.notification}>Chat with AI Assistant</h5>
+              <h5 className={s.notification}>
+                {t('sidepanels.assistant_dialog.deploy.header')}
+              </h5>
               <p className={s.annotation}>
-                In order to start chat with AI Assistant, it is necessary to
-                build it
+                {t('sidepanels.assistant_dialog.deploy.subheader')}
               </p>
             </div>
             <Button
@@ -282,7 +287,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 disabled: deploy?.isLoading || deleteDeployment.isLoading,
               }}
             >
-              Build Assistant
+              {t('sidepanels.assistant_dialog.btns.build_assistant')}
             </Button>
           </div>
         )}
@@ -337,7 +342,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                     {block?.text}
                     {block?.author === 'bot' && (
                       <span className={s.skill}>
-                        Skill: {block?.active_skill?.display_name}
+                        {t('sidepanels.assistant_dialog.skill_responder')}
+                        {` ${block?.active_skill?.display_name}`}
                       </span>
                     )}
                   </span>
@@ -358,7 +364,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               <textarea
                 spellCheck='false'
                 className={s.textarea}
-                placeholder='Type...'
+                placeholder={t(
+                  'sidepanels.assistant_dialog.message_field.placeholder'
+                )}
                 {...register('message', { required: true })}
               />
 
@@ -367,9 +375,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 <Button
                   theme='secondary'
                   props={{
-                    'data-tooltip-id': 'renew',
                     disabled: renew.isLoading || send?.isLoading,
                     onClick: handleRenewClick,
+                    'data-tooltip-id': 'renew',
                   }}
                 >
                   <SvgIcon iconName='renew' />
@@ -378,19 +386,20 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   theme='primary'
                   props={{ disabled: send?.isLoading, type: 'submit' }}
                 >
-                  Send
+                  {t('sidepanels.assistant_dialog.btns.send')}
                 </Button>
               </SidePanelButtons>
             </form>
           </>
         )}
       </div>
-      <BaseToolTip
-        isOpen={hereIsDummy}
-        delayShow={TOOLTIP_DELAY}
-        id='renew'
-        content='Start a new dialog'
-      />
+      {!hereIsDummy && (
+        <BaseToolTip
+          delayShow={TOOLTIP_DELAY}
+          id='renew'
+          content={t('tooltips.dialog_renew')}
+        />
+      )}
     </div>
   )
 }

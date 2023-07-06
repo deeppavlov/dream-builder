@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind'
 import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ReactComponent as Close } from 'assets/icons/close.svg'
 import { Badge } from 'components/UI'
@@ -48,6 +49,9 @@ export const Wrapper: FC<Props> = ({
   badge,
   table,
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'home_page.wrapper',
+  })
   const [visible, setVisible] = useState(true)
   const closeRef = useRef<HTMLButtonElement>(null)
   const isStorable = closable && id
@@ -103,7 +107,9 @@ export const Wrapper: FC<Props> = ({
                     <div className={s.btns_area}>
                       {showAll && (
                         <Link to={linkTo!}>
-                          <button className={s.ghost_btn}>Show&nbsp;All</button>
+                          <button className={s.ghost_btn}>
+                            {t('links.show_all')}
+                          </button>
                         </Link>
                       )}
                       <span className={s.amount}>{amount || '...'}</span>
@@ -119,12 +125,14 @@ export const Wrapper: FC<Props> = ({
           {subWrapper && (
             <div className={cx('wrapper', 'subWrapper')}>
               <div className={s.header}>
-                <p className={s.annotation}>Recommended Templates</p>
+                <p className={s.annotation}>{t('subwrapper')}</p>
                 {amount && (
                   <div className={s.btns_area}>
                     {showAll && (
                       <Link to={linkTo!}>
-                        <button className={s.ghost_btn}>Show&nbsp;All</button>
+                        <button className={s.ghost_btn}>
+                          {t('links.show_all')}
+                        </button>
                       </Link>
                     )}
                     <span className={s.amount}>{amount || '...'}</span>

@@ -1,6 +1,8 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
+import i18next from 'i18next'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import useTabsManager, { TabList } from 'hooks/useTabsManager'
@@ -13,7 +15,7 @@ import s from './DumbSkillSP.module.scss'
 
 interface Props {
   skill: ISkill
-  activeTab?: 'Properties' | 'Editor'
+  activeTab?: 'properties' | 'details'
   tabs?: TabList
   visibility?: SkillAvailabilityType
   children?: React.ReactNode // Editor Tab element
@@ -26,24 +28,17 @@ const DumbSkillSP = ({
   visibility,
   children,
 }: Props) => {
-  const [properties, editor] = ['Properties', 'Editor']
-  const isEditor = children !== undefined
+  const { t } = useTranslation()
+  const [properties, details] = ['properties', 'details']
   const { isPreview } = usePreview()
   const { setUIOption } = useUIOptions()
   const isCustomizable =
     skill?.is_customizable && !isPreview && visibility !== 'public'
+  const tabList =
+    tabs ?? new Map([[properties, { name: t('tabs.properties') }]])
   const [tabsInfo, setTabsInfo] = useTabsManager({
-    activeTabId: isEditor ? activeTab ?? properties : properties,
-    tabList:
-      tabs ??
-      new Map(
-        isEditor
-          ? [
-              [properties, { name: properties }],
-              [editor, { name: editor, disabled: isPreview }],
-            ]
-          : [[properties, { name: properties }]]
-      ),
+    activeTabId: activeTab ?? properties,
+    tabList,
   })
   let cx = classNames.bind(s)
 
@@ -60,6 +55,10 @@ const DumbSkillSP = ({
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
+
+  useEffect(() => {
+    setTabsInfo({ activeTabId: tabsInfo.activeTabId, tabList })
+  }, [i18next.language])
 
   return (
     <div id='skill_sp' className={s.dumbSkillSP}>
@@ -99,7 +98,9 @@ const DumbSkillSP = ({
             <li className={s.item}>
               {skill?.author?.fullname && (
                 <>
-                  <span className={cx('table-name')}>Original author:</span>
+                  <span className={cx('table-name')}>
+                    {t('sidepanels.skill_properties.original_author')}
+                  </span>
                   <span className={s.value}>
                     {skill?.author.fullname == 'Deepy Pavlova'
                       ? 'Dream Builder Team'
@@ -110,7 +111,9 @@ const DumbSkillSP = ({
             </li>
             {skill?.lm_service?.display_name && (
               <li className={s.item}>
-                <span className={cx('table-name')}>Model:</span>
+                <span className={cx('table-name')}>
+                  {t('sidepanels.skill_properties.model')}
+                </span>
                 <span className={s.value}>
                   {skill?.lm_service?.display_name!}
                 </span>
@@ -119,7 +122,13 @@ const DumbSkillSP = ({
           </ul>
           {skill?.lm_service?.description && (
             <li className={cx('item', 'big-item')}>
-              <Accordion title='Model Details' rounded isActive>
+              <Accordion
+                title={t(
+                  'sidepanels.skill_properties.accordions.model_details'
+                )}
+                rounded
+                isActive
+              >
                 <p className={cx('value', 'accardion-value')}>
                   {skill?.lm_service?.description}
                 </p>
@@ -127,7 +136,7 @@ const DumbSkillSP = ({
             </li>
           )}
           <li className={cx('item', 'big-item')}>
-            <Accordion title='Description' rounded isActive>
+            <Accordion title={t('accordions.desc')} rounded isActive>
               <p className={cx('value', 'accardion-value')}>
                 {skill?.description}
               </p>
@@ -144,7 +153,7 @@ const DumbSkillSP = ({
           </li> */}
         </div>
       )}
-      {children && tabsInfo.activeTabId === editor && children}
+      {children && tabsInfo.activeTabId === details && children}
     </div>
   )
 }

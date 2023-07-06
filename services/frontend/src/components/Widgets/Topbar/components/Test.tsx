@@ -1,15 +1,15 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { TOOLTIP_DELAY } from 'constants/constants'
+import { useTranslation } from 'react-i18next'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { SvgIcon } from 'components/Helpers'
-import { BaseToolTip } from 'components/Menus'
 import { AssistantDialogSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import s from './Test.module.scss'
 
 export const Test = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'topbar.btns' })
   const { UIOptions } = useUIOptions()
   const activeAssistant = UIOptions[consts.ACTIVE_ASSISTANT]
   const activePanel = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -30,17 +30,11 @@ export const Test = () => {
   return (
     <button
       id='testDialog' // for quitConfirmation
-      data-tooltip-id='chatWithBot'
       className={cx('test', activePanel && 'active')}
       onClick={handleBtnClick}
     >
       <SvgIcon iconName={'chat'} />
-      <p>Chat&nbsp;with&nbsp;Assistant</p>
-      <BaseToolTip
-        delayShow={TOOLTIP_DELAY}
-        id='chatWithBot'
-        content='Chat with your bot'
-      />
+      <p>{t('chat_with_assistant')}</p>
     </button>
   )
 }

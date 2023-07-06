@@ -2,12 +2,13 @@ import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { IApiService, IUserApiKey, LM_Service } from 'types/types'
 import { getTokens, getUserId } from 'api/user'
 import { trigger } from 'utils/events'
 import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
-import { validationSchema } from 'utils/validationSchema'
+import { getValidationSchema } from 'utils/getValidationSchema'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
 import s from './AccessTokensModule.module.scss'
@@ -18,6 +19,7 @@ interface FormValues {
 }
 
 export const AccessTokensModule = () => {
+  const { t } = useTranslation()
   const { data: user } = useQuery(['user'], () => getUserId())
   const { data: api_services } = useQuery<IApiService[]>(['api_services'], () =>
     getTokens()
@@ -27,6 +29,7 @@ export const AccessTokensModule = () => {
     mode: 'onSubmit',
   })
   const localStorageName = getApiKeysLSId(user?.id)
+  const validationSchema = getValidationSchema()
 
   const handleChanges = () => trigger('AccessTokensChanged', {})
 
@@ -43,7 +46,8 @@ export const AccessTokensModule = () => {
     new Promise((resolve, reject) => {
       const isTokens = tokens !== undefined && tokens !== null
 
-      if (!isTokens) return reject('No tokens found.')
+      if (!isTokens)
+        return reject(t('modals.access_api_keys.toasts.not_found_token'))
       setTokens(prev => {
         const newState =
           prev?.filter(({ api_service }) => api_service.id !== token_id) ?? prev
@@ -57,9 +61,9 @@ export const AccessTokensModule = () => {
   const handleRemoveBtnClick = (token_id: number) => {
     toast
       .promise(deleteToken(token_id), {
-        loading: 'Removing...',
-        success: 'Successfully removed!',
-        error: 'Something went wrong...',
+        loading: t('modals.access_api_keys.toasts.token_removing'),
+        success: t('modals.access_api_keys.toasts.token_removed'),
+        error: t('toasts.error'),
       })
       .finally(() => handleChanges())
   }
@@ -75,7 +79,7 @@ export const AccessTokensModule = () => {
         saveTokens(newState)
         return newState
       })
-      resolve('Successfully created!')
+      resolve('modals.access_api_keys.toasts.created')
     })
 
   const createUserToken = ({ service, token }: FormValues) =>
@@ -86,7 +90,8 @@ export const AccessTokensModule = () => {
       const isService = selectedService !== undefined
       const isUserId = user?.id !== undefined
 
-      if (!isService || !isUserId) return reject('Not found Service or User id')
+      if (!isService || !isUserId)
+        return reject('modals.access_api_keys.toasts.not_found_service')
 
       const newToken: IUserApiKey = {
         api_service: selectedService,
@@ -103,9 +108,10 @@ export const AccessTokensModule = () => {
           serviceName: selectedService.display_name,
           onContinue: () => {
             updateToken(apiTokenIndex, newToken)
-            resolve('Successfully updated!')
+            resolve(t('modals.access_api_keys.toasts.token_updated'))
           },
-          onCancel: () => resolve('Successfully cancelled!'),
+          onCancel: () =>
+            resolve(t('modals.access_api_keys.toasts.token_canceled')),
         })
         return
       }
@@ -118,13 +124,13 @@ export const AccessTokensModule = () => {
         return newState
       })
 
-      resolve('Successfully created!')
+      resolve(t('modals.access_api_keys.toasts.token_created'))
     })
 
   const onSubmit = (data: FormValues) => {
     toast
       .promise(createUserToken(data), {
-        loading: 'Creating...',
+        loading: t('modals.access_api_keys.toasts.token_creating'),
         success: data => `${data}`,
         error: data => `${data}`,
       })
@@ -136,27 +142,22 @@ export const AccessTokensModule = () => {
 
   return (
     <div className={s.module}>
-      <h5 className={s.title}>Personal access tokens</h5>
-      <p className={s.annotations}>
-        Personal access tokens allow your AI Assistants to use third-party
-        services like OpenAI, GNews, News API, etc. You can always remove these
-        tokens here if you want to stop use of the services they provide access
-        to by your AI Assistants, or you can revoke these tokens in their
-        respective services. Do not give out your personal access tokens to
-        anybody you don't want to access your files.
-      </p>
+      <h5 className={s.title}>{t('modals.access_api_keys.header')}</h5>
+      <p className={s.annotations}>{t('modals.access_api_keys.desc')}</p>
       <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
         <Input
           name='token'
-          label='Add a new personal access token:'
+          label={t('modals.access_api_keys.token_field.label')}
           control={control}
           withEnterButton
           rules={{ required: validationSchema.global.required }}
-          props={{ placeholder: 'Assistive text' }}
+          props={{
+            placeholder: t('modals.access_api_keys.token_field.placeholder'),
+          }}
         />
         <SkillDropboxSearch
           name='service'
-          label='Choose service:'
+          label={t('modals.access_api_keys.service_dropbox.label')}
           list={
             api_services?.map(s => ({
               id: s.id.toString(),
@@ -166,7 +167,11 @@ export const AccessTokensModule = () => {
           }
           control={control}
           rules={{ required: true }}
-          props={{ placeholder: 'Choose service' }}
+          props={{
+            placeholder: t(
+              'modals.access_api_keys.service_dropbox.placeholder'
+            ),
+          }}
           withoutSearch
         />
       </form>
@@ -181,7 +186,7 @@ export const AccessTokensModule = () => {
                   className={s.remove}
                   onClick={() => handleRemoveBtnClick(api_service.id)}
                 >
-                  Remove
+                  {t('modals.access_api_keys.btns.remove')}
                 </button>
               </div>
             </li>

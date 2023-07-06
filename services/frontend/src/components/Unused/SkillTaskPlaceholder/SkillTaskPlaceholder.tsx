@@ -2,9 +2,9 @@ import { ReactComponent as AlertIcon } from '@assets/icons/read_first_alert.svg'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
-import { ReadFirstSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { EditablePlaceholder } from 'components/UI'
+import ReadFirstSidePanel from 'components/Unused/ReadFirstSidepanel/ReadFisrstSidePanel'
 
 interface IProps {
   value: string

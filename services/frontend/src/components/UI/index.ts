@@ -10,7 +10,6 @@ import { Main } from './Main/Main'
 import Modal from './Modal/Modal'
 import PageErrorHandler from './PageErrorHandler/PageErrorHandler'
 import { Placeholder } from './PlaceHolder/PlaceHolder'
-import SkillTaskPlaceholder from './SkillTaskPlaceholder/SkillTaskPlaceholder'
 import { Slider } from './Slider/Slider'
 import { SmallTag } from './SmallTag/SmallTag'
 import { Table } from './Table/Table'
@@ -18,22 +17,21 @@ import { ToastCopySucces } from './Toasts/Toasts'
 import { Wrapper } from './Wrapper/Wrapper'
 
 export {
-  ErrorHandler,
   Badge,
   Banner,
   Container,
   Details,
   DummyAlert,
   EditablePlaceholder,
+  ErrorHandler,
   Hint,
   Main,
+  Modal,
   PageErrorHandler,
   Placeholder,
-  SkillTaskPlaceholder,
   Slider,
   SmallTag,
   Table,
   ToastCopySucces,
   Wrapper,
-  Modal,
 }

@@ -1,4 +1,5 @@
 import { mockSkills } from 'mocks/database/mockSkills'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { BotInfoInterface, TTopbar } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
@@ -17,6 +18,9 @@ interface Props {
 const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'topbar.ctx_menus',
+  })
   const { getDist } = useAssistants()
   const dist = getDist({ distName })?.data
 
@@ -40,44 +44,44 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
       <ContextMenuButton
         type='about'
         linkTo='http://deepdream.builders'
-        name='About'
+        name={t('main_burger.about')}
       />
       {type === 'editor' && (
         <>
           <ContextMenuButton
-            name='Welcome guide'
+            name={t('assistant_burger.welcome_guide')}
             type='properties'
             handleClick={handleWelcomeClick}
           />
           <hr />
           <ContextMenuButton
             disabled={isPreview}
-            name='Rename'
+            name={t('assistant_burger.rename')}
             type='edit'
             handleClick={handleRenameClick}
           />
           <hr />
           <ContextMenuButton
-            name='Feedback'
+            name={t('assistant_burger.feedback')}
             linkTo='https://forum.deeppavlov.ai/c/dream-builder/57'
             type='architecture'
           />
           <hr />
           <ContextMenuButton
             disabled={isPreview}
-            name='Add Skills'
+            name={t('assistant_burger.add_skills')}
             type='add'
             handleClick={handleAddSkillsClick}
           />
           <hr />
           <ContextMenuButton
             disabled={isPreview}
-            name='Visibility'
+            name={t('assistant_burger.visibility')}
             type='publish'
             handleClick={handlePublishClick}
           />
           <ContextMenuButton
-            name='Share'
+            name={t('assistant_burger.share')}
             type='share'
             disabled={
               dist?.visibility === VISIBILITY_STATUS.PRIVATE || isPreview
@@ -87,7 +91,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <hr />
           <ContextMenuButton
             disabled={isPreview}
-            name='Delete'
+            name={t('assistant_burger.delete')}
             type='delete'
             handleClick={handleDeleteClick}
           />

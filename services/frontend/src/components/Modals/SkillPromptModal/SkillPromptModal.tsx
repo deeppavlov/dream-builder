@@ -3,6 +3,7 @@ import { useUIOptions } from 'context'
 import { createRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
@@ -15,8 +16,8 @@ import { useObserver } from 'hooks/useObserver'
 import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
+import { getValidationSchema } from 'utils/getValidationSchema'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
-import { validationSchema } from 'utils/validationSchema'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { ResizerLine, SvgIcon } from 'components/Helpers'
@@ -46,6 +47,7 @@ interface IFormValues {
 }
 
 const SkillPromptModal = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
@@ -65,6 +67,7 @@ const SkillPromptModal = () => {
   const promptBuildingBlocks = (
     JSON.parse(JSON.stringify(promptBlocksJson)) as IPromptBlock[]
   )?.filter(block => block[selectedModel?.display_name])
+  const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -157,7 +160,7 @@ const SkillPromptModal = () => {
     triggerSkillSidePanel({
       skill,
       distName: distName!,
-      activeTab: 'Properties',
+      activeTab: 'properties',
     })
   }
 
@@ -252,12 +255,16 @@ const SkillPromptModal = () => {
           <form onSubmit={handleSubmit(onFormSubmit)} className={s.editor}>
             <div className={s.top}>
               <SkillDropboxSearch
+                label={t('modals.skill_prompt.service_dropbox.label')}
                 name='model'
-                label='Choose model:'
                 control={control}
                 rules={{ required: true }}
                 selectedItemId={skill?.lm_service?.id?.toString()}
-                props={{ placeholder: 'Choose model' }}
+                props={{
+                  placeholder: t(
+                    'modals.skill_prompt.service_dropbox.placeholder'
+                  ),
+                }}
                 list={dropboxArray}
                 fullWidth
                 withoutSearch
@@ -273,7 +280,9 @@ const SkillPromptModal = () => {
             <div className={s.middle}>
               {promptBuildingBlocks?.length > 0 && (
                 <div className={cx('tabs', 'blocks')}>
-                  <span className={cx('blocks-label')}>Prompt blocks:</span>
+                  <span className={cx('blocks-label')}>
+                    {t('modals.skill_prompt.prompt_blocks')}
+                  </span>
                   <PromptBlocksModule
                     blocks={promptBuildingBlocks}
                     handleSelect={handlePromptBlockSelect}
@@ -281,8 +290,8 @@ const SkillPromptModal = () => {
                 </div>
               )}
               <TextArea
+                label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
-                label='Enter prompt:'
                 tokenizerModel={selectedModel?.display_name as any}
                 defaultValue={skill?.prompt}
                 countType='tokenizer'
@@ -300,17 +309,19 @@ const SkillPromptModal = () => {
                 }}
                 triggerField={triggerField}
                 props={{
-                  placeholder: 'Pick words you might use',
+                  placeholder: t(
+                    'modals.skill_prompt.prompt_field.placeholder'
+                  ),
                   id: 'prompt-textarea',
                 }}
-                highlights={[
-                  { keyword: 'Act as', color: '#FFE9E4' },
-                  { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
-                  { keyword: 'TASK', color: '#FFFCE4' },
-                  { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
-                  { keyword: 'INSTRUCTION', color: '#E4FEFF' },
-                  { keyword: 'EXAMPLE', color: '#E4FEFF' },
-                ]}
+                // highlights={[
+                //   { keyword: 'Act as', color: '#FFE9E4' },
+                //   { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
+                //   { keyword: 'TASK', color: '#FFFCE4' },
+                //   { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
+                //   { keyword: 'INSTRUCTION', color: '#E4FEFF' },
+                //   { keyword: 'EXAMPLE', color: '#E4FEFF' },
+                // ]}
               />
             </div>
             <div className={s.btns}>
@@ -322,7 +333,7 @@ const SkillPromptModal = () => {
                     updateComponent.isLoading || isSubmitting || !isDirty,
                 }}
               >
-                Save
+                {t('modals.skill_prompt.btns.save')}
               </Button>
             </div>
           </form>

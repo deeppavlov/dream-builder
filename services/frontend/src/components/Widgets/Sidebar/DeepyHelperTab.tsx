@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DeepyHelperIcon from 'assets/icons/deeppavlov_logo_round.svg'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { consts } from 'utils/consts'
@@ -15,6 +16,7 @@ export const HELPER_TAB_ID = 'helperTab'
 
 export const DeepyHelperTab = () => {
   const { UIOptions } = useUIOptions()
+  const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
   const copilotIsActive = UIOptions[consts.COPILOT_SP_IS_ACTIVE]
   const [hintIsVisited, setHintIsVisited] = useState<boolean>(
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
@@ -24,7 +26,7 @@ export const DeepyHelperTab = () => {
   let cx = classNames.bind(s)
 
   const handleBtnClick = () => {
-    trigger(TRIGGER_LEFT_SP_EVENT, {
+    trigger(TRIGGER_LEFT_SP_EVENT as any, {
       children: <CopilotSidePanel />,
       isOpen: !copilotIsActive,
     })
@@ -52,7 +54,7 @@ export const DeepyHelperTab = () => {
         <Hint
           tooltipId={HELPER_TAB_ID}
           name={HELPER_TAB_ID}
-          text='Ask Deepy if you need help with building your assistant'
+          text={t('deepy')}
           handleClose={() => setHintIsVisited(true)}
         />
       )}

@@ -7,6 +7,7 @@ import {
   UseFormTrigger,
   useController,
 } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg'
 import { LanguageModel } from 'types/types'
 import { checkIfEmptyString } from 'utils/formValidate'
@@ -114,14 +115,15 @@ export const TextArea: FC<TextAreaProps> = ({
   const [isEnter, setIsEnter] = useState(false) // for display Enter button
   const textAreaId = props?.id ?? useId()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const pr = new Intl.PluralRules('ar-EG')
+  const { i18n, t } = useTranslation()
+  const pr = new Intl.PluralRules(i18n.language, { type: 'cardinal' })
   const suffixes = new Map([
-    ['zero', 's'],
-    ['one', ''],
-    ['two', 's'],
-    ['few', 's'],
-    ['many', 's'],
-    ['other', 's'],
+    ['zero', t('tokenizer.count_suffixes.zero')],
+    ['one', t('tokenizer.count_suffixes.one')],
+    ['two', t('tokenizer.count_suffixes.two')],
+    ['few', t('tokenizer.count_suffixes.few')],
+    ['many', t('tokenizer.count_suffixes.many')],
+    ['other', t('tokenizer.count_suffixes.other')],
   ])
   let cx = classNames.bind(s)
 
@@ -182,7 +184,10 @@ export const TextArea: FC<TextAreaProps> = ({
             <span className={s.counter}>
               {length}
               {isTokenizer && isCounting && '+ counting...'}/{maxLength?.value}
-              {isTokenizer && ` token${suffixes.get(pr.select(length))}`}
+              {isTokenizer &&
+                ` ${t('tokenizer.count_label')}${suffixes.get(
+                  pr.select(length)
+                )}`}
             </span>
           )}
         </label>

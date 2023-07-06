@@ -1,18 +1,27 @@
 .publicToPrivateModal {
+  max-width: 496px;
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.header {
+  @include t1;
+  color: $text1;
+}
+
+.footer {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: end;
   gap: 24px;
-  .header {
-    @include t1;
-    color: $text1;
-  }
-  .footer {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    align-items: center;
-    justify-content: end;
-    gap: 24px;
-  }
+}
+
+.desc {
+  @include t3;
+  color: $text3;
 }

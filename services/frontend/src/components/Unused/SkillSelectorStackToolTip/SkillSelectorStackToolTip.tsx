@@ -2,8 +2,8 @@ import { IStackElement } from 'types/types'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
-import { SelectorSettingsSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import SelectorSettingsSidePanel from 'components/Unused/SelectorSettingsSidePanel/SelectorSettingsSidePanel'
 
 interface Props {
   tooltipId: string

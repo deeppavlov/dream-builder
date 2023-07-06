@@ -1,9 +1,10 @@
 .signInModal {
+  max-width: 624px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  span {
+  mark {
     color: $primary1;
   }
 }
@@ -12,6 +13,7 @@
   width: fit-content;
   display: flex;
   align-items: center;
+  margin-left: auto;
   padding: 0 24px 0 12px;
   background-color: $bcgrnd1;
   border: 1px solid $text3;

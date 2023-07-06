@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Puzzle } from 'assets/icons/puzzle.svg'
 import { RoutesList } from 'router/RoutesList'
@@ -11,9 +12,10 @@ interface Props {
 }
 
 export const SkillsTab = ({ isActive }: Props) => {
-  let cx = classNames.bind(s)
   const navigate = useNavigate()
   const { name } = useParams()
+  const { t } = useTranslation()
+  let cx = classNames.bind(s)
 
   const skillsClickHandler = () => {
     navigate(generatePath(RoutesList.editor.skills, { name: name! }))
@@ -28,7 +30,7 @@ export const SkillsTab = ({ isActive }: Props) => {
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='sidebarSkillTab'
-        content='Skills'
+        content={t('sidebar.tooltips.skills')}
         place='right'
       />
     </button>

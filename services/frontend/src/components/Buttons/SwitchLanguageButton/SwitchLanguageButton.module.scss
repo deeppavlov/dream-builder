@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 32px;
+  .switch {
+    padding: 6px;
+    gap: 4px;
+    border: 1px solid $text3;
+    background-color: $bcgrnd1;
+    color: $text2;
+    color: rgba(0, 0, 0, 0.7);
+    @include lnks_n_btns6;
+    &.left {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+      border-right: none;
+    }
+    &.right {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+      border-left: 1px solid $text5;
+    }
+
+    &:hover,
+    &:focus-visible,
+    &.active {
+      color: $text5;
+      border-color: $text5;
+    }
+  }
+}

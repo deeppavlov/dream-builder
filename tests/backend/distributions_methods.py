@@ -605,8 +605,8 @@ class UserMethods:
             },
         )
         assert get_dialog_response.status_code == 403, get_dialog_response.json()
-        assert models.DialogSessionRead.parse_obj(get_dialog_response.json()), \
-            "Validation error while get_dialog_sessions"
+        assert {"detail": "No access"} == get_dialog_response.json(), \
+            "Validation error while get_dialog_sessions_no_access"
 
     def send_dialog_session_message(self, dialog_session_id):
         send_message_response = requests.post(
@@ -658,6 +658,7 @@ class UserMethods:
                 "openai_api_key": openai_token
             },
         )
+        print(f'send_message_response.json() = {send_message_response.json()} \n')
         assert send_message_response.status_code == 201, send_message_response.json()
         assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
             "Validation error while test_send_dialog_session_message"

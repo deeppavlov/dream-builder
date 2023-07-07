@@ -20,7 +20,7 @@ class TestDistributions:
 
     # PERMISSIONS
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
     def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
         display_name = va_data["name"]
@@ -115,6 +115,7 @@ class TestDistributions:
         user1.send_dialog_session_message(dialog_session_id)
 
         user2 = UserMethods(auth_token_user2)
+        user2.get_dialog_sessions_no_access(dialog_session_id)
         user2.send_dialog_session_message_no_access(dialog_session_id)
         user2.get_dialog_session_history_no_access(dialog_session_id)
         user2.create_dialog_sessions_no_access(name)
@@ -186,16 +187,18 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_created_from_scratch_va")
     def test_clone_created_from_scratch_va(self):
         display_name = va_data["name"]
         user = UserMethods(auth_token_user1)
         name = user.create_virtual_assistant(display_name)["name"]
-        clone_name = user.clone_va(name)
+        clone_name = user.clone_va(name)["name"]
 
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_edited_va")
     def test_clone_edited_va(self):
         display_name = va_data["name"]
@@ -203,17 +206,18 @@ class TestDistributions:
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
-        clone_name = user.clone_va(name)
+        clone_name = user.clone_va(name)["name"]
 
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_after_cloning_delete_initial_va")
     def test_after_cloning_delete_initial_va(self):
         display_name = va_data["name"]
         user = UserMethods(auth_token_user1)
         name = user.create_virtual_assistant(display_name)["name"]
-        clone_name = user.clone_va(name)
+        clone_name = user.clone_va(name)["name"]
 
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
@@ -419,8 +423,8 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    #
-    # @pytest.mark.atom
+
+    @pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
     def test_build_assistant_on_various_lm(self, lm_service_id):
@@ -503,7 +507,7 @@ class TestDistributions:
     #    user = UserMethods(auth_token)
     #    user.get_stack_ports()
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self):
         name = va_data["name"]

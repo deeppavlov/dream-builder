@@ -8,14 +8,6 @@ class LocalUrlSettings(BaseModel):
     distributions_api: str
 
 
-class LocalDatabaseSettings(BaseModel):
-    user: str
-    password: str
-    host: str
-    port: int
-    name: str
-
-
 class UrlSettings(BaseModel):
     frontend: str
     auth_api: str
@@ -36,15 +28,13 @@ class AuthSettings(BaseModel):
     test_token_user1: str
     test_token_user2: str
     openai_token: str
-    sub: str
-    chat_url: str
+
 
 
 class Settings(BaseSettings):
     url: UrlSettings
     localurl: LocalUrlSettings
     db: DatabaseSettings
-    localdb: LocalDatabaseSettings
     auth: AuthSettings
 
     class Config:

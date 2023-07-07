@@ -20,7 +20,7 @@ class TestDistributions:
 
     # PERMISSIONS
 
-    #@pytest.mark.atom
+    @pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
     def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
         display_name = va_data["name"]

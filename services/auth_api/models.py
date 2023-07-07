@@ -3,6 +3,13 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
+from services.shared.user import User
+
+
+class UserToken(User):
+    token: str
+    refresh_token: Optional[str]
+
 
 class UserBase(BaseModel):
     class Config:

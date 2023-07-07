@@ -1,6 +1,6 @@
 from typing import Union, Optional
 
-from pydantic import BaseModel, Field, validator, EmailStr
+from pydantic import BaseModel, EmailStr
 
 import database.models
 
@@ -32,8 +32,3 @@ class User(BaseOrmModel):
         obj.picture = user.picture
         obj.name = user.fullname if hasattr(user, "fullname") else user.name
         return super().from_orm(obj)
-
-class UserToken(User):
-    token: str
-    refresh_token: Optional[str]
-

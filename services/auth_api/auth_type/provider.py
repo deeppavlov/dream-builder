@@ -14,7 +14,8 @@ from database import crud
 from database.models import GithubUserValid, GoogleUserValid
 from services.auth_api import auth_type
 from services.auth_api.models import GithubUserCreate, UserCreate, UserValidScheme
-from services.shared.user import UserToken, User
+from services.shared.user import User
+from services.auth_api.models import UserToken
 
 flow: Flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
 
@@ -53,7 +54,7 @@ class GithubAuth(auth_type.OAuth):
             name=user_info_from_github["name"] or user_info_from_github["login"],
         )
 
-    async def logout(self, db: Session, token: str):
+    async def logout(self, db: Session, token: str) -> None:
         crud.set_github_users_access_token_invalid(db, token)
 
     async def exchange_authcode(self, db: Session, auth_code: str) -> UserToken:

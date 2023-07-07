@@ -1,16 +1,16 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, status
-from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 import database.crud as crud
 import database.models
 from database.core import init_db
 from apiconfig.config import settings
-from services.shared.user import User, UserToken
+from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type.provider import GithubAuth, GoogleOAuth2
+from services.auth_api.models import UserToken
 
 router = APIRouter(prefix="/auth")
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
@@ -33,7 +33,7 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
 
 @router.get("/token", status_code=status.HTTP_200_OK)
 async def validate_jwt(
-    token: str = Header(), auth_type: str = Header(default=""), db: Session = Depends(get_db)
+        token: str = Header(), auth_type: str = Header(default=""), db: Session = Depends(get_db)
 ) -> User:
     """
     `auth_type: Annotated[str | None, Header()] = None` means that auth_type header field is optional and may be None.
@@ -52,7 +52,7 @@ async def validate_jwt(
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
-    token: str = Header(), auth_type: Annotated[str | None, Header()] = None, db: Session = Depends(get_db)
+        token: str = Header(), auth_type: Annotated[str | None, Header()] = None, db: Session = Depends(get_db)
 ) -> None:
     """
     refresh_token -> token
@@ -62,7 +62,7 @@ async def logout(
 
 @router.post("/exchange_authcode")
 async def exchange_authcode(
-    auth_code: str, auth_type: str = Header(default=""), db: Session = Depends(get_db)
+        auth_code: str, auth_type: str = Header(default=""), db: Session = Depends(get_db)
 ) -> UserToken:
     """
     Exchanges authorization code for access token
@@ -82,10 +82,9 @@ async def exchange_authcode(
 
 @router.post("/update_token")
 async def update_access_token(
-    refresh_token: str, auth_type: auth_type.OAuth2ProviderNames = Header(default=""), db: Session = Depends(get_db)
+        refresh_token: str, auth_type: auth_type.OAuth2ProviderNames = Header(default=""), db: Session = Depends(get_db)
 ) -> dict[str, str]:
     return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
-
 
 # # TEST ONLY
 # @router.get("/github_auth")

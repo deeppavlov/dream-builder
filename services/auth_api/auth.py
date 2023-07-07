@@ -9,12 +9,13 @@ from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
 
 
-import database.crud as crud
 from database.core import init_db
-from database.models import UserValid
+from database.models.user import crud as user_crud
+from database.models.uservalid import crud as user_valid_crud
+from database.models.uservalid.model import UserValid
 from apiconfig.config import settings, URL_TOKENINFO, CLIENT_SECRET_FILENAME
 from services.auth_api import schemas
-from services.auth_api.models import UserCreate, UserRead, UserValidScheme, UserModel
+from services.auth_api.models import UserCreate, UserRead, UserValidScheme
 
 router = APIRouter(prefix="/auth")
 
@@ -64,17 +65,17 @@ def validate_aud(input_aud: str) -> None:
 
 def validate_email(email: str, db: Session) -> None:
 
-    if not crud.check_user_exists(db, email):
+    if not user_crud.check_user_exists(db, email):
         raise ValueError("User is not listed in the database")
 
 
 def save_user(data: Mapping[str, str], db: Session = Depends(get_db)):
-    if not crud.check_user_exists(db, data["email"]):
+    if not user_crud.check_user_exists(db, data["email"]):
         user = UserCreate(**data)
-        return UserRead.from_orm(crud.add_google_user(db, user))
+        return UserRead.from_orm(user_crud.add_google_user(db, user))
 
-    user = crud.get_user_by_sub(db, data["sub"])
-    user = crud.update_user(db, user.id, **data)
+    user = user_crud.get_by_sub(db, data["sub"])
+    user = user_crud.update_by_id(db, user.id, **data)
     return UserRead.from_orm(user)
 
 
@@ -86,15 +87,15 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        return schemas.User.from_orm(crud.get_user_by_sub(db, "106152631136730592791"))
+        return schemas.User.from_orm(user_crud.get_by_sub(db, "106152631136730592791"))
 
     try:
         data = await _fetch_user_info_by_access_token(access_token=token)
 
         validate_aud(data["aud"])
         validate_email(data["email"], db)
-        user = crud.get_user_by_sub(db, data["sub"])
-        # user = crud.update_user(db, user.id, **data)
+        user = user_crud.get_by_sub(db, data["sub"])
+        # user = user_crud.update_by_id(db, user.id, **data)
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -104,7 +105,7 @@ async def validate_jwt(token: str = Header(), db: Session = Depends(get_db)):
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(refresh_token: str = Header(), db: Session = Depends(get_db)) -> None:
-    crud.set_users_refresh_token_invalid(db, refresh_token)
+    user_valid_crud.set_users_refresh_token_invalid(db, refresh_token)
 
 
 @router.post("/exchange_authcode")
@@ -140,13 +141,13 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
 
     user_valid = UserValidScheme(refresh_token=refresh_token, is_valid=True, expire_date=expire_date)
     email = user_info["email"]
-    crud.add_user_to_uservalid(db, user_valid, email)
+    user_valid_crud.add_user_to_uservalid(db, user_valid, email)
     return {"token": access_token, "refresh_token": refresh_token, **user.dict()}
 
 
 @router.post("/update_token")
 async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
-    user: UserValid = crud.get_uservalid_by_refresh_token(db, refresh_token)
+    user: UserValid = user_valid_crud.get_uservalid_by_refresh_token(db, refresh_token)
 
     if not user:
         raise HTTPException(status_code=401, detail="User is not authenticated!")

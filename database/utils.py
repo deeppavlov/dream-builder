@@ -1,6 +1,11 @@
 import csv
+import logging
 from pathlib import Path
 from typing import Union, Dict, Type, Callable
+
+from sqlalchemy import DateTime
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql import expression
 
 
 def sqlalchemy_url(driver: str, user: str, password: str, host: str, port: int, database: str) -> str:
@@ -45,3 +50,25 @@ def iter_tsv_rows(
                     named_row[column_name] = column_type(named_row[column_name])
 
             yield named_row
+
+
+class DateTimeUtcNow(expression.FunctionElement):
+    type = DateTime()
+    inherit_cache = True
+
+
+@compiles(DateTimeUtcNow, "postgresql")
+def pg_utcnow(element, compiler, **kwargs):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
+
+
+def pre_populate_from_tsv(
+    path: Union[Path, str],
+    target,
+    connection,
+    map_value_types: Dict[str, Type[bool | int | Callable[[str], bool | int]]] = None,
+):
+    logging.warning(f"Pre-populating {target.name} from {path}")
+
+    for row in iter_tsv_rows(path, map_value_types):
+        connection.execute(target.insert(), row)

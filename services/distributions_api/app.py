@@ -2,14 +2,14 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from apiconfig.config import settings
-from services.distributions_api.routes.admin import admin_router
-from services.distributions_api.routes.api_keys import tokens_router
-from services.distributions_api.routes.assistant_dists import assistant_dists_router
-from services.distributions_api.routes.components import components_router
-from services.distributions_api.routes.deployments import deployments_router
-from services.distributions_api.routes.dialog_sessions import dialog_sessions_router
-from services.distributions_api.routes.users import users_router
-from services.distributions_api.routes.lm_services import lm_services_router
+from services.distributions_api.routes.admin.router import admin_router
+from services.distributions_api.routes.api_keys.router import tokens_router
+from services.distributions_api.routes.assistant_dists.router import assistant_dists_router
+from services.distributions_api.routes.components.router import components_router
+from services.distributions_api.routes.deployments.router import deployments_router
+from services.distributions_api.routes.dialog_sessions.router import dialog_sessions_router
+from services.distributions_api.routes.users.router import users_router
+from services.distributions_api.routes.lm_services.router import lm_services_router
 
 app = FastAPI()
 

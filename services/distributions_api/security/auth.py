@@ -1,13 +1,14 @@
 from typing import Optional
 
 import aiohttp
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
+from starlette import status
 
 from apiconfig.config import settings
 from services.distributions_api import schemas
 
 
-async def verify_token(token: str = Header(), auth_type: str = Header(default="")) -> schemas.User:
+async def vefify_token(token: str = Header(), auth_type: str = Header(default="")) -> schemas.User:
     header = {
         "token": token,
         "auth-type": auth_type
@@ -16,14 +17,29 @@ async def verify_token(token: str = Header(), auth_type: str = Header(default=""
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get(auth_url) as response:
             json_data = await response.json()
+
             if response.status != 200:
                 raise HTTPException(status_code=400, detail=json_data["detail"])
 
-    return schemas.User(**json_data)
+    return schemas.UserRead(**json_data)
 
+
+async def verify_token_or_none(token: Optional[str] = Header(default="")) -> Optional[schemas.UserRead]:
+    header = {"token": token}
+    user = None
 
 async def verify_token_or_none(token: Optional[str] = Header(default=""), auth_type: Optional[str] = Header(default="")) -> Optional[schemas.User]:
     if token:
         return await verify_token(token, auth_type)
     else:
         return None
+
+
+async def get_admin_user(user: schemas.UserRead = Depends(get_current_user)) -> Optional[schemas.UserRead]:
+    if not user.role.name == "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires admin user")
+
+    return user
+
+get_current_user = verify_token
+get_current_user_or_none = verify_token_or_none

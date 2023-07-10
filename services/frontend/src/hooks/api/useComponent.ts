@@ -127,7 +127,7 @@ export const useComponent = () => {
     onMutate: () => {
       // console.log('data = ', data)
     },
-    mutationFn: ({ data }: ICreate) => createComponent(data),
+    mutationFn: ({ data }: any) => createComponent(data),
     onSuccess: ({ id }: IStackElement, { distName, type }) => {
       // console.log('id = ', id)
       addComponentToDist.mutateAsync({ distName, id: id, type })

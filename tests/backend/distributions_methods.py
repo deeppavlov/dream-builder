@@ -11,7 +11,8 @@ from .config import (
     deployments_endpoint,
     admin_endpoint,
     lm_services_endpoint,
-    openai_token
+    openai_token,
+    lm_service_id_list
 )
 
 
@@ -33,7 +34,8 @@ class UserMethods:
                   "description": "TestBot"
                   },
         )
-        assert dist_response.status_code == 201, dist_response.json()
+        assert dist_response.status_code == 201, \
+            f'Actual response is: {dist_response.json()}, {dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(dist_response.json()), \
             "Validation error while create_virtual_assistant"
         return dist_response.json()
@@ -50,7 +52,8 @@ class UserMethods:
                   "description": "TestBot"
                   },
         )
-        assert dist_response.status_code == 201, dist_response.json()
+        assert dist_response.status_code == 201, \
+            f'Actual response is: {dist_response.json()}, {dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(dist_response.json()), \
             "Validation error while create_virtual_assistant_bad_token"
 
@@ -66,14 +69,16 @@ class UserMethods:
                   "description": 1
                   },
         )
-        assert dist_response.status_code == 201, dist_response.json()
+        assert dist_response.status_code == 201, \
+            f'Actual response is: {dist_response.json()}, {dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(dist_response.json()), \
             "Validation error while create_virtual_assistant_invalid_data"
 
     def get_list_of_public_va(self):
         public_dist_names_list = []
         public_dist_list = requests.get(assistant_dists_endpoint + "/public_templates")
-        assert public_dist_list.status_code == 200, public_dist_list.json()
+        assert public_dist_list.status_code == 200, \
+            f'Actual response is: {public_dist_list.json()}, {public_dist_list.status_code}'
         for public_dist in public_dist_list.json():
             public_dist_names_list.append(public_dist["name"])
             assert models.VirtualAssistantRead.parse_obj(public_dist), \
@@ -88,7 +93,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert private_dist_list.status_code == 200, private_dist_list.json()
+        assert private_dist_list.status_code == 200, \
+            f'Actual response is: {private_dist_list.json()}, {private_dist_list.status_code}'
         for private_dist in private_dist_list.json():
             assert models.VirtualAssistantRead.parse_obj(private_dist), \
                 "Validation error while test_get_list_of_private_dist"
@@ -102,15 +108,29 @@ class UserMethods:
                                              'token': self.auth_token,
                                          }
                                          )
-        assert get_dist_response.status_code == 200, get_dist_response.json()
+        assert get_dist_response.status_code == 200, \
+            f'Actual response is: {get_dist_response.json()}, {get_dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(get_dist_response.json()), get_dist_response.json()
         assert get_dist_response.json()["name"] == name, \
             "Validation error while test_get_va_by_name"
         return get_dist_response.json()
 
+    def get_va_by_name_non_exist(self, name):
+        get_dist_response = requests.get(url=assistant_dists_endpoint + "/" + name,
+                                         headers={
+                                             'accept': 'application/json',
+                                             'token': self.auth_token,
+                                         }
+                                         )
+        assert get_dist_response.status_code == 404, \
+            f'Actual response is: {get_dist_response.json()}, {get_dist_response.status_code}'
+        assert {'detail': f"Virtual assistant '{name}' not found in database"} == get_dist_response.json(), \
+            f'validation error, {get_dist_response.json()}, {get_dist_response.status_code}'
+
     def get_va_by_name_no_access(self, name):
         get_dist_response = requests.get(assistant_dists_endpoint + "/" + name)
-        assert get_dist_response.status_code == 403, get_dist_response.json()
+        assert get_dist_response.status_code == 403, \
+            f'Actual response is: {get_dist_response.json()}, {get_dist_response.status_code}'
         assert {"detail": "No access"} == get_dist_response.json(), get_dist_response.json()
         return get_dist_response.json()
 
@@ -123,7 +143,7 @@ class UserMethods:
             },
         )
         assert delete_response.status_code == 204, \
-            f"Validation error while delete_va_by_name {delete_response.json()}"
+            f'Actual response is: {delete_response.json()}, {delete_response.status_code}'
 
     def delete_va_by_name_no_access(self, name):
         delete_response = requests.delete(
@@ -134,7 +154,7 @@ class UserMethods:
             },
         )
         assert delete_response.status_code == 500, \
-            f"Validation error while delete_va_by_name {delete_response.json()}"
+            f'Actual response is: {delete_response.json()}, {delete_response.status_code}'
 
     def patch_va_by_name(self, name):
         patch_dist_response = requests.patch(
@@ -146,7 +166,8 @@ class UserMethods:
             },
             json={"display_name": "Test_name", "description": "Test_description"},
         )
-        assert patch_dist_response.status_code == 200, patch_dist_response.json()
+        assert patch_dist_response.status_code == 200, \
+            f'Actual response is: {patch_dist_response.json()}, {patch_dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(patch_dist_response.json()), \
             "Validation error while test_clone_public_dist"
 
@@ -160,7 +181,8 @@ class UserMethods:
             },
             json={"display_name": "Test_name", "description": "Test_description"},
         )
-        assert patch_dist_response.status_code == 500, patch_dist_response.json()
+        assert patch_dist_response.status_code == 500, \
+            f'Actual response is: {patch_dist_response.json()}, {patch_dist_response.status_code}'
         # assert {"detail": "No access"} == patch_dist_response.json(), \
         #    "Validation error while test_clone_public_dist"
 
@@ -195,7 +217,8 @@ class UserMethods:
                 ],
             },
         )
-        assert clone_dist_response.status_code == 201, clone_dist_response.json()
+        assert clone_dist_response.status_code == 201, \
+            f'Actual response is: {clone_dist_response.json()}, {clone_dist_response.status_code}'
         assert models.VirtualAssistantRead.parse_obj(clone_dist_response.json()), \
             "Validation error while test_clone_va"
         return clone_dist_response.json()
@@ -231,7 +254,8 @@ class UserMethods:
                 ],
             },
         )
-        assert clone_dist_response.status_code == 403, clone_dist_response.json()
+        assert clone_dist_response.status_code == 403, \
+            f'Actual response is: {clone_dist_response.json()}, {clone_dist_response.status_code}'
         assert {"detail": "No access"} == clone_dist_response.json(), \
             "Validation error while test_clone_va"
         return clone_dist_response.json()
@@ -243,7 +267,8 @@ class UserMethods:
                                                         'token': self.auth_token,
                                                     }
                                                     )
-        assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 200, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         assert models.VirtualAssistantComponentPipelineRead.parse_obj(get_dist_components_response.json()), \
             "Error while test_get_public_dist_components_by_name"
         return get_dist_components_response.json()
@@ -255,7 +280,8 @@ class UserMethods:
                                                         'token': self.auth_token,
                                                     }
                                                     )
-        assert get_dist_components_response.status_code == 403, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 403, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         assert {"detail": "No access"} == get_dist_components_response.json(), \
             "Error while test_get_public_dist_components_by_name"
         return get_dist_components_response.json()
@@ -272,7 +298,8 @@ class UserMethods:
                                                          'component_id': component_id,
                                                      }
                                                      )
-        assert get_dist_components_response.status_code == 201, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 201, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         return get_dist_components_response.json()
         # assert models.VirtualAssistantComponentShort.parse_obj(get_dist_components_response.json()), \
         #    "Error while test_get_public_dist_components_by_name"
@@ -289,7 +316,8 @@ class UserMethods:
                                                          'component_id': component_id,
                                                      }
                                                      )
-        assert get_dist_components_response.status_code == 422, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 422, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         # assert models.VirtualAssistantComponentShort.parse_obj(get_dist_components_response.json()), \
         #    "Error while test_get_public_dist_components_by_name"
 
@@ -301,7 +329,8 @@ class UserMethods:
                                                            'token': self.auth_token,
                                                        }
                                                        )
-        assert delete_va_component_response.status_code == 204, delete_va_component_response.json()
+        assert delete_va_component_response.status_code == 204, \
+            f'Actual response is: {delete_va_component_response.json()}, {delete_va_component_response.status_code}'
 
     def delete_va_component_no_access(self, name, component_id):
         delete_va_component_response = requests.delete(url=assistant_dists_endpoint + "/" + name + "/components/" +
@@ -311,7 +340,8 @@ class UserMethods:
                                                            'token': self.auth_token,
                                                        }
                                                        )
-        assert delete_va_component_response.status_code == 422, delete_va_component_response.json()
+        assert delete_va_component_response.status_code == 422, \
+            f'Actual response is: {delete_va_component_response.json()}, {delete_va_component_response.status_code}'
 
     def patch_va_component(self,
                            name,
@@ -322,7 +352,8 @@ class UserMethods:
                                                             'accept': 'application/json',
                                                         })
 
-        assert patch_dist_components_response.status_code == 200, patch_dist_components_response.json()
+        assert patch_dist_components_response.status_code == 200, \
+            f'Actual response is: {patch_dist_components_response.json()}, {patch_dist_components_response.status_code}'
         # assert models.VirtualAssistantRead.parse_obj(get_dist_components_response.json()), \
         #    "Error while patch_va_component"
 
@@ -345,7 +376,8 @@ class UserMethods:
         #    "lm_service_id": lm_service_id
         # }
         # )
-        assert patch_components_response.status_code == 200, patch_components_response.status_code
+        assert patch_components_response.status_code == 200, \
+            f'Actual response is: {patch_components_response.json()}, {patch_components_response.status_code}'
         # assert models.VirtualAssistantRead.parse_obj(get_dist_components_response.json()), \
         #    "Error while patch_va_component"
 
@@ -360,7 +392,8 @@ class UserMethods:
                                      'visibility': visibility
                                  }
                                  )
-        assert response.status_code == 204, response.json()
+        assert response.status_code == 204, \
+            f'Actual response is: {response.json()}, {response.status_code}'
 
     def publish_va_no_access(self, name, visibility):
         response = requests.post(url=assistant_dists_endpoint + "/" + name + '/publish',
@@ -373,7 +406,8 @@ class UserMethods:
                                      'visibility': visibility
                                  }
                                  )
-        assert response.status_code == 403, response.json()
+        assert response.status_code == 403, \
+            f'Actual response is: {response.json()}, {response.status_code}'
 
     def debug_template(self, name):
         template_file_path = "template_file_path"
@@ -398,16 +432,38 @@ class UserMethods:
                                                            'accept': 'application/json',
                                                        }
                                                        )
-        assert get_list_of_components_response.status_code == 200, get_list_of_components_response.json()
+        assert get_list_of_components_response.status_code == 200, \
+            f'Actual response is: {get_list_of_components_response.json()}, ' \
+            f'{get_list_of_components_response.status_code}'
         for dist_components in get_list_of_components_response.json():
             assert models.ComponentRead.parse_obj(dist_components), \
                 "Validation error while test_get_public_dist_components_by_name"
         return get_list_of_components_response.json()
 
+    def get_component_in_component_list(self, component_list, component_id):
+        skill_is_added = False
+        for skill in component_list["skills"]:
+            if component_id == skill["component_id"]:
+                skill_is_added = True
+                break
+
+        assert skill_is_added is True, \
+            f'Error, actual component {component_id} is not added to Assistant'
+
+    def get_component_not_exist_in_component_list(self, component_list, component_id):
+        skill_is_added = False
+        for skill in component_list["skills"]:
+            if component_id == skill["component_id"]:
+                skill_is_added = True
+                break
+
+        assert skill_is_added is False, \
+            f'Error, actual component {component_id} is added to Assistant'
+
     def create_component(self,
                          display_name='Test_name',
                          description='Test_description',
-                         lm_service_id=1,
+                         lm_service_id=lm_service_id_list[0],
                          prompt='Test_prompt'):
         get_dist_components_response = requests.post(components_endpoint,
                                                      headers={
@@ -416,13 +472,14 @@ class UserMethods:
                                                          'Content-Type': 'application/json',
                                                      },
                                                      json={
-                                                         'display_name': 'string',
-                                                         'description': 'string',
-                                                         'lm_service_id': 1,
-                                                         'prompt': 'string',
+                                                         'display_name': display_name,
+                                                         'description': description,
+                                                         'lm_service_id': lm_service_id,
+                                                         'prompt': prompt,
                                                      }
                                                      )
-        assert get_dist_components_response.status_code == 201, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 201, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         assert models.ComponentRead.parse_obj(get_dist_components_response.json()), \
             "Validation error while test_get_public_dist_components_by_name"
         return get_dist_components_response.json()
@@ -433,7 +490,8 @@ class UserMethods:
                                                         'accept': 'application/json',
                                                     }
                                                     )
-        assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 200, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         assert models.ComponentRead.parse_obj(get_dist_components_response.json()), \
             "Validation error while test_get_public_dist_components_by_name"
         return get_dist_components_response.json()
@@ -445,14 +503,15 @@ class UserMethods:
                                                            'token': self.auth_token,
                                                        }
                                                        )
-        assert get_dist_components_response.status_code == 204, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 204, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
 
     def patch_component(self,
                         component_id,
                         display_name="string",
                         description="string",
                         prompt="Your ",
-                        lm_service_id=1
+                        lm_service_id=lm_service_id_list[0]
                         ):
         get_dist_components_response = requests.patch(url=components_endpoint + "/" + str(component_id),
                                                       headers={
@@ -467,7 +526,8 @@ class UserMethods:
                                                           'lm_service_id': lm_service_id,
                                                       }
                                                       )
-        assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 200, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         assert models.ComponentRead.parse_obj(get_dist_components_response.json()), \
             "Validation error while test_get_public_dist_components_by_name"
 
@@ -477,7 +537,8 @@ class UserMethods:
                                                         'accept': 'application/json',
                                                     }
                                                     )
-        assert get_dist_components_response.status_code == 200, get_dist_components_response.json()
+        assert get_dist_components_response.status_code == 200, \
+            f'Actual response is: {get_dist_components_response.json()}, {get_dist_components_response.status_code}'
         for dist_components in get_dist_components_response.json():
             assert models.ComponentRead.parse_obj(dist_components), \
                 "Validation error while test_get_public_dist_components_by_name"
@@ -492,7 +553,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_all_users_response.status_code == 200, get_all_users_response.json()
+        assert get_all_users_response.status_code == 200, \
+            f'Actual response is: {get_all_users_response.json()}, {get_all_users_response.status_code}'
         for user in get_all_users_response.json():
             assert models.UserRead.parse_obj(user), "Validation error while get_all_users"
 
@@ -504,7 +566,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_user_response.status_code == 200, get_user_response.json()
+        assert get_user_response.status_code == 200, \
+            f'Actual response is: {get_user_response.json()}, {get_user_response.status_code}'
         assert models.UserRead.parse_obj(get_user_response.json()), "Validation error while get_user_self"
         return str(get_user_response.json()["id"])
 
@@ -516,7 +579,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_user_by_id_response.status_code == 200, get_user_by_id_response.json()
+        assert get_user_by_id_response.status_code == 200, \
+            f'Actual response is: {get_user_by_id_response.json()}, {get_user_by_id_response.status_code}'
         assert models.UserRead.parse_obj(get_user_by_id_response.json()), "Validation error while get_user_by_id"
 
     # api_tokens
@@ -528,7 +592,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_all_api_tokens_response.status_code == 200, get_all_api_tokens_response.json()
+        assert get_all_api_tokens_response.status_code == 200, \
+            f'Actual response is: {get_all_api_tokens_response.json()}, {get_all_api_tokens_response.status_code}'
         for token in get_all_api_tokens_response.json():
             assert models.ApiKeyRead.parse_obj(token), "Validation error while test_get_all_api_tokens"
 
@@ -547,7 +612,7 @@ class UserMethods:
             },
         )
         assert create_dialog_response.status_code == 201, \
-            f"Error while create_dialog_sessions with {name} assistant"
+            f'Actual response is: {create_dialog_response.json()}, {create_dialog_response.status_code}'
         assert models.DialogSessionRead.parse_obj(create_dialog_response.json()), \
             f"Validation error while create_dialog_sessions with {name} assistant "
         return create_dialog_response.json()
@@ -565,7 +630,7 @@ class UserMethods:
             },
         )
         assert create_dialog_response.status_code == 403, \
-            f"Error while create_dialog_sessions with {name} assistant"
+            f'Actual response is: {create_dialog_response.json()}, {create_dialog_response.status_code}'
         assert {"detail": "No access"} == create_dialog_response.json(), \
             f"Validation error while create_dialog_sessions with {name} assistant "
 
@@ -582,7 +647,7 @@ class UserMethods:
             },
         )
         assert create_dialog_response.status_code == 500, \
-            f"Error while create_dialog_sessions with not deployed {name} assistant"
+            f'Actual response is: {create_dialog_response.json()}, {create_dialog_response.status_code}'
 
     def get_dialog_sessions(self, dialog_session_id):
         get_dialog_response = requests.get(
@@ -592,7 +657,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_dialog_response.status_code == 200, get_dialog_response.json()
+        assert get_dialog_response.status_code == 200, \
+            f'Actual response is: {get_dialog_response.json()}, {get_dialog_response.status_code}'
         assert models.DialogSessionRead.parse_obj(get_dialog_response.json()), \
             "Validation error while get_dialog_sessions"
 
@@ -604,7 +670,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_dialog_response.status_code == 403, get_dialog_response.json()
+        assert get_dialog_response.status_code == 403, \
+            f'Actual response is: {get_dialog_response.json()}, {get_dialog_response.status_code}'
         assert {"detail": "No access"} == get_dialog_response.json(), \
             "Validation error while get_dialog_sessions_no_access"
 
@@ -620,7 +687,8 @@ class UserMethods:
                 "text": "Hello! What is your name?",
             },
         )
-        assert send_message_response.status_code == 201, send_message_response.json()
+        assert send_message_response.status_code == 201, \
+            f'Actual response is: {send_message_response.json()}, {send_message_response.status_code}'
         assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
             "Validation error while test_send_dialog_session_message"
         assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
@@ -638,7 +706,8 @@ class UserMethods:
                 "text": "Hello! What is your name?",
             },
         )
-        assert send_message_response.status_code == 403, send_message_response.json()
+        assert send_message_response.status_code == 403, \
+            f'Actual response is: {send_message_response.json()}, {send_message_response.status_code}'
         assert {"detail": "No access"} == send_message_response.json(), \
             "Validation error while test_send_dialog_session_message"
 
@@ -659,7 +728,8 @@ class UserMethods:
             },
         )
         print(f'send_message_response.json() = {send_message_response.json()} \n')
-        assert send_message_response.status_code == 201, send_message_response.json()
+        assert send_message_response.status_code == 201, \
+            f'Actual response is: {send_message_response.json()}, {send_message_response.status_code}'
         assert models.DialogChatMessageRead.parse_obj(send_message_response.json()), \
             "Validation error while test_send_dialog_session_message"
         assert send_message_response.json()["active_skill"]["name"] != "dummy_skill", \
@@ -676,7 +746,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_dialog_history_response.status_code == 200, get_dialog_history_response.json()
+        assert get_dialog_history_response.status_code == 200, \
+            f'Actual response is: {get_dialog_history_response.json()}, {get_dialog_history_response.status_code}'
         for dialog in get_dialog_history_response.json():
             assert models.DialogUtteranceRead.parse_obj(dialog), "Validation error while " \
                                                                  "test_get_dialog_session_history "
@@ -689,7 +760,8 @@ class UserMethods:
                 "token": self.auth_token,
             },
         )
-        assert get_dialog_history_response.status_code == 403, get_dialog_history_response.json()
+        assert get_dialog_history_response.status_code == 403, \
+            f'Actual response is: {get_dialog_history_response.json()}, {get_dialog_history_response.status_code}'
         assert {"detail": "No access"} == get_dialog_history_response.json(), \
             "Validation error while test_get_dialog_session_history "
 
@@ -698,7 +770,8 @@ class UserMethods:
             url=lm_services_endpoint,
             headers={"accept": "application/json"}
         )
-        assert lm_services_list_response.status_code == 200, lm_services_list_response.json()
+        assert lm_services_list_response.status_code == 200, \
+            f'Actual response is: {lm_services_list_response.json()}, {lm_services_list_response.status_code}'
         for lm_service in lm_services_list_response.json():
             assert models.LmServiceRead.parse_obj(lm_service), "Validation error while get_all_lm_services"
 
@@ -714,7 +787,8 @@ class UserMethods:
                 'state': 'DEPLOYED',
             }
         )
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
         for deployment in deployment_response.json():
             assert models.DeploymentRead.parse_obj(deployment), "Validation error while get_deployments"
 
@@ -732,7 +806,8 @@ class UserMethods:
             }
 
         )
-        assert deployment_response.status_code == 201, deployment_response.json()
+        assert deployment_response.status_code == 201, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
         assert models.DeploymentRead.parse_obj(deployment_response.json()), "Validation error while create_deployment"
         return deployment_response.json()
 
@@ -741,14 +816,16 @@ class UserMethods:
             url=deployments_endpoint + "/stacks",
             headers={
                 'accept': 'application/json'})
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def get_stack_ports(self):
         deployment_response = requests.get(
             url=deployments_endpoint + "/stack_ports",
             headers={
                 'accept': 'application/json'})
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def get_deployment(self, deployment_id):
         deployment_response = requests.get(
@@ -756,7 +833,8 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token})
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
         assert models.DeploymentRead.parse_obj(deployment_response.json()), "Validation error while get_deployment"
         return deployment_response.json()["task_id"]
 
@@ -766,8 +844,20 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token})
-        assert deployment_response.status_code == 403, deployment_response.json()
+        assert deployment_response.status_code == 403, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
         assert {"detail": "No access"} == deployment_response.json(), "Validation error while get_deployment"
+
+    def get_deployment_non_exists(self, deployment_id):
+        deployment_response = requests.get(
+            url=deployments_endpoint + "/" + str(deployment_id),
+            headers={
+                'accept': 'application/json',
+                'token': self.auth_token})
+        assert deployment_response.status_code == 404, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
+        assert {"detail": f"Deployment {str(deployment_id)} not found"} == deployment_response.json(), \
+            "Validation error while get_deployment"
 
     def delete_deployment(self, deployment_id):
         deployment_response = requests.delete(
@@ -776,7 +866,8 @@ class UserMethods:
                 'accept': '*/*',
                 'token': self.auth_token,
             })
-        assert deployment_response.status_code == 204, deployment_response.json()
+        assert deployment_response.status_code == 204, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def delete_deployment_no_access(self, deployment_id):
         deployment_response = requests.delete(
@@ -785,7 +876,8 @@ class UserMethods:
                 'accept': '*/*',
                 'token': self.auth_token,
             })
-        assert deployment_response.status_code == 403, deployment_response.json()
+        assert deployment_response.status_code == 403, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def patch_deployment(self, deployment_id):
         deployment_response = requests.patch(
@@ -794,7 +886,8 @@ class UserMethods:
                 'accept': 'application/json',
                 'token': self.auth_token,
             })
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def patch_deployment_no_access(self, deployment_id, task_id):
         deployment_response = requests.patch(
@@ -806,7 +899,8 @@ class UserMethods:
             params={
                 'task_id': task_id,
             })
-        assert deployment_response.status_code == 403, deployment_response.json()
+        assert deployment_response.status_code == 403, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
     def delete_stack(self, stack_id):
         deployment_response = requests.delete(
@@ -814,7 +908,8 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
             })
-        assert deployment_response.status_code == 200, deployment_response.json()
+        assert deployment_response.status_code == 200, \
+            f'Actual response is: {deployment_response.json()}, {deployment_response.status_code}'
 
 
 class AdminMethods:

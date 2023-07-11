@@ -162,6 +162,7 @@ class TestDistributions:
         user = UserMethods(auth_token_user1)
         user.get_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_your_va_by_name")
     def test_delete_your_va_by_name(self):
         display_name = va_data["name"]
@@ -169,6 +170,7 @@ class TestDistributions:
         name = user.create_virtual_assistant(display_name)["name"]
 
         user.delete_va_by_name(name)
+        user.get_va_by_name_non_exist(name)
 
     @qase.title(f"{counter()}. test_patch_your_va_by_name")
     def test_patch_your_va_by_name(self):
@@ -258,6 +260,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_add_created_from_scratch_va_component")
     def test_add_created_from_scratch_va_component(self):
         display_name = va_data["name"]
@@ -265,6 +268,9 @@ class TestDistributions:
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
+
+        component_list = user.get_va_components(name)
+        user.get_component_in_component_list(component_list, component_id)
 
         user.delete_va_by_name(name)
 
@@ -277,6 +283,9 @@ class TestDistributions:
         component_id = user.create_component()["id"]
         va_component_id = user.add_va_component(name, component_id)["id"]
         user.delete_va_component(name, va_component_id)
+
+        component_list = user.get_va_components(name)
+        user.get_component_not_exist_in_component_list(component_list, va_component_id)
 
         user.delete_va_by_name(name)
 
@@ -424,7 +433,7 @@ class TestDistributions:
         user.get_dialog_session_history(dialog_session_id)
 
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
     def test_build_assistant_on_various_lm(self, lm_service_id):
@@ -523,7 +532,10 @@ class TestDistributions:
         user.patch_deployment(deployment_id)
         time.sleep(60)
         user.delete_deployment(deployment_id)
+        user.get_deployment_non_exists(deployment_id)
+
         user.delete_va_by_name(va_name)
+
 
     # @pytest.mark.atom
     # @pytest.mark.parametrize("stack_id", range(578, 699))

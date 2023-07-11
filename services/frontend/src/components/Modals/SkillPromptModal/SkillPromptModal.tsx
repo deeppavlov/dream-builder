@@ -8,6 +8,7 @@ import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
 import { IPromptBlock, ISkill, LM_Service } from 'types/types'
 import { DEPLOY_STATUS } from 'constants/constants'
+import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
@@ -15,6 +16,7 @@ import { useObserver } from 'hooks/useObserver'
 import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
+import sortByGroup from 'utils/sortByGroup'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { validationSchema } from 'utils/validationSchema'
 import { Button } from 'components/Buttons'
@@ -71,13 +73,16 @@ const SkillPromptModal = () => {
     refetchOnWindowFocus: false,
   })
 
-  const dropboxArray =
+  const dropboxArray: any[] = sortByGroup(
     services?.map((service: LM_Service) => ({
       id: service?.id?.toString(),
       name: service?.name,
       display_name: service?.display_name,
       disabled: !service?.is_maintained,
-    })) || []
+      company_name: serviceCompanyMap?.[service?.name],
+    })) || [],
+    'company_name'
+  )
 
   const {
     handleSubmit,

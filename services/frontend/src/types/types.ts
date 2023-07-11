@@ -205,6 +205,7 @@ export interface LM_Service {
   project_url: string
   api_key: string | null
   is_maintained: boolean
+  company_name?: string
 }
 
 export interface ISkill extends IStackElement {

@@ -170,7 +170,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
                     prompt_file = service_env_card["PROMPT_FILE"]
                     prompt_data = utils.load_json(dream_root / prompt_file)
-                    prompt, prompt_goals = prompt_data["prompt"], prompt_data["goals"]
+                    prompt, prompt_goals = prompt_data["prompt"], prompt_data.get("goals")
 
             all_components[str(component_path.relative_to(dream_root))] = current_component_id
             current_component_id += 1

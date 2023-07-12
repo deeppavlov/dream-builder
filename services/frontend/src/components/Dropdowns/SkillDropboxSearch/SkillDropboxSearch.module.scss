@@ -39,6 +39,16 @@ $animation-delay: 300ms;
   &.fullWidth {
     max-width: 100%;
   }
+
+  &.fullHeight {
+    position: static;
+    .list {
+      top: 71px;
+      max-height: calc(100% - 71px);
+      width: calc(100% - 72px);
+      height: fit-content;
+    }
+  }
 }
 
 .disabled {

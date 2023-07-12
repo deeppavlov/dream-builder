@@ -1,6 +1,7 @@
 import { IStackElement } from 'types/types'
-import { AnnotatorSidePanel, IntentCatcherSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import AnnotatorSidePanel from 'components/Unused/AnnotatorSidePanel/AnnotatorSidePanel'
+import IntentCatcherSidePanel from 'components/Unused/IntentCatcherSidePanel/IntentCatcherSidePanel'
 import { trigger } from './events'
 
 interface Props {

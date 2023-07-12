@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { TOOLTIP_DELAY } from 'constants/constants'
@@ -11,9 +12,10 @@ interface Props {
 }
 
 export const IntegrationTab = ({ isActive }: Props) => {
-  let cx = classNames.bind(s)
   const navigate = useNavigate()
   const { name } = useParams()
+  const { t } = useTranslation()
+  let cx = classNames.bind(s)
 
   const integrationClickHandler = () => {
     navigate(generatePath(RoutesList.editor.integration, { name: name! }))
@@ -28,7 +30,7 @@ export const IntegrationTab = ({ isActive }: Props) => {
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='sidebarIntegrationTab'
-        content='Integration'
+        content={t('sidebar.tooltips.integration')}
         place='right'
       />
     </button>

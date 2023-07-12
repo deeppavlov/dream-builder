@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { logout } from 'api/user'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
@@ -9,6 +10,10 @@ interface Props {
 }
 
 export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'topbar.ctx_menus.profile',
+  })
+
   const handleProfileClick = () => trigger('AccessTokensModal', {})
 
   return (
@@ -23,7 +28,7 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
       <ContextMenuButton
         type='logout'
         theme='dark'
-        name='Log out'
+        name={t('log_out')}
         handleClick={logout}
       />
     </BaseContextMenu>

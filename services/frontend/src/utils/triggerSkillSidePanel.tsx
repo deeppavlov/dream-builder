@@ -1,13 +1,14 @@
 import { ISkill, SkillAvailabilityType } from 'types/types'
-import { IntentResponderSidePanel, SkillSidePanel } from 'components/Panels'
+import { SkillSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import SkillDetailsSidePanel from 'components/Panels/SkillDetailsSidePanel/SkillDetailsSidePanel'
+import IntentResponderSidePanel from 'components/Unused/IntentResponderSidePanel/IntentResponderSidePanel'
 import { trigger } from './events'
 
 interface Props {
   skill: ISkill
   distName: string
-  activeTab: 'Properties' | 'Editor'
+  activeTab: 'properties' | 'details'
   visibility?: SkillAvailabilityType
   isOpen?: boolean
 }
@@ -31,7 +32,7 @@ const triggerSkillSidePanel = ({
             <IntentResponderSidePanel
               key={key}
               skill={skill}
-              activeTab={activeTab}
+              // activeTab={activeTab}
             />
           ),
         })

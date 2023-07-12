@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios'
 import { useUIOptions } from 'context'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
@@ -9,6 +10,7 @@ import { createDialogSession, getHistory, sendMessage } from 'api/chat'
 import { consts } from 'utils/consts'
 
 export const useDeepyChat = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'sidepanels.deepy' })
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
   const deepyActive = UIOptions[consts.COPILOT_SP_IS_ACTIVE]
@@ -73,7 +75,7 @@ export const useDeepyChat = () => {
       onError: () => {
         sendToDeepy.mutateAsync({
           dialog_session_id: deepySession?.id,
-          text: 'hi deepy!',
+          text: t('first_msg_greeting'),
           hidden: true,
         })
       },

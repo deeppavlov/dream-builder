@@ -1,12 +1,13 @@
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from 'assets/icons/clone.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import DB from 'assets/icons/logo.png'
 import { RoutesList } from 'router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface } from 'types/types'
+import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import {
   DEPLOY_STATUS,
   PUBLISH_REQUEST_STATUS,
@@ -36,11 +37,15 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   bot,
   disabled,
 }) => {
+  const { i18n } = useTranslation()
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
-  const dateCreated = dateToUTC(new Date(bot?.date_created))
-  const time = timeToUTC(new Date(bot?.date_created))
+  const dateCreated = dateToUTC(
+    new Date(bot?.date_created),
+    i18n.language as TLocale
+  )
+  const time = timeToUTC(new Date(bot?.date_created), i18n.language as TLocale)
   const { UIOptions } = useUIOptions()
   const infoSPId = `info_${bot.id}`
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]

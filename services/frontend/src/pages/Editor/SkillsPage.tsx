@@ -1,4 +1,5 @@
 import { useAuth, useUIOptions } from 'context'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { usePreview } from 'context/PreviewProvider'
 import { useComponent } from 'hooks/api'
@@ -7,13 +8,21 @@ import { AddButton, SwitchViewButton } from 'components/Buttons'
 import { SkillList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import { AssistantModule } from 'components/Modules'
-import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
+import {
+  Container,
+  Details,
+  ErrorHandler,
+  Main,
+  Table,
+  Wrapper,
+} from 'components/UI'
 
 const SkillsPage = () => {
   const auth = useAuth()
   const { name } = useParams()
   const { UIOptions } = useUIOptions()
   const { isPreview } = usePreview()
+  const { t } = useTranslation()
   const { getAllComponents } = useComponent()
   const components = getAllComponents(name || '', { refetchOnMount: true })
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
@@ -26,8 +35,7 @@ const SkillsPage = () => {
       <AssistantModule />
       <Wrapper
         fitScreen
-        title='Skills'
-        annotation='Your AI assistant is multi-skill which means that at each step in the conversation your Assistant picks the skill to create the response.'
+        title={t('assistant_page.skills_tab.wrapper.title')}
         btns={
           <Container>
             {/* {!isPreview && (
@@ -44,17 +52,18 @@ const SkillsPage = () => {
           </Container>
         }
       >
+        <Details>{t('assistant_page.skills_tab.wrapper.annotation')}</Details>
         {components?.error && <ErrorHandler error={components?.error} />}
         {!components?.error && isTableView && (
           <Table
-            second='Type'
+            second={t('skill_table.type')}
             addButton={
               !isPreview ? (
                 <AddButton
                   forTable
                   forSkills
                   disabled={!auth?.user && isPreview}
-                  text='Add Skill'
+                  text={t('skill_table.add_btn')}
                 />
               ) : undefined
             }

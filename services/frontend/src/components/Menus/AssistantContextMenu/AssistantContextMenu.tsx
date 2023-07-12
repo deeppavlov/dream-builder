@@ -1,5 +1,6 @@
 import { useAuth } from 'context'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from 'types/types'
@@ -25,6 +26,9 @@ const AssistantContextMenu: FC<Props> = ({
   inSidePanel,
   isDeployed,
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'ctx_menus.assistant',
+  })
   const auth = useAuth()
   const navigate = useNavigate()
   const { name } = useParams()
@@ -87,7 +91,7 @@ const AssistantContextMenu: FC<Props> = ({
       {type == 'your' && (
         <>
           <ContextMenuButton
-            name='Chat With Assistant'
+            name={t('chat')}
             type='chat'
             handleClick={handleChatClick}
           />
@@ -95,33 +99,33 @@ const AssistantContextMenu: FC<Props> = ({
             disabled={
               bot?.visibility === VISIBILITY_STATUS.PRIVATE || !isDeployed
             }
-            name='Share'
+            name={t('share')}
             type='share'
             handleClick={handleShareBtnClick}
           />
           <ContextMenuButton
-            name='Visibility'
+            name={t('visibility')}
             type='publish'
             handleClick={handlePublishBtnClick}
           />
           <hr />
           <ContextMenuButton
             disabled={bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW}
-            name='Rename'
+            name={t('rename')}
             type='edit'
             handleClick={handleRenameBtnClick}
           />
           {!inSidePanel &&
             !isEditor && ( //FIX!!
               <ContextMenuButton
-                name='Properties'
+                name={t('properties')}
                 type='properties'
                 handleClick={handlePropertiesBtnClick}
               />
             )}
           <hr />
           <ContextMenuButton
-            name='Delete'
+            name={t('delete')}
             type='delete'
             handleClick={handleDeleteBtnClick}
           />
@@ -130,7 +134,7 @@ const AssistantContextMenu: FC<Props> = ({
       {type == 'public' && (
         <>
           <ContextMenuButton
-            name='Chat With Assistant'
+            name={t('chat')}
             type='chat'
             handleClick={handleChatClick}
           />
@@ -138,7 +142,7 @@ const AssistantContextMenu: FC<Props> = ({
             <>
               <hr />
               <ContextMenuButton
-                name='Properties'
+                name={t('properties')}
                 type='properties'
                 handleClick={handlePropertiesBtnClick}
               />
@@ -146,7 +150,7 @@ const AssistantContextMenu: FC<Props> = ({
             </>
           )}
           <ContextMenuButton
-            name='Check Skills'
+            name={t('check_skills')}
             type='architecture'
             handleClick={handleCheckArchitectureClick}
           />

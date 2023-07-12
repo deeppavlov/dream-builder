@@ -1,13 +1,13 @@
 import { useUIOptions } from 'context'
 import { useEffect, useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import DB from 'assets/icons/logo.png'
 import { RoutesList } from 'router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface } from 'types/types'
+import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import useTabsManager from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -27,12 +27,8 @@ interface Props {
 }
 
 const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
-  const [properties] = ['Properties']
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const [tabsInfo] = useTabsManager({
-    activeTabId: properties,
-    tabList: new Map([[properties, { name: properties }]]),
-  })
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
@@ -88,13 +84,13 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
   const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
   const publishState = onModeration
-    ? 'On Moderation'
+    ? t('assistant_visibility.on_moderation')
     : isPublished
-    ? 'Public Template'
+    ? t('assistant_visibility.public_template')
     : unlistedAssistant
-    ? 'Unlisted'
+    ? t('assistant_visibility.unlisted')
     : privateAssistant
-    ? 'Private'
+    ? t('assistant_visibility.private')
     : null
 
   return (
@@ -102,17 +98,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
       <>
         <SidePanelHeader>
           <ul role='tablist'>
-            {Array.from(tabsInfo.tabs).map(([id, tab]) => (
-              <li
-                role='tab'
-                data-disabled={tab.disabled}
-                key={id}
-                aria-selected={tabsInfo.activeTabId === id}
-                onClick={() => tabsInfo.handleTabSelect(id)}
-              >
-                {tab.name}
-              </li>
-            ))}
+            <li role='tab' aria-selected>
+              {t('tabs.properties')}
+            </li>
           </ul>
         </SidePanelHeader>
         <div className={s.botInfoSidePanel}>
@@ -138,7 +126,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <div className={s.dateAndVersion}>
               <div className={s.date}>
                 <CalendarIcon />
-                {dateToUTC(bot?.date_created)}
+                {dateToUTC(bot?.date_created, i18n.language as TLocale)}
               </div>
               <SmallTag
                 theme={
@@ -153,7 +141,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
           </div>
           <div className={s.scroll}>
             <div className={s.container}>
-              <Accordion title='Description' rounded isActive>
+              <Accordion title={t('accordions.desc')} rounded isActive>
                 <p className={s.desc}>{bot?.description}</p>
               </Accordion>
             </div>
@@ -165,7 +153,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   theme='secondary'
                   props={{ 'data-tooltip-id': tooltipId }}
                 >
-                  More
+                  {t('sidepanels.assistant.btns.more')}
                 </Button>
                 <AssistantContextMenu
                   tooltipId={tooltipId}
@@ -178,7 +166,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   theme='primary'
                   props={{ onClick: handleCloneBtnClick }}
                 >
-                  Use
+                  {t('sidepanels.assistant.btns.use')}
                 </Button>
               </>
             )}
@@ -188,7 +176,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   props={{ 'data-tooltip-id': tooltipId }}
                   theme='secondary'
                 >
-                  More
+                  {t('sidepanels.assistant.btns.more')}
                 </Button>
                 {!isEditor && (
                   <Button
@@ -198,7 +186,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                     }}
                     theme='primary'
                   >
-                    Edit
+                    {t('sidepanels.assistant.btns.edit')}
                   </Button>
                 )}
                 <AssistantContextMenu

@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { Button } from 'components/Buttons'
 import s from './ErrorHandler.module.scss'
@@ -8,6 +9,9 @@ interface Props {
 }
 
 export const ErrorHandler: FC<Props> = ({ error }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'assistants_not_loaded',
+  })
   const queryClient = useQueryClient()
   const handleRetryClick = () => queryClient.invalidateQueries()
 
@@ -15,9 +19,9 @@ export const ErrorHandler: FC<Props> = ({ error }) => {
     <>
       {error && (
         <div className={s.error}>
-          Oops, something went wrong... Please try again later
+          {t('header')}
           <Button theme='secondary' props={{ onClick: handleRetryClick }}>
-            Retry
+            {t('btns.retry')}
           </Button>
         </div>
       )}

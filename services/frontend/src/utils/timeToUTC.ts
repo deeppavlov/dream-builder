@@ -1,9 +1,11 @@
 import { format } from 'fecha'
+import { TLocale } from 'types/types'
 
-interface date_created {
-  date: string | number | Date
-}
+export const timeToUTC = (date: any, locale?: TLocale) => {
+  const formats = {
+    en: 'hh:mm A',
+    ru: 'hh:mm',
+  }
 
-export const timeToUTC = (date: any) => {
-  return format(new Date(date), 'hh:mm A')
+  return format(new Date(date), formats[locale ?? 'en'])
 }

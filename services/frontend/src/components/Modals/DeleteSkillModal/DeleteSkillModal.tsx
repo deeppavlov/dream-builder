@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
@@ -11,6 +12,9 @@ import { BaseModal } from 'components/Modals'
 import s from './DeleteSkillModal.module.scss'
 
 export const DeleteSkillModal = () => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.delete_skill',
+  })
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName } = useParams()
   const [skill, setSkill] = useState<ISkill>()
@@ -67,16 +71,16 @@ export const DeleteSkillModal = () => {
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.areYouSure}>
         <div className={s.header}>
-          <h4>Do you really want to delete skill:</h4>
+          <h4>{t('header')}</h4>
           <mark>{skill?.display_name}</mark>
-          <div className={s.desc}>This action can’t be undone</div>
+          <div className={s.desc}>{t('subheader')}</div>
         </div>
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            Cancel
+            {t('btns.cancel')}
           </Button>
           <Button theme='error' props={{ onClick: handleYesClick }}>
-            Delete
+            {t('btns.delete')}
           </Button>
         </div>
       </div>

@@ -9,7 +9,7 @@ import DumbSkillSP from './DumbSkillSP'
 interface Props {
   component_id: number
   distName: string
-  activeTab?: 'Properties' | 'Editor'
+  activeTab?: 'properties' | 'details'
   tabs?: TabList
   visibility?: SkillAvailabilityType
   children?: React.ReactNode // Editor Tab element

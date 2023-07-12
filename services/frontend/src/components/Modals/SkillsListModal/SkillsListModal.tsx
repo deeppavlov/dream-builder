@@ -2,6 +2,7 @@ import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router'
 import { generatePath } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
@@ -23,6 +24,7 @@ import s from './SkillsListModal.module.scss'
 export const SkillsListModal = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { UIOptions } = useUIOptions()
+  const { t } = useTranslation()
   const { name: distName } = useParams()
   const { deleteDeployment } = useDeploy()
   const { getDist, changeVisibility } = useAssistants()
@@ -39,14 +41,14 @@ export const SkillsListModal = () => {
     { enabled: isOpen }
   )
   const rightSidepanelIsActive = UIOptions[consts.RIGHT_SP_IS_ACTIVE]
-  const position = {
-    overlay: {
-      top: 64,
-      zIndex: 2,
-      right: rightSidepanelIsActive ? '368px' : 0,
-      transition: 'all 0.3s linear',
-    },
-  }
+  // const position = {
+  //   overlay: {
+  //     top: 64,
+  //     zIndex: 2,
+  //     right: rightSidepanelIsActive ? '368px' : 0,
+  //     transition: 'all 0.3s linear',
+  //   },
+  // }
   const cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -101,12 +103,17 @@ export const SkillsListModal = () => {
       )}
     >
       <div className={s.container}>
-        <div className={s.header}>Choose Skill</div>
+        <div className={s.header}>{t('modals.choose_skill.header')}</div>
         <Table
-          second='Type'
+          second={t('skill_table.type')}
           withoutDate={rightSidepanelIsActive}
           addButton={
-            <AddButton forTable fromScratch onAddRequest={handleClose} />
+            <AddButton
+              forTable
+              fromScratch
+              forSkills
+              onAddRequest={handleClose}
+            />
           }
         >
           {skillsList ? (
@@ -124,7 +131,7 @@ export const SkillsListModal = () => {
         </Table>
         <div className={s.footer}>
           <Button theme='primary' props={{ onClick: handleOk }}>
-            OK
+            {t('modals.choose_skill.btns.ok')}
           </Button>
         </div>
       </div>

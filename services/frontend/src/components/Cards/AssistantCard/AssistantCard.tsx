@@ -1,11 +1,12 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import { RoutesList } from 'router/RoutesList'
-import { BotCardProps } from 'types/types'
+import { BotCardProps, TLocale } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
@@ -26,6 +27,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   size,
   disabled,
 }) => {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const tooltipId = useId()
   const { UIOptions } = useUIOptions()
@@ -40,7 +42,10 @@ export const AssistantCard: FC<BotCardProps> = ({
     infoSPId === activeAssistantId ||
     bot.id === activeAssistantId ||
     bot.id === activeChat?.id
-  const dateCreated = dateToUTC(new Date(bot?.date_created))
+  const dateCreated = dateToUTC(
+    new Date(bot?.date_created),
+    i18n.language as TLocale
+  )
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
 
@@ -49,13 +54,13 @@ export const AssistantCard: FC<BotCardProps> = ({
   const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
   const publishState = onModeration
-    ? 'On Moderation'
+    ? t('assistant_visibility.on_moderation')
     : isPublished
-    ? 'Public Template'
+    ? t('assistant_visibility.public_template')
     : unlistedAssistant
-    ? 'Unlisted'
+    ? t('assistant_visibility.unlisted')
     : privateAssistant
-    ? 'Private'
+    ? t('assistant_visibility.private')
     : null
 
   const handleBotCardClick = () => {
@@ -160,7 +165,7 @@ export const AssistantCard: FC<BotCardProps> = ({
                   long
                   props={{ onClick: handleCloneClick }}
                 >
-                  Use
+                  {t('card_btns.use')}
                 </Button>
               </div>
               <Kebab tooltipId={tooltipId} theme='card' />
@@ -182,7 +187,7 @@ export const AssistantCard: FC<BotCardProps> = ({
                   disabled: onModeration || isDeploying,
                 }}
               >
-                Edit
+                {t('card_btns.edit')}
               </Button>
               <Kebab tooltipId={tooltipId} theme='card' />
               <AssistantContextMenu

@@ -1,19 +1,19 @@
 import { AdminPage } from 'pages/AdminPage'
-import { BotsAllPage } from 'pages/BotsAllPage'
-import { BotsPage } from 'pages/BotsPage'
 import { EditorPage } from 'pages/Editor/EditorPage'
 import { IntegrationPage } from 'pages/Editor/IntegrationPage'
 import SkillEditorPage from 'pages/Editor/SkillEditorPage'
 import SkillsPage from 'pages/Editor/SkillsPage'
 import ErrorPage from 'pages/ErrorPage'
 import { GoogleAuthPage } from 'pages/GoogleAuthPage'
+import { HomePage } from 'pages/HomePage'
+import { MyAssistantsPage } from 'pages/MyAssistantsPage'
+import { PublicTemplatesPage } from 'pages/PublicTemplatesPage'
 import Root from 'pages/Root'
-import { UsersBotsPage } from 'pages/UsersBotsPage'
 import { Link, generatePath } from 'react-router-dom'
 import { AdminRoute } from 'router/AdminRoute'
 import { PrivateRoute } from 'router/PrivateRoute'
 import { RoutesList } from 'router/RoutesList'
-import { CustomRouteConfig } from 'types/types'
+import { CustomRouteConfig, IRouterCrumb } from 'types/types'
 import { consts } from 'utils/consts'
 import { CrumbForEditor } from 'components/Widgets/Topbar/components/Breadcrumbs/CrumbForEditor'
 
@@ -25,24 +25,32 @@ export const RouterConfig: CustomRouteConfig[] = [
     children: [
       {
         path: RoutesList.start,
-        element: <BotsPage />,
+        element: <HomePage />,
       },
       {
         path: RoutesList.botsAll,
-        element: <BotsAllPage />,
+        element: <PublicTemplatesPage />,
         handle: {
-          crumb: () => [<Link to={RoutesList.botsAll}>Public Templates</Link>],
+          crumb: ({ t }: IRouterCrumb) => [
+            <Link to={RoutesList.botsAll}>
+              {t('breadcrumbs.public_templates')}
+            </Link>,
+          ],
         },
       },
       {
         path: RoutesList.yourBots,
         element: (
           <PrivateRoute>
-            <UsersBotsPage />
+            <MyAssistantsPage />
           </PrivateRoute>
         ),
         handle: {
-          crumb: () => [<Link to={RoutesList.yourBots}>Your Assistants</Link>],
+          crumb: ({ t }: IRouterCrumb) => [
+            <Link to={RoutesList.yourBots}>
+              {t('breadcrumbs.your_assistants')}
+            </Link>,
+          ],
         },
       },
       {
@@ -50,10 +58,9 @@ export const RouterConfig: CustomRouteConfig[] = [
         element: <EditorPage />,
         loader: ({ params }) => params,
         handle: {
-          crumb: (params: any, options?: any) => {
+          crumb: ({ params, ui }: IRouterCrumb) => {
             const path = generatePath(RoutesList.editor.default, params)
-            const display_name =
-              options?.[consts.ACTIVE_ASSISTANT]?.display_name
+            const display_name = ui?.[consts.ACTIVE_ASSISTANT]?.display_name
             return [
               display_name && <CrumbForEditor />,
               display_name && <Link to={path}>{display_name}</Link>,
@@ -78,9 +85,9 @@ export const RouterConfig: CustomRouteConfig[] = [
             element: <SkillsPage />,
             loader: ({ params }) => params,
             handle: {
-              crumb: (params: any) => [
+              crumb: ({ params, t }: IRouterCrumb) => [
                 <Link to={generatePath(RoutesList.editor.default, params)}>
-                  Skills
+                  {t('breadcrumbs.skills')}
                 </Link>,
               ],
             },
@@ -90,9 +97,9 @@ export const RouterConfig: CustomRouteConfig[] = [
             element: <IntegrationPage />,
             loader: ({ params }) => params,
             handle: {
-              crumb: (params: any) => [
+              crumb: ({ params, t }: IRouterCrumb) => [
                 <Link to={generatePath(RoutesList.editor.integration, params)}>
-                  Integration
+                  {t('breadcrumbs.integration')}
                 </Link>,
               ],
             },
@@ -106,12 +113,12 @@ export const RouterConfig: CustomRouteConfig[] = [
             ),
             loader: ({ params }) => params,
             handle: {
-              crumb: (params: any, options?: any) => {
+              crumb: ({ params, ui, t }: IRouterCrumb) => {
                 const display_name =
-                  options?.[consts.EDITOR_ACTIVE_SKILL]?.display_name
+                  ui?.[consts.EDITOR_ACTIVE_SKILL]?.display_name
                 return [
                   <Link to={generatePath(RoutesList.editor.default, params)}>
-                    Skills
+                    {t('breadcrumbs.skills')}
                   </Link>,
                   display_name && (
                     <Link

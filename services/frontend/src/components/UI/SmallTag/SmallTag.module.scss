@@ -12,7 +12,7 @@
 }
 
 .text-capitalize .text {
-  display: block;
+  display: flex;
   &::first-letter {
     text-transform: uppercase;
   }

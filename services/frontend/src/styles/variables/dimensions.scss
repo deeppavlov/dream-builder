@@ -6,3 +6,8 @@ $radius1: 24px;
 $radius2: 12px;
 
 $stack_header_height: 53px;
+
+$scrollbar-padding: 6px;
+$scrollbar-thumb-width: 8px;
+$scrollbar-total-width: calc($scrollbar-thumb-width + ($scrollbar-padding * 2));
+$scrollbar-border-radius: calc($scrollbar-total-width / 2);

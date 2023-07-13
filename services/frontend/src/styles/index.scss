@@ -7,13 +7,7 @@
 @import './ui/mixins.scss';
 
 // Note: vite hot reload does not detect live changes in index.scss,
-// so you need to restart the build to see changes in index.scss file.
-
-$scrollbar-padding: 6px;
-$scrollbar-thumb-width: 8px;
-$scrollbar-total-width: calc($scrollbar-thumb-width + ($scrollbar-padding * 2));
-$scrollbar-border-radius: calc($scrollbar-total-width / 2);
-$scrollbar-color: $text3;
+// so you need to restart the build to see changes in browser.
 
 *,
 *::before,
@@ -29,12 +23,12 @@ $scrollbar-color: $text3;
 }
 ::-webkit-scrollbar-thumb {
   height: $scrollbar-thumb-width;
-  border: $scrollbar-padding solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
+  border: $scrollbar-padding solid transparent; /* Transparent border together with `background-clip: padding-box` does the trick */
   background-clip: padding-box;
   border-radius: $scrollbar-border-radius;
   -webkit-border-radius: $scrollbar-border-radius;
   background-color: $scrollbar-color;
-  -webkit-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.025);
+  -webkit-box-shadow: inset 0 0 0 1px $scrollbar-color;
 }
 ::-webkit-scrollbar-button {
   width: 0;

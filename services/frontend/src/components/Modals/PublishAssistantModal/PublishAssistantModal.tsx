@@ -1,0 +1,174 @@
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+import { useQueryClient } from 'react-query'
+import { useParams } from 'react-router-dom'
+import store from 'store2'
+import { BotInfoInterface, Visibility } from 'types/types'
+import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
+import { getAssistantVisibility } from 'mapping/assistantVisibility'
+import { useAssistants } from 'hooks/api'
+import { useObserver } from 'hooks/useObserver'
+import { trigger } from 'utils/events'
+import { Button, RadioButton } from 'components/Buttons'
+import { BaseToolTip } from 'components/Menus'
+import { BaseModal } from 'components/Modals'
+import s from './PublishAssistantModal.module.scss'
+
+interface FormValues {
+  publishAlert: boolean
+  visibility: Visibility
+}
+export const PublishAssistantModal = () => {
+  const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [bot, setBot] = useState<BotInfoInterface | null>(null)
+  const isPushAlert = store('publishAlert')
+  const { name: distName } = useParams()
+  const isEditor = distName !== undefined && distName.length > 0
+  const queryClient = useQueryClient()
+  const { register, handleSubmit, reset, setValue, watch } =
+    useForm<FormValues>({
+      defaultValues: {
+        visibility: bot?.visibility,
+        publishAlert: isPushAlert,
+      },
+    })
+  const selectedVisibility = watch('visibility')
+  const { changeVisibility } = useAssistants()
+  const visibilityList = getAssistantVisibility()
+  const assistantVisibility = bot?.visibility
+
+  const handleEventUpdate = (data: { detail: any }) => {
+    setBot(data?.detail.bot)
+    setIsOpen(prev => !prev)
+  }
+
+  const handleNoBtnClick = () => closeModal()
+
+  const handlePublish = (data: FormValues) => {
+    const visibility = data?.visibility!
+    const name = bot?.name!
+    const deploymentState = bot?.deployment?.state
+
+    console.log(store('publishAlert'))
+    console.log('visibility = ', visibility)
+
+    store('publishAlert', data.publishAlert)
+
+    if (visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE) {
+      trigger('PublishWarningModal', { bot })
+    }
+    visibility !== assistantVisibility ||
+    bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
+      ? toast
+          .promise(
+            changeVisibility.mutateAsync(
+              {
+                name,
+                visibility,
+                inEditor: isEditor,
+                deploymentState,
+              },
+              {
+                onSuccess: () => {
+                  assistantVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
+                    queryClient.invalidateQueries(['publicDists'])
+                },
+              }
+            ),
+            {
+              loading: t('modals.publish_assistant.toasts.loading'),
+              success:
+                visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+                  ? t('modals.publish_assistant.toasts.submitted')
+                  : t('toasts.success'),
+              error: t('toasts.error'),
+            }
+          )
+          .then(() => {
+            closeModal()
+          })
+      : closeModal()
+  }
+
+  const closeModal = () => {
+    reset()
+    setIsOpen(false)
+    setBot(null)
+  }
+
+  useEffect(() => {
+    const isVisibility = bot?.visibility !== undefined
+
+    if (isVisibility) setValue('visibility', bot?.visibility)
+    setValue('publishAlert', isPushAlert)
+  }, [bot?.visibility, isPushAlert])
+
+  useObserver('PublishAssistantModal', handleEventUpdate)
+  return (
+    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
+      <div className={s.publishAssistantModal}>
+        <div className={s.header}>
+          <h4>{t('modals.publish_assistant.header')}</h4>
+        </div>
+        <form onSubmit={handleSubmit(handlePublish)} className={s.form}>
+          <div className={s.body}>
+            <div className={s.radio}>
+              {visibilityList.map(type => {
+                return (
+                  <RadioButton
+                    props={{
+                      ...register('visibility', { required: true }),
+                    }}
+                    tooltipId={type.id}
+                    key={type.id}
+                    name={type.id}
+                    id={type.name}
+                    htmlFor={type.name}
+                    value={type.id}
+                  >
+                    {type.description}
+                  </RadioButton>
+                )
+              })}
+            </div>
+            {/* <Checkbox
+              theme='secondary'
+              name='alertMessage'
+              label='Don’t show alert message again'
+              props={{ ...register('publishAlert') }}
+            /> */}
+          </div>
+          <div className={s.btns}>
+            <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
+              {t('modals.publish_assistant.btns.no')}
+            </Button>
+            <Button
+              theme='primary'
+              props={{
+                type: 'submit',
+                disabled: changeVisibility?.isLoading,
+              }}
+            >
+              {selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+                ? t('modals.publish_assistant.btns.publish')
+                : t('modals.publish_assistant.btns.save')}
+            </Button>
+          </div>
+        </form>
+      </div>
+      <BaseToolTip
+        id={VISIBILITY_STATUS.PUBLIC_TEMPLATE}
+        content={t('modals.publish_assistant.tooltips.public')}
+        theme='small'
+      />
+      <BaseToolTip
+        id={VISIBILITY_STATUS.UNLISTED_LINK}
+        content={t('modals.publish_assistant.tooltips.unlisted')}
+        theme='small'
+      />
+    </BaseModal>
+  )
+}

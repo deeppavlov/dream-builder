@@ -1,0 +1,8 @@
+pydantic[email]~=1.9.0
+git+https://github.com/deeppavlov/deeppavlov_dreamtools@dev#egg=deeppavlov_dreamtools
+sqlalchemy==2.0.5
+psycopg2-binary==2.9.5
+celery~=5.2.7
+flower~=1.2.0
+redis~=4.5.5
+gitpython==3.1.31

@@ -1,19 +1,18 @@
+import { App } from 'App'
+import { AuthProvider, PreviewProvider, UIOptionsProvider } from 'context'
+import { prepare } from 'mocks/prepare'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, RouterProvider } from 'react-router-dom'
-import { AuthProvider } from './context/AuthProvider'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { PreviewProvider } from './context/PreviewProvider'
-import { router } from './router/Router'
-import { App } from './App'
-import { prepare } from './mocks/prepare'
-import { DisplayProvider } from './context/DisplayContext'
+import { RouterProvider } from 'react-router-dom'
+import { router } from 'router/Router'
+import './i18n'
 
 const queryClient = new QueryClient()
 
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <AuthProvider>
-      <DisplayProvider>
+      <UIOptionsProvider>
         <PreviewProvider>
           <QueryClientProvider client={queryClient}>
             <App>
@@ -21,7 +20,7 @@ prepare().then(() => {
             </App>
           </QueryClientProvider>
         </PreviewProvider>
-      </DisplayProvider>
+      </UIOptionsProvider>
     </AuthProvider>
   )
 })

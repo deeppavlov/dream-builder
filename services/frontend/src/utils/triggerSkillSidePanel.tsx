@@ -1,33 +1,38 @@
-import { TRIGGER_RIGHT_SP_EVENT } from '../components/BaseSidePanel/BaseSidePanel'
-import GenerativeSkillEditor from '../components/GenerativeSkillEditor/GenerativeSkillEditor'
-import IntentResponderSidePanel from '../components/IntentResponderSidePanel/IntentResponderSidePanel'
-import SkillSidePanel from '../components/SkillSidePanel/SkillSidePanel'
-import { ISkill, SkillAvailabilityType } from '../types/types'
+import { ISkill, SkillAvailabilityType } from 'types/types'
+import { SkillSidePanel } from 'components/Panels'
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
+import SkillDetailsSidePanel from 'components/Panels/SkillDetailsSidePanel/SkillDetailsSidePanel'
+import IntentResponderSidePanel from 'components/Unused/IntentResponderSidePanel/IntentResponderSidePanel'
 import { trigger } from './events'
 
 interface Props {
   skill: ISkill
-  activeTab: 'Properties' | 'Editor'
-  type?: SkillAvailabilityType
-  parent?: React.MutableRefObject<any>
+  distName: string
+  activeTab: 'properties' | 'details'
+  visibility?: SkillAvailabilityType
+  isOpen?: boolean
 }
 
 const triggerSkillSidePanel = ({
   skill,
-  type,
+  distName,
+  visibility,
   activeTab,
-  parent,
+  isOpen,
 }: Props): void => {
+  const component_id = skill?.component_id ?? skill?.id
+  const key = `${component_id}_${visibility}_${activeTab}`
+
   const triggerByName = (displayName: string) => {
     switch (displayName) {
       case 'Dff Intent Responder Skill':
         trigger(TRIGGER_RIGHT_SP_EVENT, {
-          parent,
+          isOpen,
           children: (
             <IntentResponderSidePanel
-              key={displayName + activeTab}
+              key={key}
               skill={skill}
-              activeTab={activeTab}
+              // activeTab={activeTab}
             />
           ),
         })
@@ -35,11 +40,13 @@ const triggerSkillSidePanel = ({
 
       default:
         trigger(TRIGGER_RIGHT_SP_EVENT, {
-          parent,
+          isOpen,
           children: (
             <SkillSidePanel
-              key={displayName + activeTab}
-              skill={skill}
+              key={key}
+              component_id={component_id}
+              distName={distName}
+              visibility={visibility}
               activeTab={activeTab}
             />
           ),
@@ -48,19 +55,18 @@ const triggerSkillSidePanel = ({
     }
   }
 
-  if (type === 'public') {
-    triggerByName(skill.display_name!)
-    return
-  }
+  // if (visibility === 'public') return triggerByName(skill.display_name!)
 
   switch (skill?.name?.includes('prompted')) {
     case true:
       trigger(TRIGGER_RIGHT_SP_EVENT, {
-        parent,
+        isOpen,
         children: (
-          <GenerativeSkillEditor
-            key={skill.display_name + activeTab}
-            skill={skill}
+          <SkillDetailsSidePanel
+            key={key}
+            component_id={component_id}
+            distName={distName}
+            visibility={visibility}
             activeTab={activeTab}
           />
         ),

@@ -1,4 +1,5 @@
 import secrets
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseModel, BaseSettings, Field
@@ -12,8 +13,9 @@ def _default_agent_user_id_prefix():
 
 
 class AppSettings(BaseModel):
+    default_openai_api_key: str
+    agent_user_id_prefix: str
     add_cors_middleware: Optional[bool] = False
-    agent_user_id_prefix: Optional[str] = Field(default_factory=_default_agent_user_id_prefix)
 
 
 class UrlSettings(BaseModel):
@@ -28,7 +30,8 @@ class DatabaseSettings(BaseModel):
     host: str
     port: int
     name: str
-    dream_root_path: Optional[str]
+    initial_data_dir: Path
+    dream_root_path: Optional[Path]
 
 
 class AuthSettings(BaseModel):
@@ -46,12 +49,50 @@ class SmtpSettings(BaseModel):
     password: str
 
 
+class DeployerSettings(BaseModel):
+    registry_url: str
+    portainer_url: str
+    portainer_key: str
+    default_prefix: str
+
+
+# class StorageSettings(BaseModel):
+#     region_name: str
+#     aws_access_key_id: str
+#     aws_secret_access_key: str
+
+
+class GitSettings(BaseModel):
+    local_path: Path
+    username: str
+    remote_access_token: str
+    remote_source_url: str
+    remote_source_branch: str
+    remote_copy_url: str
+    remote_copy_branch: str
+
+
+class CelerySettings(BaseModel):
+    broker: str
+    backend: str
+
+
+class RedisSettings(BaseModel):
+    host: str
+    port: int
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings
     db: DatabaseSettings
     auth: AuthSettings
     smtp: SmtpSettings
+    deployer: DeployerSettings
+    # storage: StorageSettings
+    git: GitSettings
+    celery: CelerySettings
+    redis: RedisSettings
 
     class Config:
         env_file = ".env"

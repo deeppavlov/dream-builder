@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  .switch {
+    padding: 12px;
+    gap: 4px;
+    border: 1px solid $text3;
+    background-color: $bcgrnd1;
+    color: $text2;
+    &.left {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+      border-right: none;
+    }
+    &.right {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      border-left: 1px solid $text5;
+    }
+    svg {
+      stroke: $text2;
+      @include icon_size_24;
+    }
+    &:hover,
+    &:focus-visible,
+    &.active {
+      svg {
+        stroke: $text5;
+      }
+      border-color: $text5;
+    }
+  }
+}

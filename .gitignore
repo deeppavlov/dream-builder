@@ -74,11 +74,11 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.env
-.env.dev.local
-.env.test.local
-.env.prod.local
-.env.local
+#.env
+#.env.dev.local
+#.env.test.local
+#.env.prod.local
+#.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 =======
@@ -262,6 +262,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
 .venv
 env/
 venv/
@@ -316,4 +317,4 @@ src/.DS_Store
 *.sln
 *.sw?
 client_secret.json
-database/initial_data/*
+database/initial_data*

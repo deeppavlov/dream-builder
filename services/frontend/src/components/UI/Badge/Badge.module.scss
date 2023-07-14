@@ -1,0 +1,28 @@
+.trapezoid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  top: 16px;
+  right: -30px;
+  height: 0;
+  width: 120px;
+  rotate: 45deg;
+  border-bottom: 30px solid $salad;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  z-index: 1;
+}
+
+.text {
+  position: absolute;
+  top: 7px;
+  font-family: $main-font;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 16px;
+  color: #000;
+  text-align: center;
+  white-space: nowrap;
+}

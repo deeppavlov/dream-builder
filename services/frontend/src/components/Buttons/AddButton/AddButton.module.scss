@@ -1,0 +1,65 @@
+.forCard.forGrid {
+  @include forGrid;
+}
+.forCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  padding: 0px 24px;
+  overscroll-behavior: none;
+  gap: 4px;
+  min-width: 280px;
+  max-width: 280px;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  @include min_max_height;
+  @include btn_add-bot-card_behavior(12);
+
+  img {
+    width: 32px;
+    height: 32px;
+  }
+}
+.forSkills {
+  position: relative;
+  @include min_max_height_skill;
+}
+.tr {
+  position: sticky;
+  left: 0;
+  top: 60px;
+  z-index: 1;
+
+  .td {
+    border: none;
+    background: #ffffff;
+    padding: 0 12px 12px 12px !important;
+  }
+
+  .forTable {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 36px;
+    background: #e6e8f0;
+    border-radius: 8px;
+    @include btn_add-bot-card_behavior(8);
+    p {
+      color: $text1;
+      @include lnks_n_btns5;
+    }
+    img {
+      stroke: $text1;
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+.disabled {
+  @include disabled;
+}

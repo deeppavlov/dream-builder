@@ -1,0 +1,13 @@
+services:
+
+  testrunner:
+    env_file: [ .envs/.env.alpha ]
+    build:
+      context: ..
+      dockerfile: ../tests/backend/Dockerfile
+    depends_on:
+      - distributions-api
+    deploy:
+      resources:
+        limits:
+          memory: 256M

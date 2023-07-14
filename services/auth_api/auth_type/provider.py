@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-from typing import Union
 from urllib.parse import urlencode, parse_qs
 
 import aiohttp
+import sqlalchemy.exc
 from fastapi import HTTPException
 from google.auth import jwt
 from sqlalchemy.orm import Session
@@ -10,14 +10,18 @@ from google_auth_oauthlib.flow import Flow
 
 import database
 from apiconfig.config import settings, CLIENT_SECRET_FILENAME
-from database import crud
 from database.models import GithubUserValid, GoogleUserValid
 from services.auth_api import auth_type
 from services.auth_api.models import GithubUserCreate, UserCreate, UserValidScheme
 from services.shared.user import User
 from services.auth_api.models import UserToken
 
-flow: Flow = Flow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILENAME, scopes=None)
+from database.models import google_uservalid, google_user, github_uservalid, github_user, user
+
+flow: Flow = Flow.from_client_secrets_file(
+    client_secrets_file=CLIENT_SECRET_FILENAME,
+    scopes="openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+)
 
 
 class GithubAuth(auth_type.OAuth):
@@ -36,7 +40,7 @@ class GithubAuth(auth_type.OAuth):
 
     async def validate_token(self, db: Session, token: str) -> User:
         try:
-            uservalid_info_from_db = crud.get_github_uservalid_by_access_token(db, token)
+            uservalid_info_from_db = github_uservalid.crud.get_by_access_token(db, token)
             if not uservalid_info_from_db:
                 raise ValueError("The user with this token couldn't be found or token is not valid.")
 
@@ -45,17 +49,11 @@ class GithubAuth(auth_type.OAuth):
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
-        user_id = crud.get_general_user_by_outer_id(db, user_info_from_github["id"], self.PROVIDER_NAME).id
-        return User(
-            id=user_id,
-            outer_id=user_info_from_github["id"],
-            email=user_info_from_github["email"],
-            picture=user_info_from_github["avatar_url"],
-            name=user_info_from_github["name"] or user_info_from_github["login"],
-        )
+        user_ = user.crud.get_general_user_by_outer_id(db, user_info_from_github["id"], self.PROVIDER_NAME)
+        return User.from_orm(user_)
 
     async def logout(self, db: Session, token: str) -> None:
-        crud.set_github_users_access_token_invalid(db, token)
+        github_uservalid.crud.set_token_invalid(db, token)
 
     async def exchange_authcode(self, db: Session, auth_code: str) -> UserToken:
         user_data, access_token = await self._fetch_user_info_by_auth_code(auth_code)
@@ -69,24 +67,21 @@ class GithubAuth(auth_type.OAuth):
             name=user_data["name"] or user_data["login"],
         )
 
-        if crud.check_github_user_exists(db, github_id):
-            general_user = crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
+        if github_user.crud.check_user_exists(db, github_id):
+            general_user = user.crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
         else:
-            general_user = crud.add_user(
+            general_user = user.crud.add_user(
                 db=db,
                 provider_name=self.PROVIDER_NAME,
                 outer_id=str(github_user_create.github_id),
             )
-            crud.add_github_user(db, github_user_create, general_user.id)
+            github_user.crud.add_user(db, github_user_create, general_user.id)
 
-        crud.add_github_uservalid(db=db, user_id=general_user.id, access_token=access_token)
+        github_uservalid.crud.add_user(db=db, user_id=general_user.id, access_token=access_token)
+        general_user = User.from_orm(general_user)
 
         return UserToken(
-            id=general_user.id,
-            email=github_user_create.email,
-            outer_id=github_user_create.github_id,
-            picture=github_user_create.picture,
-            name=github_user_create.name,
+            **general_user.__dict__,
             token=access_token,
         )
 
@@ -163,57 +158,61 @@ class GoogleOAuth2(auth_type.OAuth2):
             data = await self._fetch_user_info_by_access_token(access_token=token)
 
             self._validate_aud(data["aud"])
-            self._validate_email(data["email"], db)
-            user: database.models.GoogleUser = crud.get_user_by_sub(db, data["sub"])
+            self._validate_email(data["sub"], db)
+            google_user_: database.models.GoogleUser = google_user.crud.get_by_outer_id(db, data["sub"])
+            if not google_user_:
+                raise ValueError("The user couldn't be found in the database")
             # user = crud.update_user(db, user.id, **data)
 
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
-        return User(
-            id=user.user_id,
-            outer_id=user.sub,
-            email=user.email,
-            picture=user.picture,
-            name=user.given_name or user.fullname,
-        )
+        user_ = user.crud.get_general_user_by_outer_id(db, data["sub"], self.PROVIDER_NAME)
+        return User.from_orm(user_)
 
     async def logout(self, db: Session, token: str):
-        crud.set_users_refresh_token_invalid(db, token)
+        google_uservalid.crud.set_token_invalid(db, token)
 
     async def exchange_authcode(self, db: Session, auth_code: str):
         try:
             flow.fetch_token(code=auth_code)
         except ValueError as e:
             raise HTTPException(status_code=402, detail=str(e))
-
         credentials = flow.credentials
         access_token = credentials.token
         refresh_token = credentials.refresh_token
         jwt_data = credentials._id_token
 
         user_info = jwt.decode(jwt_data, verify=False)
-
-        if crud.check_google_user_exists(db, user_info["sub"]):
-            general_user = crud.get_general_user_by_outer_id(db, user_info["sub"], self.PROVIDER_NAME)
+        if google_user.crud.check_user_exists(db, user_info["sub"]):
+            general_user = user.crud.get_general_user_by_outer_id(db, user_info["sub"], self.PROVIDER_NAME)
         else:
-            general_user = crud.add_user(
-                db=db,
-                provider_name=self.PROVIDER_NAME,
-                outer_id=user_info["sub"],
-            )
-            crud.add_google_user(db, UserCreate(**user_info), general_user.id)
+            try:
+                general_user = user.crud.add_user(
+                    db=db,
+                    provider_name=self.PROVIDER_NAME,
+                    outer_id=user_info["sub"],
+                )
+                google_user.crud.add_google_user(db, UserCreate(**user_info), general_user.id)
+            except sqlalchemy.exc.IntegrityError as e:
+                db.rollback()
+                raise e
 
         expire_date = datetime.now() + timedelta(days=settings.auth.refresh_token_lifetime_days)
-
         user_valid = UserValidScheme(
             user_id=general_user.id, refresh_token=refresh_token, is_valid=True, expire_date=expire_date
         )
-        crud.add_user_to_uservalid(db, user_valid)
+
+        try:
+            google_uservalid.crud.add_user(db, user_valid)
+        except sqlalchemy.exc.IntegrityError as e:
+            db.rollback()
+            raise e
+
         return UserToken(**User.from_orm(general_user).__dict__, token=access_token, refresh_token=refresh_token)
 
     async def update_access_token(self, db: Session, refresh_token: str) -> dict[str, str]:
-        user: GoogleUserValid = crud.get_uservalid_by_refresh_token(db, refresh_token)
+        user: GoogleUserValid = google_uservalid.crud.get_by_refresh_token(db, refresh_token)
 
         if not user:
             raise HTTPException(status_code=401, detail="User is not authenticated!")
@@ -265,8 +264,8 @@ class GoogleOAuth2(auth_type.OAuth2):
             raise ValueError("Audience is not valid!")
 
     @staticmethod
-    def _validate_email(email: str, db: Session) -> None:
-        if not crud.check_google_user_exists(db, email):
+    def _validate_email(sub: str, db: Session) -> None:
+        if not google_user.crud.check_user_exists(db, sub):
             raise ValueError("User is not listed in the database")
 
     @staticmethod

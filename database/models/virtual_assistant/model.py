@@ -23,8 +23,8 @@ class VirtualAssistant(Base):
     cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship("GoogleUser", back_populates="virtual_assistants")
+    author_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship("GeneralUser", back_populates="virtual_assistants")
 
     source = Column(String, nullable=False)
     name = Column(String, unique=True, nullable=False)

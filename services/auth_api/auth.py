@@ -3,14 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, status
 from sqlalchemy.orm import Session
 
-import database.crud as crud
-import database.models
 from database.core import init_db
 from apiconfig.config import settings
+from database.models import google_user
 from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type.provider import GithubAuth, GoogleOAuth2
 from services.auth_api.models import UserToken
+from services.auth_api.test_user import TestUser
 
 router = APIRouter(prefix="/auth")
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
@@ -30,6 +30,8 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "github": GithubAuth(),
 }
 
+test_user = TestUser()
+
 
 @router.get("/token", status_code=status.HTTP_200_OK)
 async def validate_jwt(
@@ -43,16 +45,17 @@ async def validate_jwt(
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        user: database.models.GoogleUser = crud.get_user_by_sub(db, "106152631136730592791")
+        user: google_user.model = google_user.crud.get_by_outer_id(db, "106152631136730592791")
         name = user.fullname
-        return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name)
+        return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name,
+                    role=user.role)
 
     return await PROVIDERS[auth_type].validate_token(db, token)
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
-        token: str = Header(), auth_type: Annotated[str | None, Header()] = None, db: Session = Depends(get_db)
+        token: str = Header(), auth_type: str = Header(default=""), db: Session = Depends(get_db)
 ) -> None:
     """
     refresh_token -> token

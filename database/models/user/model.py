@@ -1,42 +1,41 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    ForeignKey,
-)
-from sqlalchemy.event import listens_for
-from sqlalchemy.orm import relationship
-from sqlalchemy.types import DateTime
-
 from apiconfig.config import settings
 from database.core import Base
-from database.utils import DateTimeUtcNow, pre_populate_from_tsv
+from database.utils import pre_populate_from_tsv
+from sqlalchemy import Column, ForeignKey, Integer, Sequence, String, UniqueConstraint
+from sqlalchemy.event import listens_for
+from sqlalchemy.orm import relationship
 
 
-class GoogleUser(Base):
-    __tablename__ = "google_user"
+class GeneralUser(Base):
+    """
+    outer_id is the identifier of the third-party auth provider.
+        For Google, it's sub, for GitHub - it's id (`github_id`)
+    """
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String)
-    sub = Column(String, unique=True)
+    __tablename__ = "user"
 
-    picture = Column(String(500), nullable=True)
+    id = Column(
+        Integer,
+        Sequence("user_id_seq", start=3, increment=1),
+        primary_key=True,
+        index=True,
+    )
+    outer_id = Column(String)
+    provider_id = Column(Integer, ForeignKey("provider.id"), nullable=False)
 
-    fullname = Column(String(100), nullable=True)
-    given_name = Column(String(50), nullable=True)
-    family_name = Column(String(50), nullable=True)
-
-    date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
-
-    role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
-    role = relationship("Role")
+    google_user = relationship("GoogleUser", backref="user", uselist=False)
+    github_user = relationship("GithubUser", backref="user", uselist=False)
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
     components = relationship("Component", back_populates="author", passive_deletes=True)
     dialog_sessions = relationship("DialogSession", back_populates="user", passive_deletes=True)
     # api_tokens = relationship("UserApiToken", back_populates="user", passive_deletes=True)
 
+    # This constraint stands for uniqueness of the two fields simultaneously. Outer_id can be repeated
+    # but pair (outer_id & provider_id) cannot.
+    __table_args__ = (UniqueConstraint("outer_id", "provider_id", name="outer_provider_uc"),)
 
-@listens_for(GoogleUser.__table__, "after_create")
+
+@listens_for(GeneralUser.__table__, "after_create")
 def pre_populate_google_user(target, connection, **kw):
-    pre_populate_from_tsv(settings.db.initial_data_dir / "google_user.tsv", target, connection)
+    pre_populate_from_tsv(settings.db.initial_data_dir / "user.tsv", target, connection)

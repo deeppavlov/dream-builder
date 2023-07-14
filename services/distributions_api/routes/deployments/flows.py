@@ -4,6 +4,7 @@ import requests
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from fastapi import HTTPException
+from requests import HTTPError
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -67,10 +68,14 @@ def patch_deployment(db: Session, deployment: schemas.DeploymentRead):
 
 
 def delete_deployment(db: Session, deployment: schemas.DeploymentRead):
-    if deployment.stack_id:
-        swarm_client.delete_stack(deployment.stack_id)
+    try:
+        if deployment.stack_id:
+            swarm_client.delete_stack(deployment.stack_id)
+    except HTTPError:
+        pass
 
     delete_by_id(db, deployment.id)
+    db.commit()
 
 
 def get_swarm_stacks():

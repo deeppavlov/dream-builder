@@ -25,6 +25,7 @@ interface Props {
   label?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
   fullWidth?: boolean
+  fullHeight?: boolean
   withoutSearch?: boolean
   small?: boolean
   onSelectItem?: (id: string) => void
@@ -40,6 +41,7 @@ const SkillDropboxSearch = ({
   label,
   props,
   fullWidth,
+  fullHeight,
   withoutSearch,
   small,
   onSelectItem,
@@ -89,6 +91,7 @@ const SkillDropboxSearch = ({
         isOpen && 'open',
         error && 'error',
         fullWidth && 'fullWidth',
+        fullHeight && 'fullHeight',
         small && 'small'
       )}
       onFocus={() => setIsOpen(true)}

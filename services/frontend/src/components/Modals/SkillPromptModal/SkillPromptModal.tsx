@@ -9,6 +9,7 @@ import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
 import { IPromptBlock, ISkill, LM_Service } from 'types/types'
 import { DEPLOY_STATUS } from 'constants/constants'
+import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
@@ -17,6 +18,7 @@ import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getValidationSchema } from 'utils/getValidationSchema'
+import sortByGroup from 'utils/sortByGroup'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
@@ -74,13 +76,16 @@ const SkillPromptModal = () => {
     refetchOnWindowFocus: false,
   })
 
-  const dropboxArray =
+  const dropboxArray: any[] = sortByGroup(
     services?.map((service: LM_Service) => ({
       id: service?.id?.toString(),
       name: service?.name,
       display_name: service?.display_name,
       disabled: !service?.is_maintained,
-    })) || []
+      company_name: serviceCompanyMap?.[service?.name],
+    })) || [],
+    'company_name'
+  )
 
   const {
     handleSubmit,
@@ -267,6 +272,7 @@ const SkillPromptModal = () => {
                 }}
                 list={dropboxArray}
                 fullWidth
+                fullHeight
                 withoutSearch
               />
               <Button

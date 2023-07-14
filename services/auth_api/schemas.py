@@ -1,10 +1,11 @@
 from typing import Optional
 
-from pydantic import ConfigDict, BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr
 
 
 class BaseOrmModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        orm_mode = True
 
 
 class RoleRead(BaseOrmModel):
@@ -21,7 +22,7 @@ class User(BaseOrmModel):
     email: EmailStr
     sub: str
     role: RoleRead
-    picture: Optional[str] = None
-    fullname: Optional[str] = None
-    given_name: Optional[str] = None
-    family_name: Optional[str] = None
+    picture: Optional[str]
+    fullname: Optional[str]
+    given_name: Optional[str]
+    family_name: Optional[str]

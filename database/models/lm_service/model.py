@@ -6,7 +6,6 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.event import listens_for
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from apiconfig.config import settings
@@ -32,11 +31,6 @@ class LmService(Base):
 
     api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
     api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
-
-    lm_service_prompt_block_associations = relationship(
-        "LmServicePromptBlock", uselist=True, back_populates="lm_service", passive_deletes=True
-    )
-    prompt_blocks = association_proxy("lm_service_prompt_block_associations", attr="prompt_block")
 
     is_hosted = Column(Boolean, nullable=False)
     is_maintained = Column(Boolean, nullable=False)

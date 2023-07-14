@@ -24,14 +24,14 @@ def send_publish_request_reviewed_emails(owner_email: str, virtual_assistant_dis
 @admin_router.get("/publish_request", status_code=status.HTTP_200_OK)
 async def get_all_publish_requests(
     user: schemas.UserRead = Depends(get_admin_user), db: Session = Depends(get_db)
-) -> list[schemas.PublishRequestRead]:
+) -> [schemas.PublishRequestRead]:
     return [schemas.PublishRequestRead.from_orm(pr) for pr in publish_request_crud.get_all_publish_requests(db)]
 
 
 @admin_router.get("/publish_request/unreviewed", status_code=status.HTTP_200_OK)
 async def get_unreviewed_publish_requests(
     user: schemas.UserRead = Depends(get_admin_user), db: Session = Depends(get_db)
-) -> list[schemas.PublishRequestRead]:
+) -> [schemas.PublishRequestRead]:
     return [schemas.PublishRequestRead.from_orm(pr) for pr in publish_request_crud.get_unreviewed_publish_requests(db)]
 
 

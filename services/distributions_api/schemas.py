@@ -6,14 +6,16 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     MODEL_TYPES,
     check_memory_format,
 )
-from pydantic import field_validator, ConfigDict, BaseModel, Field, EmailStr
-from sqlalchemy.ext.associationproxy import _AssociationList
+from pydantic import BaseModel, Field, validator, EmailStr
 
 from database import enums
 
+# PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
+
 
 class BaseOrmModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        orm_mode = True
 
 
 class RoleRead(BaseOrmModel):
@@ -30,10 +32,10 @@ class UserRead(BaseOrmModel):
     email: EmailStr
     sub: str
     role: RoleRead
-    picture: Optional[str] = None
-    fullname: Optional[str] = None
-    given_name: Optional[str] = None
-    family_name: Optional[str] = None
+    picture: Optional[str]
+    fullname: Optional[str]
+    given_name: Optional[str]
+    family_name: Optional[str]
 
 
 class ApiKeyRead(BaseOrmModel):
@@ -44,49 +46,29 @@ class ApiKeyRead(BaseOrmModel):
     base_url: str
 
 
-class PromptBlockRead(BaseOrmModel):
-    id: int
-    category: Optional[str] = None
-    display_name: str
-    template: str
-    example: str
-    description: str
-    newline_before: bool
-    newline_after: bool
-
-
 class LmServiceRead(BaseOrmModel):
     id: int
     name: str
     display_name: str
     size: str
-    gpu_usage: Optional[str] = None
+    gpu_usage: Optional[str]
     max_tokens: int
     description: str
     project_url: str
-    api_key: Optional[ApiKeyRead] = None
-    prompt_blocks: Optional[list[PromptBlockRead]] = None
-    is_hosted: bool
+    api_key: Optional[ApiKeyRead]
     is_maintained: bool
-
-    @classmethod
-    @field_validator("prompt_blocks", mode="before")
-    def cast_associations_to_list(cls, v):
-        if isinstance(v, _AssociationList):
-            return list(v)
-        return v
 
 
 class DeploymentBaseRead(BaseOrmModel):
     id: int
     chat_host: str
-    chat_port: Optional[int] = None
+    chat_port: Optional[int]
     date_created: datetime
-    state: Optional[enums.DeploymentState] = None
-    error: Optional[dict] = None
-    date_state_updated: Optional[datetime] = None
-    stack_id: Optional[int] = None
-    task_id: Optional[str] = None
+    state: Optional[enums.DeploymentState]
+    error: Optional[dict]
+    date_state_updated: Optional[datetime]
+    stack_id: Optional[int]
+    task_id: Optional[str]
 
 
 class ComponentRead(BaseOrmModel):
@@ -94,21 +76,20 @@ class ComponentRead(BaseOrmModel):
     source: str
     name: str
     display_name: str
-    component_type: Optional[COMPONENT_TYPES] = None
-    model_type: Optional[MODEL_TYPES] = None
+    component_type: Optional[COMPONENT_TYPES]
+    model_type: Optional[MODEL_TYPES]
     is_customizable: bool
     author: UserRead
-    description: Optional[str] = None
-    ram_usage: Optional[str] = None
-    gpu_usage: Optional[str] = None
-    prompt: Optional[str] = None
-    prompt_goals: Optional[str] = None
-    lm_service: Optional[LmServiceRead] = None
-    lm_config: Optional[dict] = None
+    description: Optional[str]
+    ram_usage: Optional[str]
+    gpu_usage: Optional[str]
+    prompt: Optional[str]
+    prompt_goals: Optional[str]
+    lm_service: Optional[LmServiceRead]
+    lm_config: Optional[dict]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
-    @field_validator("ram_usage", "gpu_usage")
-    @classmethod
+    @validator("ram_usage", "gpu_usage")
     def check_memory_format(cls, v):
         check_memory_format(v)
         return v
@@ -116,26 +97,26 @@ class ComponentRead(BaseOrmModel):
 
 class ComponentGenerativeRead(BaseOrmModel):
     id: int
-    prompt: Optional[str] = None
-    lm_service: Optional[LmServiceRead] = None
-    lm_config: Optional[dict] = None
+    prompt: Optional[str]
+    lm_service: Optional[LmServiceRead]
+    lm_config: Optional[dict]
 
 
 class ComponentCreate(BaseModel):
     display_name: str
-    description: Optional[str] = None
-    prompt: Optional[str] = None
-    prompt_goals: Optional[str] = None
-    lm_service_id: Optional[int] = None
-    lm_config: Optional[dict] = None
+    description: Optional[str]
+    prompt: Optional[str]
+    prompt_goals: Optional[str]
+    lm_service_id: Optional[int]
+    lm_config: Optional[dict]
 
 
 class ComponentUpdate(BaseModel):
-    display_name: Optional[str] = None
-    description: Optional[str] = None
-    prompt: Optional[str] = None
-    lm_service_id: Optional[int] = None
-    lm_config: Optional[dict] = None
+    display_name: Optional[str]
+    description: Optional[str]
+    prompt: Optional[str]
+    lm_service_id: Optional[int]
+    lm_config: Optional[dict]
 
 
 class VirtualAssistantBaseRead(BaseOrmModel):
@@ -147,9 +128,9 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     description: str
     date_created: datetime
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
-    publish_state: Optional[enums.PublishRequestState] = None
-    cloned_from_id: Optional[int] = None
-    required_api_keys: Optional[List[ApiKeyRead]] = None
+    publish_state: Optional[enums.PublishRequestState]
+    cloned_from_id: Optional[int]
+    required_api_keys: Optional[List[ApiKeyRead]]
     # clones: List[VirtualAssistant]
 
     @classmethod
@@ -178,7 +159,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
 
 
 class VirtualAssistantRead(VirtualAssistantBaseRead):
-    deployment: Optional[DeploymentBaseRead] = None
+    deployment: Optional[DeploymentBaseRead]
 
 
 class VirtualAssistantCreate(BaseModel):
@@ -187,8 +168,8 @@ class VirtualAssistantCreate(BaseModel):
 
 
 class VirtualAssistantUpdate(BaseModel):
-    display_name: Optional[str] = None
-    description: Optional[str] = None
+    display_name: Optional[str]
+    description: Optional[str]
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):
@@ -200,20 +181,19 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     component_id: int
     name: str
     display_name: str
-    component_type: Optional[COMPONENT_TYPES] = None
-    model_type: Optional[MODEL_TYPES] = None
+    component_type: Optional[COMPONENT_TYPES]
+    model_type: Optional[MODEL_TYPES]
     is_customizable: bool
     author: UserRead
-    description: Optional[str] = None
-    ram_usage: Optional[str] = None
-    gpu_usage: Optional[str] = None
-    prompt: Optional[str] = None
-    lm_service: Optional[LmServiceRead] = None
+    description: Optional[str]
+    ram_usage: Optional[str]
+    gpu_usage: Optional[str]
+    prompt: Optional[str]
+    lm_service: Optional[LmServiceRead]
     date_created: datetime = Field(default_factory=datetime.utcnow)
     is_enabled: bool
 
-    @field_validator("ram_usage", "gpu_usage")
-    @classmethod
+    @validator("ram_usage", "gpu_usage")
     def check_memory_format(cls, v):
         check_memory_format(v)
         return v
@@ -242,7 +222,7 @@ class VirtualAssistantComponentPipelineRead(BaseModel):
     skills: List[VirtualAssistantComponentRead]
     candidate_annotators: List[VirtualAssistantComponentRead]
     response_selectors: List[VirtualAssistantComponentRead]
-    response_annotators: Optional[List[VirtualAssistantComponentRead]] = None
+    response_annotators: Optional[List[VirtualAssistantComponentRead]]
 
 
 class DialogSessionCreate(BaseModel):
@@ -251,9 +231,9 @@ class DialogSessionCreate(BaseModel):
 
 class DialogChatMessageCreate(BaseModel):
     text: str
-    prompt: Optional[str] = None
-    lm_service_id: Optional[int] = None
-    openai_api_key: Optional[str] = None
+    prompt: Optional[str]
+    lm_service_id: Optional[int]
+    openai_api_key: Optional[str]
 
 
 class DialogChatMessageRead(BaseModel):
@@ -264,7 +244,7 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
-    active_skill: Optional[str] = None
+    active_skill: Optional[str]
 
 
 # class UserApiToken(BaseOrmModel):
@@ -291,7 +271,7 @@ class DeploymentRead(DeploymentBaseRead):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_name: str
-    error: Optional[bool] = None
+    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):
@@ -301,9 +281,9 @@ class PublishRequestRead(BaseOrmModel):
     slug: str
     public_visibility: enums.VirtualAssistantPublicVisibility
     date_created: datetime
-    is_confirmed: Optional[bool] = None
-    reviewed_by_user: Optional[UserRead] = None
-    date_reviewed: Optional[datetime] = None
+    is_confirmed: Optional[bool]
+    reviewed_by_user: Optional[UserRead]
+    date_reviewed: Optional[datetime]
 
 
 class PublishRequestCreate(BaseOrmModel):
@@ -312,7 +292,7 @@ class PublishRequestCreate(BaseOrmModel):
 
 class DialogSessionRead(BaseOrmModel):
     id: int
-    user_id: Optional[int] = None
-    agent_dialog_id: Optional[str] = None
+    user_id: Optional[int]
+    agent_dialog_id: Optional[str]
     deployment: DeploymentRead
     is_active: bool

@@ -35,19 +35,8 @@ INITIAL_DATA_LISTS = [
     "virtual_assistant_names",
     "public_virtual_assistant_names",
     "lm_service",
-    "prompt_block",
-    "lm_service_prompt_block",
     "api_key",
     "role",
-]
-
-COPY_AS_IS_SHEETS = [
-    "role",
-    "google_user",
-    "lm_service",
-    "prompt_block",
-    "lm_service_prompt_block",
-    "api_key",
 ]
 
 
@@ -95,7 +84,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
     initial_secret = read_xlsx_file(initial_file)
 
-    for table_name in COPY_AS_IS_SHEETS:
+    for table_name in ["role", "google_user", "lm_service", "api_key"]:
         with open(f"{output_dir}/{table_name}.tsv", "w", encoding="utf-8") as table_tsv_f:
             table_csv_writer = csv.writer(table_tsv_f, delimiter="\t", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             table_csv_writer.writerow(list(initial_secret[table_name][0].keys()))

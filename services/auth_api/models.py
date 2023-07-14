@@ -1,22 +1,21 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import ConfigDict, BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserCreate(UserBase):
 
     email: EmailStr
     sub: str
-    picture: Optional[str]
-    name: Optional[str]
-    given_name: Optional[str]
-    family_name: Optional[str]
+    picture: Optional[str] = None
+    name: Optional[str] = None
+    given_name: Optional[str] = None
+    family_name: Optional[str] = None
 
 
 class UserRead(UserCreate):

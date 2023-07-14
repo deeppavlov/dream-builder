@@ -1,2 +1,2 @@
-git+https://github.com/deeppavlov/deeppavlov_dreamtools@dev#egg=deeppavlov_dreamtools
+git+https://github.com/deeppavlov/deeppavlov_dreamtools@fix/pydantic-v2-update#egg=deeppavlov_dreamtools
 openpyxl

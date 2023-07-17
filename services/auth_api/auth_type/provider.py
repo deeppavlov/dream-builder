@@ -173,7 +173,7 @@ class GoogleOAuth2(auth_type.OAuth2):
     async def logout(self, db: Session, token: str):
         google_uservalid.crud.set_token_invalid(db, token)
 
-    async def exchange_authcode(self, db: Session, auth_code: str):
+    async def exchange_authcode(self, db: Session, auth_code: str) -> UserToken:
         try:
             flow.fetch_token(code=auth_code)
         except ValueError as e:
@@ -211,13 +211,13 @@ class GoogleOAuth2(auth_type.OAuth2):
 
         return UserToken(**User.from_orm(general_user).__dict__, token=access_token, refresh_token=refresh_token)
 
-    async def update_access_token(self, db: Session, refresh_token: str) -> dict[str, str]:
-        user: GoogleUserValid = google_uservalid.crud.get_by_refresh_token(db, refresh_token)
+    async def update_access_token(self, db: Session, refresh_token: str) -> UserToken:
+        uservalid_: GoogleUserValid = google_uservalid.crud.get_by_refresh_token(db, refresh_token)
 
-        if not user:
+        if not uservalid_:
             raise HTTPException(status_code=401, detail="User is not authenticated!")
 
-        if not self._validate_date(user.expire_date):
+        if not self._validate_date(uservalid_.expire_date):
             # redirect?
             raise HTTPException(status_code=401, detail="Refresh token has expired!")
 
@@ -237,7 +237,9 @@ class GoogleOAuth2(auth_type.OAuth2):
             raise ValueError(f"Google token is bad. Response: {response}, status_code: {resp_status}")
 
         access_token = response["access_token"]
-        return {"token": access_token}
+
+        guser = User.from_orm(user.crud.get_by_id(db, uservalid_.user_id))
+        return UserToken(**guser.__dict__, refresh_token=refresh_token, token=access_token)
 
     ########################################################################
 

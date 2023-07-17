@@ -20,12 +20,12 @@ class BaseAuth(abc.ABC):
 
 
 class OAuth(BaseAuth):
-    async def exchange_authcode(self, db: Session, auth_code: str):
+    async def exchange_authcode(self, db: Session, auth_code: str) -> UserToken:
         pass
 
     login = exchange_authcode
 
 
 class OAuth2(OAuth):
-    async def update_access_token(self, db: Session, refresh_token: str):
+    async def update_access_token(self, db: Session, refresh_token: str) -> UserToken:
         pass

@@ -86,7 +86,7 @@ async def exchange_authcode(
 @router.post("/update_token")
 async def update_access_token(
         refresh_token: str, auth_type: auth_type.OAuth2ProviderNames = Header(default=""), db: Session = Depends(get_db)
-) -> dict[str, str]:
+) -> UserToken:
     return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
 
 # # TEST ONLY

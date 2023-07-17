@@ -28,3 +28,7 @@ def get_general_user_by_outer_id(db: Session, outer_id: str, provider_name: str)
 
 def get_all(db: Session) -> [GeneralUser]:
     return db.scalars(select(GeneralUser)).all()
+
+
+def get_by_id(db: Session, id: int) -> GeneralUser:
+    return db.query(GeneralUser).where(GeneralUser.id == id).first()

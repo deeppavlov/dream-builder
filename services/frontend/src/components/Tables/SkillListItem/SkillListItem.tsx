@@ -39,7 +39,15 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   handleAdd,
 }) => {
   const { i18n } = useTranslation()
-  const date = dateToUTC(skill?.date_created, i18n.language as TLocale)
+  const date = dateToUTC(
+    skill?.date_created,
+    i18n.language as TLocale,
+    {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }
+  )
   const time = timeToUTC(
     new Date(skill?.date_created),
     i18n.language as TLocale

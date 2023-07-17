@@ -10,7 +10,8 @@
     "stage": "vite --host --mode STAGE",
     "build": "vite build --mode PROD",
     "preview": "vite preview --port 5173",
-    "find-deadcode": "ts-prune | grep -v '(used in module)'"
+    "find-deadcode": "ts-prune | grep -v '(used in module)'",
+    "generate": "plop"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",

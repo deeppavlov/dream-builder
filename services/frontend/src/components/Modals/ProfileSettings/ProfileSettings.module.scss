@@ -1,0 +1,78 @@
+.profilesettings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f3;
+  overflow: hidden;
+  border-radius: 20px;
+  width: 1000px;
+  height: 574px;
+  .header {
+    background-color: #f9fafc;
+    height: 74px;
+    width: 100%;
+    padding: 12px 48px;
+    border-bottom: 1px solid #8d96b5;
+
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      .tab {
+        padding: 12px;
+        color: #8d96b5;
+        cursor: pointer;
+        @include lnks_n_btns3;
+        &.active {
+          color: rgba(0, 0, 0, 0.9);
+          cursor: default;
+        }
+      }
+    }
+  }
+  .body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 48px;
+    padding-top: 24px;
+    background-color: #f0f0f3;
+    width: 100%;
+    gap: 32px;
+    .left {
+      width: 148px;
+      img {
+        border-radius: 50%;
+        width: 148px;
+        height: 148px;
+      }
+    }
+    .right {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      .block {
+        display: flex;
+        flex-direction: column;
+        .btn {
+          padding: 0;
+          margin: 0;
+          width: fit-content;
+          color: #30f;
+          @include b2;
+        }
+        .key {
+          @include t2;
+        }
+        .value {
+          @include b2;
+        }
+      }
+    }
+  }
+}
+.baseModal {
+  padding: 0;
+}

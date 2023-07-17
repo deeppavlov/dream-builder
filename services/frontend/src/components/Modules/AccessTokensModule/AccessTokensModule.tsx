@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import { ReactComponent as Attention } from 'assets/icons/attention.svg'
 import { IApiService, IUserApiKey, LM_Service } from 'types/types'
 import { getTokens, getUserId } from 'api/user'
 import { trigger } from 'utils/events'
@@ -11,6 +12,7 @@ import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
+import { Wrapper } from 'components/UI'
 import s from './AccessTokensModule.module.scss'
 
 interface FormValues {
@@ -79,7 +81,7 @@ export const AccessTokensModule = () => {
         saveTokens(newState)
         return newState
       })
-      resolve('modals.access_api_keys.toasts.created')
+      resolve(t('modals.access_api_keys.toasts.token_created'))
     })
 
   const createUserToken = ({ service, token }: FormValues) =>
@@ -91,7 +93,7 @@ export const AccessTokensModule = () => {
       const isUserId = user?.id !== undefined
 
       if (!isService || !isUserId)
-        return reject('modals.access_api_keys.toasts.not_found_service')
+        return reject(t('modals.access_api_keys.toasts.not_found_service'))
 
       const newToken: IUserApiKey = {
         api_service: selectedService,
@@ -193,6 +195,16 @@ export const AccessTokensModule = () => {
           ))}
         </ul>
       )}
+      <Wrapper>
+        <div className={s.container}>
+          <div className={s.attention}>
+            <Attention />
+          </div>
+          <div className={s.annotation}>
+            {t('modals.access_api_keys.attention.annotation')}
+          </div>
+        </div>
+      </Wrapper>
     </div>
   )
 }

@@ -11,19 +11,16 @@
       }
     }
   },
-
   "public_templates_page": {
     "wrapper": {
       "title": "Публичные шаблоны"
     }
   },
-
   "your_assistants_page": {
     "wrapper": {
       "title": "Мои Ассистенты"
     }
   },
-
   "assistant_page": {
     "module": {
       "btns": {
@@ -57,11 +54,7 @@
       }
     }
   },
-
   "page_errors": {
-    "btns": {
-      "back_to_home": "Вернуться на главную"
-    },
     "401": {
       "title": "Погодите!",
       "message": "Вы не авторизованы!"
@@ -77,9 +70,11 @@
     "503": {
       "title": "Извините, у нас техобслуживание!",
       "message": "Подождите, пока мы не исправим ошибку. Можете обновить страницу или повторить попытку позже."
+    },
+    "btns": {
+      "back_to_home": "Вернуться на главную"
     }
   },
-
   "modals": {
     "access_api_keys": {
       "header": "Токены персонального доступа",
@@ -104,6 +99,9 @@
         "token_canceled": "Обновление токена отменено!",
         "not_found_token": "Токены не найдены.",
         "not_found_service": "Не найден сервис или id пользователя"
+      },
+      "attention": {
+        "annotation": "Токен для этого ИИ-Ассистента хранится в вашем браузере.\n\nПожалуйста, имейте в виду, что без добавления токена, Ассистент не будет работать, как задумано."
       }
     },
     "assistant": {
@@ -258,9 +256,31 @@
       "toasts": {
         "add": "Добавление..."
       }
+    },
+    "profile_settings": {
+      "tabs": {
+        "tokens": {
+          "title": "Токены персонального доступа"
+        },
+        "account": {
+          "title": "Аккаунт",
+          "name": "Имя",
+          "email": "Почта",
+          "language": "Язык",
+          "change": "Сменить язык"
+        }
+      }
+    },
+    "change_language_modal": {
+      "header": {
+        "annotation": "Выберите язык для использования на платформе Dream Builder и в электронной почте."
+      },
+      "footer": {
+        "cancel": "Отмена",
+        "save": "Сохранить\n"
+      }
     }
   },
-
   "sidepanels": {
     "skill_dialog": {
       "tabs": {
@@ -336,16 +356,13 @@
       }
     }
   },
-
   "tooltips": {
     "dialog_renew": "Начать новый диалог"
   },
-
   "ribbons": {
     "ready_for_chat": "Чат готов",
     "chat_error": "Ошибка!"
   },
-
   "toasts": {
     "success": "Успешно!",
     "error": "Что-то пошло не так...",
@@ -354,7 +371,6 @@
     "rename": "Переименование...",
     "save": "Сохранение..."
   },
-
   "ctx_menus": {
     "assistant": {
       "chat": "Начать диалог",
@@ -371,16 +387,13 @@
       "delete": "Удалить"
     }
   },
-
   "tabs": {
     "properties": "Свойства",
     "details": "Подробнее"
   },
-
   "accordions": {
     "desc": "Описание"
   },
-
   "cards": {
     "skill": {
       "tooltips": {
@@ -388,13 +401,11 @@
       }
     }
   },
-
   "card_btns": {
     "use": "Использовать",
     "edit": "Редактировать",
     "add": "Добавить"
   },
-
   "topbar": {
     "ctx_menus": {
       "main_burger": {
@@ -422,14 +433,12 @@
       "sign_in": "Войти"
     }
   },
-
   "breadcrumbs": {
     "your_assistants": "Мои Ассистенты",
     "public_templates": "Публичные шаблоны",
     "skills": "Навыки",
     "integration": "Интеграция"
   },
-
   "sidebar": {
     "tooltips": {
       "skills": "Навыки",
@@ -438,14 +447,12 @@
       "deepy": "Спросите Deepy, если вам нужна помощь в создании вашего Ассистента."
     }
   },
-
   "field_validation": {
     "required": "Это поле нужно заполнить",
     "invalid": "Невалидные данные",
     "desc_max": "Уместите текстовое описание в {{max}} знаков",
     "prompt_max": "Уместите текстовое описание промпта в {{max}} токенов"
   },
-
   "tokenizer": {
     "count_label": "токен",
     "count_suffixes": {
@@ -457,25 +464,21 @@
       "other": "ов"
     }
   },
-
   "api_key": {
     "required": {
       "label": "Введите свой личный токен доступа к OpenAI для запуска вашего Генеративного ИИ-навыка.",
       "link": "Введите личный токен доступа здесь"
     }
   },
-
   "assistant_visibility": {
     "on_moderation": "На модерации",
     "public_template": "Виден всем",
     "unlisted": "По ссылке",
     "private": "Скрыт"
   },
-
   "your_assistants": {
     "empty_placeholder": "Ваши Ассистенты появятся здесь"
   },
-
   "assistant_table": {
     "name": "Название",
     "author": "Автор",
@@ -485,7 +488,6 @@
     "actions": "Действия",
     "create_from_scratch_btn": "Создать с нуля"
   },
-
   "skill_table": {
     "name": "Название",
     "author": "Автор",
@@ -496,11 +498,19 @@
     "create_from_scratch_btn": "Создать с нуля",
     "add_btn": "Добавить скилл"
   },
-
   "assistants_not_loaded": {
     "header": "Что-то пошло не так... Повторите попытку позже.",
     "btns": {
       "retry": "Перезагрузить"
     }
+  },
+  "change_language_modal": {
+    "header": {
+      "title": "Сменить язык"
+    }
+  },
+  "language": {
+    "en": "Английский",
+    "ru": "Русский"
   }
 }

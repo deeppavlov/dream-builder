@@ -15,10 +15,7 @@
   gap: 8px;
 
   mark {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
+    @include text_ellipsis;
     @include b1;
   }
 }

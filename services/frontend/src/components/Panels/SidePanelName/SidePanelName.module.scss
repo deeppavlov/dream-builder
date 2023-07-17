@@ -8,8 +8,6 @@
   @include t3;
   
   span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include text_ellipsis;
   }
 }

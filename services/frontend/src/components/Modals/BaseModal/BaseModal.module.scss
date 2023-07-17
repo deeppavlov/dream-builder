@@ -17,11 +17,10 @@
 
   mark {
     display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     background-color: transparent;
     color: $primary1;
+
+    @include text_ellipsis;
   }
 }
 

@@ -21,9 +21,7 @@
 }
 
 .name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text_ellipsis;
   @include t3;
   color: $text1;
 }

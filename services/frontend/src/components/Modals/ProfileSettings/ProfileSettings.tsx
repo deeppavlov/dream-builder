@@ -18,7 +18,7 @@ enum ProfileTabs {
 interface ProfileSettingsProps {}
 
 export const ProfileSettings: FC<ProfileSettingsProps> = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<ProfileTabs>(ProfileTabs.account)
   const { t } = useTranslation()
   const cx = classNames.bind(s)

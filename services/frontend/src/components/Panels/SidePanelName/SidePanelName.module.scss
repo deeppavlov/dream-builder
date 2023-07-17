@@ -6,4 +6,10 @@
   gap: 12px;
   padding: 12px 24px 8px 24px;
   @include t3;
+  
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

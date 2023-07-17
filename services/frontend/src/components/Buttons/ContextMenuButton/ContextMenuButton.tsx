@@ -54,7 +54,7 @@ const ContextMenuButton = ({
     <SvgIcon
       iconName={type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type}
       svgProp={{
-        className: cx('icon', type === 'about' && 'dreambuilder'),
+        className: s.icon,
       }}
     />
   )

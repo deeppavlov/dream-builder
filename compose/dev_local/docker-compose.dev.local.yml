@@ -50,8 +50,8 @@ services:
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
       - ../../services/shared:/src/services/shared
-    depends_on:
-      - postgres
+#    depends_on:
+#      - postgres
     deploy:
       resources:
         limits:
@@ -69,9 +69,9 @@ services:
         DREAM_ROOT_PATH: /dream
         DREAM_BRANCH: dev
         PORT: 6998
-    depends_on:
-      - auth-api
-      - postgres
+#    depends_on:
+#      - auth-api
+#      - postgres
 #    depends_on:
 #      - auth-api
     ports:

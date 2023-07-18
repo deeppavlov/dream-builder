@@ -15,6 +15,7 @@
   gap: 8px;
 
   mark {
+    @include text_ellipsis;
     @include b1;
   }
 }

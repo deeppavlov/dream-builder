@@ -23,9 +23,7 @@
     white-space: nowrap;
     @include t4;
     span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @include text_ellipsis;
     }
   }
   .body {

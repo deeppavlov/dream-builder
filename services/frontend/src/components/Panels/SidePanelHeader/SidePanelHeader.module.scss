@@ -25,9 +25,7 @@
     flex-direction: row;
     width: fit-content;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include text_ellipsis;
 
     &:has([aria-selected='true']) {
       padding-bottom: 0;
@@ -40,11 +38,9 @@
   }
 
   [role='name'] {
-    @include b1;
     color: $text1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include b1;
+    @include text_ellipsis;
   }
 
   [aria-selected='true'] {

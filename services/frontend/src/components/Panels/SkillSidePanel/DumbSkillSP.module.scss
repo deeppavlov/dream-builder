@@ -21,6 +21,7 @@
 }
 
 .name {
+  @include text_ellipsis;
   @include t3;
   color: $text1;
 }

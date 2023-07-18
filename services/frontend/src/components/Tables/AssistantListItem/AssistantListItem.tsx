@@ -60,14 +60,15 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
   const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
+  const { t } = useTranslation()
   const publishState = onModeration
-    ? 'On Moderation'
+    ? t('assistant_visibility.on_moderation')
     : published
-    ? 'Public Template'
+    ? t('assistant_visibility.public_template')
     : unlistedAssistant
-    ? 'Unlisted'
+    ? t('assistant_visibility.unlisted')
     : privateAssistant
-    ? 'Private'
+    ? t('assistant_visibility.private')
     : null
 
   const isDeepyPavlova =

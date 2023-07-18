@@ -18,112 +18,9 @@ from .distributions_methods import (
 
 class TestDistributions:
 
-    # PERMISSIONS
-
-    #@pytest.mark.atom
-    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
-    def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
-        display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
-        name = user1.create_virtual_assistant(display_name)["name"]
-
-        user2 = UserMethods(auth_token_user2)
-        user2.get_va_by_name_no_access(name)
-        user2.clone_va_no_access(name)
-        user2.patch_va_by_name_no_access(name)
-        user2.delete_va_by_name_no_access(name)
-
-        user1.delete_va_by_name(name)
-
-    #@pytest.mark.atom
-    #@qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components")
-    #def test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components(self):
-    #    display_name = va_data["name"]
-    #    user1 = UserMethods(auth_token_user1)
-    #    name = user1.create_virtual_assistant(display_name)["name"]
-    #    skills = user1.get_va_components(name)["skills"]
-    #    component_id = [skill["id"] for skill in skills if skill["component_type"] == "Generative"][0]
-
-    #    user1.patch_va_component(name, component_id)
-
-    #    user2 = UserMethods(auth_token_user2)
-    #    user2.get_va_components_no_access(name)
-    #    user2.add_va_component_no_access(name, component_id)
-    #    user2.patch_va_component_no_access(name, component_id)
-    #    user2.delete_va_component_no_access(name, component_id)
-
-    #    user1.delete_va_by_name(name)
-
-    @qase.title(f"{counter()}. test_non_owner_can_access_unlisted_assistant")
-    def test_non_owner_can_access_unlisted_assistant(self):
-        display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
-        name = user1.create_virtual_assistant(display_name)["name"]
-        user1.publish_va(name, 'UNLISTED_LINK')
-        user1.create_deployment(name)
-        time.sleep(60)
-
-        user2 = UserMethods(auth_token_user2)
-        user2.get_va_by_name(name)
-
-        user1.delete_va_by_name(name)
-
-    @qase.title(f"{counter()}. test_non_owner_can_access_public_template_assistant")
-    def test_non_owner_can_access_public_template_assistant(self):
-        display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
-        name = user1.create_virtual_assistant(display_name)["name"]
-        user1.publish_va(name, "PUBLIC_TEMPLATE")
-        user1.create_deployment(name)
-        time.sleep(70)
-
-        admin = AdminMethods(auth_token)
-        publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
-        admin.confirm_publish_request(publish_request_id)
-
-        user2 = UserMethods(auth_token_user2)
-        user2.get_va_by_name(name)
-
-        user1.delete_va_by_name(name)
-
-    #@pytest.mark.atom
-    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment")
-    def test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment(self):
-        display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
-        name = user1.create_virtual_assistant(display_name)["name"]
-        deployment_id = user1.create_deployment(name)["id"]
-        time.sleep(60)
-        task_id = user1.get_deployment(deployment_id)
-
-        user2 = UserMethods(auth_token_user2)
-        user2.get_deployment_no_access(deployment_id)
-        user2.patch_deployment_no_access(deployment_id, task_id)
-        user2.delete_deployment_no_access(deployment_id)
-
-        user1.delete_va_by_name(name)
-
-    #@pytest.mark.atom
-    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
-    def test_non_owner_cannot_access_private_assistant_dialog_session(self):
-        display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
-        name = user1.create_virtual_assistant(display_name)["name"]
-        deployment_id = user1.create_deployment(name)["id"]
-        time.sleep(60)
-        dialog_session_id = user1.create_dialog_sessions(name)["id"]
-        user1.send_dialog_session_message(dialog_session_id)
-
-        user2 = UserMethods(auth_token_user2)
-        user2.get_dialog_sessions_no_access(dialog_session_id)
-        user2.send_dialog_session_message_no_access(dialog_session_id)
-        user2.get_dialog_session_history_no_access(dialog_session_id)
-        user2.create_dialog_sessions_no_access(name)
-
-        user1.delete_va_by_name(name)
-
     # ASSISTANTS_DISTS
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_create_va")
     def test_create_va(self):
         display_name = va_data["name"]
@@ -146,7 +43,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_your_va_by_name")
     def test_get_your_va_by_name(self):
         display_name = va_data["name"]
@@ -189,7 +86,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_created_from_scratch_va")
     def test_clone_created_from_scratch_va(self):
         display_name = va_data["name"]
@@ -200,7 +97,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_edited_va")
     def test_clone_edited_va(self):
         display_name = va_data["name"]
@@ -213,7 +110,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_after_cloning_delete_initial_va")
     def test_after_cloning_delete_initial_va(self):
         display_name = va_data["name"]
@@ -260,7 +157,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_add_created_from_scratch_va_component")
     def test_add_created_from_scratch_va_component(self):
         display_name = va_data["name"]
@@ -274,7 +171,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_cloned_va_component")
     def test_delete_cloned_va_component(self):
         display_name = public_va_names[0]
@@ -289,8 +186,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_created_from_scratch_va_component")
     def test_delete_created_from_scratch_va_component(self):
         display_name = va_data["name"]
@@ -363,7 +259,7 @@ class TestDistributions:
         user = UserMethods(auth_token_user1)
         user.get_list_of_components()
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_component")
     def test_create_get_patch_delete_component(self):
         user = UserMethods(auth_token_user1)
@@ -422,7 +318,7 @@ class TestDistributions:
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm(self, lm_service_id):
@@ -432,8 +328,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
     def test_build_assistant_on_various_lm(self, lm_service_id):
@@ -478,7 +373,7 @@ class TestDistributions:
         user.delete_deployment(deployment_id)
         user.delete_va_by_name(va_name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self):
         name = public_va_names[0]
@@ -499,6 +394,7 @@ class TestDistributions:
 
     # LM_SERVICES
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self):
         user = UserMethods(auth_token_user1)
@@ -506,17 +402,17 @@ class TestDistributions:
 
     # DEPLOYMENTS
 
-    #@qase.title(f"{counter()}. test_get_stacks")
-    #def test_get_stacks(self):
+    # @qase.title(f"{counter()}. test_get_stacks")
+    # def test_get_stacks(self):
     #    user = UserMethods(auth_token)
     #    user.get_stacks()
 
-    #@qase.title(f"{counter()}. test_get_stack_ports")
-    #def test_get_stack_ports(self):
+    # @qase.title(f"{counter()}. test_get_stack_ports")
+    # def test_get_stack_ports(self):
     #    user = UserMethods(auth_token)
     #    user.get_stack_ports()
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self):
         name = va_data["name"]
@@ -528,14 +424,13 @@ class TestDistributions:
         deployment = user.create_deployment(va_name)
         time.sleep(60)
         deployment_id = deployment["id"]
-        #task_id = user.get_deployment(deployment_id)
+        # task_id = user.get_deployment(deployment_id)
         user.patch_deployment(deployment_id)
         time.sleep(60)
         user.delete_deployment(deployment_id)
         user.get_deployment_non_exists(deployment_id)
 
         user.delete_va_by_name(va_name)
-
 
     # @pytest.mark.atom
     # @pytest.mark.parametrize("stack_id", range(578, 699))
@@ -600,9 +495,114 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    # LM_SERVICE
+    # PERMISSIONS
 
-    @qase.title(f"{counter()}. get_all_lm_services")
-    def test_get_all_lm_services(self):
-        user = UserMethods()
-        va = user.get_all_lm_services()
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
+    def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
+        display_name = va_data["name"]
+        user1 = UserMethods(auth_token_user1)
+        name = user1.create_virtual_assistant(display_name)["name"]
+        user2 = UserMethods(auth_token_user2)
+        user2.get_va_by_name_no_access(name)
+        user2.clone_va_no_access(name)
+        user2.patch_va_by_name_no_access(name)
+        user2.publish_va_no_access(name, visibility='PUBLIC_TEMPLATE')
+        user2.delete_va_by_name_no_access(name)
+        user1.delete_va_by_name(name)
+
+    # @pytest.mark.atom
+    # @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components")
+    # def test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components(self):
+    #    display_name = va_data["name"]
+    #    user1 = UserMethods(auth_token_user1)
+    #    name = user1.create_virtual_assistant(display_name)["name"]
+    #    skills = user1.get_va_components(name)["skills"]
+    #    component_id = [skill["id"] for skill in skills if skill["component_type"] == "Generative"][0]
+    #    user1.patch_va_component(name, component_id)
+    #    user2 = UserMethods(auth_token_user2)
+    #    user2.get_va_components_no_access(name)
+    #    user2.add_va_component_no_access(name, component_id)
+    #    user2.patch_va_component_no_access(name, component_id)
+    #    user2.delete_va_component_no_access(name, component_id)
+    #    user1.delete_va_by_name(name)
+
+    @qase.title(f"{counter()}. test_non_owner_can_access_unlisted_assistant")
+    def test_non_owner_can_access_unlisted_assistant(self):
+        display_name = va_data["name"]
+        user1 = UserMethods(auth_token_user1)
+        name = user1.create_virtual_assistant(display_name)["name"]
+        user1.publish_va(name, 'UNLISTED_LINK')
+        user1.create_deployment(name)
+        time.sleep(60)
+        user2 = UserMethods(auth_token_user2)
+        user2.get_va_by_name(name)
+        user1.delete_va_by_name(name)
+
+    @qase.title(f"{counter()}. test_non_owner_can_access_public_template_assistant")
+    def test_non_owner_can_access_public_template_assistant(self):
+        display_name = va_data["name"]
+        user1 = UserMethods(auth_token_user1)
+        name = user1.create_virtual_assistant(display_name)["name"]
+        user1.publish_va(name, "PUBLIC_TEMPLATE")
+        user1.create_deployment(name)
+        time.sleep(60)
+        admin = AdminMethods(auth_token)
+        publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
+        admin.confirm_publish_request(publish_request_id)
+        user2 = UserMethods(auth_token_user2)
+        user2.get_va_by_name(name)
+        user1.delete_va_by_name(name)
+
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment")
+    def test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment(self):
+        display_name = va_data["name"]
+        user1 = UserMethods(auth_token_user1)
+        name = user1.create_virtual_assistant(display_name)["name"]
+        deployment_id = user1.create_deployment(name)["id"]
+        time.sleep(60)
+        task_id = user1.get_deployment(deployment_id)
+        user2 = UserMethods(auth_token_user2)
+        user2.get_deployment_no_access(deployment_id)
+        user2.patch_deployment_no_access(deployment_id, task_id)
+        user2.delete_deployment_no_access(deployment_id)
+        user1.delete_va_by_name(name)
+
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
+    def test_non_owner_cannot_access_private_assistant_dialog_session(self):
+        display_name = va_data["name"]
+        user1 = UserMethods(auth_token_user1)
+        name = user1.create_virtual_assistant(display_name)["name"]
+        deployment_id = user1.create_deployment(name)["id"]
+        time.sleep(60)
+        dialog_session_id = user1.create_dialog_sessions(name)["id"]
+        user1.send_dialog_session_message(dialog_session_id)
+        user2 = UserMethods(auth_token_user2)
+        user2.get_dialog_sessions_no_access(dialog_session_id)
+        user2.send_dialog_session_message_no_access(dialog_session_id)
+        user2.get_dialog_session_history_no_access(dialog_session_id)
+        user2.create_dialog_sessions_no_access(name)
+        user1.delete_va_by_name(name)
+
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_non_admin_cannot_get_confirm_decline_publish_request")
+    def test_non_admin_cannot_get_confirm_decline_publish_request(self):
+        visibility = 'PUBLIC_TEMPLATE'
+        display_name = va_data["name"]
+        user = UserMethods(auth_token_user1)
+        name = user.create_virtual_assistant(display_name)["name"]
+        user.publish_va(name, visibility)
+
+        admin = AdminMethods(auth_token)
+        publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
+
+        admin_fake = AdminMethods(auth_token_user1)
+
+        admin_fake.get_all_publish_requests_no_access()
+        admin_fake.confirm_publish_request_no_access(publish_request_id)
+        admin_fake.confirm_publish_request_no_access(publish_request_id)
+        admin_fake.decline_publish_request_no_access(publish_request_id)
+
+        user.delete_va_by_name(name)

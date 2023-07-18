@@ -23,6 +23,6 @@ class GithubUser(Base):
     role = relationship("Role")
 
 
-@listens_for(GithubUser.__table__, "after_create")
-def pre_populate_google_user(target, connection, **kw):
-    pre_populate_from_tsv(settings.db.initial_data_dir / "github_user.tsv", target, connection)
+# @listens_for(GithubUser.__table__, "after_create")
+# def pre_populate_google_user(target, connection, **kw):
+#     pre_populate_from_tsv(settings.db.initial_data_dir / "github_user.tsv", target, connection)

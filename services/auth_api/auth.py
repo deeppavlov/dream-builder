@@ -8,7 +8,7 @@ from apiconfig.config import settings
 from database.models import google_user
 from services.shared.user import User
 from services.auth_api import auth_type
-from services.auth_api.auth_type.provider import GithubAuth, GoogleOAuth2
+from services.auth_api.auth_type import GithubAuth, GoogleOAuth2, Unauth
 from services.auth_api.models import UserToken
 from services.auth_api.test_user import TestUser
 
@@ -28,6 +28,7 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "": GoogleOAuth2(),
     "google": GoogleOAuth2(),
     "github": GithubAuth(),
+    "unauth": Unauth(),
 }
 
 test_user = TestUser()
@@ -65,7 +66,7 @@ async def logout(
 
 @router.post("/exchange_authcode")
 async def exchange_authcode(
-        auth_code: str, auth_type: str = Header(default=""), db: Session = Depends(get_db)
+        auth_code: str = "", auth_type: str = Header(default=""), db: Session = Depends(get_db)
 ) -> UserToken:
     """
     Exchanges authorization code for access token

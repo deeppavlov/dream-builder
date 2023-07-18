@@ -29,6 +29,11 @@ class User(BaseOrmModel):
 
     @classmethod
     def from_orm(cls, obj: GeneralUser):
+        if obj.unauth_user:
+            obj.email, obj.picture, obj.name = "", "", ""
+            obj.role = obj.unauth_user.role
+            return super().from_orm(obj)
+
         user = None
         for user_provider in [obj.google_user, obj.github_user]:
             if user_provider:

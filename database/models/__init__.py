@@ -13,3 +13,6 @@ from database.models.service.model import Service
 from database.models.user.model import GeneralUser
 from database.models.virtual_assistant.model import VirtualAssistant
 from database.models.virtual_assistant_component.model import VirtualAssistantComponent
+from database.models.unauth_user.model import UnauthUser
+from database.models.unauth_uservalid.model import UnauthUserValid
+from database.models.providers.model import Provider

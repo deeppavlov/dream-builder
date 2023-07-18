@@ -33,17 +33,17 @@ export const PublicToPrivateModal = () => {
 
   const handleYesClick = () => {
     const name = bot?.name!
-    const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+    const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
     action === 'edit' &&
       changeVisibility
-        .mutateAsync({ name, visibility })
+        .mutateAsync({ name, newVisibility })
         .then(() => setIsOpen(false))
         .then(() =>
           navigate(generatePath(RoutesList.editor.skills, { name: bot?.name! }))
         )
     action === 'rename' &&
       changeVisibility
-        .mutateAsync({ name, visibility })
+        .mutateAsync({ name, newVisibility })
         .then(() => {
           queryClient.invalidateQueries(['publicDists'])
           setIsOpen(false)

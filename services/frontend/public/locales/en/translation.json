@@ -183,7 +183,8 @@
       "toasts": {
         "loading": "Loading...",
         "submitted": "Submitted For Review!"
-      }
+      },
+      "checkbox": "Don’t show alert message again"
     },
     "share_assistant": {
       "header": "Share it with your community!",
@@ -253,6 +254,15 @@
       "toasts": {
         "add": "Adding..."
       }
+    },
+    "publish_warning_modal": {
+      "title": "Important",
+      "bottom": "Proceed with publishing your Assistant?",
+      "btns": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      },
+      "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
     }
   },
   "sidepanels": {

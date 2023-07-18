@@ -55,6 +55,6 @@ class Unauth(BaseAuth):
         return UserToken(**User.from_orm(guser).__dict__, token=uuid_)
 
     async def logout(self, db: Session, token: str) -> None:
-        print(unauth_uservalid.crud.set_token_invalid(db, token))
+        unauth_uservalid.crud.set_token_invalid(db, token)
 
     exchange_authcode = login

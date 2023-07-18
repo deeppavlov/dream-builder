@@ -87,9 +87,7 @@ export const PublishAssistantModal = () => {
               error: t('toasts.error'),
             }
           )
-          .then(() => {
-            closeModal()
-          })
+          .then(() => closeModal())
       : closeModal()
   }
 

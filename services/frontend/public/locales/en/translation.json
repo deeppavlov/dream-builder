@@ -11,19 +11,16 @@
       }
     }
   },
-
   "public_templates_page": {
     "wrapper": {
       "title": "Public Templates"
     }
   },
-
   "your_assistants_page": {
     "wrapper": {
       "title": "Your Assistants"
     }
   },
-
   "assistant_page": {
     "module": {
       "btns": {
@@ -57,11 +54,7 @@
       }
     }
   },
-
   "page_errors": {
-    "btns": {
-      "back_to_home": "Back to home"
-    },
     "401": {
       "title": "Hold up!",
       "message": "Unauthorized!"
@@ -77,9 +70,11 @@
     "503": {
       "title": "Sorry, we’re under maintenance!",
       "message": "Hang on till we get the error fixed.  You may also refresh the page or try again later."
+    },
+    "btns": {
+      "back_to_home": "Back to home"
     }
   },
-
   "modals": {
     "access_api_keys": {
       "header": "Personal access tokens",
@@ -162,7 +157,7 @@
     },
     "hide_public_assistant": {
       "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
-      "subheader": "",
+      "subheader": "You will have to publish it again to make it a Public Template",
       "btns": {
         "cancel": "Cancel",
         "yes": "Yes"
@@ -260,7 +255,6 @@
       }
     }
   },
-
   "sidepanels": {
     "skill_dialog": {
       "tabs": {
@@ -336,16 +330,13 @@
       }
     }
   },
-
   "tooltips": {
     "dialog_renew": "Start a new dialog"
   },
-
   "ribbons": {
     "ready_for_chat": "Ready to chat",
     "chat_error": "Error!"
   },
-
   "toasts": {
     "success": "Success!",
     "error": "Something went wrong...",
@@ -354,7 +345,6 @@
     "rename": "Renaming...",
     "save": "Saving..."
   },
-
   "ctx_menus": {
     "assistant": {
       "chat": "Chat With Assistant",
@@ -371,16 +361,13 @@
       "delete": "delete"
     }
   },
-
   "tabs": {
     "properties": "Properties",
     "details": "Details"
   },
-
   "accordions": {
     "desc": "Description"
   },
-
   "cards": {
     "skill": {
       "tooltips": {
@@ -388,13 +375,11 @@
       }
     }
   },
-
   "card_btns": {
     "use": "Use",
     "edit": "Edit",
     "add": "Add"
   },
-
   "topbar": {
     "ctx_menus": {
       "main_burger": {
@@ -422,14 +407,12 @@
       "sign_in": "Sign in"
     }
   },
-
   "breadcrumbs": {
     "your_assistants": "Your Assistants",
     "public_templates": "Public Templates",
     "skills": "Skills",
     "integration": "Integration"
   },
-
   "sidebar": {
     "tooltips": {
       "skills": "Skills",
@@ -438,14 +421,12 @@
       "deepy": "Ask Deepy if you need help with building your Assistant"
     }
   },
-
   "field_validation": {
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
     "prompt_max": "Limit prompt to {{max}} tokens"
   },
-
   "tokenizer": {
     "count_label": "token",
     "count_suffixes": {
@@ -457,25 +438,21 @@
       "other": "s"
     }
   },
-
   "api_key": {
     "required": {
       "label": "Enter your personal access token for OpenAI to run your Generative AI Skill",
       "link": "Enter your personal access token here"
     }
   },
-
   "assistant_visibility": {
     "on_moderation": "On Moderation",
     "public_template": "Public Template",
     "unlisted": "Unlisted",
     "private": "Private"
   },
-
   "your_assistants": {
     "empty_placeholder": "Your Assistants will appear here"
   },
-
   "assistant_table": {
     "name": "Name",
     "author": "Author",
@@ -485,7 +462,6 @@
     "actions": "Actions",
     "create_from_scratch_btn": "Create From Scratch"
   },
-
   "skill_table": {
     "name": "Name",
     "author": "Author",
@@ -496,7 +472,6 @@
     "create_from_scratch_btn": "Create From Scratch",
     "add_btn": "Add Skill"
   },
-
   "assistants_not_loaded": {
     "header": "Oops, something went wrong... Please try again later.",
     "btns": {

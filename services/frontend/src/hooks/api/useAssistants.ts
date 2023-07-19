@@ -23,7 +23,7 @@ import { useDeploy } from 'hooks/api/useDeploy'
 
 interface IChangeVisibility {
   name: string
-  visibility: TDistVisibility
+  newVisibility: TDistVisibility
   inEditor?: boolean
   deploymentState?: TDeploymentState
 }
@@ -112,16 +112,16 @@ export const useAssistants = () => {
   })
 
   const changeVisibility = useMutation({
-    onMutate: ({ name, visibility, deploymentState }) => {
-      if (visibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
+    onMutate: ({ name, newVisibility, deploymentState }) => {
+      if (newVisibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
         deploy.mutateAsync(name)
       }
     },
-    mutationFn: ({ name, visibility }: IChangeVisibility) =>
-      publishAssistant(name, visibility),
-    onSuccess: (_, { name, visibility, inEditor }) => {
+    mutationFn: ({ name, newVisibility }: IChangeVisibility) =>
+      publishAssistant(name, newVisibility),
+    onSuccess: (_, { name, newVisibility, inEditor }) => {
       const requestToPublicTemplate =
-        visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+        newVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
       if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
       if (inEditor) queryClient.invalidateQueries([DIST, name])

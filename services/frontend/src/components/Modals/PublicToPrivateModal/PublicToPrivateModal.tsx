@@ -15,15 +15,14 @@ import s from './PublicToPrivateModal.module.scss'
 type ActionTypes = 'edit' | 'rename'
 
 export const PublicToPrivateModal = () => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'modals.hide_public_assistant',
-  })
-  const [isOpen, setIsOpen] = useState(false)
+  const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const [action, setAction] = useState<ActionTypes | null>(null)
   const navigate = useNavigate()
 
   const handleEventUpdate = ({ detail }: any) => {
+    // FIX any
     setBot(detail?.bot)
     setAction(detail?.action)
     setIsOpen(!isOpen)
@@ -34,26 +33,22 @@ export const PublicToPrivateModal = () => {
 
   const handleYesClick = () => {
     const name = bot?.name!
-    const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+    const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
     action === 'edit' &&
       changeVisibility
-        .mutateAsync({ name, visibility })
-        .then(() => {
-          setIsOpen(false)
-        })
-        .then(() => {
+        .mutateAsync({ name, newVisibility })
+        .then(() => setIsOpen(false))
+        .then(() =>
           navigate(generatePath(RoutesList.editor.skills, { name: bot?.name! }))
-        })
+        )
     action === 'rename' &&
       changeVisibility
-        .mutateAsync({ name, visibility })
+        .mutateAsync({ name, newVisibility })
         .then(() => {
           queryClient.invalidateQueries(['publicDists'])
           setIsOpen(false)
         })
-        .then(() => {
-          trigger('AssistantModal', { bot, action: 'edit' })
-        })
+        .then(() => trigger('AssistantModal', { bot, action: 'edit' }))
   }
 
   useObserver('PublicToPrivateModal', handleEventUpdate)
@@ -61,14 +56,18 @@ export const PublicToPrivateModal = () => {
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.publicToPrivateModal}>
-        <div className={s.header}>{t('header')}</div>
-        {t('subheader') && <div className={s.desc}>{t('subheader')}</div>}
+        <div className={s.header}>
+          {t('modals.hide_public_assistant.header')}
+        </div>
+        <div className={s.desc}>
+          {t('modals.hide_public_assistant.subheader')}
+        </div>
         <div className={s.footer}>
           <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            {t('btns.cancel')}
+            {t('modals.hide_public_assistant.btns.cancel')}
           </Button>
           <Button theme='error' props={{ onClick: handleYesClick }}>
-            {t('btns.yes')}
+            {t('modals.hide_public_assistant.btns.yes')}
           </Button>
         </div>
       </div>

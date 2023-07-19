@@ -40,6 +40,7 @@ export const PRIVATE_DISTS = 'privateDists'
 export const DIST = 'dist'
 
 export const I18N_STORE_KEY = 'i18nextLng'
+export const HIDE_PUBLISH_ALERT_KEY = 'hidePublishAlert'
 
 export const locales: TLocales = {
   en: { title: ELOCALES_TITLE.EN },

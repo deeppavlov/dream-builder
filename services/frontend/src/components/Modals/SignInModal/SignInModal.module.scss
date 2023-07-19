@@ -5,6 +5,8 @@
   gap: 24px;
 
   mark {
+    display: inline;
+    white-space: pre-wrap;
     color: $primary1;
   }
 }

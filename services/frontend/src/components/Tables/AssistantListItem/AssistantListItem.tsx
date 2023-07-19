@@ -1,3 +1,4 @@
+import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +38,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   bot,
   disabled,
 }) => {
+  const cx = classNames.bind(s)
   const { i18n } = useTranslation()
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
@@ -149,7 +151,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
   return (
     <tr
-      className={s.tr}
+      className={cx('tr', isActive && 'active')}
       onClick={handleAssistantListItemClick}
       data-active={isActive}
     >

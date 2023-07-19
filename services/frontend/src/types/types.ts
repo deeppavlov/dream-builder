@@ -284,7 +284,11 @@ export type LanguageModel =
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
 
-export type AssistantFormValues = { display_name: string; description: string }
+export type AssistantFormValues = {
+  display_name: string
+  description: string
+  language: { id: TLocale; name: TLocale; display_name: 'Russian' | 'English' }
+}
 
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 

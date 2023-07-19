@@ -132,6 +132,10 @@
       "toasts": {
         "create": "Creating...",
         "clone": "Cloning..."
+      },
+      "language_field": {
+        "annotation": "This will have an impact on future components of AI Assistants, which will affect how your AI Assistant responds.",
+        "label": "Choose preferred AI Assistant language:"
       }
     },
     "confirm_api_key_update": {
@@ -515,7 +519,6 @@
       "retry": "Retry"
     }
   },
-
   "language": {
     "en": "English",
     "ru": "Russian"

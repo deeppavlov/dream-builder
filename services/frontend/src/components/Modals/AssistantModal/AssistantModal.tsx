@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { AssistantFormValues, BotInfoInterface } from 'types/types'
+import { language } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
@@ -10,6 +11,7 @@ import { useOnKey } from 'hooks/useOnKey'
 import { trigger } from 'utils/events'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
+import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input, TextArea } from 'components/Inputs'
 import { BaseModal } from 'components/Modals'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
@@ -30,21 +32,29 @@ interface IAssistantModal {
 }
 
 export const AssistantModal = () => {
-  const { t } = useTranslation('translation', { keyPrefix: 'modals.assistant' })
-  const [isOpen, setIsOpen] = useState(false)
-  const [action, setAction] = useState<TAssistantModalAction | null>(null)
+  const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [action, setAction] = useState<TAssistantModalAction | null>('clone')
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
+
   const isEditing = action === 'edit'
   const isCloning = action === 'clone'
   const isCreateFromScratch = action === 'create'
   const validationSchema = getValidationSchema()
 
-  const { handleSubmit, control, reset } = useForm<AssistantFormValues>({
+  const { handleSubmit, control, reset, watch } = useForm<AssistantFormValues>({
     mode: 'all',
+    defaultValues: {
+      language: { id: 'en', name: 'en', display_name: 'English' },
+    },
   })
-
+  console.log('watch() = ', watch('language'))
   const { create, rename, clone } = useAssistants()
-  const [NAME_ID, DESC_ID] = ['display_name', 'description']
+  const [NAME_ID, DESC_ID, LANGUAGE] = [
+    'display_name',
+    'description',
+    'language',
+  ]
 
   const closeModal = () => {
     setIsOpen(false)
@@ -59,6 +69,7 @@ export const AssistantModal = () => {
     reset({
       [NAME_ID]: data?.detail?.bot?.display_name,
       [DESC_ID]: data?.detail?.bot?.description,
+      [LANGUAGE]: data?.detail?.bot?.lang,
     })
     setIsOpen(prev => !prev)
   }
@@ -68,7 +79,8 @@ export const AssistantModal = () => {
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     switch (action) {
       case 'create':
-        toast.promise(create.mutateAsync(data), toasts.createAssistant)
+        console.log('data = ', data)
+        // toast.promise(create.mutateAsync(data), toasts.createAssistant)
         break
       case 'clone':
         toast.promise(
@@ -101,17 +113,46 @@ export const AssistantModal = () => {
       <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
         <div className={s.header}>
           <h4>
-            {isCloning && t('clone.header')}
-            {isEditing && t('edit.header')}
-            {isCreateFromScratch && t('create_from_scratch.header')}
+            {isCloning && t('modals.assistant.clone.header')}
+            {isEditing && t('modals.assistant.edit.header')}
+            {isCreateFromScratch &&
+              t('modals.assistant.create_from_scratch.header')}
           </h4>
           {!isCreateFromScratch && <mark>{bot?.display_name}</mark>}
           <div className={s.distribution}>
-            {isEditing ? t('edit.subheader') : t('subheader')}
+            {isEditing
+              ? t('modals.assistant.edit.subheader')
+              : t('modals.assistant.subheader')}
+          </div>
+        </div>
+        <div className={s.dropboxArea}>
+          <SkillDropboxSearch
+            className={s.dropbox}
+            withoutSearch
+            disabled={!isCreateFromScratch}
+            rules={{ required: true }}
+            fullWidth
+            list={
+              Object.entries(language()).map(s => {
+                const id = s[0]
+                const displayName = s[1]
+                return {
+                  id: id,
+                  name: id,
+                  display_name: displayName,
+                }
+              }) || []
+            }
+            name={LANGUAGE}
+            label={t('modals.assistant.language_field.label')}
+            control={control}
+          />
+          <div className={s.annotation}>
+            {t('modals.assistant.language_field.annotation')}
           </div>
         </div>
         <Input
-          label={t('name_field.label')}
+          label={t('modals.assistant.name_field.label')}
           name={NAME_ID}
           control={control}
           rules={{
@@ -119,12 +160,12 @@ export const AssistantModal = () => {
             pattern: validationSchema.global.regExpPattern,
           }}
           props={{
-            placeholder: t('name_field.placeholder'),
+            placeholder: t('modals.assistant.name_field.placeholder'),
           }}
         />
         <div className={s.textarea}>
           <TextArea
-            label={t('desc_field.label')}
+            label={t('modals.assistant.desc_field.label')}
             name={DESC_ID}
             control={control}
             withCounter
@@ -134,7 +175,7 @@ export const AssistantModal = () => {
               pattern: validationSchema.global.regExpPattern,
             }}
             props={{
-              placeholder: t('desc_field.placeholder'),
+              placeholder: t('modals.assistant.desc_field.placeholder'),
               rows: 6,
             }}
           />
@@ -142,14 +183,14 @@ export const AssistantModal = () => {
 
         <div className={s.btns}>
           <Button theme='secondary' props={{ onClick: closeModal }}>
-            {t('btns.cancel')}
+            {t('modals.assistant.btns.cancel')}
           </Button>
           {action === 'create' && (
             <Button
               theme='primary'
               props={{ type: 'submit', disabled: create?.isLoading }}
             >
-              {t('btns.create')}
+              {t('modals.assistant.btns.create')}
             </Button>
           )}
           {action === 'clone' && (
@@ -157,7 +198,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
             >
-              {t('btns.create')}
+              {t('modals.assistant.btns.create')}
             </Button>
           )}
           {action === 'edit' && (
@@ -165,7 +206,7 @@ export const AssistantModal = () => {
               theme='primary'
               props={{ type: 'submit', disabled: rename?.isLoading }}
             >
-              {t('btns.save')}
+              {t('modals.assistant.btns.save')}
             </Button>
           )}
         </div>

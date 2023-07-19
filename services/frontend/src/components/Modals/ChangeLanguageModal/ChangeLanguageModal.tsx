@@ -26,7 +26,8 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
 
   const handleEventUpdate = () => setIsOpen(!isOpen)
   const handleCancel = () => setIsOpen(false)
-  const handleSave = () => i18n.changeLanguage(currentLang)
+  const handleSave = () =>
+    i18n.changeLanguage(currentLang).then(() => setIsOpen(false))
 
   useObserver('ChangeLanguageModal', handleEventUpdate)
 
@@ -35,7 +36,7 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
       <div className={s.changelanguage}>
         <div className={s.header}>
           <span className={s.title}>
-            {t('change_language_modal.header.title')}
+            {t('modals.change_language_modal.header.title')}
           </span>
           <span className={s.annotation}>
             {t('modals.change_language_modal.header.annotation')}

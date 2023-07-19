@@ -47,8 +47,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text_ellipsis;
 }
 .author {
   display: flex;
@@ -75,9 +74,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include text_ellipsis;
   }
 }
 .name {
@@ -89,8 +86,7 @@
   .botName {
     color: rgba(0, 0, 0, 0.7);
     @include t4;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include text_ellipsis;
   }
   .params {
     flex-wrap: nowrap;

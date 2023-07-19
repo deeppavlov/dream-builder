@@ -6,6 +6,7 @@ import {
   ProfileSettings,
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
+import { PublishWarningModal } from 'components/Unused/PublishWarningModal/PublishWarningModal'
 import { Sidebar, Topbar } from 'components/Widgets'
 import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
 
@@ -40,6 +41,7 @@ const Root = () => {
       <ChangeLanguageModal />
       <ProfileSettings />
       <Toaster />
+      <PublishWarningModal />
     </>
   )
 }

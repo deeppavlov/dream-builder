@@ -16,8 +16,11 @@
   }
 
   mark {
+    display: block;
     background-color: transparent;
     color: $primary1;
+
+    @include text_ellipsis;
   }
 }
 

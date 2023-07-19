@@ -68,9 +68,7 @@
     justify-content: space-between;
     width: 100%;
     .title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @include text_ellipsis;
       @include t1;
     }
     .btns_area {

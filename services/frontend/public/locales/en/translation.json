@@ -99,6 +99,9 @@
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
         "not_found_service": "Not found Service or User id."
+      },
+      "attention": {
+        "annotation": " The API key for this AI Assistant is stored in your browser.\n <br />\nPlease be aware that without adding the API key, the Assistant will not function as intended."
       }
     },
     "assistant": {
@@ -255,6 +258,29 @@
         "add": "Adding..."
       }
     },
+    "profile_settings": {
+      "tabs": {
+        "tokens": {
+          "title": "Personal tokens"
+        },
+        "account": {
+          "title": "Account",
+          "name": "Name",
+          "email": "Email",
+          "language": "Language",
+          "change": "Change language"
+        }
+      }
+    },
+    "change_language_modal": {
+      "header": {
+        "annotation": "Pick which language to use for Dream Builder’s platform, and emails"
+      },
+      "footer": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+
     "publish_warning_modal": {
       "title": "Important",
       "bottom": "Proceed with publishing your Assistant?",
@@ -487,5 +513,14 @@
     "btns": {
       "retry": "Retry"
     }
+  },
+  "change_language_modal": {
+    "header": {
+      "title": "Change Language"
+    }
+  },
+  "language": {
+    "en": "English",
+    "ru": "Russian"
   }
 }

@@ -4,6 +4,12 @@ export interface UserInterface {
   name: string
   email: string
   picture: string
+  family_name: string
+  given_name: string
+  id: number
+  refresh_token: string
+  sub: string
+  token: string
 }
 
 export interface UserContext {
@@ -56,6 +62,9 @@ export type TEvents =
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
   | 'PublishWarningModal'
+  | 'ProfileSettingsModal'
+  | 'CtxMenuBtnClick'
+  | 'ChangeLanguageModal'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 

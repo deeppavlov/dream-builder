@@ -77,3 +77,26 @@
   @include b1;
   color: $red;
 }
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  .attention {
+    border-radius: 50%;
+    background-color: rgba(51, 0, 255, 0.1);
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+      stroke: $primary1;
+      @include icon_size_24;
+    }
+    .annotation {
+      color: rgba(0, 0, 0, 0.7);
+      @include b1;
+    }
+  }
+}

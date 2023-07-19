@@ -19,10 +19,10 @@ export const SettingsTab = () => {
   const settingsClickHandler = () => {
     if (!isAuthorized)
       return trigger('SignInModal', {
-        requestModal: { name: 'AccessTokensModal' },
+        requestModal: { name: 'ProfileSettingsModal' },
       })
 
-    trigger('AccessTokensModal', {})
+    trigger('ProfileSettingsModal', {})
   }
 
   return (

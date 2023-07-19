@@ -116,6 +116,7 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
+  lang?: ELOCALES_KEY
 }
 
 export interface BotCardProps {
@@ -283,11 +284,11 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
-
+export type TLang = 'Russian' | 'English'
 export type AssistantFormValues = {
   display_name: string
   description: string
-  language: { id: TLocale; name: TLocale; display_name: 'Russian' | 'English' }
+  language: { id: ELOCALES_KEY; name: ELOCALES_KEY; display_name: TLang }
 }
 
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null

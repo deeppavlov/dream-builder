@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { AssistantFormValues, BotInfoInterface } from 'types/types'
-import { language } from 'constants/constants'
+import store from 'store2'
+import {
+  AssistantFormValues,
+  BotInfoInterface,
+  ELOCALES_KEY,
+  TLang,
+} from 'types/types'
+import { I18N_STORE_KEY, language } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
@@ -20,7 +26,10 @@ import s from './AssistantModal.module.scss'
 type TAssistantModalAction = 'clone' | 'create' | 'edit'
 
 interface IAssistantInfo
-  extends Pick<BotInfoInterface, 'name' | 'display_name' | 'description'> {}
+  extends Pick<
+    BotInfoInterface,
+    'name' | 'display_name' | 'description' | 'lang'
+  > {}
 
 interface IAssistantDistInfo
   extends Pick<BotInfoInterface, 'name' | 'display_name'> {}
@@ -33,8 +42,8 @@ interface IAssistantModal {
 
 export const AssistantModal = () => {
   const { t } = useTranslation()
-  const [isOpen, setIsOpen] = useState<boolean>(true)
-  const [action, setAction] = useState<TAssistantModalAction | null>('clone')
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [action, setAction] = useState<TAssistantModalAction | null>(null)
   const [bot, setBot] = useState<Partial<IAssistantInfo> | null>(null)
 
   const isEditing = action === 'edit'
@@ -42,34 +51,51 @@ export const AssistantModal = () => {
   const isCreateFromScratch = action === 'create'
   const validationSchema = getValidationSchema()
 
-  const { handleSubmit, control, reset, watch } = useForm<AssistantFormValues>({
-    mode: 'all',
-    defaultValues: {
-      language: { id: 'en', name: 'en', display_name: 'English' },
-    },
-  })
-  console.log('watch() = ', watch('language'))
+  const currentLocale: ELOCALES_KEY = store(I18N_STORE_KEY)
+  const currentLanguage = language()[currentLocale] as TLang
+  const defaultLangValue = {
+    id: currentLocale,
+    name: currentLocale,
+    display_name: currentLanguage,
+  }
+
+  const { handleSubmit, control, reset, setValue } =
+    useForm<AssistantFormValues>({
+      mode: 'all',
+    })
+
   const { create, rename, clone } = useAssistants()
   const [NAME_ID, DESC_ID, LANGUAGE] = [
     'display_name',
     'description',
     'language',
-  ]
+  ] as const
 
   const closeModal = () => {
     setIsOpen(false)
     setAction(null)
     setBot(null)
+
     if (!isEditing) trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
   }
 
   const handleEventUpdate = (data: { detail: IAssistantModal | null }) => {
     setAction(data.detail?.action ?? 'create') // Set 'create' action as default
     setBot(data.detail?.bot ?? null)
+
+    const isCreate = data.detail?.action === 'create'
+    const assistantLang = data?.detail?.bot?.lang! as ELOCALES_KEY
+    const assistantLangDisplayName = language()[assistantLang] as TLang
+    const assistantLangValue = {
+      id: assistantLang!,
+      name: assistantLang!,
+      display_name: assistantLangDisplayName,
+    }
+
     reset({
       [NAME_ID]: data?.detail?.bot?.display_name,
       [DESC_ID]: data?.detail?.bot?.description,
-      [LANGUAGE]: data?.detail?.bot?.lang,
+      [LANGUAGE]: isCreate ? defaultLangValue : assistantLangValue,
     })
     setIsOpen(prev => !prev)
   }
@@ -79,8 +105,7 @@ export const AssistantModal = () => {
   const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
     switch (action) {
       case 'create':
-        console.log('data = ', data)
-        // toast.promise(create.mutateAsync(data), toasts.createAssistant)
+        toast.promise(create.mutateAsync(data), toasts.createAssistant)
         break
       case 'clone':
         toast.promise(
@@ -102,6 +127,17 @@ export const AssistantModal = () => {
   useOnKey(handleSubmit(onFormSubmit), 'Enter') //FIX
 
   useObserver('AssistantModal', handleEventUpdate)
+
+  useEffect(() => {
+    const botLang = bot?.lang!
+    const botDisplayLang = language()[botLang] as TLang
+    const botLangValue = {
+      id: botLang,
+      name: botLang,
+      display_name: botDisplayLang,
+    }
+    setValue(LANGUAGE, isCreateFromScratch ? defaultLangValue : botLangValue)
+  }, [isOpen, bot])
 
   return (
     <BaseModal

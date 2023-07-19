@@ -274,13 +274,14 @@
     },
     "change_language_modal": {
       "header": {
-        "annotation": "Pick which language to use for Dream Builder’s platform, and emails"
+        "annotation": "Pick which language to use for Dream Builder’s platform, and emails",
+        "title": "Change Language"
       },
       "footer": {
         "cancel": "Cancel",
         "save": "Save"
       }
-
+    },
     "publish_warning_modal": {
       "title": "Important",
       "bottom": "Proceed with publishing your Assistant?",
@@ -514,11 +515,7 @@
       "retry": "Retry"
     }
   },
-  "change_language_modal": {
-    "header": {
-      "title": "Change Language"
-    }
-  },
+
   "language": {
     "en": "English",
     "ru": "Russian"

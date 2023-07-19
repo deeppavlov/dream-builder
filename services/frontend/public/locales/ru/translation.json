@@ -274,12 +274,14 @@
     },
     "change_language_modal": {
       "header": {
-        "annotation": "Выберите язык для использования на платформе Dream Builder и в электронной почте."
+        "annotation": "Выберите язык для использования на платформе Dream Builder и в электронной почте.",
+        "title": "Сменить язык"
       },
       "footer": {
         "cancel": "Отмена",
         "save": "Сохранить\n"
       }
+    },
     "publish_warning_modal": {
       "title": "Важно",
       "bottom": "Опубликовать Ассистента?",
@@ -513,11 +515,7 @@
       "retry": "Перезагрузить"
     }
   },
-  "change_language_modal": {
-    "header": {
-      "title": "Сменить язык"
-    }
-  },
+
   "language": {
     "en": "Английский",
     "ru": "Русский"

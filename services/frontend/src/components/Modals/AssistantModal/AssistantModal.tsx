@@ -103,7 +103,6 @@ export const AssistantModal = () => {
   const name = bot?.name!
 
   const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
-    console.log('formValues = ', formValues)
     const lang = formValues.language.id as ELOCALES_KEY
     const display_name = formValues.display_name as string
     const description = formValues.description as string

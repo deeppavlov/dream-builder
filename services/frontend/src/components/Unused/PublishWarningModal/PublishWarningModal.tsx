@@ -10,6 +10,7 @@ import {
   TDistVisibility,
 } from 'types/types'
 import { HIDE_PUBLISH_ALERT_KEY, VISIBILITY_STATUS } from 'constants/constants'
+import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { Button, Checkbox } from 'components/Buttons'
@@ -43,21 +44,16 @@ export const PublishWarningModal = () => {
     const name = bot?.name!
     const newVisibility = VISIBILITY_STATUS.PUBLIC_TEMPLATE as TDistVisibility
     // user can get to this modal only if he wants to publish assistant
-    toast
-      .promise(
-        changeVisibility.mutateAsync({
-          name,
-          newVisibility,
-          inEditor,
-          deploymentState,
-        }),
-        {
-          loading: t('modals.publish_assistant.toasts.loading'),
-          success: t('modals.publish_assistant.toasts.submitted'),
-          error: t('toasts.error'),
-        }
-      )
-      .then(() => setIsOpen(prev => !prev))
+    setIsOpen(false)
+    toast.promise(
+      changeVisibility.mutateAsync({
+        name,
+        newVisibility,
+        inEditor,
+        deploymentState,
+      }),
+      toasts.publishAssistant
+    )
   }
   const handleChange = (v: any) =>
     store(HIDE_PUBLISH_ALERT_KEY, v.target.checked)

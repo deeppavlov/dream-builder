@@ -1,3 +1,5 @@
+import i18n from 'i18n'
+
 interface ToastSettings {
   loading: string
   success: string
@@ -18,6 +20,7 @@ type ToastKeys =
   | 'confirmRequest'
   | 'declineRequest'
   | 'deleteToken'
+  | 'publishAssistant'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -86,5 +89,10 @@ export const toasts: Toasts = {
     loading: 'Saving...',
     success: 'Success!',
     error: 'Something went wrong...',
+  },
+  publishAssistant: {
+    loading: i18n.t('modals.publish_assistant.toasts.loading'),
+    success: i18n.t('modals.publish_assistant.toasts.submitted'),
+    error: i18n.t('toasts.error'),
   },
 }

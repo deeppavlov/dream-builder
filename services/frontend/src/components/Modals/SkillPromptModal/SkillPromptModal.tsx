@@ -7,8 +7,14 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
-import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
-import { DEPLOY_STATUS } from 'constants/constants'
+import {
+  IPromptBlock,
+  ISkill,
+  LM_Service,
+  LanguageModel,
+  TDistVisibility,
+} from 'types/types'
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
@@ -56,7 +62,7 @@ const SkillPromptModal = () => {
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
   const { UIOptions, setUIOption } = useUIOptions()
-  const { getDist } = useAssistants()
+  const { getDist, changeVisibility } = useAssistants()
   const nav = useNavigate()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -154,8 +160,16 @@ const SkillPromptModal = () => {
             type: 'skills',
           })
           .then(() => {
+            const name = bot?.name!
+            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
-              deleteDeployment.mutateAsync(bot!)
+              deleteDeployment
+                .mutateAsync(bot!)
+                .then(
+                  () =>
+                    bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                    changeVisibility.mutateAsync({ name, newVisibility })
+                )
             } else return
           }),
         toasts.updateComponent

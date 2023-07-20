@@ -256,11 +256,6 @@ export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type ChatForm = { message: string }
 
-export type PostDistParams = {
-  display_name: string
-  description: string
-}
-
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
@@ -296,11 +291,7 @@ export type LanguageModel =
   | 'anthropic-api-claude-instant-v1'
 
 export type TLang = 'Russian' | 'English'
-export type AssistantFormValues = {
-  display_name: string
-  description: string
-  language: { id: ELOCALES_KEY; name: ELOCALES_KEY; display_name: TLang }
-}
+
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 
 export interface IApiService {

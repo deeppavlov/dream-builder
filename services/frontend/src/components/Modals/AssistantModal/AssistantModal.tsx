@@ -3,12 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import store from 'store2'
-import {
-  AssistantFormValues,
-  BotInfoInterface,
-  ELOCALES_KEY,
-  TLang,
-} from 'types/types'
+import { BotInfoInterface, ELOCALES_KEY, TLang } from 'types/types'
 import { I18N_STORE_KEY, language } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
@@ -38,6 +33,11 @@ interface IAssistantModal {
   action: TAssistantModalAction
   bot?: Partial<IAssistantInfo>
   distribution?: IAssistantDistInfo // The assistant that we clone
+}
+export type AssistantFormValues = {
+  display_name: string
+  description: string
+  language: { id: ELOCALES_KEY; name: ELOCALES_KEY; display_name: TLang }
 }
 
 export const AssistantModal = () => {
@@ -102,10 +102,18 @@ export const AssistantModal = () => {
 
   const name = bot?.name!
 
-  const onFormSubmit: SubmitHandler<AssistantFormValues> = data => {
+  const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
+    console.log('formValues = ', formValues)
+    const lang = formValues.language.id as ELOCALES_KEY
+    const display_name = formValues.display_name as string
+    const description = formValues.description as string
+
+    const data = { display_name, description }
+    const createPayload = { display_name, description, lang }
+
     switch (action) {
       case 'create':
-        toast.promise(create.mutateAsync(data), toasts.createAssistant)
+        toast.promise(create.mutateAsync(createPayload), toasts.createAssistant)
         break
       case 'clone':
         toast.promise(
@@ -161,32 +169,34 @@ export const AssistantModal = () => {
               : t('modals.assistant.subheader')}
           </div>
         </div>
-        <div className={s.dropboxArea}>
-          <SkillDropboxSearch
-            className={s.dropbox}
-            withoutSearch
-            disabled={!isCreateFromScratch}
-            rules={{ required: true }}
-            fullWidth
-            list={
-              Object.entries(language()).map(s => {
-                const id = s[0]
-                const displayName = s[1]
-                return {
-                  id: id,
-                  name: id,
-                  display_name: displayName,
-                }
-              }) || []
-            }
-            name={LANGUAGE}
-            label={t('modals.assistant.language_field.label')}
-            control={control}
-          />
-          <div className={s.annotation}>
-            {t('modals.assistant.language_field.annotation')}
+        {isCreateFromScratch && (
+          <div className={s.dropboxArea}>
+            <SkillDropboxSearch
+              className={s.dropbox}
+              withoutSearch
+              disabled={!isCreateFromScratch}
+              rules={{ required: true }}
+              fullWidth
+              list={
+                Object.entries(language()).map(s => {
+                  const id = s[0]
+                  const displayName = s[1]
+                  return {
+                    id: id,
+                    name: id,
+                    display_name: displayName,
+                  }
+                }) || []
+              }
+              name={LANGUAGE}
+              label={t('modals.assistant.language_field.label')}
+              control={control}
+            />
+            <div className={s.annotation}>
+              {t('modals.assistant.language_field.annotation')}
+            </div>
           </div>
-        </div>
+        )}
         <Input
           label={t('modals.assistant.name_field.label')}
           name={NAME_ID}

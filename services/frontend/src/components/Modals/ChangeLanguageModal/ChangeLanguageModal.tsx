@@ -1,5 +1,5 @@
 import i18n from 'i18n'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import store from 'store2'
@@ -29,6 +29,10 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
   const handleSave = () =>
     i18n.changeLanguage(currentLang).then(() => setIsOpen(false))
 
+  useEffect(() => {
+    setValue(LANGUAGE, locale)
+  }, [isOpen])
+
   useObserver('ChangeLanguageModal', handleEventUpdate)
 
   return (
@@ -50,7 +54,7 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
               <RadioButton
                 props={{
                   ...register(LANGUAGE, { required: true }),
-                  defaultChecked: locale === id,
+
                   onChange: value =>
                     setValue(LANGUAGE, value.target.value as ELOCALES_KEY),
                 }}

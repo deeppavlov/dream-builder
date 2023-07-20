@@ -280,13 +280,10 @@ export type StackType =
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
-
   | 'ChatGPT'
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
-
-
   | 'transformers-lm-oasst12b-2m'
   | 'transformers-lm-oasst12b'
   | 'transformers-lm-gptjt'
@@ -297,8 +294,6 @@ export type LanguageModel =
   | 'openai-api-chatgpt-16k'
   | 'anthropic-api-claude-v1'
   | 'anthropic-api-claude-instant-v1'
-
-export type AssistantFormValues = { display_name: string; description: string }
 
 export type TLang = 'Russian' | 'English'
 export type AssistantFormValues = {

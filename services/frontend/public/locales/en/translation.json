@@ -469,6 +469,7 @@
     "prompt_max": "Limit prompt to {{max}} tokens"
   },
   "tokenizer": {
+    "counting": "+ counting...",
     "count_label": "token",
     "count_suffixes": {
       "zero": "s",

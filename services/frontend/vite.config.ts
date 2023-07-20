@@ -28,7 +28,9 @@ export default defineConfig({
       },
     },
   ],
-
+  define: {
+    global: 'globalThis',
+  },
   css: {
     preprocessorOptions: {
       scss: { additionalData: `@import "./src/styles/index";` },

@@ -199,7 +199,7 @@
       }
     },
     "sign_in": {
-      "header": "To build your own <mark>Virtual Assistant</mark>, please sign in",
+      "header": "To build your own <mark>Assistant</mark>, please sign in",
       "btns": {
         "sign_in": "Sign in"
       }
@@ -431,9 +431,7 @@
         "share": "Share",
         "delete": "Delete"
       },
-      "profile": {
-        "log_out": "Log Out"
-      }
+      "profile": { "settings": "Profile Settings", "log_out": "Log Out" }
     },
     "tooltips": {
       "home": "Go to home page",

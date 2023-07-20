@@ -32,7 +32,7 @@ const SidePanel = ({
       right: transition === 'left' ? 'auto' : position?.right ?? 0,
       bottom: position?.bottom ?? 0,
       background: 'transparent',
-      zIndex: 1,
+      zIndex: 6,
     },
     content: {
       top: position?.top ?? 0,

@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
   background-color: #f0f0f3;
   overflow: hidden;
   border-radius: 20px;
   width: 1000px;
-  height: 574px;
+  //   min-height: 574px;
+  height: 100%;
   .header {
     background-color: #f9fafc;
     height: 74px;
@@ -31,8 +31,8 @@
     }
   }
   .body {
+    min-height: 500px;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: row;
     padding: 48px;

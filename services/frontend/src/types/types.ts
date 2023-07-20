@@ -279,10 +279,16 @@ export type StackType =
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
-  | 'ChatGPT'
-  | 'GPT-3.5'
-  | 'Open-Assistant SFT-1 12B'
-  | 'GPT-J 6B'
+  | 'transformers-lm-oasst12b-2m'
+  | 'transformers-lm-oasst12b'
+  | 'transformers-lm-gptjt'
+  | 'openai-api-gpt4-32k'
+  | 'openai-api-gpt4'
+  | 'openai-api-chatgpt'
+  | 'openai-api-davinci3'
+  | 'openai-api-chatgpt-16k'
+  | 'anthropic-api-claude-v1'
+  | 'anthropic-api-claude-instant-v1'
 
 export type AssistantFormValues = { display_name: string; description: string }
 
@@ -361,18 +367,14 @@ export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 
 export interface IPromptBlock {
-  category: string
-  color: string
-  block: string
-  template: string
-  examples: string
+  category: string | null
   description: string
-  newLineAfter: boolean
-  newLineBefore: boolean
-  ChatGPT: boolean
-  'GPT-3.5': boolean
-  'Open-Assistant Pythia 12B': boolean
-  'GPT-JT 6B': boolean
+  display_name: string
+  example: string
+  id: number
+  newline_after: boolean
+  newline_before: boolean
+  template: string
 }
 
 export enum ELOCALES_KEY {

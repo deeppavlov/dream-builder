@@ -465,6 +465,7 @@
     "prompt_max": "Уместите текстовое описание промпта в {{max}} токенов"
   },
   "tokenizer": {
+    "counting": "+ подсчет...",
     "count_label": "токен",
     "count_suffixes": {
       "zero": "ов",

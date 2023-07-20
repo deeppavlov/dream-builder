@@ -447,6 +447,7 @@
   },
 
   "tokenizer": {
+    "counting": "+ counting...",
     "count_label": "token",
     "count_suffixes": {
       "zero": "s",

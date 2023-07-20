@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
-import { IPromptBlock, ISkill, LM_Service } from 'types/types'
+import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
 import { DEPLOY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
@@ -23,13 +23,14 @@ import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { ResizerLine, SvgIcon } from 'components/Helpers'
-import { TextArea } from 'components/Inputs'
+import { PromptEditor } from 'components/Inputs'
 import { PromptBlocksModule } from 'components/Modules'
 import getFormattedPrompt from 'components/Modules/PromptBlocksModule/getFormattedPrompt'
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
 import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
+import { PromptBlocksCompositeDecorator } from '../../Inputs/PromptEditor/PromptBlocksCompositeDecorator'
 import s from './SkillPromptModal.module.scss'
 import promptBlocksJson from './promptBuildingBlocks.json'
 
@@ -86,6 +87,7 @@ const SkillPromptModal = () => {
     })) || [],
     'company_name'
   )
+  const compositeDecorator = PromptBlocksCompositeDecorator()
 
   const {
     handleSubmit,
@@ -295,7 +297,29 @@ const SkillPromptModal = () => {
                   />
                 </div>
               )}
-              <TextArea
+              {skill?.prompt && (
+                <PromptEditor
+                  label={t('modals.skill_prompt.prompt_field.label')}
+                  name='prompt'
+                  placeholder={t(
+                    'modals.skill_prompt.prompt_field.placeholder'
+                  )}
+                  defaultValue={skill?.prompt}
+                  tokenizerModel={selectedModel?.name as LanguageModel}
+                  resizable={false}
+                  control={control}
+                  rules={{
+                    required: validationSchema.global.required,
+                    maxLength:
+                      selectedModel?.max_tokens &&
+                      validationSchema.skill.prompt.maxLength(
+                        selectedModel?.max_tokens
+                      ),
+                  }}
+                  triggerField={triggerField}
+                />
+              )}
+              {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
                 tokenizerModel={selectedModel?.display_name as any}
@@ -320,15 +344,7 @@ const SkillPromptModal = () => {
                   ),
                   id: 'prompt-textarea',
                 }}
-                // highlights={[
-                //   { keyword: 'Act as', color: '#FFE9E4' },
-                //   { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
-                //   { keyword: 'TASK', color: '#FFFCE4' },
-                //   { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
-                //   { keyword: 'INSTRUCTION', color: '#E4FEFF' },
-                //   { keyword: 'EXAMPLE', color: '#E4FEFF' },
-                // ]}
-              />
+              /> */}
             </div>
             <div className={s.btns}>
               <Button

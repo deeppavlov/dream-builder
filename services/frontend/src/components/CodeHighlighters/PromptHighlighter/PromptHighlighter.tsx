@@ -29,7 +29,7 @@ export const PromptHighlighter: FC<IProps> = ({
 
   const getAllKeywordsRegExp = () => {
     const keywords = highlights.map(({ keyword }) => keyword).join('|')
-    return new RegExp(`\\b${keywords}\\b`, 'g')
+    return new RegExp(`(?<!<[^>]*|&[^;]*)(?<=\\[)(${keywords})(?=\\])`, 'g')
   }
 
   const getHighligthElement = (color: string, match: string) =>

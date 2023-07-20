@@ -447,6 +447,7 @@
   },
 
   "tokenizer": {
+    "counting": "+ подсчет...",
     "count_label": "токен",
     "count_suffixes": {
       "zero": "ов",

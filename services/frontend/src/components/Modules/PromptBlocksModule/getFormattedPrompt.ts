@@ -6,10 +6,10 @@ interface IProps {
 }
 
 const getFormattedPrompt = ({ prompt, block }: IProps) => {
-  const { template, newLineBefore, newLineAfter } = block
+  const { template, newline_before, newline_after } = block
   const isPrompt = prompt.length > 0
-  const lineBefore = newLineBefore ? (isPrompt ? '\n\n' : '') : ' '
-  const lineAfter = newLineAfter ? '\n' : ''
+  const lineBefore = newline_before ? (isPrompt ? '\n\n' : '') : ' '
+  const lineAfter = newline_after ? '\n' : ''
 
   return `${prompt}${lineBefore}${template}${lineAfter}`
 }

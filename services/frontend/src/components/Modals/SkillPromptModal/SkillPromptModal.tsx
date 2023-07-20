@@ -31,7 +31,6 @@ import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSide
 import { Modal, Wrapper } from 'components/UI'
 import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
 import s from './SkillPromptModal.module.scss'
-import promptBlocksJson from './promptBuildingBlocks.json'
 
 interface ITriggerProps {
   skill?: ISkill
@@ -66,9 +65,6 @@ const SkillPromptModal = () => {
   const modalRef = useRef(null)
   const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
-  const promptBuildingBlocks = (
-    JSON.parse(JSON.stringify(promptBlocksJson)) as IPromptBlock[]
-  )?.filter(block => block[selectedModel?.display_name])
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
 
@@ -101,6 +97,10 @@ const SkillPromptModal = () => {
     reValidateMode: 'onChange',
     defaultValues: { model: skill?.lm_service, prompt: skill?.prompt },
   })
+
+  const promptBuildingBlocks = services?.find(
+    ({ id }) => id.toString() === getValues().model?.id?.toString()
+  )?.prompt_blocks
 
   const clearStates = () => {
     setIsOpen(false)
@@ -284,7 +284,7 @@ const SkillPromptModal = () => {
               </Button>
             </div>
             <div className={s.middle}>
-              {promptBuildingBlocks?.length > 0 && (
+              {promptBuildingBlocks && promptBuildingBlocks?.length > 0 && (
                 <div className={cx('tabs', 'blocks')}>
                   <span className={cx('blocks-label')}>
                     {t('modals.skill_prompt.prompt_blocks')}

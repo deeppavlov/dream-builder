@@ -214,6 +214,7 @@ export interface LM_Service {
   api_key: string | null
   is_maintained: boolean
   company_name?: string
+  prompt_blocks?: IPromptBlock[]
 }
 
 export interface ISkill extends IStackElement {
@@ -361,18 +362,14 @@ export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 
 export interface IPromptBlock {
-  category: string
-  color: string
-  block: string
-  template: string
-  examples: string
+  category: null | string
   description: string
-  newLineAfter: boolean
-  newLineBefore: boolean
-  ChatGPT: boolean
-  'GPT-3.5': boolean
-  'Open-Assistant Pythia 12B': boolean
-  'GPT-JT 6B': boolean
+  display_name: string
+  example: string
+  id: number
+  newline_after: boolean
+  newline_before: boolean
+  template: string
 }
 
 export enum ELOCALES_KEY {

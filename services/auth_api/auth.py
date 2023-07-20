@@ -10,7 +10,6 @@ from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type import GithubAuth, GoogleOAuth2, Unauth
 from services.auth_api.models import UserToken
-from services.auth_api.test_user import TestUser
 
 router = APIRouter(prefix="/auth")
 SessionLocal = init_db(settings.db.user, settings.db.password, settings.db.host, settings.db.port, settings.db.name)
@@ -30,8 +29,6 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "github": GithubAuth(),
     "unauth": Unauth(),
 }
-
-test_user = TestUser()
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)

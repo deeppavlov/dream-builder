@@ -7,6 +7,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     check_memory_format,
 )
 from pydantic import BaseModel, Field, validator, EmailStr
+from sqlalchemy.ext.associationproxy import _AssociationList
 
 from database import enums
 
@@ -46,6 +47,17 @@ class ApiKeyRead(BaseOrmModel):
     base_url: str
 
 
+class PromptBlockRead(BaseOrmModel):
+    id: int
+    category: Optional[str] = None
+    display_name: str
+    template: str
+    example: str
+    description: str
+    newline_before: bool
+    newline_after: bool
+
+
 class LmServiceRead(BaseOrmModel):
     id: int
     name: str
@@ -55,8 +67,16 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
-    api_key: Optional[ApiKeyRead]
+    api_key: Optional[ApiKeyRead] = None
+    prompt_blocks: Optional[list[PromptBlockRead]] = None
+    is_hosted: bool
     is_maintained: bool
+
+    @validator("prompt_blocks", pre=True)
+    def cast_associations_to_list(cls, v):
+        if isinstance(v, _AssociationList):
+            return list(v)
+        return v
 
 
 class DeploymentBaseRead(BaseOrmModel):

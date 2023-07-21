@@ -1,34 +1,38 @@
 import {
   CompositeDecorator,
-  ContentState,
   Editor,
   EditorState,
-  convertFromHTML,
+  Modifier,
+  convertFromRaw,
 } from 'draft-js'
-import React from 'react'
+import { markdownToDraft } from 'markdown-draft-js'
+import React, { useImperativeHandle, useRef } from 'react'
+
+interface ITextEditorHandle {
+  insertText: (text: string) => Promise<void>
+  focus: () => void
+}
 
 interface IProps {
-  content?: string | JSX.Element | React.ReactNode | JSX.Element[]
+  content?: string
   compositeDecorator?: CompositeDecorator
   placeholder?: string
   onChange?: (value: string) => void
   onBlur?: () => void
 }
 
-export const TextEditor = React.forwardRef(
+export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
   (
     { content, compositeDecorator, placeholder, onChange, onBlur }: IProps,
-    ref: React.LegacyRef<any>
+    forwardRef
   ) => {
-    const blocksFromHTML = convertFromHTML(
-      content?.toString()?.replace(/\n/g, '<br />') ?? ''
-    )
-    const state = ContentState.createFromBlockArray(
-      blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap
-    )
+    const textEditorRef = useRef<HTMLDivElement>(null)
+    const rawData = markdownToDraft(content ?? '', { preserveNewlines: true })
+    const state = convertFromRaw(rawData)
     const [editorState, setEditorState] = React.useState(
-      EditorState.createWithContent(state, compositeDecorator)
+      EditorState.moveSelectionToEnd(
+        EditorState.createWithContent(state, compositeDecorator)
+      )
     )
 
     const handleChange = (editorState: EditorState) => {
@@ -40,9 +44,43 @@ export const TextEditor = React.forwardRef(
       }
     }
 
+    useImperativeHandle(forwardRef, () => ({
+      insertText: async text => {
+        await new Promise(resolve => {
+          insertText(text)
+          resolve(true)
+        })
+      },
+      focus: () => textEditorRef?.current?.focus(),
+    }))
+
+    const insertText = (text: string) => {
+      const currentContent = editorState.getCurrentContent(),
+        currentSelection = editorState.getSelection()
+
+      const newContent = Modifier.replaceText(
+        currentContent,
+        currentSelection,
+        text
+      )
+
+      const newEditorState = EditorState.push(
+        editorState,
+        newContent,
+        'insert-characters'
+      )
+
+      handleChange(
+        EditorState.forceSelection(
+          newEditorState,
+          newContent.getSelectionAfter()
+        )
+      )
+    }
+
     return (
       <Editor
-        ref={ref}
+        ref={textEditorRef as any}
         stripPastedStyles
         editorState={editorState}
         placeholder={placeholder}

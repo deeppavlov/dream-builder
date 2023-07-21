@@ -22,7 +22,7 @@
   cursor: default;
 }
 ::-webkit-scrollbar-thumb {
-  height: $scrollbar-thumb-width;
+  height: 70px;
   border: $scrollbar-padding solid transparent; /* Transparent border together with `background-clip: padding-box` does the trick */
   background-clip: padding-box;
   border-radius: $scrollbar-border-radius;

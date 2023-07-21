@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -25,14 +25,12 @@ import { SkillDropboxSearch } from 'components/Dropdowns'
 import { ResizerLine, SvgIcon } from 'components/Helpers'
 import { PromptEditor } from 'components/Inputs'
 import { PromptBlocksModule } from 'components/Modules'
-import getFormattedPrompt from 'components/Modules/PromptBlocksModule/getFormattedPrompt'
+import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFormattedPromptBlock'
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
 import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
-import { PromptBlocksCompositeDecorator } from '../../Inputs/PromptEditor/PromptBlocksCompositeDecorator'
 import s from './SkillPromptModal.module.scss'
-import promptBlocksJson from './promptBuildingBlocks.json'
 
 interface ITriggerProps {
   skill?: ISkill
@@ -48,6 +46,8 @@ interface IFormValues {
   }
   prompt: string
 }
+
+type PromptEditorHandle = React.ElementRef<typeof PromptEditor>
 
 const SkillPromptModal = () => {
   const { t } = useTranslation()
@@ -67,10 +67,8 @@ const SkillPromptModal = () => {
   const modalRef = useRef(null)
   const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
-  const promptBuildingBlocks = (
-    JSON.parse(JSON.stringify(promptBlocksJson)) as IPromptBlock[]
-  )?.filter(block => block[selectedModel?.display_name])
   const validationSchema = getValidationSchema()
+  const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -87,14 +85,12 @@ const SkillPromptModal = () => {
     })) || [],
     'company_name'
   )
-  const compositeDecorator = PromptBlocksCompositeDecorator()
 
   const {
     handleSubmit,
     reset,
     trigger: triggerField,
     getValues,
-    setValue,
     control,
     watch,
     formState: { dirtyFields, isSubmitting, isDirty },
@@ -103,6 +99,10 @@ const SkillPromptModal = () => {
     reValidateMode: 'onChange',
     defaultValues: { model: skill?.lm_service, prompt: skill?.prompt },
   })
+
+  const promptBuildingBlocks = services?.find(
+    ({ id }) => id.toString() === getValues().model?.id?.toString()
+  )?.prompt_blocks
 
   const clearStates = () => {
     setIsOpen(false)
@@ -171,20 +171,13 @@ const SkillPromptModal = () => {
     })
   }
 
-  const handlePromptBlockSelect = async (block: IPromptBlock) => {
-    await new Promise(resolve => {
-      setValue(
-        'prompt',
-        getFormattedPrompt({ prompt: getValues('prompt'), block }),
-        { shouldDirty: true, shouldValidate: true }
-      )
-      resolve(true)
-    }).then(() => {
-      const textareaEl = document.querySelector('#prompt-textarea')
-
-      if (!textareaEl) return
-      textareaEl.scrollTop = textareaEl?.scrollHeight
+  const handlePromptBlockSelect = (block: IPromptBlock) => {
+    const formattedBlock = getFormattedPromptBlock({
+      prompt: getValues('prompt'),
+      block,
     })
+
+    promptEditorRef?.current?.insertText(formattedBlock)
   }
 
   const onFormSubmit = (data: IFormValues) => {
@@ -286,7 +279,7 @@ const SkillPromptModal = () => {
               </Button>
             </div>
             <div className={s.middle}>
-              {promptBuildingBlocks?.length > 0 && (
+              {promptBuildingBlocks && promptBuildingBlocks?.length > 0 && (
                 <div className={cx('tabs', 'blocks')}>
                   <span className={cx('blocks-label')}>
                     {t('modals.skill_prompt.prompt_blocks')}
@@ -299,6 +292,7 @@ const SkillPromptModal = () => {
               )}
               {skill?.prompt && (
                 <PromptEditor
+                  ref={promptEditorRef}
                   label={t('modals.skill_prompt.prompt_field.label')}
                   name='prompt'
                   placeholder={t(

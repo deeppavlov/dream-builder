@@ -145,6 +145,7 @@
   border: none;
   background-color: transparent;
   cursor: text;
+  white-space: pre-line;
 
   &::placeholder {
     color: $text3;

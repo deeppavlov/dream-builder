@@ -214,6 +214,7 @@ export interface LM_Service {
   api_key: string | null
   is_maintained: boolean
   company_name?: string
+  prompt_blocks?: IPromptBlock[]
 }
 
 export interface ISkill extends IStackElement {

@@ -116,6 +116,7 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
+  language?: { id: number; value: ELOCALES_KEY }
 }
 
 export interface BotCardProps {
@@ -256,11 +257,6 @@ export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type ChatForm = { message: string }
 
-export type PostDistParams = {
-  display_name: string
-  description: string
-}
-
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
@@ -280,6 +276,10 @@ export type StackType =
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
+  | 'ChatGPT'
+  | 'GPT-3.5'
+  | 'Open-Assistant SFT-1 12B'
+  | 'GPT-J 6B'
   | 'transformers-lm-oasst12b-2m'
   | 'transformers-lm-oasst12b'
   | 'transformers-lm-gptjt'
@@ -291,7 +291,7 @@ export type LanguageModel =
   | 'anthropic-api-claude-v1'
   | 'anthropic-api-claude-instant-v1'
 
-export type AssistantFormValues = { display_name: string; description: string }
+export type TLang = 'Russian' | 'English'
 
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 

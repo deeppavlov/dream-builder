@@ -6,6 +6,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  .annotation {
+    @include b3;
+    color: $text3;
+  }
 }
 
 .header {
@@ -41,4 +46,13 @@
 
 .textMuted {
   color: $text3;
+}
+
+.dropboxArea {
+  .dropbox {
+    [id='label'] {
+      color: rgba(0, 0, 0, 0.7) !important;
+      font-weight: 400;
+    }
+  }
 }

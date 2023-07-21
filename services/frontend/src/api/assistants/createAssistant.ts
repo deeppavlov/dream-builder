@@ -1,14 +1,16 @@
+import { ELOCALES_KEY } from 'types/types'
 import { privateApi } from 'api/axiosConfig'
 
-interface PutDistParams {
+interface CreateAssistantPayload {
   display_name: string
   description: string
+  language: ELOCALES_KEY
 }
 
-export async function createAssistant(params: PutDistParams) {
+export async function createAssistant(payload: CreateAssistantPayload) {
   try {
     const { data } = await privateApi.post('/assistant_dists', {
-      ...params,
+      ...payload,
     })
     return data
   } catch (e) {

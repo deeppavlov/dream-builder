@@ -1,5 +1,9 @@
 import axios from 'axios'
-import { getAccessToken, setAccessToken } from 'utils/localStorageUser'
+import {
+  getAccessToken,
+  getLocale,
+  setAccessToken,
+} from 'utils/localStorageUser'
 import { logout, updateAccessToken } from './user'
 
 const { MODE } = import.meta.env
@@ -29,6 +33,7 @@ privateApi.interceptors.request.use(
   config => {
     if (!config.headers?.token) {
       config.headers!.token = getAccessToken()
+      config.headers!.lang = getLocale()
     }
     return config
   },

@@ -57,6 +57,7 @@ async def create_virtual_assistant(
         payload.description,
         user.id,
         user.email,
+        payload.language,
     )
     return new_virtual_assistant
 
@@ -185,7 +186,14 @@ async def clone_dist(
     -``description``: new assistant dist description
     """
     new_virtual_assistant = flows.create_virtual_assistant(
-        db, virtual_assistant.name, payload.display_name, payload.description, user.id, user.email, is_cloned=True
+        db,
+        virtual_assistant.name,
+        payload.display_name,
+        payload.description,
+        user.id,
+        user.email,
+        payload.language,
+        is_cloned=True,
     )
     return new_virtual_assistant
 

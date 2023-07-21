@@ -39,6 +39,11 @@ class UserRead(BaseOrmModel):
     family_name: Optional[str]
 
 
+class LanguageRead(BaseOrmModel):
+    id: int
+    value: str
+
+
 class ApiKeyRead(BaseOrmModel):
     id: int
     name: str
@@ -71,8 +76,9 @@ class LmServiceRead(BaseOrmModel):
     prompt_blocks: Optional[list[PromptBlockRead]] = None
     is_hosted: bool
     is_maintained: bool
+    languages: List[LanguageRead]
 
-    @validator("prompt_blocks", pre=True)
+    @validator("prompt_blocks", "languages", pre=True)
     def cast_associations_to_list(cls, v):
         if isinstance(v, _AssociationList):
             return list(v)
@@ -146,6 +152,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     name: str
     display_name: str
     description: str
+    language: LanguageRead
     date_created: datetime
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
     publish_state: Optional[enums.PublishRequestState]
@@ -185,6 +192,7 @@ class VirtualAssistantRead(VirtualAssistantBaseRead):
 class VirtualAssistantCreate(BaseModel):
     display_name: str
     description: str
+    language: Optional[str] = "en"
 
 
 class VirtualAssistantUpdate(BaseModel):

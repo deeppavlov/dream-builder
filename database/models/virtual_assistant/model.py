@@ -30,6 +30,10 @@ class VirtualAssistant(Base):
     name = Column(String, unique=True, nullable=False)
     display_name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+
+    language_id = Column(Integer, ForeignKey("language.id"), nullable=True)
+    language = relationship("Language")
+
     private_visibility = Column(
         sqltypes.Enum(enums.VirtualAssistantPrivateVisibility),
         nullable=False,

@@ -52,6 +52,7 @@ def create(
     display_name: str,
     description: str,
     components: List[Component],
+    language_id: int,
     cloned_from_id: Optional[int] = None,
 ) -> VirtualAssistant:
     new_virtual_assistant = db.scalar(
@@ -63,6 +64,7 @@ def create(
             name=name,
             display_name=display_name,
             description=description,
+            language_id=language_id,
         )
         .returning(VirtualAssistant)
     )

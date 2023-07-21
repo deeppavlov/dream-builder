@@ -41,7 +41,16 @@ INITIAL_DATA_LISTS = [
     "role",
 ]
 
-COPY_AS_IS_SHEETS = ["role", "google_user", "lm_service", "prompt_block", "lm_service_prompt_block", "api_key",]
+COPY_AS_IS_SHEETS = [
+    "role",
+    "google_user",
+    "language",
+    "lm_service",
+    "lm_service_language",
+    "prompt_block",
+    "lm_service_prompt_block",
+    "api_key",
+]
 
 
 def find_row(rows: list[dict], key: str, value: Union[str, int]):
@@ -87,6 +96,8 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
     all_components = {}
 
     initial_secret = read_xlsx_file(initial_file)
+
+    language_map = {row["value"]: row["id"] for row in initial_secret["language"]}
 
     for table_name in COPY_AS_IS_SHEETS:
         with open(f"{output_dir}/{table_name}.tsv", "w", encoding="utf-8") as table_tsv_f:
@@ -211,7 +222,16 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
     ):
         va_csv_writer = csv.writer(va_tsv_f, delimiter="\t", quotechar='"')
         va_csv_writer.writerow(
-            ["author_id", "source", "name", "display_name", "description", "private_visibility", "date_created"]
+            [
+                "author_id",
+                "source",
+                "name",
+                "display_name",
+                "description",
+                "private_visibility",
+                "date_created",
+                "language_id",
+            ]
         )
 
         va_components_csv_writer = csv.writer(va_components_tsv_f, delimiter="\t", quotechar='"')
@@ -236,6 +256,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     dist.pipeline.metadata.description,
                     enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK.value,
                     dist.pipeline.metadata.date_created.strftime("%Y-%m-%dT%H:%M:%S"),
+                    language_map[dist.pipeline.agent.service.environment.get("LANGUAGE").lower()],
                 ]
                 va_csv_writer.writerow(va_row)
 

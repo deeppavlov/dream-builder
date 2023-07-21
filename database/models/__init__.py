@@ -2,7 +2,9 @@ from database.models.api_key.model import ApiKey
 from database.models.component.model import Component
 from database.models.deployment.model import Deployment
 from database.models.dialog_session.model import DialogSession
+from database.models.language.model import Language
 from database.models.lm_service.model import LmService
+from database.models.lm_service_language.model import LmServiceLanguage
 from database.models.lm_service_prompt_block.model import LmServicePromptBlock
 from database.models.prompt_block.model import PromptBlock
 from database.models.publish_request.model import PublishRequest

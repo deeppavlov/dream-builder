@@ -1,5 +1,5 @@
 .container {
-  width: 80vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -17,15 +17,18 @@
 .backdrop {
   top: 64px;
   height: calc(100% - 64px);
-  transition: width 0.3s linear;
-}
-
-.withRightSidePanel {
-  width: calc(100% - 368px);
+  z-index: 5;
 }
 
 .modal {
+  width: 80vw;
   background-color: #f0f0f3;
   padding: 24px;
   position: relative;
+  transition: margin 0.3s ease-out, width 0.3s ease-out;
+
+  &.withRightSidePanel {
+    margin-right: 368px;
+    width: calc(80vw - 295px);
+  }
 }

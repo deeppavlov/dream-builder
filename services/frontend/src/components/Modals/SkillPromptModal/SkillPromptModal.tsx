@@ -79,9 +79,13 @@ const SkillPromptModal = () => {
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
 
-  const { data: services } = useQuery('lm_services', getAllLMservices, {
-    refetchOnWindowFocus: false,
-  })
+  const language = bot?.language?.value!
+
+  const { data: services } = useQuery(
+    'lm_services',
+    () => getAllLMservices(language),
+    { enabled: Boolean(language), refetchOnWindowFocus: false }
+  )
 
   const dropboxArray: any[] = sortByGroup(
     services?.map((service: LM_Service) => ({

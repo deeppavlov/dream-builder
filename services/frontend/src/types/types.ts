@@ -116,7 +116,7 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
-  lang?: ELOCALES_KEY
+  language?: { id: number; value: ELOCALES_KEY }
 }
 
 export interface BotCardProps {

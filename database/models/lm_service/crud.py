@@ -9,13 +9,6 @@ from database.models.language import crud as language_crud
 
 
 def get_all_lm_services(db: Session, language: str = None, hosted_only: bool = True) -> [LmService]:
-    # filter_kwargs = {}
-    # if hosted_only:
-    #     filter_kwargs["is_hosted"] = True
-    # if language:
-    #     language = language_crud.get_language_by_value(db, language)
-    #     filter_kwargs["languages"] = LmService.languages.any(language)
-
     filters = []
     if hosted_only:
         filters.append(LmService.is_hosted == True)

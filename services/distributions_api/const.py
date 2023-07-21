@@ -1,4 +1,7 @@
-TEMPLATE_DIST_PROMPT_BASED = "dream_persona_prompted"
+TEMPLATE_DIST_PROMPT_BASED = {
+    "en": "dream_persona_prompted",
+    "ru": "dream_persona_ruxglm_prompted",
+}
 
 INVISIBLE_VIRTUAL_ASSISTANT_NAMES = [
     "universal_prompted_assistant",

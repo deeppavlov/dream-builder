@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -49,10 +49,16 @@ async def create_virtual_assistant(
 
     -``description``: new assistant dist description
     """
+    try:
+        template_dist = TEMPLATE_DIST_PROMPT_BASED[payload.language]
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"No template for language {payload.language}"
+        )
 
     new_virtual_assistant = flows.create_virtual_assistant(
         db,
-        TEMPLATE_DIST_PROMPT_BASED,
+        template_dist,
         payload.display_name,
         payload.description,
         user.id,

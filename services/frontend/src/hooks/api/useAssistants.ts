@@ -48,7 +48,7 @@ interface IGetDistOptions {
 interface ICreateAssistantPayload {
   display_name: string
   description: string
-  lang: ELOCALES_KEY
+  language: ELOCALES_KEY
 }
 export const useAssistants = () => {
   const auth = useAuth()
@@ -98,6 +98,7 @@ export const useAssistants = () => {
   })
 
   const create = useMutation({
+    onMutate: data => console.log('data = ', data),
     mutationFn: (createPayload: ICreateAssistantPayload) =>
       createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {

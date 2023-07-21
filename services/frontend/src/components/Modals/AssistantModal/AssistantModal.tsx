@@ -103,12 +103,12 @@ export const AssistantModal = () => {
   const name = bot?.name!
 
   const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
-    const lang = formValues.language.id as ELOCALES_KEY
+    const language = formValues.language.id as ELOCALES_KEY
     const display_name = formValues.display_name as string
     const description = formValues.description as string
 
     const data = { display_name, description }
-    const createPayload = { display_name, description, lang }
+    const createPayload = { display_name, description, language }
 
     switch (action) {
       case 'create':

@@ -4,7 +4,7 @@ import { privateApi } from 'api/axiosConfig'
 interface CreateAssistantPayload {
   display_name: string
   description: string
-  lang: ELOCALES_KEY
+  language: ELOCALES_KEY
 }
 
 export async function createAssistant(payload: CreateAssistantPayload) {

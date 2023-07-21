@@ -96,11 +96,8 @@ export const SkillsListModal = () => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       handleClose={handleClose}
-      modalClassName={s.modal}
-      backdropClassName={cx(
-        'backdrop',
-        rightSidepanelIsActive && 'withRightSidePanel'
-      )}
+      modalClassName={cx('modal', rightSidepanelIsActive && 'withRightSidePanel')}
+      backdropClassName={s.backdrop}
     >
       <div className={s.container}>
         <div className={s.header}>{t('modals.choose_skill.header')}</div>

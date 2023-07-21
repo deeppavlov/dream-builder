@@ -5,13 +5,13 @@ interface IProps {
   block: IPromptBlock
 }
 
-const getFormattedPrompt = ({ prompt, block }: IProps) => {
+const getFormattedPromptBlock = ({ prompt, block }: IProps) => {
   const { template, newline_before, newline_after } = block
   const isPrompt = prompt.length > 0
   const lineBefore = newline_before ? (isPrompt ? '\n\n' : '') : ' '
   const lineAfter = newline_after ? '\n' : ''
 
-  return `${prompt}${lineBefore}${template}${lineAfter}`
+  return `${lineBefore}${template}${lineAfter}`
 }
 
-export default getFormattedPrompt
+export default getFormattedPromptBlock

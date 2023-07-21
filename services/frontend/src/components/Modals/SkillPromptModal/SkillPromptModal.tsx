@@ -1,13 +1,13 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { RoutesList } from 'router/RoutesList'
-import { IPromptBlock, ISkill, LM_Service } from 'types/types'
+import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
 import { DEPLOY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
@@ -23,9 +23,9 @@ import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { ResizerLine, SvgIcon } from 'components/Helpers'
-import { TextArea } from 'components/Inputs'
+import { PromptEditor } from 'components/Inputs'
 import { PromptBlocksModule } from 'components/Modules'
-import getFormattedPrompt from 'components/Modules/PromptBlocksModule/getFormattedPrompt'
+import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFormattedPromptBlock'
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
@@ -47,6 +47,8 @@ interface IFormValues {
   prompt: string
 }
 
+type PromptEditorHandle = React.ElementRef<typeof PromptEditor>
+
 const SkillPromptModal = () => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
@@ -66,6 +68,7 @@ const SkillPromptModal = () => {
   const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const validationSchema = getValidationSchema()
+  const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
 
   const { data: services } = useQuery('lm_services', getAllLMservices, {
@@ -88,7 +91,6 @@ const SkillPromptModal = () => {
     reset,
     trigger: triggerField,
     getValues,
-    setValue,
     control,
     watch,
     formState: { dirtyFields, isSubmitting, isDirty },
@@ -169,20 +171,13 @@ const SkillPromptModal = () => {
     })
   }
 
-  const handlePromptBlockSelect = async (block: IPromptBlock) => {
-    await new Promise(resolve => {
-      setValue(
-        'prompt',
-        getFormattedPrompt({ prompt: getValues('prompt'), block }),
-        { shouldDirty: true, shouldValidate: true }
-      )
-      resolve(true)
-    }).then(() => {
-      const textareaEl = document.querySelector('#prompt-textarea')
-
-      if (!textareaEl) return
-      textareaEl.scrollTop = textareaEl?.scrollHeight
+  const handlePromptBlockSelect = (block: IPromptBlock) => {
+    const formattedBlock = getFormattedPromptBlock({
+      prompt: getValues('prompt'),
+      block,
     })
+
+    promptEditorRef?.current?.insertText(formattedBlock)
   }
 
   const onFormSubmit = (data: IFormValues) => {
@@ -295,7 +290,30 @@ const SkillPromptModal = () => {
                   />
                 </div>
               )}
-              <TextArea
+              {skill?.prompt && (
+                <PromptEditor
+                  ref={promptEditorRef}
+                  label={t('modals.skill_prompt.prompt_field.label')}
+                  name='prompt'
+                  placeholder={t(
+                    'modals.skill_prompt.prompt_field.placeholder'
+                  )}
+                  defaultValue={skill?.prompt}
+                  tokenizerModel={selectedModel?.name as LanguageModel}
+                  resizable={false}
+                  control={control}
+                  rules={{
+                    required: validationSchema.global.required,
+                    maxLength:
+                      selectedModel?.max_tokens &&
+                      validationSchema.skill.prompt.maxLength(
+                        selectedModel?.max_tokens
+                      ),
+                  }}
+                  triggerField={triggerField}
+                />
+              )}
+              {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
                 tokenizerModel={selectedModel?.display_name as any}
@@ -320,15 +338,7 @@ const SkillPromptModal = () => {
                   ),
                   id: 'prompt-textarea',
                 }}
-                // highlights={[
-                //   { keyword: 'Act as', color: '#FFE9E4' },
-                //   { keyword: 'YOUR PERSONALITY', color: '##FFF1E4' },
-                //   { keyword: 'TASK', color: '#FFFCE4' },
-                //   { keyword: 'CONTEXT ABOUT HUMAN', color: '#E9FFE4' },
-                //   { keyword: 'INSTRUCTION', color: '#E4FEFF' },
-                //   { keyword: 'EXAMPLE', color: '#E4FEFF' },
-                // ]}
-              />
+              /> */}
             </div>
             <div className={s.btns}>
               <Button

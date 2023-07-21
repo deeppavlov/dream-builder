@@ -280,10 +280,16 @@ export type StackType =
 export type TTopbar = 'main' | 'editor'
 
 export type LanguageModel =
-  | 'ChatGPT'
-  | 'GPT-3.5'
-  | 'Open-Assistant SFT-1 12B'
-  | 'GPT-J 6B'
+  | 'transformers-lm-oasst12b-2m'
+  | 'transformers-lm-oasst12b'
+  | 'transformers-lm-gptjt'
+  | 'openai-api-gpt4-32k'
+  | 'openai-api-gpt4'
+  | 'openai-api-chatgpt'
+  | 'openai-api-davinci3'
+  | 'openai-api-chatgpt-16k'
+  | 'anthropic-api-claude-v1'
+  | 'anthropic-api-claude-instant-v1'
 
 export type AssistantFormValues = { display_name: string; description: string }
 
@@ -362,7 +368,7 @@ export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 
 export interface IPromptBlock {
-  category: null | string
+  category: string | null
   description: string
   display_name: string
   example: string

@@ -366,7 +366,11 @@ export interface IPublicationRequest {
 export type TErrorStatus = 401 | 404 | 500 | 503
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
-
+export enum API_CALL_TAB {
+  CURL = 'CURL',
+  NODE = 'NODE',
+  PYTHON = 'PYTHON',
+}
 export interface IPromptBlock {
   category: string | null
   description: string

@@ -101,7 +101,10 @@
         "not_found_service": "Not found Service or User id."
       },
       "attention": {
-        "annotation": " The API key for this AI Assistant is stored in your browser.\n <br />\nPlease be aware that without adding the API key, the Assistant will not function as intended."
+        "annotation": {
+          "first_line": "The API key for this AI Assistant is stored in your browser.",
+          "second_line": "Please be aware that without adding the API key, the Assistant will not function as intended."
+        }
       }
     },
     "assistant": {

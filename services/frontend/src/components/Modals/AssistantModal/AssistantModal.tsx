@@ -23,7 +23,7 @@ type TAssistantModalAction = 'clone' | 'create' | 'edit'
 interface IAssistantInfo
   extends Pick<
     BotInfoInterface,
-    'name' | 'display_name' | 'description' | 'lang'
+    'name' | 'display_name' | 'description' | 'language'
   > {}
 
 interface IAssistantDistInfo
@@ -84,7 +84,7 @@ export const AssistantModal = () => {
     setBot(data.detail?.bot ?? null)
 
     const isCreate = data.detail?.action === 'create'
-    const assistantLang = data?.detail?.bot?.lang! as ELOCALES_KEY
+    const assistantLang = data?.detail?.bot?.language?.value! as ELOCALES_KEY
     const assistantLangDisplayName = language()[assistantLang] as TLang
     const assistantLangValue = {
       id: assistantLang!,
@@ -136,7 +136,7 @@ export const AssistantModal = () => {
   useObserver('AssistantModal', handleEventUpdate)
 
   useEffect(() => {
-    const botLang = bot?.lang!
+    const botLang = bot?.language?.value!
     const botDisplayLang = language()[botLang] as TLang
     const botLangValue = {
       id: botLang,

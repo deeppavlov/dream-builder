@@ -134,7 +134,10 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   useOnlyOnMount(() => renewDialogSession())
   useObserver('RenewChat', handleRenewClick)
   useChatScroll(chatRef, [history, message])
-  useEffect(() => handleCheckChatSettings(), [skill, user?.id])
+  useEffect(
+    () => handleCheckChatSettings(),
+    [skill, user?.id, handleRenewClick]
+  )
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   return (

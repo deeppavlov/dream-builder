@@ -245,6 +245,12 @@
       &:hover,
       &:focus-visible {
         border-color: $text5;
+        color: $text5;
+        svg {
+          path {
+            stroke: $text5;
+          }
+        }
       }
     }
 

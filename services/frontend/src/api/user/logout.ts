@@ -1,4 +1,5 @@
 import { authApi } from 'api/axiosConfig'
+import { trigger } from 'utils/events'
 import { deleteLocalStorageUser, getRefreshToken } from 'utils/localStorageUser'
 
 export const logout = async () => {
@@ -17,4 +18,5 @@ export const logout = async () => {
   }
 
   deleteLocalStorageUser()
+  trigger('logout', {})
 }

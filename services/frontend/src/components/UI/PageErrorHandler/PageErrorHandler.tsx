@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/arrow_right_link.svg'
 import { TErrorStatus } from 'types/types'
 import { getErrorMessage } from 'utils/getErrorMessage'
@@ -11,8 +13,14 @@ interface IProps {
 }
 
 const PageErrorHandler = ({ status }: IProps) => {
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const { title, message } = getErrorMessage(status)
+  const redirect = () => status === 401 && navigate('/')
+
+  useEffect(() => {
+    redirect()
+  })
   return (
     // Fix on SVG
     <div className={s.pageErrorHandler}>

@@ -1,5 +1,7 @@
 import { Toaster } from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
 import { Outlet, useParams } from 'react-router-dom'
+import { useObserver } from 'hooks/useObserver'
 import 'components/Modals'
 import {
   AccessTokensModal,
@@ -21,7 +23,8 @@ import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
 const RootLayout = () => {
   const { name } = useParams()
   const isEditor = Boolean(name)
-
+  const queryClient = useQueryClient()
+  useObserver('logout', () => queryClient.invalidateQueries())
   return (
     <>
       <Topbar />

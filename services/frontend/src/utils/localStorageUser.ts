@@ -1,7 +1,6 @@
 import store from 'store2'
 import { ITokens, UserInterface } from 'types/types'
 import { I18N_STORE_KEY } from 'constants/constants'
-import { trigger } from './events'
 
 export const getLocalStorageUser = (): (UserInterface & ITokens) | null => {
   const user = localStorage.getItem('user')
@@ -14,7 +13,6 @@ export const setLocalStorageUser = (user: UserInterface & ITokens) => {
 
 export const deleteLocalStorageUser = () => {
   localStorage.removeItem('user')
-  trigger('storage', {})
 }
 
 export const getRefreshToken = (): string | null => {

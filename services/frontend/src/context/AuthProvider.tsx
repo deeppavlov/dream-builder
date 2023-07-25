@@ -15,21 +15,22 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
+
   const updateUser = () => {
     const localStorageUser = getLocalStorageUser()
 
-    console.log('user = ', user)
     if (user === null && localStorageUser !== null) {
       setUser(localStorageUser)
-    } else if (user === null && localStorageUser === null) {
-      setUser(null)
     }
   }
+  const deleteUser = () => setUser(null)
+
   useEffect(() => {
     updateUser()
   }, [])
 
-  useObserver('storage', updateUser)
+  useObserver('logout', deleteUser)
+  useObserver('login', updateUser)
   // requested before login Modal window,
   // and clear sessionStorage states
   useEffect(() => {

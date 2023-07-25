@@ -22,7 +22,7 @@ export const exchangeAuthCode = async (code: string) => {
     .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
     .then(({ data }) => {
       setLocalStorageUser(data)
-      trigger('storage', {})
+      trigger('login', {})
     })
     .catch(() => console.log('ExchangeAuthCode failed!'))
 

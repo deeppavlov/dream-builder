@@ -20,6 +20,7 @@ import {
   publishAssistant,
 } from 'api/assistants'
 import { useDeploy } from 'hooks/api/useDeploy'
+import { useObserver } from 'hooks/useObserver'
 
 interface IChangeVisibility {
   name: string
@@ -60,10 +61,15 @@ export const useAssistants = () => {
   const DIST = 'dist'
   const { deploy } = useDeploy()
 
+  // handle logout on homepage
+  useObserver('logout', () => queryClient.removeQueries(PRIVATE_DISTS))
+
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
   const fetchPrivateDists = () =>
-    useQuery(PRIVATE_DISTS, getPrivateAssistants, { enabled: userIsAuthorized })
+    useQuery(PRIVATE_DISTS, getPrivateAssistants, {
+      enabled: userIsAuthorized,
+    })
 
   const getDist = ({ distName }: IGetDist, options?: IGetDistOptions) => {
     const isRetry = options?.retry !== undefined

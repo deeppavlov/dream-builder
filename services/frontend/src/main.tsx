@@ -7,7 +7,13 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from 'router/Router'
 import './i18n'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+})
 
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

@@ -364,6 +364,10 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TErrorBoundary = {
+  status: TErrorStatus
+  message: string
+}
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 

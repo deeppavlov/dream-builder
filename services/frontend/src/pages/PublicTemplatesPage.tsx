@@ -4,8 +4,6 @@ import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
-import { AssistantModal, SignInModal } from 'components/Modals'
-import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const PublicTemplatesPage = () => {
@@ -52,9 +50,6 @@ export const PublicTemplatesPage = () => {
             </>
           )}
         </Wrapper>
-        <BaseSidePanel />
-        <AssistantModal />
-        <SignInModal />
       </Main>
     </>
   )

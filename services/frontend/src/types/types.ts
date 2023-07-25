@@ -65,6 +65,7 @@ export type TEvents =
   | 'ProfileSettingsModal'
   | 'CtxMenuBtnClick'
   | 'ChangeLanguageModal'
+  | 'storage'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 

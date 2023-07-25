@@ -17,5 +17,4 @@ export const logout = async () => {
   }
 
   deleteLocalStorageUser()
-  location.reload()
 }

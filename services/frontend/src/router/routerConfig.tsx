@@ -8,7 +8,7 @@ import { GoogleAuthPage } from 'pages/GoogleAuthPage'
 import { HomePage } from 'pages/HomePage'
 import { MyAssistantsPage } from 'pages/MyAssistantsPage'
 import { PublicTemplatesPage } from 'pages/PublicTemplatesPage'
-import Root from 'pages/Root'
+import RootLayout from 'pages/RootLayout'
 import { Link, generatePath } from 'react-router-dom'
 import { AdminRoute } from 'router/AdminRoute'
 import { PrivateRoute } from 'router/PrivateRoute'
@@ -20,9 +20,17 @@ import { CrumbForEditor } from 'components/Widgets/Topbar/components/Breadcrumbs
 export const RouterConfig: CustomRouteConfig[] = [
   {
     path: '/',
-    element: <Root />,
+    element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: RoutesList.code,
+        element: <GoogleAuthPage />,
+      },
+      {
+        path: '*',
+        element: <ErrorPage />,
+      },
       {
         path: RoutesList.start,
         element: <HomePage />,
@@ -135,14 +143,7 @@ export const RouterConfig: CustomRouteConfig[] = [
       },
     ],
   },
-  {
-    path: RoutesList.code,
-    element: <GoogleAuthPage />,
-  },
-  {
-    path: '*',
-    element: <ErrorPage />,
-  },
+
   // Dev pages
 
   {

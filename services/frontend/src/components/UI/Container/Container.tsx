@@ -15,6 +15,7 @@ interface ContainerProps {
   flexEnd?: boolean
   column?: boolean
   layoutForBottomBtns?: boolean
+  forLoader?: boolean
 }
 
 export const Container = ({
@@ -30,6 +31,7 @@ export const Container = ({
   flexEnd,
   column,
   layoutForBottomBtns,
+  forLoader,
 }: ContainerProps) => {
   const cx = classNames.bind(s)
   return (
@@ -46,7 +48,8 @@ export const Container = ({
         overflowVisible && 'overflowVisible',
         flexEnd && 'flexEnd',
         column && 'column',
-        layoutForBottomBtns && 'layoutForBottomBtns'
+        layoutForBottomBtns && 'layoutForBottomBtns',
+        forLoader && 'forLoader'
       )}
     >
       {children}

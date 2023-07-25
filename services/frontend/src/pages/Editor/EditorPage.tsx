@@ -7,17 +7,11 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
 import {
-  AssistantModal,
-  DeleteAssistantModal,
   DeleteSkillModal,
-  PublishAssistantModal,
-  ShareAssistantModal,
-  SignInModal,
   SkillModal,
   SkillQuitModal,
   SkillsListModal,
 } from 'components/Modals'
-import { BaseSidePanel } from 'components/Panels'
 import { Container } from 'components/UI'
 import { Sidebar } from 'components/Widgets'
 import {
@@ -70,16 +64,10 @@ export const EditorPage = () => {
         </Container>
       </Sidebar>
       <Outlet />
-      <SkillsListModal />
-      <BaseSidePanel />
-      <SkillQuitModal />
-      <PublishAssistantModal />
-      <DeleteAssistantModal />
-      <AssistantModal />
-      <SignInModal />
-      <ShareAssistantModal />
-      <DeleteSkillModal />
       <SkillModal />
+      <SkillsListModal />
+      <SkillQuitModal />
+      <DeleteSkillModal />
     </>
   )
 }

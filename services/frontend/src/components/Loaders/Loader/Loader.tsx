@@ -1,13 +1,17 @@
 import { FC } from 'react'
 import { RotatingLines } from 'react-loader-spinner'
 
-export const Loader: FC = () => {
+interface LoaderProps {
+  width: string
+}
+
+export const Loader: FC<LoaderProps> = ({ width }) => {
   return (
     <RotatingLines
       strokeColor='grey'
       strokeWidth='5'
       animationDuration='0.75'
-      width='48'
+      width={width || '48'}
       visible={true}
     />
   )

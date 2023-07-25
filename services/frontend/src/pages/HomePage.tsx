@@ -7,15 +7,6 @@ import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import {
-  AssistantModal,
-  DeleteAssistantModal,
-  PublicToPrivateModal,
-  PublishAssistantModal,
-  ShareAssistantModal,
-  SignInModal,
-} from 'components/Modals'
-import { BaseSidePanel } from 'components/Panels'
-import {
   Container,
   ErrorHandler,
   Main,
@@ -133,13 +124,6 @@ export const HomePage = () => {
             </Container>
           )}
         </Wrapper>
-        <BaseSidePanel />
-        <AssistantModal />
-        <PublishAssistantModal />
-        <DeleteAssistantModal />
-        <ShareAssistantModal />
-        <PublicToPrivateModal />
-        <SignInModal />
       </Main>
     </>
   )

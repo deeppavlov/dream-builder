@@ -11,7 +11,6 @@ import { dateToUTC } from 'utils/dateToUTC'
 import { sortByISO8601 } from 'utils/sortByISO8601'
 import { Button } from 'components/Buttons'
 import { BaseToolTip } from 'components/Menus'
-import { BaseSidePanel } from 'components/Panels'
 import { Container, Main, Wrapper } from 'components/UI'
 import { Sidebar, Topbar } from 'components/Widgets'
 
@@ -81,7 +80,7 @@ export const AdminPage = () => {
   return (
     <>
       <Topbar />
-      <Sidebar></Sidebar>
+      <Sidebar />
       <Main sidebar>
         <Wrapper fitScreen title='Publication Requests'>
           <Container gridForRequests>
@@ -188,7 +187,6 @@ export const AdminPage = () => {
           </Container>
         </Wrapper>
       </Main>
-      <BaseSidePanel />
     </>
   )
 }

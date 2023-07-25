@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { UserContext, UserInterface } from 'types/types'
+import { TEvents, UserContext, UserInterface } from 'types/types'
+import { useObserver } from 'hooks/useObserver'
 import {
   clearBeforeLoginLocation,
   clearBeforeLoginModal,
@@ -14,16 +15,22 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(null)
-
-  useEffect(() => {
+  const updateUser = () => {
     const localStorageUser = getLocalStorageUser()
 
+    console.log('user = ', user)
     if (user === null && localStorageUser !== null) {
       setUser(localStorageUser)
+    } else if (user === null && localStorageUser === null) {
+      setUser(null)
     }
+  }
+  useEffect(() => {
+    updateUser()
   }, [])
 
-  // Trigger requested before login Modal window,
+  useObserver('storage', updateUser)
+  // requested before login Modal window,
   // and clear sessionStorage states
   useEffect(() => {
     const beforeLoginUrl = getBeforeLoginLocation()
@@ -33,7 +40,7 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     const beforeLoginModal = getBeforeLoginModal()
 
     if (beforeLoginModal && location.href === beforeLoginUrl)
-      trigger(beforeLoginModal.name, beforeLoginModal.options)
+      trigger(beforeLoginModal.name as TEvents, beforeLoginModal.options)
 
     clearBeforeLoginLocation()
     clearBeforeLoginModal()

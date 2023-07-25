@@ -5,13 +5,6 @@ import { consts } from 'utils/consts'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
-import {
-  AssistantModal,
-  DeleteAssistantModal,
-  PublishAssistantModal,
-  ShareAssistantModal,
-} from 'components/Modals'
-import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
 
 export const MyAssistantsPage = () => {
@@ -31,7 +24,6 @@ export const MyAssistantsPage = () => {
           primary
           title={t('wrapper.title')}
           amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
-          // fullHeight
         >
           {privateDists?.error ? (
             <ErrorHandler error={privateDists?.error} />
@@ -70,11 +62,6 @@ export const MyAssistantsPage = () => {
             </>
           )}
         </Wrapper>
-        <BaseSidePanel />
-        <AssistantModal />
-        <PublishAssistantModal />
-        <DeleteAssistantModal />
-        <ShareAssistantModal />
       </Main>
     </>
   )

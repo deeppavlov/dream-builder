@@ -1,16 +1,24 @@
 import { Toaster } from 'react-hot-toast'
 import { Outlet, useParams } from 'react-router-dom'
+import 'components/Modals'
 import {
   AccessTokensModal,
+  AssistantModal,
   ChangeLanguageModal,
+  DeleteAssistantModal,
   ProfileSettings,
+  PublicToPrivateModal,
+  PublishAssistantModal,
+  PublishWarningModal,
+  ShareAssistantModal,
+  SignInModal,
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
-import { PublishWarningModal } from 'components/Unused/PublishWarningModal/PublishWarningModal'
+import { Container } from 'components/UI'
 import { Sidebar, Topbar } from 'components/Widgets'
 import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
 
-const Root = () => {
+const RootLayout = () => {
   const { name } = useParams()
   const isEditor = Boolean(name)
 
@@ -19,31 +27,29 @@ const Root = () => {
       <Topbar />
       {!isEditor && (
         <Sidebar>
-          <div style={{ height: '100%' }}></div>
-          <div
-            style={{
-              width: '100%',
-              borderTop: '1px solid #F0F0F3',
-              paddingTop: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
+          <Container layoutForTabs />
+          <Container layoutForBottomBtns>
             <DeepyHelperTab />
             <SettingsTab />
-          </div>
+          </Container>
         </Sidebar>
       )}
       <Outlet />
+      <BaseSidePanel />
       <BaseSidePanel transition='left' />
+      <ProfileSettings />
       <AccessTokensModal />
       <ChangeLanguageModal />
-      <ProfileSettings />
-      <Toaster />
+      <AssistantModal />
+      <DeleteAssistantModal />
+      <PublishAssistantModal />
       <PublishWarningModal />
+      <PublicToPrivateModal />
+      <ShareAssistantModal />
+      <SignInModal />
+      <Toaster />
     </>
   )
 }
 
-export default Root
+export default RootLayout

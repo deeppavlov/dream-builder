@@ -123,13 +123,13 @@ export const AccessTokensModule = () => {
         return newState
       })
 
-      resolve(t('modals.access_api_keys.toasts.token_created'))
+      resolve(t('modals.access_api_keys.toasts.token_added'))
     })
 
   const onSubmit = (data: FormValues) => {
     toast
       .promise(createUserToken(data), {
-        loading: t('modals.access_api_keys.toasts.token_creating'),
+        loading: t('modals.access_api_keys.toasts.token_adding'),
         success: data => `${data}`,
         error: data => `${data}`,
       })

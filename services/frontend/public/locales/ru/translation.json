@@ -95,8 +95,8 @@
         "remove": "Удалить"
       },
       "toasts": {
-        "token_creating": "Добавление...",
-        "token_created": "Токен добавлен!",
+        "token_adding": "Добавление...",
+        "token_added": "Токен добавлен!",
         "token_removing": "Удаление...",
         "token_removed": "Токен удален!",
         "token_updated": "Токен обновлен!",
@@ -338,7 +338,9 @@
       },
       "toasts": {
         "deploy_loading": "Отправка...",
-        "sent_for_deploy": "Отправлено на запуск!"
+        "sent_for_deploy": "Отправлено на запуск!",
+        "stop_deploy": "Остановка ассистента...",
+        "deploy_stopped": "Ассистент остановлен!"
       }
     },
     "assistant": {
@@ -391,7 +393,10 @@
     "delete": "Удаление...",
     "copied": "Скопировано!",
     "rename": "Переименование...",
-    "save": "Сохранение..."
+    "save": "Сохранение...",
+    "create": "Создание...",
+    "approve": "Подтверждение...",
+    "decline": "Отклонение..."
   },
   "ctx_menus": {
     "assistant": {

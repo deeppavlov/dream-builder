@@ -82,7 +82,7 @@ export const SkillModal = () => {
           },
         }
       ),
-      toasts.createComponent
+      toasts().createComponent
     )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {

@@ -83,7 +83,7 @@ export const SkillsListModal = () => {
           },
         }
       ),
-      toasts.addComponent
+      toasts().addComponent
     )
   }
 

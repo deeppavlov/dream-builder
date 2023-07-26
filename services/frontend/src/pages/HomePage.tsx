@@ -38,7 +38,6 @@ export const HomePage = () => {
 
   const { vaPageOpen } = useGA()
   useEffect(() => {
-    console.log('render')
     vaPageOpen()
   }, [auth?.user])
 

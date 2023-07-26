@@ -176,7 +176,7 @@ const SkillPromptModal = () => {
                 )
             } else return
           }),
-        toasts.updateComponent
+        toasts().updateComponent
       )
       .then(() => trigger('RenewChat', {}))
   }

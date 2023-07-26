@@ -179,7 +179,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       deploy.mutateAsync(bot?.name!, {
         onError: () => setError('deploy'),
       }),
-      toasts.deploy
+      toasts().deploy
     )
   }
   const handleCheckChatSettings = () => {

@@ -14,6 +14,7 @@ import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
 import { Wrapper } from 'components/UI'
 import s from './AccessTokensModule.module.scss'
+import { toasts } from 'mapping/toasts'
 
 interface FormValues {
   token: string
@@ -62,11 +63,7 @@ export const AccessTokensModule = () => {
 
   const handleRemoveBtnClick = (token_id: number) => {
     toast
-      .promise(deleteToken(token_id), {
-        loading: t('modals.access_api_keys.toasts.token_removing'),
-        success: t('modals.access_api_keys.toasts.token_removed'),
-        error: t('toasts.error'),
-      })
+      .promise(deleteToken(token_id), toasts().deleteToken)
       .finally(() => handleChanges())
   }
 
@@ -126,13 +123,13 @@ export const AccessTokensModule = () => {
         return newState
       })
 
-      resolve(t('modals.access_api_keys.toasts.token_created'))
+      resolve(t('modals.access_api_keys.toasts.token_added'))
     })
 
   const onSubmit = (data: FormValues) => {
     toast
       .promise(createUserToken(data), {
-        loading: t('modals.access_api_keys.toasts.token_creating'),
+        loading: t('modals.access_api_keys.toasts.token_adding'),
         success: data => `${data}`,
         error: data => `${data}`,
       })

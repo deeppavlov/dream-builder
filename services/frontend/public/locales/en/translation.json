@@ -95,8 +95,8 @@
         "remove": "Remove"
       },
       "toasts": {
-        "token_creating": "Creating...",
-        "token_created": "Successfully created!",
+        "token_adding": "Adding...",
+        "token_added": "Successfully added!",
         "token_removing": "Removing...",
         "token_removed": "Successfully removed!",
         "token_updated": "Successfully updated!",
@@ -338,7 +338,9 @@
       },
       "toasts": {
         "deploy_loading": "Loading...",
-        "sent_for_deploy": "Sent for deploy!"
+        "sent_for_deploy": "Sent for deploy!",
+        "stop_deploy": "Stop deploy...",
+        "deploy_stopped": "Deploy stopped!"
       }
     },
     "assistant": {
@@ -391,7 +393,10 @@
     "delete": "Deleting...",
     "copied": "Copied!",
     "rename": "Renaming...",
-    "save": "Saving..."
+    "save": "Saving...",
+    "create": "Creating...",
+    "approve": "Approve...",
+    "decline": "Decline..."
   },
   "ctx_menus": {
     "assistant": {

@@ -52,7 +52,7 @@ export const PublishWarningModal = () => {
         inEditor,
         deploymentState,
       }),
-      toasts.publishAssistant
+      toasts().publishAssistant
     )
   }
   const handleChange = (v: any) =>

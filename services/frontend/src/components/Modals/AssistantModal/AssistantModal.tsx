@@ -112,18 +112,18 @@ export const AssistantModal = () => {
 
     switch (action) {
       case 'create':
-        toast.promise(create.mutateAsync(createPayload), toasts.createAssistant)
+        toast.promise(create.mutateAsync(createPayload), toasts().createAssistant)
         break
       case 'clone':
         toast.promise(
           clone.mutateAsync({ data, name }, { onSuccess: closeModal }),
-          toasts.cloneAssistant
+          toasts().cloneAssistant
         )
         break
       case 'edit':
         toast.promise(
           rename.mutateAsync({ data, name }, { onSuccess: closeModal }),
-          toasts.renameAssistant
+          toasts().renameAssistant
         )
         break
       default:

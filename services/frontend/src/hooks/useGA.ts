@@ -23,7 +23,8 @@ export const useGA = () => {
       name: string
       authorId: number
       authorName: string
-    }
+    },
+    isDuplicated = false,
   ) => {
     const page_type =
       location.pathname === '/'
@@ -37,6 +38,7 @@ export const useGA = () => {
         ...prev,
         vaTemplateSource: source,
         vaTemplateView: view,
+        isDuplicated,
       }
     })
     ga4.event('Create_VA_From_Template_Button_Click', {
@@ -57,7 +59,8 @@ export const useGA = () => {
     authorId: number
     authorName: string
   }) => {
-    const { vaTemplateSource, vaTemplateView, ...newState } = gaState
+    const { vaTemplateSource, vaTemplateView, isDuplicated, ...newState } =
+      gaState
     setGaState(newState)
     const page_type =
       location.pathname === '/'
@@ -66,16 +69,21 @@ export const useGA = () => {
         ? 'allbots'
         : 'va_template_page'
 
-    ga4.event('VA_From_Template_Created', {
-      source: vaTemplateSource,
-      page_type,
-      view: vaTemplateView,
-      auth_status: isAuth,
-      template_va_id: item.id,
-      template_va_name: item.name,
-      template_va_author_id: item.authorId,
-      template_va_author_name: item.authorName,
-    })
+    isDuplicated
+      ? ga4.event('VA_Duplicated', {
+          source: vaTemplateSource,
+          page_type,
+        })
+      : ga4.event('VA_From_Template_Created', {
+          source: vaTemplateSource,
+          page_type,
+          view: vaTemplateView,
+          auth_status: isAuth,
+          template_va_id: item.id,
+          template_va_name: item.name,
+          template_va_author_id: item.authorId,
+          template_va_author_name: item.authorName,
+        })
   }
 
   return {

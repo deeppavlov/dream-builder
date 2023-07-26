@@ -7,7 +7,7 @@ import {
 } from 'react'
 
 interface IGaOptions {
-  [key: string]: string
+  [key: string]: string | boolean
 }
 
 interface IGaContext {

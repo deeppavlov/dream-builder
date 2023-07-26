@@ -105,12 +105,19 @@ export const AssistantModule = () => {
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
-    createVaFromTemplateButtonClick('va_control_block', 'none', {
-      id: bot?.id as number,
-      name: bot?.display_name as string,
-      authorId: bot?.author.id as number,
-      authorName: bot?.author.fullname || 'none',
-    })
+    const isDuplicatingOwnAssistant =
+      bot?.author.given_name === auth?.user?.given_name
+    createVaFromTemplateButtonClick(
+      'va_control_block',
+      'none',
+      {
+        id: bot?.id as number,
+        name: bot?.display_name as string,
+        authorId: bot?.author.id as number,
+        authorName: bot?.author.fullname || 'none',
+      },
+      isDuplicatingOwnAssistant
+    )
 
     if (!auth?.user)
       return trigger('SignInModal', {

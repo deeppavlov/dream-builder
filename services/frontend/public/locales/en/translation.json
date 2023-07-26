@@ -59,6 +59,10 @@
       "title": "Hold up!",
       "message": "Unauthorized!"
     },
+    "403": {
+      "title": "Forbidden",
+      "message": "You don't have permission to access this resource"
+    },
     "404": {
       "title": "Page not found!",
       "message": "We couldn’t find the page you were looking for. The link you clicked may be broken or the page may have been removed or renamed!"
@@ -91,8 +95,8 @@
         "remove": "Remove"
       },
       "toasts": {
-        "token_creating": "Creating...",
-        "token_created": "Successfully created!",
+        "token_adding": "Adding...",
+        "token_added": "Successfully added!",
         "token_removing": "Removing...",
         "token_removed": "Successfully removed!",
         "token_updated": "Successfully updated!",
@@ -101,7 +105,10 @@
         "not_found_service": "Not found Service or User id."
       },
       "attention": {
-        "annotation": " The API key for this AI Assistant is stored in your browser.\n <br />\nPlease be aware that without adding the API key, the Assistant will not function as intended."
+        "annotation": {
+          "first_line": "The API key for this AI Assistant is stored in your browser.",
+          "second_line": "Please be aware that without adding the API key, the Assistant will not function as intended."
+        }
       }
     },
     "assistant": {
@@ -132,6 +139,10 @@
       "toasts": {
         "create": "Creating...",
         "clone": "Cloning..."
+      },
+      "language_field": {
+        "annotation": "This will have an impact on future components of AI Assistants, which will affect how your AI Assistant responds.",
+        "label": "Choose preferred AI Assistant language:"
       }
     },
     "confirm_api_key_update": {
@@ -199,7 +210,7 @@
       }
     },
     "sign_in": {
-      "header": "To build your own <mark>Virtual Assistant</mark>, please sign in",
+      "header": "To build your own <mark>Assistant</mark>, please sign in",
       "btns": {
         "sign_in": "Sign in"
       }
@@ -327,7 +338,9 @@
       },
       "toasts": {
         "deploy_loading": "Loading...",
-        "sent_for_deploy": "Sent for deploy!"
+        "sent_for_deploy": "Sent for deploy!",
+        "stop_deploy": "Stop deploy...",
+        "deploy_stopped": "Deploy stopped!"
       }
     },
     "assistant": {
@@ -380,7 +393,10 @@
     "delete": "Deleting...",
     "copied": "Copied!",
     "rename": "Renaming...",
-    "save": "Saving..."
+    "save": "Saving...",
+    "create": "Creating...",
+    "approve": "Approve...",
+    "decline": "Decline..."
   },
   "ctx_menus": {
     "assistant": {
@@ -431,9 +447,7 @@
         "share": "Share",
         "delete": "Delete"
       },
-      "profile": {
-        "log_out": "Log Out"
-      }
+      "profile": { "settings": "Profile Settings", "log_out": "Log Out" }
     },
     "tooltips": {
       "home": "Go to home page",
@@ -516,7 +530,6 @@
       "retry": "Retry"
     }
   },
-
   "language": {
     "en": "English",
     "ru": "Russian"

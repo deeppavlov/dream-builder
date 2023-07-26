@@ -1,9 +1,10 @@
-import { PostDistParams } from 'types/types'
 import { privateApi } from 'api/axiosConfig'
 
-export async function renameAssistant(
+type NewAssistantInfo = { display_name: string; description: string }
+
+export async function editAssistant(
   distName: string,
-  newInfo: PostDistParams
+  newInfo: NewAssistantInfo
 ) {
   try {
     const { data } = await privateApi.patch(`/assistant_dists/${distName}`, {

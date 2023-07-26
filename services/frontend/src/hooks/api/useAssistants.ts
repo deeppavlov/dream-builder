@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import {
-  AssistantFormValues,
   BotInfoInterface,
+  ELOCALES_KEY,
   TDeploymentState,
   TDistVisibility,
 } from 'types/types'
@@ -13,11 +13,11 @@ import {
   cloneAssistant,
   createAssistant,
   deleteAssistant,
+  editAssistant,
   getAssistant,
   getPrivateAssistants,
   getPublicAssistants,
   publishAssistant,
-  renameAssistant,
 } from 'api/assistants'
 import { useDeploy } from 'hooks/api/useDeploy'
 
@@ -30,7 +30,7 @@ interface IChangeVisibility {
 
 interface IClone {
   name: string
-  data: AssistantFormValues
+  data: { display_name: string; description: string }
 }
 
 interface IRename extends IClone {}
@@ -45,6 +45,11 @@ interface IGetDistOptions {
   retry?: number
 }
 
+interface ICreateAssistantPayload {
+  display_name: string
+  description: string
+  language: ELOCALES_KEY
+}
 export const useAssistants = () => {
   const auth = useAuth()
   const userIsAuthorized = !!auth?.user
@@ -76,7 +81,7 @@ export const useAssistants = () => {
   }
 
   const rename = useMutation({
-    mutationFn: ({ name, data }: IRename) => renameAssistant(name, data),
+    mutationFn: ({ name, data }: IRename) => editAssistant(name, data),
     onSuccess: (_, { name }) => {
       queryClient.invalidateQueries([DIST, name])
       queryClient
@@ -93,7 +98,9 @@ export const useAssistants = () => {
   })
 
   const create = useMutation({
-    mutationFn: (data: AssistantFormValues) => createAssistant(data),
+    onMutate: data => console.log('data = ', data),
+    mutationFn: (createPayload: ICreateAssistantPayload) =>
+      createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
     },

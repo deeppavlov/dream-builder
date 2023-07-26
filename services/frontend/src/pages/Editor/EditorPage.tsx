@@ -50,31 +50,23 @@ export const EditorPage = () => {
     return () => setIsPreview(true)
   }, [dist])
 
+  const isEditor = Boolean(useMatch(RoutesList.editor.default))
+  const isSkills = Boolean(useMatch(RoutesList.editor.skills.slice(0, -1)))
+  const isSkillEditor = Boolean(useMatch(RoutesList.editor.skillEditor))
+  const isIntegration = Boolean(useMatch(RoutesList.editor.integration))
+  //   const BotTabActive = Boolean(useMatch(RoutesList.editor.architecture))
+
   return (
     <>
       <Sidebar>
         <Container layoutForTabs>
-          <SkillsTab
-            isActive={Boolean(useMatch(RoutesList.editor.skills.slice(0, -1)))}
-          />
-          <IntegrationTab
-            isActive={Boolean(useMatch(RoutesList.editor.integration))}
-          />
-          {/* <BotTab /> */}
-          <div style={{ height: '100%' }}></div>
-          <div
-            style={{
-              width: '100%',
-              borderTop: '1px solid #F0F0F3',
-              paddingTop: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            <DeepyHelperTab />
-            <SettingsTab />
-          </div>
+          <SkillsTab isActive={isSkills || isSkillEditor || isEditor} />
+          <IntegrationTab isActive={isIntegration} />
+          {/* <BotTab isActive={BotTabActive} /> */}
+        </Container>
+        <Container layoutForBottomBtns>
+          <DeepyHelperTab />
+          <SettingsTab />
         </Container>
       </Sidebar>
       <Outlet />

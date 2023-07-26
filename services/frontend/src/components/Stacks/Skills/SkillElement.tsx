@@ -11,6 +11,7 @@ import { srcForIcons } from 'utils/srcForIcons'
 import { Kebab } from 'components/Buttons'
 import { SkillStackToolTip } from 'components/Menus'
 import s from './SkillElement.module.scss'
+import { toasts } from 'mapping/toasts'
 
 interface SkillProps {
   skill: ISkill
@@ -35,11 +36,7 @@ export const SkillElement: FC<SkillProps> = ({ skill, isPreview }) => {
         component_id: skill.component_id,
         type: 'skills',
       }),
-      {
-        loading: 'Deleting...',
-        success: 'Success!',
-        error: 'Something went wrong...',
-      }
+      toasts().deleteComponent
     )
   }
 

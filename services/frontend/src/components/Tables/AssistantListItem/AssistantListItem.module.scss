@@ -16,6 +16,9 @@
     &:nth-child(2) {
       padding-left: 0;
     }
+    &:nth-child(3) {
+      width: 100%;
+    }
     &:first-child {
       padding-left: 24px;
     }
@@ -63,6 +66,7 @@
   flex-direction: row;
   align-items: start;
   gap: 4px;
+  width: 160px;
   
   img {
     @include icon_size_24;
@@ -101,6 +105,11 @@
     flex-wrap: nowrap;
     @include b5;
   }
+}
+.visibility {
+  width: 110px;
+  display: flex;
+  justify-content: center;
 }
 .date {
   display: flex;

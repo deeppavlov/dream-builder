@@ -54,6 +54,8 @@ def get_user_services(dist: AssistantDist):
     user_services.append("agent")
     if "prompt-selector" in services:
         user_services.append("prompt-selector")
+    elif "prompt-selector-ru" in services:
+        user_services.append("prompt-selector-ru")
     return user_services
 
 

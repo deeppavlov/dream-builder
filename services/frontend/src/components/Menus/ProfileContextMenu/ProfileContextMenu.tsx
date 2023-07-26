@@ -21,7 +21,7 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
       <ContextMenuButton
         type='profile'
         theme='dark'
-        name='Profile Settings'
+        name={t('settings')}
         handleClick={handleProfileClick}
       />
       <hr />

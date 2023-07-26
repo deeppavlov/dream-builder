@@ -272,7 +272,7 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
-    active_skill: Optional[str]
+    active_skill: Optional[ComponentRead]
 
 
 # class UserApiToken(BaseOrmModel):

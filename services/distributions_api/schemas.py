@@ -299,7 +299,6 @@ class DeploymentRead(DeploymentBaseRead):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_name: str
-    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):

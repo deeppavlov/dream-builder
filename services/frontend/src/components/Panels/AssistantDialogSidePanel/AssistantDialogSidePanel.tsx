@@ -313,11 +313,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                         )}
                       >
                         {block?.text}
-                        {/* {block?.author === 'bot' && (
+                        {block?.author === 'bot' && (
                             <span className={s.skill}>
                               Skill: {block?.active_skill?.display_name}
                             </span>
-                          )} */}
+                          )}
                       </span>
                     </div>
                   )

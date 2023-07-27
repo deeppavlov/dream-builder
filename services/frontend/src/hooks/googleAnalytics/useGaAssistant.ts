@@ -10,7 +10,7 @@ export const useGaAssistant = () => {
   const location = useLocation()
   const { gaState, setGaState } = useGAContext()
 
-  const getPageType = (isTemplate = false) => {
+  const getPageType = (isPublicTemplate = false) => {
     let pageType = ''
     switch (location.pathname) {
       case '/':
@@ -23,7 +23,7 @@ export const useGaAssistant = () => {
         pageType = 'yourbots'
         break
       default:
-        pageType = isTemplate ? 'va_template_page' : 'va_skillset_page'
+        pageType = isPublicTemplate ? 'va_template_page' : 'va_skillset_page'
         break
     }
     return pageType
@@ -85,7 +85,7 @@ export const useGaAssistant = () => {
     isDuplicated &&
       ga4.event('VA_Duplicated', {
         source: vaTemplateSource,
-        page_type: 'va_skillset_page',
+        page_type,
       })
 
     creatingVaFromScratch &&
@@ -94,10 +94,11 @@ export const useGaAssistant = () => {
         page_type,
       })
 
-    !creatingVaFromScratch && !isDuplicated &&
+    !creatingVaFromScratch &&
+      !isDuplicated &&
       ga4.event('VA_From_Template_Created', {
         source: vaTemplateSource,
-        page_type,
+        page_type: getPageType(true),
         view: vaTemplateView,
         auth_status: isAuth,
         template_va_id: vaTemplate?.id,
@@ -107,9 +108,35 @@ export const useGaAssistant = () => {
       })
   }
 
+  const vaPropsOpened = (
+    source: string,
+    view: 'card' | 'list' | 'none',
+    template?: BotInfoInterface
+  ) => {
+    const isPublicTemplate = template?.visibility === 'PUBLIC_TEMPLATE'
+    const page_type = getPageType(isPublicTemplate)
+
+    isPublicTemplate
+      ? ga4.event('Template_VA_Properties_Opened', {
+          source,
+          view,
+          page_type,
+          template_va_id: template?.id,
+          template_va_name: template?.name,
+          template_va_author_id: template?.author.id,
+          template_va_author_name: template?.author.fullname || 'none',
+        })
+      : ga4.event('VA_Properties_Opened', {
+          source,
+          view,
+          page_type,
+        })
+  }
+
   return {
     vaPageOpen,
     createVaClick,
     vaCreated,
+    vaPropsOpened,
   }
 }

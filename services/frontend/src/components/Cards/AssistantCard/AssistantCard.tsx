@@ -34,7 +34,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
   const { refetchDist } = useAssistants()
-  const { createVaClick } =useGaAssistant()
+  const { createVaClick, vaPropsOpened } = useGaAssistant()
 
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const activeChat = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -66,8 +66,11 @@ export const AssistantCard: FC<BotCardProps> = ({
     : null
 
   const handleBotCardClick = () => {
+    const isOpen = activeAssistantId !== infoSPId
+    isOpen && vaPropsOpened('va_card_click', 'card', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      isOpen: activeAssistantId !== infoSPId,
+      isOpen,
       children: (
         <AssistantSidePanel
           type={type}

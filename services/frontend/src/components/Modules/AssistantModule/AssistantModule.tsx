@@ -24,7 +24,7 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
-  const { createVaClick } =useGaAssistant()
+  const { createVaClick, vaPropsOpened } = useGaAssistant()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -56,6 +56,8 @@ export const AssistantModule = () => {
   }
 
   const handleInfo = () => {
+    vaPropsOpened('va_control_block', 'none', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: true,
       children: (

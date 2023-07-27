@@ -8,7 +8,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import { useGA } from 'hooks/useGA'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -33,7 +33,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
-  const { createVaFromTemplateButtonClick } = useGA()
+  const { createVaClick } =useGaAssistant()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
@@ -51,12 +51,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { name } = useParams()
   const isEditor = Boolean(name)
   const handleCloneBtnClick = () => {
-    createVaFromTemplateButtonClick('va_template_sidepanel', 'none', {
-      id: bot.id,
-      name: bot.display_name,
-      authorId: bot.author.id,
-      authorName: bot.author.fullname || 'none',
-    })
+    createVaClick('va_template_sidepanel', 'none', bot)
 
     const assistantClone = { action: 'clone', bot: bot }
 

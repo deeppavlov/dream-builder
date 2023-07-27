@@ -20,7 +20,7 @@ import {
   publishAssistant,
 } from 'api/assistants'
 import { useDeploy } from 'hooks/api/useDeploy'
-import { useGA } from 'hooks/useGA'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 
 interface IChangeVisibility {
   name: string
@@ -60,7 +60,7 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
-  const { creatingVaFromTemplate } = useGA()
+  const { vaCreated } =useGaAssistant()
 
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
@@ -96,12 +96,7 @@ export const useAssistants = () => {
     mutationFn: ({ name, data }: IClone) => cloneAssistant(name, data),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
-      creatingVaFromTemplate({
-        id: dist.id,
-        name: dist.display_name,
-        authorId: dist.author.id,
-        authorName: dist.author.fullname || 'none',
-      })
+      vaCreated()
     },
   })
 
@@ -111,6 +106,7 @@ export const useAssistants = () => {
       createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
+      vaCreated()
     },
   })
 

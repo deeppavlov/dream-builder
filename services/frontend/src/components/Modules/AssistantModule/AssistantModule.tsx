@@ -8,7 +8,7 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useDeploy } from 'hooks/api'
-import { useGA } from 'hooks/useGA'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -24,7 +24,7 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
-  const { createVaFromTemplateButtonClick } = useGA()
+  const { createVaClick } =useGaAssistant()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -105,19 +105,7 @@ export const AssistantModule = () => {
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
-    const isDuplicatingOwnAssistant =
-      bot?.author.given_name === auth?.user?.given_name
-    createVaFromTemplateButtonClick(
-      'va_control_block',
-      'none',
-      {
-        id: bot?.id as number,
-        name: bot?.display_name as string,
-        authorId: bot?.author.id as number,
-        authorName: bot?.author.fullname || 'none',
-      },
-      isDuplicatingOwnAssistant
-    )
+    createVaClick('va_control_block', 'none', bot)
 
     if (!auth?.user)
       return trigger('SignInModal', {

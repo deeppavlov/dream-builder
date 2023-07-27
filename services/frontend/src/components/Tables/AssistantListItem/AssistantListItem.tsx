@@ -16,7 +16,7 @@ import {
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
 import { useAssistants } from 'hooks/api'
-import { useGA } from 'hooks/useGA'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -44,7 +44,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
-  const { createVaFromTemplateButtonClick } = useGA()
+  const { createVaClick } =useGaAssistant()
   const dateCreated = dateToUTC(
     new Date(bot?.date_created),
     i18n.language as TLocale
@@ -98,12 +98,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    createVaFromTemplateButtonClick('va_templates_block', 'list', {
-      id: bot.id,
-      name: bot.display_name,
-      authorId: bot.author.id,
-      authorName: bot.author.fullname || 'none',
-    })
+    createVaClick('va_templates_block', 'list', bot)
 
     e.stopPropagation()
     const assistantClone = { action: 'clone', bot: bot }

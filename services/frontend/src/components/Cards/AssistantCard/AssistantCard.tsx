@@ -10,7 +10,7 @@ import { BotCardProps, TLocale } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
-import { useGA } from 'hooks/useGA'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -34,7 +34,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
   const { refetchDist } = useAssistants()
-  const { createVaFromTemplateButtonClick } = useGA()
+  const { createVaClick } =useGaAssistant()
 
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const activeChat = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -80,12 +80,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    createVaFromTemplateButtonClick('va_templates_block', 'card', {
-      id: bot.id,
-      name: bot.display_name,
-      authorId: bot.author.id,
-      authorName: bot.author.fullname || 'none',
-    })
+    createVaClick('va_templates_block', 'card', bot)
 
     const assistantClone = { action: 'clone', bot: bot }
 

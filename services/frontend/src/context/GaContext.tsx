@@ -1,13 +1,10 @@
-import {
-  FC,
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, createContext, useContext, useState } from 'react';
+import { BotInfoInterface } from 'types/types';
+
 
 interface IGaOptions {
-  [key: string]: string | boolean
+  [key: string]: string | boolean | BotInfoInterface | undefined;
+  vaTemplate?: BotInfoInterface;
 }
 
 interface IGaContext {
@@ -18,7 +15,7 @@ interface IGaContext {
 export const GaContext = createContext<IGaContext>({} as IGaContext)
 
 export const GaContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [gaState, setGaState] = useState<IGaOptions>({})
+  const [gaState, setGaState] = useState<IGaOptions>({} as IGaOptions)
 
   return (
     <GaContext.Provider

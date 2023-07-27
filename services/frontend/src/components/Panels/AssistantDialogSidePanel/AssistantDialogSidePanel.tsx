@@ -299,19 +299,17 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   <Loader />
                 </div>
               ) : (
-                remoteHistory?.data?.map((block: ChatHistory, i: number) => {
+                history.map((block: ChatHistory, i: number) => {
                   return (
                     <div
                       key={`${block?.author == 'bot'}${i}`}
                       className={cx(
-                        'chat__container',
-                        block?.author == 'bot' && 'chat__container_bot'
+                        block?.author == 'bot' ? 'botContainer' : 'userContainer'
                       )}
                     >
                       <span
                         className={cx(
-                          'chat__message',
-                          block?.author == 'bot' && 'chat__message_bot'
+                          block?.author == 'bot' ? 'botMessage' : 'message'
                         )}
                       >
                         {block?.text}
@@ -325,34 +323,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                   )
                 })
               )}
-              {history?.map((block, i: number) => (
-                <div
-                  key={`${block?.author == 'bot'}${i}`}
-                  className={cx(
-                    'chat__container',
-                    block?.author == 'bot' && 'chat__container_bot'
-                  )}
-                >
-                  <span
-                    className={cx(
-                      'chat__message',
-                      block?.author == 'bot' && 'chat__message_bot'
-                    )}
-                  >
-                    {block?.text}
-                    {block?.author === 'bot' && (
-                      <span className={s.skill}>
-                        {t('sidepanels.assistant_dialog.skill_responder')}
-                        {` ${block?.active_skill?.display_name}`}
-                      </span>
-                    )}
-                  </span>
-                </div>
-              ))}
               {send?.isLoading && (
                 <>
-                  <div className={cx('chat__container_bot', 'chat__container')}>
-                    <span className={cx('chat__message', 'chat__message_bot')}>
+                  <div className={s.botContainer}>
+                    <span className={s.botMessage}>
                       <TextLoader />
                     </span>
                   </div>

@@ -1,14 +1,13 @@
 import { useUIOptions } from 'context'
-import { FC, useRef } from 'react'
+import { FC } from 'react'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-async-light'
 import curlTemplate from 'assets/scripts/curl.bash?raw'
 import nodeTemplate from 'assets/scripts/node.js?raw'
 import pythonTemplate from 'assets/scripts/python.py?raw'
-import { TApiCallType } from 'types/types'
-import { API_CALL_TAB } from 'constants/constants'
+import { API_CALL_TAB, TApiCallType } from 'types/types'
 import { api } from 'api/axiosConfig'
 import { consts } from 'utils/consts'
 import { Button, SwitchButtonAPICall } from 'components/Buttons'
@@ -20,37 +19,41 @@ interface Props {
   assistantId: string
 }
 
+enum INTEGRATION_LANG {
+  CURL = 'bash',
+  NODE = 'js',
+  PYTHON = 'python',
+}
+// TODO - add loader?
 export const ApiCallCode: FC<Props> = ({ assistantId }) => {
   const { UIOptions } = useUIOptions()
   const { t } = useTranslation()
-  const preCodeRef = useRef<HTMLPreElement>(null)
 
   const activeTab: TApiCallType = UIOptions[consts.API_CALL_ACTIVE_TAB]
 
-  const curl = activeTab === API_CALL_TAB.CURL
-  const node = activeTab === API_CALL_TAB.NODE
-  const python = activeTab === API_CALL_TAB.PYTHON
+  const language: Record<TApiCallType, INTEGRATION_LANG> = {
+    [API_CALL_TAB.CURL]: INTEGRATION_LANG.CURL,
+    [API_CALL_TAB.NODE]: INTEGRATION_LANG.NODE,
+    [API_CALL_TAB.PYTHON]: INTEGRATION_LANG.PYTHON,
+  }
 
-  const language = node ? 'js' : curl ? 'bash' : python ? 'python' : 'js'
+  const script: Record<TApiCallType, string> = {
+    [API_CALL_TAB.CURL]: curlTemplate,
+    [API_CALL_TAB.NODE]: nodeTemplate,
+    [API_CALL_TAB.PYTHON]: pythonTemplate,
+  }
 
-  const script = curl
-    ? curlTemplate
-    : node
-    ? nodeTemplate
-    : python
-    ? pythonTemplate
-    : null
-
-  const format = (template: string) => {
+  const formatScript = (scriptTemplate: string) => {
     const hostName = api.defaults.baseURL
-    return template
+    return scriptTemplate
       .replaceAll('https://hostname/api/', hostName!)
       .replaceAll('assistantName', assistantId)
   }
 
-  const formattedScript = format(script!)
+  const formattedScript = formatScript(script[activeTab])
+
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(preCodeRef?.current?.props?.children)
+    navigator.clipboard.writeText(formattedScript)
     toast.custom(t => (t.visible ? <ToastCopySucces /> : null), {
       position: 'top-center',
       id: 'copySucces',
@@ -68,9 +71,8 @@ export const ApiCallCode: FC<Props> = ({ assistantId }) => {
       </div>
       <SyntaxHighlighter
         customStyle={{ margin: '0px', borderRadius: '12px' }}
-        language={language}
+        language={language[activeTab]}
         style={nightOwl}
-        // ref={preCodeRef}
       >
         {formattedScript}
       </SyntaxHighlighter>

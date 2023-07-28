@@ -76,8 +76,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
     public_dists = []
 
     for dist in get_all_public_templates(db):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
@@ -96,8 +95,7 @@ async def get_list_of_private_virtual_assistants(
     private_dists = []
 
     for dist in get_all_by_author(db, user.id):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return private_dists
 

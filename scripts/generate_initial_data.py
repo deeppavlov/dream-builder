@@ -33,7 +33,6 @@ INITIAL_DATA_LISTS = [
     "google_user",
     "deployments",
     "virtual_assistant_names",
-    "public_virtual_assistant_names",
     "lm_service",
     "prompt_block",
     "lm_service_prompt_block",
@@ -231,6 +230,7 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                 "private_visibility",
                 "date_created",
                 "language_id",
+                "is_visible",
             ]
         )
 
@@ -247,7 +247,10 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
         current_assistant_dist_id = 1
         for dist in list_dists(dream_root):
-            if dist.name in [row["name"] for row in initial_secret["virtual_assistant_names"]]:
+            virtual_assistant_names_visibility = {
+                row["name"]: row["is_visible"] for row in initial_secret["virtual_assistant_names"]
+            }
+            if dist.name in virtual_assistant_names_visibility.keys():
                 va_row = [
                     1,
                     f"assistant_dists/{dist.dist_path.name}",
@@ -256,7 +259,8 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     dist.pipeline.metadata.description,
                     enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK.value,
                     dist.pipeline.metadata.date_created.strftime("%Y-%m-%dT%H:%M:%S"),
-                    language_map[dist.pipeline.agent.service.environment.get("LANGUAGE").lower()],
+                    language_map[dist.language],
+                    virtual_assistant_names_visibility[dist.name]
                 ]
                 va_csv_writer.writerow(va_row)
 

@@ -31,6 +31,7 @@ def get_all_public_templates(db: Session) -> [VirtualAssistant]:
     return db.scalars(
         select(VirtualAssistant).where(
             and_(
+                VirtualAssistant.is_visible,
                 VirtualAssistant.publish_request.has(
                     public_visibility=enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE
                 ),
@@ -41,7 +42,9 @@ def get_all_public_templates(db: Session) -> [VirtualAssistant]:
 
 
 def get_all_by_author(db: Session, user_id: int) -> [VirtualAssistant]:
-    return db.scalars(select(VirtualAssistant).where(VirtualAssistant.author_id == user_id)).all()
+    return db.scalars(
+        select(VirtualAssistant).where(and_(VirtualAssistant.is_visible, VirtualAssistant.author_id == user_id))
+    ).all()
 
 
 def create(

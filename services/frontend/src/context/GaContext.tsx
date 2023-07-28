@@ -1,10 +1,15 @@
-import { FC, PropsWithChildren, createContext, useContext, useState } from 'react';
-import { BotInfoInterface } from 'types/types';
-
+import {
+  FC,
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useState,
+} from 'react'
+import { BotInfoInterface } from 'types/types'
 
 interface IGaOptions {
-  [key: string]: string | boolean | BotInfoInterface | undefined;
-  vaTemplate?: BotInfoInterface;
+  [key: string]: string | boolean | BotInfoInterface | undefined
+  vaTemplate?: BotInfoInterface
 }
 
 interface IGaContext {

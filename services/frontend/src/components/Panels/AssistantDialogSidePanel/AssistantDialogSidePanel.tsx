@@ -22,6 +22,7 @@ import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
 import { getUserId } from 'api/user'
 import { useAssistants, useChat, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
@@ -57,6 +58,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
   const auth = useAuth()
+  const { vaChangeDeployClick } = useGaAssistant()
 
   const dummyAnswersCounter = history.filter(message => {
     return message?.active_skill?.name! === DUMMY_SKILL
@@ -175,6 +177,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
   const handleDeploy = () => {
+    vaChangeDeployClick('va_sidepanel')
+
     toast.promise(
       deploy.mutateAsync(bot?.name!, {
         onError: () => setError('deploy'),

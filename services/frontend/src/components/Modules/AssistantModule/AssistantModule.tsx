@@ -24,8 +24,12 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
-  const { createVaClick, vaPropsOpened, vaArchitectureOpened } =
-    useGaAssistant()
+  const {
+    createVaClick,
+    vaPropsOpened,
+    vaArchitectureOpened,
+    vaChangeDeployClick,
+  } = useGaAssistant()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -75,6 +79,8 @@ export const AssistantModule = () => {
     })
   }
   const handleBuild = () => {
+    vaChangeDeployClick('va_control_block', isDeployed)
+
     !isDeployed &&
       !isDeploying &&
       !error &&

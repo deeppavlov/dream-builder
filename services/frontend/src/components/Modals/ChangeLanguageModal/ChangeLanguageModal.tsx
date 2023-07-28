@@ -2,10 +2,10 @@ import i18n from 'i18n'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import store from 'store2'
 import { ELOCALES_KEY } from 'types/types'
-import { I18N_STORE_KEY, language } from 'constants/constants'
+import { language } from 'constants/constants'
 import { useObserver } from 'hooks/useObserver'
+import { currentLocale } from 'utils/getLangFromStorage'
 import { Button, RadioButton } from 'components/Buttons'
 import BaseModal from '../BaseModal/BaseModal'
 import s from './ChangeLanguageModal.module.scss'
@@ -22,7 +22,6 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
   const { register, setValue, watch } = useForm<FormValues>()
 
   const currentLang = watch(LANGUAGE)
-  const locale: ELOCALES_KEY = store(I18N_STORE_KEY)
 
   const handleEventUpdate = () => setIsOpen(!isOpen)
   const handleCancel = () => setIsOpen(false)
@@ -30,7 +29,7 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
     i18n.changeLanguage(currentLang).then(() => setIsOpen(false))
 
   useEffect(() => {
-    setValue(LANGUAGE, locale)
+    setValue(LANGUAGE, currentLocale)
   }, [isOpen])
 
   useObserver('ChangeLanguageModal', handleEventUpdate)
@@ -78,7 +77,7 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
             theme='primary'
             props={{
               onClick: handleSave,
-              disabled: currentLang === locale,
+              disabled: currentLang === currentLocale,
             }}
           >
             {t('modals.change_language_modal.footer.save')}

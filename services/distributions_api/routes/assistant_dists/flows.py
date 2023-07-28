@@ -13,6 +13,7 @@ from database.models.component import crud as component_crud
 from database.models.lm_service import crud as lm_service_crud
 from database.models.publish_request import crud as publish_request_crud
 from database.models.service import crud as service_crud
+from database.models.language import crud as language_crud
 from database.models.virtual_assistant.crud import get_by_name, create, update_metadata_by_name, delete_by_name, update_by_name
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from git_storage.git_manager import GitManager
@@ -37,11 +38,13 @@ def create_virtual_assistant(
     description: str,
     author_id: int,
     author_email: str,
+    language: str,
     is_cloned: bool = False,
 ) -> schemas.VirtualAssistantRead:
     try:
         template_virtual_assistant = get_by_name(db, template_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / template_virtual_assistant.source)
+        language = language_crud.get_language_by_value(db, language)
 
         new_name = generate_unique_name()
         original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(
@@ -70,6 +73,7 @@ def create_virtual_assistant(
             author_email,
             description,
             existing_prompted_skills,
+            language.value,
         )
         new_dist.save(generate_configs=True)
         dream_git.commit_all_files(author_id, 1)
@@ -117,6 +121,7 @@ def create_virtual_assistant(
             display_name=display_name,
             description=description,
             components=new_components,
+            language_id=language.id,
             cloned_from_id=template_virtual_assistant.id if is_cloned else None,
         )
     except IntegrityError:

@@ -3,15 +3,19 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from database.models import LmServiceLanguage
 from database.models.lm_service.model import LmService
+from database.models.language import crud as language_crud
 
 
-def get_all_lm_services(db: Session, hosted_only: bool = True) -> [LmService]:
-    filter_kwargs = {}
+def get_all_lm_services(db: Session, language: str = None, hosted_only: bool = True) -> [LmService]:
+    filters = []
     if hosted_only:
-        filter_kwargs["is_hosted"] = True
+        filters.append(LmService.is_hosted == True)
+    if language:
+        filters.append(LmService.languages.any(LmServiceLanguage.language.has(value=language)))
 
-    return db.scalars(select(LmService).filter_by(**filter_kwargs)).all()
+    return db.scalars(select(LmService).filter(*filters)).all()
 
 
 def get_lm_service(db: Session, id: int) -> Optional[LmService]:

@@ -50,12 +50,12 @@ export const AssistantModal = () => {
   const isCloning = action === 'clone'
   const isCreateFromScratch = action === 'create'
   const validationSchema = getValidationSchema()
-
-  const currentLanguage = language()[currentLocale] as TLang
+  const locale = currentLocale()
+  const currentLanguage = language()[locale] as TLang
 
   const defaultLangValue = {
-    id: currentLocale,
-    name: currentLocale,
+    id: locale,
+    name: locale,
     display_name: currentLanguage,
   }
 

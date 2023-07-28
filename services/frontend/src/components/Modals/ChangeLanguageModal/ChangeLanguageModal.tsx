@@ -26,10 +26,12 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
   const handleEventUpdate = () => setIsOpen(!isOpen)
   const handleCancel = () => setIsOpen(false)
   const handleSave = () =>
-    i18n.changeLanguage(currentLang).then(() => setIsOpen(false))
+    i18n.changeLanguage(currentLang).then(() => {
+      setIsOpen(false)
+    })
 
   useEffect(() => {
-    setValue(LANGUAGE, currentLocale)
+    setValue(LANGUAGE, currentLocale())
   }, [isOpen])
 
   useObserver('ChangeLanguageModal', handleEventUpdate)
@@ -77,7 +79,7 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
             theme='primary'
             props={{
               onClick: handleSave,
-              disabled: currentLang === currentLocale,
+              disabled: currentLang === currentLocale(),
             }}
           >
             {t('modals.change_language_modal.footer.save')}

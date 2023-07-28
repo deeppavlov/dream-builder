@@ -23,7 +23,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     keyPrefix: 'topbar.ctx_menus',
   })
   const { getDist } = useAssistants()
-  const { renameVaButtonClick } = useGaAssistant()
+  const { renameVaButtonClick, deleteVaButtonClick } = useGaAssistant()
   const dist = getDist({ distName })?.data
 
   const handleWelcomeClick = () => {}
@@ -38,6 +38,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('PublishAssistantModal', { bot, from: 'editor' })
   }
   const handleDeleteClick = () => {
+    deleteVaButtonClick('va_action_menu', bot)
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
   const handleShareClick = () => trigger('ShareAssistantModal', distName)

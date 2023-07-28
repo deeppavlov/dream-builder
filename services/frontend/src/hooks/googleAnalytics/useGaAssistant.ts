@@ -197,6 +197,41 @@ export const useGaAssistant = () => {
     })
   }
 
+  const deleteVaButtonClick = (source: string, bot: BotInfoInterface) => {
+    const page_type = getPageType()
+    const view = getView(page_type)
+
+    setGaState(prev => ({
+      ...prev,
+      assistant: bot,
+      source,
+      view,
+    }))
+
+    ga4.event('Delete_VA_Button_Click', {
+      source,
+      page_type,
+      view,
+      va_id: bot.id,
+      va_name: bot.display_name,
+      template_va_id: bot.cloned_from_id,
+    })
+  }
+
+  const vaDeleted = () => {
+    const { source, view, assistant } = gaState
+    const page_type = getPageType()
+
+    ga4.event('VA_Deleted', {
+      source,
+      page_type,
+      view,
+      va_id: assistant?.id,
+      va_name: assistant?.display_name,
+      template_va_id: assistant?.cloned_from_id,
+    })
+  }
+
   return {
     vaPageOpen,
     createVaClick,
@@ -206,5 +241,7 @@ export const useGaAssistant = () => {
     vaArchitectureOpened,
     renameVaButtonClick,
     vaRenamed,
+    deleteVaButtonClick,
+    vaDeleted,
   }
 }

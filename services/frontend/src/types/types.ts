@@ -117,6 +117,7 @@ export interface BotInfoInterface {
   deployment: IDeployment
   required_api_keys: TKey[] | null
   language?: { id: number; value: ELOCALES_KEY }
+  cloned_from_id: number | null
 }
 
 export interface BotCardProps {

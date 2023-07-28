@@ -34,8 +34,12 @@ const AssistantContextMenu: FC<Props> = ({
   const navigate = useNavigate()
   const { name } = useParams()
   const isEditor = name !== undefined && name !== null && name?.length > 0
-  const { vaPropsOpened, setVaArchitectureOptions, renameVaButtonClick } =
-    useGaAssistant()
+  const {
+    vaPropsOpened,
+    setVaArchitectureOptions,
+    renameVaButtonClick,
+    deleteVaButtonClick,
+  } = useGaAssistant()
 
   const handlePropertiesBtnClick = () => {
     vaPropsOpened('va_card_context_menu', bot)
@@ -69,7 +73,12 @@ const AssistantContextMenu: FC<Props> = ({
 
   const handleShareBtnClick = () => trigger('ShareAssistantModal', { bot })
 
-  const handleDeleteBtnClick = () => trigger('DeleteAssistantModal', { bot })
+  const handleDeleteBtnClick = () => {
+    const source = inSidePanel ? 'va_sidepanel' : 'va_block'
+    deleteVaButtonClick(source, bot)
+
+    trigger('DeleteAssistantModal', { bot })
+  }
 
   const handleChatClick = () =>
     trigger(TRIGGER_RIGHT_SP_EVENT, {

@@ -73,7 +73,7 @@ export const useGaAssistant = () => {
           view,
           auth_status: isAuth,
           template_va_id: template.id,
-          template_va_name: template.name,
+          template_va_name: template.display_name,
           template_va_author_id: template.author.id,
           template_va_author_name: template.author.fullname || 'none',
         })
@@ -104,7 +104,7 @@ export const useGaAssistant = () => {
         view,
         auth_status: isAuth,
         template_va_id: assistant?.id,
-        template_va_name: assistant?.name,
+        template_va_name: assistant?.display_name,
         template_va_author_id: assistant?.author.id,
         template_va_author_name: assistant?.author.fullname || 'none',
       })
@@ -121,7 +121,7 @@ export const useGaAssistant = () => {
           view,
           page_type,
           template_va_id: template?.id,
-          template_va_name: template?.name,
+          template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
           template_va_author_name: template?.author.fullname || 'none',
         })
@@ -151,7 +151,7 @@ export const useGaAssistant = () => {
           view,
           page_type,
           template_va_id: template?.id,
-          template_va_name: template?.name,
+          template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
           template_va_author_name: template?.author.fullname || 'none',
         })

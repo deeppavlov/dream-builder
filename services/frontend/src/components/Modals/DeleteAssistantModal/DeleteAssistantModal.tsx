@@ -45,12 +45,12 @@ export const DeleteAssistantModal = () => {
   const handleCancelBtnClick = () => handleClose()
 
   const handleDeleteBtnClick = () => {
+    handleClose()
     toast
-      .promise(deleteDist.mutateAsync(bot?.name!), toasts.deleteAssistant)
+      .promise(deleteDist.mutateAsync(bot?.name!), toasts().deleteAssistant)
       .then(() => {
         assistantIsPublic && queryClient.invalidateQueries(['publicDists'])
       })
-      .finally(() => handleClose())
   }
 
   useObserver('DeleteAssistantModal', handleEventUpdate)

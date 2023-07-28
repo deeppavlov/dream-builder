@@ -25,9 +25,7 @@
       .name {
         cursor: pointer;
         @include t3;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        @include text_ellipsis;
       }
     }
   }

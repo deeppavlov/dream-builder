@@ -9,5 +9,7 @@
     "source.organizeImports",
     "source.sortMembers"
   ],
-  "prettier.trailingComma": "es5"
+  "prettier.trailingComma": "es5",
+  "i18n-ally.localesPaths": ["./public/locales"],
+  "i18n-ally.keystyle": "nested"
 }

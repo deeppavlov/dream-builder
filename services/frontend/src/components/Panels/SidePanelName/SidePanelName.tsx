@@ -5,7 +5,7 @@ interface Props {
 }
 
 const SidePanelName = ({ children }: Props) => {
-  return <div className={s.sidePanelName}>{children}</div>
+  return <div className={s.sidePanelName}><span>{children}</span></div>
 }
 
 export default SidePanelName

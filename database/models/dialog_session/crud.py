@@ -6,10 +6,8 @@ from database.models.dialog_session.model import DialogSession
 from database.models.virtual_assistant import crud as virtual_assistant_crud
 
 
-def get_dialog_session(db: Session, dialog_session_id: int):
+def get_by_id(db: Session, dialog_session_id: int):
     dialog_session = db.get(DialogSession, dialog_session_id)
-    if not dialog_session:
-        raise ValueError(f"Dialog session {dialog_session_id} does not exist")
 
     return dialog_session
 

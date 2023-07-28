@@ -55,7 +55,7 @@ export const DeleteSkillModal = () => {
           },
         }
       ),
-      toasts.deleteComponent
+      toasts().deleteComponent
     )
   }
 

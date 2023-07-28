@@ -8,7 +8,7 @@ i18n
   .use(LanguageDetector)
   .use(Backend)
   .init({
-    debug: true,
+    // debug: true,
     fallbackLng: 'en',
     react: {
       transEmptyNodeValue: '', // what to return for empty Trans

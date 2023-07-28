@@ -12,6 +12,10 @@ from database.models.virtual_assistant import crud as virtual_assistant_crud
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
+from services.distributions_api.routes.dialog_sessions.dependencies import (
+    dialog_session_permission,
+    dialog_session_create_permission,
+)
 from services.distributions_api.security.auth import get_current_user_or_none
 
 dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_sessions"])
@@ -87,8 +91,8 @@ async def send_history_request_to_deployed_agent(agent_history_url: str, dialog_
 
 @dialog_sessions_router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog_session(
-    payload: schemas.DialogSessionCreate,
     user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
+    virtual_assistant: schemas.VirtualAssistantRead = Depends(dialog_session_create_permission),
     db: Session = Depends(get_db),
 ):
     """ """
@@ -97,69 +101,52 @@ async def create_dialog_session(
     else:
         user_id = None
 
-    with db.begin():
-        try:
-            dialog_session = crud.create_dialog_session_by_name(db, user_id, payload.virtual_assistant_name)
-        except ValueError as e:
-            raise HTTPException(status_code=404, detail=str(e))
-
-    return schemas.DialogSessionRead.from_orm(dialog_session)
-
-
-@dialog_sessions_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
-async def get_dialog_session(
-    dialog_session_id: int,
-    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
-    db: Session = Depends(get_db),
-):
-    """ """
     try:
-        dialog_session = crud.get_dialog_session(db, dialog_session_id)
+        dialog_session = crud.create_dialog_session_by_name(db, user_id, virtual_assistant.name)
+        db.commit()
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
     return schemas.DialogSessionRead.from_orm(dialog_session)
 
 
+@dialog_sessions_router.get("/{dialog_session_id}", status_code=status.HTTP_200_OK)
+async def get_dialog_session(dialog_session: schemas.DialogSessionRead = Depends(dialog_session_permission)):
+    """ """
+    return dialog_session
+
+
 @dialog_sessions_router.post("/{dialog_session_id}/chat", status_code=status.HTTP_201_CREATED)
 async def send_dialog_session_message(
-    dialog_session_id: int,
     payload: schemas.DialogChatMessageCreate,
-    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
+    dialog_session: schemas.DialogSessionRead = Depends(dialog_session_permission),
     db: Session = Depends(get_db),
 ):
     """
     text
     """
-    with db.begin():
-        try:
-            dialog_session = crud.get_dialog_session(db, dialog_session_id)
-        except ValueError as e:
-            raise HTTPException(status_code=404, detail=str(e))
+    chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
 
-        virtual_assistant = virtual_assistant_crud.get_by_id(db, dialog_session.deployment.virtual_assistant_id)
+    if payload.lm_service_id:
+        lm_service = lm_service_crud.get_lm_service(db, payload.lm_service_id)
+        lm_service_url = f"http://{lm_service.name}:{lm_service.port}/respond"
+    else:
+        lm_service_url = None
 
-        chat_url = f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}"
+    agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
+        chat_url,
+        dialog_session.id,
+        payload.text,
+        payload.prompt,
+        lm_service_url,
+        payload.openai_api_key,
+    )
 
-        if payload.lm_service_id:
-            lm_service = lm_service_crud.get_lm_service(db, payload.lm_service_id)
-            lm_service_url = f"http://{lm_service.name}:{lm_service.port}/respond"
-        else:
-            lm_service_url = None
+    crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
 
-        agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
-            chat_url,
-            dialog_session.id,
-            payload.text,
-            payload.prompt,
-            lm_service_url,
-            payload.openai_api_key,
-        )
-
-        crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
-        active_va_component = virtual_assistant_component_crud.get_by_component_name(
-            db, virtual_assistant.id, active_skill
-        )
+    virtual_assistant = virtual_assistant_crud.get_by_id(db, dialog_session.deployment.virtual_assistant.id)
+    active_va_component = virtual_assistant_component_crud.get_by_component_name(db, virtual_assistant.id, active_skill)
+    db.commit()
 
     return schemas.DialogChatMessageRead(
         text=bot_response, active_skill=schemas.ComponentRead.from_orm(active_va_component.component)
@@ -167,21 +154,12 @@ async def send_dialog_session_message(
 
 
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
-async def get_dialog_session_history(
-    dialog_session_id: int,
-    user: Optional[schemas.UserRead] = Depends(get_current_user_or_none),
-    db: Session = Depends(get_db),
-):
+async def get_dialog_session_history(dialog_session: schemas.DialogSessionRead = Depends(dialog_session_permission)):
     """
 
     Returns:
 
     """
-    try:
-        dialog_session = crud.get_dialog_session(db, dialog_session_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
     try:
         agent_dialog_id = dialog_session.agent_dialog_id
         if not agent_dialog_id:

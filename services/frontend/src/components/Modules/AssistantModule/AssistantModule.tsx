@@ -73,7 +73,7 @@ export const AssistantModule = () => {
     !isDeployed &&
       !isDeploying &&
       !error &&
-      toast.promise(deploy.mutateAsync(bot?.name!), toasts.deploy)
+      toast.promise(deploy.mutateAsync(bot?.name!), toasts().deploy)
 
     isDeployed &&
       toast.promise(
@@ -93,11 +93,11 @@ export const AssistantModule = () => {
             }
           },
         }),
-        toasts.deleteDeployment
+        toasts().deleteDeployment
       )
 
     error &&
-      toast.promise(deleteDeployment.mutateAsync(bot), toasts.deleteDeployment)
+      toast.promise(deleteDeployment.mutateAsync(bot), toasts().deleteDeployment)
   }
   const handleShare = () => {
     trigger('ShareAssistantModal', { bot })

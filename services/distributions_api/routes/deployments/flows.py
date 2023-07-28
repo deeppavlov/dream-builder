@@ -4,6 +4,7 @@ import requests
 from deeppavlov_dreamtools import AssistantDist
 from deeppavlov_dreamtools.deployer.portainer import SwarmClient
 from fastapi import HTTPException
+from requests import HTTPError
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -29,7 +30,6 @@ dream_git = GitManager(
 
 
 def create_deployment(db: Session, new_deployment: schemas.DeploymentCreate) -> schemas.DeploymentRead:
-    # with db.begin():
     deployment = get_by_virtual_assistant_name(db, new_deployment.virtual_assistant_name)
     if deployment:
         raise HTTPException(status_code=status.HTTP_425_TOO_EARLY, detail="Deployment is already in progress!")
@@ -45,8 +45,8 @@ def create_deployment(db: Session, new_deployment: schemas.DeploymentCreate) -> 
 
     deployment = create(db, virtual_assistant.id, host)
 
-    task_id = tasks.run_deployer_task.delay(deployment_id=deployment.id).id
-    deployment = update_by_id(db, deployment.id, task_id=task_id)
+    task = tasks.run_deployer_task.delay(deployment_id=deployment.id)
+    deployment = update_by_id(db, deployment.id, task_id=task.id)
     db.commit()
 
     return schemas.DeploymentRead.from_orm(deployment)
@@ -60,18 +60,22 @@ def patch_deployment(db: Session, deployment: schemas.DeploymentRead):
     if deployment.stack_id:
         swarm_client.delete_stack(deployment.stack_id)
     tasks.app.control.revoke(deployment.task_id, terminate=True)
-    new_task_id = tasks.run_deployer_task.delay(deployment_id=deployment.id)
 
-    deployment = update_by_id(db, deployment.id, state="STARTED", task_id=new_task_id)
+    new_task = tasks.run_deployer_task.delay(deployment_id=deployment.id)
+    deployment = update_by_id(db, deployment.id, state="STARTED", task_id=new_task.id)
 
     return schemas.DeploymentRead.from_orm(deployment)
 
 
 def delete_deployment(db: Session, deployment: schemas.DeploymentRead):
-    if deployment.stack_id:
-        swarm_client.delete_stack(deployment.stack_id)
+    try:
+        if deployment.stack_id:
+            swarm_client.delete_stack(deployment.stack_id)
+    except HTTPError:
+        pass
 
     delete_by_id(db, deployment.id)
+    db.commit()
 
 
 def get_swarm_stacks():

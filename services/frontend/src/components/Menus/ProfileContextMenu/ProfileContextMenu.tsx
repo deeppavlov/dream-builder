@@ -14,14 +14,14 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
     keyPrefix: 'topbar.ctx_menus.profile',
   })
 
-  const handleProfileClick = () => trigger('AccessTokensModal', {})
+  const handleProfileClick = () => trigger('ProfileSettingsModal', {})
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
         type='profile'
         theme='dark'
-        name={userEmail}
+        name={t('settings')}
         handleClick={handleProfileClick}
       />
       <hr />

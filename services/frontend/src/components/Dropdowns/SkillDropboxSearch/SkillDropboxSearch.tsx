@@ -25,9 +25,12 @@ interface Props {
   label?: string
   props?: React.InputHTMLAttributes<HTMLInputElement>
   fullWidth?: boolean
+  fullHeight?: boolean
   withoutSearch?: boolean
   small?: boolean
   onSelectItem?: (id: string) => void
+  className?: string
+  disabled?: boolean
 }
 
 const SkillDropboxSearch = ({
@@ -40,9 +43,12 @@ const SkillDropboxSearch = ({
   label,
   props,
   fullWidth,
+  fullHeight,
   withoutSearch,
   small,
   onSelectItem,
+  className,
+  disabled,
 }: Props) => {
   const getActiveItem = (id: string) => list?.find(item => item.id === id)
 
@@ -67,6 +73,7 @@ const SkillDropboxSearch = ({
   }
 
   const handleSearchClick = (e: React.MouseEvent) => {
+    if (disabled) return
     const targetIsInput =
       (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
     if (!isOpen && targetIsInput) setIsOpen(true)
@@ -89,13 +96,22 @@ const SkillDropboxSearch = ({
         isOpen && 'open',
         error && 'error',
         fullWidth && 'fullWidth',
-        small && 'small'
+        fullHeight && 'fullHeight',
+        small && 'small',
+        className && className
       )}
-      onFocus={() => setIsOpen(true)}
+      onFocus={() => !disabled && setIsOpen(true)}
     >
-      {label && <span className={s.label}>{label}</span>}
+      {label && (
+        <span id='label' className={s.label}>
+          {label}
+        </span>
+      )}
 
-      <div className={s.search} onClick={handleSearchClick}>
+      <div
+        className={cx(s.search, disabled && s.disabled)}
+        onClick={handleSearchClick}
+      >
         {!withoutSearch && <LoupeIcon className={s.icon} />}
         {withoutSearch && serviceIconName && (
           <SvgIcon
@@ -110,7 +126,7 @@ const SkillDropboxSearch = ({
           className={s.input}
           readOnly
         />
-        <ArrowDownIcon className={cx('icon', 'arrowDown')} />
+        {!disabled && <ArrowDownIcon className={cx('icon', 'arrowDown')} />}
       </div>
 
       <ul className={s.list}>

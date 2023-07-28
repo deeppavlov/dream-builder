@@ -25,6 +25,7 @@
     .container {
       // &:invalid,
       border-color: $red !important;
+
       background-color: $bcgrnd1;
     }
 
@@ -66,6 +67,7 @@
 
     .field {
       resize: none;
+
       &::placeholder {
         color: $text3;
       }
@@ -101,7 +103,7 @@
   height: 100%;
   border: 1px solid $text3;
   border-radius: 12px;
-  padding: 8px 0;
+  padding: 8px;
   background-color: $bcgrnd1;
 
   &:focus-within {
@@ -135,13 +137,10 @@
 }
 
 .field {
-  position: absolute;
-  top: 8px;
-  left: 0;
   z-index: 1;
   min-width: 100%;
   min-height: calc(100% - 16px);
-  padding: 0 24px;
+  padding: 0px 16px;
   outline: none;
   resize: none;
   @include b2;
@@ -199,7 +198,7 @@
   }
   .container {
     background-color: $bcgrnd2;
-
+    background-color: red;
     &:hover,
     &:focus-within {
       background-color: $bcgrnd1;

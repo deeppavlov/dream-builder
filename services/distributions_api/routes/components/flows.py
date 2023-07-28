@@ -179,5 +179,5 @@ async def patch_component(
 
 
 def delete_component(db: Session, component_id: int) -> None:
-    with db.begin():
-        delete_by_id(db, component_id)
+    delete_by_id(db, component_id)
+    db.commit()

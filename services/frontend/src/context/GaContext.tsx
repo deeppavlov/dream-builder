@@ -5,17 +5,7 @@ import {
   useContext,
   useState,
 } from 'react'
-import { BotInfoInterface } from 'types/types'
-
-interface IGaOptions {
-  [key: string]: string | boolean | BotInfoInterface | undefined
-  assistant?: BotInfoInterface
-}
-
-interface IGaContext {
-  gaState: IGaOptions
-  setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
-}
+import { IGaContext, IGaOptions } from 'types/types'
 
 export const GaContext = createContext<IGaContext>({} as IGaContext)
 

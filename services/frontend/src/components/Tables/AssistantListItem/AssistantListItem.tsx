@@ -44,7 +44,8 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
-  const { createVaClick, vaPropsOpened } = useGaAssistant()
+  const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
+    useGaAssistant()
   const dateCreated = dateToUTC(
     new Date(bot?.date_created),
     i18n.language as TLocale
@@ -117,6 +118,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_block')
     e.stopPropagation()
     navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
       state: {

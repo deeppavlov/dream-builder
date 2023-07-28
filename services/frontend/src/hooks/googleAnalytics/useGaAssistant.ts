@@ -1,14 +1,16 @@
-import { useAuth } from 'context'
+import { useAuth, useUIOptions } from 'context'
+import { useGAContext } from 'context'
 import ga4 from 'react-ga4'
 import { useLocation } from 'react-router-dom'
 import { BotInfoInterface } from 'types/types'
-import { useGAContext } from 'context/GaContext'
+import { consts } from 'utils/consts'
 
 export const useGaAssistant = () => {
   const auth = useAuth()
   const isAuth = !!auth?.user
   const location = useLocation()
   const { gaState, setGaState } = useGAContext()
+  const { UIOptions } = useUIOptions()
 
   const getPageType = (isPublicTemplate = false) => {
     let pageType = ''
@@ -47,8 +49,8 @@ export const useGaAssistant = () => {
       return {
         ...prev,
         vaTemplate: template,
-        vaTemplateSource: source,
-        vaTemplateView: view,
+        source,
+        view,
         isDuplicated,
         creatingVaFromScratch,
       }
@@ -73,33 +75,28 @@ export const useGaAssistant = () => {
   }
 
   const vaCreated = () => {
-    const {
-      vaTemplateSource,
-      vaTemplateView,
-      isDuplicated,
-      creatingVaFromScratch,
-      vaTemplate,
-    } = gaState
+    const { source, view, isDuplicated, creatingVaFromScratch, vaTemplate } =
+      gaState
     const page_type = getPageType()
 
     isDuplicated &&
       ga4.event('VA_Duplicated', {
-        source: vaTemplateSource,
+        source,
         page_type,
       })
 
     creatingVaFromScratch &&
       ga4.event('VA_From_Scratch_Created', {
-        source: vaTemplateSource,
+        source,
         page_type,
       })
 
     !creatingVaFromScratch &&
       !isDuplicated &&
       ga4.event('VA_From_Template_Created', {
-        source: vaTemplateSource,
+        source,
         page_type: getPageType(true),
-        view: vaTemplateView,
+        view,
         auth_status: isAuth,
         template_va_id: vaTemplate?.id,
         template_va_name: vaTemplate?.name,
@@ -115,6 +112,10 @@ export const useGaAssistant = () => {
   ) => {
     const isPublicTemplate = template?.visibility === 'PUBLIC_TEMPLATE'
     const page_type = getPageType(isPublicTemplate)
+
+    if (source === 'va_card_context_menu') {
+      view = UIOptions[consts.IS_TABLE_VIEW] ? 'list' : 'card'
+    }
 
     isPublicTemplate
       ? ga4.event('Template_VA_Properties_Opened', {
@@ -133,10 +134,44 @@ export const useGaAssistant = () => {
         })
   }
 
+  const setVaArchitectureOptions = (source: string) => {
+    const view = UIOptions[consts.IS_TABLE_VIEW] ? 'list' : 'card'
+    const page_type = getPageType()
+    setGaState({ ...gaState, source, view, page_type })
+  }
+
+  const vaArchitectureOpened = (template?: BotInfoInterface) => {
+    const isPublicTemplate = template?.visibility === 'PUBLIC_TEMPLATE'
+
+    const view = gaState.view || 'none'
+    const source = gaState.source || 'link'
+    const page_type = gaState.page_type || 'link'
+
+    isPublicTemplate
+      ? ga4.event('Template_VA_Architecture_Opened', {
+          source,
+          view,
+          page_type,
+          template_va_id: template?.id,
+          template_va_name: template?.name,
+          template_va_author_id: template?.author.id,
+          template_va_author_name: template?.author.fullname || 'none',
+        })
+      : ga4.event('VA_Opened', {
+          source,
+          view,
+          page_type,
+          va_id: template?.id,
+          va_name: template?.display_name,
+        })
+  }
+
   return {
     vaPageOpen,
     createVaClick,
     vaCreated,
     vaPropsOpened,
+    setVaArchitectureOptions,
+    vaArchitectureOpened,
   }
 }

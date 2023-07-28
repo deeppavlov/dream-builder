@@ -24,7 +24,8 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
-  const { createVaClick, vaPropsOpened } = useGaAssistant()
+  const { createVaClick, vaPropsOpened, vaArchitectureOpened } =
+    useGaAssistant()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -125,6 +126,10 @@ export const AssistantModule = () => {
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])
+
+  useEffect(() => {
+    bot && vaArchitectureOpened(bot)
+  }, [bot])
 
   return (
     <>

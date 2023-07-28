@@ -33,7 +33,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
-  const { createVaClick } =useGaAssistant()
+  const { createVaClick, setVaArchitectureOptions } = useGaAssistant()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
@@ -63,6 +63,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_sidepanel')
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))

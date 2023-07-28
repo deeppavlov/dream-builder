@@ -34,7 +34,7 @@ const AssistantContextMenu: FC<Props> = ({
   const navigate = useNavigate()
   const { name } = useParams()
   const isEditor = name !== undefined && name !== null && name?.length > 0
-  const { vaPropsOpened } = useGaAssistant()
+  const { vaPropsOpened, setVaArchitectureOptions } = useGaAssistant()
 
   const handlePropertiesBtnClick = () => {
     vaPropsOpened('va_card_context_menu', 'none', bot)
@@ -80,6 +80,9 @@ const AssistantContextMenu: FC<Props> = ({
   const handleCheckArchitectureClick = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
+    const source = inSidePanel ? 'va_template_sidepanel' : 'va_templates_block'
+    setVaArchitectureOptions(source)
+
     navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
       state: {
         preview: true,

@@ -34,7 +34,8 @@ export const AssistantCard: FC<BotCardProps> = ({
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
   const { refetchDist } = useAssistants()
-  const { createVaClick, vaPropsOpened } = useGaAssistant()
+  const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
+    useGaAssistant()
 
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const activeChat = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -100,6 +101,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_block')
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))

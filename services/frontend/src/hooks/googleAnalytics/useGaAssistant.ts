@@ -232,6 +232,14 @@ export const useGaAssistant = () => {
     })
   }
 
+  const vaViewChanged = () => {
+    const page_type = getPageType()
+    const view = getView(page_type) === 'card' ? 'list' : 'card'
+    const source = 'top_panel'
+
+    ga4.event('VA_View_Changed', { page_type, view, source })
+  }
+
   return {
     vaPageOpen,
     createVaClick,
@@ -243,5 +251,6 @@ export const useGaAssistant = () => {
     vaRenamed,
     deleteVaButtonClick,
     vaDeleted,
+    vaViewChanged,
   }
 }

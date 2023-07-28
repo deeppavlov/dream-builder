@@ -64,7 +64,7 @@ services:
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
-        DREAM_BRANCH: feat/ruxglm_prompted_dist
+        DREAM_BRANCH: dev
         PORT: 6998
 #    depends_on:
 #      - auth-api

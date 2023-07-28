@@ -57,7 +57,7 @@ export const AssistantModule = () => {
   }
 
   const handleInfo = () => {
-    vaPropsOpened('va_control_block', 'none', bot)
+    vaPropsOpened('va_control_block', bot)
 
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: true,
@@ -108,7 +108,7 @@ export const AssistantModule = () => {
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
-    createVaClick('va_control_block', 'none', bot)
+    createVaClick('va_control_block', bot)
 
     if (!auth?.user)
       return trigger('SignInModal', {

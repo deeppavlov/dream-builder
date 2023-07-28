@@ -37,7 +37,7 @@ const AssistantContextMenu: FC<Props> = ({
   const { vaPropsOpened, setVaArchitectureOptions } = useGaAssistant()
 
   const handlePropertiesBtnClick = () => {
-    vaPropsOpened('va_card_context_menu', 'none', bot)
+    vaPropsOpened('va_card_context_menu', bot)
 
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (

@@ -68,7 +68,7 @@ export const AssistantCard: FC<BotCardProps> = ({
 
   const handleBotCardClick = () => {
     const isOpen = activeAssistantId !== infoSPId
-    isOpen && vaPropsOpened('va_card_click', 'card', bot)
+    isOpen && vaPropsOpened('va_card_click', bot)
 
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen,
@@ -84,7 +84,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    createVaClick('va_templates_block', 'card', bot)
+    createVaClick('va_templates_block', bot)
 
     const assistantClone = { action: 'clone', bot: bot }
 

@@ -51,7 +51,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { name } = useParams()
   const isEditor = Boolean(name)
   const handleCloneBtnClick = () => {
-    createVaClick('va_template_sidepanel', 'none', bot)
+    createVaClick('va_template_sidepanel', bot)
 
     const assistantClone = { action: 'clone', bot: bot }
 

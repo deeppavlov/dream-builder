@@ -31,20 +31,25 @@ export const useGaAssistant = () => {
     return pageType
   }
 
+  const getView = (page_type: string): string => {
+    if (['va_template_page', 'va_skillset_page'].includes(page_type))
+      return 'none'
+    return UIOptions[consts.IS_TABLE_VIEW] ? 'list' : 'card'
+  }
+
   const vaPageOpen = () => {
     ga4.event('VA_Page_Opened', {
       auth_status: isAuth,
     })
   }
 
-  const createVaClick = (
-    source: string,
-    view: 'card' | 'list' | 'none',
-    template?: BotInfoInterface
-  ) => {
+  const createVaClick = (source: string, template?: BotInfoInterface) => {
     const creatingVaFromScratch = !template
     const isDuplicated =
       !creatingVaFromScratch && template.author.id === auth?.user?.id
+    const page_type = getPageType(!isDuplicated)
+    const view = getView(page_type)
+
     setGaState(prev => {
       return {
         ...prev,
@@ -58,13 +63,13 @@ export const useGaAssistant = () => {
 
     creatingVaFromScratch
       ? ga4.event('Create_VA_From_Scratch_Button_Click', {
-          page_type: getPageType(),
+          page_type,
           source,
           view,
         })
       : ga4.event('Create_VA_From_Template_Button_Click', {
           source,
-          page_type: getPageType(!isDuplicated),
+          page_type,
           view,
           auth_status: isAuth,
           template_va_id: template.id,
@@ -105,17 +110,10 @@ export const useGaAssistant = () => {
       })
   }
 
-  const vaPropsOpened = (
-    source: string,
-    view: 'card' | 'list' | 'none',
-    template?: BotInfoInterface
-  ) => {
+  const vaPropsOpened = (source: string, template?: BotInfoInterface) => {
     const isPublicTemplate = template?.visibility === 'PUBLIC_TEMPLATE'
     const page_type = getPageType(isPublicTemplate)
-
-    if (source === 'va_card_context_menu') {
-      view = UIOptions[consts.IS_TABLE_VIEW] ? 'list' : 'card'
-    }
+    const view = getView(page_type)
 
     isPublicTemplate
       ? ga4.event('Template_VA_Properties_Opened', {

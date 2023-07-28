@@ -86,7 +86,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
   const handleAssistantListItemClick = () => {
     const isOpen = activeAssistantId !== infoSPId
-    isOpen && vaPropsOpened('va_card_click', 'list', bot)
+    isOpen && vaPropsOpened('va_card_click', bot)
 
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen,
@@ -102,7 +102,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    createVaClick('va_templates_block', 'list', bot)
+    createVaClick('va_templates_block', bot)
 
     e.stopPropagation()
     const assistantClone = { action: 'clone', bot: bot }

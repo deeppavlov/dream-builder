@@ -56,8 +56,7 @@ export const AddButton: FC<Props> = ({
     if (isAddPublicSkill) return trigger('SkillsListModal', {})
     if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
     if (isCreateScratchAssistant) {
-      const view = forTable ? 'list' : 'card'
-      createVaClick('va_templates_block', view)
+      createVaClick('va_templates_block')
       return trigger('AssistantModal', scratchAssistant)
     }
   }

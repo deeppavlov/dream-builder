@@ -60,7 +60,7 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
-  const { vaCreated } =useGaAssistant()
+  const { vaCreated, vaRenamed } = useGaAssistant()
 
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
@@ -89,6 +89,7 @@ export const useAssistants = () => {
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
+      vaRenamed()
     },
   })
 

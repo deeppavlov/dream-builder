@@ -5,6 +5,7 @@ import { BotInfoInterface, TTopbar } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
@@ -22,10 +23,12 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     keyPrefix: 'topbar.ctx_menus',
   })
   const { getDist } = useAssistants()
+  const { renameVaButtonClick } = useGaAssistant()
   const dist = getDist({ distName })?.data
 
   const handleWelcomeClick = () => {}
   const handleRenameClick = () => {
+    renameVaButtonClick('va_action_menu', bot)
     trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
   }
   const handleAddSkillsClick = () => {

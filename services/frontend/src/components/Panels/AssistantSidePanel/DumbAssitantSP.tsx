@@ -33,7 +33,8 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
-  const { createVaClick, setVaArchitectureOptions } = useGaAssistant()
+  const { createVaClick, setVaArchitectureOptions, renameVaButtonClick } =
+    useGaAssistant()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
@@ -72,6 +73,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handleRenameBtnClick = () => {
+    renameVaButtonClick('va_sidepanel', bot)
     trigger('AssistantModal', { bot, action: 'edit' })
   }
 
@@ -199,6 +201,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   bot={bot}
                   type={type}
                   isDeployed={isDeployed}
+                  inSidePanel
                 />
               </>
             )}

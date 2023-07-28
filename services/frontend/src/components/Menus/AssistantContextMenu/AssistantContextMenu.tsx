@@ -34,7 +34,8 @@ const AssistantContextMenu: FC<Props> = ({
   const navigate = useNavigate()
   const { name } = useParams()
   const isEditor = name !== undefined && name !== null && name?.length > 0
-  const { vaPropsOpened, setVaArchitectureOptions } = useGaAssistant()
+  const { vaPropsOpened, setVaArchitectureOptions, renameVaButtonClick } =
+    useGaAssistant()
 
   const handlePropertiesBtnClick = () => {
     vaPropsOpened('va_card_context_menu', bot)
@@ -52,6 +53,9 @@ const AssistantContextMenu: FC<Props> = ({
   }
 
   const handleRenameBtnClick = () => {
+    const source = inSidePanel ? 'va_sidepanel' : 'va_block'
+    renameVaButtonClick(source, bot)
+
     const isPublicTemplate =
       bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 

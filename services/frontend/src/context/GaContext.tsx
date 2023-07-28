@@ -9,7 +9,7 @@ import { BotInfoInterface } from 'types/types'
 
 interface IGaOptions {
   [key: string]: string | boolean | BotInfoInterface | undefined
-  vaTemplate?: BotInfoInterface
+  assistant?: BotInfoInterface
 }
 
 interface IGaContext {

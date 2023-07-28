@@ -53,7 +53,7 @@ export const useGaAssistant = () => {
     setGaState(prev => {
       return {
         ...prev,
-        vaTemplate: template,
+        assistant: template,
         source,
         view,
         isDuplicated,
@@ -80,7 +80,7 @@ export const useGaAssistant = () => {
   }
 
   const vaCreated = () => {
-    const { source, view, isDuplicated, creatingVaFromScratch, vaTemplate } =
+    const { source, view, isDuplicated, creatingVaFromScratch, assistant } =
       gaState
     const page_type = getPageType()
 
@@ -103,10 +103,10 @@ export const useGaAssistant = () => {
         page_type: getPageType(true),
         view,
         auth_status: isAuth,
-        template_va_id: vaTemplate?.id,
-        template_va_name: vaTemplate?.name,
-        template_va_author_id: vaTemplate?.author.id,
-        template_va_author_name: vaTemplate?.author.fullname || 'none',
+        template_va_id: assistant?.id,
+        template_va_name: assistant?.name,
+        template_va_author_id: assistant?.author.id,
+        template_va_author_name: assistant?.author.fullname || 'none',
       })
   }
 
@@ -164,6 +164,39 @@ export const useGaAssistant = () => {
         })
   }
 
+  const renameVaButtonClick = (source: string, bot: BotInfoInterface) => {
+    const page_type = getPageType()
+    const view = getView(page_type)
+
+    setGaState(prev => ({
+      ...prev,
+      assistant: bot,
+      source,
+      view,
+    }))
+
+    ga4.event('Rename_VA_Button_Click', {
+      source,
+      page_type,
+      view,
+      va_id: bot.id,
+      va_name: bot.display_name,
+    })
+  }
+
+  const vaRenamed = () => {
+    const { source, view, assistant } = gaState
+    const page_type = getPageType()
+
+    ga4.event('VA_Renamed', {
+      source,
+      page_type,
+      view,
+      va_id: assistant?.id,
+      va_name: assistant?.display_name,
+    })
+  }
+
   return {
     vaPageOpen,
     createVaClick,
@@ -171,5 +204,7 @@ export const useGaAssistant = () => {
     vaPropsOpened,
     setVaArchitectureOptions,
     vaArchitectureOpened,
+    renameVaButtonClick,
+    vaRenamed,
   }
 }

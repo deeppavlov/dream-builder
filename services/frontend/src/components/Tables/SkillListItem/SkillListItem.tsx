@@ -9,6 +9,7 @@ import { RoutesList } from 'router/RoutesList'
 import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { componentTypeMap } from 'mapping/componentTypeMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { timeToUTC } from 'utils/timeToUTC'
@@ -50,11 +51,15 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const nav = useNavigate()
+  const { skillsPropsOpened } = useGaSkills()
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
+  const isActive = skill.id === activeSKillId
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
+    skillsPropsOpened('card_click', skill)
+
     triggerSkillSidePanel({
       skill,
       visibility: type,

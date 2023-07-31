@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { ISkill } from 'types/types'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { trigger } from 'utils/events'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { ContextMenuButton } from 'components/Buttons'
@@ -16,6 +17,7 @@ interface Props {
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   const { name } = useParams()
   const { t } = useTranslation('translation', { keyPrefix: 'ctx_menus.skill' })
+  const { skillsPropsOpened } = useGaSkills()
   // const handleEditBtnClick = () => {
   //   if (skill.component_type === 'Generative') {
   //     trigger('SkillPromptModal', { skill })
@@ -25,12 +27,14 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   //   triggerSkillSidePanel({ skill, activeTab: 'details' })
   // }
 
-  const handlePropertiesBtnClick = () =>
+  const handlePropertiesBtnClick = () => {
+    skillsPropsOpened('skill_block_context_menu', skill)
     triggerSkillSidePanel({
       skill,
       activeTab: 'properties',
       distName: name || '',
     })
+  }
 
   const handleRenameBtnClick = () => {
     trigger('SkillModal', { action: 'edit', skill })

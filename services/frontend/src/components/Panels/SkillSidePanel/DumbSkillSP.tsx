@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import useTabsManager, { TabList } from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -41,9 +42,12 @@ const DumbSkillSP = ({
     tabList,
   })
   let cx = classNames.bind(s)
+  const { renameSkillButtonClick } = useGaSkills()
 
-  const handleRenameBtnClick = () =>
+  const handleRenameBtnClick = () => {
+    renameSkillButtonClick('sidepanel_button', skill)
     trigger('SkillModal', { action: 'edit', skill })
+  }
 
   const dispatchTrigger = (isOpen: boolean) =>
     setUIOption({

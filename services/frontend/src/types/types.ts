@@ -404,8 +404,9 @@ export interface IRouterCrumb {
 export type TLocale = 'ru' | 'en'
 
 export interface IGaOptions {
-  [key: string]: string | boolean | BotInfoInterface | undefined
+  [key: string]: string | boolean | BotInfoInterface | ISkill | undefined
   assistant?: BotInfoInterface
+  skill?: ISkill
 }
 
 export interface IGaContext {

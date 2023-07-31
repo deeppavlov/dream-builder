@@ -19,6 +19,7 @@ import {
   patchComponent,
 } from 'api/components'
 import { IPatchComponentParams } from 'api/components/patchComponent'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 
 interface IGet {
   distName: string
@@ -71,6 +72,8 @@ export const useComponent = () => {
   const queryClient = useQueryClient()
   const ALL_COMPONENTS = 'all_components'
   const COMPONENT = 'component'
+
+  const { skillRenamed } = useGaSkills()
 
   const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
@@ -153,6 +156,7 @@ export const useComponent = () => {
     mutationFn: ({ component_id, data }: IEdit) =>
       editComponent(data, component_id),
     onSuccess: (data: IStackElement, { component_id, distName, type }) => {
+      skillRenamed()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       updateCachedComponent({ id: component_id, distName, type, data })
     },

@@ -105,5 +105,37 @@ export const useGaSkills = () => {
     isDescriptionChanged && ga4.event('Skill_Description_Changed', eventBody)
   }
 
-  return { skillsPropsOpened, editSkillButtonClick, skillRenamed }
+  const skillDetailsOpened = (source: string, skill: ISkill) => {
+    const assistant = queryClient.getQueryData([
+      'dist',
+      name,
+    ]) as BotInfoInterface
+    const page_type = skillId
+      ? 'skill_editor'
+      : isPreview
+      ? 'va_template_skillset_page'
+      : 'va_skillset_page'
+    const view = getView(page_type)
+
+    console.log('Skill_Details_Opened', {
+      source,
+      page_type,
+      view,
+      skill_created_type: 'TODO',
+      skill_type: skill?.component_type,
+      va_id: assistant?.id,
+      va_name: assistant?.display_name,
+      skill_id: skill?.id,
+      skill_name: skill?.display_name,
+      skill_template_id: 'TODO',
+      skill_template_name: 'TODO',
+    })
+  }
+
+  return {
+    skillsPropsOpened,
+    editSkillButtonClick,
+    skillRenamed,
+    skillDetailsOpened,
+  }
 }

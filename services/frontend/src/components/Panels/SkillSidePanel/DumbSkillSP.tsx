@@ -42,7 +42,7 @@ const DumbSkillSP = ({
     tabList,
   })
   let cx = classNames.bind(s)
-  const { editSkillButtonClick } = useGaSkills()
+  const { editSkillButtonClick, skillDetailsOpened } = useGaSkills()
 
   const handleRenameBtnClick = () => {
     editSkillButtonClick('sidepanel_button', skill)
@@ -74,7 +74,10 @@ const DumbSkillSP = ({
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}
+              onClick={() => {
+                !isPreview && tabsInfo.handleTabSelect(id)
+                !isPreview && skillDetailsOpened('skill_sidepanel', skill)
+              }}
             >
               {tab.name}
             </li>

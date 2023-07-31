@@ -74,6 +74,7 @@ def delete_deployment(db: Session, deployment: schemas.DeploymentRead):
     except HTTPError:
         pass
 
+    tasks.app.control.revoke(deployment.task_id, terminate=True)
     delete_by_id(db, deployment.id)
     db.commit()
 

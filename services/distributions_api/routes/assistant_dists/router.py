@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -49,14 +49,21 @@ async def create_virtual_assistant(
 
     -``description``: new assistant dist description
     """
+    try:
+        template_dist = TEMPLATE_DIST_PROMPT_BASED[payload.language]
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"No template for language {payload.language}"
+        )
 
     new_virtual_assistant = flows.create_virtual_assistant(
         db,
-        TEMPLATE_DIST_PROMPT_BASED,
+        template_dist,
         payload.display_name,
         payload.description,
         user.id,
         user.email,
+        payload.language,
     )
     return new_virtual_assistant
 
@@ -69,8 +76,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
     public_dists = []
 
     for dist in get_all_public_templates(db):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
@@ -89,8 +95,7 @@ async def get_list_of_private_virtual_assistants(
     private_dists = []
 
     for dist in get_all_by_author(db, user.id):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return private_dists
 
@@ -185,7 +190,14 @@ async def clone_dist(
     -``description``: new assistant dist description
     """
     new_virtual_assistant = flows.create_virtual_assistant(
-        db, virtual_assistant.name, payload.display_name, payload.description, user.id, user.email, is_cloned=True
+        db,
+        virtual_assistant.name,
+        payload.display_name,
+        payload.description,
+        user.id,
+        user.email,
+        payload.language,
+        is_cloned=True,
     )
     return new_virtual_assistant
 

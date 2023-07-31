@@ -58,7 +58,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const isActive = skill.id === activeSKillId
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
-    skillsPropsOpened('card_click', skill)
+    !isActive && skillsPropsOpened('card_click', skill)
 
     triggerSkillSidePanel({
       skill,

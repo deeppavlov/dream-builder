@@ -156,7 +156,7 @@ export const useComponent = () => {
     mutationFn: ({ component_id, data }: IEdit) =>
       editComponent(data, component_id),
     onSuccess: (data: IStackElement, { component_id, distName, type }) => {
-      skillRenamed()
+      skillRenamed(data)
       queryClient.invalidateQueries([ALL_COMPONENTS])
       updateCachedComponent({ id: component_id, distName, type, data })
     },

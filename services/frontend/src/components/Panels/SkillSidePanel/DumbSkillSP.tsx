@@ -42,10 +42,10 @@ const DumbSkillSP = ({
     tabList,
   })
   let cx = classNames.bind(s)
-  const { renameSkillButtonClick } = useGaSkills()
+  const { editSkillButtonClick } = useGaSkills()
 
   const handleRenameBtnClick = () => {
-    renameSkillButtonClick('sidepanel_button', skill)
+    editSkillButtonClick('sidepanel_button', skill)
     trigger('SkillModal', { action: 'edit', skill })
   }
 

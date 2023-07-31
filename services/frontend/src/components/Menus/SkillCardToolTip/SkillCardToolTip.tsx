@@ -17,7 +17,7 @@ interface Props {
 const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   const { name } = useParams()
   const { t } = useTranslation('translation', { keyPrefix: 'ctx_menus.skill' })
-  const { skillsPropsOpened, renameSkillButtonClick } = useGaSkills()
+  const { skillsPropsOpened, editSkillButtonClick } = useGaSkills()
   // const handleEditBtnClick = () => {
   //   if (skill.component_type === 'Generative') {
   //     trigger('SkillPromptModal', { skill })
@@ -37,7 +37,7 @@ const SkillCardToolTip: FC<Props> = ({ tooltipId, skill, isPreview }) => {
   }
 
   const handleRenameBtnClick = () => {
-    renameSkillButtonClick('skill_block_context_menu', skill)
+    editSkillButtonClick('skill_block_context_menu', skill)
     trigger('SkillModal', { action: 'edit', skill })
   }
 

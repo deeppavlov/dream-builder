@@ -54,6 +54,7 @@ class DeployerSettings(BaseModel):
     portainer_url: str
     portainer_key: str
     default_prefix: str
+    cloud_service: str = "amazon"
 
 
 # class StorageSettings(BaseModel):

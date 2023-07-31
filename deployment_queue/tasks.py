@@ -101,6 +101,7 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
         portainer_url=settings.deployer.portainer_url,
         portainer_key=settings.deployer.portainer_key,
         default_prefix=default_prefix_map[dist.language],
+        cloud_service_name=settings.deployer.cloud_service,
     )
 
     for state, updates, err in deployer.deploy(dist):

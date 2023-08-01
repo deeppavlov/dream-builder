@@ -1,5 +1,7 @@
 import {
-BotInfoInterface,IDeploymentStatus,IPublicationRequest
+  BotInfoInterface,
+  IDeploymentStatus,
+  IPublicationRequest,
 } from '../types/types'
 
 type SortableArray<T> = T extends BotInfoInterface[]

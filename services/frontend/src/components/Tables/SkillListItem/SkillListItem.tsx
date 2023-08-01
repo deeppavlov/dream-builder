@@ -6,12 +6,7 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from 'assets/icons/add.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import { RoutesList } from 'router/RoutesList'
-import {
-  ICreateComponent,
-  ISkill,
-  SkillAvailabilityType,
-  TLocale,
-} from 'types/types'
+import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { componentTypeMap } from 'mapping/componentTypeMap'
 import { consts } from 'utils/consts'
@@ -28,7 +23,7 @@ interface SkillListItemProps {
   type: SkillAvailabilityType
   forModal?: boolean
   withoutDate?: boolean
-  handleAdd?: (skill: ICreateComponent) => void
+  handleAdd?: (skill: ISkill) => void
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
@@ -39,15 +34,11 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   handleAdd,
 }) => {
   const { i18n } = useTranslation()
-  const date = dateToUTC(
-    skill?.date_created,
-    i18n.language as TLocale,
-    {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }
-  )
+  const date = dateToUTC(skill?.date_created, i18n.language as TLocale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const time = timeToUTC(
     new Date(skill?.date_created),
     i18n.language as TLocale

@@ -73,7 +73,7 @@ export const useComponent = () => {
   const ALL_COMPONENTS = 'all_components'
   const COMPONENT = 'component'
 
-  const { skillRenamed } = useGaSkills()
+  const { skillRenamed, skillDeleted } = useGaSkills()
 
   const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
@@ -121,6 +121,7 @@ export const useComponent = () => {
   const deleteComponent = useMutation({
     mutationFn: ({ distName, id }: IDelete) => deleteComoponent(distName, id),
     onSuccess: (_, { type, distName, component_id }) => {
+      skillDeleted()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       queryClient.invalidateQueries([type, distName])
       updateCachedComponent({ distName, id: component_id, type, data: null })

@@ -117,7 +117,7 @@ export const useGaSkills = () => {
       : 'va_skillset_page'
     const view = getView(page_type)
 
-    console.log('Skill_Details_Opened', {
+    ga4.event('Skill_Details_Opened', {
       source,
       page_type,
       view,
@@ -132,10 +132,56 @@ export const useGaSkills = () => {
     })
   }
 
+  const skillDeleteButtonClick = (skill: ISkill) => {
+    const source = 'skill_block_context_menu'
+    const page_type = 'va_skillset_page'
+    const view = getView(page_type)
+    const assistant = queryClient.getQueryData([
+      'dist',
+      name,
+    ]) as BotInfoInterface
+
+    setGaState({ ...gaState, source, page_type, view, skill, assistant })
+
+    ga4.event('Delete_Skill_Button_Click', {
+      source,
+      page_type,
+      view,
+      skill_created_type: 'TODO',
+      skill_type: skill.component_type,
+      va_id: assistant.id,
+      va_name: assistant.name,
+      skill_id: skill.id,
+      skill_name: skill.display_name,
+      skill_template_id: 'TODO',
+      skill_template_name: 'TODO',
+    })
+  }
+
+  const skillDeleted = () => {
+    const { source, page_type, view, skill, assistant } = gaState
+
+    ga4.event('Skill_Deleted', {
+      source,
+      page_type,
+      view,
+      skill_created_type: 'TODO',
+      skill_type: skill?.component_id,
+      va_id: assistant?.id,
+      va_name: assistant?.display_name,
+      skill_id: 1234,
+      skill_name: skill?.display_name,
+      skill_template_id: 'TODO',
+      skill_template_name: 'TODO',
+    })
+  }
+
   return {
     skillsPropsOpened,
     editSkillButtonClick,
     skillRenamed,
     skillDetailsOpened,
+    skillDeleteButtonClick,
+    skillDeleted,
   }
 }

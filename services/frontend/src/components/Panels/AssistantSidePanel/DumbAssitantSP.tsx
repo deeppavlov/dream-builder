@@ -1,5 +1,5 @@
 import { useUIOptions } from 'context'
-import { useEffect, useId } from 'react'
+import { FC, useEffect, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
@@ -23,36 +23,55 @@ interface Props {
   bot: BotInfoInterface
   disabled?: boolean
   type: BotAvailabilityType
-  fromEditor?: boolean
 }
 
-const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
+const DumbAssistantSP: FC<Props> = ({ bot, disabled, type }) => {
   const { t, i18n } = useTranslation()
-  const navigate = useNavigate()
   const { isPreview } = usePreview()
-  const { name: distName } = useParams()
+  const { name } = useParams()
   const { setUIOption } = useUIOptions()
-  const isPreviewEditor = distName && distName?.length > 0 && isPreview
-  const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-  const tooltipId = useId()
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
+  const navigate = useNavigate()
+  const tooltipId = useId()
+
+  const isEditor = Boolean(name)
+  const isPreviewEditor = name && name?.length > 0 && isPreview
+  const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+  const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
 
   const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
+
   const author = isDeepyPavlova
     ? 'Dream Builder Team'
     : bot?.author?.fullname
     ? bot?.author?.fullname
-    : bot?.author?.given_name + ' ' + bot?.author?.family_name
+    : bot?.author?.given_name !== null && bot?.author?.family_name !== null
+    ? bot?.author?.given_name + '' + bot?.author?.family_name
+    : ''
 
-  const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
-  const { name } = useParams()
-  const isEditor = Boolean(name)
+  const tagTheme =
+    bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
+      ? 'validating'
+      : bot?.visibility
+
+  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
+  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
+  const publishState = onModeration
+    ? t('assistant_visibility.on_moderation')
+    : isPublished
+    ? t('assistant_visibility.public_template')
+    : unlistedAssistant
+    ? t('assistant_visibility.unlisted')
+    : privateAssistant
+    ? t('assistant_visibility.private')
+    : null
+
+  const date = dateToUTC(bot?.date_created, i18n.language as TLocale)
+
   const handleCloneBtnClick = () => {
     const assistantClone = { action: 'clone', bot: bot }
-
     if (!disabled) return trigger('AssistantModal', assistantClone)
-
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
     })
@@ -62,7 +81,6 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))
-
     e.stopPropagation()
   }
 
@@ -81,17 +99,6 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
     dispatchTrigger(true)
     return () => dispatchTrigger(false)
   }, [])
-  const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
-  const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
-  const publishState = onModeration
-    ? t('assistant_visibility.on_moderation')
-    : isPublished
-    ? t('assistant_visibility.public_template')
-    : unlistedAssistant
-    ? t('assistant_visibility.unlisted')
-    : privateAssistant
-    ? t('assistant_visibility.private')
-    : null
 
   return (
     bot && (
@@ -117,8 +124,10 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <div className={s.author}>
               {isDeepyPavlova ? (
                 <img src={DB} alt='Author' />
+              ) : bot?.author?.picture ? (
+                <img src={bot?.author?.picture} alt='Author' />
               ) : (
-                <img src={bot?.author?.picture} />
+                <></>
               )}
               <span>{author}</span>
             </div>
@@ -126,17 +135,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
             <div className={s.dateAndVersion}>
               <div className={s.date}>
                 <CalendarIcon />
-                {dateToUTC(bot?.date_created, i18n.language as TLocale)}
+                {date}
               </div>
-              <SmallTag
-                theme={
-                  bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
-                    ? 'validating'
-                    : bot?.visibility
-                }
-              >
-                {publishState}
-              </SmallTag>
+              <SmallTag theme={tagTheme}>{publishState}</SmallTag>
             </div>
           </div>
           <div className={s.scroll}>

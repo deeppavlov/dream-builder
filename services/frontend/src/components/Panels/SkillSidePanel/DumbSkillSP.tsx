@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import i18next from 'i18next'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
@@ -21,13 +21,13 @@ interface Props {
   children?: React.ReactNode // Editor Tab element
 }
 
-const DumbSkillSP = ({
+const DumbSkillSP: FC<Props> = ({
   skill,
   activeTab,
   tabs,
   visibility,
   children,
-}: Props) => {
+}) => {
   const { t } = useTranslation()
   const [properties, details] = ['properties', 'details']
   const { isPreview } = usePreview()

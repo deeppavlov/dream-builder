@@ -11,15 +11,19 @@ import { BaseModal } from 'components/Modals'
 import { AccessTokensModule } from 'components/Modules'
 import s from './ProfileSettings.module.scss'
 
-enum ProfileTabs {
+export enum ProfileTabs {
   account = 'account',
   tokens = 'tokens',
 }
 interface ProfileSettingsProps {}
-
+interface ProfileSettingData {
+  detail: {
+    tab?: ProfileTabs
+  }
+}
 export const ProfileSettings: FC<ProfileSettingsProps> = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState<ProfileTabs>(ProfileTabs.account)
+  const [activeTab, setActiveTab] = useState<ProfileTabs | null>(null)
   const { t } = useTranslation()
   const cx = classNames.bind(s)
 
@@ -29,8 +33,18 @@ export const ProfileSettings: FC<ProfileSettingsProps> = () => {
   const auth = useAuth()
   const user = auth?.user
   const locale: ELOCALES_KEY = store(I18N_STORE_KEY)
+  const currentLanguage = language()[locale]
+  const name =
+    user?.name || `${user?.given_name || ''}  ${user?.family_name || ''}`
 
-  const handleEventUpdate = () => setIsOpen(!isOpen)
+  const handleEventUpdate = ({ detail }: ProfileSettingData) => {
+    setIsOpen(prev => !prev)
+    setActiveTab(detail.tab ?? ProfileTabs.account)
+  }
+  const handleClose = () => {
+    setIsOpen(false)
+    setActiveTab(null)
+  }
 
   const handleTabClick = (tab: ProfileTabs) => setActiveTab(tab)
 
@@ -41,6 +55,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = () => {
   return (
     <BaseModal
       isOpen={isOpen}
+      handleClose={handleClose}
       setIsOpen={setIsOpen}
       modalClassName={s.baseModal}
     >
@@ -72,10 +87,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = () => {
                   <span className={s.key}>
                     {t('modals.profile_settings.tabs.account.name')}
                   </span>
-                  <span className={s.value}>
-                    {user?.name ||
-                      `${user?.given_name || ''}  ${user?.family_name || ''}`}
-                  </span>
+                  <span className={s.value}>{name}</span>
                 </div>
                 <div className={s.block}>
                   <span className={s.key}>
@@ -88,7 +100,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = () => {
                   <span className={s.key}>
                     {t('modals.profile_settings.tabs.account.language')}
                   </span>
-                  <span className={s.value}>{language()[locale]}</span>
+                  <span className={s.value}>{currentLanguage}</span>
                   <button className={s.btn} onClick={handleLanguageClick}>
                     {t('modals.profile_settings.tabs.account.change')}
                   </button>

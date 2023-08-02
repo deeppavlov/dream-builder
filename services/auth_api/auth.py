@@ -109,7 +109,7 @@ async def logout(refresh_token: str = Header(), db: Session = Depends(get_db)) -
 
 
 @router.post("/exchange_authcode")
-async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> dict[str, str]:
+async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)):
     """
     Exchanges authorization code for access token
 
@@ -146,7 +146,7 @@ async def exchange_authcode(auth_code: str, db: Session = Depends(get_db)) -> di
 
 
 @router.post("/update_token")
-async def update_access_token(refresh_token: str, db: Session = Depends(get_db)) -> dict[str, str]:
+async def update_access_token(refresh_token: str, db: Session = Depends(get_db)):
     user: UserValid = user_valid_crud.get_uservalid_by_refresh_token(db, refresh_token)
 
     if not user:

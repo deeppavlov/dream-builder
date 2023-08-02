@@ -1,8 +1,8 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-async-light'
 import scriptTemplate from 'assets/scripts/embed.js?raw'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
@@ -13,8 +13,6 @@ interface Props {
   assistantId: string
 }
 
-// const format = (code: string) =>
-//   prettier.format(code, { parser: 'babel', plugins: [parserBabel] })
 const themesColors = {
   default: '#3300ff',
   defaultDark: '#3300ff',
@@ -61,10 +59,9 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
     getScript(assistantId, theme, adaptiveTheme, isDarkMode)
   )
   const { t } = useTranslation()
-  const preCodeRef = useRef<HTMLPreElement>(null)
 
   const handleClick = () => {
-    navigator.clipboard.writeText(preCodeRef?.current?.props?.children)
+    navigator.clipboard.writeText(previewScript)
     toast.custom(t => (t.visible ? <ToastCopySucces /> : null), {
       position: 'top-center',
       id: 'copySucces',
@@ -89,7 +86,6 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
         customStyle={{ margin: '0px', borderRadius: '12px' }}
         language='js'
         style={nightOwl}
-        ref={preCodeRef}
       >
         {previewScript}
       </SyntaxHighlighter>

@@ -33,10 +33,22 @@ INITIAL_DATA_LISTS = [
     "google_user",
     "deployments",
     "virtual_assistant_names",
-    "public_virtual_assistant_names",
     "lm_service",
+    "prompt_block",
+    "lm_service_prompt_block",
     "api_key",
     "role",
+]
+
+COPY_AS_IS_SHEETS = [
+    "role",
+    "google_user",
+    "language",
+    "lm_service",
+    "lm_service_language",
+    "prompt_block",
+    "lm_service_prompt_block",
+    "api_key",
 ]
 
 
@@ -84,7 +96,9 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
     initial_secret = read_xlsx_file(initial_file)
 
-    for table_name in ["role", "google_user", "lm_service", "api_key"]:
+    language_map = {row["value"]: row["id"] for row in initial_secret["language"]}
+
+    for table_name in COPY_AS_IS_SHEETS:
         with open(f"{output_dir}/{table_name}.tsv", "w", encoding="utf-8") as table_tsv_f:
             table_csv_writer = csv.writer(table_tsv_f, delimiter="\t", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             table_csv_writer.writerow(list(initial_secret[table_name][0].keys()))
@@ -207,7 +221,17 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
     ):
         va_csv_writer = csv.writer(va_tsv_f, delimiter="\t", quotechar='"')
         va_csv_writer.writerow(
-            ["author_id", "source", "name", "display_name", "description", "private_visibility", "date_created"]
+            [
+                "author_id",
+                "source",
+                "name",
+                "display_name",
+                "description",
+                "private_visibility",
+                "date_created",
+                "language_id",
+                "is_visible",
+            ]
         )
 
         va_components_csv_writer = csv.writer(va_components_tsv_f, delimiter="\t", quotechar='"')
@@ -223,7 +247,10 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
 
         current_assistant_dist_id = 1
         for dist in list_dists(dream_root):
-            if dist.name in [row["name"] for row in initial_secret["virtual_assistant_names"]]:
+            virtual_assistant_names_visibility = {
+                row["name"]: row["is_visible"] for row in initial_secret["virtual_assistant_names"]
+            }
+            if dist.name in virtual_assistant_names_visibility.keys():
                 va_row = [
                     1,
                     f"assistant_dists/{dist.dist_path.name}",
@@ -232,6 +259,8 @@ def run(dream_root: Union[Path, str], initial_file: Union[Path, str], output_dir
                     dist.pipeline.metadata.description,
                     enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK.value,
                     dist.pipeline.metadata.date_created.strftime("%Y-%m-%dT%H:%M:%S"),
+                    language_map[dist.language],
+                    virtual_assistant_names_visibility[dist.name]
                 ]
                 va_csv_writer.writerow(va_row)
 

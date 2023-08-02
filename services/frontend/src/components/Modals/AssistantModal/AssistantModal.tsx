@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import store from 'store2'
 import { BotInfoInterface, ELOCALES_KEY, TLang } from 'types/types'
-import { I18N_STORE_KEY, language } from 'constants/constants'
+import { language } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { useOnKey } from 'hooks/useOnKey'
 import { trigger } from 'utils/events'
+import { currentLocale } from 'utils/getLangFromStorage'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
@@ -50,12 +50,12 @@ export const AssistantModal = () => {
   const isCloning = action === 'clone'
   const isCreateFromScratch = action === 'create'
   const validationSchema = getValidationSchema()
+  const locale = currentLocale()
+  const currentLanguage = language()[locale] as TLang
 
-  const currentLocale: ELOCALES_KEY = store(I18N_STORE_KEY)
-  const currentLanguage = language()[currentLocale] as TLang
   const defaultLangValue = {
-    id: currentLocale,
-    name: currentLocale,
+    id: locale,
+    name: locale,
     display_name: currentLanguage,
   }
 
@@ -112,7 +112,10 @@ export const AssistantModal = () => {
 
     switch (action) {
       case 'create':
-        toast.promise(create.mutateAsync(createPayload), toasts().createAssistant)
+        toast.promise(
+          create.mutateAsync(createPayload),
+          toasts().createAssistant
+        )
         break
       case 'clone':
         toast.promise(

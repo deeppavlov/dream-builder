@@ -23,8 +23,10 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   })
   const { getDist } = useAssistants()
   const dist = getDist({ distName })?.data
+  const isPrivate = dist?.visibility === VISIBILITY_STATUS.PRIVATE
 
   const handleWelcomeClick = () => {}
+
   const handleRenameClick = () => {
     trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
   }
@@ -51,7 +53,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <ContextMenuButton
             name={t('assistant_burger.welcome_guide')}
             type='properties'
-            handleClick={handleWelcomeClick}
+            linkTo='https://builder.deeppavlov.ai/ '
           />
           <hr />
           <ContextMenuButton
@@ -83,9 +85,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
           <ContextMenuButton
             name={t('assistant_burger.share')}
             type='share'
-            disabled={
-              dist?.visibility === VISIBILITY_STATUS.PRIVATE || isPreview
-            }
+            disabled={isPrivate || isPreview}
             handleClick={handleShareClick}
           />
           <hr />

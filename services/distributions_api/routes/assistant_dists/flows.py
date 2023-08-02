@@ -38,13 +38,16 @@ def create_virtual_assistant(
     description: str,
     author_id: int,
     author_email: str,
-    language: str,
+    language: str = None,
     is_cloned: bool = False,
 ) -> schemas.VirtualAssistantRead:
     try:
         template_virtual_assistant = get_by_name(db, template_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / template_virtual_assistant.source)
-        language = language_crud.get_language_by_value(db, language)
+        if not language:
+            language = template_virtual_assistant.language
+        else:
+            language = language_crud.get_language_by_value(db, language)
 
         new_name = generate_unique_name()
         original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(

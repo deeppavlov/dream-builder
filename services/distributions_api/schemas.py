@@ -192,7 +192,7 @@ class VirtualAssistantRead(VirtualAssistantBaseRead):
 class VirtualAssistantCreate(BaseModel):
     display_name: str
     description: str
-    language: Optional[str] = "en"
+    language: Optional[str]
 
 
 class VirtualAssistantUpdate(BaseModel):

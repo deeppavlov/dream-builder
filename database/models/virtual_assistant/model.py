@@ -32,7 +32,7 @@ class VirtualAssistant(Base):
     display_name = Column(String, nullable=False)
     description = Column(String, nullable=False)
 
-    language_id = Column(Integer, ForeignKey("language.id"), nullable=True)
+    language_id = Column(Integer, ForeignKey("language.id"), nullable=False)
     language = relationship("Language")
 
     private_visibility = Column(

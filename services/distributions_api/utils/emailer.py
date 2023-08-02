@@ -62,6 +62,7 @@ class Emailer:
     def _send_message(self, msg, **kwargs):
         try:
             self._server.send_message(msg, **kwargs)
+            logging.info(f"Sent message '{msg['Subject']}' from {msg['From']} to {msg['To']}")
         except Exception as e:
             logging.error(f"Failed to send message! {type(e)}: {e}")
             raise e

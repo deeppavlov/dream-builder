@@ -73,7 +73,7 @@ export const useComponent = () => {
   const ALL_COMPONENTS = 'all_components'
   const COMPONENT = 'component'
 
-  const { skillRenamed, skillDeleted } = useGaSkills()
+  const { skillRenamed, skillDeleted, skillAdded } = useGaSkills()
 
   const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
@@ -132,9 +132,10 @@ export const useComponent = () => {
       // console.log('data = ', data)
     },
     mutationFn: ({ data }: any) => createComponent(data),
-    onSuccess: ({ id }: IStackElement, { distName, type }) => {
+    onSuccess: (skill: IStackElement, { distName, type }) => {
       // console.log('id = ', id)
-      addComponentToDist.mutateAsync({ distName, id: id, type })
+      addComponentToDist.mutateAsync({ distName, id: skill.id, type })
+      skillAdded(skill)
     },
   })
   const clone = useMutation({

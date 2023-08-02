@@ -23,15 +23,15 @@ assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assista
 
 
 def send_publish_request_created_emails(
-    owner_email: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
+    owner_email: str, owner_name: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
 ):
-    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password, settings.smtp.login_policy)
 
     for moderator_email in moderator_emails:
         emailer.send_publish_request_created_to_moderators(
             moderator_email, owner_email, virtual_assistant_name, virtual_assistant_display_name
         )
-    emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
+    emailer.send_publish_request_created_to_owner(owner_email, owner_name, virtual_assistant_display_name)
 
 
 @assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
@@ -264,6 +264,7 @@ async def publish_dist(
     background_tasks.add_task(
         send_publish_request_created_emails,
         owner_email=user.email,
+        owner_name=user.fullname,
         moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
         virtual_assistant_name=virtual_assistant.name,
         virtual_assistant_display_name=virtual_assistant.display_name,

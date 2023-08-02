@@ -14,19 +14,27 @@ from services.distributions_api.utils.emailer import Emailer
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 
-def send_publish_request_reviewed_emails(owner_email: str, virtual_assistant_display_name: str, is_confirmed: bool):
-    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+def send_publish_request_reviewed_emails(
+    owner_email: str,
+    owner_name: str,
+    virtual_assistant_display_name: str,
+    virtual_assistant_url: str,
+    is_confirmed: bool,
+):
+    emailer = Emailer(
+        settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password, settings.smtp.login_policy
+    )
 
     if is_confirmed:
-        emailer.send_publish_request_confirmed_to_owner(owner_email, virtual_assistant_display_name)
+        emailer.send_publish_request_confirmed_to_owner(
+            owner_email, owner_name, virtual_assistant_display_name, virtual_assistant_url
+        )
     else:
-        emailer.send_publish_request_declined_to_owner(owner_email, virtual_assistant_display_name)
+        emailer.send_publish_request_declined_to_owner(owner_email, owner_name, virtual_assistant_display_name)
 
 
 @admin_router.get("/publish_request", status_code=status.HTTP_200_OK)
-async def get_all_publish_requests(
-    user: schemas.UserRead = Depends(get_admin_user), db: Session = Depends(get_db)
-):
+async def get_all_publish_requests(user: schemas.UserRead = Depends(get_admin_user), db: Session = Depends(get_db)):
     return [schemas.PublishRequestRead.from_orm(pr) for pr in publish_request_crud.get_all_publish_requests(db)]
 
 
@@ -49,7 +57,9 @@ async def confirm_publish_request(
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,
+            owner_name=publish_request.user.fullname,
             virtual_assistant_display_name=publish_request.virtual_assistant.display_name,
+            virtual_assistant_url=publish_request.virtual_assistant.name,
             is_confirmed=True,
         )
 
@@ -69,6 +79,7 @@ async def decline_publish_request(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,
             virtual_assistant_display_name=publish_request.virtual_assistant.display_name,
+            virtual_assistant_url=publish_request.virtual_assistant.name,
             is_confirmed=False,
         )
 

@@ -8,6 +8,7 @@ URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
 
 AVAILABLE_CLOUD_SERVICES = Literal["amazon", "local"]
+SMTP_LOGIN_POLICIES = Literal["smtp_tls", "smtp_ssl"]
 
 
 def _default_agent_user_id_prefix():
@@ -49,6 +50,7 @@ class SmtpSettings(BaseModel):
     port: int
     user: str
     password: str
+    login_policy: SMTP_LOGIN_POLICIES
 
 
 class DeployerSettings(BaseModel):

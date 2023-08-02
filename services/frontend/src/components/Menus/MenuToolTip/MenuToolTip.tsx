@@ -5,6 +5,7 @@ import { BotInfoInterface, TTopbar } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
@@ -22,12 +23,14 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     keyPrefix: 'topbar.ctx_menus',
   })
   const { getDist } = useAssistants()
+  const { renameVaButtonClick, deleteVaButtonClick } = useGaAssistant()
   const dist = getDist({ distName })?.data
   const isPrivate = dist?.visibility === VISIBILITY_STATUS.PRIVATE
 
   const handleWelcomeClick = () => {}
 
   const handleRenameClick = () => {
+    renameVaButtonClick('va_action_menu', bot)
     trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
   }
   const handleAddSkillsClick = () => {
@@ -37,6 +40,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('PublishAssistantModal', { bot, from: 'editor' })
   }
   const handleDeleteClick = () => {
+    deleteVaButtonClick('va_action_menu', bot)
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
   const handleShareClick = () => trigger('ShareAssistantModal', distName)

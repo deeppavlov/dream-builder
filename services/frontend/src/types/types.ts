@@ -117,6 +117,7 @@ export interface BotInfoInterface {
   deployment: IDeployment
   required_api_keys: TKey[] | null
   language?: { id: number; value: ELOCALES_KEY }
+  cloned_from_id: number | null
 }
 
 export interface BotCardProps {
@@ -401,3 +402,13 @@ export interface IRouterCrumb {
 }
 
 export type TLocale = 'ru' | 'en'
+
+export interface IGaOptions {
+  [key: string]: string | boolean | BotInfoInterface | undefined
+  assistant?: BotInfoInterface
+}
+
+export interface IGaContext {
+  gaState: IGaOptions
+  setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
+}

@@ -1,7 +1,9 @@
 import { useAuth, useUIOptions } from 'context'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RoutesList } from 'router/RoutesList'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
@@ -33,6 +35,11 @@ export const HomePage = () => {
   const { fetchPublicDists, fetchPrivateDists } = useAssistants()
   const publicDists = fetchPublicDists()
   const privateDists = fetchPrivateDists()
+
+  const { vaPageOpen } =useGaAssistant()
+  useEffect(() => {
+    vaPageOpen()
+  }, [auth?.user])
 
   return (
     <>

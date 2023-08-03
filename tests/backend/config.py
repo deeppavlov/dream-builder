@@ -30,7 +30,6 @@ class AuthSettings(BaseModel):
     openai_token: str
 
 
-
 class Settings(BaseSettings):
     url: UrlSettings
     localurl: LocalUrlSettings
@@ -67,18 +66,23 @@ va_data = {
     "display_name": "Test_Assistant",
     "description": "Test_Description",
 }
-public_va_names = ["ai_faq_assistant",
-                   "fairytale_assistant",
-                   "fashion_stylist_assistant",
-                   "life_coaching_assistant",
-                   "marketing_assistant",
-                   "nutrition_assistant",
-                   "multiskill_ai_assistant",
-                   "universal_prompted_assistant",
-                   "deepy_assistant",
-                   ]
+public_va_names_en = ["ai_faq_assistant",
+                      "fairytale_assistant",
+                      "fashion_stylist_assistant",
+                      "life_coaching_assistant",
+                      "marketing_assistant",
+                      "nutrition_assistant",
+                      "multiskill_ai_assistant",
 
-lm_service_id_list = [2, 3, 4, 7, 9]
+                      "universal_prompted_assistant",
+                      "deepy_assistant",
+                      ]
+
+public_va_names_ru = ["dream_persona_ruxglm_prompted",
+                      "multiskill_ru_assistant"]
+
+lm_service_id_list = [2, 3, 5, 6, 7]
+lm_service_id_russian_list = [12]
 
 base_url_distributions_api = settings_url.distributions_api
 

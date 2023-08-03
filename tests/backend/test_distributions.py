@@ -3,8 +3,10 @@ import pytest
 from qaseio.pytest import qase
 from .config import (
     va_data,
-    public_va_names,
+    public_va_names_en,
+    public_va_names_ru,
     lm_service_id_list,
+    lm_service_id_russian_list,
     auth_token_user1,
     auth_token_user2,
     auth_token,
@@ -20,12 +22,21 @@ class TestDistributions:
 
     # ASSISTANTS_DISTS
 
-    #@pytest.mark.atom
-    @qase.title(f"{counter()}. test_create_va")
-    def test_create_va(self):
+    # @pytest.mark.atom
+    @qase.title(f"{counter()}. test_create_ru_assistant")
+    def test_create_ru_assistant(self):
         display_name = va_data["name"]
         user = UserMethods(auth_token_user1)
-        name = user.create_virtual_assistant(display_name)["name"]
+        name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
+
+        user.delete_va_by_name(name)
+
+    # @pytest.mark.atom
+    @qase.title(f"{counter()}. test_create_en_assistant")
+    def test_create_en_assistant(self):
+        display_name = va_data["name"]
+        user = UserMethods(auth_token_user1)
+        name = user.create_virtual_assistant(name=display_name, language="en")["name"]
 
         user.delete_va_by_name(name)
 
@@ -55,11 +66,11 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_public_va_by_name")
     def test_get_public_va_by_name(self):
-        name = public_va_names[0]
+        name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         user.get_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_your_va_by_name")
     def test_delete_your_va_by_name(self):
         display_name = va_data["name"]
@@ -78,21 +89,40 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
+    @pytest.mark.parametrize('va_name', [public_va_names_en[0], public_va_names_ru[0]])
     @qase.title(f"{counter()}. test_clone_public_va")
-    def test_clone_public_va(self):
-        display_name = public_va_names[0]
+    def test_clone_public_va(self, va_name):
+        display_name = va_name
         user = UserMethods(auth_token_user1)
         name = user.clone_va(display_name)["name"]
 
+        user.check_language_inheritance(display_name, name)
+
         user.delete_va_by_name(name)
 
-    # @pytest.mark.atom
-    @qase.title(f"{counter()}. test_clone_created_from_scratch_va")
-    def test_clone_created_from_scratch_va(self):
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_clone_created_from_scratch_ru_va")
+    def test_clone_created_from_scratch_ru_va(self):
         display_name = va_data["name"]
         user = UserMethods(auth_token_user1)
-        name = user.create_virtual_assistant(display_name)["name"]
+        name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
         clone_name = user.clone_va(name)["name"]
+
+        user.check_language_inheritance(name, clone_name)
+
+        user.delete_va_by_name(name)
+        user.delete_va_by_name(clone_name)
+
+    #@pytest.mark.atom
+    @qase.title(f"{counter()}. test_clone_created_from_scratch_en_va")
+    def test_clone_created_from_scratch_en_va(self):
+        display_name = va_data["name"]
+        user = UserMethods(auth_token_user1)
+        name = user.create_virtual_assistant(name=display_name, language="en")["name"]
+        clone_name = user.clone_va(name)["name"]
+
+        user.check_language_inheritance(name, clone_name)
 
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
@@ -125,7 +155,7 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_public_va_components_by_name")
     def test_get_public_va_components_by_name(self):
-        name = public_va_names[0]
+        name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         user.get_va_components(name)
 
@@ -140,7 +170,7 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_cloned_va_components_by_name")
     def test_get_cloned_va_components_by_name(self):
-        display_name = public_va_names[0]
+        display_name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         name = user.clone_va(display_name)["name"]
         user.get_va_components(name)
@@ -149,7 +179,7 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_add_cloned_va_component")
     def test_add_cloned_va_component(self):
-        display_name = public_va_names[0]
+        display_name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
@@ -174,7 +204,7 @@ class TestDistributions:
     # @pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_cloned_va_component")
     def test_delete_cloned_va_component(self):
-        display_name = public_va_names[0]
+        display_name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
@@ -200,7 +230,7 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_patch_cloned_va_component")
     def test_patch_cloned_va_component(self):
-        display_name = public_va_names[0]
+        display_name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
@@ -310,7 +340,17 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('va_name', public_va_names)
+    # @pytest.mark.atom
+    @pytest.mark.parametrize('va_name', [public_va_names_en[0], public_va_names_ru[0]])
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va_unauthorized")
+    def test_get_dialog_session_history_with_public_template_va_unauthorized(self, va_name):
+        user = UserMethods('1')
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+        user.get_dialog_session_history(dialog_session_id)
+
+    #@pytest.mark.atom
+    @pytest.mark.parametrize('va_name', [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va")
     def test_get_dialog_session_history_with_public_template_va(self, va_name):
         user = UserMethods(auth_token_user1)
@@ -329,10 +369,20 @@ class TestDistributions:
         user.get_dialog_session_history(dialog_session_id)
 
     # @pytest.mark.atom
-    @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
-    @qase.title(f"{counter()}. test_build_assistant_on_various_lm")
-    def test_build_assistant_on_various_lm(self, lm_service_id):
+    @pytest.mark.parametrize('lm_service_id', lm_service_id_russian_list)
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_russian_lm")
+    def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_russian_lm(self, lm_service_id):
         va_name = "universal_prompted_assistant"
+        user = UserMethods(auth_token_user1)
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
+        user.get_dialog_session_history(dialog_session_id)
+
+    # @pytest.mark.atom
+    @pytest.mark.parametrize('lm_service_id', lm_service_id_list)
+    @qase.title(f"{counter()}. test_build_assistant_on_various_lm_en")
+    def test_build_assistant_on_various_lm_en(self, lm_service_id):
+        va_name = f"assistant_lm_service_id_{lm_service_id}"
         user = UserMethods(auth_token_user1)
         va_name = user.create_virtual_assistant(va_name)["name"]
         default_component = user.get_va_components(va_name)["skills"]
@@ -346,12 +396,43 @@ class TestDistributions:
                                             "FAQ: What is your name? My name is Paul.")
 
         deployment_id = user.create_deployment(va_name)["id"]
-        time.sleep(80)
+        time.sleep(60)
 
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
+        user.delete_deployment(deployment_id)
+        user.delete_va_by_name(va_name)
+
+    @pytest.mark.parametrize('lm_service_id', lm_service_id_russian_list)
+    @qase.title(f"{counter()}. test_build_assistant_on_various_lm_ru")
+    def test_build_assistant_on_various_lm_ru(self, lm_service_id):
+        va_name = f"assistant_lm_service_id_{lm_service_id}"
+        user = UserMethods(auth_token_user1)
+        va_name = user.create_virtual_assistant(name=va_name, language="ru")["name"]
+        default_component = user.get_va_components(va_name)["skills"]
+
+        for component in default_component:
+            if component['component_type'] == 'Generative':
+                component_id = component['component_id']
+                user.patch_component(component_id=component_id,
+                                     lm_service_id=lm_service_id,
+                                     prompt='''Вы — чат-бот, который может отвечать только на 
+                                     часто задаваемые вопросы об ИИ. 
+                ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ: 
+                Что такое умный дом? Умный дом — это как личный помощник для вашего дома. Это 
+                система устройств и приборов, которыми можно управлять дистанционно и запрограммировать на 
+                автоматическое выполнение задач. Например, вы можете использовать свой смартфон, чтобы включить свет, 
+                отрегулировать термостат или запустить кофеварку еще до того, как встанете с постели. 
+                ИНСТРУКЦИЯ: 
+                Человек вступает в разговор и начинает задавать вопросы. Сгенерируйте ответ на основе списка часто 
+                задаваемых вопросов.''',)
+        deployment_id = user.create_deployment(va_name)["id"]
+        time.sleep(60)
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
+        user.get_dialog_session_history(dialog_session_id)
         user.delete_deployment(deployment_id)
         user.delete_va_by_name(va_name)
 
@@ -376,7 +457,7 @@ class TestDistributions:
     # @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self):
-        name = public_va_names[0]
+        name = public_va_names_en[0]
         user = UserMethods(auth_token_user1)
         va = user.create_virtual_assistant(name)
         va_id = va["id"]
@@ -394,7 +475,7 @@ class TestDistributions:
 
     # LM_SERVICES
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self):
         user = UserMethods(auth_token_user1)
@@ -497,7 +578,7 @@ class TestDistributions:
 
     # PERMISSIONS
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
     def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
         display_name = va_data["name"]
@@ -554,7 +635,7 @@ class TestDistributions:
         user2.get_va_by_name(name)
         user1.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment")
     def test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment(self):
         display_name = va_data["name"]
@@ -569,7 +650,7 @@ class TestDistributions:
         user2.delete_deployment_no_access(deployment_id)
         user1.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
     def test_non_owner_cannot_access_private_assistant_dialog_session(self):
         display_name = va_data["name"]
@@ -586,7 +667,7 @@ class TestDistributions:
         user2.create_dialog_sessions_no_access(name)
         user1.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_non_admin_cannot_get_confirm_decline_publish_request")
     def test_non_admin_cannot_get_confirm_decline_publish_request(self):
         visibility = 'PUBLIC_TEMPLATE'

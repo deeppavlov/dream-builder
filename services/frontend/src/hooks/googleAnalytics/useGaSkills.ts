@@ -4,9 +4,30 @@ import { useRef } from 'react'
 import ga4 from 'react-ga4'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { BotInfoInterface, ISkill } from 'types/types'
+import { BotInfoInterface, IGaOptions, ISkill } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { consts } from 'utils/consts'
+
+const buildEventBody = ({
+  source,
+  page_type,
+  view,
+  skill,
+  assistant,
+}: IGaOptions) => ({
+  source,
+  page_type,
+  view,
+  va_id: assistant?.id,
+  va_name: assistant?.display_name,
+  skill_created_type: 'TODO',
+  skill_type: skill?.component_type,
+  skill_id: skill?.id,
+  skill_name: skill?.display_name,
+  skill_template_id: 'TODO',
+  skill_template_name: 'TODO',
+  event_type: 'Skills',
+})
 
 export const useGaSkills = () => {
   const { gaState, setGaState } = useGAContext()
@@ -30,22 +51,17 @@ export const useGaSkills = () => {
       : isPreview
       ? 'va_template_skillset_page'
       : 'va_skillset_page'
-
+    const view = getView(page_type)
     const assistant = getAssistant()
-
-    ga4.event('Skill_Properties_Opened', {
+    const eventBody = buildEventBody({
       source,
       page_type,
-      view: getView(page_type),
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      view,
+      skill,
+      assistant,
     })
+
+    ga4.event('Skill_Properties_Opened', eventBody)
   }
 
   const editSkillButtonClick = (source: string, skill: ISkill) => {
@@ -54,40 +70,28 @@ export const useGaSkills = () => {
     const view = getView(page_type)
 
     setGaState({ ...gaState, source, page_type, view, skill, assistant })
-
-    ga4.event('Rename_Skill_Button_Click', {
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
     })
+
+    ga4.event('Rename_Skill_Button_Click', eventBody)
   }
 
   const skillRenamed = (editedSkill: ISkill) => {
     const { source, page_type, view, skill, assistant } = gaState
     const isRenamed = editedSkill.display_name !== skill?.display_name
     const isDescriptionChanged = editedSkill.description !== skill?.description
-
-    const eventBody = {
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill?.component_type,
-      va_id: assistant?.id,
-      va_name: assistant?.display_name,
-      skill_id: skill?.id,
-      skill_name: skill?.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
-    }
+      skill,
+      assistant,
+    })
 
     isRenamed && ga4.event('Skill_Renamed', eventBody)
     isDescriptionChanged && ga4.event('Skill_Description_Changed', eventBody)
@@ -101,20 +105,15 @@ export const useGaSkills = () => {
       ? 'va_template_skillset_page'
       : 'va_skillset_page'
     const view = getView(page_type)
-
-    ga4.event('Skill_Details_Opened', {
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill?.component_type,
-      va_id: assistant?.id,
-      va_name: assistant?.display_name,
-      skill_id: skill?.id,
-      skill_name: skill?.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
     })
+
+    ga4.event('Skill_Details_Opened', eventBody)
   }
 
   const skillDeleteButtonClick = (skill: ISkill) => {
@@ -124,38 +123,28 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
 
     setGaState({ ...gaState, source, page_type, view, skill, assistant })
-
-    ga4.event('Delete_Skill_Button_Click', {
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
     })
+
+    ga4.event('Delete_Skill_Button_Click', eventBody)
   }
 
   const skillDeleted = () => {
     const { source, page_type, view, skill, assistant } = gaState
-
-    ga4.event('Skill_Deleted', {
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill?.component_type,
-      va_id: assistant?.id,
-      va_name: assistant?.display_name,
-      skill_id: skill?.id,
-      skill_name: skill?.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
     })
+
+    ga4.event('Skill_Deleted', eventBody)
   }
 
   const addSkillButtonClick = (source: string) => {
@@ -206,59 +195,46 @@ export const useGaSkills = () => {
     const page_type = 'va_skillset_page'
     const view = getView(page_type)
     const assistant = getAssistant()
-
-    ga4.event('Skill_Editor_Opened', {
+    const model_name = skill.lm_service?.display_name
+    const eventBody = buildEventBody({
       source,
       page_type,
       view,
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
-      model_name: skill.lm_service?.display_name,
+      skill,
+      assistant,
     })
+
+    ga4.event('Skill_Editor_Opened', { ...eventBody, model_name })
   }
 
   const skillChatRefresh = (skill: ISkill) => {
     const assistant = getAssistant()
-
-    ga4.event('Skill_Chat_Refresh', {
+    const model_name = skill.lm_service?.display_name
+    const eventBody = buildEventBody({
       source: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
-      model_name: skill.lm_service?.display_name,
+      skill,
+      assistant,
     })
+
+    ga4.event('Skill_Chat_Refresh', { ...eventBody, model_name })
   }
 
   const skillChanged = (skill: ISkill, updatedSkill: ISkill) => {
     const assistant = getAssistant()
     const prompt_changed = skill.prompt !== updatedSkill.prompt
     const model_changed = skill.lm_service !== updatedSkill.lm_service
-
-    ga4.event('Skill_Changed', {
-      source: 'skill_editor_prompt_panel',
+    const eventBody = buildEventBody({
+      source: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
+    })
+
+    ga4.event('Skill_Changed', {
+      ...eventBody,
       prompt_changed,
       model_changed,
       old_model_name: skill.lm_service?.display_name,
@@ -270,19 +246,16 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const requiredApiKey = skill?.lm_service?.name.includes('openai-api')
     const eventName = historyLength ? 'Skill_Chat_Send' : 'Skill_Chat_Start'
-
-    ga4.event(eventName, {
+    const eventBody = buildEventBody({
       source: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill?.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill?.id,
-      skill_name: skill?.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill: skill as ISkill,
+      assistant,
+    })
+
+    ga4.event(eventName, {
+      ...eventBody,
       additional_services: requiredApiKey,
       model_name: skill?.lm_service?.display_name,
     })
@@ -291,19 +264,16 @@ export const useGaSkills = () => {
   const changeSkillModel = (new_model_name: string) => {
     const assistant = getAssistant()
     const skill = getSkill()
-
-    console.log('Skill_Model_Edited', {
-      source: 'skill_editor_prompt_panel',
+    const eventBody = buildEventBody({
+      source: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill?.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
+    })
+
+    ga4.event('Skill_Model_Edited', {
+      ...eventBody,
       old_model_name: skill.lm_service?.display_name,
       new_model_name,
     })
@@ -316,19 +286,16 @@ export const useGaSkills = () => {
     promptIsDirty.current = true
     const assistant = getAssistant()
     const skill = getSkill()
-
-    ga4.event('Skill_Prompt_Edited', {
-      source: 'skill_editor_prompt_panel',
+    const eventBody = buildEventBody({
+      source: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
+    })
+
+    ga4.event('Skill_Prompt_Edited', {
+      ...eventBody,
       model_name: skill.lm_service?.display_name,
     })
   }
@@ -341,19 +308,16 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const skill = getSkill()
     const source = editorBtnClicked.current ? 'close_button' : 'other_link'
-
-    ga4.event('Skill_Editor_Closed', {
+    const eventBody = buildEventBody({
       source,
       page_type: 'va_skill_editor',
       view: 'none',
-      skill_created_type: 'TODO',
-      skill_type: skill.component_type,
-      va_id: assistant.id,
-      va_name: assistant.display_name,
-      skill_id: skill.id,
-      skill_name: skill.display_name,
-      skill_template_id: 'TODO',
-      skill_template_name: 'TODO',
+      skill,
+      assistant,
+    })
+
+    ga4.event('Skill_Editor_Closed', {
+      ...eventBody,
       model_name: skill.lm_service?.display_name,
     })
   }

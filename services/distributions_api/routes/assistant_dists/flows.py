@@ -210,10 +210,10 @@ def publish_virtual_assistant(
 ):
     dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-    if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
+    if isinstance(visibility, enums.VirtualAssistantPrivateVisibility):
         publish_request_crud.delete_publish_request(db, virtual_assistant.id)
         virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
-    elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
+    elif isinstance(visibility, enums.VirtualAssistantPublicVisibility):
         publish_request_crud.create_publish_request(
             db, virtual_assistant.id, user_id, virtual_assistant.name, visibility
         )

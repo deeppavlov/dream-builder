@@ -6,6 +6,7 @@ import { RoutesList } from 'router/RoutesList'
 import { SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { useComponent } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
 import { SidePanelButtons, SidePanelName } from 'components/Panels'
@@ -36,6 +37,7 @@ const SkillDetailsSidePanel = ({
   const { name } = useParams()
   const nav = useNavigate()
   const { isPreview } = usePreview()
+  const { skillEditorOpened } = useGaSkills()
   const isCustomizable =
     skill?.is_customizable && !isPreview && visibility !== 'public'
   const tabs = new Map([
@@ -47,6 +49,7 @@ const SkillDetailsSidePanel = ({
   const handleEnterTokenClick = () => trigger('AccessTokensModal', {})
 
   const triggerEditModal = () => {
+    skillEditorOpened('sidepanel_details_edit', skill)
     const isDistName = name !== undefined && name.length > 0
 
     if (isDistName) {

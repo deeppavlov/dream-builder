@@ -6,6 +6,7 @@ import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
 import { DEBUG_DIST } from 'constants/constants'
 import { createDialogSession, getHistory, sendMessage } from 'api/chat'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { consts } from 'utils/consts'
 
 export const useChat = () => {
@@ -15,6 +16,7 @@ export const useChat = () => {
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
   const [error, setError] = useState(false)
+  const { skillChatSend } = useGaSkills()
 
   // const checkAvailableSession = useMutation({
   //   mutationFn: (data: number) => getDialogSession(data),
@@ -46,6 +48,7 @@ export const useChat = () => {
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
+      skillChatSend(data.active_skill, history.length)
       setHistory(state => [
         ...state,
         { text: data?.text, author: 'bot', active_skill: data?.active_skill },
@@ -58,9 +61,9 @@ export const useChat = () => {
 
   const remoteHistory = useMutation({
     mutationFn: (data: number) => getHistory(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       setHistory(data)
-    }
+    },
   })
 
   return {

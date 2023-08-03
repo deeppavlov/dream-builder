@@ -6,6 +6,7 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
@@ -24,6 +25,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   })
   const { getDist } = useAssistants()
   const { renameVaButtonClick, deleteVaButtonClick } = useGaAssistant()
+  const { addSkillButtonClick } = useGaSkills()
   const dist = getDist({ distName })?.data
   const isPrivate = dist?.visibility === VISIBILITY_STATUS.PRIVATE
 
@@ -34,6 +36,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('AssistantModal', { action: 'edit', bot, from: 'editor' })
   }
   const handleAddSkillsClick = () => {
+    addSkillButtonClick('va_action_menu')
     trigger('SkillsListModal', { mockSkills })
   }
   const handlePublishClick = () => {

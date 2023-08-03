@@ -77,7 +77,16 @@ const SkillPromptModal = () => {
   const validationSchema = getValidationSchema()
   const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
-  const { skillsPropsOpened } = useGaSkills()
+  const {
+    skillsPropsOpened,
+    skillChanged,
+    editorCloseButtonClick,
+    skillEditorClosed,
+  } = useGaSkills()
+
+  useEffect(() => {
+    return () => skillEditorClosed()
+  }, [])
 
   const language = bot?.language?.value!
 
@@ -122,6 +131,7 @@ const SkillPromptModal = () => {
   }
 
   const closeModal = (continueExit?: Function) => {
+    editorCloseButtonClick()
     if (isDirty)
       return trigger('SkillQuitModal', {
         handleQuit: () => {
@@ -165,7 +175,8 @@ const SkillPromptModal = () => {
             distName: distName || '',
             type: 'skills',
           })
-          .then(() => {
+          .then(data => {
+            skillChanged(skill, data)
             const name = bot?.name!
             const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {

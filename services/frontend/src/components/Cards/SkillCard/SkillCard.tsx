@@ -42,7 +42,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const isActive = skill.id === activeSKillId
   const nav = useNavigate()
-  const { skillsPropsOpened } = useGaSkills()
+  const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
@@ -69,6 +69,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
+    skillEditorOpened('skill_block', skill)
     if (skill.component_type === ('Generative' as any)) {
       nav(
         generatePath(RoutesList.editor.skillEditor, {

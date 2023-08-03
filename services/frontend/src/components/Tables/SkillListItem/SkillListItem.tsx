@@ -51,7 +51,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const nav = useNavigate()
-  const { skillsPropsOpened } = useGaSkills()
+  const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
@@ -74,6 +74,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     handleAdd && handleAdd(skill)
   }
   const handleEditClick = (e: React.MouseEvent) => {
+    skillEditorOpened('skill_block', skill)
     if (skill.component_type === ('Generative' as any)) {
       // trigger('SkillPromptModal', { skill })
       // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })

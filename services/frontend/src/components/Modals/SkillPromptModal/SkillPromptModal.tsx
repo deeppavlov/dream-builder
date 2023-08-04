@@ -19,6 +19,7 @@ import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
 import { consts } from 'utils/consts'
@@ -76,6 +77,16 @@ const SkillPromptModal = () => {
   const validationSchema = getValidationSchema()
   const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
+  const {
+    skillsPropsOpened,
+    skillChanged,
+    editorCloseButtonClick,
+    skillEditorClosed,
+  } = useGaSkills()
+
+  useEffect(() => {
+    return () => skillEditorClosed()
+  }, [])
 
   const language = bot?.language?.value!
 
@@ -120,6 +131,7 @@ const SkillPromptModal = () => {
   }
 
   const closeModal = (continueExit?: Function) => {
+    editorCloseButtonClick()
     if (isDirty)
       return trigger('SkillQuitModal', {
         handleQuit: () => {
@@ -163,7 +175,8 @@ const SkillPromptModal = () => {
             distName: distName || '',
             type: 'skills',
           })
-          .then(() => {
+          .then(data => {
+            skillChanged(skill, data)
             const name = bot?.name!
             const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
@@ -182,6 +195,7 @@ const SkillPromptModal = () => {
   }
 
   const handlePropertiesClick = () => {
+    skillsPropsOpened('skill_editor', skill)
     triggerSkillSidePanel({
       skill,
       distName: distName!,

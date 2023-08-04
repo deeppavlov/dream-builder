@@ -10,6 +10,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -30,6 +31,7 @@ export const SkillsListModal = () => {
   const { getDist, changeVisibility } = useAssistants()
   const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
+  const { skillAdded } = useGaSkills()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
@@ -51,10 +53,10 @@ export const SkillsListModal = () => {
 
   const handleOk = () => handleClose()
 
-  const handleAdd = (skill: ISkill) => {
+  const handleAdd = (template: ISkill) => {
     toast.promise(
       clone.mutateAsync(
-        { skill: skill, distName: distName!, type: 'skills' },
+        { skill: template, distName: distName!, type: 'skills' },
         {
           onSuccess: (skill: ISkill) => {
             bot?.deployment?.state === DEPLOY_STATUS.UP &&
@@ -66,6 +68,8 @@ export const SkillsListModal = () => {
                 bot?.publish_state !== null &&
                   changeVisibility.mutateAsync({ name, newVisibility })
               })
+
+            skillAdded(skill, template)
 
             handleClose()
             navigate(

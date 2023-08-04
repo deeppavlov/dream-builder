@@ -5,6 +5,7 @@ import Add from 'assets/icons/+.svg'
 import { useAuth } from 'context/AuthProvider'
 import { usePreview } from 'context/PreviewProvider'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { trigger } from 'utils/events'
 import s from './AddButton.module.scss'
 
@@ -33,6 +34,7 @@ export const AddButton: FC<Props> = ({
   const isCreateScratchSkill = forSkills && fromScratch
   const cx = classNames.bind(s)
   const { createVaClick } = useGaAssistant()
+  const { addSkillButtonClick } = useGaSkills()
 
   const handleClick = () => {
     const isCreateScratchAssistant = !forSkills
@@ -53,8 +55,13 @@ export const AddButton: FC<Props> = ({
             }
           : {}
       )
-    if (isAddPublicSkill) return trigger('SkillsListModal', {})
-    if (isCreateScratchSkill) return trigger('SkillModal', { action: 'create' })
+    if (isAddPublicSkill) {
+      addSkillButtonClick('skill_block_button')
+      return trigger('SkillsListModal', {})
+    }
+    if (isCreateScratchSkill) {
+      return trigger('SkillModal', { action: 'create' })
+    }
     if (isCreateScratchAssistant) {
       createVaClick('va_templates_block')
       return trigger('AssistantModal', scratchAssistant)

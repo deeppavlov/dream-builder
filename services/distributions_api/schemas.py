@@ -7,6 +7,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     check_memory_format,
 )
 from pydantic import BaseModel, Field, validator, EmailStr
+from sqlalchemy.ext.associationproxy import _AssociationList
 
 from database import enums
 
@@ -38,12 +39,28 @@ class UserRead(BaseOrmModel):
     family_name: Optional[str]
 
 
+class LanguageRead(BaseOrmModel):
+    id: int
+    value: str
+
+
 class ApiKeyRead(BaseOrmModel):
     id: int
     name: str
     display_name: str
     description: str
     base_url: str
+
+
+class PromptBlockRead(BaseOrmModel):
+    id: int
+    category: Optional[str] = None
+    display_name: str
+    template: str
+    example: str
+    description: str
+    newline_before: bool
+    newline_after: bool
 
 
 class LmServiceRead(BaseOrmModel):
@@ -55,8 +72,17 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
-    api_key: Optional[ApiKeyRead]
+    api_key: Optional[ApiKeyRead] = None
+    prompt_blocks: Optional[list[PromptBlockRead]] = None
+    is_hosted: bool
     is_maintained: bool
+    languages: List[LanguageRead]
+
+    @validator("prompt_blocks", "languages", pre=True)
+    def cast_associations_to_list(cls, v):
+        if isinstance(v, _AssociationList):
+            return list(v)
+        return v
 
 
 class DeploymentBaseRead(BaseOrmModel):
@@ -126,6 +152,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     name: str
     display_name: str
     description: str
+    language: LanguageRead
     date_created: datetime
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
     publish_state: Optional[enums.PublishRequestState]
@@ -165,6 +192,7 @@ class VirtualAssistantRead(VirtualAssistantBaseRead):
 class VirtualAssistantCreate(BaseModel):
     display_name: str
     description: str
+    language: Optional[str]
 
 
 class VirtualAssistantUpdate(BaseModel):
@@ -244,7 +272,7 @@ class DialogChatMessageRead(BaseModel):
 class DialogUtteranceRead(BaseModel):
     author: str
     text: str
-    active_skill: Optional[str]
+    active_skill: Optional[ComponentRead]
 
 
 # class UserApiToken(BaseOrmModel):
@@ -271,7 +299,6 @@ class DeploymentRead(DeploymentBaseRead):
 
 class DeploymentCreate(BaseModel):
     virtual_assistant_name: str
-    error: Optional[bool]
 
 
 class PublishRequestRead(BaseOrmModel):

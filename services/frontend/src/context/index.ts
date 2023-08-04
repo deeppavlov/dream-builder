@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from './AuthProvider'
+import { GaContextProvider, useGAContext } from './GaContext'
 import { PreviewContext, PreviewProvider } from './PreviewProvider'
 import { UIOptionsProvider, useUIOptions } from './UIOptionsContext'
 
@@ -9,4 +10,6 @@ export {
   PreviewContext,
   useAuth,
   useUIOptions,
+  GaContextProvider,
+  useGAContext,
 }

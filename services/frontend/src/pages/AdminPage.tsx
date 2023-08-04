@@ -52,12 +52,18 @@ export const AdminPage = () => {
     navigate(generatePath(RoutesList.editor.skills, { name: name }))
   }
   const handleApprove: IHandler = (e, id) => {
-    toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)
+    toast.promise(
+      confirm.mutateAsync(id),
+      toasts().confirmRequest
+    )
     e.stopPropagation()
   }
 
   const handleDecline: IHandler = (e, id) => {
-    toast.promise(decline.mutateAsync(id), toasts.declineRequest)
+    toast.promise(
+      decline.mutateAsync(id),
+      toasts().declineRequest
+    )
     e.stopPropagation()
   }
 
@@ -73,7 +79,7 @@ export const AdminPage = () => {
 
     toast.promise(
       deleteDeployment.mutateAsync(assistant),
-      toasts.deleteDeployment
+      toasts().deleteDeployment
     )
     e.stopPropagation()
   }

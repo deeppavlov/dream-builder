@@ -30,11 +30,7 @@ export const INTEGRATION_ACTIVE_TAB = {
   CHAT: 'CHAT',
   API: 'API',
 }
-export const API_CALL_TAB = {
-  CURL: 'CURL',
-  NODE: 'NODE',
-  PYTHON: 'PYTHON',
-}
+
 // TODO rename & implement everywhere
 export const PUBLIC_DISTS = 'publicDists'
 export const PRIVATE_DISTS = 'privateDists'

@@ -10,6 +10,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -30,6 +31,7 @@ export const SkillsListModal = () => {
   const { getDist, changeVisibility } = useAssistants()
   const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
+  const { skillAdded } = useGaSkills()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
@@ -41,14 +43,7 @@ export const SkillsListModal = () => {
     { enabled: isOpen }
   )
   const rightSidepanelIsActive = UIOptions[consts.RIGHT_SP_IS_ACTIVE]
-  // const position = {
-  //   overlay: {
-  //     top: 64,
-  //     zIndex: 2,
-  //     right: rightSidepanelIsActive ? '368px' : 0,
-  //     transition: 'all 0.3s linear',
-  //   },
-  // }
+
   const cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -58,20 +53,23 @@ export const SkillsListModal = () => {
 
   const handleOk = () => handleClose()
 
-  const handleAdd = (skill: ISkill) => {
+  const handleAdd = (template: ISkill) => {
     toast.promise(
       clone.mutateAsync(
-        { skill: skill, distName: distName!, type: 'skills' },
+        { skill: template, distName: distName!, type: 'skills' },
         {
           onSuccess: (skill: ISkill) => {
             bot?.deployment?.state === DEPLOY_STATUS.UP &&
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish /
                 const name = bot?.name!
-                const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+                const newVisibility =
+                  VISIBILITY_STATUS.PRIVATE as TDistVisibility
                 bot?.publish_state !== null &&
-                  changeVisibility.mutateAsync({ name, visibility })
+                  changeVisibility.mutateAsync({ name, newVisibility })
               })
+
+            skillAdded(skill, template)
 
             handleClose()
             navigate(
@@ -83,7 +81,7 @@ export const SkillsListModal = () => {
           },
         }
       ),
-      toasts.addComponent
+      toasts().addComponent
     )
   }
 
@@ -96,7 +94,10 @@ export const SkillsListModal = () => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       handleClose={handleClose}
-      modalClassName={cx('modal', rightSidepanelIsActive && 'withRightSidePanel')}
+      modalClassName={cx(
+        'modal',
+        rightSidepanelIsActive && 'withRightSidePanel'
+      )}
       backdropClassName={s.backdrop}
     >
       <div className={s.container}>

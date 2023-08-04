@@ -8,6 +8,7 @@ import { ChatForm, IDialogError, ISkill } from 'types/types'
 import { DEBUG_DIST, OPEN_AI_LM } from 'constants/constants'
 import { getUserId } from 'api/user'
 import { useChat } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { useOnlyOnMount } from 'hooks/useOnMount'
@@ -36,6 +37,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
+  const { skillChatRefresh } = useGaSkills()
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
@@ -114,7 +116,10 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
 
-  const handleRenewClick = () => renewDialogSession()
+  const handleRenewClick = () => {
+    skill && skillChatRefresh(skill)
+    renewDialogSession()
+  }
 
   const handleRetryBtnClick = () => {
     setIsChecking(true)
@@ -132,12 +137,9 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
 
   // hooks
   useOnlyOnMount(() => renewDialogSession())
-  useObserver('RenewChat', handleRenewClick)
+  useObserver('RenewChat', renewDialogSession)
   useChatScroll(chatRef, [history, message])
-  useEffect(
-    () => handleCheckChatSettings(),
-    [skill, user?.id, handleRenewClick]
-  )
+  useEffect(() => handleCheckChatSettings(), [skill, user?.id])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   return (

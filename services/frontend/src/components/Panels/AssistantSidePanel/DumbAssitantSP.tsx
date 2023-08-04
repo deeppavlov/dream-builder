@@ -8,6 +8,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -32,6 +33,8 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
+  const { createVaClick, setVaArchitectureOptions, renameVaButtonClick } =
+    useGaAssistant()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
@@ -49,6 +52,8 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { name } = useParams()
   const isEditor = Boolean(name)
   const handleCloneBtnClick = () => {
+    createVaClick('va_template_sidepanel', bot)
+
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) return trigger('AssistantModal', assistantClone)
@@ -59,6 +64,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_sidepanel')
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))
@@ -67,6 +73,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handleRenameBtnClick = () => {
+    renameVaButtonClick('va_sidepanel', bot)
     trigger('AssistantModal', { bot, action: 'edit' })
   }
 
@@ -194,6 +201,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   bot={bot}
                   type={type}
                   isDeployed={isDeployed}
+                  inSidePanel
                 />
               </>
             )}

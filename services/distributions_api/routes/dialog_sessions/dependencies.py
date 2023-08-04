@@ -47,21 +47,15 @@ def dialog_session_create_permission(
     if virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.PRIVATE:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
 
-    elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK:
-        if user:
-            return virtual_assistant
-        else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not logged in")
-
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION:
         raise NotImplementedError(
-            f"{enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK} visibility is not supported yet"
+            f"{enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION} visibility is not supported yet"
         )
 
     elif (
         virtual_assistant.visibility == enums.VirtualAssistantPublicVisibility.PUBLIC_TEMPLATE
         and virtual_assistant.publish_state == enums.PublishRequestState.APPROVED
-    ):
+    ) or virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK:
         return virtual_assistant
 
 

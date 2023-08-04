@@ -10,6 +10,7 @@ import { BotCardProps, TLocale } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -33,6 +34,8 @@ export const AssistantCard: FC<BotCardProps> = ({
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
   const { refetchDist } = useAssistants()
+  const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
+    useGaAssistant()
 
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
   const activeChat = UIOptions[consts.CHAT_SP_IS_ACTIVE]
@@ -64,8 +67,11 @@ export const AssistantCard: FC<BotCardProps> = ({
     : null
 
   const handleBotCardClick = () => {
+    const isOpen = activeAssistantId !== infoSPId
+    isOpen && vaPropsOpened('va_card_click', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      isOpen: activeAssistantId !== infoSPId,
+      isOpen,
       children: (
         <AssistantSidePanel
           type={type}
@@ -78,6 +84,8 @@ export const AssistantCard: FC<BotCardProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    createVaClick('va_templates_block', bot)
+
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) {
@@ -93,6 +101,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_block')
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))

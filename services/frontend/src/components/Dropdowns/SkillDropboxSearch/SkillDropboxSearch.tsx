@@ -4,6 +4,7 @@ import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow_down.svg'
 import { ReactComponent as LoupeIcon } from 'assets/icons/loupe.svg'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { SvgIcon } from 'components/Helpers'
 import s from './SkillDropboxSearch.module.scss'
@@ -51,6 +52,7 @@ const SkillDropboxSearch = ({
   disabled,
 }: Props) => {
   const getActiveItem = (id: string) => list?.find(item => item.id === id)
+  const { changeSkillModel } = useGaSkills()
 
   const {
     field,
@@ -81,6 +83,8 @@ const SkillDropboxSearch = ({
   }
 
   const handleItemClick = (item: Item) => {
+    changeSkillModel(item.display_name)
+
     field.onChange(getActiveItem(item.id) ?? undefined)
     onSelectItem && onSelectItem(item.id)
     setIsOpen(false)

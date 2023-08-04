@@ -20,6 +20,7 @@ import {
   publishAssistant,
 } from 'api/assistants'
 import { useDeploy } from 'hooks/api/useDeploy'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 
 interface IChangeVisibility {
   name: string
@@ -59,6 +60,7 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
+  const { vaCreated, vaRenamed, vaDeleted } = useGaAssistant()
 
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
@@ -87,6 +89,7 @@ export const useAssistants = () => {
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
+      vaRenamed()
     },
   })
 
@@ -94,6 +97,7 @@ export const useAssistants = () => {
     mutationFn: ({ name, data }: IClone) => cloneAssistant(name, data),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
+      vaCreated()
     },
   })
 
@@ -103,6 +107,7 @@ export const useAssistants = () => {
       createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
+      vaCreated()
     },
   })
 
@@ -115,6 +120,7 @@ export const useAssistants = () => {
         queryClient.invalidateQueries([PUBLIC_DISTS]).then(() => {
           updateCachedDist(name)
         })
+      vaDeleted()
     },
   })
 

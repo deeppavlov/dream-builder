@@ -20,6 +20,7 @@ import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useBrowserPrompt } from 'hooks/useBrowserPrompt'
 import { useObserver } from 'hooks/useObserver'
 import { usePreventAction } from 'hooks/usePreventAction'
@@ -76,6 +77,16 @@ const SkillPromptModal = () => {
   const validationSchema = getValidationSchema()
   const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
+  const {
+    skillsPropsOpened,
+    skillChanged,
+    editorCloseButtonClick,
+    skillEditorClosed,
+  } = useGaSkills()
+
+  useEffect(() => {
+    return () => skillEditorClosed()
+  }, [])
 
   const language = bot?.language?.value!
 
@@ -114,8 +125,12 @@ const SkillPromptModal = () => {
     ({ id }) => id.toString() === getValues().model?.id?.toString()
   )?.prompt_blocks
 
-  const closeModal = (continueExit: () => void) => {
+  const handleUnsavedExit = (continueExit: () => void) => {
     trigger('SkillQuitModal', { handleQuit: continueExit })
+  }
+
+  const handleCloseButtonClick = () => {
+    editorCloseButtonClick()
   }
 
   const handleEventUpdate = (data: { detail: ITriggerProps }) => {
@@ -151,7 +166,8 @@ const SkillPromptModal = () => {
             distName: distName || '',
             type: 'skills',
           })
-          .then(() => {
+          .then(data => {
+            skillChanged(skill, data)
             const name = bot?.name!
             const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
@@ -170,6 +186,7 @@ const SkillPromptModal = () => {
   }
 
   const handlePropertiesClick = () => {
+    skillsPropsOpened('skill_editor', skill)
     triggerSkillSidePanel({
       skill,
       distName: distName!,
@@ -231,11 +248,14 @@ const SkillPromptModal = () => {
 
   usePreventAction({
     when: isOpen && isDirty,
-    onContinue: closeModal,
+    onContinue: handleUnsavedExit,
     unavailableSelectors: ['#logout'],
   })
 
-  useBrowserPrompt({ when: isOpen && isDirty, onConfirmExit: closeModal })
+  useBrowserPrompt({
+    when: isOpen && isDirty,
+    onConfirmExit: handleUnsavedExit,
+  })
 
   return (
     <Modal
@@ -363,6 +383,7 @@ const SkillPromptModal = () => {
         </div>
         <Link
           to={generatePath(RoutesList.editor.skills, { name: distName! })}
+          onClick={handleCloseButtonClick}
           className={s.close}
         >
           <SvgIcon iconName='close' />

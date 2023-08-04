@@ -19,6 +19,7 @@ import {
   patchComponent,
 } from 'api/components'
 import { IPatchComponentParams } from 'api/components/patchComponent'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 
 interface IGet {
   distName: string
@@ -72,6 +73,8 @@ export const useComponent = () => {
   const ALL_COMPONENTS = 'all_components'
   const COMPONENT = 'component'
 
+  const { skillRenamed, skillDeleted, skillAdded } = useGaSkills()
+
   const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
       [ALL_COMPONENTS, distName],
@@ -118,6 +121,7 @@ export const useComponent = () => {
   const deleteComponent = useMutation({
     mutationFn: ({ distName, id }: IDelete) => deleteComoponent(distName, id),
     onSuccess: (_, { type, distName, component_id }) => {
+      skillDeleted()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       queryClient.invalidateQueries([type, distName])
       updateCachedComponent({ distName, id: component_id, type, data: null })
@@ -128,9 +132,10 @@ export const useComponent = () => {
       // console.log('data = ', data)
     },
     mutationFn: ({ data }: any) => createComponent(data),
-    onSuccess: ({ id }: IStackElement, { distName, type }) => {
+    onSuccess: (skill: IStackElement, { distName, type }) => {
       // console.log('id = ', id)
-      addComponentToDist.mutateAsync({ distName, id: id, type })
+      addComponentToDist.mutateAsync({ distName, id: skill.id, type })
+      skillAdded(skill)
     },
   })
   const clone = useMutation({
@@ -153,6 +158,7 @@ export const useComponent = () => {
     mutationFn: ({ component_id, data }: IEdit) =>
       editComponent(data, component_id),
     onSuccess: (data: IStackElement, { component_id, distName, type }) => {
+      skillRenamed(data)
       queryClient.invalidateQueries([ALL_COMPONENTS])
       updateCachedComponent({ id: component_id, distName, type, data })
     },

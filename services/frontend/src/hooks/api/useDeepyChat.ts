@@ -79,6 +79,9 @@ export const useDeepyChat = () => {
           hidden: true,
         })
       },
+      onSuccess: (data) => {
+        setDeepyHistory(data)
+      },
     }
   )
 

@@ -24,11 +24,11 @@ endblock %} {% block header %}
 </header>
 {% endblock %} {% block content %}
 <p>
-	Dear {{[User]}},
+	Dear {{ owner_name or "Dream Builder user" }},
 	<br />
 	<br />
 	We are writing to inform you that your application for publishing a Virtual
-	Assistant is currently under review. Our team is reviewing your submission
+	Assistant {{ display_name }} is currently under review. Our team is reviewing your submission
 	carefully to ensure that it meets our requirements and guidelines.
 	<br />
 	<br />

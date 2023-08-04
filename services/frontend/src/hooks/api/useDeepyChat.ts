@@ -7,6 +7,7 @@ import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
 import { DEEPY_ASSISTANT } from 'constants/constants'
 import { createDialogSession, getHistory, sendMessage } from 'api/chat'
+import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { consts } from 'utils/consts'
 
 export const useDeepyChat = () => {
@@ -22,6 +23,7 @@ export const useDeepyChat = () => {
   const [isDeepy, setIsDeepy] = useState<boolean>(
     Boolean(deepySession?.id) && deepyActive //FIX!!!
   )
+  const { deepyChatSend, deepyChatRefresh } = useGaDeepy()
 
   const renewDeepySession = useMutation({
     onMutate: () => {
@@ -33,6 +35,7 @@ export const useDeepyChat = () => {
     },
     mutationFn: (data: string) => createDialogSession(data),
     onSuccess: data => {
+      deepyChatRefresh()
       async function updateDeepyAssistant() {
         setDeepySession(data)
         store('deepySession', data)
@@ -56,6 +59,7 @@ export const useDeepyChat = () => {
     },
     mutationFn: (variables: IPostChat) => sendMessage(variables),
     onSuccess: data => {
+      deepyChatSend(deepyHistory.length)
       setDeepyHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
     onError: (data: AxiosError) => {
@@ -79,7 +83,7 @@ export const useDeepyChat = () => {
           hidden: true,
         })
       },
-      onSuccess: (data) => {
+      onSuccess: data => {
         setDeepyHistory(data)
       },
     }

@@ -1,5 +1,5 @@
 import ga4 from 'react-ga4'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { usePreview } from 'context/PreviewProvider'
 
 type PageType =
@@ -13,6 +13,7 @@ type PageType =
 export const useGaDeepy = () => {
   const { skillId } = useParams()
   const { isPreview } = usePreview()
+  const location = useLocation()
 
   const getPageType = (): PageType => {
     let pageType: PageType

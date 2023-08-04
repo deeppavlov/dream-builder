@@ -9,7 +9,13 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from 'router/Router'
 import './i18n'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+})
 ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS)
 
 prepare().then(() => {

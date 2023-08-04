@@ -44,6 +44,7 @@ export const useGaDeepy = () => {
     ga4.event('Deepy_Chat_Opened', {
       source: 'va_templates_block',
       page_type: getPageType(),
+      event_type: 'Deepy',
     })
   }
 
@@ -56,6 +57,7 @@ export const useGaDeepy = () => {
     ga4.event(eventName, {
       source: 'va_templates_block',
       page_type: getPageType(),
+      event_type: 'Deepy',
     })
   }
 
@@ -63,6 +65,7 @@ export const useGaDeepy = () => {
     ga4.event('Deepy_Chat_Refresh', {
       source: 'va_templates_block',
       page_type: getPageType(),
+      event_type: 'Deepy',
     })
   }
 

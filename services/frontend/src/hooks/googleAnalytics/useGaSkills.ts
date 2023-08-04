@@ -261,7 +261,7 @@ export const useGaSkills = () => {
     })
   }
 
-  const changeSkillModel = (new_model_name: string) => {
+  const changeSkillModel = (newLmService: any) => {
     const assistant = getAssistant()
     const skill = getSkill()
     const eventBody = buildEventBody({
@@ -275,7 +275,7 @@ export const useGaSkills = () => {
     ga4.event('Skill_Model_Edited', {
       ...eventBody,
       old_model_name: skill.lm_service?.display_name,
-      new_model_name,
+      new_model_name: newLmService?.display_name,
     })
   }
 

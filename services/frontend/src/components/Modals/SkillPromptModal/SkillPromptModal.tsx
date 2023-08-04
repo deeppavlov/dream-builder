@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import { generatePath, useNavigate, useParams } from 'react-router'
+import { generatePath, useParams } from 'react-router'
+import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import {
   IPromptBlock,
@@ -20,8 +21,9 @@ import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { useBrowserPrompt } from 'hooks/useBrowserPrompt'
 import { useObserver } from 'hooks/useObserver'
-import { useQuitConfirmation } from 'hooks/useQuitConfirmation'
+import { usePreventAction } from 'hooks/usePreventAction'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getValidationSchema } from 'utils/getValidationSchema'
@@ -36,7 +38,6 @@ import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFo
 import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
-import { HELPER_TAB_ID } from 'components/Widgets/Sidebar/DeepyHelperTab'
 import s from './SkillPromptModal.module.scss'
 
 interface ITriggerProps {
@@ -64,7 +65,6 @@ const SkillPromptModal = () => {
   const { deleteDeployment } = useDeploy()
   const { UIOptions, setUIOption } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
-  const nav = useNavigate()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
     ? getComponent({ distName, id: parseInt(skillId), type: 'skills' })?.data
@@ -125,21 +125,12 @@ const SkillPromptModal = () => {
     ({ id }) => id.toString() === getValues().model?.id?.toString()
   )?.prompt_blocks
 
-  const clearStates = () => {
-    setIsOpen(false)
-    nav(generatePath(RoutesList.editor.skills, { name: distName || '' }))
+  const handleUnsavedExit = (continueExit: () => void) => {
+    trigger('SkillQuitModal', { handleQuit: continueExit })
   }
 
-  const closeModal = (continueExit?: Function) => {
+  const handleCloseButtonClick = () => {
     editorCloseButtonClick()
-    if (isDirty)
-      return trigger('SkillQuitModal', {
-        handleQuit: () => {
-          if (continueExit) return continueExit()
-          clearStates()
-        },
-      })
-    clearStates()
   }
 
   const handleEventUpdate = (data: { detail: ITriggerProps }) => {
@@ -255,20 +246,15 @@ const SkillPromptModal = () => {
     }
   }, [skill, isOpen])
 
-  useQuitConfirmation({
-    activeElement: modalRef,
-    availableSelectors: [
-      `#${HELPER_TAB_ID}`,
-      '#sp_left',
-      '#base_sp_close_btn',
-      '#testDialog',
-      '#skill_sp',
-      '#assistantDialogPanel',
-      '#accessTokensModal',
-      '#settingsTab',
-    ],
-    isActive: isOpen && isDirty,
-    quitHandler: closeModal,
+  usePreventAction({
+    when: isOpen && isDirty,
+    onContinue: handleUnsavedExit,
+    unavailableSelectors: ['#logout'],
+  })
+
+  useBrowserPrompt({
+    when: isOpen && isDirty,
+    onConfirmExit: handleUnsavedExit,
   })
 
   return (
@@ -395,9 +381,13 @@ const SkillPromptModal = () => {
             ref={editorRef}
           />
         </div>
-        <button className={s.close} type='button' onClick={() => closeModal()}>
+        <Link
+          to={generatePath(RoutesList.editor.skills, { name: distName! })}
+          onClick={handleCloseButtonClick}
+          className={s.close}
+        >
           <SvgIcon iconName='close' />
-        </button>
+        </Link>
       </Wrapper>
     </Modal>
   )

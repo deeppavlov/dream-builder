@@ -26,6 +26,7 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
       />
       <hr />
       <ContextMenuButton
+        id='logout'
         type='logout'
         theme='dark'
         name={t('log_out')}

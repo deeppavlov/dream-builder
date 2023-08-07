@@ -417,3 +417,12 @@ export interface IGaContext {
   gaState: IGaOptions
   setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
 }
+
+export type PageType =
+  | 'all_va_page'
+  | 'allbots'
+  | 'yourbots'
+  | 'admin_panel'
+  | 'va_skillset_page'
+  | 'va_template_skillset_page'
+  | 'va_skill_editor'

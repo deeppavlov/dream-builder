@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
+import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { SvgIcon } from 'components/Helpers'
@@ -11,11 +12,14 @@ import s from './Test.module.scss'
 export const Test = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'topbar.btns' })
   const { UIOptions } = useUIOptions()
+  const { chatOpened } = useGaChat()
   const activeAssistant = UIOptions[consts.ACTIVE_ASSISTANT]
   const activePanel = UIOptions[consts.CHAT_SP_IS_ACTIVE]
   const cx = classNames.bind(s)
 
   const handleBtnClick = () => {
+    !activePanel && chatOpened('top_panel', activeAssistant)
+
     activeAssistant &&
       trigger(TRIGGER_RIGHT_SP_EVENT, {
         children: (

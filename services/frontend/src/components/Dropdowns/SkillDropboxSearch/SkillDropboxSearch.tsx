@@ -52,7 +52,6 @@ const SkillDropboxSearch = ({
   disabled,
 }: Props) => {
   const getActiveItem = (id: string) => list?.find(item => item.id === id)
-  const { changeSkillModel } = useGaSkills()
 
   const {
     field,
@@ -83,8 +82,6 @@ const SkillDropboxSearch = ({
   }
 
   const handleItemClick = (item: Item) => {
-    changeSkillModel(item.display_name)
-
     field.onChange(getActiveItem(item.id) ?? undefined)
     onSelectItem && onSelectItem(item.id)
     setIsOpen(false)

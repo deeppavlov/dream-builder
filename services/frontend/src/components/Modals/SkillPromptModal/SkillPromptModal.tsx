@@ -82,6 +82,7 @@ const SkillPromptModal = () => {
     skillChanged,
     editorCloseButtonClick,
     skillEditorClosed,
+    changeSkillModel,
   } = useGaSkills()
 
   useEffect(() => {
@@ -257,6 +258,11 @@ const SkillPromptModal = () => {
     onConfirmExit: handleUnsavedExit,
   })
 
+  const onSelectItem = (id: string) => {
+    const lm = dropboxArray.find(item => item.id === id)
+    changeSkillModel(lm)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -287,6 +293,7 @@ const SkillPromptModal = () => {
                 fullWidth
                 fullHeight
                 withoutSearch
+                onSelectItem={onSelectItem}
               />
               <Button
                 withIcon

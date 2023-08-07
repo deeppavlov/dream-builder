@@ -37,7 +37,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
-  const { skillChatRefresh } = useGaSkills()
+  const { skillChatRefresh, skillChatSend } = useGaSkills()
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
@@ -108,6 +108,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
       prompt: skill?.prompt,
       openai_api_key: apiKey ?? undefined,
     })
+    skillChatSend(skill, history.length)
 
     reset()
   }

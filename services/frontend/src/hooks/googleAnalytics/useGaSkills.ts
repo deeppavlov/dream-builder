@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { BotInfoInterface, IGaOptions, ISkill } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { consts } from 'utils/consts'
+import { getView } from 'utils/googleAnalytics'
 
 const buildEventBody = ({
   source,
@@ -35,11 +36,8 @@ export const useGaSkills = () => {
   const { isPreview } = usePreview()
   const queryClient = useQueryClient()
   const { name, skillId } = useParams()
+  const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
-  const getView = (page_type: string): string => {
-    if (['skill_editor', 'va_skill_editor'].includes(page_type)) return 'none'
-    return UIOptions[consts.IS_TABLE_VIEW] ? 'list' : 'card'
-  }
   const getAssistant = () =>
     queryClient.getQueryData(['dist', name]) as BotInfoInterface
   const getSkill = () =>
@@ -47,11 +45,11 @@ export const useGaSkills = () => {
 
   const skillsPropsOpened = (source: string, skill: ISkill) => {
     const page_type = skillId
-      ? 'skill_editor'
+      ? 'va_skill_editor'
       : isPreview
       ? 'va_template_skillset_page'
       : 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const assistant = getAssistant()
     const eventBody = buildEventBody({
       source,
@@ -67,7 +65,7 @@ export const useGaSkills = () => {
   const editSkillButtonClick = (source: string, skill: ISkill) => {
     const assistant = getAssistant()
     const page_type = 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
 
     setGaState({ ...gaState, source, page_type, view, skill, assistant })
     const eventBody = buildEventBody({
@@ -100,11 +98,11 @@ export const useGaSkills = () => {
   const skillDetailsOpened = (source: string, skill: ISkill) => {
     const assistant = getAssistant()
     const page_type = skillId
-      ? 'skill_editor'
+      ? 'va_skill_editor'
       : isPreview
       ? 'va_template_skillset_page'
       : 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const eventBody = buildEventBody({
       source,
       page_type,
@@ -119,7 +117,7 @@ export const useGaSkills = () => {
   const skillDeleteButtonClick = (skill: ISkill) => {
     const source = 'skill_block_context_menu'
     const page_type = 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const assistant = getAssistant()
 
     setGaState({ ...gaState, source, page_type, view, skill, assistant })
@@ -149,7 +147,7 @@ export const useGaSkills = () => {
 
   const addSkillButtonClick = (source: string) => {
     const page_type = 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const assistant = getAssistant()
 
     ga4.event('Add_Skill_Button_Click', {
@@ -164,7 +162,7 @@ export const useGaSkills = () => {
   const skillAdded = (skill?: ISkill, template?: ISkill) => {
     const assistant = getAssistant()
     const page_type = 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const source = template
       ? 'skill_template_button'
       : 'create_from_scratch_button'
@@ -193,7 +191,7 @@ export const useGaSkills = () => {
     skill: ISkill
   ) => {
     const page_type = 'va_skillset_page'
-    const view = getView(page_type)
+    const view = getView(page_type, isTableView)
     const assistant = getAssistant()
     const model_name = skill.lm_service?.display_name
     const eventBody = buildEventBody({

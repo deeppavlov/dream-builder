@@ -9,6 +9,7 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -30,6 +31,7 @@ export const AssistantModule = () => {
     vaArchitectureOpened,
     vaChangeDeployClick,
   } = useGaAssistant()
+  const { visibilityVaButtonClick } = useGaPublication()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -57,6 +59,7 @@ export const AssistantModule = () => {
     : null
 
   const handleVisibility = () => {
+    visibilityVaButtonClick('va_control_block', bot)
     trigger('PublishAssistantModal', { bot })
   }
 
@@ -108,7 +111,10 @@ export const AssistantModule = () => {
       )
 
     error &&
-      toast.promise(deleteDeployment.mutateAsync(bot), toasts().deleteDeployment)
+      toast.promise(
+        deleteDeployment.mutateAsync(bot),
+        toasts().deleteDeployment
+      )
   }
   const handleShare = () => {
     trigger('ShareAssistantModal', { bot })

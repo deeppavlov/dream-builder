@@ -5,7 +5,11 @@ import { BotInfoInterface, IPublicationRequest } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { consts } from 'utils/consts'
-import { getPageType, getView } from 'utils/googleAnalytics'
+import {
+  getPageType,
+  getView,
+  safeFunctionWrapper,
+} from 'utils/googleAnalytics'
 
 export const useGaPublication = () => {
   const { skillId } = useParams()
@@ -17,17 +21,17 @@ export const useGaPublication = () => {
   const event_type = 'Publication'
 
   const visibilityVaButtonClick = (
-    source: 'va_block' | 'va_sidepanel' | 'va_control_block',
+    source_type: 'va_block' | 'va_sidepanel' | 'va_control_block',
     assistant: BotInfoInterface | undefined
   ) => {
     const page_type = getPageType(pathname, isPreview, skillId)
     const is_published =
       assistant?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
-    setGaState({ ...gaState, source, assistant })
+    setGaState({ ...gaState, source_type, assistant })
 
     ga4.event('Visibility_VA_Button_Click', {
-      source,
+      source_type,
       page_type,
       view: getView(page_type, isTableView),
       va_id: assistant?.id,
@@ -40,7 +44,7 @@ export const useGaPublication = () => {
 
   const vaVisibilityChanged = (newVisibility: string) => {
     const page_type = getPageType(pathname, isPreview, skillId)
-    const { source, assistant } = gaState
+    const { source_type, assistant } = gaState
 
     const eventName =
       newVisibility === 'PUBLIC_TEMPLATE'
@@ -50,7 +54,7 @@ export const useGaPublication = () => {
         : 'VA_Private'
 
     ga4.event(eventName, {
-      source,
+      source_type,
       page_type,
       view: getView(page_type, isTableView),
       va_id: assistant?.id,
@@ -69,11 +73,11 @@ export const useGaPublication = () => {
       type === 'accept'
         ? 'Publication_Template_VA_Accepted'
         : 'Publication_Template_VA_Rejected'
-    const source =
+    const source_type =
       type === 'accept' ? 'admin_accept_button' : 'admin_reject_button'
 
     ga4.event(eventName, {
-      source,
+      source_type,
       page_type: 'admin_panel',
       template_va_id: assistant?.id,
       template_va_name: assistant?.display_name,
@@ -85,8 +89,8 @@ export const useGaPublication = () => {
   }
 
   return {
-    visibilityVaButtonClick,
-    vaVisibilityChanged,
-    publicationRequestHandled,
+    visibilityVaButtonClick: safeFunctionWrapper(visibilityVaButtonClick),
+    vaVisibilityChanged: safeFunctionWrapper(vaVisibilityChanged),
+    publicationRequestHandled: safeFunctionWrapper(publicationRequestHandled),
   }
 }

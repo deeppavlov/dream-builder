@@ -7,16 +7,16 @@ import { useParams } from 'react-router-dom'
 import { BotInfoInterface, IGaOptions, ISkill } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { consts } from 'utils/consts'
-import { getView } from 'utils/googleAnalytics'
+import { getView, safeFunctionWrapper } from 'utils/googleAnalytics'
 
 const buildEventBody = ({
-  source,
+  source_type,
   page_type,
   view,
   skill,
   assistant,
 }: IGaOptions) => ({
-  source,
+  source_type,
   page_type,
   view,
   va_id: assistant?.id,
@@ -43,7 +43,7 @@ export const useGaSkills = () => {
   const getSkill = () =>
     queryClient.getQueryData(['component', name, Number(skillId)]) as ISkill
 
-  const skillsPropsOpened = (source: string, skill: ISkill) => {
+  const skillsPropsOpened = (source_type: string, skill: ISkill) => {
     const page_type = skillId
       ? 'va_skill_editor'
       : isPreview
@@ -52,7 +52,7 @@ export const useGaSkills = () => {
     const view = getView(page_type, isTableView)
     const assistant = getAssistant()
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -62,14 +62,14 @@ export const useGaSkills = () => {
     ga4.event('Skill_Properties_Opened', eventBody)
   }
 
-  const editSkillButtonClick = (source: string, skill: ISkill) => {
+  const editSkillButtonClick = (source_type: string, skill: ISkill) => {
     const assistant = getAssistant()
     const page_type = 'va_skillset_page'
     const view = getView(page_type, isTableView)
 
-    setGaState({ ...gaState, source, page_type, view, skill, assistant })
+    setGaState({ ...gaState, source_type, page_type, view, skill, assistant })
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -80,11 +80,11 @@ export const useGaSkills = () => {
   }
 
   const skillRenamed = (editedSkill: ISkill) => {
-    const { source, page_type, view, skill, assistant } = gaState
+    const { source_type, page_type, view, skill, assistant } = gaState
     const isRenamed = editedSkill.display_name !== skill?.display_name
     const isDescriptionChanged = editedSkill.description !== skill?.description
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -95,7 +95,7 @@ export const useGaSkills = () => {
     isDescriptionChanged && ga4.event('Skill_Description_Changed', eventBody)
   }
 
-  const skillDetailsOpened = (source: string, skill: ISkill) => {
+  const skillDetailsOpened = (source_type: string, skill: ISkill) => {
     const assistant = getAssistant()
     const page_type = skillId
       ? 'va_skill_editor'
@@ -104,7 +104,7 @@ export const useGaSkills = () => {
       : 'va_skillset_page'
     const view = getView(page_type, isTableView)
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -115,14 +115,14 @@ export const useGaSkills = () => {
   }
 
   const skillDeleteButtonClick = (skill: ISkill) => {
-    const source = 'skill_block_context_menu'
+    const source_type = 'skill_block_context_menu'
     const page_type = 'va_skillset_page'
     const view = getView(page_type, isTableView)
     const assistant = getAssistant()
 
-    setGaState({ ...gaState, source, page_type, view, skill, assistant })
+    setGaState({ ...gaState, source_type, page_type, view, skill, assistant })
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -133,9 +133,9 @@ export const useGaSkills = () => {
   }
 
   const skillDeleted = () => {
-    const { source, page_type, view, skill, assistant } = gaState
+    const { source_type, page_type, view, skill, assistant } = gaState
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -145,13 +145,13 @@ export const useGaSkills = () => {
     ga4.event('Skill_Deleted', eventBody)
   }
 
-  const addSkillButtonClick = (source: string) => {
+  const addSkillButtonClick = (source_type: string) => {
     const page_type = 'va_skillset_page'
     const view = getView(page_type, isTableView)
     const assistant = getAssistant()
 
     ga4.event('Add_Skill_Button_Click', {
-      source,
+      source_type,
       page_type,
       view,
       va_id: assistant.id,
@@ -163,7 +163,7 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const page_type = 'va_skillset_page'
     const view = getView(page_type, isTableView)
-    const source = template
+    const source_type = template
       ? 'skill_template_button'
       : 'create_from_scratch_button'
     const skill_created_type = !template ? 'from_scratch' : 'from_template'
@@ -171,7 +171,7 @@ export const useGaSkills = () => {
     const skill_template_name = template?.display_name || 'none'
 
     ga4.event('Skill_Added', {
-      source,
+      source_type,
       page_type,
       view,
       skill_created_type,
@@ -187,7 +187,7 @@ export const useGaSkills = () => {
   }
 
   const skillEditorOpened = (
-    source: 'sidepanel_details_edit' | 'skill_block',
+    source_type: 'sidepanel_details_edit' | 'skill_block',
     skill: ISkill
   ) => {
     const page_type = 'va_skillset_page'
@@ -195,7 +195,7 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const model_name = skill.lm_service?.display_name
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type,
       view,
       skill,
@@ -209,7 +209,7 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const model_name = skill.lm_service?.display_name
     const eventBody = buildEventBody({
-      source: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill,
@@ -224,7 +224,7 @@ export const useGaSkills = () => {
     const prompt_changed = skill.prompt !== updatedSkill.prompt
     const model_changed = skill.lm_service !== updatedSkill.lm_service
     const eventBody = buildEventBody({
-      source: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill,
@@ -245,7 +245,7 @@ export const useGaSkills = () => {
     const requiredApiKey = skill?.lm_service?.name.includes('openai-api')
     const eventName = historyLength ? 'Skill_Chat_Send' : 'Skill_Chat_Start'
     const eventBody = buildEventBody({
-      source: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill: skill as ISkill,
@@ -263,7 +263,7 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const skill = getSkill()
     const eventBody = buildEventBody({
-      source: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill,
@@ -285,7 +285,7 @@ export const useGaSkills = () => {
     const assistant = getAssistant()
     const skill = getSkill()
     const eventBody = buildEventBody({
-      source: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill,
@@ -305,9 +305,9 @@ export const useGaSkills = () => {
   const skillEditorClosed = () => {
     const assistant = getAssistant()
     const skill = getSkill()
-    const source = editorBtnClicked.current ? 'close_button' : 'other_link'
+    const source_type = editorBtnClicked.current ? 'close_button' : 'other_link'
     const eventBody = buildEventBody({
-      source,
+      source_type,
       page_type: 'va_skill_editor',
       view: 'none',
       skill,
@@ -322,29 +322,29 @@ export const useGaSkills = () => {
 
   const skillsetViewChanged = (view: 'card' | 'list') => {
     ga4.event('VA_Skillset_View_Changed', {
-      source: 'top_panel',
+      source_type: 'top_panel',
       page_type: 'va_skillset_page',
       view,
     })
   }
 
   return {
-    skillsPropsOpened,
-    editSkillButtonClick,
-    skillRenamed,
-    skillDetailsOpened,
-    skillDeleteButtonClick,
-    skillDeleted,
-    addSkillButtonClick,
-    skillAdded,
-    skillEditorOpened,
-    skillChatRefresh,
-    skillChanged,
-    skillChatSend,
-    changeSkillModel,
-    skillPromptEdited,
-    skillEditorClosed,
-    skillsetViewChanged,
-    editorCloseButtonClick,
+    skillsPropsOpened: safeFunctionWrapper(skillsPropsOpened),
+    editSkillButtonClick: safeFunctionWrapper(editSkillButtonClick),
+    skillRenamed: safeFunctionWrapper(skillRenamed),
+    skillDetailsOpened: safeFunctionWrapper(skillDetailsOpened),
+    skillDeleteButtonClick: safeFunctionWrapper(skillDeleteButtonClick),
+    skillDeleted: safeFunctionWrapper(skillDeleted),
+    addSkillButtonClick: safeFunctionWrapper(addSkillButtonClick),
+    skillAdded: safeFunctionWrapper(skillAdded),
+    skillEditorOpened: safeFunctionWrapper(skillEditorOpened),
+    skillChatRefresh: safeFunctionWrapper(skillChatRefresh),
+    skillChanged: safeFunctionWrapper(skillChanged),
+    skillChatSend: safeFunctionWrapper(skillChatSend),
+    changeSkillModel: safeFunctionWrapper(changeSkillModel),
+    skillPromptEdited: safeFunctionWrapper(skillPromptEdited),
+    skillEditorClosed: safeFunctionWrapper(skillEditorClosed),
+    skillsetViewChanged: safeFunctionWrapper(skillsetViewChanged),
+    editorCloseButtonClick: safeFunctionWrapper(editorCloseButtonClick),
   }
 }

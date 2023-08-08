@@ -1,7 +1,7 @@
 import ga4 from 'react-ga4'
 import { useLocation, useParams } from 'react-router-dom'
 import { usePreview } from 'context/PreviewProvider'
-import { getPageType } from 'utils/googleAnalytics'
+import { getPageType, safeFunctionWrapper } from 'utils/googleAnalytics'
 
 export const useGaDeepy = () => {
   const { skillId } = useParams()
@@ -10,7 +10,7 @@ export const useGaDeepy = () => {
 
   const deepyChatOpened = () => {
     ga4.event('Deepy_Chat_Opened', {
-      source: 'va_templates_block',
+      source_type: 'va_templates_block',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })
@@ -23,7 +23,7 @@ export const useGaDeepy = () => {
       chatHistoryLength > 2 ? 'Deepy_Chat_Send' : 'Deepy_Chat_Start'
 
     ga4.event(eventName, {
-      source: 'va_templates_block',
+      source_type: 'va_templates_block',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })
@@ -31,11 +31,15 @@ export const useGaDeepy = () => {
 
   const deepyChatRefresh = () => {
     ga4.event('Deepy_Chat_Refresh', {
-      source: 'va_templates_block',
+      source_type: 'va_templates_block',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })
   }
 
-  return { deepyChatOpened, deepyChatSend, deepyChatRefresh }
+  return {
+    deepyChatOpened: safeFunctionWrapper(deepyChatOpened),
+    deepyChatSend: safeFunctionWrapper(deepyChatSend),
+    deepyChatRefresh: safeFunctionWrapper(deepyChatRefresh),
+  }
 }

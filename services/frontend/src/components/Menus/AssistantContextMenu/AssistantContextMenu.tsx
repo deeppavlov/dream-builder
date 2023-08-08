@@ -6,6 +6,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
@@ -41,6 +42,7 @@ const AssistantContextMenu: FC<Props> = ({
     renameVaButtonClick,
     deleteVaButtonClick,
   } = useGaAssistant()
+  const { chatOpened } = useGaChat()
   const { visibilityVaButtonClick } = useGaPublication()
 
   const handlePropertiesBtnClick = () => {
@@ -86,7 +88,10 @@ const AssistantContextMenu: FC<Props> = ({
     trigger('DeleteAssistantModal', { bot })
   }
 
-  const handleChatClick = () =>
+  const handleChatClick = () => {
+    const source = inSidePanel ? 'sidepanel' : 'block'
+    chatOpened(source, bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       children: (
         <AssistantDialogSidePanel
@@ -95,6 +100,7 @@ const AssistantContextMenu: FC<Props> = ({
         />
       ),
     })
+  }
 
   const handleCheckArchitectureClick = (
     e: React.MouseEvent<HTMLButtonElement>

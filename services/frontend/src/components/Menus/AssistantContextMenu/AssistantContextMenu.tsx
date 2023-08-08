@@ -6,6 +6,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import BaseContextMenu from 'components/Menus/BaseContextMenu/BaseContextMenu'
@@ -40,6 +41,7 @@ const AssistantContextMenu: FC<Props> = ({
     renameVaButtonClick,
     deleteVaButtonClick,
   } = useGaAssistant()
+  const { visibilityVaButtonClick } = useGaPublication()
 
   const handlePropertiesBtnClick = () => {
     vaPropsOpened('va_card_context_menu', bot)
@@ -69,7 +71,11 @@ const AssistantContextMenu: FC<Props> = ({
     trigger('AssistantModal', { action: 'edit', bot })
   }
 
-  const handlePublishBtnClick = () => trigger('PublishAssistantModal', { bot })
+  const handlePublishBtnClick = () => {
+    const source = inSidePanel ? 'va_sidepanel' : 'va_block'
+    visibilityVaButtonClick(source, bot)
+    trigger('PublishAssistantModal', { bot })
+  }
 
   const handleShareBtnClick = () => trigger('ShareAssistantModal', { bot })
 

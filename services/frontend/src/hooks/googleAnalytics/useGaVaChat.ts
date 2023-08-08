@@ -1,11 +1,15 @@
 import { useAuth, useGAContext, useUIOptions } from 'context'
 import ga4 from 'react-ga4'
 import { useLocation, useParams } from 'react-router-dom'
-import { BotInfoInterface, ChatHistory } from 'types/types'
+import { BotInfoInterface } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { consts } from 'utils/consts'
-import { getPageType, getView } from 'utils/googleAnalytics'
+import {
+  getPageType,
+  getView,
+  safeFunctionWrapper,
+} from 'utils/googleAnalytics'
 
 export const useGaChat = () => {
   const auth = useAuth()
@@ -52,7 +56,7 @@ export const useGaChat = () => {
           event_type,
         })
       : ga4.event('VA_Chat_Opened', {
-          source,
+          source_type,
           page_type,
           view,
           va_id: assistant.id,
@@ -140,5 +144,9 @@ export const useGaChat = () => {
         })
   }
 
-  return { chatOpened, chatSend, refreshChat }
+  return {
+    chatOpened: safeFunctionWrapper(chatOpened),
+    chatSend: safeFunctionWrapper(chatSend),
+    refreshChat: safeFunctionWrapper(refreshChat),
+  }
 }

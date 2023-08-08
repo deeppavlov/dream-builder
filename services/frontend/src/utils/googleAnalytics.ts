@@ -42,3 +42,15 @@ export const getView = (pageType: PageType, isTableView: boolean) => {
     return 'none'
   return isTableView ? 'list' : 'card'
 }
+
+export const safeFunctionWrapper =
+  <T extends any[]>(func: (...args: T) => void) =>
+  (...args: T) => {
+    if (process.env.NODE_ENV !== 'production') return
+
+    try {
+      func(...args)
+    } catch (error) {
+      console.error(error)
+    }
+  }

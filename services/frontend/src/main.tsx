@@ -16,7 +16,10 @@ const queryClient = new QueryClient({
     },
   },
 })
-ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS)
+
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS)
+}
 
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DeepyHelperIcon from 'assets/icons/deeppavlov_logo_round.svg'
 import { TOOLTIP_DELAY } from 'constants/constants'
+import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { BaseToolTip } from 'components/Menus'
@@ -24,8 +25,11 @@ export const DeepyHelperTab = () => {
   )
   // console.log('copilotIsActive = ', copilotIsActive)
   let cx = classNames.bind(s)
+  const { deepyChatOpened } = useGaDeepy()
 
   const handleBtnClick = () => {
+    !copilotIsActive && deepyChatOpened()
+
     trigger(TRIGGER_LEFT_SP_EVENT as any, {
       children: <CopilotSidePanel />,
       isOpen: !copilotIsActive,

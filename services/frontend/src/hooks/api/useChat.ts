@@ -58,9 +58,9 @@ export const useChat = () => {
 
   const remoteHistory = useMutation({
     mutationFn: (data: number) => getHistory(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       setHistory(data)
-    }
+    },
   })
 
   return {

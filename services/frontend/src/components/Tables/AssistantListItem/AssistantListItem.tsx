@@ -16,6 +16,7 @@ import {
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -43,6 +44,8 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
+  const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
+    useGaAssistant()
   const dateCreated = dateToUTC(
     new Date(bot?.date_created),
     i18n.language as TLocale
@@ -82,8 +85,11 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
     : bot?.author?.given_name + ' ' + bot?.author?.family_name
 
   const handleAssistantListItemClick = () => {
+    const isOpen = activeAssistantId !== infoSPId
+    isOpen && vaPropsOpened('va_card_click', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      isOpen: activeAssistantId !== infoSPId,
+      isOpen,
       children: (
         <AssistantSidePanel
           type={type}
@@ -96,6 +102,8 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    createVaClick('va_templates_block', bot)
+
     e.stopPropagation()
     const assistantClone = { action: 'clone', bot: bot }
 
@@ -110,6 +118,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_block')
     e.stopPropagation()
     navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
       state: {

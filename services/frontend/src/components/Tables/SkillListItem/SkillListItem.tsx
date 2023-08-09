@@ -9,6 +9,7 @@ import { RoutesList } from 'router/RoutesList'
 import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { componentTypeMap } from 'mapping/componentTypeMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { timeToUTC } from 'utils/timeToUTC'
@@ -50,11 +51,15 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const nav = useNavigate()
+  const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
+  const isActive = skill.id === activeSKillId
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
+    !isActive && skillsPropsOpened('card_click', skill)
+
     triggerSkillSidePanel({
       skill,
       visibility: type,
@@ -69,6 +74,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     handleAdd && handleAdd(skill)
   }
   const handleEditClick = (e: React.MouseEvent) => {
+    skillEditorOpened('skill_block', skill)
     if (skill.component_type === ('Generative' as any)) {
       // trigger('SkillPromptModal', { skill })
       // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })

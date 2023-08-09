@@ -16,6 +16,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg'
 import { LanguageModel } from 'types/types'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import getTokensLength from 'utils/getTokensLength'
 import { scrollSelectionIntoView } from 'utils/scrollSelectionIntoView'
 import { PromptBlocksCompositeDecorator } from 'components/Inputs/PromptEditor/PromptBlocksCompositeDecorator'
@@ -131,6 +132,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
       ['other', t('tokenizer.count_suffixes.other')],
     ])
     let cx = classNames.bind(s)
+    const { skillPromptEdited } = useGaSkills()
 
     const handleTextEditorBlur = () => {
       field.onBlur()
@@ -138,6 +140,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
     }
 
     const handleTextEditorChange = (value: string) => {
+      skillPromptEdited()
       field.onChange(value)
     }
 

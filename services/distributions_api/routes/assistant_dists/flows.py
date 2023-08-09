@@ -38,13 +38,16 @@ def create_virtual_assistant(
     description: str,
     author_id: int,
     author_email: str,
-    language: str,
+    language: str = None,
     is_cloned: bool = False,
 ) -> schemas.VirtualAssistantRead:
     try:
         template_virtual_assistant = get_by_name(db, template_name)
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / template_virtual_assistant.source)
-        language = language_crud.get_language_by_value(db, language)
+        if not language:
+            language = template_virtual_assistant.language
+        else:
+            language = language_crud.get_language_by_value(db, language)
 
         new_name = generate_unique_name()
         original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(
@@ -207,10 +210,10 @@ def publish_virtual_assistant(
 ):
     dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
 
-    if visibility.__class__ == enums.VirtualAssistantPrivateVisibility:
+    if isinstance(visibility, enums.VirtualAssistantPrivateVisibility):
         publish_request_crud.delete_publish_request(db, virtual_assistant.id)
         virtual_assistant = update_by_name(db, dist.name, private_visibility=visibility)
-    elif visibility.__class__ == enums.VirtualAssistantPublicVisibility:
+    elif isinstance(visibility, enums.VirtualAssistantPublicVisibility):
         publish_request_crud.create_publish_request(
             db, virtual_assistant.id, user_id, virtual_assistant.name, visibility
         )

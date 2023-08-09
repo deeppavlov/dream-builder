@@ -8,6 +8,8 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -23,6 +25,13 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
+  const {
+    createVaClick,
+    vaPropsOpened,
+    vaArchitectureOpened,
+    vaChangeDeployClick,
+  } = useGaAssistant()
+  const { visibilityVaButtonClick } = useGaPublication()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -50,10 +59,13 @@ export const AssistantModule = () => {
     : null
 
   const handleVisibility = () => {
+    visibilityVaButtonClick('va_control_block', bot)
     trigger('PublishAssistantModal', { bot })
   }
 
   const handleInfo = () => {
+    vaPropsOpened('va_control_block', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: true,
       children: (
@@ -70,6 +82,8 @@ export const AssistantModule = () => {
     })
   }
   const handleBuild = () => {
+    vaChangeDeployClick('va_control_block', isDeployed)
+
     !isDeployed &&
       !isDeploying &&
       !error &&
@@ -97,12 +111,17 @@ export const AssistantModule = () => {
       )
 
     error &&
-      toast.promise(deleteDeployment.mutateAsync(bot), toasts().deleteDeployment)
+      toast.promise(
+        deleteDeployment.mutateAsync(bot),
+        toasts().deleteDeployment
+      )
   }
   const handleShare = () => {
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
+    createVaClick('va_control_block', bot)
+
     if (!auth?.user)
       return trigger('SignInModal', {
         requestModal: {
@@ -119,6 +138,10 @@ export const AssistantModule = () => {
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])
+
+  useEffect(() => {
+    bot && vaArchitectureOpened(bot)
+  }, [bot])
 
   return (
     <>

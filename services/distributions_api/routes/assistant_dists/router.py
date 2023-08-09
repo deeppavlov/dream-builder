@@ -4,6 +4,7 @@ from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
+from database import enums
 from database.models.user import crud as user_crud
 from database.models.virtual_assistant.crud import get_all_public_templates, get_all_by_author
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
@@ -23,15 +24,15 @@ assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assista
 
 
 def send_publish_request_created_emails(
-    owner_email: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
+    owner_email: str, owner_name: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
 ):
-    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password, settings.smtp.login_policy)
 
     for moderator_email in moderator_emails:
         emailer.send_publish_request_created_to_moderators(
             moderator_email, owner_email, virtual_assistant_name, virtual_assistant_display_name
         )
-    emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
+    emailer.send_publish_request_created_to_owner(owner_email, owner_name, virtual_assistant_display_name)
 
 
 @assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
@@ -261,13 +262,15 @@ async def publish_dist(
 ):
     flows.publish_virtual_assistant(db, virtual_assistant, payload.visibility, user.id)
 
-    background_tasks.add_task(
-        send_publish_request_created_emails,
-        owner_email=user.email,
-        moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
-        virtual_assistant_name=virtual_assistant.name,
-        virtual_assistant_display_name=virtual_assistant.display_name,
-    )
+    if isinstance(payload.visibility, enums.VirtualAssistantPublicVisibility):
+        background_tasks.add_task(
+            send_publish_request_created_emails,
+            owner_email=user.email,
+            owner_name=user.fullname,
+            moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
+            virtual_assistant_name=virtual_assistant.name,
+            virtual_assistant_display_name=virtual_assistant.display_name,
+        )
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

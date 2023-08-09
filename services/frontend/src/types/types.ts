@@ -117,6 +117,7 @@ export interface BotInfoInterface {
   deployment: IDeployment
   required_api_keys: TKey[] | null
   language?: { id: number; value: ELOCALES_KEY }
+  cloned_from_id: number | null
 }
 
 export interface BotCardProps {
@@ -364,6 +365,10 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TErrorBoundary = {
+  status: TErrorStatus
+  message: string
+}
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
 export enum API_CALL_TAB {
@@ -401,3 +406,23 @@ export interface IRouterCrumb {
 }
 
 export type TLocale = 'ru' | 'en'
+
+export interface IGaOptions {
+  [key: string]: string | boolean | BotInfoInterface | ISkill | undefined
+  assistant?: BotInfoInterface
+  skill?: ISkill
+}
+
+export interface IGaContext {
+  gaState: IGaOptions
+  setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
+}
+
+export type PageType =
+  | 'all_va_page'
+  | 'allbots'
+  | 'yourbots'
+  | 'admin_panel'
+  | 'va_skillset_page'
+  | 'va_template_skillset_page'
+  | 'va_skill_editor'

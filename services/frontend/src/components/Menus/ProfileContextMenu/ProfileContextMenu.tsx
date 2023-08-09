@@ -9,6 +9,8 @@ interface Props {
   userEmail: string
 }
 
+export const logoutBtnId = 'logout'
+
 export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'topbar.ctx_menus.profile',
@@ -26,7 +28,7 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
       />
       <hr />
       <ContextMenuButton
-        id='logout'
+        id={logoutBtnId}
         type='logout'
         theme='dark'
         name={t('log_out')}

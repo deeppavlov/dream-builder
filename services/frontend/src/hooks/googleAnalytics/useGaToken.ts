@@ -61,13 +61,14 @@ export const useGaToken = () => {
     })
   }
 
-  const missingTokenError = (sourse_type: string, services?: string) => {
+  const missingTokenError = (source_type: string, services?: string) => {
     const page_type = getPageType(pathname, isPreview, skillId)
 
     ga4.event('AccessTokens_Missing_Error_Detected', {
-      sourse_type,
+      source_type,
       page_type,
       services: services || 'None',
+      event_type,
     })
   }
 

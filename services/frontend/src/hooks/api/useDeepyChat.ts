@@ -63,8 +63,9 @@ export const useDeepyChat = () => {
       setDeepyHistory(state => [...state, { text: data?.text, author: 'bot' }])
     },
     onError: (data: AxiosError) => {
-      data.response?.status === 404 &&
-        renewDeepySession.mutateAsync(DEEPY_ASSISTANT)
+      const needToRenew =
+        data.response?.status === 404 || data.response?.status === 403
+      needToRenew && renewDeepySession.mutateAsync(DEEPY_ASSISTANT)
     },
   })
 

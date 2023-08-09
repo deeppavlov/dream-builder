@@ -146,7 +146,7 @@ const SkillPromptModal = () => {
     })
   }
 
-  const handleSave = ({ prompt, model }: IFormValues) => {
+  const handleSave = ({ prompt }: IFormValues) => {
     const isSkill = skill !== undefined && skill !== null
     const isModel = selectedModel !== undefined && selectedModel !== null
 
@@ -383,6 +383,7 @@ const SkillPromptModal = () => {
           </div>
           <SkillDialog
             isDebug
+            bot={bot}
             distName={distName}
             skill={skill}
             ref={editorRef}

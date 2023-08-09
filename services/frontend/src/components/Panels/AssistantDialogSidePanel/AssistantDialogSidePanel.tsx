@@ -23,6 +23,7 @@ import { getDeploy } from 'api/deploy'
 import { getUserId } from 'api/user'
 import { useAssistants, useChat, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
@@ -61,6 +62,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const auth = useAuth()
   const { vaChangeDeployClick } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
+  const { setTokenState, missingTokenError } = useGaToken()
 
   const dummyAnswersCounter = history.filter(message => {
     return message?.active_skill?.name! === DUMMY_SKILL
@@ -87,6 +89,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           type: 'api-key',
           msg: t('api_key.required.label'),
         })
+
+        const services = [
+          ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+        ].join(', ')
+        missingTokenError('va_dialog_panel', services)
         return false
       }
 
@@ -195,7 +202,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleCheckChatSettings = () => {
     readyToGetSession && bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
   }
-  const handleEnterTokentClick = () => trigger('AccessTokensModal', {})
+  const handleEnterTokentClick = () => {
+    const services = [
+      ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+    ].join(', ')
+    setTokenState('va_dialog_panel', services)
+    trigger('AccessTokensModal', {})
+  }
 
   // hooks
   useChatScroll(chatRef, [history, message, remoteHistory])

@@ -9,6 +9,7 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
+import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
 import s from './DeleteAssistantModal.module.scss'
@@ -35,8 +36,8 @@ export const DeleteAssistantModal = () => {
   const handleClose = () => {
     setBot(null)
     setIsOpen(false)
-    if (isEditorRoute) navigate(RoutesList.start)
   }
+
   const handleEventUpdate = (data: { detail: IDeleteAssistantModal }) => {
     setBot(data.detail.bot ?? null)
     setIsOpen(prev => !prev)
@@ -46,10 +47,13 @@ export const DeleteAssistantModal = () => {
 
   const handleDeleteBtnClick = () => {
     handleClose()
+    trigger('AssistantDeleted', {})
+
     toast
       .promise(deleteDist.mutateAsync(bot?.name!), toasts().deleteAssistant)
       .then(() => {
         assistantIsPublic && queryClient.invalidateQueries(['publicDists'])
+        if (isEditorRoute) navigate(RoutesList.start)
       })
   }
 

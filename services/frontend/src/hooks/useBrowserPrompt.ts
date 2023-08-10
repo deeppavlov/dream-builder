@@ -34,8 +34,9 @@ function useConfirmExit(
   }, [navigator, confirmExit, when])
 }
 
+// TODO/FIX: No default browser prompt shown when switching between routes
 export function useBrowserPrompt({
-  message,
+  message = '',
   when = true,
   onConfirmExit,
 }: IBrowserPrompt) {

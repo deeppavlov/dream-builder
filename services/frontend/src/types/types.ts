@@ -214,7 +214,7 @@ export interface LM_Service {
   max_tokens: number
   description: string
   project_url: string
-  api_key: string | null
+  api_key: TKey | null
   is_maintained: boolean
   company_name?: string
   prompt_blocks?: IPromptBlock[]

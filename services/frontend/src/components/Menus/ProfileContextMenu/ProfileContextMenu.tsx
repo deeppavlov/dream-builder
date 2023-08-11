@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { logout } from 'api/user'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import { BaseContextMenu } from 'components/Menus'
@@ -15,8 +16,12 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'topbar.ctx_menus.profile',
   })
+  const { setTokenState } = useGaToken()
 
-  const handleProfileClick = () => trigger('ProfileSettingsModal', {})
+  const handleProfileClick = () => {
+    setTokenState('profile_settings')
+    trigger('ProfileSettingsModal', {})
+  }
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>

@@ -109,7 +109,8 @@ export const CopilotSidePanel = () => {
                   <div
                     key={`${block?.author == 'bot'}${i}`}
                     className={cx(
-                      block?.author == 'bot' ? 'botContainer' : 'userContainer'
+                      block?.author == 'bot' ? 'botContainer' : 'userContainer',
+                      block?.hidden && 'hidden'
                     )}
                   >
                     <span

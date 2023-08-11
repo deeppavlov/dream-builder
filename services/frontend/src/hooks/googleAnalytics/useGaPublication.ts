@@ -21,7 +21,11 @@ export const useGaPublication = () => {
   const event_type = 'Publication'
 
   const visibilityVaButtonClick = (
-    source_type: 'va_block' | 'va_sidepanel' | 'va_control_block',
+    source_type:
+      | 'va_block'
+      | 'va_sidepanel'
+      | 'va_control_block'
+      | 'va_action_menu',
     assistant: BotInfoInterface | undefined
   ) => {
     const page_type = getPageType(pathname, isPreview, skillId)

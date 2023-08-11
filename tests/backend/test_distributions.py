@@ -89,7 +89,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @pytest.mark.parametrize('va_name', [public_va_names_en[0], public_va_names_ru[0]])
     @qase.title(f"{counter()}. test_clone_public_va")
     def test_clone_public_va(self, va_name):
@@ -101,7 +101,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    #@pytest.mark.atom
+    @pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_created_from_scratch_ru_va")
     def test_clone_created_from_scratch_ru_va(self):
         display_name = va_data["name"]
@@ -114,7 +114,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
         user.delete_va_by_name(clone_name)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_created_from_scratch_en_va")
     def test_clone_created_from_scratch_en_va(self):
         display_name = va_data["name"]
@@ -427,7 +427,7 @@ class TestDistributions:
                 отрегулировать термостат или запустить кофеварку еще до того, как встанете с постели. 
                 ИНСТРУКЦИЯ: 
                 Человек вступает в разговор и начинает задавать вопросы. Сгенерируйте ответ на основе списка часто 
-                задаваемых вопросов.''',)
+                задаваемых вопросов.''', )
         deployment_id = user.create_deployment(va_name)["id"]
         time.sleep(60)
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
@@ -445,7 +445,7 @@ class TestDistributions:
         va_name = va["name"]
 
         deployment_id = user.create_deployment(va_name)["id"]
-        time.sleep(70)
+        time.sleep(60)
 
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message(dialog_session_id)
@@ -464,7 +464,7 @@ class TestDistributions:
         va_name = va["name"]
 
         deployment_id = user.create_deployment(va_name)["id"]
-        time.sleep(80)
+        time.sleep(60)
 
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message(dialog_session_id)
@@ -493,7 +493,7 @@ class TestDistributions:
     #    user = UserMethods(auth_token)
     #    user.get_stack_ports()
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self):
         name = va_data["name"]
@@ -608,18 +608,24 @@ class TestDistributions:
     #    user2.delete_va_component_no_access(name, component_id)
     #    user1.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_can_access_unlisted_assistant")
-    def test_non_owner_can_access_unlisted_assistant(self):
+    def test_non_owner_non_auth_can_access_unlisted_assistant(self):
         display_name = va_data["name"]
         user1 = UserMethods(auth_token_user1)
         name = user1.create_virtual_assistant(display_name)["name"]
         user1.publish_va(name, 'UNLISTED_LINK')
         user1.create_deployment(name)
         time.sleep(60)
-        user2 = UserMethods(auth_token_user2)
-        user2.get_va_by_name(name)
+
+        user2 = UserMethods('1')
+        dialog_session_id = user2.create_dialog_sessions(name)["id"]
+        user2.send_dialog_session_message(dialog_session_id)
+        user2.get_dialog_session_history(dialog_session_id)
+
         user1.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_non_owner_can_access_public_template_assistant")
     def test_non_owner_can_access_public_template_assistant(self):
         display_name = va_data["name"]

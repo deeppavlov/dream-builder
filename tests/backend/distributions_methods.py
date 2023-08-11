@@ -780,8 +780,8 @@ class UserMethods:
             },
         )
         assert_status_code(response, 200)
-        # for dialog in response.json():
-        #    assert_validation(dialog, models.DialogUtteranceRead)
+        for dialog in response.json():
+            assert_validation(dialog, models.DialogUtteranceRead)
 
     def get_dialog_session_history_no_access(self, dialog_session_id):
         response = requests.get(

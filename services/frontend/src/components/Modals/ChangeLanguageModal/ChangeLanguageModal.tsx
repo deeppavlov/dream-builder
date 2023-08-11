@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ELOCALES_KEY } from 'types/types'
 import { language } from 'constants/constants'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useObserver } from 'hooks/useObserver'
 import { currentLocale } from 'utils/getLangFromStorage'
 import { Button, RadioButton } from 'components/Buttons'
@@ -20,15 +21,18 @@ export const ChangeLanguageModal: FC<ChangeLanguageModalProps> = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { t } = useTranslation()
   const { register, setValue, watch } = useForm<FormValues>()
+  const { languageChanged } = useGaEvents()
 
   const currentLang = watch(LANGUAGE)
 
   const handleEventUpdate = () => setIsOpen(!isOpen)
   const handleCancel = () => setIsOpen(false)
-  const handleSave = () =>
+  const handleSave = () => {
+    languageChanged(currentLang)
     i18n.changeLanguage(currentLang).then(() => {
       setIsOpen(false)
     })
+  }
 
   useEffect(() => {
     setValue(LANGUAGE, currentLocale())

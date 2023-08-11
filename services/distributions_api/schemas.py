@@ -11,6 +11,7 @@ from sqlalchemy.ext.associationproxy import _AssociationList
 
 from database import enums
 
+
 # PUBLISH_REQUEST_VISIBILITY_CHOICES = Literal["unlisted", "public_template", "public", "private"]
 
 
@@ -129,20 +130,46 @@ class ComponentGenerativeRead(BaseOrmModel):
 
 
 class ComponentCreate(BaseModel):
-    display_name: str
-    description: Optional[str]
-    prompt: Optional[str]
-    prompt_goals: Optional[str]
-    lm_service_id: Optional[int]
-    lm_config: Optional[dict]
+    display_name: str = Field(..., examples=["Recipe Generator"])
+    description: Optional[str] = Field(..., examples=["Generates recipes based on your ingredients"])
+    prompt: Optional[str] = Field(
+        ..., examples=["Your task is to generate a recipe for a salad when the user gives you an ingredient list"]
+    )
+    prompt_goals: Optional[str] = Field(..., examples=["Generates salad recipes"])
+    lm_service_id: Optional[int] = Field(..., examples=[13])
+    lm_config: Optional[dict] = Field(
+        ...,
+        examples=[
+            {
+                "do_sample": True,
+                "num_beams": 2,
+                "max_new_tokens": 200,
+                "min_new_tokens": 8,
+                "num_return_sequences": 2,
+            }
+        ],
+    )
 
 
 class ComponentUpdate(BaseModel):
-    display_name: Optional[str]
-    description: Optional[str]
-    prompt: Optional[str]
-    lm_service_id: Optional[int]
-    lm_config: Optional[dict]
+    display_name: Optional[str] = Field(..., examples=["Recipe Generator 2.0"])
+    description: Optional[str] = Field(..., examples=["Generates awesome recipes based on your ingredients"])
+    prompt: Optional[str] = Field(
+        ..., examples=["Your task is to generate a recipe for a soup when the user gives you an ingredient list"]
+    )
+    lm_service_id: Optional[int] = Field(..., examples=[4])
+    lm_config: Optional[dict] = Field(
+        ...,
+        examples=[
+            {
+                "top_p": 1.0,
+                "max_tokens": 64,
+                "temperature": 0.4,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+            }
+        ],
+    )
 
 
 class VirtualAssistantBaseRead(BaseOrmModel):
@@ -190,14 +217,16 @@ class VirtualAssistantRead(VirtualAssistantBaseRead):
 
 
 class VirtualAssistantCreate(BaseModel):
-    display_name: str
-    description: str
-    language: Optional[str]
+    display_name: str = Field(..., examples=["Sous-chef Assistant"])
+    description: str = Field(
+        ..., examples=["This assistant will help you create recipe ideas based on the ingredients you have"]
+    )
+    language: Optional[Literal["en", "ru"]] = Field(..., examples=["en"])
 
 
 class VirtualAssistantUpdate(BaseModel):
-    display_name: Optional[str]
-    description: Optional[str]
+    display_name: Optional[str] = Field(..., examples=["New Display Name"])
+    description: Optional[str] = Field(..., examples=["Updated description"])
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):
@@ -254,11 +283,11 @@ class VirtualAssistantComponentPipelineRead(BaseModel):
 
 
 class DialogSessionCreate(BaseModel):
-    virtual_assistant_name: str
+    virtual_assistant_name: str = Field(..., examples=["ff99abcd"])
 
 
 class DialogChatMessageCreate(BaseModel):
-    text: str
+    text: str = Field(..., examples=["who are you?"])
     prompt: Optional[str]
     lm_service_id: Optional[int]
     openai_api_key: Optional[str]
@@ -298,7 +327,7 @@ class DeploymentRead(DeploymentBaseRead):
 
 
 class DeploymentCreate(BaseModel):
-    virtual_assistant_name: str
+    virtual_assistant_name: str = Field(..., examples=["ff99abcd"])
 
 
 class PublishRequestRead(BaseOrmModel):
@@ -314,7 +343,9 @@ class PublishRequestRead(BaseOrmModel):
 
 
 class PublishRequestCreate(BaseOrmModel):
-    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
+    visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility] = Field(
+        ..., examples=[enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK]
+    )
 
 
 class DialogSessionRead(BaseOrmModel):

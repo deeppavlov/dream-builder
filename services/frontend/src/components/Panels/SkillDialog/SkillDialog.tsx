@@ -9,6 +9,7 @@ import { DEBUG_DIST, OPEN_AI_LM } from 'constants/constants'
 import { getUserId } from 'api/user'
 import { useChat } from 'hooks/api'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { useOnlyOnMount } from 'hooks/useOnMount'
@@ -38,6 +39,7 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
   const chatRef = useRef<HTMLUListElement>(null)
   const cx = classNames.bind(s)
   const { skillChatRefresh, skillChatSend } = useGaSkills()
+  const { setTokenState, missingTokenError } = useGaToken()
 
   const renewDialogSession = () => {
     const isDistName = distName !== undefined && distName?.length > 0
@@ -70,6 +72,11 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
           type: 'api-key',
           msg: t('api_key.required.label'),
         })
+
+        missingTokenError(
+          'skill_editor_dialog_panel',
+          skill?.lm_service?.api_key?.display_name
+        )
         return false
       }
 
@@ -134,7 +141,14 @@ const SkillDialog = forwardRef(({ isDebug, distName, skill }: Props, ref) => {
     checkIsChatSettings(user?.id)
   }
 
-  const handleEnterTokenClick = () => trigger('AccessTokensModal', {})
+  const handleEnterTokenClick = () => {
+    skill &&
+      setTokenState(
+        'skill_editor_dialog_panel',
+        skill?.lm_service?.api_key?.display_name
+      )
+    trigger('AccessTokensModal', {})
+  }
 
   // hooks
   useOnlyOnMount(() => renewDialogSession())

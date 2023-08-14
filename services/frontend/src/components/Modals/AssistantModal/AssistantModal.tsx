@@ -7,10 +7,10 @@ import { language } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
-import { useOnKey } from 'hooks/useOnKey'
 import { trigger } from 'utils/events'
 import { currentLocale } from 'utils/getLangFromStorage'
 import { getValidationSchema } from 'utils/getValidationSchema'
+import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input, TextArea } from 'components/Inputs'
@@ -101,7 +101,10 @@ export const AssistantModal = () => {
   }
 
   const name = bot?.name!
-
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const disabled = create?.isLoading || clone?.isLoading || rename.isLoading
+    submitOnEnter(e, !disabled, handleSubmit(onFormSubmit))
+  }
   const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
     const language = formValues.language.id as ELOCALES_KEY
     const display_name = formValues.display_name as string
@@ -134,7 +137,7 @@ export const AssistantModal = () => {
     }
   }
 
-  useOnKey(handleSubmit(onFormSubmit), 'Enter') //FIX
+  //   useOnKey(handleSubmit(onFormSubmit), 'Enter') //FIX
 
   useObserver('AssistantModal', handleEventUpdate)
 
@@ -156,7 +159,11 @@ export const AssistantModal = () => {
       handleClose={closeModal}
       onRequestClose={closeModal}
     >
-      <form className={s.assistantModal} onSubmit={handleSubmit(onFormSubmit)}>
+      <form
+        className={s.assistantModal}
+        onKeyDown={handleKeyDown}
+        onSubmit={handleSubmit(onFormSubmit)}
+      >
         <div className={s.header}>
           <h4>
             {isCloning && t('modals.assistant.clone.header')}

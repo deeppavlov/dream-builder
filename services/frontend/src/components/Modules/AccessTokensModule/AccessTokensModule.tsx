@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ReactComponent as Attention } from 'assets/icons/attention.svg'
 import { IApiService, IUserApiKey, LM_Service } from 'types/types'
+import { toasts } from 'mapping/toasts'
 import { getTokens, getUserId } from 'api/user'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { trigger } from 'utils/events'
 import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { getValidationSchema } from 'utils/getValidationSchema'
@@ -14,7 +16,6 @@ import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
 import { Wrapper } from 'components/UI'
 import s from './AccessTokensModule.module.scss'
-import { toasts } from 'mapping/toasts'
 
 interface FormValues {
   token: string
@@ -28,11 +29,12 @@ export const AccessTokensModule = () => {
     getTokens()
   )
   const [tokens, setTokens] = useState<IUserApiKey[] | null>(null)
-  const { handleSubmit, reset, control } = useForm<FormValues>({
+  const { handleSubmit, reset, control, watch } = useForm<FormValues>({
     mode: 'onSubmit',
   })
   const localStorageName = getApiKeysLSId(user?.id)
   const validationSchema = getValidationSchema()
+  const { openTokenModal, tokenPasted, addOrDeleteToken } = useGaToken()
 
   const handleChanges = () => trigger('AccessTokensChanged', {})
 
@@ -58,6 +60,9 @@ export const AccessTokensModule = () => {
         saveTokens(newState)
         return newState
       })
+
+      const service = api_services?.find(({ id }) => id === token_id)
+      addOrDeleteToken(service?.display_name, 'delete')
       resolve(true)
     })
 
@@ -124,6 +129,7 @@ export const AccessTokensModule = () => {
       })
 
       resolve(t('modals.access_api_keys.toasts.token_added'))
+      addOrDeleteToken(selectedService.display_name, 'add')
     })
 
   const onSubmit = (data: FormValues) => {
@@ -138,6 +144,15 @@ export const AccessTokensModule = () => {
   }
 
   useEffect(() => setTokens(getLSApiKeys(user?.id)), [user])
+
+  const tokenValue = watch('token')
+  useEffect(() => {
+    tokenPasted(tokenValue)
+  }, [tokenValue])
+
+  useEffect(() => {
+    openTokenModal()
+  }, [])
 
   return (
     <div className={s.module}>

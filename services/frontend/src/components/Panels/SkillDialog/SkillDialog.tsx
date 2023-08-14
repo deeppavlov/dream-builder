@@ -9,6 +9,7 @@ import { OPEN_AI_LM } from 'constants/constants'
 import { getUserId } from 'api/user'
 import { useChat } from 'hooks/api'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { chooseUniversalPrompted } from 'utils/chooseUniversalPrompted'
@@ -40,6 +41,7 @@ const SkillDialog = forwardRef(
     const chatRef = useRef<HTMLUListElement>(null)
     const cx = classNames.bind(s)
     const { skillChatRefresh, skillChatSend } = useGaSkills()
+    const { setTokenState, missingTokenError } = useGaToken()
 
     const renewDialogSession = () => {
       const isDistName = distName !== undefined && distName?.length > 0
@@ -93,6 +95,11 @@ const SkillDialog = forwardRef(
           type: 'prompt',
           msg: `Enter your prompt in the ${skill?.name} editor to run your Generative AI Skill`,
         })
+
+        missingTokenError(
+          'skill_editor_dialog_panel',
+          skill?.lm_service?.api_key?.display_name
+        )
         return false
       }
 
@@ -139,9 +146,14 @@ const SkillDialog = forwardRef(
       checkIsChatSettings(user?.id)
     }
 
-    const handleEnterTokenClick = () => trigger('AccessTokensModal', {})
-
-    // hooks
+    const handleEnterTokenClick = () => {
+      skill &&
+        setTokenState(
+          'skill_editor_dialog_panel',
+          skill?.lm_service?.api_key?.display_name
+        )
+      trigger('AccessTokensModal', {})
+    }
 
     useChatScroll(chatRef, [history, message])
     useObserver('RenewChat', renewDialogSession)

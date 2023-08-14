@@ -104,7 +104,7 @@ export const useAssistants = () => {
   })
 
   const create = useMutation({
-    onMutate: data => console.log('data = ', data),
+    onMutate: () => {},
     mutationFn: (createPayload: ICreateAssistantPayload) =>
       createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {

@@ -90,7 +90,12 @@ class GitManager:
 
     def commit(self, user_id: int, change_id: int, *files):
         index = self.repo.index
+
         index.add(files)
+        # Sometimes modified files are not added in the previous line.
+        # Uncomment the following line to help debugging the issue
+        # print(self.repo.git.status())
+
         commit_message = f"dream-api/{user_id}/{change_id}"
         index.commit(commit_message)
 

@@ -171,7 +171,7 @@ async def patch_component(
         prompt=component_update.prompt,
         prompt_goals=prompt_goals,
         lm_service_id=component_update.lm_service_id,
-        lm_config=component_update.lm_config,
+        lm_config=dream_component.lm_config,
     )
     db.commit()
 

@@ -3,6 +3,7 @@ import { useAuth, useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as Gear } from 'assets/icons/gear.svg'
 import { TOOLTIP_DELAY } from 'constants/constants'
+import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { BaseToolTip } from 'components/Menus'
@@ -15,6 +16,7 @@ export const SettingsTab = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
   const isActive = UIOptions[consts.SETTINGS_MODAL_IS_ACTIVE]
   let cx = classNames.bind(s)
+  const { setTokenState } = useGaToken()
 
   const settingsClickHandler = () => {
     if (!isAuthorized)
@@ -22,6 +24,7 @@ export const SettingsTab = () => {
         requestModal: { name: 'ProfileSettingsModal' },
       })
 
+    setTokenState('services_common_button')
     trigger('ProfileSettingsModal', {})
   }
 

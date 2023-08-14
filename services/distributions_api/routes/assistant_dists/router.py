@@ -49,6 +49,8 @@ async def create_virtual_assistant(
     -``display_name``: new assistant dist display name
 
     -``description``: new assistant dist description
+
+    -``language``: new assistant language
     """
     try:
         template_dist = TEMPLATE_DIST_PROMPT_BASED[payload.language]
@@ -182,7 +184,7 @@ async def clone_dist(
 
     **Path args**
 
-    -``dist_name``: name of the distribution
+    -``dist_name``: name of the original distribution
 
     **Payload args**
 

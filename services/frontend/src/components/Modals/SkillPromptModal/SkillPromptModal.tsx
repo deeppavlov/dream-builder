@@ -33,6 +33,7 @@ import { Button } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { ResizerLine, SvgIcon } from 'components/Helpers'
 import { PromptEditor } from 'components/Inputs'
+import { logoutBtnId } from 'components/Menus/ProfileContextMenu/ProfileContextMenu'
 import { PromptBlocksModule } from 'components/Modules'
 import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFormattedPromptBlock'
 import { SkillDialog } from 'components/Panels'
@@ -71,6 +72,7 @@ const SkillPromptModal = () => {
     : null
   const bot = distName ? getDist({ distName }).data : null
   const [selectedModel, setSelectedModel] = useState<LM_Service | null>(null)
+  const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
@@ -204,6 +206,8 @@ const SkillPromptModal = () => {
     promptEditorRef?.current?.insertText(formattedBlock)
   }
 
+  const handleAssistantDelete = () => setPreventExit(false)
+
   const onFormSubmit = (data: IFormValues) => {
     const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
     if (isDirty) handleSave(data)
@@ -247,14 +251,20 @@ const SkillPromptModal = () => {
     }
   }, [skill, isOpen])
 
+  useEffect(() => {
+    setPreventExit(isOpen && isDirty)
+  }, [isOpen, isDirty])
+
+  useObserver('AssistantDeleted', handleAssistantDelete)
+
   usePreventAction({
-    when: isOpen && isDirty,
+    when: preventExit,
     onContinue: handleUnsavedExit,
-    unavailableSelectors: ['#logout'],
+    unavailableSelectors: [`#${logoutBtnId}`],
   })
 
   useBrowserPrompt({
-    when: isOpen && isDirty,
+    when: preventExit,
     onConfirmExit: handleUnsavedExit,
   })
 

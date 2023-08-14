@@ -218,7 +218,7 @@ export interface LM_Service {
   is_maintained: boolean
   company_name?: string
   prompt_blocks?: IPromptBlock[]
-  languages: { id: number; value: ELOCALES_KEY }[]
+  languages?: { id: number; value: ELOCALES_KEY }[]
 }
 
 export interface ISkill extends IStackElement {

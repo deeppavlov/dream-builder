@@ -131,14 +131,14 @@ class ComponentGenerativeRead(BaseOrmModel):
 
 class ComponentCreate(BaseModel):
     display_name: str = Field(..., examples=["Recipe Generator"])
-    description: Optional[str] = Field(..., examples=["Generates recipes based on your ingredients"])
+    description: Optional[str] = Field(None, examples=["Generates recipes based on your ingredients"])
     prompt: Optional[str] = Field(
-        ..., examples=["Your task is to generate a recipe for a salad when the user gives you an ingredient list"]
+        None, examples=["Your task is to generate a recipe for a salad when the user gives you an ingredient list"]
     )
-    prompt_goals: Optional[str] = Field(..., examples=["Generates salad recipes"])
-    lm_service_id: Optional[int] = Field(..., examples=[13])
+    prompt_goals: Optional[str] = Field(None, examples=["Generates salad recipes"])
+    lm_service_id: Optional[int] = Field(None, examples=[13])
     lm_config: Optional[dict] = Field(
-        ...,
+        None,
         examples=[
             {
                 "do_sample": True,
@@ -152,14 +152,14 @@ class ComponentCreate(BaseModel):
 
 
 class ComponentUpdate(BaseModel):
-    display_name: Optional[str] = Field(..., examples=["Recipe Generator 2.0"])
-    description: Optional[str] = Field(..., examples=["Generates awesome recipes based on your ingredients"])
+    display_name: Optional[str] = Field(None, examples=["Recipe Generator 2.0"])
+    description: Optional[str] = Field(None, examples=["Generates awesome recipes based on your ingredients"])
     prompt: Optional[str] = Field(
-        ..., examples=["Your task is to generate a recipe for a soup when the user gives you an ingredient list"]
+        None, examples=["Your task is to generate a recipe for a soup when the user gives you an ingredient list"]
     )
-    lm_service_id: Optional[int] = Field(..., examples=[4])
+    lm_service_id: Optional[int] = Field(None, examples=[4])
     lm_config: Optional[dict] = Field(
-        ...,
+        None,
         examples=[
             {
                 "top_p": 1.0,
@@ -221,12 +221,12 @@ class VirtualAssistantCreate(BaseModel):
     description: str = Field(
         ..., examples=["This assistant will help you create recipe ideas based on the ingredients you have"]
     )
-    language: Optional[Literal["en", "ru"]] = Field(..., examples=["en"])
+    language: Optional[Literal["en", "ru"]] = Field(None, examples=["en"])
 
 
 class VirtualAssistantUpdate(BaseModel):
-    display_name: Optional[str] = Field(..., examples=["New Display Name"])
-    description: Optional[str] = Field(..., examples=["Updated description"])
+    display_name: Optional[str] = Field(None, examples=["New Display Name"])
+    description: Optional[str] = Field(None, examples=["Updated description"])
 
 
 class CreateVirtualAssistantComponentRequest(BaseModel):

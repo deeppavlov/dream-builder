@@ -1,7 +1,8 @@
 import i18n from 'i18n'
 import { ELOCALES_KEY, ELOCALES_TITLE, TLocales } from 'types/types'
 
-export const DEBUG_DIST = 'universal_prompted_assistant'
+export const DEBUG_EN_DIST = 'universal_prompted_assistant'
+export const DEBUG_RU_DIST = 'universal_ru_prompted_assistant'
 export const DEEPY_ASSISTANT = 'deepy_assistant'
 export const DUMMY_SKILL = 'dummy_skill'
 export const TOOLTIP_DELAY = 1000

@@ -9,6 +9,7 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
@@ -32,6 +33,7 @@ export const AssistantModule = () => {
     vaChangeDeployClick,
   } = useGaAssistant()
   const { visibilityVaButtonClick } = useGaPublication()
+  const { shareVaButtonClick } = useGaEvents()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -117,6 +119,7 @@ export const AssistantModule = () => {
       )
   }
   const handleShare = () => {
+    shareVaButtonClick('va_control_block', bot)
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {

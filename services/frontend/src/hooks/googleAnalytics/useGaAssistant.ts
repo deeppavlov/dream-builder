@@ -80,6 +80,7 @@ export const useGaAssistant = () => {
           template_va_name: template.display_name,
           template_va_author_id: template.author.id,
           template_va_author_name: template.author.fullname || 'none',
+          template_va_language: template.language?.value,
           event_type,
         })
   }
@@ -119,6 +120,7 @@ export const useGaAssistant = () => {
         template_va_name: assistant?.display_name,
         template_va_author_id: assistant?.author.id,
         template_va_author_name: assistant?.author.fullname || 'none',
+        template_va_language: assistant?.language?.value,
         event_type,
       })
   }
@@ -137,6 +139,7 @@ export const useGaAssistant = () => {
           template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
           template_va_author_name: template?.author.fullname || 'none',
+          template_va_language: template?.language?.value,
           event_type,
         })
       : ga4.event('VA_Properties_Opened', {
@@ -169,6 +172,7 @@ export const useGaAssistant = () => {
           template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
           template_va_author_name: template?.author.fullname || 'none',
+          template_va_language: template?.language?.value,
           event_type,
         })
       : ga4.event('VA_Opened', {
@@ -177,6 +181,7 @@ export const useGaAssistant = () => {
           page_type,
           va_id: template?.id,
           va_name: template?.display_name,
+          va_language: template?.language?.value,
           event_type,
         })
   }
@@ -198,6 +203,7 @@ export const useGaAssistant = () => {
       view,
       va_id: bot.id,
       va_name: bot.display_name,
+      va_language: bot?.language?.value,
       event_type,
     })
   }
@@ -212,6 +218,7 @@ export const useGaAssistant = () => {
       view,
       va_id: assistant?.id,
       va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       event_type,
     })
   }
@@ -234,6 +241,7 @@ export const useGaAssistant = () => {
       va_id: bot.id,
       va_name: bot.display_name,
       template_va_id: bot.cloned_from_id,
+      va_language: bot?.language?.value,
       event_type,
     })
   }
@@ -248,6 +256,7 @@ export const useGaAssistant = () => {
       view,
       va_id: assistant?.id,
       va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       template_va_id: assistant?.cloned_from_id,
       event_type,
     })

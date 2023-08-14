@@ -40,6 +40,7 @@ export const useGaPublication = () => {
       view: getView(page_type, isTableView),
       va_id: assistant?.id,
       va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       va_prev_status: assistant?.visibility,
       is_published,
       event_type,
@@ -63,6 +64,7 @@ export const useGaPublication = () => {
       view: getView(page_type, isTableView),
       va_id: assistant?.id,
       va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       va_prev_status: assistant?.visibility,
       event_type,
     })
@@ -85,6 +87,7 @@ export const useGaPublication = () => {
       page_type: 'admin_panel',
       template_va_id: assistant?.id,
       template_va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       va_prev_status: assistant?.visibility,
       template_va_author_id: assistant?.author.id,
       template_va_author_name: assistant?.author.fullname,

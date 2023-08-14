@@ -21,10 +21,12 @@ const buildEventBody = ({
   view,
   va_id: assistant?.id,
   va_name: assistant?.display_name,
+  va_language: assistant?.language?.value,
   skill_created_type: 'TODO',
   skill_type: skill?.component_type,
   skill_id: skill?.id,
   skill_name: skill?.display_name,
+  skill_language: skill?.lm_service?.languages.map(l => l.value).join(', '),
   skill_template_id: 'TODO',
   skill_template_name: 'TODO',
   event_type: 'Skills',
@@ -156,6 +158,7 @@ export const useGaSkills = () => {
       view,
       va_id: assistant.id,
       va_name: assistant.display_name,
+      va_language: assistant?.language?.value,
     })
   }
 
@@ -178,10 +181,12 @@ export const useGaSkills = () => {
       skill_type: skill?.component_type,
       va_id: assistant?.id,
       va_name: assistant?.display_name,
+      va_language: assistant?.language?.value,
       skill_id: skill?.id,
       skill_name: skill?.display_name,
       skill_template_id,
       skill_template_name,
+      skill_language: skill?.lm_service?.languages.map(l => l.value).join(', '),
       model_name: skill?.lm_service?.display_name,
     })
   }
@@ -227,7 +232,7 @@ export const useGaSkills = () => {
       source_type: 'skill_editor_dialog_panel',
       page_type: 'va_skill_editor',
       view: 'none',
-      skill,
+      skill: updatedSkill,
       assistant,
     })
 

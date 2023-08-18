@@ -7,7 +7,9 @@ $animation-delay: 300ms;
   width: 100%;
   height: fit-content;
   cursor: pointer;
-
+  &.disabled * {
+    @include disabled;
+  }
   &.small {
     min-width: 200px;
     max-width: 200px;

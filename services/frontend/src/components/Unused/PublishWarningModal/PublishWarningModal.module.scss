@@ -1,7 +1,7 @@
 .publishWarningModal {
   display: flex;
   flex-direction: column;
-  min-width: 582px;
+  width: 582px;
   gap: 8px;
   .header {
     display: flex;
@@ -47,5 +47,11 @@
     align-items: center;
     width: 100;
     gap: 24px;
+  }
+  .checkbox {
+    padding-top: 32px;
+    label {
+      color: #8d96b5;
+    }
   }
 }

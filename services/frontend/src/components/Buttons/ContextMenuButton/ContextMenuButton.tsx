@@ -23,6 +23,7 @@ type TMenuItem =
   | 'logout'
 
 interface Props {
+  id?: string
   name?: string
   type?: TMenuItem
   theme?: 'dark'
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const ContextMenuButton = ({
+  id,
   name,
   type,
   theme,
@@ -61,6 +63,7 @@ const ContextMenuButton = ({
 
   return (
     <button
+      id={id}
       className={cx('item', disabled && 'disabled', theme && theme)}
       onClick={handleBtnClick}
     >

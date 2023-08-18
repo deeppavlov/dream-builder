@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { TTopbar } from 'types/types'
 import { consts } from 'utils/consts'
 import { GoogleSignInButton } from 'components/Buttons'
-import { SwitchLanguageButton } from 'components/Buttons/SwitchLanguageButton/SwitchLanguageButton'
 import { Profile } from 'components/Menus'
 import { BurgerMenu } from 'components/Menus/BurgerMenu/BurgerMenu'
 import s from './Topbar.module.scss'
@@ -24,17 +23,16 @@ export const Topbar = () => {
   const isTableViewSwitcher = isEditor
     ? editorActiveTab == 'Architecture' && !skillEditorIsActive
     : location.pathname !== '/profile'
-  let cx = classNames.bind(s)
-
+  const cx = classNames.bind(s)
+  const dist = UIOptions[consts.ACTIVE_ASSISTANT]
   return (
     <div className={cx('topbar', isEditor && 'editor', !user && 'gapForBtns')}>
-      <BurgerMenu type={type} dist={UIOptions[consts.ACTIVE_ASSISTANT]} />
-      <div className={s.logo_area}>
+      <BurgerMenu type={type} dist={dist} />
+      <div className={s.crumbs}>
         <Breadcrumbs />
       </div>
-      <div className={s.btns_area}>
+      <div className={s.btns}>
         {isTableViewSwitcher && <Display />}
-        <SwitchLanguageButton />
         {isEditor && <Test />}
         {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
       </div>

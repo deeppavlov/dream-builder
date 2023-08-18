@@ -4,6 +4,12 @@ export interface UserInterface {
   name: string
   email: string
   picture: string
+  family_name: string
+  given_name: string
+  id: number
+  refresh_token: string
+  sub: string
+  token: string
 }
 
 export interface UserContext {
@@ -56,6 +62,10 @@ export type TEvents =
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
   | 'PublishWarningModal'
+  | 'ProfileSettingsModal'
+  | 'CtxMenuBtnClick'
+  | 'ChangeLanguageModal'
+  | 'AssistantDeleted'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
@@ -107,6 +117,8 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
+  language?: { id: number; value: ELOCALES_KEY }
+  cloned_from_id: number | null
 }
 
 export interface BotCardProps {
@@ -202,9 +214,11 @@ export interface LM_Service {
   max_tokens: number
   description: string
   project_url: string
-  api_key: string | null
+  api_key: TKey | null
   is_maintained: boolean
   company_name?: string
+  prompt_blocks?: IPromptBlock[]
+  languages?: { id: number; value: ELOCALES_KEY }[]
 }
 
 export interface ISkill extends IStackElement {
@@ -246,11 +260,6 @@ export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type ChatForm = { message: string }
 
-export type PostDistParams = {
-  display_name: string
-  description: string
-}
-
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
@@ -274,8 +283,18 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
+  | 'transformers-lm-oasst12b-2m'
+  | 'transformers-lm-oasst12b'
+  | 'transformers-lm-gptjt'
+  | 'openai-api-gpt4-32k'
+  | 'openai-api-gpt4'
+  | 'openai-api-chatgpt'
+  | 'openai-api-davinci3'
+  | 'openai-api-chatgpt-16k'
+  | 'anthropic-api-claude-v1'
+  | 'anthropic-api-claude-instant-v1'
 
-export type AssistantFormValues = { display_name: string; description: string }
+export type TLang = 'Russian' | 'English'
 
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 
@@ -348,22 +367,26 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TErrorBoundary = {
+  status: TErrorStatus
+  message: string
+}
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
-
+export enum API_CALL_TAB {
+  CURL = 'CURL',
+  NODE = 'NODE',
+  PYTHON = 'PYTHON',
+}
 export interface IPromptBlock {
-  category: string
-  color: string
-  block: string
-  template: string
-  examples: string
+  category: string | null
   description: string
-  newLineAfter: boolean
-  newLineBefore: boolean
-  ChatGPT: boolean
-  'GPT-3.5': boolean
-  'Open-Assistant Pythia 12B': boolean
-  'GPT-JT 6B': boolean
+  display_name: string
+  example: string
+  id: number
+  newline_after: boolean
+  newline_before: boolean
+  template: string
 }
 
 export enum ELOCALES_KEY {
@@ -385,3 +408,23 @@ export interface IRouterCrumb {
 }
 
 export type TLocale = 'ru' | 'en'
+
+export interface IGaOptions {
+  [key: string]: string | boolean | BotInfoInterface | ISkill | undefined
+  assistant?: BotInfoInterface
+  skill?: ISkill
+}
+
+export interface IGaContext {
+  gaState: IGaOptions
+  setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
+}
+
+export type PageType =
+  | 'all_va_page'
+  | 'allbots'
+  | 'yourbots'
+  | 'admin_panel'
+  | 'va_skillset_page'
+  | 'va_template_skillset_page'
+  | 'va_skill_editor'

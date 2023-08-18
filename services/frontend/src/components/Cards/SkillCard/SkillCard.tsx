@@ -9,6 +9,7 @@ import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { componentTypeMap } from 'mapping/componentTypeMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -41,6 +42,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const isActive = skill.id === activeSKillId
   const nav = useNavigate()
+  const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
 
@@ -50,6 +52,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleSkillCardClick = (e: React.MouseEvent) => {
+    !isActive && skillsPropsOpened('card_click', skill)
     e.stopPropagation()
     triggerSkillSidePanel({
       skill,
@@ -66,6 +69,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleEditBtnClick = (e: React.MouseEvent) => {
+    skillEditorOpened('skill_block', skill)
     if (skill.component_type === ('Generative' as any)) {
       nav(
         generatePath(RoutesList.editor.skillEditor, {

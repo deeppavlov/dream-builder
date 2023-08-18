@@ -15,6 +15,7 @@
   }
   .name {
     color: $text1;
+    @include text_ellipsis;
     @include t3;
   }
 
@@ -77,10 +78,8 @@
 
   .table {
     width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     color: $text2;
+    @include text_ellipsis;
     @include b3;
     li {
       .tableCount {
@@ -102,8 +101,7 @@
     margin-bottom: 4px;
     @include b3;
     span {
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @include text_ellipsis;
     }
     img {
       @include icon_size_24;

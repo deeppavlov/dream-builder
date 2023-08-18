@@ -1,5 +1,11 @@
 .confirmApiTokenUpdate {
   width: 100%;
+  h4 {
+    mark {
+      display: inline-flex;
+    }
+  }
+  max-width: 600px;
 }
 
 .desc {

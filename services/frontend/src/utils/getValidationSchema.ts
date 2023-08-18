@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export const getValidationSchema = () => {
@@ -8,7 +7,7 @@ export const getValidationSchema = () => {
     global: {
       required: t('required'),
       regExpPattern: {
-        value: /^[\s\p{L}.'’,!-?]+$/giu,
+        value: /^[\s\p{L}.'’,!-?«»]+$/giu,
         message: t('invalid'),
       },
       desc: {

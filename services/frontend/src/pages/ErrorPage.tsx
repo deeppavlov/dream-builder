@@ -1,11 +1,13 @@
 import { useRouteError } from 'react-router-dom'
+import { TErrorBoundary } from 'types/types'
 import { PageErrorHandler } from 'components/UI'
 
-const ErrorPage = () => {
+const ErrorPage = ({ status: initStatus }: Partial<TErrorBoundary>) => {
   let error = useRouteError() as any
-  const defaultErrorStatus = 404
-  const status = error?.response?.status ?? defaultErrorStatus
+  const status = error?.response?.status ?? error?.status ?? initStatus
+  const isStatus = status !== undefined && status !== null
 
+  if (!isStatus) throw error
   return <PageErrorHandler status={status} />
 }
 

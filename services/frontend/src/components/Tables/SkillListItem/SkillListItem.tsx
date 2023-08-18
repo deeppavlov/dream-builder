@@ -6,14 +6,10 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Add } from 'assets/icons/add.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import { RoutesList } from 'router/RoutesList'
-import {
-  ICreateComponent,
-  ISkill,
-  SkillAvailabilityType,
-  TLocale,
-} from 'types/types'
+import { ISkill, SkillAvailabilityType, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { componentTypeMap } from 'mapping/componentTypeMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { timeToUTC } from 'utils/timeToUTC'
@@ -28,7 +24,7 @@ interface SkillListItemProps {
   type: SkillAvailabilityType
   forModal?: boolean
   withoutDate?: boolean
-  handleAdd?: (skill: ICreateComponent) => void
+  handleAdd?: (skill: ISkill) => void
 }
 
 export const SkillListItem: FC<SkillListItemProps> = ({
@@ -39,7 +35,11 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   handleAdd,
 }) => {
   const { i18n } = useTranslation()
-  const date = dateToUTC(skill?.date_created, i18n.language as TLocale)
+  const date = dateToUTC(skill?.date_created, i18n.language as TLocale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const time = timeToUTC(
     new Date(skill?.date_created),
     i18n.language as TLocale
@@ -51,11 +51,15 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const { UIOptions } = useUIOptions()
   const { name: distName } = useParams()
   const nav = useNavigate()
+  const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const activeSKillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
+  const isActive = skill.id === activeSKillId
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
+    !isActive && skillsPropsOpened('card_click', skill)
+
     triggerSkillSidePanel({
       skill,
       visibility: type,
@@ -70,6 +74,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     handleAdd && handleAdd(skill)
   }
   const handleEditClick = (e: React.MouseEvent) => {
+    skillEditorOpened('skill_block', skill)
     if (skill.component_type === ('Generative' as any)) {
       // trigger('SkillPromptModal', { skill })
       // trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })

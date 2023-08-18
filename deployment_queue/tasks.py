@@ -54,6 +54,8 @@ def get_user_services(dist: AssistantDist):
     user_services.append("agent")
     if "prompt-selector" in services:
         user_services.append("prompt-selector")
+    if "prompt-selector-ru" in services:
+        user_services.append("prompt-selector-ru")
     return user_services
 
 
@@ -86,6 +88,11 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
             deployment = deployment_crud.update_by_id(db, deployment_id, chat_port=port)
             chat_host, chat_port = deployment.chat_host, deployment.chat_port
 
+    default_prefix_map = {
+        "en": settings.deployer.default_prefix,
+        "ru": f"{settings.deployer.default_prefix}ru_",
+    }
+
     deployer = SwarmDeployer(
         user_identifier=dist.name,
         registry_addr=settings.deployer.registry_url,
@@ -93,7 +100,8 @@ def run_deployer(dist: AssistantDist, deployment_id: int):
         deployment_dict={"services": {"agent": {"ports": [f"{port}:4242"]}}},
         portainer_url=settings.deployer.portainer_url,
         portainer_key=settings.deployer.portainer_key,
-        default_prefix=settings.deployer.default_prefix,
+        default_prefix=default_prefix_map[dist.language],
+        cloud_service_name=settings.deployer.cloud_service,
     )
 
     for state, updates, err in deployer.deploy(dist):

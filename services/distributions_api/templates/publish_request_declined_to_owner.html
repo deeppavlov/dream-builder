@@ -17,11 +17,11 @@
 </header>
 {% endblock %} {% block content %}
 <p>
-	Dear {{[User]}},
+	Dear {{ owner_name or "Dream Builder user" }},
 	<br />
 	<br />
 	I regret to inform you that your application for publishing your Virtual
-	Assistant has been declined. Our team has reviewed your submission and
+	Assistant {{ display_name }} has been declined. Our team has reviewed your submission and
 	unfortunately, it did not meet our publication guidelines and standards.
 	<br />
 	<br />

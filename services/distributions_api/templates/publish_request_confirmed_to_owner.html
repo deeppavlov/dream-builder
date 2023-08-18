@@ -43,16 +43,16 @@ endblock%} {% block header %}
 </header>
 {% endblock %} {% block content %}
 <p>
-	Hello {{ [owner_name] }}
+	Hello {{ owner_name or "Dream Builder user" }}
 	<br />
 	<br />
 	We are delighted to have you on board.
 	<br />
 	<br />
-	We are happy to inform you that your {{ [dist_name] }} Virtual Assistant has
+	We are happy to inform you that your Virtual Assistant {{ display_name }} has
 	been successfully published to our Public library. You can see your published
 	Virtual Assistant here:
-	<a href="{{ [dist_url] }}"> {{[dist_url]}} </a>
+	<a href="{{ dist_url }}"> {{ dist_url }} </a>
 	<br />
 	<br />
 	We are glad you joined us on our path to something great. Thank you for

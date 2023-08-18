@@ -45,19 +45,20 @@
   gap: 24px;
   overflow-y: scroll;
   background-color: $bcgrnd2;
-  &__container {
+  .userContainer {
     display: flex;
     align-items: flex-end;
     gap: 8px;
     height: fit-content;
     width: 100%;
     justify-content: flex-end;
-    &_bot {
-      flex-direction: column;
-      align-items: flex-start;
-    }
   }
-  &__message {
+  .botContainer {
+    @extend .userContainer;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .message {
     @include b2;
     background-color: $bcgrnd3;
     padding: 12px;
@@ -66,28 +67,20 @@
     width: fit-content;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-
-    &_bot {
-      background: rgba(255, 204, 0, 0.1);
-      border-radius: 12px 12px 12px 0px;
-      display: flex;
-      flex-direction: column;
-      .skill {
-        @include b4;
-        color: rgba(0, 0, 0, 0.5);
-      }
+  }
+  .botMessage {
+    @extend .message;
+    background: rgba(255, 204, 0, 0.1);
+    border-radius: 12px 12px 12px 0px;
+    display: flex;
+    flex-direction: column;
+    .skill {
+      @include b4;
+      color: rgba(0, 0, 0, 0.5);
     }
   }
 }
-.right {
-  .right-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px 18px;
-  }
-}
-.start,
+
 .error {
   display: flex;
   font-display: column;
@@ -109,12 +102,6 @@
 }
 .runTest {
   margin-top: 24px;
-}
-.error {
-  color: #ff3b30;
-  button {
-    background-color: #ff3b30;
-  }
 }
 .deployPanel {
   width: 100%;

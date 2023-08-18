@@ -141,7 +141,7 @@ export const RouterConfig: CustomRouteConfig[] = [
   },
   {
     path: '*',
-    element: <ErrorPage />,
+    element: <ErrorPage status={404} />,
   },
   // Dev pages
 

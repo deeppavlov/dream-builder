@@ -20,12 +20,11 @@
 .route {
   @include b3;
   @include accent_text;
+  @include text_ellipsis;
   cursor: pointer;
   margin: 1px 8px;
 
   max-width: 250px; //FIX
-  overflow: hidden;
-  text-overflow: ellipsis;
   &:hover {
     color: $primary1;
     border-bottom: 1px solid $primary1;
@@ -33,27 +32,6 @@
     a {
       color: $primary1;
     }
-  }
-}
-
-.active,
-.route:active {
-  color: #190080;
-  border-bottom: 1px solid #190080;
-
-  a {
-    color: #190080;
-  }
-}
-
-.route {
-  @include b3;
-  @include accent_text;
-  cursor: pointer;
-
-  &:hover {
-    color: $primary1;
-    border-bottom: 1px solid $primary1;
   }
 }
 

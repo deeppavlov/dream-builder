@@ -1,4 +1,5 @@
 .assistantCard {
+  cursor: default;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -43,23 +44,24 @@
     max-height: 88px;
     color: $text2;
     @include hide_text;
-    -webkit-line-clamp: 4; 
+    -webkit-line-clamp: 4;
     @include b3;
   }
-  .dateAndVersion {
+  .langAndVersion {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  .date {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $text2;
-    @include b3;
 
-    svg {
-      @include icon_size_24;
+    .lng {
+      height: 100%;
+      @include d3;
+      display: flex;
+      width: 36px;
+      justify-content: center;
+      align-items: center;
+      color: $text3;
+      border: 1px solid $text3;
+      border-radius: 8px;
     }
   }
 

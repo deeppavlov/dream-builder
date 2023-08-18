@@ -150,14 +150,11 @@ export const AssistantCard: FC<BotCardProps> = ({
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>
             {bot?.description}
           </div>
-          <div className={s.dateAndVersion}>
-            <div className={s.date}>
-              <CalendarIcon />
-              {dateCreated}
-            </div>
+          <div className={s.langAndVersion}>
             <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
               {publishState}
             </SmallTag>
+            <div className={s.lng}>{bot.language?.value.toUpperCase()}</div>
           </div>
         </div>
         <div className={s.btns}>

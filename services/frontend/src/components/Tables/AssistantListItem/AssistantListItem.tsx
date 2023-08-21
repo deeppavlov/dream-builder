@@ -197,7 +197,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.lng}>{bot.language?.value.toUpperCase()}</div>
+        <div className={s.lng}>{bot.language?.value}</div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>

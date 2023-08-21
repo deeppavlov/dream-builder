@@ -154,7 +154,7 @@ export const AssistantCard: FC<BotCardProps> = ({
             <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
               {publishState}
             </SmallTag>
-            <div className={s.lng}>{bot.language?.value.toUpperCase()}</div>
+            <div className={s.lng}>{bot.language?.value}</div>
           </div>
         </div>
         <div className={s.btns}>

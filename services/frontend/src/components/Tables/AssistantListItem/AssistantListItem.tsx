@@ -197,10 +197,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
-          <p className={s.time}>{time || '------'}</p>
-        </div>
+        <div className={s.lng}>{bot.language?.value.toUpperCase()}</div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>

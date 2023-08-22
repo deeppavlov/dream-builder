@@ -510,7 +510,7 @@
     "author": "Author",
     "desc": "Description",
     "visibility": "Visibility",
-    "created": "Created",
+    "created": "Language",
     "actions": "Actions",
     "create_from_scratch_btn": "Create From Scratch"
   },

@@ -67,7 +67,7 @@
   align-items: start;
   gap: 4px;
   width: 160px;
-  
+
   img {
     @include icon_size_24;
     border-radius: 50%;
@@ -111,19 +111,19 @@
   display: flex;
   justify-content: center;
 }
-.date {
+.lng {
+  height: 26px;
+  @include d3;
   display: flex;
-  flex-direction: column;
+  width: 36px;
   justify-content: center;
-  width: fit-content;
-  padding-top: 12px;
-  .ddmmyyyy {
-    white-space: nowrap;
-    @include t4;
-  }
-  .time {
-    @include b4;
-  }
+  align-items: center;
+  margin: auto;
+  color: $text3;
+  border: 1px solid $text3;
+  border-radius: 8px;
+  text-transform: uppercase;
+  line-height: 1;
 }
 .btns_area {
   display: flex;

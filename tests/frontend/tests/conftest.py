@@ -1,9 +1,7 @@
 import pytest
 from selenium import webdriver
 import time
-
-
-# from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 
 
 def pytest_addoption(parser):
@@ -16,12 +14,15 @@ def browser(request):
     browser = 0
     browser_name = request.config.getoption("browser_name")
 
+    options = Options()
+    options.add_argument("lang=en-GB")
+
     if browser_name == "chrome":
-       browser = webdriver.Chrome()
+        browser = webdriver.Chrome(options=options)
     elif browser_name == "firefox":
-       browser = webdriver.Firefox()
+        browser = webdriver.Firefox()
     elif browser_name == "edge":
-       browser = webdriver.Edge()
+        browser = webdriver.Edge()
 
     print(f"\nstart {browser_name} browser for test..")
 

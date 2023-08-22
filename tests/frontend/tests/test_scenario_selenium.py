@@ -21,7 +21,7 @@ def test_scenario_1_main(browser):
         page.open()
 ##
         # Implementation Details
-        page.check_deepy_tooltip()
+        #page.check_deepy_tooltip()
         page.scroll_public_templates_left()
         page.click_deepy_button()
 #

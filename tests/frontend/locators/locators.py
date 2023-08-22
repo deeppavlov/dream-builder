@@ -209,6 +209,17 @@ class SkillEditorPageLocators:
 
 
 class ProfilePageLocators:
+    ACCOUNT_TAB = (By.XPATH, "//li[contains(text(),'Account')]")
+    PERSONAL_TOKENS = (By.XPATH, "//li[contains(text(),'Personal tokens')]")
+
+    CURRENT_LANGUAGE = (By.XPATH,
+                        "//li[contains(text(),'//span[text()='Language']/../span[contains(@class,'_value')]')]")
+    CHANGE_LANGUAGE = (By.XPATH, "//button[text()='Change language']")
+    RADIOBUTTON_ENGLISH = (By.CSS_SELECTOR, "input[id='English']")
+    RADIOBUTTON_RUSSIAN = (By.CSS_SELECTOR, "input[id='Russian']")
+    SAVE_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_footer')]/button[contains(@class,'primary')]")
+    CANCEL_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_footer')]/button[contains(@class,'secondary')]")
+
     TOKEN_TEXTAREA = (By.CSS_SELECTOR, "input[name='token']")
     CHOOSE_TOKEN_SERVICES_DROPDOWN = (By.CSS_SELECTOR, "input[name='service']")
     CHOOSE_TOKEN_SERVICE_OPENAI = (By.XPATH, "//span[contains(text(),'OpenAI')]")
@@ -267,11 +278,11 @@ class DeepyLocators:
     #DEEPY_TOOLTIP = (By.CSS_SELECTOR, "button#helperTab")
 
     MESSAGE_TEXTAREA = (By.XPATH, "//div[@id='sp_left']//textarea[contains(@class,'_dialogSidePanel')]")
-    SEND_BUTTON = (By.XPATH, "//div[@id='sp_left']//button[contains(@class,'_button')]")
+    SEND_BUTTON = (By.XPATH, "//div[@id='sp_left']//button[contains(@class, 'primary')]")
+    RESTART_BUTTON = (By.XPATH, "//div[@id='sp_left']//button[contains(@class, 'secondary')]")
 
-    USER_MESSAGE = (By.XPATH, "//div[1]/span[contains(@class,'_chat')]")
-    DEEPY_MESSAGE = (By.XPATH, "//div[2]/span[contains(@class,'_chat')]")
-    # RESTART_DIALOG_BUTTON = (By.CSS_SELECTOR, "")
+    USER_MESSAGE = (By.XPATH, "//div[@id='sp_left']//span[contains(@class,'_botMessage')]")
+    DEEPY_MESSAGE = (By.XPATH, "//div[@id='sp_left']//span[contains(@class,'_botMessage')]")
     CLOSE_BUTTON = (By.XPATH, "//div[@id='sp_left']//button[contains(@class,'_close')]")
 
 

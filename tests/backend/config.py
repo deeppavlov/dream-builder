@@ -73,7 +73,7 @@ public_va_names_en = ["ai_faq_assistant",
                       "marketing_assistant",
                       "nutrition_assistant",
                       "multiskill_ai_assistant",
-                      "dream_persona_openai_prompted"
+                      "dream_persona_openai_prompted",
 
                       "universal_prompted_assistant",
                       "deepy_assistant",

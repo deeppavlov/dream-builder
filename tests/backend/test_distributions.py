@@ -89,7 +89,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.parametrize('va_name', [public_va_names_en[0], public_va_names_ru[0]])
     @qase.title(f"{counter()}. test_clone_public_va")
     def test_clone_public_va(self, va_name):
@@ -101,10 +101,11 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_clone_created_from_scratch_ru_va")
     def test_clone_created_from_scratch_ru_va(self):
         display_name = va_data["name"]
+        language = "ru"
         user = UserMethods(auth_token_user1)
         name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
         clone_name = user.clone_va(name)["name"]
@@ -340,7 +341,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.parametrize('va_name', [public_va_names_en[0], public_va_names_ru[0]])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va_unauthorized")
     def test_get_dialog_session_history_with_public_template_va_unauthorized(self, va_name):

@@ -219,25 +219,7 @@ class UserMethods:
             },
             json={
                 "display_name": "Test_clone_name",
-                "description": "Test_clone_description",
-                "annotators": [
-                    "string",
-                ],
-                "response_annotators": [
-                    "string",
-                ],
-                "candidate_annotators": [
-                    "string",
-                ],
-                "skill_selectors": [
-                    "string",
-                ],
-                "skills": [
-                    "string",
-                ],
-                "response_selectors": [
-                    "string",
-                ],
+                "description": "Test_clone_description"
             },
         )
         assert_status_code(response, 201)

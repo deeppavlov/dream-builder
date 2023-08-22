@@ -6,8 +6,9 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
-import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
+import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
 import BaseContextMenu from 'components/Menus/BaseContextMenu/BaseContextMenu'
@@ -44,6 +45,7 @@ const AssistantContextMenu: FC<Props> = ({
   } = useGaAssistant()
   const { chatOpened } = useGaChat()
   const { visibilityVaButtonClick } = useGaPublication()
+  const { shareVaButtonClick } = useGaEvents()
 
   const handlePropertiesBtnClick = () => {
     vaPropsOpened('va_card_context_menu', bot)
@@ -79,7 +81,11 @@ const AssistantContextMenu: FC<Props> = ({
     trigger('PublishAssistantModal', { bot })
   }
 
-  const handleShareBtnClick = () => trigger('ShareAssistantModal', { bot })
+  const handleShareBtnClick = () => {
+    const source = inSidePanel ? 'va_sidepanel' : 'va_block'
+    shareVaButtonClick(source, bot)
+    trigger('ShareAssistantModal', { bot })
+  }
 
   const handleDeleteBtnClick = () => {
     const source = inSidePanel ? 'va_sidepanel' : 'va_block'

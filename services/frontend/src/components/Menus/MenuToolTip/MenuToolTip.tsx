@@ -6,6 +6,7 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { trigger } from 'utils/events'
@@ -28,6 +29,7 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
   const { renameVaButtonClick, deleteVaButtonClick } = useGaAssistant()
   const { visibilityVaButtonClick } = useGaPublication()
   const { addSkillButtonClick } = useGaSkills()
+  const { shareVaButtonClick } = useGaEvents()
   const dist = getDist({ distName })?.data
   const isPrivate = dist?.visibility === VISIBILITY_STATUS.PRIVATE
 
@@ -42,14 +44,17 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     trigger('SkillsListModal', { mockSkills })
   }
   const handlePublishClick = () => {
-    visibilityVaButtonClick('va_control_block', bot)
+    visibilityVaButtonClick('va_action_menu', bot)
     trigger('PublishAssistantModal', { bot, from: 'editor' })
   }
   const handleDeleteClick = () => {
     deleteVaButtonClick('va_action_menu', bot)
     trigger('DeleteAssistantModal', { bot, from: 'editor' })
   }
-  const handleShareClick = () => trigger('ShareAssistantModal', distName)
+  const handleShareClick = () => {
+    shareVaButtonClick('va_action_menu', bot)
+    trigger('ShareAssistantModal', distName)
+  }
 
   return (
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>

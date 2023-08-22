@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { TOOLTIP_DELAY } from 'constants/constants'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { SvgIcon } from 'components/Helpers'
 import { BaseToolTip } from 'components/Menus'
 import s from './IntegrationTab.module.scss'
@@ -16,8 +17,10 @@ export const IntegrationTab = ({ isActive }: Props) => {
   const { name } = useParams()
   const { t } = useTranslation()
   let cx = classNames.bind(s)
+  const { vaIntegrationsOpened } = useGaEvents()
 
   const integrationClickHandler = () => {
+    vaIntegrationsOpened()
     navigate(generatePath(RoutesList.editor.integration, { name: name! }))
   }
   return (

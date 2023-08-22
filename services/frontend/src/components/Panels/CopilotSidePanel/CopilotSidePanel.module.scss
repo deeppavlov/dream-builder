@@ -62,7 +62,6 @@
     width: fit-content;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-
   }
   .botMessage {
     @extend .message;
@@ -85,6 +84,9 @@
     width: 100%;
     justify-content: flex-end;
 
+    &.hidden {
+      display: none;
+    }
   }
   .botContainer {
     @extend .userContainer;

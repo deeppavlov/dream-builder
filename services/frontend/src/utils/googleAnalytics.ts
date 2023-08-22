@@ -46,7 +46,7 @@ export const getView = (pageType: PageType, isTableView: boolean) => {
 export const safeFunctionWrapper =
   <T extends any[]>(func: (...args: T) => void) =>
   (...args: T) => {
-    if (process.env.NODE_ENV !== 'production') return
+    if (import.meta.env.MODE === 'DEV') return
 
     try {
       func(...args)

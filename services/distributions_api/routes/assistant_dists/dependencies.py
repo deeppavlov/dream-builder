@@ -38,10 +38,7 @@ def virtual_assistant_view_permission(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
 
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK:
-        if user:
-            return virtual_assistant
-        else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not logged in")
+        return virtual_assistant
 
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION:
         raise NotImplementedError(

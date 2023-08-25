@@ -4,15 +4,13 @@ import { FC, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
-import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import { RoutesList } from 'router/RoutesList'
-import { BotCardProps, TLocale } from 'types/types'
+import { BotCardProps } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
-import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button, Kebab } from 'components/Buttons'
@@ -45,10 +43,7 @@ export const AssistantCard: FC<BotCardProps> = ({
     infoSPId === activeAssistantId ||
     bot.id === activeAssistantId ||
     bot.id === activeChat?.id
-  const dateCreated = dateToUTC(
-    new Date(bot?.date_created),
-    i18n.language as TLocale
-  )
+
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   let cx = classNames.bind(s)
 
@@ -150,14 +145,11 @@ export const AssistantCard: FC<BotCardProps> = ({
           <div className={s.desc} data-tooltip-id={'botCardDesc' + bot?.name}>
             {bot?.description}
           </div>
-          <div className={s.dateAndVersion}>
-            <div className={s.date}>
-              <CalendarIcon />
-              {dateCreated}
-            </div>
+          <div className={s.langAndVersion}>
             <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
               {publishState}
             </SmallTag>
+            <div className={s.lng}>{bot.language?.value}</div>
           </div>
         </div>
         <div className={s.btns}>

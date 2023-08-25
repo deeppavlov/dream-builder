@@ -8,7 +8,7 @@ import { ReactComponent as Clone } from 'assets/icons/clone.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import DB from 'assets/icons/logo.png'
 import { RoutesList } from 'router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
+import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import {
   DEPLOY_STATUS,
   PUBLISH_REQUEST_STATUS,
@@ -18,9 +18,7 @@ import { getDeploy } from 'api/deploy'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
-import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
-import { timeToUTC } from 'utils/timeToUTC'
 import { Button, Kebab } from 'components/Buttons'
 import { AssistantContextMenu } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
@@ -40,17 +38,12 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   disabled,
 }) => {
   const cx = classNames.bind(s)
-  const { i18n } = useTranslation()
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
   const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
     useGaAssistant()
-  const dateCreated = dateToUTC(
-    new Date(bot?.date_created),
-    i18n.language as TLocale
-  )
-  const time = timeToUTC(new Date(bot?.date_created), i18n.language as TLocale)
+
   const { UIOptions } = useUIOptions()
   const infoSPId = `info_${bot.id}`
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
@@ -197,10 +190,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
-          <p className={s.time}>{time || '------'}</p>
-        </div>
+        <div className={s.lng}>{bot.language?.value}</div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>

@@ -20,8 +20,10 @@ async def get_current_user(token: str = Header(), auth_type: str = Header(defaul
     return schemas.UserRead(**json_data)
 
 
-async def get_current_user_or_none(token: Optional[str] = Header(default="")) -> Optional[schemas.UserRead]:
-    header = {"token": token}
+async def get_current_user_or_none(
+    token: Optional[str] = Header(default=""), auth_type: str = Header(default="")
+) -> Optional[schemas.UserRead]:
+    header = {"token": token, "auth-type": auth_type}
     user = None
 
     auth_url = f"{settings.url.auth_api}/auth/token"
@@ -34,7 +36,6 @@ async def get_current_user_or_none(token: Optional[str] = Header(default="")) ->
                 user = schemas.UserRead(**json_data)
 
     return user
-
 
 
 async def get_admin_user(user: schemas.UserRead = Depends(get_current_user)) -> Optional[schemas.UserRead]:

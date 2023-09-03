@@ -9,20 +9,24 @@ const getClearUrl = (url: string) => {
   return urlOject.toString()
 }
 
-export const exchangeAuthCode = async (code: string) => {
+export const exchangeAuthCode = (
+  code: string,
+  authType: 'google' | 'github'
+) => {
   let axiosConfig = {
     mode: 'no-cors',
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'auth-type': authType,
     },
   }
 
-  await authApi
-    .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
+  authApi
+    .post(`exchange_authcode?auth_code=${code}`, '', axiosConfig)
     .then(({ data }) => setLocalStorageUser(data))
     .catch(() => console.log('ExchangeAuthCode failed!'))
-
-  const beforeLoginUrl =
-    getBeforeLoginLocation() ?? getClearUrl(location.origin)
-  location.href = beforeLoginUrl
+    .finally(() => {
+      const beforeLoginUrl =
+        getBeforeLoginLocation() ?? getClearUrl(location.origin)
+      location.href = beforeLoginUrl
+    })
 }

@@ -4,9 +4,9 @@ import Button from './Button/Button'
 import { Checkbox } from './Checkbox/Checkbox'
 import ContextMenuButton from './ContextMenuButton/ContextMenuButton'
 import EditPencilButton from './EditPencilButton/EditPencilButton'
-import GoogleSignInButton from './GoogleSignInButton/GoogleSignInButton'
 import { Kebab } from './Kebab/Kebab'
 import { RadioButton } from './RadioButton/RadioButton'
+import SignInButton from './SignInButton/SignInButton'
 import { SwitchButton } from './SwitchButton/SwitchButton'
 import { SwitchButtonAPICall } from './SwitchButtonAPICall/SwitchButtonAPICall'
 import { SwitchViewButton } from './SwitchViewButton/SwitchViewButton'
@@ -20,7 +20,7 @@ export {
   Checkbox,
   ContextMenuButton,
   EditPencilButton,
-  GoogleSignInButton,
+  SignInButton,
   Kebab,
   RadioButton,
   SwitchButton,

@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import { login } from 'api/user'
+import { trigger } from 'utils/events'
 import { Button } from 'components/Buttons'
 
-const GoogleSignInButton = () => {
+const SignInButton = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'topbar.btns' })
 
-  const handleBtnClick = () => login()
+  const handleBtnClick = () => trigger('SignInModal', {})
 
   return (
     <Button theme='secondary' small props={{ onClick: handleBtnClick }}>
@@ -14,4 +14,4 @@ const GoogleSignInButton = () => {
   )
 }
 
-export default GoogleSignInButton
+export default SignInButton

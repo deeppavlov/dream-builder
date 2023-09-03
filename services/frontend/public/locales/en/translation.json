@@ -210,9 +210,12 @@
       }
     },
     "sign_in": {
-      "header": "To build your own <mark>Assistant</mark>, please sign in",
+      "build": "To build your own <mark>Assistant</mark>, please sign in",
+      "settings": "Sign in to access the settings",
+      "sign_in": "<b>Sign in</b>",
       "btns": {
-        "sign_in": "Sign in"
+        "google_sign_in": "Sign in with Google",
+        "github_sign_in": "Sign in with GitHub"
       }
     },
     "skill": {

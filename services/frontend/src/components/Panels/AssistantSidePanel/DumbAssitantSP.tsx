@@ -1,6 +1,6 @@
 import { useUIOptions } from 'context'
 import { useEffect, useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import DB from 'assets/icons/logo.png'
@@ -41,12 +41,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
-  const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
-  const author = isDeepyPavlova
-    ? 'Dream Builder Team'
-    : bot?.author?.fullname
-    ? bot?.author?.fullname
-    : bot?.author?.given_name + ' ' + bot?.author?.family_name
+  const isDeepyPavlova =
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
 
   const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const { name } = useParams()
@@ -60,6 +57,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
 
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
+      msg: <Trans i18nKey='modals.sign_in.build' />,
     })
   }
 

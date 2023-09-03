@@ -79,7 +79,7 @@ export const useGaAssistant = () => {
           template_va_id: template.id,
           template_va_name: template.display_name,
           template_va_author_id: template.author.id,
-          template_va_author_name: template.author.fullname || 'none',
+          template_va_author_name: template.author.name || 'none',
           template_va_language: template.language?.value,
           event_type,
         })
@@ -119,7 +119,7 @@ export const useGaAssistant = () => {
         template_va_id: assistant?.id,
         template_va_name: assistant?.display_name,
         template_va_author_id: assistant?.author.id,
-        template_va_author_name: assistant?.author.fullname || 'none',
+        template_va_author_name: assistant?.author.name || 'none',
         template_va_language: assistant?.language?.value,
         event_type,
       })
@@ -138,7 +138,7 @@ export const useGaAssistant = () => {
           template_va_id: template?.id,
           template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
-          template_va_author_name: template?.author.fullname || 'none',
+          template_va_author_name: template?.author.name || 'none',
           template_va_language: template?.language?.value,
           event_type,
         })
@@ -171,7 +171,7 @@ export const useGaAssistant = () => {
           template_va_id: template?.id,
           template_va_name: template?.display_name,
           template_va_author_id: template?.author.id,
-          template_va_author_name: template?.author.fullname || 'none',
+          template_va_author_name: template?.author.name || 'none',
           template_va_language: template?.language?.value,
           event_type,
         })

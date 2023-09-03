@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from 'assets/icons/clone.svg'
@@ -70,12 +70,8 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
     : null
 
   const isDeepyPavlova =
-    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.sub
-  const author = isDeepyPavlova
-    ? 'Dream Builder Team'
-    : bot?.author?.fullname
-    ? bot?.author?.fullname
-    : bot?.author?.given_name + ' ' + bot?.author?.family_name
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
 
   const handleAssistantListItemClick = () => {
     const isOpen = activeAssistantId !== infoSPId
@@ -107,6 +103,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
+      msg: <Trans i18nKey='modals.sign_in.build' />,
     })
   }
 

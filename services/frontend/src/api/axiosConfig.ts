@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getAuthType } from 'utils/localStorageAuth'
 import {
   getAccessToken,
   getLocale,
@@ -34,6 +35,7 @@ privateApi.interceptors.request.use(
     if (!config.headers?.token) {
       config.headers!.token = getAccessToken()
       config.headers!.lang = getLocale()
+      config.headers!['auth-type'] = getAuthType()
     }
     return config
   },

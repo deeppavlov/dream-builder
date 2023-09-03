@@ -1,22 +1,23 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { exchangeAuthCode } from 'api/user'
+import { setAuthType } from 'utils/localStorageAuth'
 
-/**
- * Parsing `auth_code` that comes from Google
- */
-export const GoogleAuthPage = () => {
+export const AuthPage = () => {
   const nav = useNavigate()
 
   useEffect(() => {
     const code = new URLSearchParams(location.search).get('code')
+
+    const authType = location.search.includes('google') ? 'google' : 'github'
+    setAuthType(authType)
 
     if (!code) {
       nav('/')
       return
     }
 
-    exchangeAuthCode(code)
+    exchangeAuthCode(code, authType)
   }, [])
 
   return <>Redirecting...</>

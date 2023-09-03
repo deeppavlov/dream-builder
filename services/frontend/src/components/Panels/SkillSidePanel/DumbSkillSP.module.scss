@@ -67,7 +67,8 @@
 .item {
   width: 100%;
   display: flex;
-  align-items: center;
+  gap: 4px;
+  align-items: flex-start;
   justify-content: space-between;
   @include componentType;
   @include modelType;

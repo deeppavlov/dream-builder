@@ -27,13 +27,18 @@ export interface IPreviewContext {
 }
 
 export interface IAuthor {
-  email: string
-  family_name: string
-  fullname: string
-  given_name: string
   id: number
+  email: string
+  name: string
   picture: string
-  sub: string
+  outer_id: string
+  role: {
+    id: number
+    name: string
+    can_set_roles: boolean
+    can_confirm_publish: boolean
+    can_view_private_assistants: boolean
+  }
 }
 
 export type TEvents =

@@ -51,7 +51,7 @@ export const useGaChat = () => {
           template_va_id: assistant.id,
           template_va_name: assistant.display_name,
           template_va_author_id: assistant.author.id,
-          template_va_author_name: assistant.author.fullname,
+          template_va_author_name: assistant.author.name,
           template_va_language: assistant?.language?.value,
           additional_services,
           event_type,
@@ -93,7 +93,7 @@ export const useGaChat = () => {
         template_va_name: assistant.display_name,
         template_va_language: assistant?.language?.value,
         template_va_author_id: assistant.author.id,
-        template_va_author_name: assistant.author.fullname,
+        template_va_author_name: assistant.author.name,
         additional_services,
         event_type,
       })
@@ -132,7 +132,7 @@ export const useGaChat = () => {
           template_va_name: assistant?.display_name,
           template_va_language: assistant?.language?.value,
           template_va_author_id: assistant?.author.id,
-          template_va_author_name: assistant?.author.fullname,
+          template_va_author_name: assistant?.author.name,
           additional_services,
           event_type,
         })

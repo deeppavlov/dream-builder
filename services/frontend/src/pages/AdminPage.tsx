@@ -165,10 +165,7 @@ export const AdminPage = () => {
                       </span>
                       <span>
                         author:
-                        {deployment?.virtual_assistant?.author?.fullname ||
-                          deployment?.virtual_assistant?.author?.given_name +
-                            ' ' +
-                            deployment?.virtual_assistant?.author?.family_name}
+                        {deployment?.virtual_assistant?.author?.name}
                       </span>
                       <span
                         style={{ cursor: 'pointer' }}
@@ -266,12 +263,7 @@ const Request: FC<RequestProps> = ({
               style={{ height: '20px', borderRadius: '50%' }}
               src={r?.virtual_assistant?.author?.picture}
             />
-            <mark>
-              {r?.virtual_assistant?.author?.fullname ||
-                r?.virtual_assistant?.author?.given_name +
-                  ' ' +
-                  r?.virtual_assistant?.author?.family_name}
-            </mark>
+            <mark>{r?.virtual_assistant?.author?.name}</mark>
           </span>
           <span>
             <b>email: </b>

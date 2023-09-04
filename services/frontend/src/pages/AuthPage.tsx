@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { exchangeAuthCode } from 'api/user'
 import { setAuthType } from 'utils/localStorageAuth'
 
-export const AuthPage = () => {
+export const AuthPage = ({ authType }: { authType: 'google' | 'github' }) => {
   const nav = useNavigate()
 
   useEffect(() => {
     const code = new URLSearchParams(location.search).get('code')
-
-    const authType = location.search.includes('google') ? 'google' : 'github'
     setAuthType(authType)
 
     if (!code) {

@@ -3,6 +3,7 @@ export const RoutesList = {
   botsAll: '/allbots',
   yourBots: '/yourbots',
   code: '/code',
+  githubCode: '/ghcode',
   editor: {
     default: '/:name',
     skills: '/:name/skills?',

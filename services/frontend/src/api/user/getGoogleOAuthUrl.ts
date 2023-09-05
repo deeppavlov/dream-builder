@@ -3,7 +3,7 @@ export const getGoogleOAuthURL = () => {
 
   const options = {
     redirect_uri: import.meta.env[
-      'VITE_GOOGLE_OAUTH_REDIRECT_URL_' + import.meta.env.MODE
+      'VITE_OAUTH_REDIRECT_URL_' + import.meta.env.MODE
     ] as string,
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
     access_type: 'offline',

@@ -6,6 +6,9 @@ class BasePageLocators:
     SIGN_IN_BUTTON = (By.XPATH, "//button[contains(text(),'Sign in')]")
     SIGN_IN_BUTTON_MODAL_WINDOW = (By.XPATH, "//button[contains(@class,'_sign-in-btn')]")
 
+    SIGN_IN_WITH_GOOGLE = (By.XPATH, "//img[@alt='Google']/..")
+    SIGN_IN_WITH_GITHUB = (By.XPATH, "//img[@alt='GitHub']/..")
+
     #MAIN MENU
     MAIN_MENU_BUTTON = (By.XPATH, "//div[contains(@class,'_menu')]")
     ABOUT_BUTTON = (By.XPATH, "//a[contains(text(),'About')]/..")
@@ -37,8 +40,17 @@ class BasePageLocators:
 
 class GoogleAuthPageLocators:
     EMAIL_TEXTAREA = (By.CSS_SELECTOR, "input[type='email']")
+    #NEXT_BUTTON = (By.XPATH, "//span[text()='Next']")
     NEXT_BUTTON = (By.XPATH, "//span[text()='Далее']")
     USER_EMAIL_BUTTON = (By.CSS_SELECTOR, f"[data-email='{users_email}']")
+
+class GithubAuthPageLocators:
+    EMAIL_TEXTAREA = (By.CSS_SELECTOR, "[name='login']")
+    PASSWORD_TEXTAREA = (By.CSS_SELECTOR, "[name='password']")
+    SIGN_IN = (By.CSS_SELECTOR, "[value=Sign in]")
+
+    VERIFICATION_CODE = (By.CSS_SELECTOR, "[type='text']")
+    VERIFY_BUTTON = (By.CSS_SELECTOR, "[data-disable-with='Verifying…']")
 
 
 class AllGAPageLocators:
@@ -268,7 +280,7 @@ class DialogPanelLocators:
     SEND_BUTTON = (By.CSS_SELECTOR, "[id='sp_right'] button[type='submit']")
 
     USER_MESSAGE = (By.XPATH, "//div[1]/span[contains(@class,'_chat')]")
-    BOT_MESSAGE = (By.XPATH, "//div[2]/span[contains(@class,'_chat')]")
+    BOT_MESSAGE = (By.XPATH, "//div[2]/span[contains(@class,'_bot')]")
 
     RESTART_DIALOG_BUTTON = (By.XPATH, "//div[@id='sp_right']//button[contains(@class,'secondary')] ")
     CLOSE_BUTTON = (By.XPATH, "//div[@id='sp_right']//button[contains(@class,'_close')] ")

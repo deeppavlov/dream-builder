@@ -7,6 +7,35 @@ import time
 
 
 class ProfilePage(BasePage):
+
+    def switch_to_personal_tokens_tab(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.PERSONAL_TOKENS)
+        textarea.click()
+
+    def switch_to_personal_account_tab(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.ACCOUNT_TAB)
+        textarea.click()
+
+    def click_change_language(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.CHANGE_LANGUAGE)
+        textarea.click()
+
+    def select_english_language(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.RADIOBUTTON_ENGLISH)
+        textarea.click()
+
+    def select_russian_language(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.RADIOBUTTON_RUSSIAN)
+        textarea.click()
+
+    def click_save_button_language_mw(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.SAVE_BUTTON)
+        textarea.click()
+
+    def click_cancel_button_language_mw(self):
+        textarea = self.browser.find_element(*ProfilePageLocators.CANCEL_BUTTON)
+        textarea.click()
+
     def enter_token(self):
         textarea = self.browser.find_element(*ProfilePageLocators.TOKEN_TEXTAREA)
         textarea.click()

@@ -18,7 +18,7 @@ def browser(request):
     options.add_argument("lang=en-GB")
 
     if browser_name == "chrome":
-        browser = webdriver.Chrome(options=options)
+        browser = webdriver.Chrome("C:/chromedriver/chromedriver.exe", options=options)
     elif browser_name == "firefox":
         browser = webdriver.Firefox()
     elif browser_name == "edge":

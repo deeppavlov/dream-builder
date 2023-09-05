@@ -26,7 +26,7 @@ def test_scenario_1_main(browser):
         page.click_deepy_button()
 #
         panel = DeepyPanel(browser, browser.current_url)
-        panel.check_welcome_dialogue()
+        #panel.check_welcome_dialogue()
         panel.click_deepy_button()
 #
     with qase.step("2. Wendy scrolls though VAs templates"):

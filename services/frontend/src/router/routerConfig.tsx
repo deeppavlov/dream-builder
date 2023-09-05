@@ -137,11 +137,7 @@ export const RouterConfig: CustomRouteConfig[] = [
   },
   {
     path: RoutesList.code,
-    element: <AuthPage authType='google' />,
-  },
-  {
-    path: RoutesList.githubCode,
-    element: <AuthPage authType='github' />,
+    element: <AuthPage />,
   },
   {
     path: '*',

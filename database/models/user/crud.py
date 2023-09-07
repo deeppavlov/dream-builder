@@ -1,58 +1,34 @@
-from typing import Optional
-
-from sqlalchemy import select, update
+from database.models import providers
+from database.models.user.model import GeneralUser
+from sqlalchemy import String, cast, select
 from sqlalchemy.orm import Session
 
-from database.models.user.model import GoogleUser
 
-
-def get_all(db: Session) -> [GoogleUser]:
-    return db.scalars(select(GoogleUser)).all()
-
-
-def check_user_exists(db: Session, email) -> bool:
-    if db.query(GoogleUser).filter(GoogleUser.email == email).first():
-        return True
-    return False
-
-
-def add_google_user(db: Session, user) -> GoogleUser:
-    db_user = GoogleUser(
-        email=user.email,
-        sub=user.sub,
-        picture=user.picture,
-        fullname=user.name,
-        given_name=user.given_name,
-        family_name=user.family_name,
-        role_id=1,
+def add_user(
+    db: Session,
+    provider_name: str,
+    outer_id: str,
+) -> GeneralUser:
+    provider_id = providers.crud.get_provider_id_by_name(db, provider_name)
+    user = GeneralUser(
+        provider_id=provider_id,
+        outer_id=outer_id,
     )
-    db.add(db_user)
+    db.add(user)
     db.commit()
-    db.refresh(db_user)
-    return db_user
-
-
-def get_by_id(db: Session, user_id: int) -> Optional[GoogleUser]:
-    return db.get(GoogleUser, user_id)
-
-
-def get_by_sub(db: Session, sub: str) -> GoogleUser:
-    return db.scalar(select(GoogleUser).filter_by(sub=sub))
-
-
-def get_by_email(db: Session, email: str) -> GoogleUser:
-    return db.scalar(select(GoogleUser).filter_by(email=email))
-
-
-def get_by_role(db: Session, role_id: int) -> [GoogleUser]:
-    return db.scalars(select(GoogleUser).filter_by(role_id=role_id)).all()
-
-
-def update_by_id(db: Session, id: int, **kwargs) -> GoogleUser:
-    kwargs = {k: v for k, v in kwargs.items() if k in GoogleUser.__table__.columns.keys()}
-
-    user = db.scalar(update(GoogleUser).filter_by(id=id).values(**kwargs).returning(GoogleUser))
-    if not user:
-        raise ValueError(f"GoogleUser with id={id} does not exist")
-
+    db.refresh(user)
     return user
+
+
+def get_general_user_by_outer_id(db: Session, outer_id: str, provider_name: str) -> GeneralUser:
+    provider_id = providers.crud.get_provider_id_by_name(db, provider_name)
+    gu = GeneralUser
+    return db.query(gu).where(gu.provider_id == provider_id, gu.outer_id == cast(outer_id, String)).first()
+
+
+def get_all(db: Session) -> [GeneralUser]:
+    return db.scalars(select(GeneralUser)).all()
+
+
+def get_by_id(db: Session, id: int) -> GeneralUser:
+    return db.query(GeneralUser).where(GeneralUser.id == id).first()

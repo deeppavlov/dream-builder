@@ -1,22 +1,16 @@
 from database.models.component.model import Component
-
-from sqlalchemy import select, and_, delete
+from database.models.virtual_assistant import crud as virtual_assistant_crud
+from database.models.virtual_assistant_component.model import VirtualAssistantComponent
+from sqlalchemy import and_, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from database.models.virtual_assistant_component.model import VirtualAssistantComponent
-from database.models.virtual_assistant import crud as virtual_assistant_crud
 
-
-def get_by_id(
-    db: Session, virtual_assistant_component_id: int
-) -> [VirtualAssistantComponent]:
+def get_by_id(db: Session, virtual_assistant_component_id: int) -> [VirtualAssistantComponent]:
     return db.get(VirtualAssistantComponent, virtual_assistant_component_id)
 
 
-def get_by_component_name(
-    db: Session, virtual_assistant_id: int, component_name: str
-) -> VirtualAssistantComponent:
+def get_by_component_name(db: Session, virtual_assistant_id: int, component_name: str) -> VirtualAssistantComponent:
     va_component = db.scalar(
         select(VirtualAssistantComponent).filter(
             and_(
@@ -38,33 +32,23 @@ def get_by_component_name_like(
         select(VirtualAssistantComponent).filter(
             and_(
                 VirtualAssistantComponent.virtual_assistant_id == virtual_assistant_id,
-                VirtualAssistantComponent.component.has(
-                    Component.name.like(f"%{component_name_pattern}")
-                ),
+                VirtualAssistantComponent.component.has(Component.name.like(f"%{component_name_pattern}")),
             )
         )
     ).all()
 
 
 def get_all_by_virtual_assistant_id(db: Session, virtual_assistant_id: int) -> [VirtualAssistantComponent]:
-    return db.scalars(
-        select(VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)
-    ).all()
+    return db.scalars(select(VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant_id)).all()
 
 
-def get_all_by_virtual_assistant_name(
-    db: Session, virtual_assistant_name: str
-) -> [VirtualAssistantComponent]:
+def get_all_by_virtual_assistant_name(db: Session, virtual_assistant_name: str) -> [VirtualAssistantComponent]:
     virtual_assistant = virtual_assistant_crud.get_by_name(db, virtual_assistant_name)
 
-    return db.scalars(
-        select(VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)
-    ).all()
+    return db.scalars(select(VirtualAssistantComponent).filter_by(virtual_assistant_id=virtual_assistant.id)).all()
 
 
-def create(
-    db: Session, virtual_assistant_id: int, component_id: int, is_enabled: bool = True
-):
+def create(db: Session, virtual_assistant_id: int, component_id: int, is_enabled: bool = True):
     return db.scalar(
         insert(VirtualAssistantComponent)
         .values(

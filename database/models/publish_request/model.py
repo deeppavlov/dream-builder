@@ -27,8 +27,8 @@ class PublishRequest(Base):
         "VirtualAssistant", uselist=False, foreign_keys="PublishRequest.virtual_assistant_id"
     )
 
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
-    user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.user_id")
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    user = relationship("GeneralUser", uselist=False, foreign_keys="PublishRequest.user_id")
 
     slug = Column(String, nullable=False, unique=True)
     public_visibility = Column(sqltypes.Enum(enums.VirtualAssistantPublicVisibility), nullable=False)
@@ -39,8 +39,8 @@ class PublishRequest(Base):
     )
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 
-    reviewed_by_user_id = Column(Integer, ForeignKey("google_user.id"))
-    reviewed_by_user = relationship("GoogleUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
+    reviewed_by_user_id = Column(Integer, ForeignKey("user.id"))
+    reviewed_by_user = relationship("GeneralUser", uselist=False, foreign_keys="PublishRequest.reviewed_by_user_id")
 
     date_reviewed = Column(DateTime, nullable=True)
 

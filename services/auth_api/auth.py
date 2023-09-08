@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from database.core import init_db
 from apiconfig.config import settings
 from database.models import google_user
+from services.auth_api.auth_type.basic import BasicAuth
 from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type import GithubAuth, GoogleOAuth2, Unauth
@@ -28,6 +29,7 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "google": GoogleOAuth2(),
     "github": GithubAuth(),
     "unauth": Unauth(),
+    "basic": BasicAuth(),
 }
 
 

@@ -47,6 +47,7 @@ services:
     volumes:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
+      - ../../services/shared:/src/services/shared
       - ../../apiconfig:/src/apiconfig
     deploy:
       resources:
@@ -73,6 +74,7 @@ services:
       - ../../apiconfig:/src/apiconfig
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
+      - ../../services/shared:/src/services/shared
       - ../../deployment_queue:/src/deployment_queue
     deploy:
       resources:

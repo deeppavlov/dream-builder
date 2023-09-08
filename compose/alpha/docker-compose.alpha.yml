@@ -48,6 +48,7 @@ services:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
     deploy:
       resources:
         limits:
@@ -74,6 +75,7 @@ services:
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
       - ../../deployment_queue:/src/deployment_queue
+      - ../../services/shared:/src/services/shared
     deploy:
       resources:
         limits:

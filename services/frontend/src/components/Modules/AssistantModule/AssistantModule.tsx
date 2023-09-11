@@ -1,7 +1,7 @@
 import { useAuth } from 'context'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TDistVisibility } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
@@ -131,6 +131,7 @@ export const AssistantModule = () => {
           name: 'AssistantModal',
           options: { action: 'clone', bot: bot },
         },
+        msg: <Trans i18nKey='modals.sign_in.build' />,
       })
 
     trigger('AssistantModal', { bot, action: 'clone' })

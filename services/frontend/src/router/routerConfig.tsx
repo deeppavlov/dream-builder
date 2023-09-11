@@ -1,10 +1,10 @@
 import { AdminPage } from 'pages/AdminPage'
+import { AuthPage } from 'pages/AuthPage'
 import { EditorPage } from 'pages/Editor/EditorPage'
 import { IntegrationPage } from 'pages/Editor/IntegrationPage'
 import SkillEditorPage from 'pages/Editor/SkillEditorPage'
 import SkillsPage from 'pages/Editor/SkillsPage'
 import ErrorPage from 'pages/ErrorPage'
-import { GoogleAuthPage } from 'pages/GoogleAuthPage'
 import { HomePage } from 'pages/HomePage'
 import { MyAssistantsPage } from 'pages/MyAssistantsPage'
 import { PublicTemplatesPage } from 'pages/PublicTemplatesPage'
@@ -137,7 +137,7 @@ export const RouterConfig: CustomRouteConfig[] = [
   },
   {
     path: RoutesList.code,
-    element: <GoogleAuthPage />,
+    element: <AuthPage />,
   },
   {
     path: '*',

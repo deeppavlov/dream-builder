@@ -3,6 +3,13 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
+from services.shared.user import User
+
+
+class UserToken(User):
+    token: str
+    refresh_token: Optional[str]
+
 
 class UserBase(BaseModel):
     class Config:
@@ -10,7 +17,6 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-
     email: EmailStr
     sub: str
     picture: Optional[str]
@@ -24,7 +30,7 @@ class UserRead(UserCreate):
 
 
 class UserValidScheme(UserBase):
-
+    user_id: int
     refresh_token: str
     is_valid: bool
     expire_date: datetime
@@ -38,3 +44,21 @@ class UserModel(UserBase):
     fullname: str
     given_name: str
     family_name: str
+
+
+class GithubUserCreate(UserBase):
+    email: Optional[EmailStr]
+    github_id: int
+    picture: str
+    name: str
+
+
+class GithubUser(GithubUserCreate):
+    id: int
+
+
+class GithubUserValidCreate(UserBase):
+    user_id: str
+    access_token: str
+    is_valid: bool
+    expire_date: datetime

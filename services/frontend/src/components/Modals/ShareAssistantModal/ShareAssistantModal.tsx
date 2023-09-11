@@ -52,7 +52,7 @@ export const ShareAssistantModal = () => {
   useObserver('ShareAssistantModal', handleEventUpdate)
   useEffect(() => {
     reset({
-      link: `https://assistants.deepdream.builders/?assistant=${bot}`,
+      link: `https://assistants.builder.deeppavlov.ai/${bot}`,
     })
   }, [bot])
 

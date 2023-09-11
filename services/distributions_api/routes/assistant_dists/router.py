@@ -19,6 +19,7 @@ from services.distributions_api.routes.assistant_dists.dependencies import (
 )
 from services.distributions_api.security.auth import get_current_user
 from services.distributions_api.utils.emailer import Emailer
+from services.distributions_api.utils.name_generator import from_email
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
 
@@ -65,7 +66,7 @@ async def create_virtual_assistant(
         payload.display_name,
         payload.description,
         user.id,
-        user.email,
+        from_email(user),
         payload.language,
     )
     return new_virtual_assistant

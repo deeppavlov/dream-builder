@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { FC } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import Add from 'assets/icons/+.svg'
 import { useAuth } from 'context/AuthProvider'
 import { usePreview } from 'context/PreviewProvider'
@@ -52,6 +52,7 @@ export const AddButton: FC<Props> = ({
                 name: 'AssistantModal',
                 options: scratchAssistant,
               },
+              msg: <Trans i18nKey='modals.sign_in.build' />,
             }
           : {}
       )

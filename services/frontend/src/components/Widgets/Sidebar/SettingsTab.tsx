@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useAuth, useUIOptions } from 'context'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { ReactComponent as Gear } from 'assets/icons/gear.svg'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
@@ -22,6 +22,7 @@ export const SettingsTab = () => {
     if (!isAuthorized)
       return trigger('SignInModal', {
         requestModal: { name: 'ProfileSettingsModal' },
+        msg: <Trans i18nKey='modals.sign_in.settings' />,
       })
 
     setTokenState('services_common_button')

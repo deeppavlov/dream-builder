@@ -7,6 +7,7 @@ from deeppavlov_dreamtools.distconfigs.generics import (
     check_memory_format,
 )
 from pydantic import BaseModel, Field, validator, EmailStr
+from services.shared.user import User
 from sqlalchemy.ext.associationproxy import _AssociationList
 
 from database import enums
@@ -29,15 +30,8 @@ class RoleRead(BaseOrmModel):
     can_set_roles: bool
 
 
-class UserRead(BaseOrmModel):
-    id: int
-    email: EmailStr
-    sub: str
+class UserRead(User):
     role: RoleRead
-    picture: Optional[str]
-    fullname: Optional[str]
-    given_name: Optional[str]
-    family_name: Optional[str]
 
 
 class LanguageRead(BaseOrmModel):

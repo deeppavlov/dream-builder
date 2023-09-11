@@ -90,7 +90,7 @@ export const useGaPublication = () => {
       va_language: assistant?.language?.value,
       va_prev_status: assistant?.visibility,
       template_va_author_id: assistant?.author.id,
-      template_va_author_name: assistant?.author.fullname,
+      template_va_author_name: assistant?.author.name,
       event_type,
     })
   }

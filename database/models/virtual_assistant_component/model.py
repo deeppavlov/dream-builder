@@ -1,15 +1,9 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Integer,
-    ForeignKey,
-)
-from sqlalchemy.event import listens_for
-from sqlalchemy.orm import relationship
-
 from apiconfig.config import settings
 from database.core import Base
 from database.utils import pre_populate_from_tsv
+from sqlalchemy import Boolean, Column, ForeignKey, Integer
+from sqlalchemy.event import listens_for
+from sqlalchemy.orm import relationship
 
 
 class VirtualAssistantComponent(Base):

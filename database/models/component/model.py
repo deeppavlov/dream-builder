@@ -27,8 +27,8 @@ class Component(Base):
     model_type = Column(String, nullable=True)
     is_customizable = Column(Boolean, nullable=False)
 
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship("GoogleUser", back_populates="components")
+    author_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship("GeneralUser", back_populates="components")
 
     description = Column(String, nullable=True)
 

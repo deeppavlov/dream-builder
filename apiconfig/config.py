@@ -61,6 +61,11 @@ class DeployerSettings(BaseModel):
     cloud_service: Optional[AVAILABLE_CLOUD_SERVICES]
 
 
+class GithubAuth(BaseModel):
+    client_id: str
+    client_secret: str
+
+
 # class StorageSettings(BaseModel):
 #     region_name: str
 #     aws_access_key_id: str
@@ -94,6 +99,7 @@ class Settings(BaseSettings):
     auth: AuthSettings
     smtp: SmtpSettings
     deployer: DeployerSettings
+    github: GithubAuth
     # storage: StorageSettings
     git: GitSettings
     celery: CelerySettings
@@ -110,6 +116,10 @@ class Settings(BaseSettings):
             "client_id": self.auth.google_client_id,
             "client_secret": self.auth.google_client_secret,
         }
+
+    @property
+    def github_auth_client_info(self):
+        return {"client_id": self.github.client_id, "client_secret": self.github.client_secret}
 
 
 settings = Settings()

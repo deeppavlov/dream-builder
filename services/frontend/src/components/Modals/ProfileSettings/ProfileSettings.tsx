@@ -72,10 +72,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = () => {
                   <span className={s.key}>
                     {t('modals.profile_settings.tabs.account.name')}
                   </span>
-                  <span className={s.value}>
-                    {user?.name ||
-                      `${user?.given_name || ''}  ${user?.family_name || ''}`}
-                  </span>
+                  <span className={s.value}>{user?.name}</span>
                 </div>
                 <div className={s.block}>
                   <span className={s.key}>

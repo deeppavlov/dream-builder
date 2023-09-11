@@ -3,7 +3,7 @@ import { useAuth, useUIOptions } from 'context'
 import { useParams } from 'react-router-dom'
 import { TTopbar } from 'types/types'
 import { consts } from 'utils/consts'
-import { GoogleSignInButton } from 'components/Buttons'
+import { SignInButton } from 'components/Buttons'
 import { Profile } from 'components/Menus'
 import { BurgerMenu } from 'components/Menus/BurgerMenu/BurgerMenu'
 import s from './Topbar.module.scss'
@@ -34,7 +34,7 @@ export const Topbar = () => {
       <div className={s.btns}>
         {isTableViewSwitcher && <Display />}
         {isEditor && <Test />}
-        {user ? <Profile auth={auth} /> : <GoogleSignInButton />}
+        {user ? <Profile auth={auth} /> : <SignInButton />}
       </div>
     </div>
   )

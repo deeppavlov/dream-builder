@@ -7,6 +7,8 @@ class UrlSettings(BaseModel):
     frontend: str
     email: str
     token: str
+    github_email: str
+    github_password: str
 
 
 class Settings(BaseSettings):
@@ -25,6 +27,8 @@ url = settings_test.url.frontend
 admin_url = url+"admin"
 users_email = settings_test.url.email
 openai_token = settings_test.url.token
+github_email = settings_test.url.github_email
+github_password = settings_test.url.github_password
 
 generative_model = "ChatGPT"
 public_va_name = "Marketing Assistant"

@@ -3,6 +3,7 @@ from qaseio.pytest import qase
 import time
 from pages.all_ga_page import AllGAPage
 from pages.google_auth_page import GoogleAuthPage
+from pages.github_auth_page import GithubAuthPage
 from pages.dialog_panel import DialogPanel
 from pages.deepy_panel import DeepyPanel
 from pages.skill_page import SkillPage
@@ -47,12 +48,29 @@ def test_scenario_1_main(browser):
     with qase.step("4. Wendy likes and use the template (must login)"):
         page.click_use_template()
         time.sleep(1)
-        page.click_sign_in_button_modal_window()
+
+        page.click_sign_in_with_github()
         time.sleep(2)
+
+        page = GithubAuthPage(browser, browser.current_url)
+        page.enter_login()
+        page.enter_password()
+        page.click_sign_in()
+
+        page = AllGAPage(browser, browser.current_url)
+        page.click_sign_in_button()
+        page.click_sign_in_with_github()
+
+        page = GithubAuthPage(browser, browser.current_url)
+        page.enter_login()
+        page.enter_password()
+        page.click_sign_in()
+
+        time.sleep(15)
 ##
-        page = GoogleAuthPage(browser, browser.current_url)
-        time.sleep(2)
-        page.do_auth()
+        #page = GoogleAuthPage(browser, browser.current_url)
+        #time.sleep(2)
+        #page.do_auth()
 ##
         page = AllGAPage(browser, browser.current_url)
         time.sleep(3)

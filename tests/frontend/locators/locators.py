@@ -40,14 +40,15 @@ class BasePageLocators:
 
 class GoogleAuthPageLocators:
     EMAIL_TEXTAREA = (By.CSS_SELECTOR, "input[type='email']")
-    #NEXT_BUTTON = (By.XPATH, "//span[text()='Next']")
-    NEXT_BUTTON = (By.XPATH, "//span[text()='Далее']")
+    NEXT_BUTTON = (By.XPATH, "//span[text()='Next']")
+    #NEXT_BUTTON = (By.XPATH, "//span[text()='Далее']")
     USER_EMAIL_BUTTON = (By.CSS_SELECTOR, f"[data-email='{users_email}']")
+
 
 class GithubAuthPageLocators:
     EMAIL_TEXTAREA = (By.CSS_SELECTOR, "[name='login']")
     PASSWORD_TEXTAREA = (By.CSS_SELECTOR, "[name='password']")
-    SIGN_IN = (By.CSS_SELECTOR, "[value=Sign in]")
+    SIGN_IN = (By.CSS_SELECTOR, "[value='Sign in']")
 
     VERIFICATION_CODE = (By.CSS_SELECTOR, "[type='text']")
     VERIFY_BUTTON = (By.CSS_SELECTOR, "[data-disable-with='Verifying…']")

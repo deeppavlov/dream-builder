@@ -16,6 +16,7 @@ def browser(request):
 
     options = Options()
     options.add_argument("lang=en-GB")
+    #options.add_argument("lang=ru")
 
     if browser_name == "chrome":
         browser = webdriver.Chrome("C:/chromedriver/chromedriver.exe", options=options)
@@ -32,3 +33,5 @@ def browser(request):
     print("\nquit browser..")
     time.sleep(1)
     browser.quit()
+
+

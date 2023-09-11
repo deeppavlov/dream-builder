@@ -27,11 +27,11 @@ class BasePage:
         button.click()
 
     def click_sign_in_with_google(self):
-        button = self.browser.find_element(*BasePageLocators.SIGN_IN_BUTTON_MODAL_WINDOW)
+        button = self.browser.find_element(*BasePageLocators.SIGN_IN_WITH_GOOGLE)
         button.click()
 
     def click_sign_in_with_github(self):
-        button = self.browser.find_element(*BasePageLocators.SIGN_IN_BUTTON_MODAL_WINDOW)
+        button = self.browser.find_element(*BasePageLocators.SIGN_IN_WITH_GITHUB)
         button.click()
 
     def go_to_about_dreambuilder_page(self):

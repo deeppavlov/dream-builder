@@ -11,12 +11,11 @@ import time
 
 
 class AllGAPage(BasePage):
-    def is_va_loaded(self):
-        pass
-        #startTime = time.time()
-        #link = self.browser.find_element(*AllGAPageLocators.CLONE_PUBLIC_VA_BUTTON)
-        #endTime = time.time()
-        #print("Время загрузки VA = ", endTime-startTime)
+    def is_public_template_loaded(self):
+        WebDriverWait(self.browser, 5).until(
+            EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD)
+        )
+
 
     # PUBLIC
 
@@ -58,7 +57,6 @@ class AllGAPage(BasePage):
     def click_cancel_template_modal_window(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_CANCEL_BUTTON)
         button.click()
-
 
     def click_on_public_template_card(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_TEMPLATE_CARD)

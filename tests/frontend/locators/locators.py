@@ -141,7 +141,7 @@ class SkillPageLocators:
 
     # EDIT_SKILL_BUTTON = (By.XPATH, "//p[contains(text(),'Generative')]/../../..//button[contains(text(),'Edit')]")
     EDIT_SKILL_BUTTON = (By.XPATH, f"//p[contains(text(),'{skill_name}')]/../..//button[contains(text(),'Edit')]")
-    CHAT_WITH_ASSISTANT_BUTTON = (By.CSS_SELECTOR, "button[data-tooltip-id='chatWithBot']")
+    CHAT_WITH_ASSISTANT_BUTTON = (By.CSS_SELECTOR, "[id='testDialog']")
     BUILD_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Build Assistant')]")
     STOP_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Stop Assistant')]")
     DUPLICATE_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Duplicate Assistant')]")
@@ -196,16 +196,11 @@ class SkillPageLocators:
     PYTHON_CODE = (By.CSS_SELECTOR, ".language-python")
 
 
-
-
-
-
-
 class SkillEditorPageLocators:
     OPEN_MODELS_DROPDOWN = (By.CSS_SELECTOR, "input[placeholder='Choose model']")
     CHOOSE_MODEL = (By.XPATH, f"//span[contains(text(),'{generative_model}')]")
     ENTER_TOKEN_HERE = (By.XPATH, "//button[contains(text(),'Enter your')]")
-    PROMPT_TEXTAREA = (By.XPATH, "//textarea[contains(@class,'_field')]")
+    PROMPT_TEXTAREA = (By.CSS_SELECTOR, "[role='textbox']")
     SAVE_BUTTON = (By.XPATH, "//button[contains(text(),'Save')]")
 
     MESSAGE_TEXTAREA = (By.XPATH, "//form[contains(@class,'_dialog_')]//textarea")
@@ -246,24 +241,33 @@ class ProfilePageLocators:
 
 
 class MessengerPageLocators:
+    ENTER_YOUR_TOKEN_MW = (By.XPATH, "//button[text()='Enter your personal access token here']")
+
     SAY_HI_BUTTON = (By.XPATH, "//button[text()='Say Hi!']")
     MESSAGE_TEXTAREA = (By.CSS_SELECTOR, "div textarea")
-    BOT_MESSAGE = (By.CSS_SELECTOR, "[data-idx='1']")
-    SEND_BUTTON = (By.XPATH, "//button[text()='Send']")
-    PROPERTIES_BUTTON = (By.CSS_SELECTOR, "[stroke='#8d96b5']")
-    SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_share')]")
-    SHARE_ON_SOCIAL_MEDIA_BUTTON = (By.XPATH, "//button[text()='Share on social media']")
-    SHARE_TO_TELEGRAM_BUTTON = (By.XPATH, "//button[text()=' Telegram']")
+    BOT_MESSAGE = (By.XPATH, "//span[contains(@class,'_botMessage')]")
+    USER_MESSAGE = (By.XPATH, "//span[contains(@class,'_message')]")
+    SEND_BUTTON = (By.CSS_SELECTOR, "[type='submit']")
+    REFRESH_BUTTON = (By.CSS_SELECTOR, "[data-tooltip-id='renew']")
+
+    TOKEN_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_btns')]/button[1]")
+    PROPERTIES_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_btns')]/button[3]")
+    SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[2]")
+
+    #SHARE_ON_SOCIAL_MEDIA_BUTTON = (By.XPATH, "//button[text()='Share on social media']")
+    SHARE_TO_TELEGRAM_BUTTON = (By.CSS_SELECTOR, "button[aria-label='telegram']")
+    SHARE_TO_TWITTER_BUTTON = (By.CSS_SELECTOR, "button[aria-label='twitter']")
     EMBED_BUTTON = (By.XPATH, "//button[text()='Embed']")
     MAKE_COPY_BUTTON = (By.XPATH, "//span[contains(text(),'Make Copy')]/../..")
 
-    KEY_BUTTON = (By.XPATH, "//div[contains(@class,'_key-icon')]")
-    CLOSE_BUTTON = (By.XPATH, "//div[contains(@class,'_close-btn')]")
+    CLOSE_BUTTON = (By.XPATH, "//div[contains(@class,'_accessTokensModal')]//*[local-name() = 'svg'][contains(@class,"
+                              "'_close')]")
+    CLOSE_BUTTON_GET_STARTED = (By.XPATH, "//*[local-name() = 'svg'][contains(@class,'_close')]")
 
-    TOKEN_TEXTAREA = (By.CSS_SELECTOR, "input[name='tokenValue']")
+    TOKEN_TEXTAREA = (By.CSS_SELECTOR, "input[name='token']")
 
-    CHOOSE_TOKEN_SERVICES_DROPDOWN = (By.CSS_SELECTOR, "input[name='tokenService']")
-    CHOOSE_TOKEN_SERVICE_OPENAI = (By.XPATH, "//li[contains(text(),'Openai')]")
+    CHOOSE_TOKEN_SERVICES_DROPDOWN = (By.CSS_SELECTOR, "input[name='service']")
+    CHOOSE_TOKEN_SERVICE_OPENAI = (By.XPATH, "//span[contains(text(),'OpenAI')]")
     ENTER_TOKEN_BUTTON = (By.XPATH, "//button[text()='Enter']")
 
     REMOVE_TOKEN = (By.XPATH, "//button[contains(@class,'_remove')]")

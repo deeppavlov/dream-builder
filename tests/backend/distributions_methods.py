@@ -16,7 +16,7 @@ from .config import (
     openai_token,
     lm_service_id_list,
     lm_service_id_russian_list,
-    auth_token_user1,
+    test_token_github1,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -275,7 +275,7 @@ class UserMethods:
         return response.json()
 
     def check_language_inheritance(self, init_name, clone_name):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
 
         init_language = user.get_va_by_name(init_name)["language"]["value"]
         clone_language = user.get_va_by_name(clone_name)["language"]["value"]

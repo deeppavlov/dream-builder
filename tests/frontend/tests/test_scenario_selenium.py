@@ -20,23 +20,23 @@ def test_scenario_1_main(browser):
     with qase.step(f"1. Wendy visits site: (alpha) (not login) {browser.name}"):
         page = AllGAPage(browser, url)
         page.open()
-##
+
         # Implementation Details
-        #page.check_deepy_tooltip()
+        page.check_deepy_tooltip()
         page.scroll_public_templates_left()
         page.click_deepy_button()
-#
+
         panel = DeepyPanel(browser, browser.current_url)
         #panel.check_welcome_dialogue()
         panel.click_deepy_button()
-#
+
     with qase.step("2. Wendy scrolls though VAs templates"):
         page.scroll_public_templates_right()
-#
+
     with qase.step("3. Wendy picks a VAs template to check and chat with it"):
         time.sleep(2)
         page.click_kebab_public_template()
-#
+
         page.click_kebab_public_template_chat()
         panel = DialogPanel(browser, browser.current_url)
         panel.click_restart_button()
@@ -44,7 +44,7 @@ def test_scenario_1_main(browser):
         panel.enter_message()
         panel.send_message()
         panel.check_bot_message()
-###
+
     with qase.step("4. Wendy likes and use the template (must login)"):
         page.click_use_template()
         time.sleep(1)
@@ -57,23 +57,18 @@ def test_scenario_1_main(browser):
         page.enter_password()
         page.click_sign_in()
 
-        page = AllGAPage(browser, browser.current_url)
-        page.click_sign_in_button()
-        page.click_sign_in_with_github()
+        #page = AllGAPage(browser, browser.current_url)
+        #page.click_sign_in_button()
+        #page.click_sign_in_with_github()
 
-        page = GithubAuthPage(browser, browser.current_url)
-        page.enter_login()
-        page.enter_password()
-        page.click_sign_in()
-
-        time.sleep(15)
-##
         #page = GoogleAuthPage(browser, browser.current_url)
         #time.sleep(2)
         #page.do_auth()
-##
+
         page = AllGAPage(browser, browser.current_url)
-        time.sleep(3)
+        #time.sleep(3)
+        #page.click_use_template()
+        #time.sleep(3)
         page.clear_name_in_create_va_mw()
         time.sleep(2)
         page.clear_name_in_create_va_mw()
@@ -180,13 +175,13 @@ def test_scenario_1_main(browser):
         time.sleep(1)
 #
     with qase.step("The user story for user of Wendy: 1. User visits link of VA"):
-        #page = MessengerPage(browser, url=share_link)
-        page = MessengerPage(browser, url='https://assistants.deepdream.builders/?assistant=16hyvvmim9iq')
+        page = MessengerPage(browser, url=share_link)
         page.open()
         time.sleep(3)
 #
     with qase.step("The user story for user of Wendy: 2. User starts talk to VA"):
-        page.click_key_button()
+        #page.click_key_button()
+        page.click_enter_your_token_mw()
         page.enter_token()
         page.open_choose_service_dropdown()
         time.sleep(1)
@@ -196,6 +191,7 @@ def test_scenario_1_main(browser):
         #page.check_success_toast()
         #page.check_success_toast_disappear()
         page.click_close_button()
+        page.click_close_button_get_started()
 
         page.enter_message()
         page.send_message()
@@ -207,7 +203,6 @@ def test_scenario_1_main(browser):
 #
     with qase.step("The user story for user of Wendy: 4. User wants to share this link with other of his friends"):
         page.click_share_button()
-        page.click_share_on_social_media_button()
         page.click_share_on_telegram()
         time.sleep(3)
 

@@ -7,6 +7,10 @@ import time
 
 
 class MessengerPage(BasePage):
+    def click_enter_your_token_mw(self):
+        button = self.browser.find_element(*MessengerPageLocators.ENTER_YOUR_TOKEN_MW)
+        button.click()
+
     def click_say_hi(self):
         button = self.browser.find_element(*MessengerPageLocators.SAY_HI_BUTTON)
         button.click()
@@ -44,10 +48,6 @@ class MessengerPage(BasePage):
 
     def click_share_button(self):
         button = self.browser.find_element(*MessengerPageLocators.SHARE_BUTTON)
-        button.click()
-
-    def click_share_on_social_media_button(self):
-        button = self.browser.find_element(*MessengerPageLocators.SHARE_ON_SOCIAL_MEDIA_BUTTON)
         button.click()
 
     def click_share_on_telegram(self):
@@ -93,3 +93,9 @@ class MessengerPage(BasePage):
         success_toast = WebDriverWait(self.browser, 3).until(
             EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON)
         ).click()
+
+    def click_close_button_get_started(self):
+        success_toast = WebDriverWait(self.browser, 3).until(
+            EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON_GET_STARTED)
+        ).click()
+

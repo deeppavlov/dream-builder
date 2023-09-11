@@ -10,7 +10,8 @@ from .config import (
     auth_token_user1,
     auth_token_user2,
     auth_token,
-    test_token_github,
+    test_token_github1,
+    test_token_github2,
 
     counter_distributions as counter
 )
@@ -24,11 +25,11 @@ class TestDistributions:
 
     # ASSISTANTS_DISTS
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_create_ru_assistant")
     def test_create_ru_assistant(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token='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', auth_type='github')
+        user = UserMethods(auth_token=test_token_github1)
         name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
 
         user.delete_va_by_name(name)
@@ -37,20 +38,21 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_create_en_assistant")
     def test_create_en_assistant(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(name=display_name, language="en")["name"]
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @qase.title(f"{counter()}. test_get_list_of_public_va")
     def test_get_list_of_public_va(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_list_of_public_va()
 
     @qase.title(f"{counter()}. test_get_list_of_your_va")
     def test_get_list_of_your_a(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.get_list_of_private_va(name)
 
@@ -60,7 +62,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_your_va_by_name")
     def test_get_your_va_by_name(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.get_va_by_name(name)
 
@@ -69,14 +71,14 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_public_va_by_name")
     def test_get_public_va_by_name(self):
         name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_va_by_name(name)
 
     # @pytest.mark.atom
     @qase.title(f"{counter()}. test_delete_your_va_by_name")
     def test_delete_your_va_by_name(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
 
         user.delete_va_by_name(name)
@@ -85,7 +87,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_patch_your_va_by_name")
     def test_patch_your_va_by_name(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.patch_va_by_name(name)
 
@@ -96,7 +98,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_clone_public_va")
     def test_clone_public_va(self, va_name):
         display_name = va_name
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.clone_va(display_name)["name"]
 
         user.check_language_inheritance(display_name, name)
@@ -108,7 +110,7 @@ class TestDistributions:
     def test_clone_created_from_scratch_ru_va(self):
         display_name = va_data["name"]
         language = "ru"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
         clone_name = user.clone_va(name)["name"]
 
@@ -121,7 +123,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_clone_created_from_scratch_en_va")
     def test_clone_created_from_scratch_en_va(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(name=display_name, language="en")["name"]
         clone_name = user.clone_va(name)["name"]
 
@@ -134,7 +136,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_clone_edited_va")
     def test_clone_edited_va(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
@@ -147,7 +149,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_after_cloning_delete_initial_va")
     def test_after_cloning_delete_initial_va(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         clone_name = user.clone_va(name)["name"]
 
@@ -159,13 +161,13 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_public_va_components_by_name")
     def test_get_public_va_components_by_name(self):
         name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_va_components(name)
 
     @qase.title(f"{counter()}. test_get_created_from_scratch_va_components_by_name")
     def test_get_created_from_scratch_va_components_by_name(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.get_va_components(name)
 
@@ -174,7 +176,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_cloned_va_components_by_name")
     def test_get_cloned_va_components_by_name(self):
         display_name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.clone_va(display_name)["name"]
         user.get_va_components(name)
 
@@ -183,7 +185,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_add_cloned_va_component")
     def test_add_cloned_va_component(self):
         display_name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
@@ -194,7 +196,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_add_created_from_scratch_va_component")
     def test_add_created_from_scratch_va_component(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
@@ -208,7 +210,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_delete_cloned_va_component")
     def test_delete_cloned_va_component(self):
         display_name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
         va_component_id = user.add_va_component(name, component_id)["id"]
@@ -223,7 +225,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_delete_created_from_scratch_va_component")
     def test_delete_created_from_scratch_va_component(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         va_component_id = user.add_va_component(name, component_id)["id"]
@@ -234,7 +236,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_patch_cloned_va_component")
     def test_patch_cloned_va_component(self):
         display_name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.clone_va(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
@@ -245,7 +247,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_patch_created_from_scratch_va_component")
     def test_patch_created_from_scratch_va_component(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         component_id = user.create_component()["id"]
         user.add_va_component(name, component_id)
@@ -259,7 +261,7 @@ class TestDistributions:
     def test_publish_dist_unlisted(self):
         visibility = 'UNLISTED_INVITATION'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -269,7 +271,7 @@ class TestDistributions:
     def test_publish_dist_private(self):
         visibility = 'PRIVATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -279,7 +281,7 @@ class TestDistributions:
     def test_publish_dist_public_template(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -289,13 +291,13 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_list_of_components")
     def test_get_list_of_components(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_list_of_components()
 
     # @pytest.mark.atom
     @qase.title(f"{counter()}. test_create_get_patch_delete_component")
     def test_create_get_patch_delete_component(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         component_id = user.create_component()["id"]
         user.get_component(component_id)
         user.patch_component(component_id)
@@ -304,7 +306,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_list_of_group_components")
     def test_get_list_of_group_components(self):
         group_name = "Generative"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_list_of_group_components(group_name)
 
     # USERS
@@ -316,12 +318,12 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_user_self")
     def test_get_user_self(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_user_self()
 
     @qase.title(f"{counter()}. test_get_user_by_id")
     def test_get_user_by_id(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user_id = user.get_user_self()
         user.get_user_by_id(user_id)
 
@@ -329,7 +331,7 @@ class TestDistributions:
 
     @qase.title(f"{counter()}. test_get_all_api_keys")
     def test_get_all_api_keys(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_all_api_keys()
 
     # DIALOG_SESSIONS
@@ -337,7 +339,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_create_dialog_sessions_with_not_deployed_created_from_scratch_va")
     def test_create_dialog_sessions_with_not_deployed_created_from_scratch_va(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.create_dialog_sessions_not_deployed(name)
 
@@ -356,7 +358,7 @@ class TestDistributions:
     @pytest.mark.parametrize('va_name', [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va")
     def test_get_dialog_session_history_with_public_template_va(self, va_name):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
@@ -366,7 +368,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_lm(self, lm_service_id):
         va_name = "universal_prompted_assistant"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
@@ -376,7 +378,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_russian_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_russian_lm(self, lm_service_id):
         va_name = "universal_prompted_assistant"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         dialog_session_id = user.create_dialog_sessions(va_name)["id"]
         user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
@@ -386,7 +388,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_en")
     def test_build_assistant_on_various_lm_en(self, lm_service_id):
         va_name = f"assistant_lm_service_id_{lm_service_id}"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         va_name = user.create_virtual_assistant(va_name)["name"]
         default_component = user.get_va_components(va_name)["skills"]
         #
@@ -412,7 +414,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_ru")
     def test_build_assistant_on_various_lm_ru(self, lm_service_id):
         va_name = f"assistant_lm_service_id_{lm_service_id}"
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         va_name = user.create_virtual_assistant(name=va_name, language="ru")["name"]
         default_component = user.get_va_components(va_name)["skills"]
 
@@ -442,7 +444,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_created_from_scratch_va")
     def test_get_dialog_session_history_with_created_from_scratch_va(self):
         name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         va = user.create_virtual_assistant(name)
         va_id = va["id"]
         va_name = va["name"]
@@ -461,7 +463,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self):
         name = public_va_names_en[0]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         va = user.create_virtual_assistant(name)
         va_id = va["id"]
         va_name = va["name"]
@@ -481,7 +483,7 @@ class TestDistributions:
     # @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self):
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         user.get_all_lm_services()
 
     # DEPLOYMENTS
@@ -500,7 +502,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self):
         name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
 
         va = user.create_virtual_assistant(name)
         va_name = va["name"]
@@ -525,12 +527,14 @@ class TestDistributions:
 
     # ADMIN
 
+    @pytest.mark.atom
     @qase.title(f"{counter()}. test_get_all_publish_requests")
     def test_get_all_publish_requests(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
+        print(f'name = {name}')
         user.publish_va(name, visibility)
 
         admin = AdminMethods(auth_token)
@@ -542,7 +546,7 @@ class TestDistributions:
     def test_get_get_unreviewed_publish_requests(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -555,7 +559,7 @@ class TestDistributions:
     def test_confirm_publish_request(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -569,7 +573,7 @@ class TestDistributions:
     def test_decline_publish_request(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
@@ -585,9 +589,9 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
     def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self):
         display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
+        user1 = UserMethods(test_token_github1)
         name = user1.create_virtual_assistant(display_name)["name"]
-        user2 = UserMethods(auth_token_user2)
+        user2 = UserMethods(test_token_github2)
         user2.get_va_by_name_no_access(name)
         user2.clone_va_no_access(name)
         user2.patch_va_by_name_no_access(name)
@@ -615,7 +619,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_non_owner_can_access_unlisted_assistant")
     def test_non_owner_non_auth_can_access_unlisted_assistant(self):
         display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
+        user1 = UserMethods(test_token_github1)
         name = user1.create_virtual_assistant(display_name)["name"]
         user1.publish_va(name, 'UNLISTED_LINK')
         user1.create_deployment(name)
@@ -632,7 +636,7 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_non_owner_can_access_public_template_assistant")
     def test_non_owner_can_access_public_template_assistant(self):
         display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
+        user1 = UserMethods(test_token_github1)
         name = user1.create_virtual_assistant(display_name)["name"]
         user1.publish_va(name, "PUBLIC_TEMPLATE")
         user1.create_deployment(name)
@@ -640,7 +644,7 @@ class TestDistributions:
         admin = AdminMethods(auth_token)
         publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
         admin.confirm_publish_request(publish_request_id)
-        user2 = UserMethods(auth_token_user2)
+        user2 = UserMethods(test_token_github2)
         user2.get_va_by_name(name)
         user1.delete_va_by_name(name)
 
@@ -648,12 +652,12 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment")
     def test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment(self):
         display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
+        user1 = UserMethods(test_token_github1)
         name = user1.create_virtual_assistant(display_name)["name"]
         deployment_id = user1.create_deployment(name)["id"]
         time.sleep(60)
         task_id = user1.get_deployment(deployment_id)
-        user2 = UserMethods(auth_token_user2)
+        user2 = UserMethods(test_token_github2)
         user2.get_deployment_no_access(deployment_id)
         user2.patch_deployment_no_access(deployment_id, task_id)
         user2.delete_deployment_no_access(deployment_id)
@@ -663,13 +667,13 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
     def test_non_owner_cannot_access_private_assistant_dialog_session(self):
         display_name = va_data["name"]
-        user1 = UserMethods(auth_token_user1)
+        user1 = UserMethods(test_token_github1)
         name = user1.create_virtual_assistant(display_name)["name"]
         deployment_id = user1.create_deployment(name)["id"]
         time.sleep(60)
         dialog_session_id = user1.create_dialog_sessions(name)["id"]
         user1.send_dialog_session_message(dialog_session_id)
-        user2 = UserMethods(auth_token_user2)
+        user2 = UserMethods(test_token_github2)
         user2.get_dialog_sessions_no_access(dialog_session_id)
         user2.send_dialog_session_message_no_access(dialog_session_id)
         user2.get_dialog_session_history_no_access(dialog_session_id)
@@ -681,14 +685,14 @@ class TestDistributions:
     def test_non_admin_cannot_get_confirm_decline_publish_request(self):
         visibility = 'PUBLIC_TEMPLATE'
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(test_token_github1)
         name = user.create_virtual_assistant(display_name)["name"]
         user.publish_va(name, visibility)
 
         admin = AdminMethods(auth_token)
         publish_request_id = admin.get_unreviewed_publish_requests()[-1]["id"]
 
-        admin_fake = AdminMethods(auth_token_user1)
+        admin_fake = AdminMethods(test_token_github1)
 
         admin_fake.get_all_publish_requests_no_access()
         admin_fake.confirm_publish_request_no_access(publish_request_id)

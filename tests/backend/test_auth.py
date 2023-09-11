@@ -32,7 +32,8 @@ class TestAuth:
             url=auth_endpoint + "/logout",
             headers={
                 "accept": "*/*",
-                "refresh-token": auth_refresh_token,
+                "token": auth_refresh_token,
+                "auth-type": "github",
             },
         )
         assert response.status_code == 204, response.json()

@@ -10,6 +10,8 @@ from .config import (
     auth_token_user1,
     auth_token_user2,
     auth_token,
+    test_token_github,
+
     counter_distributions as counter
 )
 from .distributions_methods import (
@@ -22,11 +24,11 @@ class TestDistributions:
 
     # ASSISTANTS_DISTS
 
-    # @pytest.mark.atom
+    @pytest.mark.atom
     @qase.title(f"{counter()}. test_create_ru_assistant")
     def test_create_ru_assistant(self):
         display_name = va_data["name"]
-        user = UserMethods(auth_token_user1)
+        user = UserMethods(auth_token='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', auth_type='github')
         name = user.create_virtual_assistant(name=display_name, language="ru")["name"]
 
         user.delete_va_by_name(name)

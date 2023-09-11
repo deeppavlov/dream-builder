@@ -50,8 +50,9 @@ def assert_requires_admin_user(response):
 
 
 class UserMethods:
-    def __init__(self, auth_token='token'):
+    def __init__(self, auth_token='token', auth_type='github'):
         self.auth_token = auth_token
+        self.auth_type = auth_type
 
     # ASSISTANT_DIST
 
@@ -61,6 +62,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={"display_name": name,
@@ -79,6 +81,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": "bad_token",
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={"display_name": "TestBot",
@@ -94,6 +97,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={"display_name": 1,
@@ -119,6 +123,7 @@ class UserMethods:
             headers={
                 "accept": "*/*",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -136,6 +141,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 200)
@@ -150,6 +156,7 @@ class UserMethods:
                                 headers={
                                     'accept': 'application/json',
                                     'token': self.auth_token,
+                                    "auth-type": self.auth_type,
                                 }
                                 )
         assert_status_code(response, 404)
@@ -170,6 +177,7 @@ class UserMethods:
             headers={
                 "accept": "*/*",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 204)
@@ -180,6 +188,7 @@ class UserMethods:
             headers={
                 "accept": "*/*",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 500)
@@ -190,6 +199,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={"display_name": "Test_name", "description": "Test_description"},
@@ -203,6 +213,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={"display_name": "Test_name", "description": "Test_description"},
@@ -215,6 +226,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -232,6 +244,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -277,6 +290,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 200)
@@ -289,6 +303,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 403)
@@ -301,6 +316,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
 
@@ -319,6 +335,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
 
@@ -335,6 +352,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 204)
@@ -345,6 +363,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 500)
@@ -388,6 +407,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/json',
             },
             json={
@@ -402,6 +422,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/json',
             },
             json={
@@ -472,6 +493,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
             json={
@@ -502,6 +524,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 204)
@@ -518,6 +541,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
             json={
@@ -549,6 +573,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -561,6 +586,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -573,6 +599,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -586,6 +613,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -600,6 +628,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -616,6 +645,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -631,6 +661,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -645,6 +676,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -656,6 +688,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 403)
@@ -667,6 +700,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -685,6 +719,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -700,6 +735,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -726,6 +762,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
             json={
@@ -759,6 +796,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 200)
@@ -771,6 +809,7 @@ class UserMethods:
             headers={
                 "accept": "application/json",
                 "token": self.auth_token,
+                "auth-type": self.auth_type,
             },
         )
         assert_status_code(response, 403)
@@ -793,7 +832,9 @@ class UserMethods:
             url=deployments_endpoint,
             headers={
                 'accept': 'application/json',
-                'token': self.auth_token},
+                'token': self.auth_token,
+                "auth-type": self.auth_type,
+            },
             params={
                 'state': 'DEPLOYED',
             }
@@ -807,6 +848,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
             json={
@@ -824,6 +866,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'Content-Type': 'application/json',
             },
             json={
@@ -839,7 +882,9 @@ class UserMethods:
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
-                'token': self.auth_token}
+                'token': self.auth_token,
+                "auth-type": self.auth_type,
+            }
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.DeploymentRead)
@@ -850,7 +895,9 @@ class UserMethods:
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
-                'token': self.auth_token}
+                'token': self.auth_token,
+                "auth-type": self.auth_type,
+            }
         )
         assert_status_code(response, 403)
         assert_no_access(response)
@@ -860,7 +907,9 @@ class UserMethods:
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
                 'accept': 'application/json',
-                'token': self.auth_token}
+                'token': self.auth_token,
+                "auth-type": self.auth_type,
+            }
         )
         assert_status_code(response, 404)
         assert {"detail": f"Deployment {str(deployment_id)} not found"} == response.json(), \
@@ -873,6 +922,7 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 204)
@@ -883,7 +933,9 @@ class UserMethods:
             headers={
                 'accept': '*/*',
                 'token': self.auth_token,
-            })
+                "auth-type": self.auth_type,
+            }
+        )
         assert_status_code(response, 403)
         # assert_no_access(response)
 
@@ -893,6 +945,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 200)
@@ -903,6 +956,7 @@ class UserMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             },
             params={
                 'task_id': task_id,
@@ -937,8 +991,9 @@ class UserMethods:
 
 
 class AdminMethods:
-    def __init__(self, auth_token):
+    def __init__(self, auth_token='token', auth_type='github'):
         self.auth_token = auth_token
+        self.auth_type = auth_type
 
     # ADMIN
 
@@ -948,6 +1003,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 200)
@@ -961,6 +1017,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 403)
@@ -972,6 +1029,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 200)
@@ -985,6 +1043,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
             }
         )
         assert_status_code(response, 403)
@@ -996,6 +1055,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/x-www-form-urlencoded',
             }
         )
@@ -1008,6 +1068,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/x-www-form-urlencoded',
             }
         )
@@ -1020,6 +1081,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/x-www-form-urlencoded',
             }
         )
@@ -1032,6 +1094,7 @@ class AdminMethods:
             headers={
                 'accept': 'application/json',
                 'token': self.auth_token,
+                "auth-type": self.auth_type,
                 'content-type': 'application/x-www-form-urlencoded',
             }
         )

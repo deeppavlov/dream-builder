@@ -27,6 +27,7 @@ class AuthSettings(BaseModel):
     test_token: str
     test_token_user1: str
     test_token_user2: str
+    test_token_github: str
     openai_token: str
 
 
@@ -47,6 +48,8 @@ settings_test = Settings()
 auth_token = settings_test.auth.test_token
 auth_token_user1 = settings_test.auth.test_token_user1
 auth_token_user2 = settings_test.auth.test_token_user2
+
+test_token_github = settings_test.auth.test_token_github
 
 openai_token = settings_test.auth.openai_token
 settings_url = settings_test.localurl

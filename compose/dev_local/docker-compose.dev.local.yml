@@ -45,6 +45,8 @@ services:
         PORT: 6999
     ports:
       - "6979:6999"
+    environment:
+      ENV_TYPE: stage
     volumes:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database

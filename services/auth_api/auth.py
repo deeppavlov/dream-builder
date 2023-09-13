@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from database.core import init_db
 from apiconfig.config import settings
 from database.models import google_user
+from database.utils import IS_STAGE
 from services.auth_api.auth_type.basic import BasicAuth
 from services.shared.user import User
 from services.auth_api import auth_type
@@ -29,8 +30,11 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "google": GoogleOAuth2(),
     "github": GithubAuth(),
     "unauth": Unauth(),
-    "basic": BasicAuth(),
 }
+
+# TODO: fix typing
+if IS_STAGE:
+    PROVIDERS.update({"basic": BasicAuth()})
 
 
 @router.get("/token", status_code=status.HTTP_200_OK)

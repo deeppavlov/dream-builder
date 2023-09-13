@@ -304,6 +304,18 @@
         "continue": "Continue"
       },
       "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
+    },
+    "add_email_modal": {
+      "title": "Please enter your email",
+      "subtitle": "It is necessary for publishing your Assistant.",
+      "form": {
+        "label": "Your public email",
+        "placeholder": "Enter your email"
+      },
+      "btns": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
     }
   },
   "sidepanels": {
@@ -479,7 +491,8 @@
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
-    "prompt_max": "Limit prompt to {{max}} tokens"
+    "prompt_max": "Limit prompt to {{max}} tokens",
+    "email": "Please, enter a valid email"
   },
   "tokenizer": {
     "counting": "+ counting...",

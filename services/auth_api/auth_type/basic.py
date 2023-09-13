@@ -46,16 +46,22 @@ class BasicAuth(BaseAuth):
         """
         UNSUPPORTED
         """
-        pass
+        raise ValueError("Not Implemented")
+
+    ########################################################################
 
     @staticmethod
     def _parse_token(token: str) -> list[str]:
+        """
+        my@email.com:mypassword:["my@email.com", "mypassword"]
+        """
         splitted: list[str] = token.split(":")
 
         if len(splitted) != 2:
             raise ValueError("Can't parse token")
 
         return splitted
+
     @staticmethod
     def _to_usertoken(general_user: GeneralUser, basic_user: BasicUser) -> UserToken:
         """

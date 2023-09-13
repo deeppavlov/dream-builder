@@ -63,7 +63,10 @@ async def logout(
     """
     refresh_token -> token
     """
-    return await PROVIDERS[auth_type].logout(db, token)
+    try:
+        return await PROVIDERS[auth_type].logout(db, token)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/exchange_authcode")

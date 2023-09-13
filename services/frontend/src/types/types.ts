@@ -66,11 +66,11 @@ export type TEvents =
   | 'ConfirmApiTokenUpdateModal'
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
-  | 'PublishWarningModal'
   | 'ProfileSettingsModal'
   | 'CtxMenuBtnClick'
   | 'ChangeLanguageModal'
   | 'AssistantDeleted'
+  | 'PublishAssistantWizard'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 

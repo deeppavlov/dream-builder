@@ -86,8 +86,9 @@ export const PublishAssistantModal = () => {
       )
     }
 
-    if (isPublicTemplate && !hidePublishAlert && !isInReview) {
-      trigger('PublishWarningModal', {
+    const user = store('user')
+    if (isPublicTemplate && !isInReview && (!hidePublishAlert || !user.email)) {
+      trigger('PublishAssistantWizard', {
         bot,
         inEditor,
         deploymentState,

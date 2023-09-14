@@ -21,7 +21,7 @@ export const PublishAssistantWizard = () => {
   const [deploymentState, setDeploymentState] = useState<TDeploymentState>()
   const [step, setStep] = useState(0)
   const { changeVisibility } = useAssistants()
-  const hasEmail = Boolean(store('user').email)
+  const hasEmail = Boolean(store('user')?.email)
 
   const handleContinue = () => {
     hasEmail ? handlePublish() : setStep(prev => prev + 1)

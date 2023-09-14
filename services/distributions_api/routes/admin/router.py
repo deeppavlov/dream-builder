@@ -57,7 +57,7 @@ async def confirm_publish_request(
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,
-            owner_name=publish_request.user.fullname,
+            owner_name=publish_request.user.name,
             virtual_assistant_display_name=publish_request.virtual_assistant.display_name,
             virtual_assistant_url=publish_request.virtual_assistant.name,
             is_confirmed=True,

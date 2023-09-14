@@ -2,7 +2,6 @@ from .base_page import BasePage
 from locators.locators import SkillPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 
 class SkillPage(BasePage):
@@ -110,7 +109,3 @@ class SkillPage(BasePage):
     def click_change_view(self):
         button = self.browser.find_element(*SkillPageLocators.CHANGE_VIEW_BUTTON)
         button.click()
-
-
-
-

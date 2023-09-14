@@ -3,7 +3,6 @@ from locators.locators import MessengerPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tests.config import openai_token
-import time
 
 
 class MessengerPage(BasePage):

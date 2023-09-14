@@ -1,5 +1,3 @@
-import time
-import pytest
 import pydantic
 import logging
 import requests
@@ -50,7 +48,7 @@ def assert_requires_admin_user(response):
 
 
 class UserMethods:
-    def __init__(self, auth_token='token', auth_type='github'):
+    def __init__(self, auth_token=test_token_github1, auth_type='github'):
         self.auth_token = auth_token
         self.auth_type = auth_type
 
@@ -134,6 +132,20 @@ class UserMethods:
         assert created_va_name in private_dist_names, \
             f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}" \
             f"""{LOGGER.error(f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}")}"""
+
+    def get_list_of_private_va_wo_assert(self):
+        private_dist_names_list = []
+        response = requests.get(
+            url=assistant_dists_endpoint + "/user_owned",
+            headers={
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        for private_dist in response.json():
+            private_dist_names_list.append(private_dist["name"])
+        return private_dist_names_list
+
 
     def get_va_by_name(self, name):
         response = requests.get(

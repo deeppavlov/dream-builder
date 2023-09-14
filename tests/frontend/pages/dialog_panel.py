@@ -2,7 +2,6 @@ from .base_page import BasePage
 from locators.locators import DialogPanelLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 
 class DialogPanel(BasePage):

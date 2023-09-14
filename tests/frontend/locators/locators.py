@@ -138,8 +138,6 @@ class AllGAPageLocators:
 class SkillPageLocators:
     # SKILLS TAB
     SKILLS_TAB = (By.CSS_SELECTOR, "[data-tooltip-id='sidebarSkillTab']")
-
-    # EDIT_SKILL_BUTTON = (By.XPATH, "//p[contains(text(),'Generative')]/../../..//button[contains(text(),'Edit')]")
     EDIT_SKILL_BUTTON = (By.XPATH, f"//p[contains(text(),'{skill_name}')]/../..//button[contains(text(),'Edit')]")
     CHAT_WITH_ASSISTANT_BUTTON = (By.CSS_SELECTOR, "[id='testDialog']")
     BUILD_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Build Assistant')]")
@@ -178,7 +176,6 @@ class SkillPageLocators:
 
     ASSISTANT_NAME = (By.XPATH, "//h5[contains(@class,'_title')]")
     ASSISTANT_DESCRIPTION = (By.XPATH, "//span[contains(@class,'_body')]")
-
 
     # INTEGRATION TAB
 
@@ -254,7 +251,6 @@ class MessengerPageLocators:
     PROPERTIES_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_btns')]/button[3]")
     SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[2]")
 
-    #SHARE_ON_SOCIAL_MEDIA_BUTTON = (By.XPATH, "//button[text()='Share on social media']")
     SHARE_TO_TELEGRAM_BUTTON = (By.CSS_SELECTOR, "button[aria-label='telegram']")
     SHARE_TO_TWITTER_BUTTON = (By.CSS_SELECTOR, "button[aria-label='twitter']")
     EMBED_BUTTON = (By.XPATH, "//button[text()='Embed']")
@@ -273,11 +269,8 @@ class MessengerPageLocators:
     REMOVE_TOKEN = (By.XPATH, "//button[contains(@class,'_remove')]")
     ADDED_TOKEN = (By.XPATH, "//div[contains(@class,'_tokenName')]")
 
-    SUCCESS_TOAST=''
-
 
 class DialogPanelLocators:
-    # RUN_TEST = (By.XPATH, "/button[contains(@class,'_runTest_')]")
     BUILD_ASSISTANT = (By.XPATH, "//div[contains(@class,'_deployPanel')]/button")
 
     MESSAGE_TEXTAREA = (By.XPATH, "//div[@id='sp_right']//textarea")

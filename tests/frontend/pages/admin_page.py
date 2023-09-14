@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 from locators.locators import AdminPageLocators
 from tests.config import public_va_name, users_email, skill_name, generative_model
-import time
 
 
 class AdminPage(BasePage):

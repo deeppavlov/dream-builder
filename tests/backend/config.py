@@ -89,7 +89,6 @@ public_va_names_ru = ["dream_persona_ruxglm_prompted",
                       "multiskill_ru_assistant",
                       "action_stories_ru_assistant",
                       "journalist_helper_ru_assistant",
-
                       ]
 
 lm_service_id_list = [2, 4, 5, 6, 7]

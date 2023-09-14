@@ -3,7 +3,6 @@ from locators.locators import ProfilePageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tests.config import openai_token
-import time
 
 
 class ProfilePage(BasePage):
@@ -67,4 +66,3 @@ class ProfilePage(BasePage):
         success_toast = WebDriverWait(self.browser, 3).until(
             EC.presence_of_element_located(ProfilePageLocators.CLOSE_BUTTON)
         ).click()
-

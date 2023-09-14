@@ -7,8 +7,6 @@ from .base_page import BasePage
 from locators.locators import AllGAPageLocators
 from tests.config import public_va_name, users_email, skill_name, generative_model, your_va_name
 
-import time
-
 
 class AllGAPage(BasePage):
     def is_public_template_loaded(self):
@@ -16,8 +14,7 @@ class AllGAPage(BasePage):
             EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD)
         )
 
-
-    # PUBLIC
+    # PUBLIC ASSISTANTS
 
     def scroll_public_templates_right(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_RIGHT_SCROLL_BUTTON)
@@ -70,9 +67,7 @@ class AllGAPage(BasePage):
         assert self.is_not_element_present(*AllGAPageLocators.PROPERTIES_PANEL_HEADER), \
             "properties_panel is not presented, but should be"
 
-
-
-    # YOUR
+    # YOUR ASSISTANTS
 
     def click_your_a_edit_button(self):
         WebDriverWait(self.browser, 3).until(
@@ -185,7 +180,3 @@ class AllGAPage(BasePage):
         edit_button = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located(AllGAPageLocators.DEEPY_TOOLTIP)
         )
-
-
-
-

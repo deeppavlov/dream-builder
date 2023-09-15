@@ -149,12 +149,11 @@ const SkillPromptModal = () => {
   }
   const promptContext: { context: string } = { context: '' }
 
-  // обновление контекста
   const handleSave = ({ prompt }: IFormValues) => {
     const isSkill = skill !== undefined && skill !== null
     const isModel = selectedModel !== undefined && selectedModel !== null
 
-    const context = promptContext?.context // подмена
+    const context = promptContext?.context
 
     if (!isSkill || !isModel) return
 
@@ -211,7 +210,6 @@ const SkillPromptModal = () => {
 
   const handleAssistantDelete = () => setPreventExit(false)
 
-  // обновление контекста
   const onFormSubmit = (data: IFormValues) => {
     const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
     if (isDirty) handleSave(data)

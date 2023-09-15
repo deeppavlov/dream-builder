@@ -87,15 +87,6 @@ export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
     promptContext.context = markdownString
 
     return (
-      // <Editor
-      //   ref={textEditorRef as any}
-      //   stripPastedStyles
-      //   editorState={editorState}
-      //   placeholder={placeholder}
-      //   onChange={handleChange}
-      //   onBlur={onBlur}
-      // />
-
       <Editor
         editorState={editorState}
         // ref={textEditorRef as any}

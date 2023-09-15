@@ -1,27 +1,17 @@
-import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import classNames from 'classnames/bind'
-import React, {
-  createRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
-import {
-  Control,
-  RegisterOptions,
-  UseFormTrigger,
-  useController,
-} from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg'
-import { LanguageModel } from 'types/types'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
-import getTokensLength from 'utils/getTokensLength'
-import { scrollSelectionIntoView } from 'utils/scrollSelectionIntoView'
-import { PromptBlocksCompositeDecorator } from 'components/Inputs/PromptEditor/PromptBlocksCompositeDecorator'
-import { TextEditor } from '../TextEditor/TextEditor'
-import s from './PromptEditor.module.scss'
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import classNames from 'classnames/bind';
+import React, { createRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Control, RegisterOptions, UseFormTrigger, useController } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg';
+import { LanguageModel } from 'types/types';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+import getTokensLength from 'utils/getTokensLength';
+import { scrollSelectionIntoView } from 'utils/scrollSelectionIntoView';
+import { PromptBlocksCompositeDecorator } from 'components/Inputs/PromptEditor/PromptBlocksCompositeDecorator';
+import { TextEditor } from '../TextEditor/TextEditor';
+import s from './PromptEditor.module.scss';
+
 
 interface IProps {
   name: string
@@ -34,6 +24,7 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
+  promptContext: { context: string }
 }
 
 interface IValidateTokens {
@@ -92,6 +83,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
       name,
       rules,
       triggerField,
+      promptContext,
     },
     forwardRef
   ) => {
@@ -211,6 +203,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
           {resizable && <TextAreaLogo className={s.resizer} />}
           <div className={s.field}>
             <TextEditor
+              promptContext={promptContext}
               ref={textEditorRef}
               content={field.value}
               compositeDecorator={compositeDecorator}

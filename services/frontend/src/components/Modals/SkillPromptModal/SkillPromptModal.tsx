@@ -147,10 +147,14 @@ const SkillPromptModal = () => {
       return !prev
     })
   }
+  const promptContext: { context: string } = { context: '' }
 
+  // обновление контекста
   const handleSave = ({ prompt }: IFormValues) => {
     const isSkill = skill !== undefined && skill !== null
     const isModel = selectedModel !== undefined && selectedModel !== null
+
+    const context = promptContext?.context // подмена
 
     if (!isSkill || !isModel) return
 
@@ -165,7 +169,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: prompt,
+            prompt: context,
             distName: distName || '',
             type: 'skills',
           })
@@ -202,12 +206,12 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-
     promptEditorRef?.current?.insertText(formattedBlock)
   }
 
   const handleAssistantDelete = () => setPreventExit(false)
 
+  // обновление контекста
   const onFormSubmit = (data: IFormValues) => {
     const isDirty = Boolean(dirtyFields?.model || dirtyFields?.prompt)
     if (isDirty) handleSave(data)
@@ -327,6 +331,7 @@ const SkillPromptModal = () => {
               )}
               {skill?.prompt && (
                 <PromptEditor
+                  promptContext={promptContext}
                   ref={promptEditorRef}
                   label={t('modals.skill_prompt.prompt_field.label')}
                   name='prompt'
@@ -348,6 +353,7 @@ const SkillPromptModal = () => {
                   triggerField={triggerField}
                 />
               )}
+
               {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'

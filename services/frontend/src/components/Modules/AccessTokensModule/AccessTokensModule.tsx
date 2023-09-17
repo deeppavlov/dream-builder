@@ -165,7 +165,7 @@ export const AccessTokensModule = () => {
             label={t('modals.access_api_keys.token_field.label')}
             control={control}
             withEnterButton
-            rules={{ required: validationSchema.global.required }}
+            rules={{ required: validationSchema.globals.required }}
             props={{
               placeholder: t('modals.access_api_keys.token_field.placeholder'),
             }}

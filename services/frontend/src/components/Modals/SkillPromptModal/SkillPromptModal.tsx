@@ -338,7 +338,7 @@ const SkillPromptModal = () => {
                   resizable={false}
                   control={control}
                   rules={{
-                    required: validationSchema.global.required,
+                    required: validationSchema.globals.required,
                     maxLength:
                       selectedModel?.max_tokens &&
                       validationSchema.skill.prompt.maxLength(

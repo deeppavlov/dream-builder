@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host --mode DEV",
     "msw": "vite --host --mode MSW",
-    "prod": "vite --host --mode PROD",
+    "dev": "vite --host --mode DEV",
     "stage": "vite --host --mode STAGE",
-    "build": "vite build --mode PROD",
+    "prod": "vite --host --mode PROD",
+    "build-dev": "vite build --mode DEV",
+    "build-stage": "vite build --mode STAGE",
+    "build-prod": "vite build --mode PROD",
     "preview": "vite preview --port 5173",
     "find-deadcode": "ts-prune | grep -v '(used in module)'",
     "generate": "plop"

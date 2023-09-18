@@ -4,7 +4,7 @@ export const getValidationSchema = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'field_validation' })
 
   return {
-    global: {
+    globals: {
       required: t('required'),
       regExpPattern: {
         value: /^[\s\p{L}.'’,!-?«»]+$/giu,

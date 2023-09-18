@@ -9,9 +9,9 @@ services:
       args:
         FRONTEND_ENV: stage
     ports:
-      - "6981:5173"
+      - "6981:80"
     volumes:
-      - ../../services/frontend:/src
+      - ../nginx.conf:/etc/nginx/conf.d/default.conf
     deploy:
       resources:
         limits:

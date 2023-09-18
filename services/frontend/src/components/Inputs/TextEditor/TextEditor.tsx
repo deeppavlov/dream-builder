@@ -1,10 +1,9 @@
-import classNames from 'classnames/bind'
 import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js'
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js'
 import React, { useImperativeHandle, useRef } from 'react'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import s from './TextEditor.module.scss'
+import style from './TextEditor.module.scss'
 
 interface ITextEditorHandle {
   insertText: (text: string) => Promise<void>
@@ -32,7 +31,6 @@ export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
     }: IProps,
     forwardRef
   ) => {
-    let cx = classNames.bind(s)
     const textEditorRef = useRef<HTMLDivElement>(null)
     const rawData = markdownToDraft(content ?? '')
     const state = convertFromRaw(rawData)
@@ -87,33 +85,35 @@ export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
     promptContext.context = markdownString
 
     return (
-      <Editor
-        editorState={editorState}
-        // ref={textEditorRef as any}
-        stripPastedStyles
-        toolbarClassName={cx('toolbarClassName')}
-        wrapperClassName='wrapperClassName'
-        editorClassName={cx('editorClassName')}
-        placeholder={placeholder}
-        toolbar={{
-          options: ['list', 'textAlign', 'emoji', 'history'],
-        }}
-        onBlur={onBlur}
-        onEditorStateChange={handleChange}
-        // hashtag={{
-        //   separator: ' ',
-        //   trigger: '#',
-        // }}
-        // mention={{
-        //   separator: ' ',
-        //   trigger: '@',
-        //   suggestions: [
-        //     { text: 'JavaScript', value: 'javascript', url: 'js' },
-        //     { text: 'Golang', value: 'golang', url: 'go' },
-        //   ],
-        // }}
-        customDecorators={compositeDecorator}
-      />
+      <>
+        <Editor
+          editorState={editorState}
+          // ref={textEditorRef as any}
+          stripPastedStyles
+          toolbarClassName={style.toolbarClassName}
+          wrapperClassName='wrapperClassName'
+          editorClassName={style.editorClassName}
+          // placeholder={placeholder}
+          toolbar={{
+            options: ['list', 'textAlign', 'emoji', 'history'],
+          }}
+          onBlur={onBlur}
+          onEditorStateChange={handleChange}
+          // hashtag={{
+          //   separator: ' ',
+          //   trigger: '#',
+          // }}
+          // mention={{
+          //   separator: ' ',
+          //   trigger: '@',
+          //   suggestions: [
+          //     { text: 'JavaScript', value: 'javascript', url: 'js' },
+          //     { text: 'Golang', value: 'golang', url: 'go' },
+          //   ],
+          // }}
+          customDecorators={compositeDecorator}
+        />
+      </>
     )
   }
 )

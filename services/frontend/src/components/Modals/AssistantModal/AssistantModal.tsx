@@ -158,9 +158,10 @@ export const AssistantModal = () => {
       setIsOpen={setIsOpen}
       handleClose={closeModal}
       onRequestClose={closeModal}
+      modalClassName={s.modal}
     >
       <form
-        className={s.assistantModal}
+        className={s.form}
         onKeyDown={handleKeyDown}
         onSubmit={handleSubmit(onFormSubmit)}
       >

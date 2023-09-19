@@ -34,6 +34,7 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
+  promptContext: { context: string }
 }
 
 interface IValidateTokens {
@@ -92,6 +93,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
       name,
       rules,
       triggerField,
+      promptContext,
     },
     forwardRef
   ) => {
@@ -211,6 +213,7 @@ export const PromptEditor = React.forwardRef<PromptEditorHandle, IProps>(
           {resizable && <TextAreaLogo className={s.resizer} />}
           <div className={s.field}>
             <TextEditor
+              promptContext={promptContext}
               ref={textEditorRef}
               content={field.value}
               compositeDecorator={compositeDecorator}

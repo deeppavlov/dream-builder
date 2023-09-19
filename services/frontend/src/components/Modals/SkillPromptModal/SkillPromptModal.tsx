@@ -147,10 +147,13 @@ const SkillPromptModal = () => {
       return !prev
     })
   }
+  const promptContext: { context: string } = { context: '' }
 
   const handleSave = ({ prompt }: IFormValues) => {
     const isSkill = skill !== undefined && skill !== null
     const isModel = selectedModel !== undefined && selectedModel !== null
+
+    const context = promptContext?.context
 
     if (!isSkill || !isModel) return
 
@@ -165,7 +168,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: prompt,
+            prompt: context,
             distName: distName || '',
             type: 'skills',
           })
@@ -202,7 +205,6 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-
     promptEditorRef?.current?.insertText(formattedBlock)
   }
 
@@ -327,6 +329,7 @@ const SkillPromptModal = () => {
               )}
               {skill?.prompt && (
                 <PromptEditor
+                  promptContext={promptContext}
                   ref={promptEditorRef}
                   label={t('modals.skill_prompt.prompt_field.label')}
                   name='prompt'
@@ -338,7 +341,7 @@ const SkillPromptModal = () => {
                   resizable={false}
                   control={control}
                   rules={{
-                    required: validationSchema.global.required,
+                    required: validationSchema.globals.required,
                     maxLength:
                       selectedModel?.max_tokens &&
                       validationSchema.skill.prompt.maxLength(
@@ -348,6 +351,7 @@ const SkillPromptModal = () => {
                   triggerField={triggerField}
                 />
               )}
+
               {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'

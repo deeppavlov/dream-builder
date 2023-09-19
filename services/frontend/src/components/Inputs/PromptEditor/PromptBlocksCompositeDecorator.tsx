@@ -1,4 +1,4 @@
-import { CompositeDecorator, ContentBlock } from 'draft-js'
+import { ContentBlock } from 'draft-js'
 import { IPromptBlock } from 'types/types'
 
 type IStrategyCallback = (start: number, end: number) => void
@@ -63,7 +63,7 @@ export const PromptBlocksCompositeDecorator = (blocks?: IPromptBlock[]) => {
   // const isBlocks = blocks && blocks.length > 0
 
   // if (!isBlocks) return
-  return new CompositeDecorator([
+  return [
     {
       strategy: blockNameStrategy,
       component: BlockNameComponent,
@@ -72,5 +72,5 @@ export const PromptBlocksCompositeDecorator = (blocks?: IPromptBlock[]) => {
       strategy: blockInputStrategy,
       component: BlockInputComponent,
     },
-  ])
+  ]
 }

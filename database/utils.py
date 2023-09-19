@@ -1,4 +1,5 @@
 import csv
+import os
 import typing
 from functools import wraps
 import logging
@@ -12,6 +13,7 @@ from sqlalchemy import DateTime
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
 
+IS_STAGE = (os.getenv("ENV_TYPE") == "stage")
 
 def sqlalchemy_url(driver: str, user: str, password: str, host: str, port: int, database: str) -> str:
     """Create sqlalchemy sessionmaker

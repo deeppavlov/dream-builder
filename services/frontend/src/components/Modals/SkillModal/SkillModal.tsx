@@ -135,8 +135,8 @@ export const SkillModal = () => {
             defaultValue={getValues()[NAME_ID]}
             control={control}
             rules={{
-              required: validationSchema.global.required,
-              pattern: validationSchema.global.regExpPattern,
+              required: validationSchema.globals.required,
+              pattern: validationSchema.globals.regExpPattern,
             }}
             props={{
               placeholder: t('modals.skill.name_field.placeholder'),
@@ -150,10 +150,10 @@ export const SkillModal = () => {
               defaultValue={getValues()[DESC_ID]}
               withCounter
               rules={{
-                required: validationSchema.global.required,
+                required: validationSchema.globals.required,
                 maxLength:
-                  validationSchema.global.desc.maxLength(descriptionMaxLenght),
-                pattern: validationSchema.global.regExpPattern,
+                  validationSchema.globals.desc.maxLength(descriptionMaxLenght),
+                pattern: validationSchema.globals.regExpPattern,
               }}
               props={{
                 placeholder: t('modals.skill.desc_field.placeholder'),

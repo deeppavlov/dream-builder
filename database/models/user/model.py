@@ -1,3 +1,5 @@
+import os
+
 from apiconfig.config import settings
 from database.core import Base
 from database.utils import pre_populate_from_tsv
@@ -26,6 +28,7 @@ class GeneralUser(Base):
     google_user = relationship("GoogleUser", backref="user", uselist=False)
     github_user = relationship("GithubUser", backref="user", uselist=False)
     unauth_user = relationship("UnauthUser", backref="user", uselist=False)
+    basic_user = relationship("BasicUser", backref="user", uselist=False)
 
     virtual_assistants = relationship("VirtualAssistant", back_populates="author", passive_deletes=True)
     components = relationship("Component", back_populates="author", passive_deletes=True)

@@ -1,11 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, status, HTTPException
 from sqlalchemy.orm import Session
 
 from database.core import init_db
 from apiconfig.config import settings
 from database.models import google_user
+from database.utils import IS_STAGE
+from services.auth_api.auth_type.basic import BasicAuth
 from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type import GithubAuth, GoogleOAuth2, Unauth
@@ -30,6 +32,10 @@ PROVIDERS: dict[str, auth_type.AuthProviders] = {
     "unauth": Unauth(),
 }
 
+# TODO: fix typing
+if IS_STAGE:
+    PROVIDERS.update({"basic": BasicAuth()})
+
 
 @router.get("/token", status_code=status.HTTP_200_OK)
 async def validate_jwt(
@@ -42,13 +48,16 @@ async def validate_jwt(
     Check is carried out via `_fetch_user_info_by_access_token` function
     raise HTTPException with status_code == 400
     """
-    if token == settings.auth.test_token:
-        user: google_user.model = google_user.crud.get_by_outer_id(db, "106152631136730592791")
-        name = user.fullname
-        return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name,
-                    role=user.role)
+    try:
+        if token == settings.auth.test_token:
+            user: google_user.model = google_user.crud.get_by_outer_id(db, "106152631136730592791")
+            name = user.fullname
+            return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name,
+                        role=user.role)
 
-    return await PROVIDERS[auth_type].validate_token(db, token)
+        return await PROVIDERS[auth_type].validate_token(db, token)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.put("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -58,7 +67,10 @@ async def logout(
     """
     refresh_token -> token
     """
-    return await PROVIDERS[auth_type].logout(db, token)
+    try:
+        return await PROVIDERS[auth_type].logout(db, token)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/exchange_authcode")
@@ -78,16 +90,17 @@ async def exchange_authcode(
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    return await PROVIDERS[auth_type].exchange_authcode(db, auth_code)
+    try:
+        return await PROVIDERS[auth_type].login(db, auth_code)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/update_token")
 async def update_access_token(
         refresh_token: str, auth_type: auth_type.OAuth2ProviderNames = Header(default=""), db: Session = Depends(get_db)
 ) -> UserToken:
-    return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
-
-# # TEST ONLY
-# @router.get("/github_auth")
-# async def github_auth():
-#     return RedirectResponse(PROVIDERS["github"].GITHUB_AUTH_URL_WITH_PARAMS)
+    try:
+        return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

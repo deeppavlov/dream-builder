@@ -11,7 +11,7 @@ class BaseAuth(abc.ABC):
         pass
 
     @staticmethod
-    async def login(self, db: Session, token: str) -> User:
+    async def login(self, db: Session, token: str) -> UserToken:
         pass
 
     @staticmethod

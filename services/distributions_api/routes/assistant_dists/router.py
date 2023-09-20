@@ -241,6 +241,7 @@ async def patch_virtual_assistant_component(
     dist_name: str, virtual_assistant_component_id: int, db: Session = Depends(get_db)
 ):
     """"""
+    return HTTPException(status_code=501, detail="Not Implemented")
 
 
 @assistant_dists_router.delete(
@@ -269,7 +270,7 @@ async def publish_dist(
         background_tasks.add_task(
             send_publish_request_created_emails,
             owner_email=user.email,
-            owner_name=user.fullname,
+            owner_name=user.name,
             moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
             virtual_assistant_name=virtual_assistant.name,
             virtual_assistant_display_name=virtual_assistant.display_name,

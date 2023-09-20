@@ -97,7 +97,7 @@
   height: 100%;
   border: 1px solid $text3;
   border-radius: 12px;
-  padding: 8px 0;
+  // padding: 8px 0;
   background-color: $bcgrnd1;
   overflow: auto;
 
@@ -133,7 +133,7 @@
 
 .field {
   position: absolute;
-  top: 8px;
+  // top: 8px;
   left: 0;
   z-index: 1;
   min-width: 100%;
@@ -168,7 +168,7 @@
 
 :global {
   .public-DraftEditorPlaceholder-inner {
-    position: absolute;
+    // position: absolute;
     // top: 0;
     // left: 0;
     color: $text3;

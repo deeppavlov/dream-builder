@@ -1,0 +1,17 @@
+.toolbarClassName {
+  position: fixed;
+  z-index: 2;
+  position: sticky;
+  top: 0;
+  border: none;
+}
+.editorClassName {
+  // padding-top: 50px;
+  padding-bottom: 15px;
+}
+
+.editorClassName {
+  li {
+    margin-left: 2.5em !important;
+  }
+}

@@ -9,9 +9,11 @@ services:
       args:
         FRONTEND_ENV: dev
     ports:
-      - "6971:5173"
+      - "6971:80"
+
     volumes:
-      - ../../services/frontend:/src
+      - ../nginx.conf:/etc/nginx/conf.d/default.conf
+
     deploy:
       resources:
         limits:
@@ -45,6 +47,8 @@ services:
         PORT: 6999
     ports:
       - "6979:6999"
+    environment:
+      ENV_TYPE: stage
     volumes:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database

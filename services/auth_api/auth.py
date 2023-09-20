@@ -90,10 +90,10 @@ async def update_access_token(
     return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
 
 # TEST ONLY
-@router.get("/github_auth")
-async def github_auth():
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(PROVIDERS["github"].GITHUB_AUTH_URL_WITH_PARAMS)
+# @router.get("/github_auth")
+# async def github_auth():
+#     from fastapi.responses import RedirectResponse
+#     return RedirectResponse(PROVIDERS["github"].GITHUB_AUTH_URL_WITH_PARAMS)
 
 
 @router.post("/update_user/{id}")

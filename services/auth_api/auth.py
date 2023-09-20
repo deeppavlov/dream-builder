@@ -80,7 +80,7 @@ async def exchange_authcode(
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    return await PROVIDERS[auth_type].exchange_authcode(db, auth_code)
+    return await PROVIDERS[auth_type].login(db, auth_code)
 
 
 @router.post("/update_token")

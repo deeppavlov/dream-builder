@@ -1,12 +1,9 @@
-import {
-  CompositeDecorator,
-  Editor,
-  EditorState,
-  Modifier,
-  convertFromRaw,
-} from 'draft-js'
-import { markdownToDraft } from 'markdown-draft-js'
+import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js'
+import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js'
 import React, { useImperativeHandle, useRef } from 'react'
+import { Editor } from 'react-draft-wysiwyg'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import style from './TextEditor.module.scss'
 
 interface ITextEditorHandle {
   insertText: (text: string) => Promise<void>
@@ -15,26 +12,31 @@ interface ITextEditorHandle {
 
 interface IProps {
   content?: string
-  compositeDecorator?: CompositeDecorator
+  compositeDecorator?: { strategy: Function; component: Function }[]
   placeholder?: string
   onChange?: (value: string) => void
   onBlur?: () => void
+  promptContext: { context: string }
 }
 
 export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
   (
-    { content, compositeDecorator, placeholder, onChange, onBlur }: IProps,
+    {
+      content,
+      compositeDecorator,
+      placeholder,
+      onChange,
+      onBlur,
+      promptContext,
+    }: IProps,
     forwardRef
   ) => {
     const textEditorRef = useRef<HTMLDivElement>(null)
-    const rawData = markdownToDraft(content ?? '', { preserveNewlines: true })
+    const rawData = markdownToDraft(content ?? '')
     const state = convertFromRaw(rawData)
     const [editorState, setEditorState] = React.useState(
-      EditorState.moveSelectionToEnd(
-        EditorState.createWithContent(state, compositeDecorator)
-      )
+      EditorState.moveSelectionToEnd(EditorState.createWithContent(state))
     )
-
     const handleChange = (editorState: EditorState) => {
       setEditorState(editorState)
 
@@ -43,7 +45,6 @@ export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
         onChange(plainText)
       }
     }
-
     useImperativeHandle(forwardRef, () => ({
       insertText: async text => {
         await new Promise(resolve => {
@@ -78,15 +79,41 @@ export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
       )
     }
 
+    const contextEditor = editorState.getCurrentContent()
+    const rawObject = convertToRaw(contextEditor)
+    const markdownString = draftToMarkdown(rawObject)
+    promptContext.context = markdownString
+
     return (
-      <Editor
-        ref={textEditorRef as any}
-        stripPastedStyles
-        editorState={editorState}
-        placeholder={placeholder}
-        onChange={handleChange}
-        onBlur={onBlur}
-      />
+      <>
+        <Editor
+          editorState={editorState}
+          // ref={textEditorRef as any}
+          stripPastedStyles
+          toolbarClassName={style.toolbarClassName}
+          wrapperClassName='wrapperClassName'
+          editorClassName={style.editorClassName}
+          // placeholder={placeholder}
+          toolbar={{
+            options: ['list', 'textAlign', 'emoji', 'history'],
+          }}
+          onBlur={onBlur}
+          onEditorStateChange={handleChange}
+          // hashtag={{
+          //   separator: ' ',
+          //   trigger: '#',
+          // }}
+          // mention={{
+          //   separator: ' ',
+          //   trigger: '@',
+          //   suggestions: [
+          //     { text: 'JavaScript', value: 'javascript', url: 'js' },
+          //     { text: 'Golang', value: 'golang', url: 'go' },
+          //   ],
+          // }}
+          customDecorators={compositeDecorator}
+        />
+      </>
     )
   }
 )

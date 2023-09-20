@@ -1,11 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, status, HTTPException
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 from database.core import init_db
 from apiconfig.config import settings
 from database.models import google_user
+from database.user_ops import update_user_email
 from services.shared.user import User
 from services.auth_api import auth_type
 from services.auth_api.auth_type import GithubAuth, GoogleOAuth2, Unauth
@@ -87,7 +89,21 @@ async def update_access_token(
 ) -> UserToken:
     return await PROVIDERS[auth_type].update_access_token(db, refresh_token)
 
-# # TEST ONLY
-# @router.get("/github_auth")
-# async def github_auth():
-#     return RedirectResponse(PROVIDERS["github"].GITHUB_AUTH_URL_WITH_PARAMS)
+# TEST ONLY
+@router.get("/github_auth")
+async def github_auth():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(PROVIDERS["github"].GITHUB_AUTH_URL_WITH_PARAMS)
+
+
+@router.post("/update_user/{id}")
+async def update_user_info(
+        user_id: int, new_email: EmailStr, token: str = Header(), auth_type: str = Header(default=""), db: Session = Depends(get_db),
+):
+    """
+    At the moment, only changing the user's email is supported.
+    """
+    if token == settings.auth.test_token:
+        raise HTTPException(status_code=400, detail=str("Can't change GodUser"))
+
+    return update_user_email(db, user_id, auth_type, new_email)

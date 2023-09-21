@@ -1,28 +1,20 @@
 import requests
 from qaseio.pytest import qase
-from .config import (
-    auth_endpoint,
-    auth_token,
-    auth_refresh_token,
-
-    counter_auth as counter
-)
+from .config import auth_endpoint, admin_token, test_token_github1, auth_refresh_token, counter_auth as counter
 
 
 class TestAuth:
     @qase.title(f"{counter()}. test_auth_bad_token")
     def test_auth_bad_token(self):
         response = requests.get(
-            url=auth_endpoint + "/token",
-            headers={"token": "abc.abc.abc", "accept": "application/json"}
+            url=auth_endpoint + "/token", headers={"token": "abc.abc.abc", "accept": "application/json"}
         )
         assert response.status_code == 400, response.json()
 
     @qase.title(f"{counter()}. test_auth_valid_token")
     def test_auth_valid_token(self):
         response = requests.get(
-            url=auth_endpoint + "/token",
-            headers={"token": auth_token, "accept": "application/json"}
+            url=auth_endpoint + "/token", headers={"token": test_token_github1, "accept": "application/json"}
         )
         assert response.status_code == 200, response.json()
 

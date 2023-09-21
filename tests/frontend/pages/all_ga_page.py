@@ -4,15 +4,13 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
-from locators.locators import AllGAPageLocators
-from tests.config import public_va_name, users_email, skill_name, generative_model, your_va_name
+from tests.frontend.locators.locators import AllGAPageLocators
+from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name
 
 
 class AllGAPage(BasePage):
     def is_public_template_loaded(self):
-        WebDriverWait(self.browser, 5).until(
-            EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD)
-        )
+        WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD))
 
     # PUBLIC ASSISTANTS
 
@@ -28,9 +26,7 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB)
         button.click()
 
-        WebDriverWait(self.browser, 2).until(
-            EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_KEBAB_CHAT)
-        )
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_KEBAB_CHAT))
 
     def click_kebab_public_template_chat(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB_CHAT)
@@ -49,7 +45,7 @@ class AllGAPage(BasePage):
             EC.element_to_be_clickable(AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
         ).click()
 
-        #self.browser.execute_script('arguments[0].click()', AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
+        # self.browser.execute_script('arguments[0].click()', AllGAPageLocators.PUBLIC_USE_MW_USE_BUTTON)
 
     def click_cancel_template_modal_window(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_MW_CANCEL_BUTTON)
@@ -60,12 +56,14 @@ class AllGAPage(BasePage):
         button.click()
 
     def check_is_properties_panel_present(self):
-        assert self.is_element_present(*AllGAPageLocators.PROPERTIES_PANEL_HEADER), \
-            "properties_panel is not presented, but should be"
+        assert self.is_element_present(
+            *AllGAPageLocators.PROPERTIES_PANEL_HEADER
+        ), "properties_panel is not presented, but should be"
 
     def check_is_not_properties_panel_present(self):
-        assert self.is_not_element_present(*AllGAPageLocators.PROPERTIES_PANEL_HEADER), \
-            "properties_panel is not presented, but should be"
+        assert self.is_not_element_present(
+            *AllGAPageLocators.PROPERTIES_PANEL_HEADER
+        ), "properties_panel is not presented, but should be"
 
     # YOUR ASSISTANTS
 
@@ -78,9 +76,7 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
         button.click()
 
-        WebDriverWait(self.browser, 2).until(
-            EC.visibility_of_element_located(AllGAPageLocators.YOUR_KEBAB_CHAT)
-        )
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(AllGAPageLocators.YOUR_KEBAB_CHAT))
 
     def click_kebab_your_a_chat(self):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_CHAT)
@@ -137,6 +133,18 @@ class AllGAPage(BasePage):
     def click_create_from_scratch_button(self):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_BUTTON)
         button.click()
+
+    def click_choose_language_assistant_dropdown(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_DROPDOWN)
+        textarea.click()
+
+    def click_choose_language_assistant_en(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_EN)
+        textarea.click()
+
+    def click_choose_language_assistant_ru(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_RU)
+        textarea.click()
 
     def enter_name_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)

@@ -1,13 +1,13 @@
-from locators.locators import GoogleAuthPageLocators
+from tests.frontend.locators.locators import GoogleAuthPageLocators
 from .base_page import BasePage
-from tests.cookies import cookies_list
+from tests.frontend.cookies import cookies_list
 import time
-from tests.config import public_va_name, users_email, skill_name, generative_model
+from tests.frontend.config import public_va_name, users_email, skill_name, generative_model
 
 
 class GoogleAuthPage(BasePage):
     def do_auth(self):
-        #self.browser.delete_all_cookies()
+        # self.browser.delete_all_cookies()
         for cookie in cookies_list:
             self.browser.add_cookie(cookie)
         time.sleep(3)
@@ -27,6 +27,3 @@ class GoogleAuthPage(BasePage):
         time.sleep(2)
         button = self.browser.find_element(*GoogleAuthPageLocators.USER_EMAIL_BUTTON)
         button.click()
-
-
-

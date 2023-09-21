@@ -1,5 +1,5 @@
 from .base_page import BasePage
-from locators.locators import DialogPanelLocators
+from tests.frontend.locators.locators import DialogPanelLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -26,9 +26,7 @@ class DialogPanel(BasePage):
         textarea = self.browser.find_element(*DialogPanelLocators.MESSAGE_TEXTAREA)
         textarea.click()
         textarea.clear()
-        WebDriverWait(self.browser, 5).until(
-            EC.text_to_be_present_in_element(DialogPanelLocators.MESSAGE_TEXTAREA, "")
-        )
+        WebDriverWait(self.browser, 5).until(EC.text_to_be_present_in_element(DialogPanelLocators.MESSAGE_TEXTAREA, ""))
 
     def check_bot_message(self):
         assistant_message = 0
@@ -37,13 +35,15 @@ class DialogPanel(BasePage):
                 EC.text_to_be_present_in_element(DialogPanelLocators.BOT_MESSAGE, "•")
             )
         finally:
-            assert assistant_message is False, \
-                f"assistant_message.text is (1): {self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text}"
+            assert (
+                assistant_message is False
+            ), f"assistant_message.text is (1): {self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text}"
 
         assistant_message = self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text
 
-        assert "Marketing" in assistant_message or "marketing" in assistant_message, \
-            f"assistant_message.text is: {assistant_message}"
+        assert (
+            "Marketing" in assistant_message or "marketing" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"
 
     def check_bot_message_edited_prompt(self):
         assistant_message = 0
@@ -52,12 +52,15 @@ class DialogPanel(BasePage):
                 EC.text_to_be_present_in_element(DialogPanelLocators.BOT_MESSAGE, "•")
             )
         finally:
-            assert assistant_message is False, \
-                f"assistant_message.text is (1): {self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text}"
+            assert (
+                assistant_message is False
+            ), f"assistant_message.text is (1): {self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text}"
 
         assistant_message = self.browser.find_element(*DialogPanelLocators.BOT_MESSAGE).text
 
-        assert "Sale" in assistant_message or "sale" in assistant_message or \
-               "sales" in assistant_message or "Sales" in assistant_message, \
-            f"assistant_message.text is: {assistant_message}"
-
+        assert (
+            "Sale" in assistant_message
+            or "sale" in assistant_message
+            or "sales" in assistant_message
+            or "Sales" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"

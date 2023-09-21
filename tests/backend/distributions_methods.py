@@ -12,8 +12,10 @@ from .config import (
     admin_endpoint,
     lm_services_endpoint,
     openai_token,
-    lm_service_id_list,
-    lm_service_id_russian_list,
+    lm_service_id_en_list,
+    lm_service_id_ru_list,
+    lm_service_id_en_nominal_list,
+    lm_service_id_union_list,
     test_token_github1,
 )
 
@@ -21,34 +23,36 @@ LOGGER = logging.getLogger(__name__)
 
 
 def assert_status_code(response, status_code):
-    assert response.status_code == status_code, \
-        f"Expected status code is {status_code}, actual: {response.status_code}, {response.json()} " \
+    assert response.status_code == status_code, (
+        f"Expected status code is {status_code}, actual: {response.status_code}, {response.json()} "
         f"{LOGGER.error(f'Expected status code is {status_code}, actual: {response.status_code}, {response.json()}')}"
+    )
 
 
 def assert_validation(response, model):
     try:
-        assert model.parse_obj(response), \
-            f"Validation error, actual response: {response}"
+        assert model.parse_obj(response), f"Validation error, actual response: {response}"
     except pydantic.error_wrappers.ValidationError as err:
-        LOGGER.error(f'Validation error, actual response: {response}')
+        LOGGER.error(f"Validation error, actual response: {response}")
         raise err
 
 
 def assert_no_access(response):
-    assert {"detail": "No access"} == response.json(), \
-        f"Expected response is 'detail': 'No access',' actual: {response.json()} " \
+    assert {"detail": "No access"} == response.json(), (
+        f"Expected response is 'detail': 'No access',' actual: {response.json()} "
         f"""{LOGGER.error(f"Expected response is 'detail':'No access', actual: {response.json()}")}"""
+    )
 
 
 def assert_requires_admin_user(response):
-    assert {'detail': 'Requires admin user'} == response.json(), \
-        f"Expected response is 'detail': 'Requires admin user',' actual: {response.json()} " \
+    assert {"detail": "Requires admin user"} == response.json(), (
+        f"Expected response is 'detail': 'Requires admin user',' actual: {response.json()} "
         f"""{LOGGER.error(f"Expected response is 'detail': 'Requires admin user', actual: {response.json()}")}"""
+    )
 
 
 class UserMethods:
-    def __init__(self, auth_token=test_token_github1, auth_type='github'):
+    def __init__(self, auth_token=test_token_github1, auth_type="github"):
         self.auth_token = auth_token
         self.auth_type = auth_type
 
@@ -63,10 +67,7 @@ class UserMethods:
                 "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
-            json={"display_name": name,
-                  "description": "TestBot",
-                  "language": language
-                  },
+            json={"display_name": name, "description": "TestBot", "language": language},
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.VirtualAssistantRead)
@@ -82,9 +83,7 @@ class UserMethods:
                 "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
-            json={"display_name": "TestBot",
-                  "description": "TestBot"
-                  },
+            json={"display_name": "TestBot", "description": "TestBot"},
         )
         assert_status_code(response, 403)
         assert_validation(response.json(), models.VirtualAssistantRead)
@@ -98,9 +97,7 @@ class UserMethods:
                 "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
-            json={"display_name": 1,
-                  "description": 1
-                  },
+            json={"display_name": 1, "description": 1},
         )
         assert_status_code(response, 403)
         assert_validation(response.json(), models.VirtualAssistantRead)
@@ -129,9 +126,10 @@ class UserMethods:
             private_dist_names_list.append(private_dist["name"])
             assert_validation(private_dist, models.VirtualAssistantRead)
         private_dist_names = [private_dist["name"] for private_dist in response.json()]
-        assert created_va_name in private_dist_names, \
-            f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}" \
+        assert created_va_name in private_dist_names, (
+            f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}"
             f"""{LOGGER.error(f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}")}"""
+        )
 
     def get_list_of_private_va_wo_assert(self):
         private_dist_names_list = []
@@ -146,36 +144,38 @@ class UserMethods:
             private_dist_names_list.append(private_dist["name"])
         return private_dist_names_list
 
-
     def get_va_by_name(self, name):
         response = requests.get(
             url=assistant_dists_endpoint + "/" + name,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.VirtualAssistantRead)
-        assert response.json()["name"] == name, \
-            f"Response doesn't contain a name: name = {name}, {response.json()}" \
+        assert response.json()["name"] == name, (
+            f"Response doesn't contain a name: name = {name}, {response.json()}"
             f"""{LOGGER.error(f"Response doesn't contain a name: name = {name}, {response.json()}")}"""
+        )
         return response.json()
 
     def get_va_by_name_non_exist(self, name):
-        response = requests.get(url=assistant_dists_endpoint + "/" + name,
-                                headers={
-                                    'accept': 'application/json',
-                                    'token': self.auth_token,
-                                    "auth-type": self.auth_type,
-                                }
-                                )
+        response = requests.get(
+            url=assistant_dists_endpoint + "/" + name,
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
         assert_status_code(response, 404)
-        assert {'detail': f"Virtual assistant '{name}' not found in database"} == response.json(), \
-            f"Expected response: 'not found in database', actual: {response.status_code}, {response.json()}" \
+        assert {"detail": f"Virtual assistant '{name}' not found in database"} == response.json(), (
+            f"Expected response: 'not found in database', actual: {response.status_code}, {response.json()}"
             f"""{LOGGER.error(
                 f"Expected response: 'not found in database', actual: {response.status_code}, {response.json()}")}"""
+        )
 
     def get_va_by_name_no_access(self, name):
         response = requests.get(assistant_dists_endpoint + "/" + name)
@@ -241,10 +241,7 @@ class UserMethods:
                 "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
-            json={
-                "display_name": "Test_clone_name",
-                "description": "Test_clone_description"
-            },
+            json={"display_name": "Test_clone_name", "description": "Test_clone_description"},
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.VirtualAssistantRead)
@@ -292,18 +289,19 @@ class UserMethods:
         init_language = user.get_va_by_name(init_name)["language"]["value"]
         clone_language = user.get_va_by_name(clone_name)["language"]["value"]
 
-        assert init_language == clone_language, \
-            f"Expected language: {init_language}, actual language: {clone_language}" \
+        assert init_language == clone_language, (
+            f"Expected language: {init_language}, actual language: {clone_language}"
             f"{LOGGER.error(f'Expected language: {init_language}, actual language: {clone_language}')}"
+        )
 
     def get_va_components(self, name):
         response = requests.get(
             url=assistant_dists_endpoint + "/" + name + "/components",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.VirtualAssistantComponentPipelineRead)
@@ -313,10 +311,10 @@ class UserMethods:
         response = requests.get(
             url=assistant_dists_endpoint + "/" + name + "/components",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 403)
         assert_no_access(response)
@@ -326,15 +324,14 @@ class UserMethods:
         response = requests.post(
             url=assistant_dists_endpoint + "/" + name + "/components",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
-
             json={
-                'component_id': component_id,
-            }
+                "component_id": component_id,
+            },
         )
         assert_status_code(response, 201)
         return response.json()
@@ -345,15 +342,14 @@ class UserMethods:
         response = requests.post(
             url=assistant_dists_endpoint + "/" + name + "/components",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
-
             json={
-                'component_id': component_id,
-            }
+                "component_id": component_id,
+            },
         )
         assert_status_code(response, 500)
         # assert_no_access(response)
@@ -362,10 +358,10 @@ class UserMethods:
         response = requests.delete(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 204)
 
@@ -373,10 +369,10 @@ class UserMethods:
         response = requests.delete(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 500)
         # assert_no_access(response)
@@ -385,8 +381,8 @@ class UserMethods:
         response = requests.patch(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
-                'accept': 'application/json',
-            }
+                "accept": "application/json",
+            },
         )
         assert_status_code(response, 200)
         # assert models.VirtualAssistantRead.parse_obj(get_dist_components_response.json()), \
@@ -400,8 +396,8 @@ class UserMethods:
         response = requests.patch(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
-                'accept': 'application/json',
-            }
+                "accept": "application/json",
+            },
         )
         # json={
         #    "display_name": display_name,
@@ -415,31 +411,27 @@ class UserMethods:
 
     def publish_va(self, name, visibility):
         response = requests.post(
-            url=assistant_dists_endpoint + "/" + name + '/publish',
+            url=assistant_dists_endpoint + "/" + name + "/publish",
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/json',
+                "content-type": "application/json",
             },
-            json={
-                'visibility': visibility
-            }
+            json={"visibility": visibility},
         )
         assert_status_code(response, 204)
 
     def publish_va_no_access(self, name, visibility):
         response = requests.post(
-            url=assistant_dists_endpoint + "/" + name + '/publish',
+            url=assistant_dists_endpoint + "/" + name + "/publish",
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/json',
+                "content-type": "application/json",
             },
-            json={
-                'visibility': visibility
-            }
+            json={"visibility": visibility},
         )
         assert_status_code(response, 500)
         # assert_no_access(response)
@@ -450,12 +442,12 @@ class UserMethods:
         response = requests.get(
             url=assistant_dists_endpoint + "/templates" + "/template_file_path",
             headers={
-                'accept': 'application/json',
+                "accept": "application/json",
             },
             params={
-                'owner_address': owner_address,
-                'dist_name': name,
-            }
+                "owner_address": owner_address,
+                "dist_name": name,
+            },
         )
         assert_status_code(response, 200)
 
@@ -465,8 +457,8 @@ class UserMethods:
         response = requests.get(
             url=components_endpoint,
             headers={
-                'accept': 'application/json',
-            }
+                "accept": "application/json",
+            },
         )
         assert_status_code(response, 200)
         for dist_components in response.json():
@@ -480,9 +472,10 @@ class UserMethods:
                 skill_is_added = True
                 break
 
-        assert skill_is_added is True, \
-            f"Error, actual component {component_id} is not added to Assistant" \
+        assert skill_is_added is True, (
+            f"Error, actual component {component_id} is not added to Assistant"
             f"""{LOGGER.error(f"Error, actual component {component_id} is not added to Assistant")}"""
+        )
 
     def get_component_not_exist_in_component_list(self, component_list, component_id):
         skill_is_added = False
@@ -491,29 +484,32 @@ class UserMethods:
                 skill_is_added = True
                 break
 
-        assert skill_is_added is False, \
-            f'Error, actual component {component_id} is added to Assistant' \
+        assert skill_is_added is False, (
+            f"Error, actual component {component_id} is added to Assistant"
             f"""{LOGGER.error(f"Error, actual component {component_id} is added to Assistant")}"""
+        )
 
-    def create_component(self,
-                         display_name='Test_name',
-                         description='Test_description',
-                         lm_service_id=lm_service_id_list[0],
-                         prompt='Test_prompt'):
+    def create_component(
+        self,
+        display_name="Test_name",
+        description="Test_description",
+        lm_service_id=lm_service_id_en_list[0],
+        prompt="Test_prompt",
+    ):
         response = requests.post(
             components_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             json={
-                'display_name': display_name,
-                'description': description,
-                'lm_service_id': lm_service_id,
-                'prompt': prompt,
-            }
+                "display_name": display_name,
+                "description": description,
+                "lm_service_id": lm_service_id,
+                "prompt": prompt,
+            },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.ComponentRead)
@@ -523,8 +519,8 @@ class UserMethods:
         response = requests.get(
             url=components_endpoint + "/" + str(component_id),
             headers={
-                'accept': 'application/json',
-            }
+                "accept": "application/json",
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.ComponentRead)
@@ -534,34 +530,35 @@ class UserMethods:
         response = requests.delete(
             url=components_endpoint + "/" + str(component_id),
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 204)
 
-    def patch_component(self,
-                        component_id,
-                        display_name="string",
-                        description="string",
-                        prompt="Your prompt",
-                        lm_service_id=lm_service_id_list[0]
-                        ):
+    def patch_component(
+        self,
+        component_id,
+        display_name="string",
+        description="string",
+        prompt="Your prompt",
+        lm_service_id=lm_service_id_en_list[0],
+    ):
         response = requests.patch(
             url=components_endpoint + "/" + str(component_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             json={
-                'display_name': display_name,
-                'description': description,
-                'prompt': prompt,
-                'lm_service_id': lm_service_id,
-            }
+                "display_name": display_name,
+                "description": description,
+                "prompt": prompt,
+                "lm_service_id": lm_service_id,
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.ComponentRead)
@@ -570,27 +567,14 @@ class UserMethods:
         response = requests.get(
             url=components_endpoint + "/group/" + group_name,
             headers={
-                'accept': 'application/json',
-            }
+                "accept": "application/json",
+            },
         )
         assert_status_code(response, 200)
         for dist_components in response.json():
             assert_validation(dist_components, models.ComponentRead)
 
     # USERS
-
-    def get_all_users(self):
-        response = requests.get(
-            url=users_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-            },
-        )
-        assert_status_code(response, 200)
-        for user in response.json():
-            assert_validation(user, models.UserRead)
 
     def get_user_self(self):
         response = requests.get(
@@ -603,7 +587,7 @@ class UserMethods:
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.UserRead)
-        return str(response.json()["id"])
+        return response.json()
 
     def get_user_by_id(self, user_id):
         response = requests.get(
@@ -721,9 +705,9 @@ class UserMethods:
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
-        assert response.json()["active_skill"]["name"] != "dummy_skill", \
-            "Dummy skill answers" \
-            f"{LOGGER.error(f'Dummy skill answers')}"
+        assert response.json()["active_skill"]["name"] != "dummy_skill", (
+            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+        )
 
     def send_dialog_session_message_no_access(self, dialog_session_id):
         response = requests.post(
@@ -753,20 +737,21 @@ class UserMethods:
             json={
                 "text": "Hello! What is your name?",
                 "prompt": "TASK:  You are a chatbot that can only answers questions below. "
-                          "FAQ: What is your name? My name is Paul.",
+                "FAQ: What is your name? My name is Paul.",
                 "lm_service_id": lm_service_id,
-                "openai_api_key": openai_token
+                "openai_api_key": openai_token,
             },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
-        assert response.json()["active_skill"]["name"] != "dummy_skill", \
-            "Dummy skill answers" \
+        assert response.json()["active_skill"]["name"] != "dummy_skill", (
+            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+        )
+        assert "Paul" in response.json()["text"], (
+            f"Skill answers incorrectly, {response.json()['text']}, "
+            f"{response.json()['active_skill']['name']}"
             f"{LOGGER.error(f'Dummy skill answers')}"
-        assert "Paul" in response.json()["text"], \
-            f"Skill answers incorrectly, {response.json()['text']}, " \
-            f"{response.json()['active_skill']['name']}" \
-            f"{LOGGER.error(f'Dummy skill answers')}"
+        )
 
     def send_dialog_session_message_various_russian_lm(self, dialog_session_id, lm_service_id):
         response = requests.post(
@@ -779,7 +764,7 @@ class UserMethods:
             },
             json={
                 "text": "Что такое умный дом?",
-                "prompt": '''Вы — чат-бот, который может отвечать только на часто задаваемые вопросы об ИИ. 
+                "prompt": """Вы — чат-бот, который может отвечать только на часто задаваемые вопросы об ИИ. 
                 ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ: 
                 Что такое умный дом? Умный дом — это как личный помощник для вашего дома. Это 
                 система устройств и приборов, которыми можно управлять дистанционно и запрограммировать на 
@@ -787,20 +772,21 @@ class UserMethods:
                 отрегулировать термостат или запустить кофеварку еще до того, как встанете с постели. 
                 ИНСТРУКЦИЯ: 
                 Человек вступает в разговор и начинает задавать вопросы. Сгенерируйте ответ на основе списка часто 
-                задаваемых вопросов.''',
+                задаваемых вопросов.""",
                 "lm_service_id": lm_service_id,
-                "openai_api_key": openai_token
+                "openai_api_key": openai_token,
             },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
-        assert response.json()["active_skill"]["name"] != "dummy_skill", \
-            "Dummy skill answers" \
+        assert response.json()["active_skill"]["name"] != "dummy_skill", (
+            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+        )
+        assert "дом" in response.json()["text"], (
+            f"Skill answers incorrectly, {response.json()['text']}, "
+            f"{response.json()['active_skill']['name']}"
             f"{LOGGER.error(f'Dummy skill answers')}"
-        assert "дом" in response.json()["text"], \
-            f"Skill answers incorrectly, {response.json()['text']}, " \
-            f"{response.json()['active_skill']['name']}" \
-            f"{LOGGER.error(f'Dummy skill answers')}"
+        )
 
     def get_dialog_session_history(self, dialog_session_id):
         response = requests.get(
@@ -828,14 +814,33 @@ class UserMethods:
         assert_no_access(response)
 
     def get_all_lm_services(self):
+        response = requests.get(url=lm_services_endpoint, headers={"accept": "application/json"})
+
+        assert_status_code(response, 200)
+        for lm_service in response.json():
+            assert_validation(lm_service, models.LmServiceRead)
+
+        actual_lm_service_id_list = [response["id"] for response in response.json()]
+        assert actual_lm_service_id_list == lm_service_id_union_list
+
+    def get_all_lm_services_for_language(self, language="en"):
         response = requests.get(
             url=lm_services_endpoint,
-            headers={"accept": "application/json"}
+            headers={"accept": "application/json"},
+            params={
+                "language": language,
+            },
         )
 
         assert_status_code(response, 200)
         for lm_service in response.json():
             assert_validation(lm_service, models.LmServiceRead)
+        actual_lm_service_id_russian_list = [response["id"] for response in response.json()]
+
+        if language == "ru":
+            assert actual_lm_service_id_russian_list == lm_service_id_ru_list
+        if language == "en":
+            assert actual_lm_service_id_russian_list == lm_service_id_en_nominal_list
 
     # DEPLOYMENTS
 
@@ -843,13 +848,13 @@ class UserMethods:
         response = requests.get(
             url=deployments_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
             },
             params={
-                'state': 'DEPLOYED',
-            }
+                "state": "DEPLOYED",
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.DeploymentRead)
@@ -858,15 +863,14 @@ class UserMethods:
         response = requests.post(
             url=deployments_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             json={
-                f'virtual_assistant_name': va_name,
-
-            }
+                f"virtual_assistant_name": va_name,
+            },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DeploymentRead)
@@ -876,15 +880,14 @@ class UserMethods:
         response = requests.post(
             url=deployments_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             json={
-                f'virtual_assistant_name': va_name,
-
-            }
+                f"virtual_assistant_name": va_name,
+            },
         )
         assert_status_code(response, 403)
         assert_no_access(response)
@@ -893,10 +896,10 @@ class UserMethods:
         response = requests.get(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.DeploymentRead)
@@ -906,10 +909,10 @@ class UserMethods:
         response = requests.get(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 403)
         assert_no_access(response)
@@ -918,24 +921,25 @@ class UserMethods:
         response = requests.get(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 404)
-        assert {"detail": f"Deployment {str(deployment_id)} not found"} == response.json(), \
-            "Validation error while get_deployment_non_exists" \
+        assert {"detail": f"Deployment {str(deployment_id)} not found"} == response.json(), (
+            "Validation error while get_deployment_non_exists"
             f"{LOGGER.error(f'Expected response is Deployment not found, actual:, {response.json()}')}"
+        )
 
     def delete_deployment(self, deployment_id):
         response = requests.delete(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 204)
 
@@ -943,10 +947,10 @@ class UserMethods:
         response = requests.delete(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': '*/*',
-                'token': self.auth_token,
+                "accept": "*/*",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 403)
         # assert_no_access(response)
@@ -955,10 +959,10 @@ class UserMethods:
         response = requests.patch(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
 
@@ -966,57 +970,63 @@ class UserMethods:
         response = requests.patch(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
             },
             params={
-                'task_id': task_id,
-            }
+                "task_id": task_id,
+            },
         )
         assert_status_code(response, 403)
         # assert_no_access(response)
 
     def get_stacks(self):
-        response = requests.get(
-            url=deployments_endpoint + "/stacks",
-            headers={
-                'accept': 'application/json'}
-        )
+        response = requests.get(url=deployments_endpoint + "/stacks", headers={"accept": "application/json"})
         assert_status_code(response, 200)
 
     def get_stack_ports(self):
-        response = requests.get(
-            url=deployments_endpoint + "/stack_ports",
-            headers={
-                'accept': 'application/json'}
-        )
+        response = requests.get(url=deployments_endpoint + "/stack_ports", headers={"accept": "application/json"})
         assert_status_code(response, 200)
 
     def delete_stack(self, stack_id):
         response = requests.delete(
             url=deployments_endpoint + "/stacks/" + str(stack_id),
             headers={
-                'accept': 'application/json',
-            })
+                "accept": "application/json",
+            },
+        )
         assert_status_code(response, 200)
 
 
 class AdminMethods:
-    def __init__(self, auth_token='token', auth_type='github'):
+    def __init__(self, auth_token="token", auth_type="github"):
         self.auth_token = auth_token
         self.auth_type = auth_type
 
     # ADMIN
 
+    def get_all_users(self):
+        response = requests.get(
+            url=users_endpoint,
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        assert_status_code(response, 200)
+        for user in response.json():
+            assert_validation(user, models.UserRead)
+
     def get_all_publish_requests(self):
         response = requests.get(
             url=admin_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
         for publish_request in response.json():
@@ -1027,10 +1037,10 @@ class AdminMethods:
         response = requests.get(
             url=admin_endpoint,
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 403)
         assert_requires_admin_user(response)
@@ -1039,10 +1049,10 @@ class AdminMethods:
         response = requests.get(
             url=admin_endpoint + "/unreviewed",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 200)
         for publish_request in response.json():
@@ -1053,10 +1063,10 @@ class AdminMethods:
         response = requests.get(
             url=admin_endpoint + "/unreviewed",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-            }
+            },
         )
         assert_status_code(response, 403)
         assert_requires_admin_user(response)
@@ -1065,11 +1075,11 @@ class AdminMethods:
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/x-www-form-urlencoded',
-            }
+                "content-type": "application/x-www-form-urlencoded",
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
@@ -1078,11 +1088,11 @@ class AdminMethods:
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/x-www-form-urlencoded',
-            }
+                "content-type": "application/x-www-form-urlencoded",
+            },
         )
         assert_status_code(response, 403)
         assert_requires_admin_user(response)
@@ -1091,11 +1101,11 @@ class AdminMethods:
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/x-www-form-urlencoded',
-            }
+                "content-type": "application/x-www-form-urlencoded",
+            },
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
@@ -1104,11 +1114,11 @@ class AdminMethods:
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
             headers={
-                'accept': 'application/json',
-                'token': self.auth_token,
+                "accept": "application/json",
+                "token": self.auth_token,
                 "auth-type": self.auth_type,
-                'content-type': 'application/x-www-form-urlencoded',
-            }
+                "content-type": "application/x-www-form-urlencoded",
+            },
         )
         assert_status_code(response, 403)
         assert_requires_admin_user(response)

@@ -1,14 +1,16 @@
 from .base_page import BasePage
-from locators.locators import SkillPageLocators
+from tests.frontend.locators.locators import SkillPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 class SkillPage(BasePage):
     def click_edit_skill(self):
-        edit_button = WebDriverWait(self.browser, 6).until(
-            EC.element_to_be_clickable(SkillPageLocators.EDIT_SKILL_BUTTON)
-        ).click()
+        edit_button = (
+            WebDriverWait(self.browser, 6)
+            .until(EC.element_to_be_clickable(SkillPageLocators.EDIT_SKILL_BUTTON))
+            .click()
+        )
 
     def click_chat_with_assistant_button(self):
         button = self.browser.find_element(*SkillPageLocators.CHAT_WITH_ASSISTANT_BUTTON)
@@ -53,14 +55,20 @@ class SkillPage(BasePage):
         button.click()
 
     def check_is_properties_panel_present(self):
-        edit_button = WebDriverWait(self.browser, 2).until(
-            EC.visibility_of_element_located(SkillPageLocators.PROPERTIES_PANEL_HEADER)
-        ), "properties_panel is not presented, but should be"
+        edit_button = (
+            WebDriverWait(self.browser, 2).until(
+                EC.visibility_of_element_located(SkillPageLocators.PROPERTIES_PANEL_HEADER)
+            ),
+            "properties_panel is not presented, but should be",
+        )
 
     def check_is_not_properties_panel_present(self):
-        edit_button = WebDriverWait(self.browser, 2).until(
-            EC.invisibility_of_element_located(SkillPageLocators.PROPERTIES_PANEL_HEADER)
-        ), "properties_panel is presented, but should not been"
+        edit_button = (
+            WebDriverWait(self.browser, 2).until(
+                EC.invisibility_of_element_located(SkillPageLocators.PROPERTIES_PANEL_HEADER)
+            ),
+            "properties_panel is presented, but should not been",
+        )
 
     def click_build_assistant(self):
         button = self.browser.find_element(*SkillPageLocators.BUILD_ASSISTANT_BUTTON)

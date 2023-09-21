@@ -1,12 +1,11 @@
 from .base_page import BasePage
-from locators.locators import ProfilePageLocators
+from tests.frontend.locators.locators import ProfilePageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.config import openai_token
+from tests.frontend.config import openai_token
 
 
 class ProfilePage(BasePage):
-
     def switch_to_personal_tokens_tab(self):
         textarea = self.browser.find_element(*ProfilePageLocators.PERSONAL_TOKENS)
         textarea.click()
@@ -49,9 +48,11 @@ class ProfilePage(BasePage):
         button.click()
 
     def click_enter_token_button(self):
-        edit_button = WebDriverWait(self.browser, 3).until(
-            EC.element_to_be_clickable(ProfilePageLocators.ENTER_TOKEN_BUTTON)
-        ).click()
+        edit_button = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.element_to_be_clickable(ProfilePageLocators.ENTER_TOKEN_BUTTON))
+            .click()
+        )
 
     def click_remove_button(self):
         button = self.browser.find_element(*ProfilePageLocators.REMOVE_TOKEN)
@@ -63,6 +64,8 @@ class ProfilePage(BasePage):
         )
 
     def click_close_button(self):
-        success_toast = WebDriverWait(self.browser, 3).until(
-            EC.presence_of_element_located(ProfilePageLocators.CLOSE_BUTTON)
-        ).click()
+        success_toast = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.presence_of_element_located(ProfilePageLocators.CLOSE_BUTTON))
+            .click()
+        )

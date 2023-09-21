@@ -1,7 +1,6 @@
-from locators.locators import GithubAuthPageLocators
+from tests.frontend.locators.locators import GithubAuthPageLocators
 from .base_page import BasePage
-import time
-from tests.config import public_va_name, github_email, github_password, skill_name, generative_model
+from tests.frontend.config import public_va_name, github_email, github_password, skill_name, generative_model
 
 
 class GithubAuthPage(BasePage):
@@ -16,4 +15,3 @@ class GithubAuthPage(BasePage):
     def click_sign_in(self):
         email_textarea = self.browser.find_element(*GithubAuthPageLocators.SIGN_IN)
         email_textarea.click()
-

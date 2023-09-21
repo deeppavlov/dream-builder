@@ -1,5 +1,5 @@
 from .base_page import BasePage
-from locators.locators import DeepyLocators
+from tests.frontend.locators.locators import DeepyLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -12,13 +12,13 @@ class DeepyPanel(BasePage):
                 EC.text_to_be_present_in_element(DeepyLocators.DEEPY_MESSAGE, "•")
             )
         finally:
-            assert deepy_message is False, \
-                f"deepy_message.text is (1): {self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE).text}"
+            assert (
+                deepy_message is False
+            ), f"deepy_message.text is (1): {self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE).text}"
 
         deepy_text = self.browser.find_element(*DeepyLocators.DEEPY_MESSAGE).text
 
-        assert "Deepy" in deepy_text or "deepy" in deepy_message, \
-            f"deepy_message.text is: {deepy_text}"
+        assert "Deepy" in deepy_text or "deepy" in deepy_message, f"deepy_message.text is: {deepy_text}"
 
     def enter_message_deepy(self):
         textarea = self.browser.find_element(*DeepyLocators.MESSAGE_TEXTAREA)

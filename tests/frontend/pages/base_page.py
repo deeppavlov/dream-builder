@@ -3,7 +3,7 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from locators.locators import BasePageLocators
+from tests.frontend.locators.locators import BasePageLocators
 
 
 class BasePage:
@@ -43,9 +43,11 @@ class BasePage:
         button.click()
 
     def click_deepy_button(self):
-        button = WebDriverWait(self.browser, 3).until(
-            EC.visibility_of_element_located(BasePageLocators.DEEPY_BUTTON)
-        ).click()
+        button = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.visibility_of_element_located(BasePageLocators.DEEPY_BUTTON))
+            .click()
+        )
 
     def check_success_toast(self):
         success_toast = WebDriverWait(self.browser, 25).until(
@@ -78,12 +80,12 @@ class BasePage:
 
     def is_disappeared(self, how, what, timeout=4):
         try:
-            WebDriverWait(self.browser, timeout, 1, TimeoutException).\
-                until_not(EC.presence_of_element_located((how, what)))
+            WebDriverWait(self.browser, timeout, 1, TimeoutException).until_not(
+                EC.presence_of_element_located((how, what))
+            )
         except TimeoutException:
             return False
         return True
 
     def should_be_authorized_user(self):
-        assert self.is_element_present(*BasePage.USER_ICON), "User icon is not presented," \
-                                                                     " probably unauthorised user"
+        assert self.is_element_present(*BasePage.USER_ICON), "User icon is not presented," " probably unauthorised user"

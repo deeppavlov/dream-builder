@@ -1,8 +1,8 @@
 from .base_page import BasePage
-from locators.locators import MessengerPageLocators
+from tests.frontend.locators.locators import MessengerPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.config import openai_token
+from tests.frontend.config import openai_token
 
 
 class MessengerPage(BasePage):
@@ -30,12 +30,16 @@ class MessengerPage(BasePage):
                 EC.text_to_be_present_in_element(MessengerPageLocators.BOT_MESSAGE, "•")
             )
         finally:
-            assert assistant_message is False, \
-                f"assistant_message.text is (1): {self.browser.find_element(*MessengerPageLocators.BOT_MESSAGE).text}"
+            assert (
+                assistant_message is False
+            ), f"assistant_message.text is (1): {self.browser.find_element(*MessengerPageLocators.BOT_MESSAGE).text}"
         assistant_message = self.browser.find_element(*MessengerPageLocators.BOT_MESSAGE).text
-        assert "Sale" in assistant_message or "sale" in assistant_message or \
-               "sales" in assistant_message or "Sales" in assistant_message, \
-            f"assistant_message.text is: {assistant_message}"
+        assert (
+            "Sale" in assistant_message
+            or "sale" in assistant_message
+            or "sales" in assistant_message
+            or "Sales" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"
 
     def click_check_properties(self):
         button = self.browser.find_element(*MessengerPageLocators.PROPERTIES_BUTTON)
@@ -75,9 +79,11 @@ class MessengerPage(BasePage):
         button.click()
 
     def click_enter_token_button(self):
-        edit_button = WebDriverWait(self.browser, 3).until(
-            EC.element_to_be_clickable(MessengerPageLocators.ENTER_TOKEN_BUTTON)
-        ).click()
+        edit_button = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.element_to_be_clickable(MessengerPageLocators.ENTER_TOKEN_BUTTON))
+            .click()
+        )
 
     def click_remove_button(self):
         button = self.browser.find_element(*MessengerPageLocators.REMOVE_TOKEN)
@@ -89,12 +95,15 @@ class MessengerPage(BasePage):
         )
 
     def click_close_button(self):
-        success_toast = WebDriverWait(self.browser, 3).until(
-            EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON)
-        ).click()
+        success_toast = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON))
+            .click()
+        )
 
     def click_close_button_get_started(self):
-        success_toast = WebDriverWait(self.browser, 3).until(
-            EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON_GET_STARTED)
-        ).click()
-
+        success_toast = (
+            WebDriverWait(self.browser, 3)
+            .until(EC.presence_of_element_located(MessengerPageLocators.CLOSE_BUTTON_GET_STARTED))
+            .click()
+        )

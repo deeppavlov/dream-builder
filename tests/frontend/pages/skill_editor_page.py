@@ -1,7 +1,8 @@
 from .base_page import BasePage
-from locators.locators import SkillEditorPageLocators
+from tests.frontend.locators.locators import SkillEditorPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from tests.frontend.config import lm_service_en_list, lm_service_ru_list
 
 
 class SkillEditorPage(BasePage):
@@ -12,6 +13,20 @@ class SkillEditorPage(BasePage):
     def choose_generative_model(self):
         button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
         button.click()
+
+    def check_all_en_models(self):
+        models_list = self.browser.find_elements(*SkillEditorPageLocators.ALL_MODELS)
+        lm_service_en_list_actual = [model.text for model in models_list]
+        assert (
+            lm_service_en_list_actual == lm_service_en_list
+        ), f"English lm services do not match, actual is: {lm_service_en_list_actual}"
+
+    def check_all_ru_models(self):
+        models_list = self.browser.find_elements(*SkillEditorPageLocators.ALL_MODELS)
+        lm_service_ru_list_actual = [model.text for model in models_list]
+        assert (
+            lm_service_ru_list_actual == lm_service_ru_list
+        ), f"Russian lm services do not match, actual is: {lm_service_ru_list_actual}"
 
     def click_enter_token_here(self):
         button = self.browser.find_element(*SkillEditorPageLocators.ENTER_TOKEN_HERE)
@@ -49,13 +64,15 @@ class SkillEditorPage(BasePage):
                 EC.text_to_be_present_in_element(SkillEditorPageLocators.BOT_MESSAGE, "•")
             )
         finally:
-            assert assistant_message is False, \
-                f"assistant_message.text is (1): {self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text}"
+            assert (
+                assistant_message is False
+            ), f"assistant_message.text is (1): {self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text}"
 
         assistant_message = self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text
 
-        assert "Marketing" in assistant_message or "marketing" in assistant_message, \
-            f"assistant_message.text is: {assistant_message}"
+        assert (
+            "Marketing" in assistant_message or "marketing" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"
 
     def check_bot_message_edited_prompt(self):
         assistant_message = 0
@@ -64,14 +81,18 @@ class SkillEditorPage(BasePage):
                 EC.text_to_be_present_in_element(SkillEditorPageLocators.BOT_MESSAGE, "•")
             )
         finally:
-            assert assistant_message is False, \
-                f"assistant_message.text is (1): {self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text}"
+            assert (
+                assistant_message is False
+            ), f"assistant_message.text is (1): {self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text}"
 
         assistant_message = self.browser.find_element(*SkillEditorPageLocators.BOT_MESSAGE).text
 
-        assert "Sale" in assistant_message or "sale" in assistant_message or \
-               "sales" in assistant_message or "Sales" in assistant_message, \
-            f"assistant_message.text is: {assistant_message}"
+        assert (
+            "Sale" in assistant_message
+            or "sale" in assistant_message
+            or "sales" in assistant_message
+            or "Sales" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"
 
     def restart_dialog(self):
         button = self.browser.find_element(*SkillEditorPageLocators.RESTART_DIALOG_BUTTON)

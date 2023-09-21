@@ -21,6 +21,7 @@ type ToastKeys =
   | 'declineRequest'
   | 'deleteToken'
   | 'publishAssistant'
+  | 'renameComponent'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -88,6 +89,11 @@ export const toasts: () => Toasts = () => ({
   publishAssistant: {
     loading: i18n.t('modals.publish_assistant.toasts.loading'),
     success: i18n.t('modals.publish_assistant.toasts.submitted'),
+    error: i18n.t('toasts.error'),
+  },
+  renameComponent: {
+    loading: i18n.t('toasts.rename'),
+    success: i18n.t('toasts.success'),
     error: i18n.t('toasts.error'),
   },
   deleteComponent: {

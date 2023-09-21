@@ -107,8 +107,8 @@ export const AssistantModal = () => {
   }
   const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
     const language = formValues.language.id as ELOCALES_KEY
-    const display_name = formValues.display_name as string
-    const description = formValues.description as string
+    const display_name = formValues.display_name
+    const description = formValues.description
 
     const data = { display_name, description }
     const createPayload = { display_name, description, language }
@@ -116,7 +116,7 @@ export const AssistantModal = () => {
     switch (action) {
       case 'create':
         toast.promise(
-          create.mutateAsync(createPayload),
+          create.mutateAsync(createPayload, { onSuccess: closeModal }),
           toasts().createAssistant
         )
         break
@@ -158,9 +158,10 @@ export const AssistantModal = () => {
       setIsOpen={setIsOpen}
       handleClose={closeModal}
       onRequestClose={closeModal}
+      modalClassName={s.modal}
     >
       <form
-        className={s.assistantModal}
+        className={s.form}
         onKeyDown={handleKeyDown}
         onSubmit={handleSubmit(onFormSubmit)}
       >
@@ -240,7 +241,7 @@ export const AssistantModal = () => {
           <Button theme='secondary' props={{ onClick: closeModal }}>
             {t('modals.assistant.btns.cancel')}
           </Button>
-          {action === 'create' && (
+          {isCreateFromScratch && (
             <Button
               theme='primary'
               props={{ type: 'submit', disabled: create?.isLoading }}
@@ -248,7 +249,7 @@ export const AssistantModal = () => {
               {t('modals.assistant.btns.create')}
             </Button>
           )}
-          {action === 'clone' && (
+          {isCloning && (
             <Button
               theme='primary'
               props={{ type: 'submit', disabled: clone?.isLoading }}
@@ -256,7 +257,7 @@ export const AssistantModal = () => {
               {t('modals.assistant.btns.create')}
             </Button>
           )}
-          {action === 'edit' && (
+          {isEditing && (
             <Button
               theme='primary'
               props={{ type: 'submit', disabled: rename?.isLoading }}

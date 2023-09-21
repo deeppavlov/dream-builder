@@ -10,7 +10,6 @@
   .slash {
     @include lnks_n_btns4;
     color: $text3;
-
     &::before {
       content: '/';
     }
@@ -18,13 +17,15 @@
 }
 
 .route {
-  @include b3;
-  @include accent_text;
-  @include text_ellipsis;
   cursor: pointer;
   margin: 1px 8px;
-
-  max-width: 250px; //FIX
+  @include b3;
+  @include accent_text;
+  a {
+    @include text_ellipsis;
+    display: block;
+    max-width: 250px; //FIX
+  }
   &:hover {
     color: $primary1;
     border-bottom: 1px solid $primary1;
@@ -39,7 +40,6 @@
 .route:active {
   color: #190080;
   border-bottom: 1px solid #190080;
-
   a {
     color: #190080;
   }

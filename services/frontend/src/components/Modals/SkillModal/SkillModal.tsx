@@ -66,7 +66,6 @@ export const SkillModal = () => {
   const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
-    console.log('data = ', data)
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },
@@ -96,11 +95,7 @@ export const SkillModal = () => {
     toast
       .promise(
         edit.mutateAsync({ data, component_id, distName, type: 'skills' }),
-        {
-          loading: t('toasts.rename'),
-          success: t('toasts.success'),
-          error: t('toasts.error'),
-        }
+        toasts().renameComponent
       )
       .then(() => closeModal())
   }
@@ -147,24 +142,25 @@ export const SkillModal = () => {
               placeholder: t('modals.skill.name_field.placeholder'),
             }}
           />
-
-          <TextArea
-            label={t('modals.skill.desc_field.label')}
-            name={DESC_ID}
-            control={control}
-            defaultValue={getValues()[DESC_ID]}
-            withCounter
-            rules={{
-              required: validationSchema.globals.required,
-              maxLength:
-                validationSchema.globals.desc.maxLength(descriptionMaxLenght),
-              pattern: validationSchema.globals.regExpPattern,
-            }}
-            props={{
-              placeholder: t('modals.skill.desc_field.placeholder'),
-              rows: 6,
-            }}
-          />
+          <div className={s.textarea}>
+            <TextArea
+              label={t('modals.skill.desc_field.label')}
+              name={DESC_ID}
+              control={control}
+              defaultValue={getValues()[DESC_ID]}
+              withCounter
+              rules={{
+                required: validationSchema.globals.required,
+                maxLength:
+                  validationSchema.globals.desc.maxLength(descriptionMaxLenght),
+                pattern: validationSchema.globals.regExpPattern,
+              }}
+              props={{
+                placeholder: t('modals.skill.desc_field.placeholder'),
+                rows: 6,
+              }}
+            />
+          </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: closeModal }}>
               {t('modals.skill.btns.cancel')}

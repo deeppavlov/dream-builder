@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
@@ -199,7 +200,7 @@ async def clone_dist(
         payload.display_name,
         payload.description,
         user.id,
-        user.email,
+        from_email(user),
         payload.language,
         is_cloned=True,
     )
@@ -213,13 +214,14 @@ async def get_virtual_assistant_components(
 ):
     grouped_components = {}
     for va_component in virtual_assistant_component_crud.get_all_by_virtual_assistant_name(db, virtual_assistant.name):
+        logging.info(va_component.__dict__)
         if va_component.component.group not in grouped_components:
             grouped_components[va_component.component.group] = []
 
         grouped_components[va_component.component.group].append(
             schemas.VirtualAssistantComponentRead.from_orm(va_component)
         )
-
+    logging.info(grouped_components)
     return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 

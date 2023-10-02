@@ -199,7 +199,7 @@ async def clone_dist(
         payload.display_name,
         payload.description,
         user.id,
-        user.email,
+        from_email(user),
         payload.language,
         is_cloned=True,
     )
@@ -219,7 +219,6 @@ async def get_virtual_assistant_components(
         grouped_components[va_component.component.group].append(
             schemas.VirtualAssistantComponentRead.from_orm(va_component)
         )
-
     return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 

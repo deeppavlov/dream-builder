@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 
 from database.core import init_db
 from apiconfig.config import settings
-from database.models import google_user
+from database.models import GoogleUser
+from database.models.google_user import crud as google_user_crud
 from database.user_ops import update_user_email
 from services.shared.user import User
 from services.auth_api import auth_type
@@ -45,7 +46,7 @@ async def validate_jwt(
     raise HTTPException with status_code == 400
     """
     if token == settings.auth.test_token:
-        user: google_user.model = google_user.crud.get_by_outer_id(db, "106152631136730592791")
+        user: GoogleUser = google_user_crud.get_by_outer_id(db, "106152631136730592791")
         name = user.fullname
         return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name,
                     role=user.role)

@@ -330,7 +330,7 @@ export type TComponents = {
 }
 
 export interface IBeforeLoginModal {
-  name: string
+  name: TEvents
   options: { [x: string]: any }
 }
 

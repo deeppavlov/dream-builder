@@ -90,6 +90,13 @@ class AllGAPageLocators:
     CREATE_VA_CLOSE_BUTTON = (By.CSS_SELECTOR, "[stroke='inherit']")
     CREATE_VA_CREATE_BUTTON = (By.XPATH, "//button[text()='Create']")
 
+    CREATE_VA_ERROR_NAME_CANT_BE_EMPTY = (
+        By.XPATH, "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']")
+    CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY = (
+        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']")
+    CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
+        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 1000 characters']")
+
     YOUR_EDIT_BUTTON = (
         By.XPATH,
         f"//div[contains(@class,'_wrapper')][2]//span[text()='{your_va_name}']/../../div[2]//button[text()='Edit']",
@@ -176,7 +183,22 @@ class SkillPageLocators:
     CREATE_SKILL_CREATE_BUTTON = (By.XPATH, "//button[text()='Create']")
     CREATE_SKILL_OK_BUTTON = (By.XPATH, "//button[text()='OK']")
 
+    RENAME_SKILL_SAVE_BUTTON = (By.XPATH, "[type='submit']")
+
+    CREATE_VA_ERROR_NAME_CANT_BE_EMPTY = (
+        By.XPATH, "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']")
+    CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY = (
+        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']")
+    CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
+        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 500 characters']")
+
     SKILL_CARD = (By.XPATH, f"//p[text()='{skill_name}']")
+    SKILL_CARD_CONTEXT_MENU = (
+        By.XPATH, f"//p[contains(@class,'_generative')]/../../..//button[contains(@class,'_secondary')]")
+    SKILL_CARD_CONTEXT_MENU_RENAME = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[1]")
+    SKILL_CARD_CONTEXT_MENU_PROPERTIES = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[2]")
+    SKILL_CARD_CONTEXT_MENU_DELETE = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[3]")
+
     PROPERTIES_PANEL_HEADER = (By.XPATH, "//li[text()='Properties']")
 
     CARD_MODE_TAB = (By.XPATH, "//button[contains(@class,'_left')]")
@@ -207,10 +229,23 @@ class SkillPageLocators:
 class SkillEditorPageLocators:
     OPEN_MODELS_DROPDOWN = (By.CSS_SELECTOR, "input[placeholder='Choose model']")
     CHOOSE_MODEL = (By.XPATH, f"//span[contains(text(),'{generative_model}')]")
+
+    #ANTHROPIC_C_9K
+    #ANTHROPIC_CI_9K
+    #GPT35_4K
+    #CHATGPT_4K
+    #CHATGPT_16K
+    #GPT4_8K
+    #GPT4_32K
+    #GPT_JT6B_2K
+
     ALL_MODELS = (By.XPATH, f"//li[contains(@class,'_item')]")
     ENTER_TOKEN_HERE = (By.XPATH, "//button[contains(text(),'Enter your')]")
     PROMPT_TEXTAREA = (By.CSS_SELECTOR, "[role='textbox']")
     SAVE_BUTTON = (By.XPATH, "//button[contains(text(),'Save')]")
+
+    ERROR_MESSAGE_PROMPT_LIMIT = (By.XPATH, "//label[contains(text(),'Limit prompt to')]")
+    ERROR_MESSAGE_FIELD_CANT_BE_EMPTY = (By.XPATH, "//label[contains(text(),'This field')]")
 
     MESSAGE_TEXTAREA = (By.XPATH, "//form[contains(@class,'_dialog_')]//textarea")
     SEND_BUTTON = (By.XPATH, "//form[contains(@class,'_dialog_')]//button[2]")

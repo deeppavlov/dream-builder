@@ -1,8 +1,11 @@
-from .base_page import BasePage
-from tests.frontend.locators.locators import SkillEditorPageLocators
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.frontend.config import lm_service_en_list, lm_service_ru_list
+from selenium.webdriver.common.keys import Keys
+from .base_page import BasePage
+from tests.frontend.locators.locators import SkillEditorPageLocators
+from tests.frontend.config import lm_service_en_list, lm_service_ru_list, default_prompt_ru, default_prompt_en, \
+    description_1001_symbol, gigant_prompt
 
 
 class SkillEditorPage(BasePage):
@@ -14,6 +17,10 @@ class SkillEditorPage(BasePage):
         button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
         button.click()
 
+    def select_specific_model(self, model_name):
+        button = self.browser.find_element(By.XPATH, f"//span[contains(text(),'{model_name}')]")
+        button.click()
+
     def check_all_en_models(self):
         models_list = self.browser.find_elements(*SkillEditorPageLocators.ALL_MODELS)
         lm_service_en_list_actual = [model.text for model in models_list]
@@ -21,12 +28,29 @@ class SkillEditorPage(BasePage):
             lm_service_en_list_actual == lm_service_en_list
         ), f"English lm services do not match, actual is: {lm_service_en_list_actual}"
 
+        return
+
     def check_all_ru_models(self):
         models_list = self.browser.find_elements(*SkillEditorPageLocators.ALL_MODELS)
         lm_service_ru_list_actual = [model.text for model in models_list]
         assert (
             lm_service_ru_list_actual == lm_service_ru_list
-        ), f"Russian lm services do not match, actual is: {lm_service_ru_list_actual}"
+        ), f"Not all required Russian lm services are presented, actual is: {lm_service_ru_list_actual}"
+
+    def check_default_prompt_ru(self):
+        prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
+        actual_prompt_ru = [prompt.text for prompt in prompt_list]
+        assert (
+                actual_prompt_ru == default_prompt_ru
+        ), f"Incorrect russian default prompt, actual is: {actual_prompt_ru}"
+
+    def check_default_prompt_en(self):
+        prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
+        actual_prompt_en = [prompt.text for prompt in prompt_list]
+        print(actual_prompt_en)
+        assert (
+                actual_prompt_en == default_prompt_en
+        ), f"Incorrect english default prompt, actual is: {actual_prompt_en}"
 
     def click_enter_token_here(self):
         button = self.browser.find_element(*SkillEditorPageLocators.ENTER_TOKEN_HERE)
@@ -34,15 +58,31 @@ class SkillEditorPage(BasePage):
 
     def clear_old_prompt(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
-        textarea.clear()
-        WebDriverWait(self.browser, 5).until(
-            EC.text_to_be_present_in_element(SkillEditorPageLocators.PROMPT_TEXTAREA, "")
-        )
+        textarea.send_keys(Keys.CONTROL + "a")
+        textarea.send_keys(Keys.DELETE)
+        #textarea.send_keys('')
+
+        #textarea.clear()
+        #WebDriverWait(self.browser, 5).until(
+        #    EC.text_to_be_present_in_element(SkillEditorPageLocators.PROMPT_TEXTAREA, "")
+        #)
 
     def enter_new_prompt(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
         textarea.send_keys("Your name is Sale Assistant. You work with sales specialists and you help them do sales.")
+
+    def enter_new_prompt_upper_limit(self):
+        textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
+        textarea.click()
+        #textarea.send_keys(description_1001_symbol*50)
+        textarea.send_keys(description_1001_symbol)
+
+    def check_error_message_limit_prompt(self):
+        error = self.browser.find_element(*SkillEditorPageLocators.ERROR_MESSAGE_PROMPT_LIMIT)
+
+    def check_error_message_field_cant_be_empty(self):
+        error = self.browser.find_element(*SkillEditorPageLocators.ERROR_MESSAGE_FIELD_CANT_BE_EMPTY)
 
     def click_save_button(self):
         button = self.browser.find_element(*SkillEditorPageLocators.SAVE_BUTTON)

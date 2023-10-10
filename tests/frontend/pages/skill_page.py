@@ -2,6 +2,7 @@ from .base_page import BasePage
 from tests.frontend.locators.locators import SkillPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 
 class SkillPage(BasePage):
@@ -17,8 +18,12 @@ class SkillPage(BasePage):
         button.click()
 
     def click_create_skill_button(self):
-        button = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_BUTTON)
-        button.click()
+        button = (
+            WebDriverWait(self.browser, 6)
+                .until(EC.element_to_be_clickable(SkillPageLocators.CREATE_SKILL_BUTTON))
+                .click()
+        )
+
 
     def click_create_skill_from_scratch_button(self):
         button = self.browser.find_element(*SkillPageLocators.CREATE_FROM_SCRATCH_BUTTON)
@@ -33,6 +38,25 @@ class SkillPage(BasePage):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
         textarea.click()
         textarea.send_keys("New description")
+
+    def enter_description_upper_limit_in_create_skill_mw(self):
+        textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
+        textarea.click()
+        textarea.send_keys('1234 '*101)
+
+    def clear_name_in_create_skill_mw(self):
+        textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_NAME_TEXTAREA)
+        textarea.click()
+        textarea.send_keys(Keys.CONTROL + "a")
+        textarea.send_keys(Keys.DELETE)
+        textarea.send_keys('')
+
+    def clear_description_in_create_skill_mw(self):
+        textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
+        textarea.click()
+        textarea.send_keys(Keys.CONTROL + "a")
+        textarea.send_keys(Keys.DELETE)
+        textarea.send_keys('')
 
     def click_create_in_create_skill_mw(self):
         button = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_CREATE_BUTTON)
@@ -50,8 +74,37 @@ class SkillPage(BasePage):
         button = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_OK_BUTTON)
         button.click()
 
+    def click_save_in_rename_skill_mw(self):
+        button = self.browser.find_element(*SkillPageLocators.RENAME_SKILL_SAVE_BUTTON)
+        button.click()
+
+    def check_error_message_name_cant_be_empty_in_create_skill_mw(self):
+        error = self.browser.find_element(*SkillPageLocators.CREATE_VA_ERROR_NAME_CANT_BE_EMPTY)
+
+    def check_error_message_description_cant_be_empty_in_create_skill_mw(self):
+        error = self.browser.find_element(*SkillPageLocators.CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY)
+
+    def check_error_message_limit_text_description_in_create_skill_mw(self):
+        error = self.browser.find_element(*SkillPageLocators.CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION)
+
     def click_on_skill_card(self):
         button = self.browser.find_element(*SkillPageLocators.SKILL_CARD)
+        button.click()
+
+    def click_on_skill_card_context_menu(self):
+        button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU)
+        button.click()
+
+    def click_on_skill_card_context_menu_rename(self):
+        button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU_RENAME)
+        button.click()
+
+    def click_on_skill_card_context_menu_properties(self):
+        button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU_PROPERTIES)
+        button.click()
+
+    def click_on_skill_card_context_menu_delete(self):
+        button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU_DELETE)
         button.click()
 
     def check_is_properties_panel_present(self):

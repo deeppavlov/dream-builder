@@ -1,11 +1,15 @@
+import time
+
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from .base_page import BasePage
 from tests.frontend.locators.locators import AllGAPageLocators
-from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name
+from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name, \
+    description_1001_symbol
 
 
 class AllGAPage(BasePage):
@@ -154,12 +158,26 @@ class AllGAPage(BasePage):
     def clear_name_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
         textarea.click()
-        textarea.clear()
+        textarea.send_keys(Keys.CONTROL + "a")
+        textarea.send_keys(Keys.DELETE)
+        textarea.send_keys('')
+
+    def clear_description_in_create_va_mw(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
+        textarea.click()
+        textarea.send_keys(Keys.CONTROL + "a")
+        textarea.send_keys(Keys.DELETE)
+        textarea.send_keys('')
 
     def enter_description_in_create_va_mw(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
         textarea.click()
         textarea.send_keys("New description")
+
+    def enter_description_upper_limit_in_create_va_mw(self):
+        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
+        textarea.click()
+        textarea.send_keys('1234 '*250)
 
     def click_create_in_create_va_mw(self):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_CREATE_BUTTON)
@@ -168,6 +186,15 @@ class AllGAPage(BasePage):
     def click_close_in_create_va_mw(self):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_CLOSE_BUTTON)
         button.click()
+
+    def check_error_message_name_cant_be_empty_in_create_skill_mw(self):
+        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_NAME_CANT_BE_EMPTY)
+
+    def check_error_message_description_cant_be_empty_in_create_skill_mw(self):
+        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY)
+
+    def check_error_message_limit_text_description_in_create_skill_mw(self):
+        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION)
 
     def check_building_is_done(self):
         edit_button = WebDriverWait(self.browser, 90).until(

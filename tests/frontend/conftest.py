@@ -3,42 +3,57 @@ from qaseio.pytest import qase
 
 from selenium import webdriver
 import time
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.edge.options import Options as EdgeOptions
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser_name", action="store", default="chrome", help="Choose browser: chrome, firefox, edge")
+    parser.addoption("--browser_name", default="chrome", help="Choose browser: chrome, firefox, edge")
+    # parser.addoption('--host', default='staging', help="Choose environment: dev, stage, prod")
+    parser.addoption("--window_size", default="1920,1080",
+                     help='Choose window-size: "1920,1080", "1536,864", "1366,768", "1280,720"')
+
+
+def set_options(options):
+    options.add_argument("--lang=en-GB")
+    # options.add_argument("--lang=ru")
+    # options.add_argument('--headless')
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    # options.add_argument(
+    #    "--user-agent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    #    "Chrome/117.0.0.0 Safari/537.36"
+    # )
 
 
 @pytest.fixture(scope="function")
 def browser(request):
     browser = 0
     browser_name = request.config.getoption("browser_name")
-
-    options = Options()
-    options.add_argument("lang=en-GB")
-    # options.add_argument("lang=ru")
-    # options.add_argument('--headless')
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument(
-        "--user-agent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/117.0.0.0 Safari/537.36"
-    )
+    window_size = tuple(request.config.getoption("window_size").split(','))
 
     if browser_name == "chrome":
+        options = ChromeOptions()
+        set_options(options)
         browser = webdriver.Chrome(options=options)
+
     elif browser_name == "firefox":
-        browser = webdriver.Firefox()
+        options = FirefoxOptions()
+        options.set_preference('intl.accept_languages', 'en-GB')
+        set_options(options)
+        browser = webdriver.Firefox(options=options)
+
     elif browser_name == "edge":
-        browser = webdriver.Edge()
+        options = EdgeOptions()
+        set_options(options)
+        browser = webdriver.Edge(options=options)
 
     print(f"\nstart {browser_name} browser for test..")
 
-    browser.set_window_size(1920, 1080)
+    browser.set_window_size(*window_size)
 
     yield browser
     print("\nquit browser..")
-    time.sleep(1)
     browser.quit()
 
 

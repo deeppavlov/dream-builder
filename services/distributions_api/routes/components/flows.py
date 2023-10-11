@@ -10,6 +10,7 @@ from database.models.lm_service import crud as lm_service_crud
 from database.models.service import crud as service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
+from services.distributions_api.utils.name_generator import from_email
 
 dream_git = GitManager(
     settings.git.local_path,
@@ -96,7 +97,7 @@ def create_component(
             f"http://{prompted_skill_container_name}:{prompted_skill_port}/respond",
             prompted_skill_name,
             new_component.display_name,
-            user.email,
+            from_email(user),
             new_component.description,
         )
         dream_git.commit_all_files(user.id, 1)

@@ -1,119 +1,107 @@
-import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js'
-import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js'
-import React, { useImperativeHandle, useRef } from 'react'
-import { Editor } from 'react-draft-wysiwyg'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import style from './TextEditor.module.scss'
+// import { autocompletion } from '@codemirror/autocomplete'
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
+import { useEffect, useRef } from 'react';
+import { inputDecoration, // myAutocomplete,
+titleDecoration } from './editorPlugins';
 
-interface ITextEditorHandle {
-  insertText: (text: string) => Promise<void>
-  focus: () => void
-}
 
 interface IProps {
-  content?: string
-  compositeDecorator?: { strategy: Function; component: Function }[]
   placeholder?: string
   onChange?: (value: string) => void
   onBlur?: () => void
-  promptContext: { context: string }
+  editorContext: { code: string; skill: string }
+  setEditorContext: Function
 }
 
-export const TextEditor = React.forwardRef<ITextEditorHandle, IProps>(
-  (
-    {
-      content,
-      compositeDecorator,
-      placeholder,
-      onChange,
-      onBlur,
-      promptContext,
-    }: IProps,
-    forwardRef
-  ) => {
-    const textEditorRef = useRef<HTMLDivElement>(null)
-    const rawData = markdownToDraft(content ?? '')
-    const state = convertFromRaw(rawData)
-    const [editorState, setEditorState] = React.useState(
-      EditorState.moveSelectionToEnd(EditorState.createWithContent(state))
-    )
-    const handleChange = (editorState: EditorState) => {
-      setEditorState(editorState)
+export const TextEditor = ({
+  editorContext,
+  setEditorContext,
+  onChange,
+  onBlur,
+  placeholder,
+}: IProps) => {
+  const ref = useRef<any>(null)
 
-      if (onChange) {
-        const plainText = editorState.getCurrentContent().getPlainText()
-        onChange(plainText)
-      }
+  useEffect(() => {
+    setTimeout(() => {
+      const content = document.querySelector(
+        '.cm-content'
+      ) as HTMLDivElement | null
+
+      const lastChild = content?.lastChild as HTMLElement
+      lastChild.scrollIntoView()
+    }, 200)
+  }, [])
+
+  useEffect(() => {
+    if (onChange) {
+      onChange(editorContext.code)
     }
-    useImperativeHandle(forwardRef, () => ({
-      insertText: async text => {
-        await new Promise(resolve => {
-          insertText(text)
-          resolve(true)
+  }, [editorContext.code])
+
+  useEffect(() => {
+    if ((editorContext.skill === '')) {
+      return
+    }
+      setTimeout(() => {
+        const state = ref.current.view.viewState.state
+        const range = state.selection.ranges[0]
+        ref.current.view.dispatch({
+          changes: {
+            from: range.from,
+            to: range.to,
+            insert: editorContext.skill,
+          },
         })
-      },
-      focus: () => textEditorRef?.current?.focus(),
-    }))
+        setEditorContext({...editorContext, skill: ''})
+      }, 200)
+  }, [editorContext.skill])
 
-    const insertText = (text: string) => {
-      const currentContent = editorState.getCurrentContent(),
-        currentSelection = editorState.getSelection()
+  // const onChangeValue = useCallback((value: string) => {
+  //   setEditorContext({ ...editorContext, code: value })
+  // }, [])
 
-      const newContent = Modifier.replaceText(
-        currentContent,
-        currentSelection,
-        text
-      )
+  const myTheme = EditorView.theme({
+    '.cm-activeLine': {
+      backgroundColor: 'transparent',
+    },
+    '&.ͼ1.cm-focused': {
+      outline: 'none',
+    },
 
-      const newEditorState = EditorState.push(
-        editorState,
-        newContent,
-        'insert-characters'
-      )
+    '.ͼ5p': {
+      height: '100%',
+    },
+  })
 
-      handleChange(
-        EditorState.forceSelection(
-          newEditorState,
-          newContent.getSelectionAfter()
-        )
-      )
-    }
+  const baseTheme = EditorView.baseTheme({
+    '.widget-input': {
+      color: 'blue',
+    },
+    '.widget-title': {
+      textDecoration: 'underline',
+    },
+  })
 
-    const contextEditor = editorState.getCurrentContent()
-    const rawObject = convertToRaw(contextEditor)
-    const markdownString = draftToMarkdown(rawObject)
-    promptContext.context = markdownString
-
-    return (
-      <>
-        <Editor
-          editorState={editorState}
-          // ref={textEditorRef as any}
-          stripPastedStyles
-          toolbarClassName={style.toolbarClassName}
-          wrapperClassName='wrapperClassName'
-          editorClassName={style.editorClassName}
-          // placeholder={placeholder}
-          toolbar={{
-            options: ['list', 'textAlign', 'emoji', 'history'],
-          }}
-          onBlur={onBlur}
-          onEditorStateChange={handleChange}
-          // hashtag={{
-          //   separator: ' ',
-          //   trigger: '#',
-          // }}
-          // mention={{
-          //   separator: ' ',
-          //   trigger: '@',
-          //   suggestions: [
-          //     { text: 'JavaScript', value: 'javascript', url: 'js' },
-          //     { text: 'Golang', value: 'golang', url: 'go' },
-          //   ],
-          // }}
-          customDecorators={compositeDecorator}
-        />
-      </>
-    )
-  }
-)
+  return (
+    <CodeMirror
+      ref={ref}
+      onBlur={onBlur}
+      value={editorContext.code}
+      theme={myTheme}
+      placeholder={placeholder}
+      basicSetup={{
+        lineNumbers: false,
+        foldGutter: false,
+        highlightSelectionMatches: false,
+      }}
+      extensions={[
+        inputDecoration,
+        titleDecoration,
+        baseTheme,
+        // autocompletion({ override: [myAutocomplete] }),
+      ]}
+      onChange={value => setEditorContext({ ...editorContext, code: value })}
+    />
+  )
+}

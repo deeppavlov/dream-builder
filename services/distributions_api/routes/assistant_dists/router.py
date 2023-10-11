@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
+from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException, Header
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
@@ -262,6 +262,7 @@ async def publish_dist(
     virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_patch_permission),
     user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
+    auth_type: str = Header(default="")
 ):
     flows.publish_virtual_assistant(db, virtual_assistant, payload.visibility, user.id)
 
@@ -270,7 +271,7 @@ async def publish_dist(
             send_publish_request_created_emails,
             owner_email=user.email,
             owner_name=user.name,
-            moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
+            moderator_emails=[m.email for m in user_crud.get_by_role(db, 2, auth_type)],
             virtual_assistant_name=virtual_assistant.name,
             virtual_assistant_display_name=virtual_assistant.display_name,
         )

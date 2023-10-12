@@ -23,6 +23,17 @@ export const authApi = axios.create({
   baseURL: import.meta.env['VITE_AUTH_API_URL_' + MODE],
 })
 
+authApi.interceptors.request.use(
+  config => {
+    if (!config.headers?.token) {
+      config.headers!.token = getAccessToken()
+      config.headers!['auth-type'] = getAuthType()
+    }
+    return config
+  },
+  error => Promise.reject(error)
+)
+
 /**
  * Axios instance of private distribution API
  */

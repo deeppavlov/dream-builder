@@ -312,8 +312,8 @@
         "placeholder": "Введите ваш email"
       },
       "btns": {
-        "cancel": "Cancel",
-        "continue": "Continue"
+        "cancel": "Отмена",
+        "continue": "Продолжить"
       },
       "error": "Что-то пошло не так..."
     }

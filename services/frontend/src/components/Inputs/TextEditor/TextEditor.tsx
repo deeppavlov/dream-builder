@@ -88,7 +88,7 @@ export const TextEditor = ({
         baseTheme,
         //
       ]}
-      onChange={value => setEditorContext({ ...editorContext, code: value })}
+      onChange={(value: string) => setEditorContext({ ...editorContext, code: value })}
     />
   )
 }

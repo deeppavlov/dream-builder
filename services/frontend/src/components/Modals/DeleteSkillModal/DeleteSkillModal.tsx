@@ -47,10 +47,10 @@ export const DeleteSkillModal = () => {
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish
                 const name = bot?.name
-                const visibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
-                const publishState = bot.publish_state !== null
-                publishState &&
-                  changeVisibility.mutateAsync({ name, visibility }) //FIX
+                const newVisibility =
+                  VISIBILITY_STATUS.PRIVATE as TDistVisibility
+                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                  changeVisibility.mutateAsync({ name, newVisibility })
               })
           },
         }

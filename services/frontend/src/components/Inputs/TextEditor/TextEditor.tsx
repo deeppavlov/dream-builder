@@ -1,9 +1,7 @@
 // import { autocompletion } from '@codemirror/autocomplete'
-import CodeMirror, { EditorView } from '@uiw/react-codemirror';
-import { useEffect, useRef } from 'react';
-import { inputDecoration, // myAutocomplete,
-titleDecoration } from './editorPlugins';
-
+import CodeMirror, { EditorView } from '@uiw/react-codemirror'
+import { useEffect, useRef } from 'react'
+import { inputDecoration, titleDecoration } from './editorPlugins'
 
 interface IProps {
   placeholder?: string
@@ -23,43 +21,32 @@ export const TextEditor = ({
   const ref = useRef<any>(null)
 
   useEffect(() => {
-    setTimeout(() => {
-      const content = document.querySelector(
-        '.cm-content'
-      ) as HTMLDivElement | null
-
-      const lastChild = content?.lastChild as HTMLElement
-      lastChild.scrollIntoView()
-    }, 200)
-  }, [])
-
-  useEffect(() => {
     if (onChange) {
       onChange(editorContext.code)
     }
   }, [editorContext.code])
 
   useEffect(() => {
-    if ((editorContext.skill === '')) {
+    if (editorContext.skill === '') {
       return
     }
-      setTimeout(() => {
-        const state = ref.current.view.viewState.state
-        const range = state.selection.ranges[0]
-        ref.current.view.dispatch({
-          changes: {
-            from: range.from,
-            to: range.to,
-            insert: editorContext.skill,
-          },
-        })
-        setEditorContext({...editorContext, skill: ''})
-      }, 200)
-  }, [editorContext.skill])
+    setTimeout(() => {
+      const state = ref.current.view.viewState.state
+      const range = state.selection.ranges[0]
 
-  // const onChangeValue = useCallback((value: string) => {
-  //   setEditorContext({ ...editorContext, code: value })
-  // }, [])
+      ref.current.view.dispatch({
+        changes: {
+          from: range.from,
+          to: range.to,
+          insert: editorContext.skill,
+        },
+      })
+
+      const newEditorContextCode = ref.current.view.state.doc.text.join('\n')
+
+      setEditorContext({ skill: '', code: newEditorContextCode })
+    }, 200)
+  }, [editorContext.skill])
 
   const myTheme = EditorView.theme({
     '.cm-activeLine': {
@@ -99,7 +86,7 @@ export const TextEditor = ({
         inputDecoration,
         titleDecoration,
         baseTheme,
-        // autocompletion({ override: [myAutocomplete] }),
+        //
       ]}
       onChange={value => setEditorContext({ ...editorContext, code: value })}
     />

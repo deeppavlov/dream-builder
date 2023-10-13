@@ -1,10 +1,10 @@
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import classNames from 'classnames/bind';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dispatch, useEffect, useRef, useState, SetStateAction } from 'react';
 import { Control, RegisterOptions, UseFormTrigger, useController } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg';
-import { IEditorContext, LanguageModel } from 'types/types';
+import { IEditorContext, LanguageModel } from 'types/types'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
 import getTokensLength from 'utils/getTokensLength';
 import { TextEditor } from '../TextEditor/TextEditor';

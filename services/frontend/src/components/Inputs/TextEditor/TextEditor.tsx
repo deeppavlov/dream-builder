@@ -1,8 +1,8 @@
 //  import { autocompletion } from '@codemirror/autocomplete'
-import CodeMirror, { EditorView } from '@uiw/react-codemirror';
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
-import { inputDecoration, titleDecoration } from './editorPlugins';
-import {IEditorContext} from 'types/types'
+import CodeMirror, { EditorView } from '@uiw/react-codemirror'
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
+import { IEditorContext } from 'types/types'
+import { inputDecoration, titleDecoration } from './editorPlugins'
 
 interface IProps {
   placeholder?: string
@@ -60,6 +60,13 @@ export const TextEditor = ({
     '.ͼ5p': {
       height: '100%',
     },
+    '&.ͼ4 .cm-line': {
+      fontFamily: 'Inter,sans-serif',
+      fontStyle: 'normal',
+      fontWeight: '400',
+      lineHeight: '160%',
+      fontSize: '16px',
+    },
   })
 
   const baseTheme = EditorView.baseTheme({
@@ -72,24 +79,26 @@ export const TextEditor = ({
   })
 
   return (
-    <CodeMirror
-      ref={ref}
-      onBlur={onBlur}
-      value={editorContext.code}
-      theme={myTheme}
-      placeholder={placeholder}
-      basicSetup={{
-        lineNumbers: false,
-        foldGutter: false,
-        highlightSelectionMatches: false,
-      }}
-      extensions={[
-        inputDecoration,
-        titleDecoration,
-        baseTheme,
-        //
-      ]}
-      onChange={(value: string) => setEditorContext({ ...editorContext, code: value })}
-    />
+      <CodeMirror
+        ref={ref}
+        onBlur={onBlur}
+        value={editorContext.code}
+        theme={myTheme}
+        placeholder={placeholder}
+        basicSetup={{
+          lineNumbers: false,
+          foldGutter: false,
+          highlightSelectionMatches: false,
+        }}
+        extensions={[
+          inputDecoration,
+          titleDecoration,
+          baseTheme,
+          EditorView.lineWrapping,
+        ]}
+        onChange={(value: string) =>
+          setEditorContext({ ...editorContext, code: value })
+        }
+      />
   )
 }

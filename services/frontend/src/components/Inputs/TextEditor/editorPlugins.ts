@@ -81,7 +81,6 @@ class PlaceholderWidget extends WidgetType {
   }
 
   eq(other: PlaceholderWidget): boolean {
-    console.log(other)
     return other.label === this.label
   }
 

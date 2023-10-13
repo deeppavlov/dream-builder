@@ -1,11 +1,11 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from starlette import status
 
 from apiconfig.config import settings
 from database.models.publish_request import crud as publish_request_crud
+from database.models.github_user import crud as github_user_crud
+from database.models.google_user import crud as google_user_crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.security.auth import get_admin_user
@@ -54,6 +54,17 @@ async def confirm_publish_request(
 ) -> schemas.PublishRequestRead:
     with db.begin():
         publish_request = publish_request_crud.approve_publish_request(db, publish_request_id, user.id)
+        is_github_user = github_user_crud.check_user_exists(db, publish_request.user.outer_id)
+        if is_github_user:
+            desired_user = github_user_crud.get_by_outer_id(db, publish_request.user.outer_id)
+            publish_request.user.email = desired_user.email
+            publish_request.user.name = desired_user.name
+        else:
+            is_google_user = google_user_crud.check_user_exists(db, publish_request.user.outer_id)
+            if is_google_user:
+                desired_user = google_user_crud.get_by_outer_id(db, publish_request.user.outer_id)
+                publish_request.user.email = desired_user.email
+                publish_request.user.name = desired_user.fullname
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,
@@ -75,6 +86,15 @@ async def decline_publish_request(
 ) -> schemas.PublishRequestRead:
     with db.begin():
         publish_request = publish_request_crud.reject_publish_request(db, publish_request_id, user.id)
+        is_github_user = github_user_crud.check_user_exists(db, publish_request.user.outer_id)
+        if is_github_user:
+            desired_user = github_user_crud.get_by_outer_id(db, publish_request.user.outer_id)
+            publish_request.user.email = desired_user.email
+        else:
+            is_google_user = google_user_crud.check_user_exists(db, publish_request.user.outer_id)
+            if is_google_user:
+                desired_user = google_user_crud.get_by_outer_id(db, publish_request.user.outer_id)
+                publish_request.user.email = desired_user.email
         background_tasks.add_task(
             send_publish_request_reviewed_emails,
             owner_email=publish_request.user.email,

@@ -1,5 +1,5 @@
-import { CompletionContext } from '@codemirror/autocomplete';
-import { Decoration, EditorView, MatchDecorator, ViewPlugin, ViewUpdate, WidgetType } from '@uiw/react-codemirror';
+import { CompletionContext } from '@codemirror/autocomplete'
+import { Decoration, EditorView, MatchDecorator, ViewPlugin, ViewUpdate, WidgetType } from '@uiw/react-codemirror'
 
 
 export const inputDecoration = ViewPlugin.fromClass(

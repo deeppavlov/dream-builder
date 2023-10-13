@@ -1,10 +1,10 @@
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import classNames from 'classnames/bind';
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Control, RegisterOptions, UseFormTrigger, useController } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg';
-import { LanguageModel } from 'types/types';
+import { IEditorContext, LanguageModel } from 'types/types';
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
 import getTokensLength from 'utils/getTokensLength';
 import { TextEditor } from '../TextEditor/TextEditor';
@@ -22,8 +22,8 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
-  editorContext: { code: string; skill: string }
-  setEditorContext: Function
+  editorContext: IEditorContext
+  setEditorContext: Dispatch<SetStateAction<IEditorContext>>
 }
 
 interface IValidateTokens {

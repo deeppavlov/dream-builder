@@ -1,45 +1,41 @@
-import classNames from 'classnames/bind'
-import { useUIOptions } from 'context'
-import { createRef, useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
-import { generatePath, useParams } from 'react-router'
-import { Link } from 'react-router-dom'
-import { RoutesList } from 'router/RoutesList'
-import {
-  IPromptBlock,
-  ISkill,
-  LM_Service,
-  LanguageModel,
-  TDistVisibility,
-} from 'types/types'
-import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
-import { toasts } from 'mapping/toasts'
-import { getAllLMservices } from 'api/components'
-import { useAssistants, useComponent, useDeploy } from 'hooks/api'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
-import { useBrowserPrompt } from 'hooks/useBrowserPrompt'
-import { useObserver } from 'hooks/useObserver'
-import { usePreventAction } from 'hooks/usePreventAction'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { getValidationSchema } from 'utils/getValidationSchema'
-import sortByGroup from 'utils/sortByGroup'
-import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
-import { Button } from 'components/Buttons'
-import { SkillDropboxSearch } from 'components/Dropdowns'
-import { ResizerLine, SvgIcon } from 'components/Helpers'
-import { PromptEditor } from 'components/Inputs'
-import { logoutBtnId } from 'components/Menus/ProfileContextMenu/ProfileContextMenu'
-import { PromptBlocksModule } from 'components/Modules'
-import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFormattedPromptBlock'
-import { SkillDialog } from 'components/Panels'
-import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Modal, Wrapper } from 'components/UI'
-import s from './SkillPromptModal.module.scss'
+import classNames from 'classnames/bind';
+import { useUIOptions } from 'context';
+import { createRef, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { generatePath, useParams } from 'react-router';
+import { Link } from 'react-router-dom';
+import { RoutesList } from 'router/RoutesList';
+import { IPromptBlock, ISkill, LM_Service, LanguageModel, TDistVisibility } from 'types/types';
+import { IEditorContext } from 'types/types';
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants';
+import { serviceCompanyMap } from 'mapping/serviceCompanyMap';
+import { toasts } from 'mapping/toasts';
+import { getAllLMservices } from 'api/components';
+import { useAssistants, useComponent, useDeploy } from 'hooks/api';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+import { useBrowserPrompt } from 'hooks/useBrowserPrompt';
+import { useObserver } from 'hooks/useObserver';
+import { usePreventAction } from 'hooks/usePreventAction';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import { getValidationSchema } from 'utils/getValidationSchema';
+import sortByGroup from 'utils/sortByGroup';
+import triggerSkillSidePanel from 'utils/triggerSkillSidePanel';
+import { Button } from 'components/Buttons';
+import { SkillDropboxSearch } from 'components/Dropdowns';
+import { ResizerLine, SvgIcon } from 'components/Helpers';
+import { PromptEditor } from 'components/Inputs';
+import { logoutBtnId } from 'components/Menus/ProfileContextMenu/ProfileContextMenu';
+import { PromptBlocksModule } from 'components/Modules';
+import getFormattedPromptBlock from 'components/Modules/PromptBlocksModule/getFormattedPromptBlock';
+import { SkillDialog } from 'components/Panels';
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel';
+import { Modal, Wrapper } from 'components/UI';
+import s from './SkillPromptModal.module.scss';
+
 
 interface ITriggerProps {
   skill?: ISkill
@@ -84,7 +80,10 @@ const SkillPromptModal = () => {
     changeSkillModel,
   } = useGaSkills()
 
-  const [editorContext, setEditorContext] = useState({ code: '', skill: '' })
+  const [editorContext, setEditorContext] = useState<IEditorContext>({
+    code: '',
+    skill: '',
+  })
 
   useEffect(() => {
     return () => skillEditorClosed()

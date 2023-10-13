@@ -1,14 +1,16 @@
-import { Decoration, EditorView, MatchDecorator, ViewPlugin, WidgetType } from '@uiw/react-codemirror';
+import { CompletionContext } from '@codemirror/autocomplete';
+import { Decoration, EditorView, MatchDecorator, ViewPlugin, ViewUpdate, WidgetType } from '@uiw/react-codemirror';
+
 
 export const inputDecoration = ViewPlugin.fromClass(
   class {
     placeholders
 
-    constructor(view: any) {
+    constructor(view: EditorView) {
       this.placeholders = placeholderInput.createDeco(view)
     }
 
-    update(update: any) {
+    update(update: ViewUpdate) {
       this.placeholders = placeholderInput.updateDeco(update, this.placeholders)
     }
   },
@@ -46,11 +48,11 @@ export const titleDecoration = ViewPlugin.fromClass(
   class {
     placeholders
 
-    constructor(view: any) {
+    constructor(view: EditorView) {
       this.placeholders = placeholderTitle.createDeco(view)
     }
 
-    update(update: any) {
+    update(update: ViewUpdate) {
       this.placeholders = placeholderTitle.updateDeco(update, this.placeholders)
     }
   },
@@ -65,7 +67,7 @@ export const titleDecoration = ViewPlugin.fromClass(
 
 const placeholderTitle = new MatchDecorator({
   regexp: getBlockNameRegEx(blockNames),
-  decoration: match =>
+  decoration: (match: RegExpExecArray) =>
     Decoration.replace({
       widget: new PlaceholderWidget(match[0]),
     }),
@@ -73,12 +75,13 @@ const placeholderTitle = new MatchDecorator({
 
 class PlaceholderWidget extends WidgetType {
   label: string
-  constructor(label: any) {
+  constructor(label: string) {
     super()
     this.label = label
   }
 
-  eq(other: any) {
+  eq(other: PlaceholderWidget): boolean {
+    console.log(other)
     return other.label === this.label
   }
 
@@ -97,8 +100,8 @@ const completions = [
   { label: 'password', type: 'variable' },
 ]
 
-export const myAutocomplete = (context: any) => {
-  let before = context.matchBefore(/\w+/)
+export const myAutocomplete = (context: CompletionContext) => {
+  const before = context.matchBefore(/\w+/)
   if (context.explicit && !before) {
     return null
   }

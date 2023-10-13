@@ -1,14 +1,15 @@
-// import { autocompletion } from '@codemirror/autocomplete'
-import CodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { useEffect, useRef } from 'react'
-import { inputDecoration, titleDecoration } from './editorPlugins'
+//  import { autocompletion } from '@codemirror/autocomplete'
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { inputDecoration, titleDecoration } from './editorPlugins';
+import {IEditorContext} from 'types/types'
 
 interface IProps {
   placeholder?: string
   onChange?: (value: string) => void
   onBlur?: () => void
-  editorContext: { code: string; skill: string }
-  setEditorContext: Function
+  editorContext: IEditorContext
+  setEditorContext: Dispatch<SetStateAction<IEditorContext>>
 }
 
 export const TextEditor = ({

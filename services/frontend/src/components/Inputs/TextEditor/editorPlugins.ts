@@ -47,11 +47,11 @@ export const titleDecoration = ViewPlugin.fromClass(
     placeholders
 
     constructor(view: any) {
-      this.placeholders = placeholdeTitle.createDeco(view)
+      this.placeholders = placeholderTitle.createDeco(view)
     }
 
     update(update: any) {
-      this.placeholders = placeholdeTitle.updateDeco(update, this.placeholders)
+      this.placeholders = placeholderTitle.updateDeco(update, this.placeholders)
     }
   },
   {
@@ -63,7 +63,7 @@ export const titleDecoration = ViewPlugin.fromClass(
   }
 )
 
-const placeholdeTitle = new MatchDecorator({
+const placeholderTitle = new MatchDecorator({
   regexp: getBlockNameRegEx(blockNames),
   decoration: match =>
     Decoration.replace({

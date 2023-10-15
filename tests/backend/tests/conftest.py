@@ -1,6 +1,6 @@
 import pytest
-from .distributions_methods import UserMethods, AdminMethods
-from .config import (
+from tests.backend.distributions_methods import UserMethods, AdminMethods
+from tests.backend.config import (
     admin_token,
     test_token_github1,
     test_token_github2,

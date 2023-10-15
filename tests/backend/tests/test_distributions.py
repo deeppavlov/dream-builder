@@ -1,7 +1,7 @@
 import time
 import pytest
 from qaseio.pytest import qase
-from .config import (
+from tests.backend.config import (
     va_data,
     public_va_names_en,
     public_va_names_ru,
@@ -9,14 +9,14 @@ from .config import (
     lm_service_id_ru_list,
     counter_distributions as counter,
 )
-from .distributions_methods import UserMethods, AdminMethods
+from tests.backend.distributions_methods import UserMethods, AdminMethods
 
 
 class TestDistributions:
     # ASSISTANTS_DISTS
 
     @classmethod
-    def teardown_class(cls):
+    def teardown_class(self):
         user = UserMethods()
         names_list = user.get_list_of_private_va_wo_assert()
         if names_list:
@@ -58,6 +58,7 @@ class TestDistributions:
         name = user.create_virtual_assistant(display_name)["name"]
         user.get_va_by_name(name)
 
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_get_public_va_by_name")
     def test_get_public_va_by_name(self, user):
@@ -307,7 +308,7 @@ class TestDistributions:
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va")
@@ -316,7 +317,7 @@ class TestDistributions:
         user.send_dialog_session_message(dialog_session_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("lm_service_id", lm_service_id_en_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_en_lm")
@@ -326,7 +327,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("lm_service_id", lm_service_id_ru_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_ru_lm")
@@ -336,7 +337,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("lm_service_id", lm_service_id_en_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_en")
@@ -364,6 +365,7 @@ class TestDistributions:
 
         user.delete_va_by_name(va_name)
 
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("lm_service_id", lm_service_id_ru_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_ru")
@@ -427,7 +429,7 @@ class TestDistributions:
 
     # LM_SERVICES
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self, user):
@@ -438,6 +440,7 @@ class TestDistributions:
     def test_get_all_lm_services_en(self, user):
         user.get_all_lm_services_for_language("en")
 
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_get_all_lm_services_ru")
     def test_get_all_lm_services_ru(self, user):
@@ -472,16 +475,10 @@ class TestDistributions:
 
         user.delete_va_by_name(va_name)
 
-    # @pytest.mark.atom
-    # @pytest.mark.parametrize("stack_id", range(578, 699))
-    # @qase.title(f"{counter()}. test_delete_stack")
-    # def test_delete_stack(self, user, stack_id):
-    #    deploy = DeploymentsMethods(auth_token_user)
-    #    deploy.delete_stack(stack_id)
 
     # ADMIN
 
-    # @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_get_all_publish_requests")
     def test_get_all_publish_requests(self, user, admin):
@@ -494,6 +491,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_get_unreviewed_publish_requests")
     def test_get_get_unreviewed_publish_requests(self, user, admin):
@@ -506,6 +504,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_confirm_publish_request")
     def test_confirm_publish_request(self, user, admin):
@@ -519,6 +518,7 @@ class TestDistributions:
 
         user.delete_va_by_name(name)
 
+   # @pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_decline_publish_request")
     def test_decline_publish_request(self, user, admin):

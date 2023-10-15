@@ -166,7 +166,11 @@ class TestUI:
     #            print(f'model_name = {model_name}')
     #            page.select_specific_model(model_name)
     #            page.clear_old_prompt()
-    #            page.enter_new_prompt_upper_limit()
+#
+    #            for i in range(0, 9):
+    #                page.enter_new_prompt_upper_limit()
+    #                #page.enter_new_prompt()
+    #                time.sleep(2)
     #            page.click_save_button()
     #            page.check_error_message_limit_prompt()
     #

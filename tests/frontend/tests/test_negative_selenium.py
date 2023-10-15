@@ -24,8 +24,10 @@ class TestUI:
                 user.delete_va_by_name(name)
 
     @pytest.mark.negative
+    @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
+    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
     @qase.title(f"test_create_assistant_from_scratch_negative_inputs")
-    def test_create_assistant_from_scratch_negative_inputs(self, browser):
+    def test_create_assistant_from_scratch_negative_inputs(self, browser, screen_size):
         with qase.step(f"1. Open site: {browser.name}"):
             page = AllGAPage(browser, url)
             page.open()

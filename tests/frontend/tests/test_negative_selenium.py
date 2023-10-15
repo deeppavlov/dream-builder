@@ -23,7 +23,6 @@ class TestUI:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.atom
     @pytest.mark.negative
     @qase.title(f"test_create_assistant_from_scratch_negative_inputs")
     def test_create_assistant_from_scratch_negative_inputs(self, browser):

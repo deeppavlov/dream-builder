@@ -290,7 +290,7 @@ class TestUI:
 
     @pytest.mark.chrome_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen',
+    @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Chrome")
@@ -299,7 +299,7 @@ class TestUI:
 
     @pytest.mark.edge_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['edge'], indirect=True)
-    @pytest.mark.parametrize('screen',
+    @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Edge")
@@ -308,7 +308,7 @@ class TestUI:
 
     @pytest.mark.firefox_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
-    @pytest.mark.parametrize('screen',
+    @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Firefox ")

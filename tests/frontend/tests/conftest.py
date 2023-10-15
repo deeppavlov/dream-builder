@@ -6,6 +6,7 @@ import time
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver.safari.options import Options as SafariOptions
 
 
 def pytest_addoption(parser):
@@ -28,9 +29,9 @@ def set_options(options):
 
 @pytest.fixture(scope="function")
 def browser(request):
+    browser_name = request.param
     browser = 0
-    browser_name = request.config.getoption("browser_name")
-    window_size = tuple(request.config.getoption("window_size").split(','))
+    window_size = tuple(request.config.getoption("window_size").split(","))
 
     if browser_name == "chrome":
         options = ChromeOptions()
@@ -39,7 +40,7 @@ def browser(request):
 
     elif browser_name == "firefox":
         options = FirefoxOptions()
-        options.set_preference('intl.accept_languages', 'en-GB')
+        options.set_preference("intl.accept_languages", "en-GB")
         set_options(options)
         browser = webdriver.Firefox(options=options)
 
@@ -48,6 +49,11 @@ def browser(request):
         set_options(options)
         browser = webdriver.Edge(options=options)
 
+    elif browser_name == "safari":
+        options = SafariOptions()
+        set_options(options)
+        browser = webdriver.Safari(options=options)
+
     print(f"\nstart {browser_name} browser for test..")
 
     browser.set_window_size(*window_size)
@@ -55,6 +61,13 @@ def browser(request):
     yield browser
     print("\nquit browser..")
     browser.quit()
+
+
+@pytest.fixture(scope="function")
+def screen_size(request, browser):
+    print(f'request.param = {request.param}')
+    window_size = tuple(request.param[0].split(","))
+    browser.set_window_size(*window_size)
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

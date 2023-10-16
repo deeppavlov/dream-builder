@@ -68,9 +68,11 @@ public_va_names_ru = [
 ]
 
 lm_service_id_en_list = [2, 4, 5, 6, 7]
-lm_service_id_ru_list = [4, 5, 6, 7, 8, 12, 13]
+lm_service_id_ru_list = [4, 5, 6, 7, 12, 13]
 
 lm_service_id_en_nominal_list = [2, 4, 5, 6, 7, 8, 9, 10]
+lm_service_id_ru_nominal_list = [4, 5, 6, 7, 8, 12, 13]
+
 lm_service_id_union_list = [2, 4, 5, 6, 7, 8, 9, 10, 12, 13]
 
 
@@ -100,3 +102,4 @@ def create_counter(title: str):
 counter_auth = create_counter("TestAuth")
 counter_distributions = create_counter("TestDistributions")
 counter_db = create_counter("TestDB")
+counter_ui = create_counter("TestUI")

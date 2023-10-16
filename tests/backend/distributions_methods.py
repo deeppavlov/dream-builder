@@ -15,6 +15,7 @@ from .config import (
     lm_service_id_en_list,
     lm_service_id_ru_list,
     lm_service_id_en_nominal_list,
+    lm_service_id_ru_nominal_list,
     lm_service_id_union_list,
     test_token_github1,
 )
@@ -490,11 +491,11 @@ class UserMethods:
         )
 
     def create_component(
-        self,
-        display_name="Test_name",
-        description="Test_description",
-        lm_service_id=lm_service_id_en_list[0],
-        prompt="Test_prompt",
+            self,
+            display_name="Test_name",
+            description="Test_description",
+            lm_service_id=lm_service_id_en_list[0],
+            prompt="Test_prompt",
     ):
         response = requests.post(
             components_endpoint,
@@ -538,12 +539,12 @@ class UserMethods:
         assert_status_code(response, 204)
 
     def patch_component(
-        self,
-        component_id,
-        display_name="string",
-        description="string",
-        prompt="Your prompt",
-        lm_service_id=lm_service_id_en_list[0],
+            self,
+            component_id,
+            display_name="string",
+            description="string",
+            prompt="Your prompt",
+            lm_service_id=lm_service_id_en_list[0],
     ):
         response = requests.patch(
             url=components_endpoint + "/" + str(component_id),
@@ -706,7 +707,7 @@ class UserMethods:
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
         )
 
     def send_dialog_session_message_no_access(self, dialog_session_id):
@@ -737,7 +738,7 @@ class UserMethods:
             json={
                 "text": "Hello! What is your name?",
                 "prompt": "TASK:  You are a chatbot that can only answers questions below. "
-                "FAQ: What is your name? My name is Paul.",
+                          "FAQ: What is your name? My name is Paul.",
                 "lm_service_id": lm_service_id,
                 "openai_api_key": openai_token,
             },
@@ -745,7 +746,7 @@ class UserMethods:
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
         )
         assert "Paul" in response.json()["text"], (
             f"Skill answers incorrectly, {response.json()['text']}, "
@@ -780,7 +781,7 @@ class UserMethods:
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}"
+            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')} {response.json()['text']}"
         )
         assert "дом" in response.json()["text"], (
             f"Skill answers incorrectly, {response.json()['text']}, "
@@ -821,6 +822,7 @@ class UserMethods:
             assert_validation(lm_service, models.LmServiceRead)
 
         actual_lm_service_id_list = [response["id"] for response in response.json()]
+        actual_lm_service_id_list.sort()
         assert actual_lm_service_id_list == lm_service_id_union_list
 
     def get_all_lm_services_for_language(self, language="en"):
@@ -835,12 +837,17 @@ class UserMethods:
         assert_status_code(response, 200)
         for lm_service in response.json():
             assert_validation(lm_service, models.LmServiceRead)
-        actual_lm_service_id_russian_list = [response["id"] for response in response.json()]
+        actual_lm_service_id_list = [response["id"] for response in response.json()]
+        actual_lm_service_name_list = [response["name"] for response in response.json()]
+
+        actual_lm_service_id_list.sort()
 
         if language == "ru":
-            assert actual_lm_service_id_russian_list == lm_service_id_ru_list
+            assert actual_lm_service_id_list == lm_service_id_ru_nominal_list, \
+                f"Actual lm service name list is {actual_lm_service_name_list} "
         if language == "en":
-            assert actual_lm_service_id_russian_list == lm_service_id_en_nominal_list
+            assert actual_lm_service_id_list == lm_service_id_en_nominal_list, \
+                f"Actual lm service name list is {actual_lm_service_name_list} "
 
     # DEPLOYMENTS
 

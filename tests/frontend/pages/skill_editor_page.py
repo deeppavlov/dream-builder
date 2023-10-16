@@ -76,7 +76,7 @@ class SkillEditorPage(BasePage):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
         #textarea.send_keys(description_1001_symbol*50)
-        textarea.send_keys(description_1001_symbol)
+        textarea.send_keys(default_prompt_en)
 
     def check_error_message_limit_prompt(self):
         error = self.browser.find_element(*SkillEditorPageLocators.ERROR_MESSAGE_PROMPT_LIMIT)

@@ -1,6 +1,5 @@
 import { authApi } from 'api/axiosConfig'
 import { getBeforeLoginLocation } from 'utils/beforeSignInManager'
-import { setLocalStorageUser } from 'utils/localStorageUser'
 
 const getClearUrl = (url: string) => {
   var urlOject = new URL(url)
@@ -20,9 +19,9 @@ export const exchangeAuthCode = (
     },
   }
 
-  authApi
+  return authApi
     .post(`exchange_authcode?auth_code=${code}`, '', axiosConfig)
-    .then(({ data }) => setLocalStorageUser(data))
+    .then(({ data }) => data)
     .catch(() => console.log('ExchangeAuthCode failed!'))
     .finally(() => {
       const beforeLoginUrl =

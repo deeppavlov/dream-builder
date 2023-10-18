@@ -3,26 +3,42 @@
   max-width: 146px;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   padding: 12px 0;
   border-radius: 12px;
-}
+  position: relative;
+  overflow: hidden;
 
+  @media (max-width: 900px) {
+    min-width: 100px;
+  }
+}
 .promptBlockModule,
 .block,
 .type {
   border: 1px solid $text3;
   background-color: $bcgrnd1;
 }
-
 .container {
-  overflow: auto;
-  padding: 0 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   width: 100%;
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  z-index: 1;
+  min-width: 100%;
+  outline: none;
+  resize: none;
+  @include b2;
+  border: none;
+  background-color: transparent;
+  white-space: pre-line;
+  overflow: auto;
+  padding-left: 10px;
+  padding-right: 5px;
 }
 
 .block {
@@ -36,6 +52,10 @@
   cursor: pointer;
   @include b4;
   color: $text1;
+
+  // @media (max-width: 900px) {
+  //   font-size: 10px;
+  // }
 }
 
 .type {

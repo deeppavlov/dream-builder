@@ -25,6 +25,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_ru_assistant")
     def test_create_ru_assistant(self, user):
         display_name = va_data["name"]
@@ -32,6 +33,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_en_assistant")
     def test_create_en_assistant(self, user):
         display_name = va_data["name"]
@@ -39,11 +41,13 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_list_of_public_va")
     def test_get_list_of_public_va(self, user):
         user.get_list_of_public_va()
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_list_of_your_va")
     def test_get_list_of_your_a(self, user):
         display_name = va_data["name"]
@@ -52,6 +56,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_your_va_by_name")
     def test_get_your_va_by_name(self, user):
         display_name = va_data["name"]
@@ -60,6 +65,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_public_va_by_name")
     def test_get_public_va_by_name(self, user):
         name = public_va_names_en[0]
@@ -67,6 +73,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_delete_your_va_by_name")
     def test_delete_your_va_by_name(self, user):
         display_name = va_data["name"]
@@ -75,8 +82,9 @@ class TestDistributions:
         user.delete_va_by_name(name)
         user.get_va_by_name_non_exist(name)
 
-    @qase.title(f"{counter()}. test_patch_your_va_by_name")
     @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_patch_your_va_by_name")
     def test_patch_your_va_by_name(self, user):
         display_name = va_data["name"]
         name = user.create_virtual_assistant(display_name)["name"]
@@ -85,6 +93,14 @@ class TestDistributions:
     # @pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("va_name", [public_va_names_en[0], public_va_names_ru[0]])
+    @qase.title(f"{counter()}. test_clone_public_va_smoke")
+    def test_clone_public_va_smoke(self, user, va_name):
+        display_name = va_name
+        name = user.clone_va(display_name)["name"]
+        user.check_language_inheritance(display_name, name)
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_clone_public_va")
     def test_clone_public_va(self, user, va_name):
         display_name = va_name
@@ -93,6 +109,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_clone_created_from_scratch_ru_va")
     def test_clone_created_from_scratch_ru_va(self, user):
         display_name = va_data["name"]
@@ -102,6 +119,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_clone_created_from_scratch_en_va")
     def test_clone_created_from_scratch_en_va(self, user):
         display_name = va_data["name"]
@@ -111,6 +129,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_clone_edited_va")
     def test_clone_edited_va(self, user):
         display_name = va_data["name"]
@@ -121,6 +140,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_after_cloning_delete_initial_va")
     def test_after_cloning_delete_initial_va(self, user):
         display_name = va_data["name"]
@@ -130,12 +150,14 @@ class TestDistributions:
     # VA COMPONENTS
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_public_va_components_by_name")
     def test_get_public_va_components_by_name(self, user):
         name = public_va_names_en[0]
         user.get_va_components(name)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_created_from_scratch_va_components_by_name")
     def test_get_created_from_scratch_va_components_by_name(self, user):
         display_name = va_data["name"]
@@ -143,6 +165,7 @@ class TestDistributions:
         user.get_va_components(name)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_cloned_va_components_by_name")
     def test_get_cloned_va_components_by_name(self, user):
         display_name = public_va_names_en[0]
@@ -150,6 +173,7 @@ class TestDistributions:
         user.get_va_components(name)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_add_cloned_va_component")
     def test_add_cloned_va_component(self, user):
         display_name = public_va_names_en[0]
@@ -159,6 +183,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_add_created_from_scratch_va_component")
     def test_add_created_from_scratch_va_component(self, user):
         display_name = va_data["name"]
@@ -171,6 +196,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_delete_cloned_va_component")
     def test_delete_cloned_va_component(self, user):
         display_name = public_va_names_en[0]
@@ -184,6 +210,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_delete_created_from_scratch_va_component")
     def test_delete_created_from_scratch_va_component(self, user):
         display_name = va_data["name"]
@@ -193,6 +220,7 @@ class TestDistributions:
         user.delete_va_component(name, va_component_id)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_patch_cloned_va_component")
     def test_patch_cloned_va_component(self, user):
         display_name = public_va_names_en[0]
@@ -202,6 +230,7 @@ class TestDistributions:
         user.patch_va_component(name, component_id)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_patch_created_from_scratch_va_component")
     def test_patch_created_from_scratch_va_component(self, user):
         display_name = va_data["name"]
@@ -213,6 +242,7 @@ class TestDistributions:
     # PUBLISH
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_publish_dist_unlisted")
     def test_publish_dist_unlisted(self, user):
         visibility = "UNLISTED_INVITATION"
@@ -223,6 +253,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_publish_dist_private")
     def test_publish_dist_private(self, user):
         visibility = "PRIVATE"
@@ -231,6 +262,7 @@ class TestDistributions:
         user.publish_va(name, visibility)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_publish_dist_public_template")
     def test_publish_dist_public_template(self, user):
         visibility = "PUBLIC_TEMPLATE"
@@ -243,12 +275,14 @@ class TestDistributions:
     # COMPONENTS
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_list_of_components")
     def test_get_list_of_components(self, user):
         user.get_list_of_components()
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_get_patch_delete_component")
     def test_create_get_patch_delete_component(self, user):
         component_id = user.create_component()["id"]
@@ -257,6 +291,7 @@ class TestDistributions:
         user.delete_component(component_id)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_list_of_group_components")
     def test_get_list_of_group_components(self, user):
         group_name = "Generative"
@@ -266,17 +301,20 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_users")
     def test_get_all_users(self, admin):
         admin.get_all_users()
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_user_self, user")
     def test_get_user_self(self, user):
         user.get_user_self()
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_user_by_id")
     def test_get_user_by_id(self, user):
         user_id = str(user.get_user_self()["id"])
@@ -285,6 +323,7 @@ class TestDistributions:
     # API_TOKENS
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_api_keys")
     def test_get_all_api_keys(self, user):
         user.get_all_api_keys()
@@ -292,6 +331,7 @@ class TestDistributions:
     # DIALOG_SESSIONS
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_dialog_sessions_with_not_deployed_created_from_scratch_va")
     def test_create_dialog_sessions_with_not_deployed_created_from_scratch_va(self, user):
         display_name = va_data["name"]
@@ -301,6 +341,15 @@ class TestDistributions:
     # @pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.parametrize("va_name", [public_va_names_en[0], public_va_names_ru[0]])
+    @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va_unauthorized_smoke")
+    def test_get_dialog_session_history_with_public_template_va_unauthorized_smoke(self, user, va_name):
+        user = UserMethods("1")
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+        user.get_dialog_session_history(dialog_session_id)
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va_unauthorized")
     def test_get_dialog_session_history_with_public_template_va_unauthorized(self, user, va_name):
         user = UserMethods("1")
@@ -310,6 +359,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_public_template_va")
     def test_get_dialog_session_history_with_public_template_va(self, user, va_name):
@@ -319,6 +369,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @pytest.mark.parametrize("lm_service_id", lm_service_id_en_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_en_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_en_lm(self, user, lm_service_id):
@@ -329,6 +380,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @pytest.mark.parametrize("lm_service_id", lm_service_id_ru_list)
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_universal_prompted_assistant_on_various_ru_lm")
     def test_get_dialog_session_history_with_universal_prompted_assistant_on_various_ru_lm(self, user, lm_service_id):
@@ -337,8 +389,31 @@ class TestDistributions:
         user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    #@pytest.mark.atom
+    # @pytest.mark.atom
     @pytest.mark.smoke
+    @qase.title(f"{counter()}. test_build_assistant_smoke")
+    def test_build_assistant_smoke(self, user, lm_service_id=5):
+        va_name = f"assistant_lm_service_id_{lm_service_id}"
+        va_name = user.create_virtual_assistant(va_name)["name"]
+        default_component = user.get_va_components(va_name)["skills"]
+        for component in default_component:
+            if component["component_type"] == "Generative":
+                component_id = component["component_id"]
+                user.patch_component(
+                    component_id=component_id,
+                    lm_service_id=lm_service_id,
+                    prompt="TASK:  You are a chatbot that can only answers questions below. "
+                           "FAQ: What is your name? My name is Paul.",
+                )
+        deployment_id = user.create_deployment(va_name)["id"]
+        time.sleep(60)
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
+        user.get_dialog_session_history(dialog_session_id)
+        user.delete_va_by_name(va_name)
+
+    #@pytest.mark.atom
+    @pytest.mark.regression
     @pytest.mark.parametrize("lm_service_id", lm_service_id_en_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_en")
     def test_build_assistant_on_various_lm_en(self, user, lm_service_id):
@@ -366,7 +441,7 @@ class TestDistributions:
         user.delete_va_by_name(va_name)
 
     #@pytest.mark.atom
-    @pytest.mark.smoke
+    @pytest.mark.regression
     @pytest.mark.parametrize("lm_service_id", lm_service_id_ru_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_ru")
     def test_build_assistant_on_various_lm_ru(self, user, lm_service_id):
@@ -399,6 +474,7 @@ class TestDistributions:
         user.delete_va_by_name(va_name)
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_created_from_scratch_va")
     def test_get_dialog_session_history_with_created_from_scratch_va(self, user):
         name = va_data["name"]
@@ -414,6 +490,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_dialog_session_history_with_cloned_va")
     def test_get_dialog_session_history_with_cloned_va(self, user):
         name = public_va_names_en[0]
@@ -431,17 +508,20 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_lm_services")
     def test_get_all_lm_services(self, user):
         user.get_all_lm_services()
 
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_lm_services_en")
     def test_get_all_lm_services_en(self, user):
         user.get_all_lm_services_for_language("en")
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_lm_services_ru")
     def test_get_all_lm_services_ru(self, user):
         user.get_all_lm_services_for_language("ru")
@@ -460,6 +540,7 @@ class TestDistributions:
 
     # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_get_patch_delete_deployment")
     def test_create_get_patch_delete_deployment(self, user):
         name = va_data["name"]
@@ -480,6 +561,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_all_publish_requests")
     def test_get_all_publish_requests(self, user, admin):
         visibility = "PUBLIC_TEMPLATE"
@@ -493,6 +575,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_get_unreviewed_publish_requests")
     def test_get_get_unreviewed_publish_requests(self, user, admin):
         visibility = "PUBLIC_TEMPLATE"
@@ -506,6 +589,7 @@ class TestDistributions:
 
     #@pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_confirm_publish_request")
     def test_confirm_publish_request(self, user, admin):
         visibility = "PUBLIC_TEMPLATE"
@@ -520,6 +604,7 @@ class TestDistributions:
 
    # @pytest.mark.atom
     @pytest.mark.smoke
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_decline_publish_request")
     def test_decline_publish_request(self, user, admin):
         visibility = "PUBLIC_TEMPLATE"
@@ -535,6 +620,7 @@ class TestDistributions:
     # PERMISSIONS
 
     # @pytest.mark.atom
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete")
     def test_non_owner_cannot_access_private_assistant_get_patch_clone_publish_delete(self, user, user2):
         display_name = va_data["name"]
@@ -547,6 +633,7 @@ class TestDistributions:
         user2.delete_va_by_name_no_access(name)
 
     # @pytest.mark.atom
+    # @pytest.mark.regression
     # @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components")
     # def test_non_owner_cannot_access_private_assistant_get_add_patch_delete_components(self, user):
     #    display_name = va_data["name"]
@@ -563,6 +650,7 @@ class TestDistributions:
     #    user.delete_va_by_name(name)
 
     # @pytest.mark.atom
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_owner_can_access_unlisted_assistant")
     def test_non_owner_non_auth_can_access_unlisted_assistant(self, user, user2):
         display_name = va_data["name"]
@@ -579,6 +667,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     # @pytest.mark.atom
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_owner_can_access_public_template_assistant")
     def test_non_owner_can_access_public_template_assistant(self, user, user2, admin):
         display_name = va_data["name"]
@@ -594,6 +683,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     # @pytest.mark.atom
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment")
     def test_non_owner_cannot_access_private_assistant_get_patch_delete_deployment(self, user, user2):
         display_name = va_data["name"]
@@ -609,6 +699,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     # @pytest.mark.atom
+    @pytest.mark.permissions
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
     def test_non_owner_cannot_access_private_assistant_dialog_session(self, user, user2):
         display_name = va_data["name"]
@@ -625,6 +716,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     # @pytest.mark.atom
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_admin_cannot_get_confirm_decline_publish_request")
     def test_non_admin_cannot_get_confirm_decline_publish_request(self, user, user2, admin):
         visibility = "PUBLIC_TEMPLATE"

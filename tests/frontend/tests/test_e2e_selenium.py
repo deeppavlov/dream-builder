@@ -257,12 +257,12 @@ def decorator_base_test(func):
 
 
 class TestUI:
-    def teardown_method(self):
-        user = UserMethods()
-        names_list = user.get_list_of_private_va_wo_assert()
-        if names_list:
-            for name in names_list:
-                user.delete_va_by_name(name)
+    #def teardown_method(self):
+    #    user = UserMethods()
+    #    names_list = user.get_list_of_private_va_wo_assert()
+    #    if names_list:
+    #        for name in names_list:
+    #            user.delete_va_by_name(name)
 
     @pytest.mark.chrome_e2e
     @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
@@ -288,7 +288,7 @@ class TestUI:
     def test_firefox_e2e(self, browser, screen_size):
         pass
 
-    @pytest.mark.chrome_parametrize_screen_size
+    @pytest.mark.chrome_e2e_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
     @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
@@ -297,7 +297,7 @@ class TestUI:
     def test_chrome_e2e_parametrize_screen_size(self, browser, screen_size):
         pass
 
-    @pytest.mark.edge_parametrize_screen_size
+    @pytest.mark.edge_e2e_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['edge'], indirect=True)
     @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
@@ -306,7 +306,7 @@ class TestUI:
     def test_edge_e2e_parametrize_screen_size(self, browser, screen_size):
         pass
 
-    @pytest.mark.firefox_parametrize_screen_size
+    @pytest.mark.firefox_e2e_parametrize_screen_size
     @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
     @pytest.mark.parametrize('screen_size',
                              [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)

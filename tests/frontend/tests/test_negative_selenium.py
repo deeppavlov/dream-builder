@@ -23,8 +23,8 @@ class TestUI:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.negative
-    @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
+    @pytest.mark.negative_ui
+    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
     @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
     @qase.title(f"test_create_assistant_from_scratch_negative_inputs")
     def test_create_assistant_from_scratch_negative_inputs(self, browser, screen_size):

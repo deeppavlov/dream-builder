@@ -115,6 +115,69 @@ type TKey = {
   name: string
 }
 
+export type TEvents =
+  | 'TRIGGER_RIGHT_SP_EVENT'
+  | 'ShareAssistantModal'
+  | 'SignInModal'
+  | 'RenewChat'
+  | 'AssistantModal'
+  | 'ChooseBotModal'
+  | 'DeleteAssistantModal'
+  | 'DeployNotificationModal'
+  | 'IntentCatcherModal'
+  | 'IntentResponderModal'
+  | 'PublicToPrivateModal'
+  | 'Modal'
+  | 'PublishAssistantModal'
+  | 'SkillModal'
+  | 'SkillPromptModal'
+  | 'SkillQuitModal'
+  | 'SkillsListModal'
+  | 'CreateGenerativeSkillModal'
+  | 'CreateSkillDistModal'
+  | 'DeleteSkillModal'
+  | 'FreezeSkillModal'
+  | 'ConfirmApiTokenUpdateModal'
+  | 'AccessTokensModal'
+  | 'AccessTokensChanged'
+  | 'PublishWarningModal'
+
+export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
+
+export type TDeploymentState =
+  | null
+  | 'STARTED'
+  | 'CREATING_CONFIG_FILES'
+  | 'BUILDING_IMAGE'
+  | 'PUSHING_IMAGES'
+  | 'DEPLOYING_STACK'
+  | 'DEPLOYED'
+  | 'UP'
+
+export interface IDeployment {
+  chat_host: string
+  chat_port: number
+  date_created: string
+  date_state_updated: any
+  id: number
+  state: TDeploymentState
+  error: {
+    state: string
+    message: string
+    exception: string
+  }
+}
+export interface IDeploymentStatus extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
+type TKey = {
+  base_url: string
+  description: string
+  display_name: string
+  id: number
+  name: string
+}
+
 export interface BotInfoInterface {
   id: number
   name: string

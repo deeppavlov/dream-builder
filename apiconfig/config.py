@@ -92,6 +92,39 @@ class RedisSettings(BaseModel):
     port: int
 
 
+class DeployerSettings(BaseModel):
+    registry_url: str
+    portainer_url: str
+    portainer_key: str
+    default_prefix: str
+
+
+# class StorageSettings(BaseModel):
+#     region_name: str
+#     aws_access_key_id: str
+#     aws_secret_access_key: str
+
+
+class GitSettings(BaseModel):
+    local_path: Path
+    username: str
+    remote_access_token: str
+    remote_source_url: str
+    remote_source_branch: str
+    remote_copy_url: str
+    remote_copy_branch: str
+
+
+class CelerySettings(BaseModel):
+    broker: str
+    backend: str
+
+
+class RedisSettings(BaseModel):
+    host: str
+    port: int
+
+
 class Settings(BaseSettings):
     app: AppSettings
     url: UrlSettings

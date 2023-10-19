@@ -426,7 +426,7 @@
     "skill": {
       "rename": "Rename",
       "properties": "Properties",
-      "delete": "delete"
+      "delete": "Delete"
     }
   },
   "tabs": {

@@ -1,7 +1,9 @@
+from typing import Union
+
 import sqlalchemy
 from sqlalchemy.orm import Session
 
-from database.models import GoogleUser, GithubUser, GeneralUser
+from database.models import GoogleUser, GithubUser
 from database.models.user import crud as user_crud
 
 provider_table_mapping = {
@@ -9,11 +11,11 @@ provider_table_mapping = {
     "github": GithubUser,
 }
 
-list_of_admins: [GeneralUser] = None
+list_of_admins: [Union[GoogleUser, GithubUser]] = None
 list_of_admins_ids: {int} = None
 
 
-def update_user_email(db: Session, user_id: int, provider_name: str, new_email: str):
+def update_user_email(db: Session, user_id: int, provider_name: str, new_email: str, auth_type: str):
     """
     Update a user's email after verifying their role.
     """
@@ -22,7 +24,7 @@ def update_user_email(db: Session, user_id: int, provider_name: str, new_email: 
 
     User = provider_table_mapping[provider_name]
 
-    validate_user_id(db, user_id) # role must be user
+    validate_user_id(db, user_id, auth_type) # role must be user
 
     user = user_crud.get_by_id(db, user_id)
 
@@ -46,13 +48,13 @@ def update_user_email(db: Session, user_id: int, provider_name: str, new_email: 
     return provider_user
 
 
-def validate_user_id(db: Session, user_id: int):
+def validate_user_id(db: Session, user_id: int, auth_type: str):
     """
     Validate a user's ID and prevent changes for admin users.
     """
     global list_of_admins, list_of_admins_ids
     if list_of_admins is None or list_of_admins_ids is None:
-        list_of_admins = user_crud.get_by_role(db, 3)
+        list_of_admins = user_crud.get_by_role(db, 3, auth_type=auth_type)
         list_of_admins_ids = {admin.id for admin in list_of_admins}
 
     if user_id in list_of_admins_ids:

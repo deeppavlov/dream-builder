@@ -80,7 +80,7 @@ async def exchange_authcode(
     7) Access token to authenticate user
     8) post request to exchange the refresh token for access token
     """
-    return await PROVIDERS[auth_type].login(db, auth_code)
+    return await PROVIDERS[auth_type].exchange_authcode(db, auth_code)
 
 
 @router.post("/update_token")
@@ -106,4 +106,4 @@ async def update_user_info(
     if token == settings.auth.test_token:
         raise HTTPException(status_code=400, detail=str("Can't change GodUser"))
 
-    return update_user_email(db, user_id, auth_type, new_email)
+    return update_user_email(db, user_id, auth_type, new_email, auth_type)

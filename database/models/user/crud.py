@@ -1,6 +1,8 @@
+from typing import Union
+
 from database.models import providers, GoogleUser, GithubUser
 from database.models.user.model import GeneralUser
-from sqlalchemy import String, cast, select, or_
+from sqlalchemy import String, cast, select
 from sqlalchemy.orm import Session
 
 
@@ -34,11 +36,8 @@ def get_by_id(db: Session, id: int) -> GeneralUser:
     return db.query(GeneralUser).where(GeneralUser.id == id).first()
 
 
-def get_by_role(db: Session, role_id: int) -> [GeneralUser]:
-    general_users_with_desired_role = db.query(GeneralUser).filter(
-        or_(
-            GoogleUser.role_id == role_id,
-            GithubUser.role_id == role_id
-        )
-    ).all()
+def get_by_role(db: Session, role_id: int, auth_type: str) -> [Union[GoogleUser, GithubUser]]:
+    desired_table = GithubUser if auth_type == "github" else GoogleUser
+    general_users_with_desired_role = db.query(desired_table).filter(desired_table.role_id == role_id).all()
+
     return general_users_with_desired_role

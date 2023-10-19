@@ -10,7 +10,7 @@
   overflow: hidden;
 
   @media (max-width: 900px) {
-    min-width: 100px;
+    min-width: 95px;
   }
 }
 .promptBlockModule,
@@ -53,9 +53,9 @@
   @include b4;
   color: $text1;
 
-  // @media (max-width: 900px) {
-  //   font-size: 10px;
-  // }
+  @media (max-width: 900px) {
+    font-size: 10px;
+  }
 }
 
 .type {

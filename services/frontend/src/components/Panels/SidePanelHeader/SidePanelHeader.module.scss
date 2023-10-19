@@ -7,10 +7,15 @@
   @include t2;
   align-items: center;
   gap: 8px;
+  justify-content: space-around;
+
+  @media (max-width: 1145px) {
+    font-size: 12px;
+  }
 
   [role='tablist'] {
     display: flex;
-    padding: 0 60px 0 24px;
+    // padding: 0 60px 0 24px;
     gap: 24px;
     overflow: hidden;
     height: 100%;
@@ -24,6 +29,7 @@
     display: flex;
     flex-direction: row;
     width: fit-content;
+    align-items: center;
 
     @include text_ellipsis;
 
@@ -46,5 +52,11 @@
   [aria-selected='true'] {
     border-bottom: 2px solid $primary1;
     color: $text1;
+  }
+}
+
+[id='sp_right'] {
+  .sidePanelHeader {
+    font-size: 18px;
   }
 }

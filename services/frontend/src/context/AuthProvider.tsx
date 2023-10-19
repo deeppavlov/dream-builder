@@ -24,7 +24,9 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
 
   useEffect(() => {
     if (user) setLocalStorageUser(user)
-    else deleteLocalStorageUser()
+    else {
+      deleteLocalStorageUser()
+    }
   }, [user])
 
   // Trigger requested before login Modal window,
@@ -42,6 +44,20 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     clearBeforeLoginLocation()
     clearBeforeLoginModal()
   }, [user])
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'user') {
+        setUser(event.newValue as UserInterface | null)
+        location.reload()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const userContextValue = useMemo(
     () => ({

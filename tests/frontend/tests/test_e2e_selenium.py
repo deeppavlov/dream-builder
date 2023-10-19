@@ -257,12 +257,12 @@ def decorator_base_test(func):
 
 
 class TestUI:
-    #def teardown_method(self):
-    #    user = UserMethods()
-    #    names_list = user.get_list_of_private_va_wo_assert()
-    #    if names_list:
-    #        for name in names_list:
-    #            user.delete_va_by_name(name)
+    def teardown_method(self):
+        user = UserMethods()
+        names_list = user.get_list_of_private_va_wo_assert()
+        if names_list:
+            for name in names_list:
+                user.delete_va_by_name(name)
 
     @pytest.mark.chrome_e2e
     @pytest.mark.parametrize('browser', ['chrome'], indirect=True)

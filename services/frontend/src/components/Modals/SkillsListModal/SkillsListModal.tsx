@@ -65,7 +65,7 @@ export const SkillsListModal = () => {
                 const name = bot?.name!
                 const newVisibility =
                   VISIBILITY_STATUS.PRIVATE as TDistVisibility
-                bot?.publish_state !== null &&
+                bot?.publish_state !== VISIBILITY_STATUS.PRIVATE &&
                   changeVisibility.mutateAsync({ name, newVisibility })
               })
 

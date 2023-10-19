@@ -95,11 +95,11 @@ export const AssistantModule = () => {
       toast.promise(
         deleteDeployment.mutateAsync(bot!, {
           onSuccess: () => {
-            const visibility: TDistVisibility =
+            const newVisibility: TDistVisibility =
               VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
               changeVisibility.mutateAsync(
-                { name: bot?.name || '', visibility },
+                { name: bot?.name || '', newVisibility },
                 {
                   onSuccess: data => {
                     console.log('data = ', data)

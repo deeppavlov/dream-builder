@@ -10,6 +10,10 @@ export const getValidationSchema = () => {
         value: /^[\s\p{L}.'’,!-?«»]+$/giu,
         message: t('invalid'),
       },
+      emailPattern: {
+        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        message: t('email'),
+      },
       desc: {
         maxLength: (max: number) => ({
           value: max,

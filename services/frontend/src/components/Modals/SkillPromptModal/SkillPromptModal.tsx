@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -8,13 +8,8 @@ import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import {
-  IPromptBlock,
-  ISkill,
-  LM_Service,
-  LanguageModel,
-  TDistVisibility,
-} from 'types/types'
+import { IPromptBlock, ISkill, LM_Service, LanguageModel, TDistVisibility } from 'types/types'
+import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
@@ -41,6 +36,7 @@ import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSide
 import { Modal, Wrapper } from 'components/UI'
 import s from './SkillPromptModal.module.scss'
 
+
 interface ITriggerProps {
   skill?: ISkill
   isOpen?: boolean
@@ -55,8 +51,6 @@ interface IFormValues {
   }
   prompt: string
 }
-
-type PromptEditorHandle = React.ElementRef<typeof PromptEditor>
 
 const SkillPromptModal = () => {
   const { t } = useTranslation()
@@ -77,7 +71,6 @@ const SkillPromptModal = () => {
   const editorRef = createRef()
   const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const validationSchema = getValidationSchema()
-  const promptEditorRef = React.createRef<PromptEditorHandle>()
   const cx = classNames.bind(s)
   const {
     skillsPropsOpened,
@@ -86,6 +79,11 @@ const SkillPromptModal = () => {
     skillEditorClosed,
     changeSkillModel,
   } = useGaSkills()
+
+  const [editorContext, setEditorContext] = useState<IEditorContext>({
+    code: '',
+    skill: '',
+  })
 
   useEffect(() => {
     return () => skillEditorClosed()
@@ -147,13 +145,9 @@ const SkillPromptModal = () => {
       return !prev
     })
   }
-  const promptContext: { context: string } = { context: '' }
-
   const handleSave = ({ prompt }: IFormValues) => {
     const isSkill = skill !== undefined && skill !== null
     const isModel = selectedModel !== undefined && selectedModel !== null
-
-    const context = promptContext?.context
 
     if (!isSkill || !isModel) return
 
@@ -168,7 +162,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: context,
+            prompt: prompt,
             distName: distName || '',
             type: 'skills',
           })
@@ -205,7 +199,7 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-    promptEditorRef?.current?.insertText(formattedBlock)
+    setEditorContext({ ...editorContext, skill: formattedBlock })
   }
 
   const handleAssistantDelete = () => setPreventExit(false)
@@ -329,8 +323,8 @@ const SkillPromptModal = () => {
               )}
               {skill?.prompt && (
                 <PromptEditor
-                  promptContext={promptContext}
-                  ref={promptEditorRef}
+                  editorContext={editorContext}
+                  setEditorContext={setEditorContext}
                   label={t('modals.skill_prompt.prompt_field.label')}
                   name='prompt'
                   placeholder={t(

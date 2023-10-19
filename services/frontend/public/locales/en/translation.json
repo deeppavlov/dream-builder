@@ -304,6 +304,18 @@
         "continue": "Continue"
       },
       "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
+    },
+    "add_email_modal": {
+      "title": "Enter your email address",
+      "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
+      "form": {
+        "placeholder": "Enter your email"
+      },
+      "btns": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      },
+      "error": "Something went wrong..."
     }
   },
   "sidepanels": {
@@ -479,7 +491,8 @@
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
-    "prompt_max": "Limit prompt to {{max}} tokens"
+    "prompt_max": "Limit prompt to {{max}} tokens",
+    "email": "Please, enter a valid email"
   },
   "tokenizer": {
     "counting": "+ counting...",

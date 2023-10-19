@@ -1,19 +1,26 @@
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router-dom';
+
 
 export interface UserInterface {
-  name: string
-  email: string
-  picture: string
-  family_name: string
-  given_name: string
   id: number
-  refresh_token: string
-  sub: string
+  email: string
+  outer_id: string
+  picture: string
+  name: string
   token: string
+  refresh_token: string
+  role: {
+    id: number
+    name: string
+    can_set_roles: boolean
+    can_confirm_publish: boolean
+    can_view_private_assistants: boolean
+  }
 }
 
 export interface UserContext {
   user: UserInterface | null
+  setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>
 }
 
 export interface ITokens {
@@ -66,11 +73,11 @@ export type TEvents =
   | 'ConfirmApiTokenUpdateModal'
   | 'AccessTokensModal'
   | 'AccessTokensChanged'
-  | 'PublishWarningModal'
   | 'ProfileSettingsModal'
   | 'CtxMenuBtnClick'
   | 'ChangeLanguageModal'
   | 'AssistantDeleted'
+  | 'PublishAssistantWizard'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
@@ -330,7 +337,7 @@ export type TComponents = {
 }
 
 export interface IBeforeLoginModal {
-  name: string
+  name: TEvents
   options: { [x: string]: any }
 }
 
@@ -433,3 +440,8 @@ export type PageType =
   | 'va_skillset_page'
   | 'va_template_skillset_page'
   | 'va_skill_editor'
+
+  export interface IEditorContext {
+    code: string
+    skill: string
+  }

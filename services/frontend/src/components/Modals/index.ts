@@ -8,6 +8,7 @@ import { DeleteSkillModal } from './DeleteSkillModal/DeleteSkillModal'
 import { ProfileSettings } from './ProfileSettings/ProfileSettings'
 import { PublicToPrivateModal } from './PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from './PublishAssistantModal/PublishAssistantModal'
+import { PublishAssistantWizard } from './PublishAssistantWizard/PublishAssistantWizard'
 import { ShareAssistantModal } from './ShareAssistantModal/ShareAssistantModal'
 import { SignInModal } from './SignInModal/SignInModal'
 import { SkillModal } from './SkillModal/SkillModal'
@@ -32,4 +33,5 @@ export {
   SkillPromptModal,
   SkillQuitModal,
   SkillsListModal,
+  PublishAssistantWizard,
 }

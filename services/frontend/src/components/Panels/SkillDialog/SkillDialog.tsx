@@ -76,7 +76,7 @@ const SkillDialog = forwardRef(
         if (!isApiKey) {
           setError({
             type: 'api-key',
-            msg: t('api_key.required.label'),
+            msg: t('api_key.required.skill_label'),
           })
           return false
         }

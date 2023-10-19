@@ -508,8 +508,12 @@
   },
   "api_key": {
     "required": {
-      "label": "Enter your personal access token for OpenAI to run your Generative AI Skill",
-      "link": "Enter your personal access token here"
+      "skill_label": "Enter your personal access token for OpenAI to talk to this Generative AI Skill",
+      "assistant_label": "Enter your personal access token for OpenAI to talk to this AI Assistant",
+      "link": "Enter your personal access token here",
+      "api-key": "Enter token",
+      "auth": "Sign in",
+      "auth_required": "To start a talk with an AI assistant, you need to log in and enter your personal access token."
     }
   },
   "assistant_visibility": {

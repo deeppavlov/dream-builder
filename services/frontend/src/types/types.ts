@@ -1,5 +1,4 @@
-import { RouteObject } from 'react-router-dom';
-
+import { RouteObject } from 'react-router-dom'
 
 export interface UserInterface {
   id: number
@@ -348,6 +347,7 @@ export type TDialogError =
   | 'dist-name'
   | 'deploy'
   | 'chat'
+  | 'auth'
   | null
 
 export interface IDialogError {
@@ -441,7 +441,7 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
-  export interface IEditorContext {
-    code: string
-    skill: string
-  }
+export interface IEditorContext {
+  code: string
+  skill: string
+}

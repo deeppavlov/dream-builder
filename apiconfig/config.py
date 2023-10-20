@@ -1,11 +1,14 @@
 import secrets
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic import BaseModel, BaseSettings, Field
 
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
+
+AVAILABLE_CLOUD_SERVICES = Literal["amazon", "local"]
+SMTP_LOGIN_POLICIES = Literal["smtp_tls", "smtp_ssl"]
 
 
 def _default_agent_user_id_prefix():
@@ -47,6 +50,46 @@ class SmtpSettings(BaseModel):
     port: int
     user: str
     password: str
+    login_policy: SMTP_LOGIN_POLICIES
+
+
+class DeployerSettings(BaseModel):
+    registry_url: str
+    portainer_url: str
+    portainer_key: str
+    default_prefix: str
+    cloud_service: Optional[AVAILABLE_CLOUD_SERVICES]
+
+
+class GithubAuth(BaseModel):
+    client_id: str
+    client_secret: str
+
+
+# class StorageSettings(BaseModel):
+#     region_name: str
+#     aws_access_key_id: str
+#     aws_secret_access_key: str
+
+
+class GitSettings(BaseModel):
+    local_path: Path
+    username: str
+    remote_access_token: str
+    remote_source_url: str
+    remote_source_branch: str
+    remote_copy_url: str
+    remote_copy_branch: str
+
+
+class CelerySettings(BaseModel):
+    broker: str
+    backend: str
+
+
+class RedisSettings(BaseModel):
+    host: str
+    port: int
 
 
 class DeployerSettings(BaseModel):
@@ -89,6 +132,7 @@ class Settings(BaseSettings):
     auth: AuthSettings
     smtp: SmtpSettings
     deployer: DeployerSettings
+    github: GithubAuth
     # storage: StorageSettings
     git: GitSettings
     celery: CelerySettings
@@ -105,6 +149,10 @@ class Settings(BaseSettings):
             "client_id": self.auth.google_client_id,
             "client_secret": self.auth.google_client_secret,
         }
+
+    @property
+    def github_auth_client_info(self):
+        return {"client_id": self.github.client_id, "client_secret": self.github.client_secret}
 
 
 settings = Settings()

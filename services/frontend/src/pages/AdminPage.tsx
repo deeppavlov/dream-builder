@@ -3,10 +3,15 @@ import toast from 'react-hot-toast'
 import { RotatingLines } from 'react-loader-spinner'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { IDeploymentState, RequestProps } from 'types/types'
+import {
+  IDeploymentState,
+  IPublicationRequest,
+  RequestProps,
+} from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAdmin, useDeploy } from 'hooks/api'
+import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { dateToUTC } from 'utils/dateToUTC'
 import { sortByISO8601 } from 'utils/sortByISO8601'
 import { Button } from 'components/Buttons'
@@ -42,6 +47,7 @@ function filterStack(arr: IDeploymentState[]) {
 export const AdminPage = () => {
   const { requests, confirm, decline } = useAdmin()
   const { deployments, deleteDeployment } = useDeploy()
+  const { publicationRequestHandled } = useGaPublication()
 
   const filteredDeployment = filterStack(deployments?.data!)
 
@@ -52,12 +58,22 @@ export const AdminPage = () => {
     navigate(generatePath(RoutesList.editor.skills, { name: name }))
   }
   const handleApprove: IHandler = (e, id) => {
-    toast.promise(confirm.mutateAsync(id), toasts.confirmRequest)
+    const publicationRequest = sortedRequest?.find(
+      r => r.id === id
+    ) as IPublicationRequest
+    publicationRequestHandled(publicationRequest, 'accept')
+
+    toast.promise(confirm.mutateAsync(id), toasts().confirmRequest)
     e.stopPropagation()
   }
 
   const handleDecline: IHandler = (e, id) => {
-    toast.promise(decline.mutateAsync(id), toasts.declineRequest)
+    const publicationRequest = sortedRequest?.find(
+      r => r.id === id
+    ) as IPublicationRequest
+    publicationRequestHandled(publicationRequest, 'decline')
+
+    toast.promise(decline.mutateAsync(id), toasts().declineRequest)
     e.stopPropagation()
   }
 
@@ -73,7 +89,7 @@ export const AdminPage = () => {
 
     toast.promise(
       deleteDeployment.mutateAsync(assistant),
-      toasts.deleteDeployment
+      toasts().deleteDeployment
     )
     e.stopPropagation()
   }
@@ -149,10 +165,7 @@ export const AdminPage = () => {
                       </span>
                       <span>
                         author:
-                        {deployment?.virtual_assistant?.author?.fullname ||
-                          deployment?.virtual_assistant?.author?.given_name +
-                            ' ' +
-                            deployment?.virtual_assistant?.author?.family_name}
+                        {deployment?.virtual_assistant?.author?.name}
                       </span>
                       <span
                         style={{ cursor: 'pointer' }}
@@ -250,12 +263,7 @@ const Request: FC<RequestProps> = ({
               style={{ height: '20px', borderRadius: '50%' }}
               src={r?.virtual_assistant?.author?.picture}
             />
-            <mark>
-              {r?.virtual_assistant?.author?.fullname ||
-                r?.virtual_assistant?.author?.given_name +
-                  ' ' +
-                  r?.virtual_assistant?.author?.family_name}
-            </mark>
+            <mark>{r?.virtual_assistant?.author?.name}</mark>
           </span>
           <span>
             <b>email: </b>

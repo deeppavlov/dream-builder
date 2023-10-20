@@ -1,6 +1,6 @@
 import { useUIOptions } from 'context'
 import { useEffect, useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg'
 import DB from 'assets/icons/logo.png'
@@ -8,6 +8,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
@@ -32,33 +33,36 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   const { isPreview } = usePreview()
   const { name: distName } = useParams()
   const { setUIOption } = useUIOptions()
+  const { createVaClick, setVaArchitectureOptions, renameVaButtonClick } =
+    useGaAssistant()
   const isPreviewEditor = distName && distName?.length > 0 && isPreview
   const isPublic = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const tooltipId = useId()
   const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
-  const isDeepyPavlova = bot?.author?.fullname! == 'Deepy Pavlova'
-  const author = isDeepyPavlova
-    ? 'Dream Builder Team'
-    : bot?.author?.fullname
-    ? bot?.author?.fullname
-    : bot?.author?.given_name + ' ' + bot?.author?.family_name
+  const isDeepyPavlova =
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
 
   const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const { name } = useParams()
   const isEditor = Boolean(name)
   const handleCloneBtnClick = () => {
+    createVaClick('va_template_sidepanel', bot)
+
     const assistantClone = { action: 'clone', bot: bot }
 
     if (!disabled) return trigger('AssistantModal', assistantClone)
 
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
+      msg: <Trans i18nKey='modals.sign_in.build' />,
     })
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_sidepanel')
     isPublished
       ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
       : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))
@@ -67,6 +71,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
   }
 
   const handleRenameBtnClick = () => {
+    renameVaButtonClick('va_sidepanel', bot)
     trigger('AssistantModal', { bot, action: 'edit' })
   }
 
@@ -194,6 +199,7 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
                   bot={bot}
                   type={type}
                   isDeployed={isDeployed}
+                  inSidePanel
                 />
               </>
             )}

@@ -1,6 +1,5 @@
 import { authApi } from 'api/axiosConfig'
 import { getBeforeLoginLocation } from 'utils/beforeSignInManager'
-import { setLocalStorageUser } from 'utils/localStorageUser'
 
 const getClearUrl = (url: string) => {
   var urlOject = new URL(url)
@@ -9,20 +8,24 @@ const getClearUrl = (url: string) => {
   return urlOject.toString()
 }
 
-export const exchangeAuthCode = async (code: string) => {
+export const exchangeAuthCode = (
+  code: string,
+  authType: 'google' | 'github'
+) => {
   let axiosConfig = {
     mode: 'no-cors',
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'auth-type': authType,
     },
   }
 
-  await authApi
-    .post(`exchange_authcode?auth_code=${code}`, axiosConfig)
-    .then(({ data }) => setLocalStorageUser(data))
+  return authApi
+    .post(`exchange_authcode?auth_code=${code}`, '', axiosConfig)
+    .then(({ data }) => data)
     .catch(() => console.log('ExchangeAuthCode failed!'))
-
-  const beforeLoginUrl =
-    getBeforeLoginLocation() ?? getClearUrl(location.origin)
-  location.href = beforeLoginUrl
+    .finally(() => {
+      const beforeLoginUrl =
+        getBeforeLoginLocation() ?? getClearUrl(location.origin)
+      location.href = beforeLoginUrl
+    })
 }

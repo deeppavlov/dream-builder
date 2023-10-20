@@ -4,9 +4,10 @@ import toast from 'react-hot-toast'
 import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { ISkill } from 'types/types'
+import { ISkill, TDistVisibility } from 'types/types'
+import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
-import { useComponent } from 'hooks/api'
+import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
@@ -30,9 +31,12 @@ export const SkillModal = () => {
   const [action, setAction] = useState<TSkillModalAction | null>(null)
   const [skill, setSkill] = useState<ISkill | null>(null)
   const { name: distName } = useParams()
+  const { deleteDeployment } = useDeploy()
+  const { getDist, changeVisibility } = useAssistants()
   const nav = useNavigate()
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
   const validationSchema = getValidationSchema()
+  const bot = distName ? getDist({ distName }).data : null
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
@@ -66,7 +70,6 @@ export const SkillModal = () => {
   const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
-    console.log('data = ', data)
     toast.promise(
       create.mutateAsync(
         { data, distName: distName || '', type: 'skills' },
@@ -79,10 +82,19 @@ export const SkillModal = () => {
                 skillId: (skill?.component_id ?? skill?.id)?.toString(),
               })
             )
+            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+            deleteDeployment.mutateAsync(bot!).then(
+              () =>
+                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                changeVisibility.mutateAsync({
+                  name: bot?.name!,
+                  newVisibility,
+                })
+            )
           },
         }
       ),
-      toasts.createComponent
+      toasts().createComponent
     )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
@@ -96,11 +108,7 @@ export const SkillModal = () => {
     toast
       .promise(
         edit.mutateAsync({ data, component_id, distName, type: 'skills' }),
-        {
-          loading: t('toasts.rename'),
-          success: t('toasts.success'),
-          error: t('toasts.error'),
-        }
+        toasts().renameComponent
       )
       .then(() => closeModal())
   }
@@ -140,31 +148,32 @@ export const SkillModal = () => {
             defaultValue={getValues()[NAME_ID]}
             control={control}
             rules={{
-              required: validationSchema.global.required,
-              pattern: validationSchema.global.regExpPattern,
+              required: validationSchema.globals.required,
+              pattern: validationSchema.globals.regExpPattern,
             }}
             props={{
               placeholder: t('modals.skill.name_field.placeholder'),
             }}
           />
-
-          <TextArea
-            label={t('modals.skill.desc_field.label')}
-            name={DESC_ID}
-            control={control}
-            defaultValue={getValues()[DESC_ID]}
-            withCounter
-            rules={{
-              required: validationSchema.global.required,
-              maxLength:
-                validationSchema.global.desc.maxLength(descriptionMaxLenght),
-              pattern: validationSchema.global.regExpPattern,
-            }}
-            props={{
-              placeholder: t('modals.skill.desc_field.placeholder'),
-              rows: 6,
-            }}
-          />
+          <div className={s.textarea}>
+            <TextArea
+              label={t('modals.skill.desc_field.label')}
+              name={DESC_ID}
+              control={control}
+              defaultValue={getValues()[DESC_ID]}
+              withCounter
+              rules={{
+                required: validationSchema.globals.required,
+                maxLength:
+                  validationSchema.globals.desc.maxLength(descriptionMaxLenght),
+                pattern: validationSchema.globals.regExpPattern,
+              }}
+              props={{
+                placeholder: t('modals.skill.desc_field.placeholder'),
+                rows: 6,
+              }}
+            />
+          </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: closeModal }}>
               {t('modals.skill.btns.cancel')}

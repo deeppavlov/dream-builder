@@ -1,9 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException, Header
 from sqlalchemy.orm import Session
 
 from apiconfig.config import settings
+from database import enums
 from database.models.user import crud as user_crud
 from database.models.virtual_assistant.crud import get_all_public_templates, get_all_by_author
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
@@ -18,20 +19,21 @@ from services.distributions_api.routes.assistant_dists.dependencies import (
 )
 from services.distributions_api.security.auth import get_current_user
 from services.distributions_api.utils.emailer import Emailer
+from services.distributions_api.utils.name_generator import from_email
 
 assistant_dists_router = APIRouter(prefix="/api/assistant_dists", tags=["assistant_dists"])
 
 
 def send_publish_request_created_emails(
-    owner_email: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
+    owner_email: str, owner_name: str, moderator_emails: List[str], virtual_assistant_name: str, virtual_assistant_display_name: str
 ):
-    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)
+    emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password, settings.smtp.login_policy)
 
     for moderator_email in moderator_emails:
         emailer.send_publish_request_created_to_moderators(
             moderator_email, owner_email, virtual_assistant_name, virtual_assistant_display_name
         )
-    emailer.send_publish_request_created_to_owner(owner_email, virtual_assistant_display_name)
+    emailer.send_publish_request_created_to_owner(owner_email, owner_name, virtual_assistant_display_name)
 
 
 @assistant_dists_router.post("", status_code=status.HTTP_201_CREATED)
@@ -48,15 +50,24 @@ async def create_virtual_assistant(
     -``display_name``: new assistant dist display name
 
     -``description``: new assistant dist description
+
+    -``language``: new assistant language
     """
+    try:
+        template_dist = TEMPLATE_DIST_PROMPT_BASED[payload.language]
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"No template for language {payload.language}"
+        )
 
     new_virtual_assistant = flows.create_virtual_assistant(
         db,
-        TEMPLATE_DIST_PROMPT_BASED,
+        template_dist,
         payload.display_name,
         payload.description,
         user.id,
-        user.email,
+        from_email(user),
+        payload.language,
     )
     return new_virtual_assistant
 
@@ -69,8 +80,7 @@ async def get_list_of_public_virtual_assistants(db: Session = Depends(get_db)) -
     public_dists = []
 
     for dist in get_all_public_templates(db):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        public_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return public_dists
 
@@ -89,8 +99,7 @@ async def get_list_of_private_virtual_assistants(
     private_dists = []
 
     for dist in get_all_by_author(db, user.id):
-        if dist.name not in const.INVISIBLE_VIRTUAL_ASSISTANT_NAMES:
-            private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
+        private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
     return private_dists
 
@@ -176,7 +185,7 @@ async def clone_dist(
 
     **Path args**
 
-    -``dist_name``: name of the distribution
+    -``dist_name``: name of the original distribution
 
     **Payload args**
 
@@ -185,7 +194,14 @@ async def clone_dist(
     -``description``: new assistant dist description
     """
     new_virtual_assistant = flows.create_virtual_assistant(
-        db, virtual_assistant.name, payload.display_name, payload.description, user.id, user.email, is_cloned=True
+        db,
+        virtual_assistant.name,
+        payload.display_name,
+        payload.description,
+        user.id,
+        from_email(user),
+        payload.language,
+        is_cloned=True,
     )
     return new_virtual_assistant
 
@@ -203,7 +219,6 @@ async def get_virtual_assistant_components(
         grouped_components[va_component.component.group].append(
             schemas.VirtualAssistantComponentRead.from_orm(va_component)
         )
-
     return schemas.VirtualAssistantComponentPipelineRead(**grouped_components)
 
 
@@ -225,6 +240,7 @@ async def patch_virtual_assistant_component(
     dist_name: str, virtual_assistant_component_id: int, db: Session = Depends(get_db)
 ):
     """"""
+    return HTTPException(status_code=501, detail="Not Implemented")
 
 
 @assistant_dists_router.delete(
@@ -246,16 +262,19 @@ async def publish_dist(
     virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_patch_permission),
     user: schemas.UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
+    auth_type: str = Header(default="")
 ):
     flows.publish_virtual_assistant(db, virtual_assistant, payload.visibility, user.id)
 
-    background_tasks.add_task(
-        send_publish_request_created_emails,
-        owner_email=user.email,
-        moderator_emails=[m.email for m in user_crud.get_by_role(db, 2)],
-        virtual_assistant_name=virtual_assistant.name,
-        virtual_assistant_display_name=virtual_assistant.display_name,
-    )
+    if isinstance(payload.visibility, enums.VirtualAssistantPublicVisibility):
+        background_tasks.add_task(
+            send_publish_request_created_emails,
+            owner_email=user.email,
+            owner_name=user.name,
+            moderator_emails=[m.email for m in user_crud.get_by_role(db, 2, auth_type)],
+            virtual_assistant_name=virtual_assistant.name,
+            virtual_assistant_display_name=virtual_assistant.display_name,
+        )
 
 
 @assistant_dists_router.get("/templates/{template_file_path}")

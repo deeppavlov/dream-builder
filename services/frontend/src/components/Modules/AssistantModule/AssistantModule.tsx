@@ -1,13 +1,16 @@
 import { useAuth } from 'context'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TDistVisibility } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
+import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -23,6 +26,14 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
+  const {
+    createVaClick,
+    vaPropsOpened,
+    vaArchitectureOpened,
+    vaChangeDeployClick,
+  } = useGaAssistant()
+  const { visibilityVaButtonClick } = useGaPublication()
+  const { shareVaButtonClick } = useGaEvents()
   const { data: bot, isFetched } = getDist(
     { distName: name! },
     { refetchOnMount: true }
@@ -50,10 +61,13 @@ export const AssistantModule = () => {
     : null
 
   const handleVisibility = () => {
+    visibilityVaButtonClick('va_control_block', bot)
     trigger('PublishAssistantModal', { bot })
   }
 
   const handleInfo = () => {
+    vaPropsOpened('va_control_block', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
       isOpen: true,
       children: (
@@ -70,20 +84,22 @@ export const AssistantModule = () => {
     })
   }
   const handleBuild = () => {
+    vaChangeDeployClick('va_control_block', isDeployed)
+
     !isDeployed &&
       !isDeploying &&
       !error &&
-      toast.promise(deploy.mutateAsync(bot?.name!), toasts.deploy)
+      toast.promise(deploy.mutateAsync(bot?.name!), toasts().deploy)
 
     isDeployed &&
       toast.promise(
         deleteDeployment.mutateAsync(bot!, {
           onSuccess: () => {
-            const visibility: TDistVisibility =
+            const newVisibility: TDistVisibility =
               VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
               changeVisibility.mutateAsync(
-                { name: bot?.name || '', visibility },
+                { name: bot?.name || '', newVisibility },
                 {
                   onSuccess: data => {
                     console.log('data = ', data)
@@ -93,22 +109,29 @@ export const AssistantModule = () => {
             }
           },
         }),
-        toasts.deleteDeployment
+        toasts().deleteDeployment
       )
 
     error &&
-      toast.promise(deleteDeployment.mutateAsync(bot), toasts.deleteDeployment)
+      toast.promise(
+        deleteDeployment.mutateAsync(bot),
+        toasts().deleteDeployment
+      )
   }
   const handleShare = () => {
+    shareVaButtonClick('va_control_block', bot)
     trigger('ShareAssistantModal', { bot })
   }
   const handleDuplicate = () => {
+    createVaClick('va_control_block', bot)
+
     if (!auth?.user)
       return trigger('SignInModal', {
         requestModal: {
           name: 'AssistantModal',
           options: { action: 'clone', bot: bot },
         },
+        msg: <Trans i18nKey='modals.sign_in.build' />,
       })
 
     trigger('AssistantModal', { bot, action: 'clone' })
@@ -119,6 +142,10 @@ export const AssistantModule = () => {
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])
+
+  useEffect(() => {
+    bot && vaArchitectureOpened(bot)
+  }, [bot])
 
   return (
     <>

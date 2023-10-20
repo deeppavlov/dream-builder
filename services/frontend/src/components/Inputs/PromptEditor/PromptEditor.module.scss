@@ -1,0 +1,177 @@
+.promptEditor {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 12px;
+  gap: 2px;
+  position: relative;
+  padding: 24px 0px;
+  height: 100%;
+
+  &[data-active='true'] {
+    .container {
+      box-shadow: none !important;
+      color: $text1;
+      // padding-right: 69px;
+    }
+
+    .resizer {
+      display: none;
+    }
+  }
+
+  &[data-error='true'] {
+    .container {
+      // &:invalid,
+      border-color: $red !important;
+      background-color: $bcgrnd1;
+    }
+
+    .label {
+      color: $red;
+    }
+
+    .resizer path {
+      stroke: $red;
+    }
+  }
+
+  &:hover {
+    .container {
+      border-color: $primary1;
+    }
+    .resizer path {
+      stroke: $primary1;
+    }
+  }
+
+  &:not(.placeholder):has(.field:disabled) {
+    .label {
+      color: $text3;
+      opacity: 0.3;
+    }
+
+    .resizer {
+      display: none !important;
+    }
+
+    .container {
+      background-color: $bcgrnd3;
+      color: $text3;
+      border-color: $text3;
+
+      opacity: 0.3;
+    }
+
+    .field {
+      resize: none;
+      &::placeholder {
+        color: $text3;
+      }
+    }
+  }
+}
+
+.resize-container {
+  resize: both;
+  overflow: hidden;
+
+  &::-webkit-resizer {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+.container {
+  display: flex;
+  min-height: 80px;
+  max-height: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid $text3;
+  border-radius: 12px;
+  background-color: $bcgrnd1;
+  overflow: hidden;
+
+  &:focus-within {
+    box-shadow: 0px 0px 0px 3px rgba(41, 0, 204, 0.3);
+    border-color: $primary1;
+    color: $text1;
+  }
+}
+
+.label {
+  @include b3;
+  color: $text2;
+  display: flex;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.about {
+  top: 100%;
+  transform: translateY(-100%);
+}
+
+.title {
+  color: $text2;
+}
+
+.counter {
+  margin-left: auto;
+}
+
+.field {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  z-index: 1;
+  min-width: 100%;
+  padding: 0 24px;
+  outline: none;
+  resize: none;
+  @include b2;
+  border: none;
+  background-color: transparent;
+  white-space: pre-line;
+  overflow: auto;
+
+  &::placeholder {
+    color: $text3;
+    opacity: 0.4;
+  }
+}
+
+.resizer {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  bottom: 8px;
+  right: 8px;
+  pointer-events: none;
+
+  path {
+    stroke: $text3;
+  }
+}
+
+:global {
+  .public-DraftEditorPlaceholder-inner {
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    color: $text3;
+    opacity: 0.4;
+    user-select: none;
+  }
+}

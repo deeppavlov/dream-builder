@@ -7,21 +7,27 @@ import {
   getBeforeLoginModal,
 } from 'utils/beforeSignInManager'
 import { trigger } from 'utils/events'
-import { getLocalStorageUser } from 'utils/localStorageUser'
+import {
+  deleteLocalStorageUser,
+  getLocalStorageUser,
+  setLocalStorageUser,
+} from 'utils/localStorageUser'
 
-export const AuthContext = createContext<UserContext | null>(null)
+export const AuthContext = createContext<UserContext>({
+  user: null,
+  setUser: () => {},
+})
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
-  const [user, setUser] = useState<UserInterface | null>(null)
+  const [user, setUser] = useState<UserInterface | null>(getLocalStorageUser())
 
   useEffect(() => {
-    const localStorageUser = getLocalStorageUser()
-
-    if (user === null && localStorageUser !== null) {
-      setUser(localStorageUser)
+    if (user) setLocalStorageUser(user)
+    else {
+      deleteLocalStorageUser()
     }
-  }, [])
+  }, [user])
 
   // Trigger requested before login Modal window,
   // and clear sessionStorage states
@@ -39,9 +45,24 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     clearBeforeLoginModal()
   }, [user])
 
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'user') {
+        setUser(event.newValue as UserInterface | null)
+        location.reload()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
+
   const userContextValue = useMemo(
     () => ({
       user,
+      setUser,
     }),
     [user]
   )

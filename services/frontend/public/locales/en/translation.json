@@ -11,19 +11,16 @@
       }
     }
   },
-
   "public_templates_page": {
     "wrapper": {
       "title": "Public Templates"
     }
   },
-
   "your_assistants_page": {
     "wrapper": {
       "title": "Your Assistants"
     }
   },
-
   "assistant_page": {
     "module": {
       "btns": {
@@ -57,14 +54,14 @@
       }
     }
   },
-
   "page_errors": {
-    "btns": {
-      "back_to_home": "Back to home"
-    },
     "401": {
       "title": "Hold up!",
       "message": "Unauthorized!"
+    },
+    "403": {
+      "title": "Forbidden",
+      "message": "You don't have permission to access this resource"
     },
     "404": {
       "title": "Page not found!",
@@ -77,9 +74,11 @@
     "503": {
       "title": "Sorry, we’re under maintenance!",
       "message": "Hang on till we get the error fixed.  You may also refresh the page or try again later."
+    },
+    "btns": {
+      "back_to_home": "Back to home"
     }
   },
-
   "modals": {
     "access_api_keys": {
       "header": "Personal access tokens",
@@ -96,14 +95,20 @@
         "remove": "Remove"
       },
       "toasts": {
-        "token_creating": "Creating...",
-        "token_created": "Successfully created!",
+        "token_adding": "Adding...",
+        "token_added": "Successfully added!",
         "token_removing": "Removing...",
         "token_removed": "Successfully removed!",
         "token_updated": "Successfully updated!",
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
         "not_found_service": "Not found Service or User id."
+      },
+      "attention": {
+        "annotation": {
+          "first_line": "The API key for this AI Assistant is stored in your browser.",
+          "second_line": "Please be aware that without adding the API key, the Assistant will not function as intended."
+        }
       }
     },
     "assistant": {
@@ -134,6 +139,10 @@
       "toasts": {
         "create": "Creating...",
         "clone": "Cloning..."
+      },
+      "language_field": {
+        "annotation": "This will have an impact on future components of AI Assistants, which will affect how your AI Assistant responds.",
+        "label": "Choose preferred AI Assistant language:"
       }
     },
     "confirm_api_key_update": {
@@ -162,7 +171,7 @@
     },
     "hide_public_assistant": {
       "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
-      "subheader": "",
+      "subheader": "You will have to publish it again to make it a Public Template",
       "btns": {
         "cancel": "Cancel",
         "yes": "Yes"
@@ -188,7 +197,8 @@
       "toasts": {
         "loading": "Loading...",
         "submitted": "Submitted For Review!"
-      }
+      },
+      "checkbox": "Don’t show alert message again"
     },
     "share_assistant": {
       "header": "Share it with your community!",
@@ -200,9 +210,12 @@
       }
     },
     "sign_in": {
-      "header": "To build your own <mark>Virtual Assistant</mark>, please sign in",
+      "build": "To build your own <mark>Assistant</mark>, please sign in",
+      "settings": "Sign in to access the settings",
+      "sign_in": "<b>Sign in</b>",
       "btns": {
-        "sign_in": "Sign in"
+        "google_sign_in": "Sign in with Google",
+        "github_sign_in": "Sign in with GitHub"
       }
     },
     "skill": {
@@ -258,9 +271,53 @@
       "toasts": {
         "add": "Adding..."
       }
+    },
+    "profile_settings": {
+      "tabs": {
+        "tokens": {
+          "title": "Personal tokens"
+        },
+        "account": {
+          "title": "Account",
+          "name": "Name",
+          "email": "Email",
+          "language": "Language",
+          "change": "Change language"
+        }
+      }
+    },
+    "change_language_modal": {
+      "header": {
+        "annotation": "Pick which language to use for Dream Builder’s platform, and emails",
+        "title": "Change Language"
+      },
+      "footer": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+    "publish_warning_modal": {
+      "title": "Important",
+      "bottom": "Proceed with publishing your Assistant?",
+      "btns": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      },
+      "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
+    },
+    "add_email_modal": {
+      "title": "Enter your email address",
+      "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
+      "form": {
+        "placeholder": "Enter your email"
+      },
+      "btns": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      },
+      "error": "Something went wrong..."
     }
   },
-
   "sidepanels": {
     "skill_dialog": {
       "tabs": {
@@ -296,7 +353,9 @@
       },
       "toasts": {
         "deploy_loading": "Loading...",
-        "sent_for_deploy": "Sent for deploy!"
+        "sent_for_deploy": "Sent for deploy!",
+        "stop_deploy": "Stop deploy...",
+        "deploy_stopped": "Deploy stopped!"
       }
     },
     "assistant": {
@@ -336,25 +395,24 @@
       }
     }
   },
-
   "tooltips": {
     "dialog_renew": "Start a new dialog"
   },
-
   "ribbons": {
     "ready_for_chat": "Ready to chat",
     "chat_error": "Error!"
   },
-
   "toasts": {
     "success": "Success!",
     "error": "Something went wrong...",
     "delete": "Deleting...",
     "copied": "Copied!",
     "rename": "Renaming...",
-    "save": "Saving..."
+    "save": "Saving...",
+    "create": "Creating...",
+    "approve": "Approve...",
+    "decline": "Decline..."
   },
-
   "ctx_menus": {
     "assistant": {
       "chat": "Chat With Assistant",
@@ -371,16 +429,13 @@
       "delete": "delete"
     }
   },
-
   "tabs": {
     "properties": "Properties",
     "details": "Details"
   },
-
   "accordions": {
     "desc": "Description"
   },
-
   "cards": {
     "skill": {
       "tooltips": {
@@ -388,13 +443,11 @@
       }
     }
   },
-
   "card_btns": {
     "use": "Use",
     "edit": "Edit",
     "add": "Add"
   },
-
   "topbar": {
     "ctx_menus": {
       "main_burger": {
@@ -409,9 +462,7 @@
         "share": "Share",
         "delete": "Delete"
       },
-      "profile": {
-        "log_out": "Log Out"
-      }
+      "profile": { "settings": "Profile Settings", "log_out": "Log Out" }
     },
     "tooltips": {
       "home": "Go to home page",
@@ -422,14 +473,12 @@
       "sign_in": "Sign in"
     }
   },
-
   "breadcrumbs": {
     "your_assistants": "Your Assistants",
     "public_templates": "Public Templates",
     "skills": "Skills",
     "integration": "Integration"
   },
-
   "sidebar": {
     "tooltips": {
       "skills": "Skills",
@@ -438,15 +487,15 @@
       "deepy": "Ask Deepy if you need help with building your Assistant"
     }
   },
-
   "field_validation": {
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
-    "prompt_max": "Limit prompt to {{max}} tokens"
+    "prompt_max": "Limit prompt to {{max}} tokens",
+    "email": "Please, enter a valid email"
   },
-
   "tokenizer": {
+    "counting": "+ counting...",
     "count_label": "token",
     "count_suffixes": {
       "zero": "s",
@@ -457,35 +506,30 @@
       "other": "s"
     }
   },
-
   "api_key": {
     "required": {
       "label": "Enter your personal access token for OpenAI to run your Generative AI Skill",
       "link": "Enter your personal access token here"
     }
   },
-
   "assistant_visibility": {
     "on_moderation": "On Moderation",
     "public_template": "Public Template",
     "unlisted": "Unlisted",
     "private": "Private"
   },
-
   "your_assistants": {
     "empty_placeholder": "Your Assistants will appear here"
   },
-
   "assistant_table": {
     "name": "Name",
     "author": "Author",
     "desc": "Description",
     "visibility": "Visibility",
-    "created": "Created",
+    "created": "Language",
     "actions": "Actions",
     "create_from_scratch_btn": "Create From Scratch"
   },
-
   "skill_table": {
     "name": "Name",
     "author": "Author",
@@ -496,11 +540,14 @@
     "create_from_scratch_btn": "Create From Scratch",
     "add_btn": "Add Skill"
   },
-
   "assistants_not_loaded": {
     "header": "Oops, something went wrong... Please try again later.",
     "btns": {
       "retry": "Retry"
     }
+  },
+  "language": {
+    "en": "English",
+    "ru": "Russian"
   }
 }

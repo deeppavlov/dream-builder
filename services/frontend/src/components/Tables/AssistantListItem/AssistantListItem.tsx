@@ -1,13 +1,14 @@
+import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { FC, useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { ReactComponent as Clone } from 'assets/icons/clone.svg'
 import { ReactComponent as Edit } from 'assets/icons/edit_pencil.svg'
 import DB from 'assets/icons/logo.png'
 import { RoutesList } from 'router/RoutesList'
-import { BotAvailabilityType, BotInfoInterface, TLocale } from 'types/types'
+import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import {
   DEPLOY_STATUS,
   PUBLISH_REQUEST_STATUS,
@@ -15,10 +16,9 @@ import {
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
 import { useAssistants } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
-import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
-import { timeToUTC } from 'utils/timeToUTC'
 import { Button, Kebab } from 'components/Buttons'
 import { AssistantContextMenu } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
@@ -37,15 +37,13 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   bot,
   disabled,
 }) => {
-  const { i18n } = useTranslation()
+  const cx = classNames.bind(s)
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
   const tooltipId = useId()
-  const dateCreated = dateToUTC(
-    new Date(bot?.date_created),
-    i18n.language as TLocale
-  )
-  const time = timeToUTC(new Date(bot?.date_created), i18n.language as TLocale)
+  const { createVaClick, vaPropsOpened, setVaArchitectureOptions } =
+    useGaAssistant()
+
   const { UIOptions } = useUIOptions()
   const infoSPId = `info_${bot.id}`
   const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
@@ -60,27 +58,27 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const privateAssistant = bot?.visibility === VISIBILITY_STATUS.PRIVATE
   const unlistedAssistant = bot?.visibility === VISIBILITY_STATUS.UNLISTED_LINK
 
+  const { t } = useTranslation()
   const publishState = onModeration
-    ? 'On Moderation'
+    ? t('assistant_visibility.on_moderation')
     : published
-    ? 'Public Template'
+    ? t('assistant_visibility.public_template')
     : unlistedAssistant
-    ? 'Unlisted'
+    ? t('assistant_visibility.unlisted')
     : privateAssistant
-    ? 'Private'
+    ? t('assistant_visibility.private')
     : null
 
   const isDeepyPavlova =
-    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.sub
-  const author = isDeepyPavlova
-    ? 'Dream Builder Team'
-    : bot?.author?.fullname
-    ? bot?.author?.fullname
-    : bot?.author?.given_name + ' ' + bot?.author?.family_name
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
+  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
 
   const handleAssistantListItemClick = () => {
+    const isOpen = activeAssistantId !== infoSPId
+    isOpen && vaPropsOpened('va_card_click', bot)
+
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      isOpen: activeAssistantId !== infoSPId,
+      isOpen,
       children: (
         <AssistantSidePanel
           type={type}
@@ -93,6 +91,8 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   }
 
   const handleCloneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    createVaClick('va_templates_block', bot)
+
     e.stopPropagation()
     const assistantClone = { action: 'clone', bot: bot }
 
@@ -103,10 +103,12 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
     trigger('SignInModal', {
       requestModal: { name: 'AssistantModal', options: assistantClone },
+      msg: <Trans i18nKey='modals.sign_in.build' />,
     })
   }
 
   const handlEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setVaArchitectureOptions('va_block')
     e.stopPropagation()
     navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }), {
       state: {
@@ -148,7 +150,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
   return (
     <tr
-      className={s.tr}
+      className={cx('tr', isActive && 'active')}
       onClick={handleAssistantListItemClick}
       data-active={isActive}
     >
@@ -185,10 +187,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
       <td className={s.td}>
-        <div className={s.date}>
-          <p className={s.ddmmyyyy}>{dateCreated || '------'}</p>
-          <p className={s.time}>{time || '------'}</p>
-        </div>
+        <div className={s.lng}>{bot.language?.value}</div>
       </td>
       <td className={s.td}>
         <div className={s.btns_area}>

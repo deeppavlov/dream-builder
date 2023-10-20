@@ -5,8 +5,12 @@ import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import store from 'store2'
-import { BotInfoInterface, Visibility } from 'types/types'
-import { PUBLISH_REQUEST_STATUS, VISIBILITY_STATUS } from 'constants/constants'
+import { BotInfoInterface, TDistVisibility, Visibility } from 'types/types'
+import {
+  HIDE_PUBLISH_ALERT_KEY,
+  PUBLISH_REQUEST_STATUS,
+  VISIBILITY_STATUS,
+} from 'constants/constants'
 import { getAssistantVisibility } from 'mapping/assistantVisibility'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
@@ -24,21 +28,22 @@ export const PublishAssistantModal = () => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
-  const isPushAlert = store('publishAlert')
   const { name: distName } = useParams()
-  const isEditor = distName !== undefined && distName.length > 0
+  const inEditor = distName !== undefined && distName.length > 0
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, setValue, watch } =
     useForm<FormValues>({
       defaultValues: {
         visibility: bot?.visibility,
-        publishAlert: isPushAlert,
       },
     })
-  const selectedVisibility = watch('visibility')
   const { changeVisibility } = useAssistants()
   const visibilityList = getAssistantVisibility()
-  const assistantVisibility = bot?.visibility
+  const selectedVisibility = watch('visibility')
+  const isSelectedVisibilityPublic =
+    selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+  const isVisibilityChange = selectedVisibility !== bot?.visibility
+  const currentVisibility = bot?.visibility
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data?.detail.bot)
@@ -48,48 +53,64 @@ export const PublishAssistantModal = () => {
   const handleNoBtnClick = () => closeModal()
 
   const handlePublish = (data: FormValues) => {
-    const visibility = data?.visibility!
+    const hidePublishAlert = store(HIDE_PUBLISH_ALERT_KEY)
+
+    const newVisibility = data.visibility as TDistVisibility
     const name = bot?.name!
     const deploymentState = bot?.deployment?.state
 
-    console.log(store('publishAlert'))
-    console.log('visibility = ', visibility)
+    const isAlreadyPublicTemplate =
+      currentVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+    const isVisibilityChange = newVisibility !== currentVisibility
+    const isPublicTemplate = newVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+    const isInReview = bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
+    // if assistant on review it means that it pretend to be public template,
+    // so no need to publish it again
 
-    store('publishAlert', data.publishAlert)
-
-    if (visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE) {
-      trigger('PublishWarningModal', { bot })
+    const publish = async () => {
+      await changeVisibility.mutateAsync(
+        {
+          name,
+          newVisibility,
+          inEditor,
+          deploymentState,
+        },
+        {
+          onSuccess: () => {
+            isAlreadyPublicTemplate &&
+              queryClient.invalidateQueries(['publicDists'])
+            // The invalidation from the hook does not work for some reason.
+            // TODO:FIX
+          },
+        }
+      )
     }
-    visibility !== assistantVisibility ||
-    bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
+
+    const user = store('user')
+    if (isPublicTemplate && !isInReview && (!hidePublishAlert || !user.email)) {
+      trigger('PublishAssistantWizard', {
+        bot,
+        inEditor,
+        deploymentState,
+      })
+      closeModal()
+      return
+    }
+    if (isInReview && isPublicTemplate) {
+      closeModal()
+      return
+    }
+
+    isVisibilityChange
       ? toast
-          .promise(
-            changeVisibility.mutateAsync(
-              {
-                name,
-                visibility,
-                inEditor: isEditor,
-                deploymentState,
-              },
-              {
-                onSuccess: () => {
-                  assistantVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE &&
-                    queryClient.invalidateQueries(['publicDists'])
-                },
-              }
-            ),
-            {
-              loading: t('modals.publish_assistant.toasts.loading'),
-              success:
-                visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-                  ? t('modals.publish_assistant.toasts.submitted')
-                  : t('toasts.success'),
-              error: t('toasts.error'),
-            }
-          )
-          .then(() => {
-            closeModal()
+          .promise(publish(), {
+            loading: t('modals.publish_assistant.toasts.loading'),
+            success: isPublicTemplate
+              ? t('modals.publish_assistant.toasts.submitted')
+              : t('toasts.success'),
+            error: t('toasts.error'),
           })
+          .then(() => closeModal())
       : closeModal()
   }
 
@@ -101,12 +122,11 @@ export const PublishAssistantModal = () => {
 
   useEffect(() => {
     const isVisibility = bot?.visibility !== undefined
-
     if (isVisibility) setValue('visibility', bot?.visibility)
-    setValue('publishAlert', isPushAlert)
-  }, [bot?.visibility, isPushAlert])
+  }, [bot?.visibility])
 
   useObserver('PublishAssistantModal', handleEventUpdate)
+
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={closeModal}>
       <div className={s.publishAssistantModal}>
@@ -134,12 +154,6 @@ export const PublishAssistantModal = () => {
                 )
               })}
             </div>
-            {/* <Checkbox
-              theme='secondary'
-              name='alertMessage'
-              label='Don’t show alert message again'
-              props={{ ...register('publishAlert') }}
-            /> */}
           </div>
           <div className={s.btns}>
             <Button theme='secondary' props={{ onClick: handleNoBtnClick }}>
@@ -149,10 +163,10 @@ export const PublishAssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
-                disabled: changeVisibility?.isLoading,
+                disabled: changeVisibility?.isLoading || !isVisibilityChange,
               }}
             >
-              {selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+              {isSelectedVisibilityPublic
                 ? t('modals.publish_assistant.btns.publish')
                 : t('modals.publish_assistant.btns.save')}
             </Button>

@@ -1,6 +1,11 @@
 import { Toaster } from 'react-hot-toast'
 import { Outlet, useParams } from 'react-router-dom'
-import { AccessTokensModal } from 'components/Modals'
+import {
+  AccessTokensModal,
+  ChangeLanguageModal,
+  ProfileSettings,
+  PublishAssistantWizard,
+} from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import { Sidebar, Topbar } from 'components/Widgets'
 import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
@@ -33,7 +38,10 @@ const Root = () => {
       <Outlet />
       <BaseSidePanel transition='left' />
       <AccessTokensModal />
+      <ChangeLanguageModal />
+      <ProfileSettings />
       <Toaster />
+      <PublishAssistantWizard />
     </>
   )
 }

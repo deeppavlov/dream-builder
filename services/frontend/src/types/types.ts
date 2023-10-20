@@ -1,13 +1,26 @@
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router-dom';
+
 
 export interface UserInterface {
-  name: string
+  id: number
   email: string
+  outer_id: string
   picture: string
+  name: string
+  token: string
+  refresh_token: string
+  role: {
+    id: number
+    name: string
+    can_set_roles: boolean
+    can_confirm_publish: boolean
+    can_view_private_assistants: boolean
+  }
 }
 
 export interface UserContext {
   user: UserInterface | null
+  setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>
 }
 
 export interface ITokens {
@@ -21,13 +34,85 @@ export interface IPreviewContext {
 }
 
 export interface IAuthor {
-  email: string
-  family_name: string
-  fullname: string
-  given_name: string
   id: number
+  email: string
+  name: string
   picture: string
-  sub: string
+  outer_id: string
+  role: {
+    id: number
+    name: string
+    can_set_roles: boolean
+    can_confirm_publish: boolean
+    can_view_private_assistants: boolean
+  }
+}
+
+export type TEvents =
+  | 'TRIGGER_RIGHT_SP_EVENT'
+  | 'ShareAssistantModal'
+  | 'SignInModal'
+  | 'RenewChat'
+  | 'AssistantModal'
+  | 'ChooseBotModal'
+  | 'DeleteAssistantModal'
+  | 'DeployNotificationModal'
+  | 'IntentCatcherModal'
+  | 'IntentResponderModal'
+  | 'PublicToPrivateModal'
+  | 'Modal'
+  | 'PublishAssistantModal'
+  | 'SkillModal'
+  | 'SkillPromptModal'
+  | 'SkillQuitModal'
+  | 'SkillsListModal'
+  | 'CreateGenerativeSkillModal'
+  | 'CreateSkillDistModal'
+  | 'DeleteSkillModal'
+  | 'FreezeSkillModal'
+  | 'ConfirmApiTokenUpdateModal'
+  | 'AccessTokensModal'
+  | 'AccessTokensChanged'
+  | 'ProfileSettingsModal'
+  | 'CtxMenuBtnClick'
+  | 'ChangeLanguageModal'
+  | 'AssistantDeleted'
+  | 'PublishAssistantWizard'
+
+export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
+
+export type TDeploymentState =
+  | null
+  | 'STARTED'
+  | 'CREATING_CONFIG_FILES'
+  | 'BUILDING_IMAGE'
+  | 'PUSHING_IMAGES'
+  | 'DEPLOYING_STACK'
+  | 'DEPLOYED'
+  | 'UP'
+
+export interface IDeployment {
+  chat_host: string
+  chat_port: number
+  date_created: string
+  date_state_updated: any
+  id: number
+  state: TDeploymentState
+  error: {
+    state: string
+    message: string
+    exception: string
+  }
+}
+export interface IDeploymentStatus extends IDeployment {
+  virtual_assistant: BotInfoInterface
+}
+type TKey = {
+  base_url: string
+  description: string
+  display_name: string
+  id: number
+  name: string
 }
 
 export type TEvents =
@@ -107,6 +192,8 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
+  language?: { id: number; value: ELOCALES_KEY }
+  cloned_from_id: number | null
 }
 
 export interface BotCardProps {
@@ -202,9 +289,11 @@ export interface LM_Service {
   max_tokens: number
   description: string
   project_url: string
-  api_key: string | null
+  api_key: TKey | null
   is_maintained: boolean
   company_name?: string
+  prompt_blocks?: IPromptBlock[]
+  languages?: { id: number; value: ELOCALES_KEY }[]
 }
 
 export interface ISkill extends IStackElement {
@@ -246,11 +335,6 @@ export type ModelType = 'dictionary' | 'ml_based' | 'nn_based' | 'external'
 
 export type ChatForm = { message: string }
 
-export type PostDistParams = {
-  display_name: string
-  description: string
-}
-
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
@@ -274,8 +358,18 @@ export type LanguageModel =
   | 'GPT-3.5'
   | 'Open-Assistant SFT-1 12B'
   | 'GPT-J 6B'
+  | 'transformers-lm-oasst12b-2m'
+  | 'transformers-lm-oasst12b'
+  | 'transformers-lm-gptjt'
+  | 'openai-api-gpt4-32k'
+  | 'openai-api-gpt4'
+  | 'openai-api-chatgpt'
+  | 'openai-api-davinci3'
+  | 'openai-api-chatgpt-16k'
+  | 'anthropic-api-claude-v1'
+  | 'anthropic-api-claude-instant-v1'
 
-export type AssistantFormValues = { display_name: string; description: string }
+export type TLang = 'Russian' | 'English'
 
 export type Visibility = 'PUBLIC_TEMPLATE' | 'PRIVATE' | 'UNLISTED_LINK' | null
 
@@ -306,7 +400,7 @@ export type TComponents = {
 }
 
 export interface IBeforeLoginModal {
-  name: string
+  name: TEvents
   options: { [x: string]: any }
 }
 
@@ -348,22 +442,26 @@ export interface IPublicationRequest {
 }
 
 export type TErrorStatus = 401 | 404 | 500 | 503
+export type TErrorBoundary = {
+  status: TErrorStatus
+  message: string
+}
 export type TIntegrationTabType = 'CHAT' | 'API'
 export type TApiCallType = 'CURL' | 'NODE' | 'PYTHON'
-
+export enum API_CALL_TAB {
+  CURL = 'CURL',
+  NODE = 'NODE',
+  PYTHON = 'PYTHON',
+}
 export interface IPromptBlock {
-  category: string
-  color: string
-  block: string
-  template: string
-  examples: string
+  category: string | null
   description: string
-  newLineAfter: boolean
-  newLineBefore: boolean
-  ChatGPT: boolean
-  'GPT-3.5': boolean
-  'Open-Assistant Pythia 12B': boolean
-  'GPT-JT 6B': boolean
+  display_name: string
+  example: string
+  id: number
+  newline_after: boolean
+  newline_before: boolean
+  template: string
 }
 
 export enum ELOCALES_KEY {
@@ -385,3 +483,28 @@ export interface IRouterCrumb {
 }
 
 export type TLocale = 'ru' | 'en'
+
+export interface IGaOptions {
+  [key: string]: string | boolean | BotInfoInterface | ISkill | undefined
+  assistant?: BotInfoInterface
+  skill?: ISkill
+}
+
+export interface IGaContext {
+  gaState: IGaOptions
+  setGaState: React.Dispatch<React.SetStateAction<IGaOptions>>
+}
+
+export type PageType =
+  | 'all_va_page'
+  | 'allbots'
+  | 'yourbots'
+  | 'admin_panel'
+  | 'va_skillset_page'
+  | 'va_template_skillset_page'
+  | 'va_skill_editor'
+
+  export interface IEditorContext {
+    code: string
+    skill: string
+  }

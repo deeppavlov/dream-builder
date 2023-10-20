@@ -5,6 +5,7 @@
   justify-content: center;
   width: 100%;
   gap: 32px;
+  overflow: hidden;
   .header {
     @include t1;
     align-items: start;
@@ -51,25 +52,25 @@
   }
   .lines {
     position: relative;
+    display: inline-block;
+
     &:after {
       content: ' ';
       height: 1px;
-      width: 187px;
+      width: 100%;
       background: #f1f1f1;
-      display: block;
       position: absolute;
       top: 50%;
-      right: 0px;
+      margin-left: 16px;
     }
     &:before {
       content: ' ';
       height: 1px;
-      width: 187px;
+      width: 100%;
       background: #f1f1f1;
-      display: block;
       position: absolute;
       top: 50%;
-      left: 0px;
+      margin-left: calc(-100% - 16px);
     }
   }
   .footer {

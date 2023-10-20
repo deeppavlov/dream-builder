@@ -26,9 +26,7 @@
     .botName {
       color: rgba(0, 0, 0, 0.9);
       white-space: nowrap;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      @include text_ellipsis;
       @include t4;
     }
   }

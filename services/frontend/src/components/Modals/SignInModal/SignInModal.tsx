@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import GitHubLogo from 'assets/images/GitHubLogo.svg'
 import GoogleLogo from 'assets/images/GoogleLogo.svg'
 import { IBeforeLoginModal } from 'types/types'
 import { login } from 'api/user'
@@ -22,7 +23,7 @@ interface Props {
 export const SignInModal = ({ msg: propsMsg }: Props) => {
   const { t } = useTranslation('translation', { keyPrefix: 'modals.sign_in' })
   const [isOpen, setIsOpen] = useState(false)
-  const [msg, setMsg] = useState<MessageType | null>(propsMsg ?? null)
+  const [msg, setMsg] = useState<MessageType | undefined>(propsMsg)
   let cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -31,27 +32,39 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
   }
 
   const handleEventUpdate = (data: { detail: Props | null }) => {
-    if (data.detail?.msg) setMsg(data.detail.msg)
+    setMsg(data?.detail?.msg)
     if (data.detail?.requestModal)
       saveBeforeLoginModal(data.detail?.requestModal)
     setIsOpen(prev => !prev)
   }
 
-  const handleSignInBtnClick = () => login()
+  const handleGoogleSignIn = () => login.google()
+  const handleGitHubSignIn = () => login.gitHub()
 
   useObserver('SignInModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} handleClose={handleClose}>
-      <div className={cx('signInModal')}>
-        <h4>
-          {/* span tag styled as primary color marked text */}
-          {msg || <Trans i18nKey='modals.sign_in.header' />}
+    <BaseModal
+      modalClassName={s.modal}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      handleClose={handleClose}
+    >
+      <div className={s.container}>
+        <h4 className={cx(!msg && 'h4')}>
+          {msg || <Trans i18nKey='modals.sign_in.sign_in' />}
         </h4>
-        <button className={cx('sign-in-btn')} onClick={handleSignInBtnClick}>
-          <img src={GoogleLogo} alt='Google' />
-          {t('btns.sign_in')}
-        </button>
+
+        <div className={s.btns}>
+          <button className={cx('sign-in-btn')} onClick={handleGoogleSignIn}>
+            <img src={GoogleLogo} alt='Google' />
+            {t('btns.google_sign_in')}
+          </button>
+          <button className={cx('sign-in-btn')} onClick={handleGitHubSignIn}>
+            <img src={GitHubLogo} alt='GitHub' />
+            {t('btns.github_sign_in')}
+          </button>
+        </div>
       </div>
     </BaseModal>
   )

@@ -6,9 +6,12 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.event import listens_for
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import sqltypes
 
 from apiconfig.config import settings
+from database import enums
 from database.core import Base
 from database.utils import pre_populate_from_tsv
 
@@ -29,8 +32,18 @@ class LmService(Base):
     description = Column(String)
     project_url = Column(String)
 
+    lm_service_language_associations = relationship(
+        "LmServiceLanguage", uselist=True, back_populates="lm_service", passive_deletes=True
+    )
+    languages = association_proxy("lm_service_language_associations", attr="language")
+
     api_key_id = Column(Integer, ForeignKey("api_key.id"), nullable=True)
     api_key = relationship("ApiKey", uselist=False, foreign_keys="LmService.api_key_id")
+
+    lm_service_prompt_block_associations = relationship(
+        "LmServicePromptBlock", uselist=True, back_populates="lm_service", passive_deletes=True
+    )
+    prompt_blocks = association_proxy("lm_service_prompt_block_associations", attr="prompt_block")
 
     is_hosted = Column(Boolean, nullable=False)
     is_maintained = Column(Boolean, nullable=False)

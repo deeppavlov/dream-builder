@@ -9,9 +9,11 @@ services:
       args:
         FRONTEND_ENV: dev
     ports:
-      - "6971:5173"
+      - "6971:80"
+
     volumes:
-      - ../../services/frontend:/src
+      - ../nginx.conf:/etc/nginx/conf.d/default.conf
+
     deploy:
       resources:
         limits:
@@ -45,10 +47,15 @@ services:
         PORT: 6999
     ports:
       - "6979:6999"
+    environment:
+      ENV_TYPE: stage
     volumes:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
+#    depends_on:
+#      - postgres
     deploy:
       resources:
         limits:
@@ -68,11 +75,17 @@ services:
         PORT: 6998
 #    depends_on:
 #      - auth-api
+#      - postgres
+#    depends_on:
+#      - auth-api
     ports:
       - "6978:6998"
     volumes:
       - ../../services/distributions_api:/src/services/distributions_api
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
+      - ~/.aws:/root/.aws
+      - /var/run/docker.sock:/var/run/docker.sock
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
       - ../../deployment_queue:/src/deployment_queue

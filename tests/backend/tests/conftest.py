@@ -25,8 +25,16 @@ def admin():
     return admin
 
 
-@pytest.fixture(scope="session")
-def delete_all_users_assistant():
-    user = UserMethods(test_token_github1, "github")
+def pytest_sessionfinish(session, exitstatus):
+    """
+    user = UserMethods()
     names_list = user.get_list_of_private_va_wo_assert()
-    print(names_list)
+    if names_list:
+        for name in names_list:
+            user.delete_va_by_name(name)
+    """
+    if not hasattr(session.config, "workerinput"):
+        pass
+
+
+

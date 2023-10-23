@@ -103,52 +103,32 @@ export const CopilotSidePanel = () => {
               <Loader />
             </div>
           ) : (
-            deepyRemoteHistory?.data?.map((block: ChatHistory, i: number) => {
-              if (i > 0)
+            deepyHistory.map((block: ChatHistory, i: number) => {
+              if (i > 0) {
                 return (
                   <div
                     key={`${block?.author == 'bot'}${i}`}
                     className={cx(
-                      'chat__container',
-                      block?.author == 'bot' && 'chat__container_bot'
+                      block?.author == 'bot' ? 'botContainer' : 'userContainer',
+                      block?.hidden && 'hidden'
                     )}
                   >
                     <span
                       onClick={() => handleMessageClick(block?.text)}
                       className={cx(
-                        'chat__message',
-                        block?.author == 'bot' && 'chat__message_bot'
+                        block?.author == 'bot' ? 'botMessage' : 'message'
                       )}
                     >
                       {block?.text}
                     </span>
                   </div>
                 )
+              }
             })
           )}
-          {deepyHistory?.map((block: ChatHistory, i: number) => (
-            <div
-              key={`${block?.author == 'bot'}${i}`}
-              className={cx(
-                'chat__container',
-                block?.author == 'bot' && 'chat__container_bot'
-              )}
-            >
-              <span
-                style={{ display: block?.hidden ? 'none' : ' ' }}
-                onClick={() => handleMessageClick(block?.text)}
-                className={cx(
-                  'chat__message',
-                  block?.author == 'bot' && 'chat__message_bot'
-                )}
-              >
-                {block?.text}
-              </span>
-            </div>
-          ))}
           {textLoaderActive && (
-            <div className={cx('chat__container', 'chat__container_bot')}>
-              <span className={cx('chat__message', 'chat__message_bot')}>
+            <div className={s.botContainer}>
+              <span className={s.botMessage}>
                 <TextLoader />
               </span>
             </div>

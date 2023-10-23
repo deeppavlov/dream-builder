@@ -33,7 +33,6 @@ interface TextAreaProps {
   name: string
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
-  highlights?: IHighlights
 }
 
 interface IValidateTokens {
@@ -81,7 +80,6 @@ export const TextArea: FC<TextAreaProps> = ({
   rules,
   theme,
   triggerField,
-  highlights,
 }) => {
   const isTokenizer = countType === 'tokenizer'
   const {
@@ -215,15 +213,6 @@ export const TextArea: FC<TextAreaProps> = ({
               Enter
             </Button>
           </div>
-        )}
-
-        {highlights && (
-          <PromptHighlighter
-            className={s.highlighter}
-            text={field.value}
-            textAreaRef={textareaRef}
-            highlights={highlights}
-          />
         )}
       </div>
 

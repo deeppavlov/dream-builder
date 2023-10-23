@@ -23,6 +23,7 @@ type TMenuItem =
   | 'logout'
 
 interface Props {
+  id?: string
   name?: string
   type?: TMenuItem
   theme?: 'dark'
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const ContextMenuButton = ({
+  id,
   name,
   type,
   theme,
@@ -54,13 +56,14 @@ const ContextMenuButton = ({
     <SvgIcon
       iconName={type === 'about' ? 'deeppavlov_dream-logo_light_vert' : type}
       svgProp={{
-        className: cx('icon', type === 'about' && 'dreambuilder'),
+        className: s.icon,
       }}
     />
   )
 
   return (
     <button
+      id={id}
       className={cx('item', disabled && 'disabled', theme && theme)}
       onClick={handleBtnClick}
     >

@@ -1,0 +1,39 @@
+{
+  "id": 15,
+  "author": {
+    "id": 4,
+    "email": "o.klmntv@gmail.com",
+    "sub": "108543565727323140489",
+    "role": {
+      "id": 3,
+      "name": "admin",
+      "can_view_private_assistants": true,
+      "can_confirm_publish": true,
+      "can_set_roles": true
+    },
+    "picture": "https://lh3.googleusercontent.com/a/AAcHTtcldyDgTPzR9ZK00q_6-Gat0rhIzKNv-cfy48FLWSWBmA=s96-c",
+    "fullname": "Artem Klementev",
+    "given_name": "Artem",
+    "family_name": "Klementev"
+  },
+  "source": "assistant_dists/kfyz1p7n1yji",
+  "name": "kfyz1p7n1yji",
+  "display_name": "фвыа",
+  "description": "asdf",
+  "date_created": "2023-07-18T11:12:38.824784",
+  "visibility": "PRIVATE",
+  "publish_state": null,
+  "cloned_from_id": null,
+  "required_api_keys": [],
+  "deployment": {
+    "id": 11,
+    "chat_host": "http://54.82.109.154",
+    "chat_port": 4555,
+    "date_created": "2023-07-18T12:08:13.273304",
+    "state": null,
+    "error": null,
+    "date_state_updated": "2023-07-18T12:08:52.555922",
+    "stack_id": 623,
+    "task_id": "47478b9a-e983-47f6-a8c0-bcb67176a299"
+  }
+}

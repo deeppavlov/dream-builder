@@ -4,6 +4,7 @@ import { Control, RegisterOptions, useController } from 'react-hook-form'
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow_down.svg'
 import { ReactComponent as LoupeIcon } from 'assets/icons/loupe.svg'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { SvgIcon } from 'components/Helpers'
 import s from './SkillDropboxSearch.module.scss'
@@ -29,6 +30,8 @@ interface Props {
   withoutSearch?: boolean
   small?: boolean
   onSelectItem?: (id: string) => void
+  className?: string
+  disabled?: boolean
 }
 
 const SkillDropboxSearch = ({
@@ -45,6 +48,8 @@ const SkillDropboxSearch = ({
   withoutSearch,
   small,
   onSelectItem,
+  className,
+  disabled,
 }: Props) => {
   const getActiveItem = (id: string) => list?.find(item => item.id === id)
 
@@ -69,6 +74,7 @@ const SkillDropboxSearch = ({
   }
 
   const handleSearchClick = (e: React.MouseEvent) => {
+    if (disabled) return
     const targetIsInput =
       (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
     if (!isOpen && targetIsInput) setIsOpen(true)
@@ -92,13 +98,21 @@ const SkillDropboxSearch = ({
         error && 'error',
         fullWidth && 'fullWidth',
         fullHeight && 'fullHeight',
-        small && 'small'
+        small && 'small',
+        className && className
       )}
-      onFocus={() => setIsOpen(true)}
+      onFocus={() => !disabled && setIsOpen(true)}
     >
-      {label && <span className={s.label}>{label}</span>}
+      {label && (
+        <span id='label' className={s.label}>
+          {label}
+        </span>
+      )}
 
-      <div className={s.search} onClick={handleSearchClick}>
+      <div
+        className={cx(s.search, disabled && s.disabled)}
+        onClick={handleSearchClick}
+      >
         {!withoutSearch && <LoupeIcon className={s.icon} />}
         {withoutSearch && serviceIconName && (
           <SvgIcon
@@ -113,7 +127,7 @@ const SkillDropboxSearch = ({
           className={s.input}
           readOnly
         />
-        <ArrowDownIcon className={cx('icon', 'arrowDown')} />
+        {!disabled && <ArrowDownIcon className={cx('icon', 'arrowDown')} />}
       </div>
 
       <ul className={s.list}>

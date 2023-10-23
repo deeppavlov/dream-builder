@@ -1,4 +1,5 @@
 import { authApi } from 'api/axiosConfig'
+import { removeAuthType } from 'utils/localStorageAuth'
 import { deleteLocalStorageUser, getRefreshToken } from 'utils/localStorageUser'
 
 export const logout = async () => {
@@ -12,6 +13,7 @@ export const logout = async () => {
 
   try {
     await authApi.put(`logout`, {}, axiosConfig)
+    removeAuthType()
   } catch (error) {
     console.log('Logout failed!', error)
   }

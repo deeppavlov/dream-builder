@@ -17,8 +17,8 @@ class DialogSession(Base):
 
     id = Column(Integer, index=True, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"))
-    user = relationship("GoogleUser", uselist=False, foreign_keys="DialogSession.user_id")
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    user = relationship("GeneralUser", uselist=False, foreign_keys="DialogSession.user_id")
 
     deployment_id = Column(Integer, ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
     deployment = relationship("Deployment", uselist=False, foreign_keys="DialogSession.deployment_id")

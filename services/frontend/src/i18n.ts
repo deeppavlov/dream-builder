@@ -8,12 +8,12 @@ i18n
   .use(LanguageDetector)
   .use(Backend)
   .init({
-    debug: true,
+    // debug: true,
     fallbackLng: 'en',
     react: {
       transEmptyNodeValue: '', // what to return for empty Trans
-      transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
-      transKeepBasicHtmlNodesFor: ['br', 'mark'], // don't convert to <1></1> if simple react elements
+      transSupportBasicHtmlNodes: true,
+      transKeepBasicHtmlNodesFor: ['br', 'mark', 'b'],
     },
   })
 

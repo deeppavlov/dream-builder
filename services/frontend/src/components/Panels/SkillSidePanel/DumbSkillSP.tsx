@@ -1,10 +1,12 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import i18next from 'i18next'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import logo from 'assets/icons/logo.png'
 import { ISkill, SkillAvailabilityType } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import useTabsManager, { TabList } from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -21,13 +23,13 @@ interface Props {
   children?: React.ReactNode // Editor Tab element
 }
 
-const DumbSkillSP = ({
+const DumbSkillSP: FC<Props> = ({
   skill,
   activeTab,
   tabs,
   visibility,
   children,
-}: Props) => {
+}) => {
   const { t } = useTranslation()
   const [properties, details] = ['properties', 'details']
   const { isPreview } = usePreview()
@@ -41,9 +43,15 @@ const DumbSkillSP = ({
     tabList,
   })
   let cx = classNames.bind(s)
+  const { editSkillButtonClick, skillDetailsOpened } = useGaSkills()
 
-  const handleRenameBtnClick = () =>
+  const isDeepyPavlova =
+    import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === skill?.author?.outer_id
+
+  const handleRenameBtnClick = () => {
+    editSkillButtonClick('sidepanel_button', skill)
     trigger('SkillModal', { action: 'edit', skill })
+  }
 
   const dispatchTrigger = (isOpen: boolean) =>
     setUIOption({
@@ -70,7 +78,10 @@ const DumbSkillSP = ({
               data-disabled={tab.disabled}
               key={id}
               aria-selected={tabsInfo.activeTabId === id}
-              onClick={() => !isPreview && tabsInfo.handleTabSelect(id)}
+              onClick={() => {
+                !isPreview && tabsInfo.handleTabSelect(id)
+                !isPreview && skillDetailsOpened('skill_sidepanel', skill)
+              }}
             >
               {tab.name}
             </li>
@@ -87,24 +98,20 @@ const DumbSkillSP = ({
             />
           </div>
           <div className={s.author}>
-            <img src={skill?.author?.picture} />
+            <img src={isDeepyPavlova ? logo : skill?.author?.picture} />
             <span>
-              {skill?.author.fullname == 'Deepy Pavlova'
-                ? 'Dream Builder Team'
-                : skill?.author.fullname}
+              {isDeepyPavlova ? 'Dream Builder Team' : skill?.author.name}
             </span>
           </div>
           <ul className={s.table}>
             <li className={s.item}>
-              {skill?.author?.fullname && (
+              {skill?.author?.name && (
                 <>
                   <span className={cx('table-name')}>
                     {t('sidepanels.skill_properties.original_author')}
                   </span>
                   <span className={s.value}>
-                    {skill?.author.fullname == 'Deepy Pavlova'
-                      ? 'Dream Builder Team'
-                      : skill?.author.fullname}
+                    {isDeepyPavlova ? 'Dream Builder Team' : skill?.author.name}
                   </span>
                 </>
               )}

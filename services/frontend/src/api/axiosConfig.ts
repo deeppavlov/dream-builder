@@ -1,5 +1,10 @@
 import axios from 'axios'
-import { getAccessToken, setAccessToken } from 'utils/localStorageUser'
+import { getAuthType } from 'utils/localStorageAuth'
+import {
+  getAccessToken,
+  getLocale,
+  setAccessToken,
+} from 'utils/localStorageUser'
 import { logout, updateAccessToken } from './user'
 
 const { MODE } = import.meta.env
@@ -18,6 +23,17 @@ export const authApi = axios.create({
   baseURL: import.meta.env['VITE_AUTH_API_URL_' + MODE],
 })
 
+authApi.interceptors.request.use(
+  config => {
+    if (!config.headers?.token) {
+      config.headers!.token = getAccessToken()
+      config.headers!['auth-type'] = getAuthType()
+    }
+    return config
+  },
+  error => Promise.reject(error)
+)
+
 /**
  * Axios instance of private distribution API
  */
@@ -29,6 +45,8 @@ privateApi.interceptors.request.use(
   config => {
     if (!config.headers?.token) {
       config.headers!.token = getAccessToken()
+      config.headers!.lang = getLocale()
+      config.headers!['auth-type'] = getAuthType()
     }
     return config
   },

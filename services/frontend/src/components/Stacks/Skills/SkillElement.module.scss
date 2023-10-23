@@ -21,10 +21,8 @@
         @include icon_size_24;
       }
       .name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         cursor: pointer;
+        @include text_ellipsis;
         @include t3;
       }
     }

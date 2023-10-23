@@ -3,6 +3,7 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
+    Boolean,
 )
 from sqlalchemy.event import listens_for
 from sqlalchemy.orm import relationship, backref
@@ -23,13 +24,17 @@ class VirtualAssistant(Base):
     cloned_from_id = Column(Integer, ForeignKey("virtual_assistant.id", ondelete="SET NULL"), nullable=True)
     clones = relationship("VirtualAssistant", backref=backref("cloned_from", remote_side=[id]))
 
-    author_id = Column(Integer, ForeignKey("google_user.id", ondelete="CASCADE"), nullable=False)
-    author = relationship("GoogleUser", back_populates="virtual_assistants")
+    author_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = relationship("GeneralUser", back_populates="virtual_assistants")
 
     source = Column(String, nullable=False)
     name = Column(String, unique=True, nullable=False)
     display_name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+
+    language_id = Column(Integer, ForeignKey("language.id"), nullable=False)
+    language = relationship("Language")
+
     private_visibility = Column(
         sqltypes.Enum(enums.VirtualAssistantPrivateVisibility),
         nullable=False,
@@ -44,8 +49,14 @@ class VirtualAssistant(Base):
         "PublishRequest", uselist=False, back_populates="virtual_assistant", passive_deletes=True
     )
     deployment = relationship("Deployment", uselist=False, back_populates="virtual_assistant", passive_deletes=True)
+    is_visible = Column(Boolean, nullable=False, default=True)
 
 
 @listens_for(VirtualAssistant.__table__, "after_create")
 def pre_populate_virtual_assistant(target, connection, **kw):
-    pre_populate_from_tsv(settings.db.initial_data_dir / "virtual_assistant.tsv", target, connection)
+    pre_populate_from_tsv(
+        settings.db.initial_data_dir / "virtual_assistant.tsv",
+        target,
+        connection,
+        map_value_types={"is_visible": lambda x: bool(int(x))},
+    )

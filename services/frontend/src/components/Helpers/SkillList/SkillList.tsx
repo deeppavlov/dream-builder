@@ -1,5 +1,8 @@
-import { FC } from 'react'
-import { SkillListProps } from 'types/types'
+import { useUIOptions } from 'context'
+import { FC, useEffect, useState } from 'react'
+import { ELOCALES_KEY, ISkill, SkillListProps } from 'types/types'
+import { consts } from 'utils/consts'
+import { sortSkillsBylang } from 'utils/sortSkillsBylang'
 import { SkillCard } from 'components/Cards'
 import { SkillListItem } from 'components/Tables'
 
@@ -12,9 +15,21 @@ export const SkillList: FC<SkillListProps> = ({
   withoutDate,
   handleAdd,
 }) => {
+  const [sortedSkills, setSortedSkills] = useState<ISkill[]>([])
+  const { UIOptions } = useUIOptions()
+  const assistantLang: ELOCALES_KEY =
+    UIOptions[consts.ACTIVE_ASSISTANT].language?.value
+
+  const handleLangChange = () =>
+    skills && setSortedSkills([...sortSkillsBylang(skills, assistantLang)])
+
+  useEffect(() => {
+    handleLangChange()
+  }, [skills, assistantLang])
+
   return (
     <>
-      {skills?.map((skill, i) => {
+      {sortedSkills?.map((skill, i) => {
         return view == 'table' ? (
           <SkillListItem
             handleAdd={handleAdd}

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useMutation } from 'react-query'
 import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
-import { DEBUG_DIST } from 'constants/constants'
+import { DEBUG_EN_DIST, DEBUG_RU_DIST } from 'constants/constants'
 import { createDialogSession, getHistory, sendMessage } from 'api/chat'
 import { consts } from 'utils/consts'
 
@@ -14,7 +14,7 @@ export const useChat = () => {
   const [session, setSession] = useState<SessionConfig | null>(null)
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
-  const [error, setError] = useState(false)
+  const [error, setError] = useState<boolean>(false)
 
   // const checkAvailableSession = useMutation({
   //   mutationFn: (data: number) => getDialogSession(data),
@@ -24,19 +24,17 @@ export const useChat = () => {
   const renew = useMutation({
     onMutate: data => {
       store(data + '_session') ? store.remove(data + '_session') : null
-
       setMessage('')
       setHistory([])
     },
     mutationFn: (data: string) => createDialogSession(data),
     onSuccess: (data, variables) => {
-      store(variables + '_session', data)
+      const isDebug = variables === DEBUG_EN_DIST || variables === DEBUG_RU_DIST
+      !isDebug && store(variables + '_session', data)
       setSession(data)
-      variables !== DEBUG_DIST && remoteHistory.mutateAsync(data.id)
+      !isDebug && remoteHistory.mutateAsync(data.id)
     },
-    onError: (_, variables) => {
-      store.remove(variables + '_session')
-    },
+    onError: (_, variables) => store.remove(variables + '_session'),
   })
 
   const send = useMutation({
@@ -52,12 +50,17 @@ export const useChat = () => {
       ])
     },
     onError: (data: AxiosError) => {
-      data.response?.status === 404 && renew.mutateAsync(bot?.name)
+      const needToRenew =
+        data.response?.status === 404 || data.response?.status === 403
+      needToRenew && renew.mutateAsync(bot?.name)
     },
   })
 
   const remoteHistory = useMutation({
     mutationFn: (data: number) => getHistory(data),
+    onSuccess: data => {
+      setHistory(data)
+    },
   })
 
   return {

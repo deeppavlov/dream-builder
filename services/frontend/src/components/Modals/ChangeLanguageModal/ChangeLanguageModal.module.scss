@@ -1,0 +1,36 @@
+.changelanguage {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  gap: 32px;
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    .title {
+      @include t1;
+    }
+    .annotation {
+      @include b3;
+      color: #8d96b5;
+    }
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 12px;
+    label {
+      @include t3;
+    }
+  }
+  .footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    gap: 24px;
+  }
+}

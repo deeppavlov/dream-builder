@@ -11,7 +11,35 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [
     react(),
-    svgr(),
+    svgr({
+      svgrOptions: {
+        // Handle ID collisions with multiple SVG
+        plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
+        svgo: true,
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  // viewBox is required to resize SVGs with CSS.
+                  // @see https://github.com/svg/svgo/issues/1128
+                  removeViewBox: false,
+
+                  cleanupIds: true,
+                },
+              },
+            },
+            {
+              name: 'prefixIds',
+              params: {
+                active: true,
+              },
+            },
+          ],
+        },
+      },
+    }),
     chunkSplitPlugin(),
     wasm(),
     topLevelAwait(),
@@ -28,7 +56,9 @@ export default defineConfig({
       },
     },
   ],
-
+  define: {
+    global: 'globalThis',
+  },
   css: {
     preprocessorOptions: {
       scss: { additionalData: `@import "./src/styles/index";` },

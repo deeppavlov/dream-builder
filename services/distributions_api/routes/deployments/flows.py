@@ -37,7 +37,7 @@ def create_deployment(db: Session, new_deployment: schemas.DeploymentCreate) -> 
     virtual_assistant = virtual_assistant_crud.get_by_name(db, new_deployment.virtual_assistant_name)
     dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     dream_dist.save(overwrite=True, generate_configs=True)
-    dream_git.push_to_copy_remote_origin()
+    dream_git.commit_and_push(1, 1)
 
     parsed_url = urlparse(settings.deployer.portainer_url)
     host = f"http://{parsed_url.hostname}"
@@ -74,6 +74,7 @@ def delete_deployment(db: Session, deployment: schemas.DeploymentRead):
     except HTTPError:
         pass
 
+    tasks.app.control.revoke(deployment.task_id, terminate=True)
     delete_by_id(db, deployment.id)
     db.commit()
 

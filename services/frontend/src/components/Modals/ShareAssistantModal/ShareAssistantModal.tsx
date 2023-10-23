@@ -51,8 +51,9 @@ export const ShareAssistantModal = () => {
 
   useObserver('ShareAssistantModal', handleEventUpdate)
   useEffect(() => {
+    const modePrefix = import.meta.env.MODE === 'PROD' ? '' : 'stage.'
     reset({
-      link: `https://assistants.deepdream.builders/?assistant=${bot}`,
+      link: `https://${modePrefix}assistants.builder.deeppavlov.ai/${bot}`,
     })
   }, [bot])
 

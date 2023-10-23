@@ -7,7 +7,10 @@
     "source.formatDocument",
     "source.fixAll.eslint",
     "source.organizeImports",
-    "source.sortMembers"
+    "source.sortMembers",
+    "source.addMissingImports"
   ],
-  "prettier.trailingComma": "es5"
+  "prettier.trailingComma": "es5",
+  "i18n-ally.localesPaths": ["./public/locales"],
+  "i18n-ally.keystyle": "nested"
 }

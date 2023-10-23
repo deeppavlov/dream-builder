@@ -22,7 +22,7 @@
     @include accent_text;
   }
 
-  .btns_area {
+  .btns {
     display: flex;
     align-items: center;
     justify-content: end;
@@ -50,7 +50,7 @@
     align-items: center;
     justify-content: center;
   }
-  .logo_area {
+  .crumbs {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -97,7 +97,7 @@ a {
   }
 }
 .topbar.gapForBtns {
-  .btns_area {
+  .btns {
     gap: 16px;
   }
 }

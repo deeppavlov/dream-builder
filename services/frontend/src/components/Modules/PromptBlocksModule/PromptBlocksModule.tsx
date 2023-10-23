@@ -19,15 +19,15 @@ export const PromptBlocksModule = ({ blocks, handleSelect }: IProps) => {
         {blocks?.map((block, i) => (
           <span
             key={`key-${i}`}
-            id={block.block}
-            data-tooltip-id={block.block}
+            id={block.display_name}
+            data-tooltip-id={block.display_name}
             className={s.block}
             onClick={() => handleBlockClick(block)}
           >
-            {block.block}
+            {block.display_name}
             <BaseToolTip
               delayShow={TOOLTIP_DELAY}
-              id={block.block}
+              id={block.display_name}
               content={block.description}
               place='right'
               theme='description'

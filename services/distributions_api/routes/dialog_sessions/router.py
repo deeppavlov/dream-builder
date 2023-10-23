@@ -154,7 +154,9 @@ async def send_dialog_session_message(
 
 
 @dialog_sessions_router.get("/{dialog_session_id}/history", status_code=status.HTTP_200_OK)
-async def get_dialog_session_history(dialog_session: schemas.DialogSessionRead = Depends(dialog_session_permission)):
+async def get_dialog_session_history(
+    dialog_session: schemas.DialogSessionRead = Depends(dialog_session_permission), db: Session = Depends(get_db)
+):
     """
 
     Returns:
@@ -170,9 +172,26 @@ async def get_dialog_session_history(dialog_session: schemas.DialogSessionRead =
             detail=f"No agent dialog id recorded for session {dialog_session.id}. Send a message first!",
         )
     else:
-        history = await send_history_request_to_deployed_agent(
+        raw_history = await send_history_request_to_deployed_agent(
             f"{dialog_session.deployment.chat_host}:{dialog_session.deployment.chat_port}",
             dialog_session.agent_dialog_id,
         )
 
-    return [schemas.DialogUtteranceRead(**utterance) for utterance in history]
+        history = []
+        virtual_assistant = virtual_assistant_crud.get_by_id(db, dialog_session.deployment.virtual_assistant.id)
+        for message in raw_history:
+            if message.get("active_skill"):
+                active_va_component = virtual_assistant_component_crud.get_by_component_name(
+                    db, virtual_assistant.id, message["active_skill"]
+                )
+                active_skill = schemas.ComponentRead.from_orm(active_va_component.component)
+            else:
+                active_skill = None
+            utterance = schemas.DialogUtteranceRead(
+                author=message["author"],
+                text=message["text"],
+                active_skill=active_skill,
+            )
+            history.append(utterance)
+
+    return history

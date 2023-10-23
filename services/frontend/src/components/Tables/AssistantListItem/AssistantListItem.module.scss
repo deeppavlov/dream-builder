@@ -1,10 +1,23 @@
 .tr {
   border-top: 1px solid #f0f0f3;
   height: 64px;
+  color: $text2;
+
+  &:hover {
+    color: $text5;
+    cursor: pointer;
+  }
+
+  &.active .td {
+    background-color: $primary2;
+  }
 
   .td {
     &:nth-child(2) {
       padding-left: 0;
+    }
+    &:nth-child(3) {
+      width: 100%;
     }
     &:first-child {
       padding-left: 24px;
@@ -15,14 +28,13 @@
     border: none;
     text-align: start;
     background: #fff;
-    color: #313030;
     padding: 0px 12px;
     .fillIcon {
-      fill: rgba(0, 0, 0, 0.7);
+      fill: $text2;
       @include icon_size_24;
     }
     .strokeIcon {
-      stroke: rgba(0, 0, 0, 0.7);
+      stroke: $text2;
       @include icon_size_24;
     }
   }
@@ -37,7 +49,6 @@
   max-height: 64px;
   width: 100%;
   max-width: fit-content;
-  color: rgba(0, 0, 0, 0.7);
   @include b3;
   .tooltips {
     @include tooltip;
@@ -53,9 +64,10 @@
 .author {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: start;
   gap: 4px;
-  
+  width: 160px;
+
   img {
     @include icon_size_24;
     border-radius: 50%;
@@ -69,15 +81,13 @@
   p {
     display: flex;
     align-items: center;
-    color: #3300ff;
+    color: $text5;
     @include b3;
     width: 100%;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include text_ellipsis;
   }
 }
 .name {
@@ -87,32 +97,33 @@
   width: 170px;
   max-width: 170px;
   .botName {
-    color: rgba(0, 0, 0, 0.7);
     @include t4;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .params {
     flex-wrap: nowrap;
-    color: rgba(0, 0, 0, 0.7);
     @include b5;
   }
 }
-.date {
+.visibility {
+  width: 110px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  width: fit-content;
-  padding-top: 12px;
-  .ddmmyyyy {
-    white-space: nowrap;
-    color: rgba(0, 0, 0, 0.7);
-    @include t4;
-  }
-  .time {
-    @include b4;
-    color: rgba(0, 0, 0, 0.7);
-  }
+}
+.lng {
+  height: 26px;
+  @include d3;
+  display: flex;
+  width: 36px;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  color: $text3;
+  border: 1px solid $text3;
+  border-radius: 8px;
+  text-transform: uppercase;
+  line-height: 1;
 }
 .btns_area {
   display: flex;

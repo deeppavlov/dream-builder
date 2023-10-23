@@ -18,6 +18,7 @@ def get_virtual_assistant(dist_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
 
     try:
+        # TODO:`AssistantDist.from_dist` is a quite expensive operation. Should be replaced with `check_VA_locally` func
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found locally")
@@ -38,10 +39,7 @@ def virtual_assistant_view_permission(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
 
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK:
-        if user:
-            return virtual_assistant
-        else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not logged in")
+        return virtual_assistant
 
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION:
         raise NotImplementedError(

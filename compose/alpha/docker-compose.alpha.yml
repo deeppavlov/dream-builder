@@ -9,9 +9,9 @@ services:
       args:
         FRONTEND_ENV: prod
     ports:
-      - "6991:5173"
+      - "6991:80"
     volumes:
-      - ../../services/frontend:/src
+      - ../nginx.conf:/etc/nginx/conf.d/default.conf
     deploy:
       resources:
         limits:
@@ -48,6 +48,7 @@ services:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
       - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
     deploy:
       resources:
         limits:
@@ -74,6 +75,7 @@ services:
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
       - ../../deployment_queue:/src/deployment_queue
+      - ../../services/shared:/src/services/shared
     deploy:
       resources:
         limits:

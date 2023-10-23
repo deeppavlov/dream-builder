@@ -2,7 +2,7 @@ import secrets
 from pathlib import Path
 from typing import Optional, Literal
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel, BaseSettings, Field
 
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"

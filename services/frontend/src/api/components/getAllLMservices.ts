@@ -1,9 +1,11 @@
-import { LM_Service } from 'types/types'
+import { ELOCALES_KEY, LM_Service } from 'types/types'
 import { api } from 'api/axiosConfig'
 
-export async function getAllLMservices(): Promise<LM_Service[]> {
+export async function getAllLMservices(
+  language: ELOCALES_KEY | null
+): Promise<LM_Service[]> {
   try {
-    const { data } = await api.get(`lm_services`)
+    const { data } = await api.get(`lm_services?language=${language}`)
     return data
   } catch (e) {
     throw e

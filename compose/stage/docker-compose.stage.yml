@@ -9,9 +9,9 @@ services:
       args:
         FRONTEND_ENV: stage
     ports:
-      - "6981:5173"
+      - "6981:80"
     volumes:
-      - ../../services/frontend:/src
+      - ../nginx.conf:/etc/nginx/conf.d/default.conf
     deploy:
       resources:
         limits:
@@ -47,6 +47,7 @@ services:
     volumes:
       - ../../services/auth_api:/src/services/auth_api
       - ../../database:/src/database
+      - ../../services/shared:/src/services/shared
       - ../../apiconfig:/src/apiconfig
     deploy:
       resources:
@@ -73,6 +74,7 @@ services:
       - ../../apiconfig:/src/apiconfig
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
+      - ../../services/shared:/src/services/shared
       - ../../deployment_queue:/src/deployment_queue
     deploy:
       resources:

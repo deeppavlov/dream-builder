@@ -1,27 +1,55 @@
-.signInModal {
+.modal {
+  width: fit-content;
+  min-width: 468px;
   max-width: 624px;
+  padding: 40px 64px;
+}
+
+.container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: $spcng40;
+  width: 100%;
 
   mark {
+    display: inline;
+    white-space: pre-wrap;
     color: $primary1;
+  }
+
+  .h4 {
+    text-align: center;
+    color: color #000000e6;
+    @include h4;
+    font-weight: $normal;
   }
 }
 
-.sign-in-btn {
-  width: fit-content;
+.btns {
   display: flex;
-  align-items: center;
-  margin-left: auto;
-  padding: 0 24px 0 12px;
-  background-color: $bcgrnd1;
-  border: 1px solid $text3;
-  border-radius: 12px;
-  @include lnks_n_btns3;
+  flex-direction: column;
+  gap: 12px;
 
-  img {
-    width: 48px;
-    height: 48px;
+  .sign-in-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $bcgrnd1;
+    border: 1px solid $text3;
+    border-radius: 12px;
+    @include lnks_n_btns3;
+
+    &:active {
+      box-shadow: $shadow;
+    }
+    &:hover {
+      border-color: $primary1;
+    }
+
+    img {
+      width: 48px;
+      height: 48px;
+    }
   }
 }

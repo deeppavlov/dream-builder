@@ -6,12 +6,37 @@
 @import './typography/mixins.scss';
 @import './ui/mixins.scss';
 
+// Note: vite hot reload does not detect live changes in index.scss,
+// so you need to restart the build to see changes in browser.
+
 *,
 *::before,
 *::after {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  width: $scrollbar-total-width; /* Total width including `border-width` of scrollbar thumb */
+  height: $scrollbar-total-width;
+  cursor: default;
+}
+::-webkit-scrollbar-thumb {
+  height: 70px;
+  border: $scrollbar-padding solid transparent; /* Transparent border together with `background-clip: padding-box` does the trick */
+  background-clip: padding-box;
+  border-radius: $scrollbar-border-radius;
+  -webkit-border-radius: $scrollbar-border-radius;
+  background-color: $scrollbar-color;
+  -webkit-box-shadow: inset 0 0 0 1px $scrollbar-color;
+}
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
 }
 html,
 body {
@@ -40,6 +65,10 @@ li {
 
 p {
   @include b1;
+}
+
+textarea {
+  cursor: auto;
 }
 
 :global {

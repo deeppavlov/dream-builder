@@ -17,7 +17,7 @@ class TestDistributions:
 
     # ASSISTANTS_DISTS
 
-    #@pytest.mark.atom
+    @pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_ru_assistant")
@@ -382,7 +382,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @qase.title(f"{counter()}. test_build_assistant_smoke")
     def test_build_assistant_smoke(self, user, lm_service_id=2):
@@ -431,7 +431,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-        #user.delete_va_by_name(va_name)
+        user.delete_va_by_name(va_name)
 
     #@pytest.mark.atom
     @pytest.mark.regression
@@ -465,7 +465,7 @@ class TestDistributions:
         user.send_dialog_session_message_various_russian_lm(dialog_session_id, lm_service_id)
         user.get_dialog_session_history(dialog_session_id)
 
-        #user.delete_va_by_name(va_name)
+        user.delete_va_by_name(va_name)
 
     @pytest.mark.smoke
     @pytest.mark.regression

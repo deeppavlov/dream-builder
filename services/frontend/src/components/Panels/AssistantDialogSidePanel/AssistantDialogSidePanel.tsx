@@ -20,7 +20,6 @@ import {
 } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
-import { getUserId } from 'api/user'
 import { useAssistants, useChat, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
@@ -55,11 +54,10 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     { distName: dist?.name },
     { refetchOnMount: true }
   )
-  const { data: user } = useQuery(['user'], () => getUserId())
+  const { user } = useAuth()
   const { send, renew, session, message, history, setSession, remoteHistory } =
     useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
-  const auth = useAuth()
   const { vaChangeDeployClick } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
   const { setTokenState, missingTokenError } = useGaToken()
@@ -70,26 +68,28 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const hereIsDummy = dummyAnswersCounter > 2
 
-  const checkIsChatSettings = (userId: number) => {
+  const checkIsChatSettings = (userId: number | undefined) => {
+    setErrorPanel(null)
     const isOpenAIModelInside = () => {
       return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
     }
-    if (userId === undefined || userId === null) return
-    setErrorPanel(null)
 
     if (isOpenAIModelInside()) {
+      if (!userId) {
+        setErrorPanel({
+          type: 'auth',
+          msg: t('api_key.required.auth_required'),
+        })
+        return false
+      }
       const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-      const isApiKey =
-        openaiApiKey !== null &&
-        openaiApiKey !== undefined &&
-        openaiApiKey.length > 0
+      const isApiKey = Boolean(openaiApiKey)
 
-      if (!isApiKey && bot?.author?.id !== 1) {
+      if (!isApiKey) {
         setErrorPanel({
           type: 'api-key',
-          msg: t('api_key.required.label'),
+          msg: t('api_key.required.assistant_label'),
         })
-
         const services = [
           ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
         ].join(', ')
@@ -161,9 +161,6 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     const isMessage = message.replace(/\s/g, '').length > 0
     if (!isMessage) return
 
-    const isChatSettings = checkIsChatSettings(user?.id)
-    if (auth?.user && !isChatSettings) return
-
     const id = session?.id!
 
     send.mutate(
@@ -200,14 +197,22 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     )
   }
   const handleCheckChatSettings = () => {
-    readyToGetSession && bot?.author?.id !== 1 && checkIsChatSettings(user?.id)
+    readyToGetSession && checkIsChatSettings(user?.id)
   }
-  const handleEnterTokentClick = () => {
-    const services = [
-      ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
-    ].join(', ')
-    setTokenState('va_dialog_panel', services)
-    trigger('AccessTokensModal', {})
+
+  const handleErrorBtnClick = (type: TDialogError) => {
+    if (type === 'api-key') {
+      const services = [
+        ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+      ].join(', ')
+      setTokenState('va_dialog_panel', services)
+      trigger('AccessTokensModal', {})
+    }
+    if (type === 'auth') {
+      trigger('SignInModal', {
+        requestModal: { name: 'AccessTokensModal', options: {} },
+      })
+    }
   }
 
   // hooks
@@ -218,7 +223,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     handleCheckChatSettings()
-  }, [user?.id, bot])
+  }, [user, bot])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new
@@ -267,15 +272,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           <>
             <span className={s.alertName}>Error!</span>
             <p className={s.alertDesc}>{errorPanel.msg}</p>
-            {errorPanel.type === 'api-key' && (
-              <div className={s.link}>
-                <Button
-                  theme='ghost'
-                  props={{ onClick: handleEnterTokentClick }}
-                >
-                  {t('api_key.required.link')}
-                </Button>
-              </div>
+            {(errorPanel.type === 'auth' || errorPanel.type === 'api-key') && (
+              <Button
+                theme='primary'
+                props={{ onClick: () => handleErrorBtnClick(errorPanel.type) }}
+              >
+                {t(`api_key.required.${errorPanel.type}`)}
+              </Button>
             )}
           </>
         )}

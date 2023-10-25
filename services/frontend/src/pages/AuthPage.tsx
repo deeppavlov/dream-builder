@@ -1,12 +1,11 @@
-import { useAuth } from 'context'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { exchangeAuthCode } from 'api/user'
 import { getAuthType } from 'utils/localStorageAuth'
+import { setLocalStorageUser } from 'utils/localStorageUser'
 
 export const AuthPage = () => {
   const nav = useNavigate()
-  const { setUser } = useAuth()
 
   useEffect(() => {
     const code = new URLSearchParams(location.search).get('code')
@@ -19,7 +18,7 @@ export const AuthPage = () => {
     }
 
     exchangeAuthCode(code, authType).then(data => {
-      setUser(data)
+      setLocalStorageUser(data)
     })
   }, [])
 

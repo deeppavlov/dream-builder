@@ -7,6 +7,7 @@ import { IBeforeLoginModal } from 'types/types'
 import { login } from 'api/user'
 import { useObserver } from 'hooks/useObserver'
 import {
+  clearBeforeLoginAnalyticsState,
   clearBeforeLoginModal,
   saveBeforeLoginModal,
 } from 'utils/beforeSignInManager'
@@ -28,6 +29,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
 
   const handleClose = () => {
     clearBeforeLoginModal()
+    clearBeforeLoginAnalyticsState()
     setIsOpen(false)
   }
 

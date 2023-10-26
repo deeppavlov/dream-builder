@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { UserContext, UserInterface } from 'types/types'
 import {
+  clearBeforeLoginAnalyticsState,
   clearBeforeLoginLocation,
   clearBeforeLoginModal,
+  getBeforeLoginAnalyticsState,
   getBeforeLoginLocation,
   getBeforeLoginModal,
 } from 'utils/beforeSignInManager'
@@ -12,6 +14,7 @@ import {
   getLocalStorageUser,
   setLocalStorageUser,
 } from 'utils/localStorageUser'
+import { useGAContext } from './GaContext'
 
 export const AuthContext = createContext<UserContext>({
   user: null,
@@ -21,6 +24,7 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(getLocalStorageUser())
+  const { setGaState } = useGAContext()
 
   useEffect(() => {
     if (user) setLocalStorageUser(user)
@@ -40,6 +44,12 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
 
     if (beforeLoginModal && location.href === beforeLoginUrl)
       trigger(beforeLoginModal.name, beforeLoginModal.options)
+
+    const beforeLoginAnalyticsState = getBeforeLoginAnalyticsState()
+    if (beforeLoginAnalyticsState) {
+      setGaState(beforeLoginAnalyticsState)
+      clearBeforeLoginAnalyticsState()
+    }
 
     clearBeforeLoginLocation()
     clearBeforeLoginModal()

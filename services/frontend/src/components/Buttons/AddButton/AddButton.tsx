@@ -43,7 +43,8 @@ export const AddButton: FC<Props> = ({
 
     if (onAddRequest) onAddRequest()
 
-    if (!auth?.user)
+    if (!auth?.user) {
+      createVaClick('va_templates_block')
       return trigger(
         'SignInModal',
         isCreateScratchAssistant
@@ -56,6 +57,7 @@ export const AddButton: FC<Props> = ({
             }
           : {}
       )
+    }
     if (isAddPublicSkill) {
       addSkillButtonClick('skill_block_button')
       return trigger('SkillsListModal', {})

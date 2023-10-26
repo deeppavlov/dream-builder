@@ -62,7 +62,8 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
-  const { vaCreated, vaRenamed, vaDeleted } = useGaAssistant()
+  const { vaCreated, vaRenamed, vaDeleted, vaChangeDeployState } =
+    useGaAssistant()
   const { vaVisibilityChanged } = useGaPublication()
 
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
@@ -135,7 +136,7 @@ export const useAssistants = () => {
   const changeVisibility = useMutation({
     onMutate: ({ name, newVisibility, deploymentState }) => {
       if (newVisibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
-        deploy.mutateAsync(name)
+        deploy.mutateAsync(name).then(() => vaChangeDeployState('VA_Deployed'))
       }
     },
     mutationFn: ({ name, newVisibility }: IChangeVisibility) =>

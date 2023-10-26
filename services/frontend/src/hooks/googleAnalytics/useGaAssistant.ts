@@ -278,14 +278,14 @@ export const useGaAssistant = () => {
     ga4.event('VA_View_Changed', { page_type, view, source_type, event_type })
   }
 
-  const vaChangeDeployClick = (
-    source_type: string,
-    isDeployed: boolean = false
+  const vaChangeDeployState = (
+    eventName: 'VA_Undeployed' | 'VA_Deployed',
+    source_type?: string
   ) => {
     const page_type = getPageType()
-    const eventName = isDeployed ? 'VA_Undeployed' : 'VA_Deployed'
+    const source = source_type || gaState.source_type
 
-    ga4.event(eventName, { source_type, page_type, event_type })
+    ga4.event(eventName, { source_type: source, page_type, event_type })
   }
 
   return {
@@ -300,6 +300,6 @@ export const useGaAssistant = () => {
     deleteVaButtonClick: safeFunctionWrapper(deleteVaButtonClick),
     vaDeleted: safeFunctionWrapper(vaDeleted),
     vaViewChanged: safeFunctionWrapper(vaViewChanged),
-    vaChangeDeployClick: safeFunctionWrapper(vaChangeDeployClick),
+    vaChangeDeployState: safeFunctionWrapper(vaChangeDeployState),
   }
 }

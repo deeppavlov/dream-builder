@@ -58,7 +58,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { send, renew, session, message, history, setSession, remoteHistory } =
     useChat()
   const [apiKey, setApiKey] = useState<string | null>(null)
-  const { vaChangeDeployClick } = useGaAssistant()
+  const { vaChangeDeployState } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
   const { setTokenState, missingTokenError } = useGaToken()
 
@@ -187,12 +187,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     submitOnEnter(e, !send?.isLoading, handleSubmit(handleSend))
   }
   const handleDeploy = () => {
-    vaChangeDeployClick('va_sidepanel')
-
     toast.promise(
-      deploy.mutateAsync(bot?.name!, {
-        onError: () => setError('deploy'),
-      }),
+      deploy
+        .mutateAsync(bot?.name!, {
+          onError: () => setError('deploy'),
+        })
+        .then(() => vaChangeDeployState('VA_Deployed', 'va_sidepanel')),
       toasts().deploy
     )
   }

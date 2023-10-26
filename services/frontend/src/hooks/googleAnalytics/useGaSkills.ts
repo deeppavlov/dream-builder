@@ -152,6 +152,9 @@ export const useGaSkills = () => {
     const view = getView(page_type, isTableView)
     const assistant = getAssistant()
 
+    // is required to pass source_type to the VA_Deployed/Undeployed event
+    setGaState(prev => ({ ...prev, source_type }))
+
     ga4.event('Add_Skill_Button_Click', {
       source_type,
       page_type,
@@ -229,7 +232,7 @@ export const useGaSkills = () => {
     const prompt_changed = skill.prompt !== updatedSkill.prompt
     const model_changed = skill.lm_service !== updatedSkill.lm_service
     const eventBody = buildEventBody({
-      source_type: 'skill_editor_dialog_panel',
+      source_type: 'skill_editor_prompt_panel',
       page_type: 'va_skill_editor',
       view: 'none',
       skill: updatedSkill,

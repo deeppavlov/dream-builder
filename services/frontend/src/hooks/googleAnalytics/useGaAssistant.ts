@@ -3,20 +3,21 @@ import { useGAContext } from 'context'
 import ga4 from 'react-ga4'
 import { useLocation } from 'react-router-dom'
 import { BotInfoInterface } from 'types/types'
+import { saveBeforeLoginAnalyticsState } from 'utils/beforeSignInManager'
 import { consts } from 'utils/consts'
 import { safeFunctionWrapper } from 'utils/googleAnalytics'
 
 export const useGaAssistant = () => {
   const auth = useAuth()
   const isAuth = !!auth?.user
-  const location = useLocation()
+  const { pathname } = useLocation()
   const { gaState, setGaState } = useGAContext()
   const { UIOptions } = useUIOptions()
   const event_type = 'Assistant'
 
   const getPageType = (isPublicTemplate = false) => {
     let pageType = ''
-    switch (location.pathname) {
+    switch (pathname) {
       case '/':
         pageType = 'all_va_page'
         break
@@ -53,21 +54,27 @@ export const useGaAssistant = () => {
     const page_type = getPageType(!isDuplicated)
     const view = getView(page_type)
 
+    const currentState = {
+      assistant: template,
+      source_type,
+      view,
+      isDuplicated,
+      creatingVaFromScratch,
+      auth_status: isAuth,
+    }
+    if (!isAuth) saveBeforeLoginAnalyticsState(currentState)
+
     setGaState(prev => {
       return {
         ...prev,
-        assistant: template,
-        source_type,
-        view,
-        isDuplicated,
-        creatingVaFromScratch,
+        ...currentState,
       }
     })
 
     creatingVaFromScratch
       ? ga4.event('Create_VA_From_Scratch_Button_Click', {
+          source_type: pathname === '/' ? source_type : 'va_block',
           page_type,
-          source_type,
           view,
           event_type,
         })
@@ -92,6 +99,7 @@ export const useGaAssistant = () => {
       isDuplicated,
       creatingVaFromScratch,
       assistant,
+      auth_status,
     } = gaState
     const page_type = getPageType()
 
@@ -104,7 +112,7 @@ export const useGaAssistant = () => {
 
     creatingVaFromScratch &&
       ga4.event('VA_From_Scratch_Created', {
-        source_type,
+        source_type: pathname === '/' ? source_type : 'va_block',
         page_type,
         event_type,
       })
@@ -115,7 +123,7 @@ export const useGaAssistant = () => {
         source_type,
         page_type: getPageType(true),
         view,
-        auth_status: isAuth,
+        auth_status,
         template_va_id: assistant?.id,
         template_va_name: assistant?.display_name,
         template_va_author_id: assistant?.author.id,

@@ -1,6 +1,7 @@
 import aiohttp
 from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
-from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
+from deeppavlov_dreamtools.distconfigs.services import (create_generative_prompted_skill_service,
+                                                        create_google_api_skill_service)
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from sqlalchemy.orm import Session
 
@@ -12,7 +13,6 @@ from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
 from services.distributions_api.utils.name_generator import from_email
 from services.distributions_api.routes.components.models import ComponentType
-from services.distributions_api.routes.components.utils import create_google_api_skill_service
 
 
 dream_git = GitManager(

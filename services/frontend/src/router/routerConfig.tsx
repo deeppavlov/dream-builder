@@ -55,11 +55,7 @@ export const RouterConfig: CustomRouteConfig[] = [
       },
       {
         path: RoutesList.editor.default,
-        element: (
-          <PrivateRoute>
-            <EditorPage />
-          </PrivateRoute>
-        ),
+        element: <EditorPage />,
         loader: ({ params }) => params,
         handle: {
           crumb: ({ params, ui }: IRouterCrumb) => {

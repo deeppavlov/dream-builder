@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { useAuth } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -75,6 +76,11 @@ export const useAssistants = () => {
     return useQuery<BotInfoInterface>({
       queryKey: [DIST, distName],
       queryFn: () => getAssistant(distName!),
+      onError: error => {
+        if (error instanceof AxiosError && error?.response?.status === 401) {
+          navigate('/')
+        }
+      },
       refetchOnMount: Boolean(options?.refetchOnMount),
       refetchOnWindowFocus: true,
       initialData: () => getCachedDist(distName!),

@@ -5,6 +5,7 @@ import GitHubLogo from 'assets/images/GitHubLogo.svg'
 import GoogleLogo from 'assets/images/GoogleLogo.svg'
 import { IBeforeLoginModal } from 'types/types'
 import { login } from 'api/user'
+import { useGaAuth } from 'hooks/googleAnalytics/useGaAuth'
 import { useObserver } from 'hooks/useObserver'
 import {
   clearBeforeLoginAnalyticsState,
@@ -25,6 +26,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
   const { t } = useTranslation('translation', { keyPrefix: 'modals.sign_in' })
   const [isOpen, setIsOpen] = useState(false)
   const [msg, setMsg] = useState<MessageType | undefined>(propsMsg)
+  const { userLoggedIn } = useGaAuth()
   let cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -40,8 +42,15 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
     setIsOpen(prev => !prev)
   }
 
-  const handleGoogleSignIn = () => login.google()
-  const handleGitHubSignIn = () => login.gitHub()
+  const source_type = msg ? 'use_template' : 'auth_button' // analytics
+  const handleGoogleSignIn = () => {
+    userLoggedIn(source_type, 'google')
+    login.google()
+  }
+  const handleGitHubSignIn = () => {
+    userLoggedIn(source_type, 'github')
+    login.gitHub()
+  }
 
   useObserver('SignInModal', handleEventUpdate)
 

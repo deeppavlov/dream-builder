@@ -1,4 +1,4 @@
-import { useAuth, useGAContext, useUIOptions } from 'context'
+import { useAuth, useUIOptions } from 'context'
 import ga4 from 'react-ga4'
 import { useLocation, useParams } from 'react-router-dom'
 import { BotInfoInterface } from 'types/types'
@@ -18,7 +18,6 @@ export const useGaChat = () => {
   const { isPreview } = usePreview()
   const { pathname } = useLocation()
   const { UIOptions } = useUIOptions()
-  const { gaState, setGaState } = useGAContext()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const event_type = 'Dialog panels'
 
@@ -39,8 +38,6 @@ export const useGaChat = () => {
     const additional_services = !!assistant.required_api_keys?.length
     const page_type = getPageType(pathname, isPreview, skillId)
     const view = getView(page_type, isTableView)
-
-    setGaState({ ...gaState, source_type })
 
     isPublicTemplate
       ? ga4.event('Template_VA_Chat_Opened', {
@@ -71,11 +68,13 @@ export const useGaChat = () => {
   }
 
   const chatSend = (historyLength: number) => {
-    const { source_type } = gaState
     const isAuth = !!auth?.user
     const assistant = UIOptions[consts.CHAT_SP_IS_ACTIVE]
     const isPublicTemplate =
       assistant.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
+    const source_type = isPublicTemplate
+      ? 'va_template_sidepanel'
+      : 'va_sidepanel'
     const additional_services = !!assistant.required_api_keys?.length
     const page_type = getPageType(pathname, isPreview, skillId)
     const view = getView(page_type, isTableView)
@@ -124,7 +123,7 @@ export const useGaChat = () => {
 
     isPublicTemplate
       ? ga4.event('Template_VA_Chat_Refresh', {
-          source_type: 'va_sidepanel',
+          source_type: 'va_template_sidepanel',
           page_type,
           view,
           auth_shatus: isAuth,

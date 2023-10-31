@@ -67,8 +67,14 @@ class GithubAuth(auth_type.OAuth):
             name=user_data["name"] or user_data["login"],
         )
 
+        first_auth = True
         if github_user.crud.check_user_exists(db, github_id):
+            first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
+            try:
+                github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
+            except sqlalchemy.exc.IntegrityError as e:
+                db.rollback()
         else:
             general_user = user.crud.add_user(
                 db=db,
@@ -83,7 +89,7 @@ class GithubAuth(auth_type.OAuth):
         return UserToken(
             **general_user.__dict__,
             token=access_token,
-        )
+        ).__dict__ | {"first_auth": first_auth}
 
     ########################################################################
 
@@ -183,9 +189,15 @@ class GoogleOAuth2(auth_type.OAuth2):
         refresh_token = credentials.refresh_token
         jwt_data = credentials._id_token
 
+        first_auth = True
         user_info = jwt.decode(jwt_data, verify=False)
         if google_user.crud.check_user_exists(db, user_info["sub"]):
+            first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, user_info["sub"], self.PROVIDER_NAME)
+            try:
+                google_user.crud.update_by_id(db, general_user.id, **user_info)
+            except sqlalchemy.exc.IntegrityError as e:
+                db.rollback()
         else:
             try:
                 general_user = user.crud.add_user(
@@ -209,7 +221,11 @@ class GoogleOAuth2(auth_type.OAuth2):
             db.rollback()
             raise e
 
-        return UserToken(**User.from_orm(general_user).__dict__, token=access_token, refresh_token=refresh_token)
+        return UserToken(
+            **User.from_orm(general_user).__dict__,
+            token=access_token,
+            refresh_token=refresh_token
+        ).__dict__ | {"first_auth": first_auth}
 
     async def update_access_token(self, db: Session, refresh_token: str) -> UserToken:
         uservalid_: GoogleUserValid = google_uservalid.crud.get_by_refresh_token(db, refresh_token)

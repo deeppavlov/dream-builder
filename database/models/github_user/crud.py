@@ -45,6 +45,6 @@ def update_by_id(db: Session, user_id: int, **kwargs) -> GithubUser:
 
     user = db.scalar(update(GithubUser).filter_by(user_id=user_id).values(**kwargs).returning(GithubUser))
     if not user:
-        raise ValueError(f"GoogleUser with id={user_id} does not exist")
+        raise ValueError(f"GithubUser with id={user_id} does not exist")
 
     return user

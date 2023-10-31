@@ -71,6 +71,10 @@ class GithubAuth(auth_type.OAuth):
         if github_user.crud.check_user_exists(db, github_id):
             first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
+            try:
+                github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
+            except sqlalchemy.exc.IntegrityError as e:
+                db.rollback()
         else:
             general_user = user.crud.add_user(
                 db=db,
@@ -190,6 +194,10 @@ class GoogleOAuth2(auth_type.OAuth2):
         if google_user.crud.check_user_exists(db, user_info["sub"]):
             first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, user_info["sub"], self.PROVIDER_NAME)
+            try:
+                google_user.crud.update_by_id(db, general_user.id, **user_info)
+            except sqlalchemy.exc.IntegrityError as e:
+                db.rollback()
         else:
             try:
                 general_user = user.crud.add_user(

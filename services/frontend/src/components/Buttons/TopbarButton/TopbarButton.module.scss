@@ -2,10 +2,6 @@
   height: 100%;
   // padding: 20px 8px;
 
-  @media (max-width: 900px) {
-    padding: 0px 8px;
-  }
-
   &:hover {
     background-color: $primary3;
 

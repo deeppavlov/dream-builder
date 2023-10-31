@@ -6,11 +6,8 @@
   align-items: center;
   white-space: nowrap;
   gap: 2px;
-
-  @media (max-width: 1000px) {
-    flex-wrap: wrap;
-    padding: 0px;
-  }
+  flex-wrap: nowrap;
+  overflow: hidden;
 
   .slash {
     @include lnks_n_btns4;
@@ -26,14 +23,8 @@
   margin: 1px 8px;
   @include b3;
   @include accent_text;
-
-  @media (max-width: 1245px) {
-    font-size: 12px;
-  }
-  @media (max-width: 1100px) {
-    font-size: 10px;
-    margin: 0px 5px;
-  }
+  overflow: hidden;
+  min-width: 50px;
 
   a {
     @include text_ellipsis;

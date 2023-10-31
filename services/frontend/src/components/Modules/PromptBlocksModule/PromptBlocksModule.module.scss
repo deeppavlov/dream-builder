@@ -8,10 +8,6 @@
   border-radius: 12px;
   position: relative;
   overflow: hidden;
-
-  @media (max-width: 900px) {
-    min-width: 95px;
-  }
 }
 .promptBlockModule,
 .block,
@@ -52,10 +48,6 @@
   cursor: pointer;
   @include b4;
   color: $text1;
-
-  @media (max-width: 900px) {
-    font-size: 10px;
-  }
 }
 
 .type {

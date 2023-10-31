@@ -7,11 +7,9 @@
   @include t2;
   align-items: center;
   gap: 8px;
-  justify-content: space-around;
+  padding-left: 24px;
+  padding-right: 36px;
 
-  @media (max-width: 1145px) {
-    font-size: 12px;
-  }
 
   [role='tablist'] {
     display: flex;
@@ -55,8 +53,3 @@
   }
 }
 
-[id='sp_right'] {
-  .sidePanelHeader {
-    font-size: 18px;
-  }
-}

@@ -18,6 +18,7 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
+    overflow: hidden;
   }
 
   &.editor {
@@ -36,11 +37,7 @@
     height: 64px;
     gap: 20px;
     // width: 100%;
-    padding: 16px;
-
-    @media (max-width: 1000px) {
-      padding: 6px;
-    }
+    padding: 16px 8px;
 
     img {
       width: 40px;
@@ -71,10 +68,8 @@
     gap: 12px;
     color: #3300ff;
     background-color: $bcgrnd1;
-
-    @media (max-width: 880px) {
-      padding: 0px;
-    }
+    overflow: hidden;
+    flex-shrink: 10;
 
     h3 {
       font-weight: 600;

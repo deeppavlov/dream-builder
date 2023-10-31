@@ -4,12 +4,6 @@
   flex-direction: column;
   // width: 368px;
 
-  // &[id='sp_left'] {
-  //   @media (max-width: 1140px) {
-  //     width: 250px;
-  //   }
-  // }
-
   .textarea {
     @include b1;
     min-height: 160px;

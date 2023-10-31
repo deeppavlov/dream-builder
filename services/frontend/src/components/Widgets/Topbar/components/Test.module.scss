@@ -11,22 +11,6 @@
   gap: 12px;
   flex-shrink: 0;
 
-  @media (max-width: 1145px) {
-    max-height: 36px;
-    min-height: 36px;
-    p {
-      font-size: 12px !important;
-    }
-  }
-
-  @media (max-width: 900px) {
-    max-height: 30px;
-    min-height: 30px;
-    p {
-      font-size: 10px !important;
-    }
-  }
-
   svg {
     @include icon_size_24;
     path {

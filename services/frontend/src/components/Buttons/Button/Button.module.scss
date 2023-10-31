@@ -11,12 +11,6 @@
   text-align: center;
   @include lnks_n_btns3;
 
-  @media (max-width: 1145px) {
-     padding: 6px 12px;
-     font-size: 12px;
-  }
-
-
   svg {
     @include icon_size_24;
   }

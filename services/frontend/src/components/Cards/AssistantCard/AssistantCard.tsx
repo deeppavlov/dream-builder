@@ -140,6 +140,13 @@ export const AssistantCard: FC<BotCardProps> = ({
       {type === 'your' && isDeployed && <Badge />}
       <div className={cx('header', isDeploying && 'deploying')}>
         <span>{bot?.display_name}</span>
+        <div
+          data-tooltip-id='my-tooltip'
+          data-tooltip-content='Hello world!'
+          data-tooltip-variant='warning'
+          data-tooltip-place='right'
+          className={s.status}
+        ></div>
       </div>
       <div className={s.body}>
         <div className={s.block}>

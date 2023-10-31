@@ -34,12 +34,9 @@
   }
 }
 
-.withSidePanel {
-  margin-left: 368px;
-  @media (max-width: 1140px) {
-    margin-left: 230px;
-  }
-}
+// .withSidePanel {
+//   margin-left: 368px;
+// }
 
 .editor-container {
   display: flex;
@@ -136,9 +133,6 @@
 .blocks-label {
   @include b3;
   color: $text2;
-  @media (max-width: 900px) {
-    font-size: 12px;
-  }
 }
 
 .prompt {
@@ -170,11 +164,5 @@
   svg {
     stroke: $text2;
     @include icon_size_24;
-  }
-}
-
-#sp_left {
-  @media (max-width: 1140px) {
-    margin-left: 230px;
   }
 }

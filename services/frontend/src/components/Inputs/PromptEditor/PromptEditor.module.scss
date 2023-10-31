@@ -9,10 +9,6 @@
   padding: 24px 0px;
   height: 100%;
 
-  @media (max-width: 900px) {
-    padding: 20px 0px;
-  }
-
   &[data-active='true'] {
     .container {
       box-shadow: none !important;
@@ -119,10 +115,6 @@
   position: absolute;
   top: 0px;
   left: 0px;
-
-  @media (max-width: 900px) {
-    font-size: 12px;
-  }
 }
 
 .about {

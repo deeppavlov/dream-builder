@@ -35,8 +35,10 @@ class GithubAuth(auth_type.OAuth):
     URL_USERINFO = "https://api.github.com/user"
     AUTH_URL = "https://github.com/login/oauth/authorize"
     URL_TOKENINFO = "https://github.com/login/oauth/access_token"
-    CLIENT_PARAMETERS = settings.github_auth_client_info
-    GITHUB_AUTH_URL_WITH_PARAMS = f"{AUTH_URL}?{urlencode(CLIENT_PARAMETERS)}"
+
+    if settings.github:
+        CLIENT_PARAMETERS = settings.github_auth_client_info
+        GITHUB_AUTH_URL_WITH_PARAMS = f"{AUTH_URL}?{urlencode(CLIENT_PARAMETERS)}"
 
     async def validate_token(self, db: Session, token: str) -> User:
         try:
@@ -130,9 +132,11 @@ class GithubAuth(auth_type.OAuth):
         return user_data, access_token
 
     def _get_github_tokeninfo_endpoint(self, code: str) -> str:
-        auth_client_params = settings.github_auth_client_info
-        auth_client_params.update({"code": code})
-        return f"{self.URL_TOKENINFO}?{urlencode(auth_client_params)}"
+        if settings.github:
+            auth_client_params = settings.github_auth_client_info
+            auth_client_params.update({"code": code})
+            return f"{self.URL_TOKENINFO}?{urlencode(auth_client_params)}"
+        raise HTTPException(status_code=405, detail="Method Not Allowed")
 
     def _is_token_good(self, body: str) -> bool:
         """

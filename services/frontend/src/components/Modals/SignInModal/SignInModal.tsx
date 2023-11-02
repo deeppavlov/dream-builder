@@ -26,7 +26,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
   const { t } = useTranslation('translation', { keyPrefix: 'modals.sign_in' })
   const [isOpen, setIsOpen] = useState(false)
   const [msg, setMsg] = useState<MessageType | undefined>(propsMsg)
-  const { userLoggedIn } = useGaAuth()
+  const { authClick } = useGaAuth()
   let cx = classNames.bind(s)
 
   const handleClose = () => {
@@ -44,11 +44,11 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
 
   const source_type = msg ? 'use_template' : 'auth_button' // analytics
   const handleGoogleSignIn = () => {
-    userLoggedIn(source_type, 'google')
+    authClick(source_type)
     login.google()
   }
   const handleGitHubSignIn = () => {
-    userLoggedIn(source_type, 'github')
+    authClick(source_type)
     login.gitHub()
   }
 

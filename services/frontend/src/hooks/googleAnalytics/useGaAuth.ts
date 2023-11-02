@@ -2,7 +2,12 @@ import ga4 from 'react-ga4'
 import { useLocation, useParams } from 'react-router-dom'
 import store from 'store2'
 import { usePreview } from 'context/PreviewProvider'
+import {
+  getBeforeLoginAnalyticsState,
+  saveBeforeLoginAnalyticsState,
+} from 'utils/beforeSignInManager'
 import { getPageType, safeFunctionWrapper } from 'utils/googleAnalytics'
+import { getAuthType } from 'utils/localStorageAuth'
 
 export const useGaAuth = () => {
   const { isPreview } = usePreview()
@@ -10,10 +15,20 @@ export const useGaAuth = () => {
   const { skillId } = useParams()
   const event_type = 'Authorization'
 
-  const userLoggedIn = (source_type: string, auth_type: string) => {
-    const page_type = getPageType(pathname, isPreview, skillId)
+  const authClick = (authSource: string) => {
+    const prevState = getBeforeLoginAnalyticsState()
+    saveBeforeLoginAnalyticsState({
+      ...prevState,
+      authSource,
+    })
+  }
 
-    ga4.event('User_logged_in', {
+  const userLoggedIn = (source_type: string, firstAuth: boolean) => {
+    const page_type = getPageType(pathname, isPreview, skillId)
+    const eventName = firstAuth ? 'User_signed_up' : 'User_logged_in'
+    const auth_type = getAuthType()
+
+    ga4.event(eventName, {
       source_type,
       page_type,
       event_type,
@@ -33,6 +48,7 @@ export const useGaAuth = () => {
   }
 
   return {
+    authClick,
     userLoggedIn: safeFunctionWrapper(userLoggedIn),
     userLoggedOut: safeFunctionWrapper(userLoggedOut),
   }

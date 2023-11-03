@@ -99,7 +99,7 @@ class Settings(BaseSettings):
     auth: AuthSettings
     smtp: SmtpSettings
     deployer: DeployerSettings
-    github: GithubAuth
+    github: Optional[GithubAuth]
     # storage: StorageSettings
     git: GitSettings
     celery: CelerySettings

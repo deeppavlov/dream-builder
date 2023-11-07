@@ -24,7 +24,7 @@
   @include b3;
   @include accent_text;
   overflow: hidden;
-  min-width: 50px;
+  min-width: 25px;
 
   a {
     @include text_ellipsis;

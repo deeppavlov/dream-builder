@@ -34,7 +34,13 @@
   white-space: pre-line;
   overflow: auto;
   padding-left: 10px;
-  padding-right: 5px;
+  padding-right: 10px;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 1px solid transparent;
+  }
 }
 
 .block {

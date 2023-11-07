@@ -1,6 +1,6 @@
 (function () {
   /* params */
-  const chatUrl = `https://assistants.deepdream.builders/embed?assistant=${assistant}&theme=${chatTheme}&adaptive-theme=${adaptiveTheme}`;
+  const chatUrl = `https://hostname/embed?assistant=${assistant}&theme=${chatTheme}&adaptive-theme=${adaptiveTheme}`;
 
   window.addEventListener("load", function () {
     const idPrefix = Math.random().toString(36).substring(2, 15);

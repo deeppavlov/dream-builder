@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import scriptTemplate from 'assets/scripts/embed.js?raw'
+import { api } from 'api/axiosConfig'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
 import { ToastCopySucces } from 'components/UI'
@@ -71,7 +72,12 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
 
   useEffect(() => {
     const script = getScript(assistantId, theme, adaptiveTheme, isDarkMode)
-    setPreviewScript(script)
+    const hostName = api.defaults.baseURL as string
+    const formattedScript = script.replaceAll(
+      'https://hostname/',
+      hostName.slice(0, -4)
+    )
+    setPreviewScript(formattedScript)
   }, [assistantId, adaptiveTheme, theme, isDarkMode])
 
   return (

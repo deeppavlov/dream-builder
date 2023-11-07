@@ -1,7 +1,7 @@
 # Create dialog session using assistant name and get configuration
 
 curl -X 'POST' 
-  'http://hostname/api/dialog_sessions' \
+  'https://hostname/api/dialog_sessions' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -11,7 +11,7 @@ curl -X 'POST'
 # Send message
 
 curl -X 'POST' 
-  'http://hostname/api/dialog_sessions/$your_dialog_session_id/chat' \
+  'https://hostname/api/dialog_sessions/$your_dialog_session_id/chat' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -22,7 +22,7 @@ curl -X 'POST'
 # Get chat history
 
 curl -X 'GET' 
-  'http://hostname/api/dialog_sessions/$your_dialog_session_id/history' \
+  'https://hostname/api/dialog_sessions/$your_dialog_session_id/history' \
   -H 'accept: application/json' 
   
 

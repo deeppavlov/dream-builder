@@ -58,7 +58,7 @@ const SkillPromptModal = () => {
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const { UIOptions, setUIOption } = useUIOptions()
+  const {setUIOption} = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -69,7 +69,6 @@ const SkillPromptModal = () => {
   const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
-  const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
   const {
@@ -273,10 +272,7 @@ const SkillPromptModal = () => {
     <Modal
       isOpen={isOpen}
       backdropClassName={s.backdrop}
-      modalClassName={cx(
-        'skillPromptModal',
-        leftSidePanelIsActive && 'withSidePanel'
-      )}
+      modalClassName={cx('skillPromptModal')}
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >

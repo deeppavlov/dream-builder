@@ -13,6 +13,14 @@
   box-shadow: 80px 0px 20px rgba(100, 99, 99, 0.15);
   position: relative;
   z-index: 3;
+
+  .container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
   &.editor {
     box-shadow: 78px 0px 20px rgba(100, 99, 99, 0.15);
   }
@@ -28,8 +36,8 @@
     justify-content: end;
     height: 64px;
     gap: 20px;
-    width: 100%;
-    padding: 16px;
+    // width: 100%;
+    padding: 16px 8px;
 
     img {
       width: 40px;
@@ -51,6 +59,7 @@
     justify-content: center;
   }
   .crumbs {
+    // width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -59,6 +68,9 @@
     gap: 12px;
     color: #3300ff;
     background-color: $bcgrnd1;
+    overflow: hidden;
+    flex-shrink: 10;
+
     h3 {
       font-weight: 600;
       font-size: 18px;

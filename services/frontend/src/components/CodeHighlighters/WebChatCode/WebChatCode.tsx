@@ -77,7 +77,6 @@ export const WebChatCode: FC<Props> = ({ assistantId }) => {
       'https://hostname/',
       hostName.slice(0, -4)
     )
-    console.log(api.defaults)
     setPreviewScript(formattedScript)
   }, [assistantId, adaptiveTheme, theme, isDarkMode])
 

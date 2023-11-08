@@ -8,6 +8,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useObserver } from 'hooks/useObserver'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
@@ -37,6 +38,7 @@ export const SkillModal = () => {
   const [NAME_ID, DESC_ID] = ['display_name', 'description']
   const validationSchema = getValidationSchema()
   const bot = distName ? getDist({ distName }).data : null
+  const { vaChangeDeployState } = useGaAssistant()
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
@@ -83,14 +85,14 @@ export const SkillModal = () => {
               })
             )
             const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
-            deleteDeployment.mutateAsync(bot!).then(
-              () =>
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+            deleteDeployment.mutateAsync(bot!).then(() => {
+              bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
                 changeVisibility.mutateAsync({
                   name: bot?.name!,
                   newVisibility,
                 })
-            )
+              vaChangeDeployState('VA_Undeployed')
+            })
           },
         }
       ),

@@ -8,13 +8,20 @@ import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { IPromptBlock, ISkill, LM_Service, LanguageModel, TDistVisibility } from 'types/types'
+import {
+  IPromptBlock,
+  ISkill,
+  LM_Service,
+  LanguageModel,
+  TDistVisibility,
+} from 'types/types'
 import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useBrowserPrompt } from 'hooks/useBrowserPrompt'
 import { useObserver } from 'hooks/useObserver'
@@ -35,7 +42,6 @@ import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
 import s from './SkillPromptModal.module.scss'
-
 
 interface ITriggerProps {
   skill?: ISkill
@@ -78,6 +84,7 @@ const SkillPromptModal = () => {
     skillEditorClosed,
     changeSkillModel,
   } = useGaSkills()
+  const { vaChangeDeployState } = useGaAssistant()
 
   const [editorContext, setEditorContext] = useState<IEditorContext>({
     code: '',
@@ -170,13 +177,14 @@ const SkillPromptModal = () => {
             const name = bot?.name!
             const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
-              deleteDeployment
-                .mutateAsync(bot!)
-                .then(
-                  () =>
-                    bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                    changeVisibility.mutateAsync({ name, newVisibility })
+              deleteDeployment.mutateAsync(bot!).then(() => {
+                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                  changeVisibility.mutateAsync({ name, newVisibility })
+                vaChangeDeployState(
+                  'VA_Undeployed',
+                  'skill_editor_prompt_panel'
                 )
+              })
             } else return
           }),
         toasts().updateComponent

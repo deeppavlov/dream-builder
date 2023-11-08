@@ -43,6 +43,14 @@ export const getView = (pageType: PageType, isTableView: boolean) => {
   return isTableView ? 'list' : 'card'
 }
 
+export const getSkillView = (pageType: PageType, isTableView: boolean) => {
+  if (pageType === 'va_skill_editor') {
+    return 'none'
+  }
+
+  return isTableView ? 'list' : 'card'
+}
+
 export const safeFunctionWrapper =
   <T extends any[]>(func: (...args: T) => void) =>
   (...args: T) => {

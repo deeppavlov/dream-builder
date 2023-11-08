@@ -10,6 +10,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
@@ -32,6 +33,7 @@ export const SkillsListModal = () => {
   const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
   const { skillAdded } = useGaSkills()
+  const { vaChangeDeployState } = useGaAssistant()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
@@ -67,6 +69,7 @@ export const SkillsListModal = () => {
                   VISIBILITY_STATUS.PRIVATE as TDistVisibility
                 bot?.publish_state !== VISIBILITY_STATUS.PRIVATE &&
                   changeVisibility.mutateAsync({ name, newVisibility })
+                vaChangeDeployState('VA_Undeployed')
               })
 
             skillAdded(skill, template)

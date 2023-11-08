@@ -78,6 +78,10 @@ const SkillDialog = forwardRef(
             type: 'api-key',
             msg: t('api_key.required.skill_label'),
           })
+          missingTokenError(
+            'skill_editor_dialog_panel',
+            skill?.lm_service?.api_key?.display_name
+          )
           return false
         }
 
@@ -96,10 +100,6 @@ const SkillDialog = forwardRef(
           msg: `Enter your prompt in the ${skill?.name} editor to run your Generative AI Skill`,
         })
 
-        missingTokenError(
-          'skill_editor_dialog_panel',
-          skill?.lm_service?.api_key?.display_name
-        )
         return false
       }
 

@@ -1,0 +1,25 @@
+.status {
+  width: 16px;
+  height: 16px;
+  border-radius: 20px;
+  background-color: white;
+  padding: 8px;
+
+  &.success {
+    background-color: green;
+  }
+
+  &.error {
+    background-color: red;
+  }
+
+  &.warning {
+    background-color: orange;
+  }
+}
+
+.statusBox {
+  display: flex;
+  gap: 8px;
+  padding-left: 20px;
+}

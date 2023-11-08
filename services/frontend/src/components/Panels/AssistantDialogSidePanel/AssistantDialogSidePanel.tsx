@@ -5,11 +5,13 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
+import { Tooltip } from 'react-tooltip'
 import {
   BotInfoInterface,
   ChatForm,
   ChatHistory,
   IDialogError,
+  IExaminationLite,
   TDialogError,
 } from 'types/types'
 import {
@@ -21,12 +23,13 @@ import {
 import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
 import { getUserId } from 'api/user'
-import { useAssistants, useChat, useDeploy } from 'hooks/api'
+import { useAssistants, useChat, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
+import { examinationMassage } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
@@ -46,6 +49,7 @@ interface Props {
 }
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
+  const { getAllComponents } = useComponent()
   const { t } = useTranslation()
   // queries
   const queryClient = useQueryClient()
@@ -250,6 +254,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     return () => dispatchTrigger(false)
   }, [])
 
+  const components = getAllComponents(bot?.name || '', {
+    refetchOnMount: true,
+  })
+
+  const resultExamination = examinationMassage(components)
+
+  const { massage, isError } = resultExamination
+
   return (
     <div id='assistantDialogPanel' className={s.container}>
       <SidePanelHeader>
@@ -303,15 +315,27 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 {t('sidepanels.assistant_dialog.deploy.subheader')}
               </p>
             </div>
-            <Button
-              theme='primary'
-              props={{
-                onClick: handleDeploy,
-                disabled: deploy?.isLoading || deleteDeployment.isLoading,
-              }}
+            <Tooltip
+              id={`my-tooltip-${bot?.id}`}
+              style={{ zIndex: 1, opacity: 1 }}
+            />
+            <div
+              data-tooltip-id={`my-tooltip-${bot?.id}`}
+              data-tooltip-content={massage}
+              data-tooltip-variant={resultExamination.status}
+              data-tooltip-place='bottom'
             >
-              {t('sidepanels.assistant_dialog.btns.build_assistant')}
-            </Button>
+              <Button
+                theme='primary'
+                props={{
+                  onClick: handleDeploy,
+                  disabled:
+                    deploy?.isLoading || deleteDeployment.isLoading || isError,
+                }}
+              >
+                {t('sidepanels.assistant_dialog.btns.build_assistant')}
+              </Button>{' '}
+            </div>
           </div>
         )}
         {chatPanel && (

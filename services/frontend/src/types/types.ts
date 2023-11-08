@@ -1,6 +1,26 @@
 import { RouteObject } from 'react-router-dom';
 
 
+export interface IСounter {
+  countError: number
+  countWarning: number
+}
+export interface IExaminationLite {
+  status: string
+  massage: string
+  isError: boolean
+}
+
+export interface IMassage {
+  status: string
+  massage: string
+}
+
+export interface ICollectionError {
+  error: IMassage[]
+  warning: IMassage[]
+}
+
 export interface UserInterface {
   id: number
   email: string
@@ -441,7 +461,7 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
-  export interface IEditorContext {
-    code: string
-    skill: string
-  }
+export interface IEditorContext {
+  code: string
+  skill: string
+}

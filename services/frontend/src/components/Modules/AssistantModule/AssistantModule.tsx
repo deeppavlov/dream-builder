@@ -3,11 +3,12 @@ import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
-import { TDistVisibility } from 'types/types'
+import { Tooltip } from 'react-tooltip'
+import { IExaminationLite, TDistVisibility } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
-import { useAssistants, useDeploy } from 'hooks/api'
+import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
@@ -15,11 +16,13 @@ import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
+import { examinationMassage } from 'utils/checkingAssistants'
 import { AssistantSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Container, Details, SmallTag, Wrapper } from 'components/UI'
 
 export const AssistantModule = () => {
+  const { getAllComponents } = useComponent()
   const { name } = useParams()
   const { isPreview } = usePreview()
   const navigate = useNavigate()
@@ -147,6 +150,14 @@ export const AssistantModule = () => {
     bot && vaArchitectureOpened(bot)
   }, [bot])
 
+  const components = getAllComponents(bot?.name || '', {
+    refetchOnMount: true,
+  })
+
+  const resultExamination = examinationMassage(components)
+
+  const { status, massage, isError }: IExaminationLite = resultExamination
+
   return (
     <>
       <Wrapper
@@ -167,39 +178,53 @@ export const AssistantModule = () => {
               {t('assistant_page.module.btns.duplicate')}
             </Button>
             {!isPreview && (
-              <Button
-                loader={isDeploying}
-                theme={!error ? 'purple' : 'error'}
-                props={{
-                  onClick: handleBuild,
-                  disabled: deleteDeployment?.isLoading || deploy?.isLoading,
-                }}
+              <div
+                data-tooltip-id={`tooltip`}
+                data-tooltip-content={massage}
+                data-tooltip-variant={status}
+                data-tooltip-place='bottom'
               >
-                {!bot?.deployment && (
-                  <>
-                    <SvgIcon iconName='start' />
-                    {t('assistant_page.module.btns.build')}
-                  </>
-                )}
-                {isDeploying && (
-                  <>
-                    <SvgIcon iconName='start' />
-                    {t('assistant_page.module.btns.build')}
-                  </>
-                )}
-                {isDeployed && (
-                  <>
-                    <SvgIcon iconName='stop' />
-                    {t('assistant_page.module.btns.stop')}
-                  </>
-                )}
-                {error && (
-                  <>
-                    <SvgIcon iconName='restart' />
-                    {t('assistant_page.module.btns.restart')}
-                  </>
-                )}
-              </Button>
+                <Tooltip
+                  style={{ zIndex: 1, opacity: 1 }}
+                  id={`tooltip`}
+                />
+                <Button
+                  loader={isDeploying}
+                  theme={!error ? 'purple' : 'error'}
+                  props={{
+                    onClick: handleBuild,
+                    disabled:
+                      deleteDeployment?.isLoading ||
+                      deploy?.isLoading ||
+                      isError,
+                  }}
+                >
+                  {!bot?.deployment && (
+                    <>
+                      <SvgIcon iconName='start' />
+                      {t('assistant_page.module.btns.build')}
+                    </>
+                  )}
+                  {isDeploying && (
+                    <>
+                      <SvgIcon iconName='start' />
+                      {t('assistant_page.module.btns.build')}
+                    </>
+                  )}
+                  {isDeployed && (
+                    <>
+                      <SvgIcon iconName='stop' />
+                      {t('assistant_page.module.btns.stop')}
+                    </>
+                  )}
+                  {error && (
+                    <>
+                      <SvgIcon iconName='restart' />
+                      {t('assistant_page.module.btns.restart')}
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
           </Container>
         }

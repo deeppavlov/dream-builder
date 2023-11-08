@@ -10,7 +10,7 @@ export const useGaDeepy = () => {
 
   const deepyChatOpened = () => {
     ga4.event('Deepy_Chat_Opened', {
-      source_type: 'va_templates_block',
+      source_type: 'left_panel',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })
@@ -23,7 +23,7 @@ export const useGaDeepy = () => {
       chatHistoryLength > 2 ? 'Deepy_Chat_Send' : 'Deepy_Chat_Start'
 
     ga4.event(eventName, {
-      source_type: 'va_templates_block',
+      source_type: 'left_panel',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })
@@ -31,7 +31,7 @@ export const useGaDeepy = () => {
 
   const deepyChatRefresh = () => {
     ga4.event('Deepy_Chat_Refresh', {
-      source_type: 'va_templates_block',
+      source_type: 'left_panel',
       page_type: getPageType(pathname, isPreview, skillId),
       event_type: 'Deepy',
     })

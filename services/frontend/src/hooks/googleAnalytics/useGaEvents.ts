@@ -19,7 +19,7 @@ export const useGaEvents = () => {
   const vaIntegrationsOpened = () => {
     !pathname.includes('integration') &&
       ga4.event('VA_Integrations_Opened', {
-        source: 'va_left_panel',
+        source_type: 'va_left_panel',
         page_type: 'va_skillset_page',
         event_type: 'Integrations',
       })
@@ -30,7 +30,7 @@ export const useGaEvents = () => {
     const old_language = new_language === 'ru' ? 'en' : 'ru'
 
     ga4.event('Language_Changed', {
-      source: 'profile_settings',
+      source_type: 'profile_settings',
       page_type,
       old_language,
       new_language,

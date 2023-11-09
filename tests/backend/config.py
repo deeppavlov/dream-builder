@@ -110,6 +110,17 @@ def create_counter(title: str):
     return func
 
 
+def empty_counter():
+    i = 0
+
+    def func():
+        nonlocal i
+        i += 1
+        return f"{i}"
+
+    return func
+
+
 counter_auth = create_counter("TestAuth")
 counter_distributions = create_counter("TestDistributions")
 counter_db = create_counter("TestDB")

@@ -5,8 +5,20 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class DialogPanel(BasePage):
+    def check_is_dialog_panel_loaded(self):
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(DialogPanelLocators.CLOSE_BUTTON))
+
+    def check_is_dialog_panel_closed(self):
+        WebDriverWait(self.browser, 1).until(
+            EC.presence_of_element_located(DialogPanelLocators.WHOLE_DIALOG_PANEL)
+        )
+
     def click_build_assistant(self):
         button = self.browser.find_element(*DialogPanelLocators.BUILD_ASSISTANT)
+        button.click()
+
+    def click_close_button(self):
+        button = self.browser.find_element(*DialogPanelLocators.CLOSE_BUTTON)
         button.click()
 
     def click_restart_button(self):
@@ -64,3 +76,11 @@ class DialogPanel(BasePage):
             or "sales" in assistant_message
             or "Sales" in assistant_message
         ), f"assistant_message.text is: {assistant_message}"
+
+    def check_token_error_message(self):
+        error = self.browser.find_element(*DialogPanelLocators.ERROR_TOKEN_MESSAGE)
+
+    def click_enter_token_button(self):
+        error = self.browser.find_element(*DialogPanelLocators.ENTER_TOKEN_BUTTON)
+
+

@@ -702,12 +702,13 @@ class UserMethods:
             },
             json={
                 "text": "Hello! What is your name?",
+                "openai_api_key": openai_token
             },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
+            f"Dummy skill answers, {response.json()['text']}"
         )
 
     def send_dialog_session_message_no_access(self, dialog_session_id):

@@ -17,7 +17,7 @@ class TestDistributions:
 
     # ASSISTANTS_DISTS
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.regression
     @qase.title(f"{counter()}. test_create_ru_assistant")
@@ -350,7 +350,7 @@ class TestDistributions:
     #    user.send_dialog_session_message(dialog_session_id)
     #    user.get_dialog_session_history(dialog_session_id)
 
-    # @pytest.mark.atom
+    @pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])

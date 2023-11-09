@@ -2,7 +2,6 @@ import pytest
 from qaseio.pytest import qase
 import time
 from tests.frontend.pages.all_ga_page import AllGAPage
-from tests.frontend.pages.google_auth_page import GoogleAuthPage
 from tests.frontend.pages.github_auth_page import GithubAuthPage
 from tests.frontend.pages.dialog_panel import DialogPanel
 from tests.frontend.pages.deepy_panel import DeepyPanel

@@ -1,17 +1,27 @@
+import time
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from .base_page import BasePage
 from tests.frontend.locators.locators import SkillEditorPageLocators
-from tests.frontend.config import lm_service_en_list, lm_service_ru_list, default_prompt_ru, default_prompt_en, \
-    description_1001_symbol, gigant_prompt
+from tests.frontend.config import lm_service_en_list, lm_service_ru_list, default_prompt_ru, default_prompt_en
 
 
 class SkillEditorPage(BasePage):
     def open_models_dropdown(self):
         button = self.browser.find_element(*SkillEditorPageLocators.OPEN_MODELS_DROPDOWN)
         button.click()
+
+    def check_dropdown_opened(self):
+        time.sleep(1)
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(SkillEditorPageLocators.DROPDOWN_IS_OPEN))
+
+    def check_dropdown_closed(self):
+        WebDriverWait(self.browser, 1).until(
+            EC.presence_of_element_located(SkillEditorPageLocators.WHOLE_MODELS_DROPDOWN)
+        )
 
     def choose_generative_model(self):
         button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
@@ -83,6 +93,11 @@ class SkillEditorPage(BasePage):
 
     def check_error_message_field_cant_be_empty(self):
         error = self.browser.find_element(*SkillEditorPageLocators.ERROR_MESSAGE_FIELD_CANT_BE_EMPTY)
+
+    def check_error_message_field_cant_be_empty_disappear(self):
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located(SkillEditorPageLocators.ERROR_MESSAGE_FIELD_CANT_BE_EMPTY)
+        )
 
     def click_save_button(self):
         button = self.browser.find_element(*SkillEditorPageLocators.SAVE_BUTTON)

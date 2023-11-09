@@ -18,7 +18,7 @@ def pytest_addoption(parser):
 def set_options(options):
     options.add_argument("--lang=en-GB")
     # options.add_argument("--lang=ru")
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
     options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_argument(
     #    "--user-agent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -66,6 +66,7 @@ def browser(request):
 def screen_size(request, browser):
     window_size = tuple(request.param[0].split(","))
     browser.set_window_size(*window_size)
+    return window_size
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

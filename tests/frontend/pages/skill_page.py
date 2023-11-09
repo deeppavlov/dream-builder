@@ -24,7 +24,6 @@ class SkillPage(BasePage):
                 .click()
         )
 
-
     def click_create_skill_from_scratch_button(self):
         button = self.browser.find_element(*SkillPageLocators.CREATE_FROM_SCRATCH_BUTTON)
         button.click()
@@ -170,3 +169,39 @@ class SkillPage(BasePage):
     def click_change_view(self):
         button = self.browser.find_element(*SkillPageLocators.CHANGE_VIEW_BUTTON)
         button.click()
+
+    # INTEGRATION TAB
+
+    def switch_to_integration_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.INTEGRATION_TAB)
+        button.click()
+
+    def switch_to_skills_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.SKILLS_TAB)
+        button.click()
+
+    def switch_to_web_chat_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.WEB_CHAT_TAB)
+        button.click()
+
+    def switch_to_api_call_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.API_CALL_TAB)
+        button.click()
+
+    def switch_to_curl_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.CURL_TAB)
+        button.click()
+
+    def switch_to_nodejs_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.NODE_JS_TAB)
+        button.click()
+
+    def switch_to_python_tab(self):
+        button = self.browser.find_element(*SkillPageLocators.PYTHON_TAB)
+        button.click()
+
+    def click_copy_code_button(self):
+        button = self.browser.find_element(*SkillPageLocators.COPY_CODE)
+        button.click()
+
+

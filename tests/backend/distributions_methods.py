@@ -702,12 +702,13 @@ class UserMethods:
             },
             json={
                 "text": "Hello! What is your name?",
+                "openai_api_key": openai_token
             },
         )
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
+            f"Dummy skill answers, {response.json()['text']}"
         )
 
     def send_dialog_session_message_no_access(self, dialog_session_id):
@@ -1005,6 +1006,58 @@ class UserMethods:
         )
         assert_status_code(response, 200)
 
+    # NON ACCESS TO ADMIN METHODS
+
+    def get_all_publish_requests_no_access(self):
+        response = requests.get(
+            url=admin_endpoint,
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def get_unreviewed_publish_requests_no_access(self):
+        response = requests.get(
+            url=admin_endpoint + "/unreviewed",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def confirm_publish_request_no_access(self, publish_request_id):
+        response = requests.post(
+            url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def decline_publish_request_no_access(self, publish_request_id):
+        response = requests.post(
+            url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
 
 class AdminMethods:
     def __init__(self, auth_token="token", auth_type="github"):
@@ -1040,18 +1093,6 @@ class AdminMethods:
             assert_validation(publish_request, models.PublishRequestRead)
         return response.json()
 
-    def get_all_publish_requests_no_access(self):
-        response = requests.get(
-            url=admin_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def get_unreviewed_publish_requests(self):
         response = requests.get(
             url=admin_endpoint + "/unreviewed",
@@ -1066,18 +1107,6 @@ class AdminMethods:
             assert_validation(publish_request, models.PublishRequestRead)
         return response.json()
 
-    def get_unreviewed_publish_requests_no_access(self):
-        response = requests.get(
-            url=admin_endpoint + "/unreviewed",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def confirm_publish_request(self, publish_request_id):
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
@@ -1091,19 +1120,6 @@ class AdminMethods:
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
 
-    def confirm_publish_request_no_access(self, publish_request_id):
-        response = requests.post(
-            url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-                "content-type": "application/x-www-form-urlencoded",
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def decline_publish_request(self, publish_request_id):
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
@@ -1116,16 +1132,3 @@ class AdminMethods:
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
-
-    def decline_publish_request_no_access(self, publish_request_id):
-        response = requests.post(
-            url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-                "content-type": "application/x-www-form-urlencoded",
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)

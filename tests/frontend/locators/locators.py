@@ -11,17 +11,19 @@ class BasePageLocators:
 
     # MAIN MENU
     MAIN_MENU_BUTTON = (By.XPATH, "//div[contains(@class,'_menu')]")
-    ABOUT_BUTTON = (By.XPATH, "//a[contains(text(),'About')]/..")
-    WELCOME_GUIDE_BUTTON = (By.XPATH, "//span[contains(text(),'Welcome guide')]/..")
-    RENAME_BUTTON = (By.XPATH, "//span[contains(text(),'Rename')]/..")
-    ADD_SKILLS_BUTTON = (By.XPATH, "//span[contains(text(),'Add Skills')]/..")
-    VISIBILITY_BUTTON = (By.XPATH, "//span[contains(text(),'Visibility')]/..")
-    SHARE_BUTTON = (By.XPATH, "//span[contains(text(),'Share')]/..")
-    DELETE_BUTTON = (By.XPATH, "//span[contains(text(),'Delete')]")
+    MAIN_MENU_WHOLE = (By.CSS_SELECTOR, "[id='editor']")
+    MAIN_MENU_ABOUT = (By.XPATH, "//a[contains(text(),'About')]/..")
+    MAIN_MENU_WELCOME_GUIDE = (By.XPATH, "//span[contains(text(),'Welcome guide')]/..")
+    MAIN_MENU_RENAME = (By.XPATH, "//span[contains(text(),'Rename')]/..")
+    MAIN_MENU_FEEDBACK = (By.XPATH, "//a[contains(text(),'Feedback')]/..")
+    MAIN_MENU_ADD_SKILLS = (By.XPATH, "//span[contains(text(),'Add Skills')]/..")
+    MAIN_MENU_VISIBILITY = (By.XPATH, "//span[contains(text(),'Visibility')]/..")
+    MAIN_MENU_SHARE = (By.XPATH, "//span[contains(text(),'Share')]/..")
+    MAIN_MENU_DELETE = (By.XPATH, "//span[contains(text(),'Delete')]")
 
     AVATAR_BUTTON = (By.CSS_SELECTOR, "[data-tooltip-id='profile']")
-    EMAIL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_item')][1]")
-    LOGOUT_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_item')][2]")
+    PROFILE_SETTINGS_BUTTON = (By.XPATH, "//button[contains(@class,'_item')][1]")
+    LOGOUT_BUTTON = (By.XPATH, "//button[contains(@class,'_item')][2]")
 
     HOME_BUTTON = (By.CSS_SELECTOR, "button[data-tooltip-id='home']")
     BCB_PUBLIC_TEMPLATES = (By.XPATH, f"[href='/allbots']")
@@ -36,6 +38,7 @@ class BasePageLocators:
 
     SUCCESS_TOAST = (By.XPATH, "//div[contains(text(),'Success')]")
     SUBMITTED_TOAST = (By.XPATH, "//div[contains(text(),'Submitted')]")
+    COPIED_TOAST = (By.CSS_SELECTOR, "[class*='_succes']")
 
 
 class GoogleAuthPageLocators:
@@ -97,10 +100,7 @@ class AllGAPageLocators:
     CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
         By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 1000 characters']")
 
-    YOUR_EDIT_BUTTON = (
-        By.XPATH,
-        f"//div[contains(@class,'_wrapper')][2]//span[text()='{your_va_name}']/../../div[2]//button[text()='Edit']",
-    )
+    YOUR_EDIT_BUTTON = (By.XPATH, f"//button[text()='Edit']")
     YOUR_RIGHT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnR')][contains(@class,'_private')]")
     YOUR_LEFT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnL')][contains(@class,'_private')]")
 
@@ -135,6 +135,14 @@ class AllGAPageLocators:
     NO_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'No')]")
     CLOSE_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(@class,'_close')]")
 
+    UNLISTED_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='UNLISTED_LINK']")
+    PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='PUBLIC_TEMPLATE']")
+
+    CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
+                                            "[class*='_baseModal'] button[class*='_button_theme_primary']")
+    CANCEL_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
+                                          "[class*='_baseModal'] button[class*='_button_theme_secondary']")
+
     SHOW_ALL_YOUR_VA = (By.CSS_SELECTOR, "[href='/yourbots']>button")
 
     READY_TO_CHAT = (By.XPATH, f"//span[contains(text(),'{your_va_name}')]/../..//span[contains(text(),'Ready')]")
@@ -150,6 +158,9 @@ class AllGAPageLocators:
     )
 
     DEEPY_TOOLTIP = (By.XPATH, "//div[contains(text(),'Ask Deepy')]")
+
+    GOOGLE_LOGO = (By.CSS_SELECTOR, "[alt='Google']")
+    GITHUB_LOGO = (By.CSS_SELECTOR, "[alt='GitHub']")
 
 
 class SkillPageLocators:
@@ -217,9 +228,9 @@ class SkillPageLocators:
     API_CALL_TAB = (By.XPATH, "//button[text()='API Call']")
     COPY_CODE = (By.XPATH, "//button[text()='Copy Code']")
 
-    CURL_TAB = (By.CSS_SELECTOR, "//button[text()='cURL']")
-    NODE_JS_TAB = (By.CSS_SELECTOR, "//button[text()='NodeJS']")
-    PYTHON_TAB = (By.CSS_SELECTOR, "//button[text()='Python']")
+    CURL_TAB = (By.XPATH, "//button[text()='cURL']")
+    NODE_JS_TAB = (By.XPATH, "//button[text()='NodeJS']")
+    PYTHON_TAB = (By.XPATH, "//button[text()='Python']")
 
     CURL_CODE = (By.CSS_SELECTOR, ".language-bash")
     NODE_JS_CODE = (By.CSS_SELECTOR, ".language-js")
@@ -228,16 +239,10 @@ class SkillPageLocators:
 
 class SkillEditorPageLocators:
     OPEN_MODELS_DROPDOWN = (By.CSS_SELECTOR, "input[placeholder='Choose model']")
-    CHOOSE_MODEL = (By.XPATH, f"//span[contains(text(),'{generative_model}')]")
+    WHOLE_MODELS_DROPDOWN = (By.XPATH, "//ul[contains(@class, '_list')]")
+    DROPDOWN_IS_OPEN = (By.XPATH, "//div[contains(@class, 'open')]")
 
-    #ANTHROPIC_C_9K
-    #ANTHROPIC_CI_9K
-    #GPT35_4K
-    #CHATGPT_4K
-    #CHATGPT_16K
-    #GPT4_8K
-    #GPT4_32K
-    #GPT_JT6B_2K
+    CHOOSE_MODEL = (By.XPATH, f"//span[contains(text(),'{generative_model}')]")
 
     ALL_MODELS = (By.XPATH, f"//li[contains(@class,'_item')]")
     ENTER_TOKEN_HERE = (By.XPATH, "//button[contains(text(),'Enter your')]")
@@ -271,8 +276,8 @@ class ProfilePageLocators:
     CHANGE_LANGUAGE = (By.XPATH, "//button[text()='Change language']")
     RADIOBUTTON_ENGLISH = (By.CSS_SELECTOR, "input[id='English']")
     RADIOBUTTON_RUSSIAN = (By.CSS_SELECTOR, "input[id='Russian']")
-    SAVE_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_footer')]/button[contains(@class,'primary')]")
-    CANCEL_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_footer')]/button[contains(@class,'secondary')]")
+    SAVE_BUTTON = (By.XPATH, "//div[contains(@class,'_footer')]/button[contains(@class,'primary')]")
+    CANCEL_BUTTON = (By.XPATH, "//div[contains(@class,'_footer')]/button[contains(@class,'secondary')]")
 
     TOKEN_TEXTAREA = (By.CSS_SELECTOR, "input[name='token']")
     CHOOSE_TOKEN_SERVICES_DROPDOWN = (By.CSS_SELECTOR, "input[name='service']")
@@ -292,14 +297,23 @@ class MessengerPageLocators:
     SAY_HI_BUTTON = (By.XPATH, "//button[text()='Say Hi!']")
     MESSAGE_TEXTAREA = (By.CSS_SELECTOR, "div textarea")
     BOT_MESSAGE = (By.XPATH, "//span[contains(@class,'_botMessage')]")
+    BOT_MESSAGE_CONTAINER = (By.CSS_SELECTOR, "[class*='_botContainer']")
     USER_MESSAGE = (By.XPATH, "//span[contains(@class,'_message')]")
     SEND_BUTTON = (By.CSS_SELECTOR, "[type='submit']")
     REFRESH_BUTTON = (By.CSS_SELECTOR, "[data-tooltip-id='renew']")
 
-    TOKEN_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_btns')]/button[1]")
-    PROPERTIES_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_btns')]/button[3]")
-    SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[2]")
+    TOKEN_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[1]")
 
+    PROPERTIES_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[3]")
+    PROPERTIES_PANEL_CLOSE_BUTTON = (By.CSS_SELECTOR, "[id='base_sp_close_btn']")
+    PROPERTIES_PANEL_WHOLE = (By.CSS_SELECTOR, "[data-modal-type='side-panel']")
+    PROPERTIES_PANEL_OPEN_DREAM_BUILDER_BUTTON = (By.CSS_SELECTOR, "[class*='_button_theme_primary'][type='button']")
+
+    MAIN_MENU_BUTTON = (By.XPATH, "//div[contains(@class,'_menu')]")
+    MAIN_MENU_WHOLE = (By.CSS_SELECTOR, "[id='main']")
+
+    SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_btns')]/button[2]")
+    CLOSE_SHARE_MW = (By.CSS_SELECTOR, "button svg[class*='_close']")
     SHARE_TO_TELEGRAM_BUTTON = (By.CSS_SELECTOR, "button[aria-label='telegram']")
     SHARE_TO_TWITTER_BUTTON = (By.CSS_SELECTOR, "button[aria-label='twitter']")
     EMBED_BUTTON = (By.XPATH, "//button[text()='Embed']")
@@ -333,6 +347,13 @@ class DialogPanelLocators:
 
     RESTART_DIALOG_BUTTON = (By.XPATH, "//div[@id='sp_right']//button[contains(@class,'secondary')] ")
     CLOSE_BUTTON = (By.XPATH, "//div[@id='sp_right']//button[contains(@class,'_close')] ")
+
+    WHOLE_DIALOG_PANEL = (By.CSS_SELECTOR, "[id='assistantDialogPanel']")
+
+    ERROR_TOKEN_MESSAGE = (By.XPATH, "//p[contains(text(),"
+                                     "'Enter your personal access token for OpenAI to talk to this AI Assistant')]")
+    ENTER_TOKEN_BUTTON = (By.XPATH, "//button[contains(text(),'Enter token')]")
+
 
 
 class DeepyLocators:

@@ -6,14 +6,14 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from .base_page import BasePage
 from tests.frontend.locators.locators import AllGAPageLocators
-from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name, \
-    description_1001_symbol
+from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name
 
 
 class AllGAPage(BasePage):
-    def is_public_template_loaded(self):
+    def check_is_public_template_loaded(self):
         WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD))
 
     # PUBLIC ASSISTANTS
@@ -113,10 +113,12 @@ class AllGAPage(BasePage):
     def change_visibility_to_unlisted(self):
         button = self.browser.find_element(*AllGAPageLocators.UNLISTED_VISIBILITY_MW)
         button.click()
+        ActionChains(self.browser).move_to_element(button).perform()
 
     def change_visibility_to_public_template(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_TEMPLATE_VISIBILITY_MW)
         button.click()
+        ActionChains(self.browser).move_to_element(button).perform()
 
     def save_visibility(self):
         button = self.browser.find_element(*AllGAPageLocators.SAVE_BUTTON_VISIBILITY_MW)
@@ -125,6 +127,24 @@ class AllGAPage(BasePage):
     def publish_visibility(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLISH_BUTTON_VISIBILITY_MW)
         button.click()
+
+    def click_continue_publish_visibility(self):
+        button = self.browser.find_element(*AllGAPageLocators.CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW)
+        button.click()
+
+    def click_cancel_publish_visibility(self):
+        button = self.browser.find_element(*AllGAPageLocators.CANCEL_BUTTON_IMPORTANT_PUBLISH_MW)
+        button.click()
+
+    def check_unlisted_visibility_tooltip(self):
+        time.sleep(1)
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
+            AllGAPageLocators.UNLISTED_TOOLTIP_VISIBILITY_MW))
+
+    def check_public_template_visibility_tooltip(self):
+        time.sleep(1)
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
+            AllGAPageLocators.PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW))
 
     def click_kebab_your_a_rename(self):
         button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_RENAME)
@@ -214,4 +234,12 @@ class AllGAPage(BasePage):
     def check_deepy_tooltip(self):
         edit_button = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located(AllGAPageLocators.DEEPY_TOOLTIP)
+        )
+
+    def check_google_github_logo(self):
+        WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(AllGAPageLocators.GOOGLE_LOGO)
+        )
+        WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(AllGAPageLocators.GITHUB_LOGO)
         )

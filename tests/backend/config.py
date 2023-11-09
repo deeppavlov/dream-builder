@@ -59,6 +59,17 @@ public_va_names_en = [
     "deepy_assistant",
 ]
 
+public_va_names_visible_en = [
+    "ai_faq_assistant",
+    "fairytale_assistant",
+    "fashion_stylist_assistant",
+    "life_coaching_assistant",
+    "marketing_assistant",
+    "nutrition_assistant",
+    "multiskill_ai_assistant",
+    "dream_persona_openai_prompted",
+]
+
 public_va_names_ru = [
     "dream_persona_ruxglm_prompted",
     "fairytale_ru_assistant",
@@ -95,6 +106,17 @@ def create_counter(title: str):
         nonlocal i
         i += 1
         return f"{title}: {i}"
+
+    return func
+
+
+def empty_counter():
+    i = 0
+
+    def func():
+        nonlocal i
+        i += 1
+        return f"{i}"
 
     return func
 

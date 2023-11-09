@@ -20,7 +20,12 @@ class TestAuth:
     @qase.title(f"{counter()}. test_auth_valid_token")
     def test_auth_valid_token(self):
         response = requests.get(
-            url=auth_endpoint + "/token", headers={"token": test_token_github1, "accept": "application/json"}
+            url=auth_endpoint + "/token",
+            headers={
+                "token": test_token_github1,
+                "accept": "application/json",
+                'auth-type': "github"
+            }
         )
         assert response.status_code == 200, response.json()
 

@@ -181,9 +181,9 @@
       "header": "Change who can see your Assistant?",
       "subheader": "This action can’t be undone.",
       "radio_btns": {
-        "private": "Private (only you can see it)",
-        "unlisted": "Unlisted (only those you’ve shared the direct link can see it)",
-        "public": "Public Template (everyone can see it and re-use it)"
+        "private": "Only me",
+        "unlisted": "Only a people with a link",
+        "public": "Public"
       },
       "tooltips": {
         "public": "Everyone can clone and talk to your VA",

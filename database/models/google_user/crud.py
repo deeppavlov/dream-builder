@@ -49,6 +49,9 @@ def get_by_role(db: Session, role_id: int) -> [GoogleUser]:
 
 
 def update_by_id(db: Session, user_id: int, **kwargs) -> GoogleUser:
+    if name := kwargs.get("name"):
+        kwargs["fullname"] = name
+
     kwargs = {k: v for k, v in kwargs.items() if k in GoogleUser.__table__.columns.keys()}
 
     user = db.scalar(update(GoogleUser).filter_by(user_id=user_id).values(**kwargs).returning(GoogleUser))

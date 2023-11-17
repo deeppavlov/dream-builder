@@ -2,7 +2,10 @@ import store from 'store2'
 import { SessionConfig } from 'types/types'
 
 export const getAvailableDialogSession = (
-  assistantName: string
+  assistantName: string,
+  userId?: number
 ): SessionConfig => {
-  return store(assistantName + '_session')
+  return userId
+    ? store(`${assistantName}_session_${userId}`)
+    : store(`${assistantName}_session`)
 }

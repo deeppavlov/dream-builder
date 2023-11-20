@@ -229,7 +229,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // get existing dialog session || create new
   useEffect(() => {
     const availableSession =
-      readyToGetSession && getAvailableDialogSession(bot?.name)
+      readyToGetSession && getAvailableDialogSession(bot?.name, user?.id)
 
     availableSession
       ? remoteHistory

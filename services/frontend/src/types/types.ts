@@ -1,5 +1,4 @@
-import { RouteObject } from 'react-router-dom';
-
+import { RouteObject } from 'react-router-dom'
 
 export interface IСounter {
   countError: number
@@ -19,6 +18,7 @@ export interface IMassage {
 export interface ICollectionError {
   error: IMassage[]
   warning: IMassage[]
+  [key: string]: IMassage[]
 }
 
 export interface UserInterface {

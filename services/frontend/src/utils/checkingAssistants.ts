@@ -1,5 +1,6 @@
-import { UseQueryResult } from 'react-query'
-import { ICollectionError, ISkill, TComponents } from 'types/types'
+import { UseQueryResult } from 'react-query';
+import { ICollectionError, ISkill, TComponents } from 'types/types';
+
 
 const InputError = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
@@ -11,7 +12,7 @@ const InputError = (skill: ISkill, acc: ICollectionError) => {
   if (result) {
     const newError = {
       status: 'error',
-      massage: 'Не допустимая значение [YOUR INPUT]',
+      massage: 'Не допустимое значение [YOUR INPUT]',
     }
     acc.error = [...acc.error, newError]
   }
@@ -48,6 +49,85 @@ const lengthPrompt = (skill: ISkill, acc: ICollectionError) => {
   }
 }
 
+const test1 = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined) {
+    return
+  }
+
+  const result = true
+  if (result) {
+    const newError = {
+      status: 'error',
+      massage: 'тестовая ошибка 1',
+    }
+    acc.error = [...acc.error, newError]
+  }
+}
+
+const test2 = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined) {
+    return
+  }
+
+  const result = true
+  if (result) {
+    const newError = {
+      status: 'error',
+      massage: 'тестовая ошибка 2',
+    }
+    acc.error = [...acc.error, newError]
+  }
+}
+
+const test3 = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined) {
+    return
+  }
+
+  const result = true
+  if (result) {
+    const newWarning = {
+      status: 'warning',
+      massage: 'тестовая ошибка 3',
+    }
+    acc.warning = [...acc.warning, newWarning]
+  }
+}
+
+const test4 = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined) {
+    return
+  }
+
+  const result = true
+  if (result) {
+    const newError = {
+      status: 'error',
+      massage:
+        'Очень длинная критическая ошибка которая описывает ошибку скила и как ее исправить что бы было правильно.',
+    }
+    acc.error = [...acc.error, newError]
+  }
+}
+
+
+const test5 = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined) {
+    return
+  }
+
+  const result = true
+  if (result) {
+    const newWarning = {
+      status: 'warning',
+      massage:
+        'Очень длинное предупреждение о том что ваш скилл может работать не корректно, и то как это можно поправить. ',
+    }
+    acc.warning = [...acc.warning, newWarning]
+  }
+}
+
+
 export const examination = (data: ISkill) => {
   const acc = {
     error: [],
@@ -57,6 +137,11 @@ export const examination = (data: ISkill) => {
   InputError(data, acc)
   languageWarning(data, acc)
   lengthPrompt(data, acc)
+  test1(data, acc)
+  test2(data, acc)
+  test3(data, acc)
+  test4(data, acc)
+  test5(data, acc)
   return acc
 }
 

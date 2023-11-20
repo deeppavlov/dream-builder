@@ -12,11 +12,11 @@ import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
+import { examinationMassage } from 'utils/checkingAssistants'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
-import { examinationMassage } from 'utils/checkingAssistants'
 import { AssistantSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Container, Details, SmallTag, Wrapper } from 'components/UI'
@@ -156,8 +156,6 @@ export const AssistantModule = () => {
 
   const resultExamination = examinationMassage(components)
 
-  const { status, massage, isError }: IExaminationLite = resultExamination
-
   return (
     <>
       <Wrapper
@@ -180,14 +178,11 @@ export const AssistantModule = () => {
             {!isPreview && (
               <div
                 data-tooltip-id={`tooltip`}
-                data-tooltip-content={massage}
-                data-tooltip-variant={status}
+                data-tooltip-content={resultExamination.massage}
+                data-tooltip-variant={resultExamination.status}
                 data-tooltip-place='bottom'
               >
-                <Tooltip
-                  style={{ zIndex: 1, opacity: 1 }}
-                  id={`tooltip`}
-                />
+                <Tooltip style={{ zIndex: 1, opacity: 1 }} id={`tooltip`} />
                 <Button
                   loader={isDeploying}
                   theme={!error ? 'purple' : 'error'}
@@ -196,7 +191,7 @@ export const AssistantModule = () => {
                     disabled:
                       deleteDeployment?.isLoading ||
                       deploy?.isLoading ||
-                      isError,
+                      resultExamination.isError,
                   }}
                 >
                   {!bot?.deployment && (

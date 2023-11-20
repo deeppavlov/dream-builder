@@ -1,0 +1,47 @@
+.icon {
+  position: relative;
+  cursor: pointer;
+  width: $sidebar-width;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  img {
+    height: 36px;
+    width: 36px;
+  }
+  &:hover {
+    @extend .active;
+  }
+}
+
+.active {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    background-color: $yellow;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  &:hover {
+    &::before {
+      background-color: $text5;
+    }
+  }
+}
+
+.countError {
+  position: absolute;
+  top: -3px;
+  border-radius: 7px;
+  left: 45px;
+  width: max-content;
+  padding: 1px;
+  font-size: 11px;
+  min-width: 15px;
+  background: red;
+}

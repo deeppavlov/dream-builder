@@ -1,7 +1,12 @@
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
-import { Dispatch, useEffect, useRef, useState, SetStateAction } from 'react'
-import { Control, RegisterOptions, UseFormTrigger, useController } from 'react-hook-form'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import {
+  Control,
+  RegisterOptions,
+  UseFormTrigger,
+  useController,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg'
 import { IEditorContext, LanguageModel } from 'types/types'
@@ -9,7 +14,6 @@ import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import getTokensLength from 'utils/getTokensLength'
 import { TextEditor } from '../TextEditor/TextEditor'
 import s from './PromptEditor.module.scss'
-
 
 interface IProps {
   name: string
@@ -111,6 +115,7 @@ export const PromptEditor = ({
     ['many', t('tokenizer.count_suffixes.many')],
     ['other', t('tokenizer.count_suffixes.other')],
   ])
+
   let cx = classNames.bind(s)
   const { skillPromptEdited } = useGaSkills()
 
@@ -134,6 +139,7 @@ export const PromptEditor = ({
       setLength(0)
       setIsCounting(false)
     }
+    setEditorContext({ ...editorContext, code: field.value })
   }, [field.value])
 
   useEffect(() => {

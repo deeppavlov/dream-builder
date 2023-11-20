@@ -16,6 +16,7 @@ export const useGaDeepy = () => {
     })
   }
 
+
   const deepyChatSend = (chatHistoryLength: number) => {
     if (!chatHistoryLength) return
 

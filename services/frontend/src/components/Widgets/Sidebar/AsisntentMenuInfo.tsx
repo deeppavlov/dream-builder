@@ -1,20 +1,21 @@
-import { ReactComponent as Information } from '@assets/icons/information.svg'
-import classNames from 'classnames/bind'
-import { useUIOptions } from 'context'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { BotInfoInterface, ISkill } from 'types/types'
-import { TOOLTIP_DELAY } from 'constants/constants'
-import { useAssistants, useComponent } from 'hooks/api'
-import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
-import { examination } from 'utils/checkingAssistants'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { BaseToolTip } from 'components/Menus'
-import { WarningsInfo } from 'components/Panels'
-import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Hint } from 'components/UI'
-import s from './AsisntentMenuInfo.module.scss'
+import { ReactComponent as Information } from '@assets/icons/information.svg';
+import classNames from 'classnames/bind';
+import { useUIOptions } from 'context';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BotInfoInterface, ISkill } from 'types/types';
+import { TOOLTIP_DELAY } from 'constants/constants';
+import { useAssistants, useComponent } from 'hooks/api';
+import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy';
+import { examination } from 'utils/checkingAssistants';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import { BaseToolTip } from 'components/Menus';
+import { WarningsInfo } from 'components/Panels';
+import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel';
+import { Hint } from 'components/UI';
+import s from './AsisntentMenuInfo.module.scss';
+
 
 export const HELPER_TAB_ID = 'helperTabError'
 
@@ -44,23 +45,22 @@ export const AsisntentMenuInfo = () => {
     localStorage.setItem(`${HELPER_TAB_ID}_IS_VISITED`, JSON.stringify(true))
   }
 
-  // useEffect(() => {
-  //   const initState = privateDists?.data?.sort(
-  //     (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
-  //   )
-  //   const data = initState?.map((el: BotInfoInterface) => {
-  //     const components = getAllComponents(el.name || '')
-  //     const result = components.data?.skills
-  //       ?.filter(el => el.name !== 'dummy_skill')
-  //       .map((el: ISkill) => {
-  //         const resultExamination = examination(el)
-  //         return { name: el.display_name, data: resultExamination, skill: el }
-  //       })
-  //     return { name: el.display_name, skill: result, bot: el }
-  //   })
 
-  //   console.log(data)
-  // }, [])
+    const initState = privateDists?.data?.sort(
+      (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
+    )
+    const data = initState?.map((el: BotInfoInterface) => {
+      const components = getAllComponents(el.name || '') //   На этом этапе он  ругается.  Можно запустить с задержкой  он  отрисует, но будет ругаться на  порядок вызовов хуков.
+      const result = components.data?.skills
+        ?.filter(el => el.name !== 'dummy_skill')
+        .map((el: ISkill) => {
+          const resultExamination = examination(el)
+          return { name: el.display_name, data: resultExamination, skill: el }
+        })
+      return { name: el.display_name, skill: result, bot: el }
+    })
+
+    console.log(data)
 
   return (
     <button

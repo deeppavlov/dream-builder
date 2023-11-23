@@ -61,15 +61,15 @@
         padding-bottom: 8px;
         align-items: center;
 
-        &::before {
-          content: '';
-          background-color: rebeccapurple;
-          width: 10px;
-          height: 2px;
-          display: block;
-          right: 1px;
-          position: relative;
-        }
+        // &::before {
+        //   content: '';
+        //   background-color: rebeccapurple;
+        //   width: 10px;
+        //   height: 2px;
+        //   display: block;
+        //   right: 1px;
+        //   position: relative;
+        // }
 
         &:hover {
           cursor: pointer;
@@ -81,37 +81,67 @@
   }
 }
 
-.errorContend {
-  border-radius: 6px;
-  padding: 8px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-
-  &::before {
-    content: '';
-    background-color: rebeccapurple;
-    width: 10px;
-    height: 2px;
-    display: block;
-    right: 8px;
-    position: relative;
-  }
-  .hederError {
+.skillBlock {
+  .errorContend {
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin-bottom: 12px;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
+    align-items: stretch;
 
-    // &::before {
-    //   content: '';
-    //   background-color: rebeccapurple;
-    //   width: 10px;
-    //   height: 2px;
-    //   display: block;
-    //   right: 8px;
-    //   position: relative;
+    .Vline {
+      background-color: rebeccapurple;
+      width: 2px;
+      left: -5px;
+      position: relative;
+    }
+
+    .cluster {
+      display: flex;
+      align-items: center;
+
+      &::after {
+        content: '';
+        width: 10px;
+        left: -5px;
+        height: 2px;
+        display: block;
+        position: relative;
+        background: rebeccapurple;
+      }
+    }
+
+    // &:first-of-type {
+    //   border: 2px solid orange;
     // }
+
+    &::before {
+      content: '';
+      background-color: rebeccapurple;
+      width: 2px;
+      height: 20px;
+      display: block;
+      right: 3px;
+      top: -20px;
+      position: relative;
+    }
+    .hederError {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+    }
+    &:last-of-type {
+      .Vline {
+        transform: translate(0%, -48%);
+      }
+    }
+  }
+}
+
+.first {
+  &::before {
+    height: 0px !important;
   }
 }
 
@@ -162,5 +192,3 @@
   padding-left: 24px;
   padding-right: 36px;
 }
-
-

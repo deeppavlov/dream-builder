@@ -5,6 +5,7 @@ import { prepare } from 'mocks/prepare'
 import ReactDOM from 'react-dom/client'
 import ReactGA from 'react-ga4'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { RouterProvider } from 'react-router-dom'
 import { router } from 'router/Router'
 import './i18n'
@@ -31,6 +32,7 @@ prepare().then(() => {
               <App>
                 <RouterProvider router={router} />
               </App>
+              <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>
           </PreviewProvider>
         </UIOptionsProvider>

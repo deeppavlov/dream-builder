@@ -134,7 +134,7 @@ export const AssistantCard: FC<BotCardProps> = ({
     },
   })
 
-  const renderStatusToolTip = () => {
+  const RenderStatusToolTip = () => {
     if (type === 'your') {
       const components = getAllComponents(bot.name || '', {
         refetchOnMount: true,
@@ -173,7 +173,7 @@ export const AssistantCard: FC<BotCardProps> = ({
               <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
                 {publishState}
               </SmallTag>
-              {renderStatusToolTip()}
+              {<RenderStatusToolTip />}
             </div>
             <div className={s.lng}>{bot.language?.value}</div>
           </div>

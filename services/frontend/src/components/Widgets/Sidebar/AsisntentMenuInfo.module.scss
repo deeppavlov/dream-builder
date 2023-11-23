@@ -34,14 +34,33 @@
   }
 }
 
-.countError {
-  position: absolute;
-  top: -3px;
-  border-radius: 7px;
-  left: 45px;
-  width: max-content;
-  padding: 1px;
-  font-size: 11px;
-  min-width: 15px;
-  background: red;
+.iconError {
+  width: 24px;
+  height: 24px;
+  .count {
+    position: absolute;
+    top: -3px;
+    border-radius: 7px;
+    left: 45px;
+    width: max-content;
+    padding: 1px;
+    font-size: 11px;
+    min-width: 15px;
+
+    &.error {
+      background: #ff3333;
+    }
+
+    &.warning {
+      background: #ff9500;
+    }
+  }
+
+  &:hover {
+    svg {
+      g {
+        stroke: #3300ff;
+      }
+    }
+  }
 }

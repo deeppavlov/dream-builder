@@ -62,31 +62,6 @@ const WarningsInfo = () => {
     return () => dispatchTrigger(false)
   }, [])
 
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const doc = document.querySelectorAll(`.${s.skillBlock}`)
-  //     doc.forEach(element => {
-  //       const firstElementChild = element.firstElementChild
-  //       const lastElementChild = element.lastElementChild
-
-  //       const corF = firstElementChild.getBoundingClientRect()
-  //       const corL = lastElementChild.getBoundingClientRect()
-
-  //       console.log(corF)
-  //       console.log(corL)
-
-  //       const a = Math.abs(corF.y - corL.y)
-
-  //       const b = firstElementChild.clientHeight / 2
-
-  //       const c = lastElementChild.clientHeight / 2
-
-  //       console.log(a - b + c)
-  //     })
-  //   }, 500)
-  // }, [])
-
   const renderMassage = (key: string, data: ICollectionError) => {
     if (data[key].length === 0) {
       return null
@@ -98,9 +73,21 @@ const WarningsInfo = () => {
           : { background: 'var(--1010, rgba(255, 204, 0, 0.10))' }
 
       return (
-        <div key={i} className={s.errorContend} style={myStyle}>
+        <div
+          key={i}
+          className={`${s.errorContend}  ${
+            i === 0 && key === 'error' ? s.first : ''
+          }`}
+          style={myStyle}
+        >
+          <div className={s.Vline}></div>
+          <div className={s.cluster}></div>
           <div className={s.hederError}>
-            {key === 'error' ? <Error /> : <Warning />}
+            {key === 'error' ? (
+              <Error width={20} height={20} />
+            ) : (
+              <Warning width={20} height={20} />
+            )}
             <span className={s.infoAll}>{el.massage}</span>
           </div>
         </div>
@@ -131,7 +118,7 @@ const WarningsInfo = () => {
 
     return (
       <div className={s.skill} key={i}>
-        <div className={s.line}></div>
+        {/* <div className={s.line}></div> */}
         <div className={s.skillBlock}>
           <div
             className={s.skillName}

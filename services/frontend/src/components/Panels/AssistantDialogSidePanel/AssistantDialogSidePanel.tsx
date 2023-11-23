@@ -5,13 +5,11 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
-import { Tooltip } from 'react-tooltip'
 import {
   BotInfoInterface,
   ChatForm,
   ChatHistory,
   IDialogError,
-  IExaminationLite,
   TDialogError,
 } from 'types/types'
 import {
@@ -311,31 +309,25 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               <h5 className={s.notification}>
                 {t('sidepanels.assistant_dialog.deploy.header')}
               </h5>
-              <p className={s.annotation}>
-                {t('sidepanels.assistant_dialog.deploy.subheader')}
+              <p
+                className={s.annotation}
+                style={isError ? { color: 'red' } : {}}
+              >
+                {isError
+                  ? massage
+                  : t('sidepanels.assistant_dialog.deploy.subheader')}
               </p>
             </div>
-            <Tooltip
-              id={`my-tooltip-${bot?.id}`}
-              style={{ zIndex: 1, opacity: 1 }}
-            />
-            <div
-              data-tooltip-id={`my-tooltip-${bot?.id}`}
-              data-tooltip-content={massage}
-              data-tooltip-variant={resultExamination.status}
-              data-tooltip-place='bottom'
+            <Button
+              theme='primary'
+              props={{
+                onClick: handleDeploy,
+                disabled:
+                  deploy?.isLoading || deleteDeployment.isLoading || isError,
+              }}
             >
-              <Button
-                theme='primary'
-                props={{
-                  onClick: handleDeploy,
-                  disabled:
-                    deploy?.isLoading || deleteDeployment.isLoading || isError,
-                }}
-              >
-                {t('sidepanels.assistant_dialog.btns.build_assistant')}
-              </Button>{' '}
-            </div>
+              {t('sidepanels.assistant_dialog.btns.build_assistant')}
+            </Button>{' '}
           </div>
         )}
         {chatPanel && (

@@ -66,7 +66,13 @@ const SkillsPage = () => {
         {components?.error && <ErrorHandler error={components?.error} />}
         {!components?.error && isTableView && (
           <Table
-            second={t('skill_table.type')}
+            headers={[
+              t('skill_table.name'),
+              t('skill_table.type'),
+              t('skill_table.desc'),
+              t('skill_table.created'),
+              t('skill_table.actions'),
+            ]}
             addButton={
               !isPreview ? (
                 <AddButton

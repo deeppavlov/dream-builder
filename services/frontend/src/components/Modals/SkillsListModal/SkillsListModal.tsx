@@ -105,9 +105,15 @@ export const SkillsListModal = () => {
     >
       <div className={s.container}>
         <div className={s.header}>{t('modals.choose_skill.header')}</div>
+
         <Table
-          second={t('skill_table.type')}
-          withoutDate={rightSidepanelIsActive}
+          headers={[
+            t('skill_table.name'),
+            t('skill_table.type'),
+            t('skill_table.desc'),
+            ...(rightSidepanelIsActive ? [] : [t('skill_table.created')]),
+            t('skill_table.actions'),
+          ]}
           addButton={
             <AddButton
               forTable

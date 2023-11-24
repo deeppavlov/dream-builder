@@ -11,7 +11,6 @@ import {
   IMassage,
   ISkill,
   IStackElement,
-  IСounter,
 } from 'types/types'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants, useComponent } from 'hooks/api'
@@ -34,23 +33,6 @@ const WarningsInfo = () => {
   const { name } = useParams()
   const { setUIOption } = useUIOptions()
 
-  const initState = privateDists?.data?.sort(
-    (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
-  )
-
-  const data = initState?.map((el: BotInfoInterface) => {
-    const components = getAllComponents(el.name || '')
-
-    const result = components.data?.skills
-      ?.filter(el => el.name !== 'dummy_skill')
-      .map((el: ISkill) => {
-        const resultExamination = examination(el)
-        return { name: el.display_name, data: resultExamination, skill: el }
-      })
-
-    return { name: el.display_name, skill: result, bot: el }
-  })
-
   const dispatchTrigger = (isOpen: boolean) =>
     setUIOption({
       name: consts.WARNING_WINDOW_SP_IS_ACTIVE,
@@ -62,38 +44,43 @@ const WarningsInfo = () => {
     return () => dispatchTrigger(false)
   }, [])
 
+  const initState = privateDists?.data?.sort(
+    (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
+  )
+
+  const data = initState?.map((el: BotInfoInterface) => {
+    const components = getAllComponents(el.name || '')
+    const result = components.data?.skills
+      ?.filter(el => el.name !== 'dummy_skill')
+      .map((el: ISkill) => {
+        const resultExamination = examination(el)
+        return { name: el.display_name, data: resultExamination, skill: el }
+      })
+
+    return { name: el.display_name, skill: result, bot: el }
+  })
+
   const renderMassage = (key: string, data: ICollectionError) => {
     if (data[key].length === 0) {
       return null
     }
     const massage = data[key].map((el: IMassage, i: number) => {
-      const myStyle =
-        key === 'error'
-          ? { background: 'var(--1010, rgba(255, 51, 51, 0.10))' }
-          : { background: 'var(--1010, rgba(255, 204, 0, 0.10))' }
-
       return (
         <div
           key={i}
           className={`${s.errorContend}  ${
             i === 0 && key === 'error' ? s.first : ''
           }`}
-          style={myStyle}
         >
           <div className={s.Vline}></div>
           <div className={s.cluster}></div>
           <div className={s.hederError}>
-            {key === 'error' ? (
-              <Error width={20} height={20} />
-            ) : (
-              <Warning width={20} height={20} />
-            )}
+            {key === 'error' ? <Error /> : <Warning />}
             <span className={s.infoAll}>{el.massage}</span>
           </div>
         </div>
       )
     })
-
     return massage
   }
 
@@ -116,15 +103,27 @@ const WarningsInfo = () => {
       }
     }
 
+    const countError = skills.data.error.length + skills.data.warning.length
+    const massageCountError = countError === 0 ? '' : `(${countError})`
+
+    const colorError =
+      skills.data.error.length !== 0
+        ? { color: '#b20000' }
+        : skills.data.warning.length !== 0
+        ? { color: '#FF9500' }
+        : {}
+
     return (
       <div className={s.skill} key={i}>
-        {/* <div className={s.line}></div> */}
         <div className={s.skillBlock}>
           <div
             className={s.skillName}
             onClick={e => handleEditBtnClick(e, skills.skill)}
           >
-            skill: {skills.name}
+            <div className={`${s.massageCountError}`} style={colorError}>
+              {massageCountError}
+            </div>
+            {skills.name}
           </div>
           {renderMassage('error', skills.data)}
           {renderMassage('warning', skills.data)}

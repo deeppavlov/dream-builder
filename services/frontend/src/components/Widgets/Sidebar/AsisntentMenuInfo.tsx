@@ -32,13 +32,12 @@ import s from './AsisntentMenuInfo.module.scss'
 export const HELPER_TAB_ID = 'helperTabError'
 
 export const AsisntentMenuInfo = () => {
-  const { user } = useAuth()
-  const queryClient = useQueryClient()
+  const { getAllComponents } = useComponent()
   const { fetchPrivateDists } = useAssistants()
   const privateDists = fetchPrivateDists()
-  const { getAllComponents } = useComponent()
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
   const { UIOptions } = useUIOptions()
-
   const { deepyChatOpened } = useGaDeepy()
   const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
   const copilotIsActive = UIOptions[consts.WARNING_WINDOW_SP_IS_ACTIVE]
@@ -46,8 +45,6 @@ export const AsisntentMenuInfo = () => {
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
       true
   )
-
-  const [state, setState] = useState([])
 
   let cx = classNames.bind(s)
 
@@ -61,57 +58,6 @@ export const AsisntentMenuInfo = () => {
     setHintIsVisited(true)
     localStorage.setItem(`${HELPER_TAB_ID}_IS_VISITED`, JSON.stringify(true))
   }
-
-  // const initState = privateDists.data.sort(
-  //   (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
-  // )
-  // const data = initState?.map((el: BotInfoInterface) => {
-  //   const components = getAllComponents(el.name || '') //   На этом этапе он  ругается.  Можно запустить с задержкой  он  отрисует, но будет ругаться на  порядок вызовов хуков.
-  //   const result = components.data?.skills
-  //     ?.filter(el => el.name !== 'dummy_skill')
-  //     .map((el: ISkill) => {
-  //       const resultExamination = examination(el)
-  //       return { name: el.display_name, data: resultExamination, skill: el }
-  //     })
-  //   return { name: el.display_name, skill: result, bot: el }
-  // })
-
-  // useEffect(() => {
-  //   if (privateDists.status === 'success') {
-  //     const sortedDists = privateDists.data
-  //       ? privateDists.data.sort(
-  //           (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
-  //         )
-  //       : []
-
-  //     const { data: componentsList } = useQuery(
-  //       ['user_skills', user?.id],
-  //       () =>
-  //         Promise.all(
-  //           sortedDists.map(async el => {
-  //             const components = await getComponents(el.name)
-  //             const res = { error: 0, warning: 0 }
-  //             const result = components.skills
-  //               .filter(el => el.name !== 'dummy_skill')
-  //               .forEach((el: ISkill) => {
-  //                 const resultExamination = examination(el)
-  //                 res.error += resultExamination.error.length
-  //                 res.warning += resultExamination.warning.length
-  //               })
-
-  //             return res
-  //           })
-  //         ),
-  //       {
-  //         refetchOnMount: false,
-  //         refetchOnWindowFocus: false,
-  //         enabled: sortedDists?.length! > 0,
-  //         initialData: [],
-  //       }
-  //     )
-  //     setState(componentsList)
-  //   }
-  // }, [privateDists])
 
   const sortedDists = privateDists.data
     ? privateDists.data.sort(
@@ -188,7 +134,7 @@ export const AsisntentMenuInfo = () => {
       className={cx('icon', copilotIsActive && 'active')}
       onClick={handleBtnClick}
     >
-      <RenderCountError />
+      {<RenderCountError />}
 
       {hintIsVisited ? (
         <BaseToolTip

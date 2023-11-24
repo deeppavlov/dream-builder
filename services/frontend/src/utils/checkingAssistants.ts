@@ -35,7 +35,7 @@ const languageWarning = (skill: ISkill, acc: ICollectionError) => {
 }
 
 const lengthPrompt = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
+  if (skill.prompt === undefined || skill.prompt === null) {
     return
   }
 

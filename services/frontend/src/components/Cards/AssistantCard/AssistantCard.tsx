@@ -1,26 +1,55 @@
-import classNames from 'classnames/bind'
-import { useUIOptions } from 'context'
-import { FC, useId } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import { useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router-dom'
-import { RoutesList } from 'router/RoutesList'
-import { BotCardProps } from 'types/types'
-import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
-import { getDeploy } from 'api/deploy/getDeploy'
-import { useAssistants } from 'hooks/api'
-import { useComponent } from 'hooks/api'
-import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { getAssistantState } from 'utils/getAssistantState'
-import { Button, Kebab } from 'components/Buttons'
-import { AssistantContextMenu } from 'components/Menus'
-import { AssistantSidePanel } from 'components/Panels'
-import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Badge, SmallTag } from 'components/UI'
-import { StatusToolTip } from '../../Menus/index'
-import s from './AssistantCard.module.scss'
+import classNames from 'classnames/bind';
+import { useUIOptions } from 'context';
+import { FC, useId } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { useQuery, useQueryClient } from 'react-query';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { RoutesList } from 'router/RoutesList';
+import { BotCardProps } from 'types/types';
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants';
+import { getDeploy } from 'api/deploy/getDeploy';
+import { useAssistants } from 'hooks/api';
+import { useComponent } from 'hooks/api';
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import { getAssistantState } from 'utils/getAssistantState';
+import { Button, Kebab } from 'components/Buttons';
+import { AssistantContextMenu } from 'components/Menus';
+import { AssistantSidePanel } from 'components/Panels';
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel';
+import { Badge, SmallTag } from 'components/UI';
+import { StatusToolTip } from '../../Menus/index';
+import s from './AssistantCard.module.scss';
+
+
+const RenderStatusToolTip = ({
+  type,
+  bot,
+  getAllComponents,
+}: {
+  type: string
+  bot: any
+  getAllComponents: Function
+}) => {
+  if (type === 'your') {
+    const components = getAllComponents(bot.name || '', {
+      refetchOnMount: true,
+    })
+
+    if (components.data && components.data.skills) {
+      return (
+        <StatusToolTip
+          name='AssistantCard'
+          skills={components.data.skills}
+          bot={bot}
+        />
+      )
+    }
+  }
+  return null
+}
+
 
 export const AssistantCard: FC<BotCardProps> = ({
   type,
@@ -134,25 +163,6 @@ export const AssistantCard: FC<BotCardProps> = ({
     },
   })
 
-  const RenderStatusToolTip = () => {
-    if (type === 'your') {
-      const components = getAllComponents(bot.name || '', {
-        refetchOnMount: true,
-      })
-
-      if (components.data && components.data.skills) {
-        return (
-          <StatusToolTip
-            name='AssistantCard'
-            skills={components.data.skills}
-            bot={bot}
-          />
-        )
-      }
-    }
-    return null
-  }
-
   return (
     <div
       className={cx('assistantCard', `${type}`, size)}
@@ -173,7 +183,7 @@ export const AssistantCard: FC<BotCardProps> = ({
               <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
                 {publishState}
               </SmallTag>
-              {<RenderStatusToolTip />}
+              {<RenderStatusToolTip type={type} bot={bot} getAllComponents={getAllComponents} />}
             </div>
             <div className={s.lng}>{bot.language?.value}</div>
           </div>

@@ -1,8 +1,10 @@
 import { useAuth, useUIOptions } from 'context'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { usePreview } from 'context/PreviewProvider'
-import { useComponent } from 'hooks/api'
+import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants, useComponent } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { AddButton, SwitchViewButton } from 'components/Buttons'
 import { SkillList } from 'components/Helpers'
@@ -24,8 +26,16 @@ const SkillsPage = () => {
   const { isPreview } = usePreview()
   const { t } = useTranslation()
   const { getAllComponents } = useComponent()
+  const { getDist } = useAssistants()
+  const navigate = useNavigate()
   const components = getAllComponents(name || '', { refetchOnMount: true })
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
+  const { data: dist } = getDist({ distName: name })
+
+  useEffect(() => {
+    if (!auth.user && dist?.visibility !== VISIBILITY_STATUS.PUBLIC_TEMPLATE)
+      navigate('/')
+  }, [auth.user])
 
   // const handleReadFirst = () =>
   //   trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })

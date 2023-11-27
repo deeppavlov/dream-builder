@@ -534,7 +534,8 @@
     "author": "Автор",
     "desc": "Описание",
     "visibility": "Видимость",
-    "created": "Язык",
+    "created": "Создан",
+    "language": "Язык",
     "actions": "Действия",
     "create_from_scratch_btn": "Создать с нуля"
   },

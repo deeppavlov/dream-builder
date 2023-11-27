@@ -1,0 +1,61 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: $bcgrnd2;
+}
+
+.token {
+  @include b1;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: $text1;
+}
+
+.string {
+  width: 100%;
+  transition: all 300ms;
+  overflow: hidden;
+  padding: 6px 12px 6px 48px;
+  border-top: 1px solid $bcgrnd3;
+
+  & label {
+    font-weight: 500;
+    color: $text1;
+  }
+}
+
+.tokenName {
+  @include hide_text;
+  width: 100%;
+  -webkit-line-clamp: 1;
+}
+
+.icon {
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  margin-right: 4px;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.validate {
+  @include b1;
+  color: $primary1;
+}
+
+.remove {
+  @include b1;
+  color: $red;
+}

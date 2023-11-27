@@ -182,8 +182,9 @@
       "subheader": "This action can’t be undone.",
       "radio_btns": {
         "private": "Only me",
-        "unlisted": "Only a people with a link",
-        "public": "Public"
+        "unlisted": "Only people with a link",
+        "public": "Public",
+        "on_moderation": "Public (on moderation)"
       },
       "tooltips": {
         "public": "Everyone can clone and talk to your VA",

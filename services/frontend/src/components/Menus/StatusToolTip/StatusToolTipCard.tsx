@@ -1,7 +1,8 @@
-import { Tooltip } from 'react-tooltip';
-import { ICollectionError, IMassage } from 'types/types';
-import style from './StatusToolTip.module.scss';
-
+import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
+import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
+import { Tooltip } from 'react-tooltip'
+import { ICollectionError, IMassage } from 'types/types'
+import style from './StatusToolTip.module.scss'
 
 const StatusToolTipCard = ({
   data,
@@ -10,12 +11,12 @@ const StatusToolTipCard = ({
   data: ICollectionError
   id?: number
 }) => {
-  const errorRender = () => {
-    if (data.error.length === 0) {
+  const render = (key: string) => {
+    if (data[key].length === 0) {
       return null
     }
 
-    const massageError = data.error.map((el: IMassage, i: number) => {
+    const massage = data[key].map((el: IMassage, i: number) => {
       return (
         <li key={i}>
           {i + 1}. {el.massage}
@@ -23,60 +24,42 @@ const StatusToolTipCard = ({
       )
     })
 
-    return (
-      <>
-        <div
-          data-tooltip-id={`tooltip_error${id}`}
-          data-tooltip-variant={'error'}
+    const icon =
+      key === 'error' ? (
+        <Error
+          data-tooltip-id={`tooltip_error${id}${key}`}
+          data-tooltip-variant={key}
           data-tooltip-place='right'
-          className={`${style.status} ${style.error}`}
-        ></div>
-        <Tooltip id={`tooltip_error${id}`} style={{ zIndex: 1, opacity: 1}}>
-          <div>
-            <h3>Критические ошибки</h3>
-            <ul>{massageError}</ul>
-          </div>
-        </Tooltip>
-      </>
-    )
-  }
-
-  const warningRender = () => {
-    if (data.warning.length === 0) {
-      return null
-    }
-
-    const massageWarning = data.warning.map((el: IMassage, i: number) => {
-      return (
-        <li key={i}>
-          {i + 1}. {el.massage}
-        </li>
+        ></Error>
+      ) : (
+        <Warning
+          data-tooltip-id={`tooltip_error${id}${key}`}
+          data-tooltip-variant={key}
+          data-tooltip-place='right'
+        ></Warning>
       )
-    })
 
     return (
-      <>
-        <div
-          data-tooltip-id={`tooltip_warning${id}`}
-          data-tooltip-variant={'warning'}
-          data-tooltip-place='right'
-          className={`${style.status} ${style.warning}`}
-        ></div>
-        <Tooltip id={`tooltip_warning${id}`} style={{ zIndex: 1, opacity: 1}}
+      <div className={style.errorBox}>
+        {icon}
+        <div className={style.massageCountError}>{data[key].length}</div>
+        <Tooltip
+          id={`tooltip_error${id}${key}`}
+          style={{ zIndex: 1, opacity: 1 }}
         >
           <div>
-            <h3>Рекомендации</h3>
-            <ul>{massageWarning}</ul>
+            <h3>{key === 'error' ? 'Критические ошибки' : 'Рекомендации'}</h3>
+            <ul>{massage}</ul>
           </div>
         </Tooltip>
-      </>
+      </div>
     )
   }
 
   return (
     <div className={style.statusBox}>
-      {errorRender()}
-      {warningRender()}
+      {render('error')}
+      {render('warning')}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { RouteObject } from 'react-router-dom'
 export interface IСounter {
   countError: number
   countWarning: number
+  [key: string]: number
 }
 export interface IExaminationLite {
   status: string

@@ -1,6 +1,5 @@
-import { UseQueryResult } from 'react-query';
-import { ICollectionError, ISkill, TComponents } from 'types/types';
-
+import { UseQueryResult } from 'react-query'
+import { ICollectionError, ISkill, TComponents } from 'types/types'
 
 const InputError = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
@@ -110,7 +109,6 @@ const test4 = (skill: ISkill, acc: ICollectionError) => {
   }
 }
 
-
 const test5 = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
     return
@@ -126,7 +124,6 @@ const test5 = (skill: ISkill, acc: ICollectionError) => {
     acc.warning = [...acc.warning, newWarning]
   }
 }
-
 
 export const examination = (data: ISkill) => {
   const acc = {
@@ -164,7 +161,11 @@ export const examinationMassage = (
     })
     .includes(true)
 
-  const status = isError ? 'error' : isWarning ? 'warning' : 'success'
+  const status: 'error' | 'warning' | 'success' = isError
+    ? 'error'
+    : isWarning
+    ? 'warning'
+    : 'success'
 
   const massageMap = {
     error:

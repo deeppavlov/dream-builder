@@ -18,6 +18,10 @@
     gap: 8px;
     padding-left: 24px;
     padding-right: 36px;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 17px;
+    text-decoration-color: #3300ff;
   }
 
   .assistantBlock {
@@ -26,10 +30,7 @@
     display: block;
     padding: 0px 10px;
     text-overflow: ellipsis;
-
-    background: #f4f4f4;
     margin-bottom: 22px;
-    box-shadow: 0px 0px 5px #a79a9a;
 
     .assistantName {
       color: var(--90, rgba(0, 0, 0, 0.9));
@@ -92,7 +93,7 @@
           align-items: stretch;
           margin-left: 12px;
 
-          .Vline {
+          .verticalLine {
             background-color: rebeccapurple;
             width: 2px;
             left: -5px;
@@ -150,7 +151,7 @@
             }
           }
           &:last-of-type {
-            .Vline {
+            .verticalLine {
               transform: translate(0%, -48%);
             }
           }

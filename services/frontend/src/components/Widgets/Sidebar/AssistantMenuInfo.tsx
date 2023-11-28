@@ -1,23 +1,12 @@
 import { ReactComponent as Information } from '@assets/icons/information.svg'
 import classNames from 'classnames/bind'
 import { useAuth, useUIOptions } from 'context'
-import { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  useIsFetching,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from 'react-query'
-import {
-  BotInfoInterface,
-  ICollectionError,
-  ISkill,
-  IСounter,
-} from 'types/types'
+import { useQuery, useQueryClient } from 'react-query'
+import { BotInfoInterface, ISkill, IСounter } from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { getComponents } from 'api/components'
-import { getComponent } from 'api/components'
 import { useAssistants, useComponent } from 'hooks/api'
 import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { examination } from 'utils/checkingAssistants'
@@ -27,16 +16,14 @@ import { BaseToolTip } from 'components/Menus'
 import { WarningsInfo } from 'components/Panels'
 import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Hint } from 'components/UI'
-import s from './AsisntentMenuInfo.module.scss'
+import s from './AssistantMenuInfo.module.scss'
 
 export const HELPER_TAB_ID = 'helperTabError'
 
-export const AsisntentMenuInfo = () => {
-  const { getAllComponents } = useComponent()
+export const AssistantMenuInfo = () => {
   const { fetchPrivateDists } = useAssistants()
-  const privateDists = fetchPrivateDists()
+  const privateDistsInit = fetchPrivateDists()
   const { user } = useAuth()
-  const queryClient = useQueryClient()
   const { UIOptions } = useUIOptions()
   const { deepyChatOpened } = useGaDeepy()
   const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
@@ -45,6 +32,14 @@ export const AsisntentMenuInfo = () => {
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
       true
   )
+
+  const [privateDists, setPrivateDists] = useState({})
+
+  useEffect(() => {
+    if (privateDistsInit.status === 'success') {
+      setPrivateDists(privateDistsInit)
+    }
+  }, [privateDistsInit.data])
 
   let cx = classNames.bind(s)
 
@@ -59,8 +54,8 @@ export const AsisntentMenuInfo = () => {
     localStorage.setItem(`${HELPER_TAB_ID}_IS_VISITED`, JSON.stringify(true))
   }
 
-  const sortedDists = privateDists.data
-    ? privateDists.data.sort(
+  const sortedDists = privateDists?.data
+    ? privateDists?.data.sort(
         (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
       )
     : []
@@ -69,18 +64,17 @@ export const AsisntentMenuInfo = () => {
     ['user_skills', user?.id],
     () =>
       Promise.all(
-        sortedDists.map(async el => {
-          const components = await getComponents(el.name)
-          const res = { error: 0, warning: 0 }
+        sortedDists.map(async (el: BotInfoInterface) => {
+          const acc = { countError: 0, countWarning: 0 }
+          const components = await getComponents(el.name) // no error handling
           components.skills
-            .filter(el => el.name !== 'dummy_skill')
+            .filter((el: ISkill) => el.name !== 'dummy_skill')
             .forEach((el: ISkill) => {
               const resultExamination = examination(el)
-              res.error += resultExamination.error.length
-              res.warning += resultExamination.warning.length
+              acc.countError += resultExamination.error.length
+              acc.countWarning += resultExamination.warning.length
             })
-
-          return res
+          return acc
         })
       ),
     {
@@ -92,9 +86,9 @@ export const AsisntentMenuInfo = () => {
   )
 
   const count = componentsList?.reduce(
-    (acc: IСounter, el: any) => {
-      const countError = el.error
-      const countWarning = el.warning
+    (acc: IСounter, el: IСounter) => {
+      const countError = el.countError
+      const countWarning = el.countWarning
       acc.countError += countError
       acc.countWarning += countWarning
       return acc
@@ -103,38 +97,41 @@ export const AsisntentMenuInfo = () => {
   )
 
   const RenderCountError = () => {
-    if (count?.countError !== 0) {
+    const icon = <Information style={{ width: 24, height: 24 }} />
+
+    if (count.countError !== 0) {
       return (
         <div className={s.iconError}>
-          <div className={`${s.count} ${s.error}`}>{count?.countError}</div>
-          <Information style={{ width: 24, height: 24 }} />
+          <div className={`${s.count} ${s.error}`}>{count.countError}</div>
+          {icon}
         </div>
       )
     }
     if (count.countWarning !== 0) {
       return (
-        <div>
+        <div className={s.iconError}>
           <div className={`${s.count} ${s.warning}`}>{count.countWarning}</div>
-          <Information style={{ width: 24, height: 24 }} />
+          {icon}
         </div>
       )
     }
-    return (
-      <div>
-        <div className={`${s.count} ${s.warning}`}></div>
-        <Information style={{ width: 24, height: 24 }} />
-      </div>
-    )
+    return icon
   }
+
+  const myStyle: CSSProperties =
+    count.countError === 0 && count.countWarning === 0
+      ? { pointerEvents: 'none', opacity: 0.3 }
+      : {}
 
   return (
     <button
+      style={myStyle}
       id={HELPER_TAB_ID}
       data-tooltip-id={HELPER_TAB_ID}
       className={cx('icon', copilotIsActive && 'active')}
       onClick={handleBtnClick}
     >
-      {<RenderCountError />}
+      <RenderCountError />
 
       {hintIsVisited ? (
         <BaseToolTip

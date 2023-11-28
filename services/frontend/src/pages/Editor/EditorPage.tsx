@@ -10,7 +10,7 @@ import { AssistantModal, DeleteAssistantModal, DeleteSkillModal, PublishAssistan
 import { BaseSidePanel } from 'components/Panels';
 import { Container } from 'components/UI';
 import { Sidebar } from 'components/Widgets';
-import { AsisntentMenuInfo, DeepyHelperTab, IntegrationTab, SettingsTab, SkillsTab } from 'components/Widgets/Sidebar';
+import { AssistantMenuInfo, DeepyHelperTab, IntegrationTab, SettingsTab, SkillsTab } from 'components/Widgets/Sidebar';
 
 
 export const EditorPage = () => {
@@ -52,7 +52,7 @@ export const EditorPage = () => {
         </Container>
         <Container layoutForBottomBtns>
           <DeepyHelperTab />
-          <AsisntentMenuInfo  />
+          <AssistantMenuInfo  />
           <SettingsTab />
         </Container>
       </Sidebar>

@@ -9,7 +9,7 @@ import {
 import { BaseSidePanel } from 'components/Panels'
 import { Sidebar, Topbar } from 'components/Widgets'
 import {
-  AsisntentMenuInfo,
+  AssistantMenuInfo,
   DeepyHelperTab,
   SettingsTab,
 } from 'components/Widgets/Sidebar'
@@ -36,7 +36,7 @@ const Root = () => {
             }}
           >
             <DeepyHelperTab />
-            <AsisntentMenuInfo  />
+            <AssistantMenuInfo  />
             <SettingsTab />
           </div>
         </Sidebar>

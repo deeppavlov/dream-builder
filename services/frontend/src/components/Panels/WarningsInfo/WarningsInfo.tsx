@@ -1,25 +1,19 @@
-import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
-import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
-import { useUIOptions } from 'context'
-import React, { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import { RoutesList } from 'router/RoutesList'
-import {
-  BotInfoInterface,
-  ICollectionError,
-  IMassage,
-  ISkill,
-  IStackElement,
-} from 'types/types'
-import { VISIBILITY_STATUS } from 'constants/constants'
-import { useAssistants, useComponent } from 'hooks/api'
-import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
-import { examination } from 'utils/checkingAssistants'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import s from './WarningsInfo.module.scss'
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg';
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
+import { useUIOptions } from 'context';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { RoutesList } from 'router/RoutesList';
+import { BotInfoInterface, ICollectionError, IMassage, ISkill, IStackElement } from 'types/types';
+import { VISIBILITY_STATUS } from 'constants/constants';
+import { useAssistants, useComponent } from 'hooks/api';
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+import { examination } from 'utils/checkingAssistants';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import s from './WarningsInfo.module.scss';
 
 const WarningsInfo = () => {
   const { fetchPrivateDists } = useAssistants()
@@ -72,7 +66,7 @@ const WarningsInfo = () => {
             i === 0 && key === 'error' ? s.first : ''
           }`}
         >
-          <div className={s.Vline}></div>
+          <div className={s.verticalLine}></div>
           <div className={s.cluster}></div>
           <div className={s.hederError}>
             {key === 'error' ? <Error /> : <Warning />}

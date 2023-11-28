@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
-from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name
+from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name, \
+    added_skill_name, your_skill_name, default_skill_name
 
 
 class BasePageLocators:
@@ -25,18 +26,19 @@ class BasePageLocators:
     PROFILE_SETTINGS_BUTTON = (By.XPATH, "//button[contains(@class,'_item')][1]")
     LOGOUT_BUTTON = (By.XPATH, "//button[contains(@class,'_item')][2]")
 
+    CHAT_WITH_ASSISTANT_BUTTON = (By.CSS_SELECTOR, "[id='testDialog']")
+
     HOME_BUTTON = (By.CSS_SELECTOR, "button[data-tooltip-id='home']")
-    BCB_PUBLIC_TEMPLATES = (By.XPATH, f"[href='/allbots']")
-    BCB_YOUR_ASSISTANTS = (By.XPATH, f"[href='/yourbots']")
+    BCB_PUBLIC_TEMPLATES = (By.CSS_SELECTOR, f"[href='/allbots']")
+    BCB_YOUR_ASSISTANTS = (By.CSS_SELECTOR, f"[href='/yourbots']")
     BCB_YOUR_ASSISTANT_NAME = (By.XPATH, f"//a[text()='{your_va_name}']")
     BCB_PUBLIC_ASSISTANT_NAME = (By.XPATH, f"//a[text()='{public_va_name}']")
-
-    CHANGE_VIEW_TYPE = (By.CSS_SELECTOR, "button[data-tooltip-id='viewType']")
 
     DEEPY_BUTTON = (By.CSS_SELECTOR, "button#helperTab")
     SETTINGS_BUTTON = (By.CSS_SELECTOR, "button#settingsTab")
 
     SUCCESS_TOAST = (By.XPATH, "//div[contains(text(),'Success')]")
+    SAVING_TOAST = (By.XPATH, "//div[contains(text(),'Saving')]")
     SUBMITTED_TOAST = (By.XPATH, "//div[contains(text(),'Submitted')]")
     COPIED_TOAST = (By.CSS_SELECTOR, "[class*='_succes']")
 
@@ -57,41 +59,33 @@ class GithubAuthPageLocators:
     VERIFY_BUTTON = (By.CSS_SELECTOR, "[data-disable-with='Verifying…']")
 
 
-class AllGAPageLocators:
-    # PUBLIC TEMPLATES ASSISTANTS
-    PUBLIC_TEMPLATE_CARD = (By.XPATH, f"//span[text()='{public_va_name}']/../..")
+class Visibility_MW_Locators:
+    PRIVATE_VISIBILITY_MW = (By.CSS_SELECTOR, "#Private")
+    UNLISTED_VISIBILITY_MW = (By.CSS_SELECTOR, "#Unlisted")
+    PUBLIC_TEMPLATE_VISIBILITY_MW = (By.CSS_SELECTOR, "#Public")
 
-    PUBLIC_RIGHT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnR')][contains(@class,'_sub')]")
-    PUBLIC_LEFT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnL')][contains(@class,'_sub')]")
-    PUBLIC_KEBAB = (By.XPATH, f"//span[text()='{public_va_name}']/../..//button[contains(@class,'secondary')]")
+    SAVE_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'Save')]")
+    PUBLISH_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'Publish')]")
+    NO_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'No')]")
+    CLOSE_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(@class,'_close')]")
 
-    PUBLIC_KEBAB_CHAT = (By.XPATH, "//span[text()='Chat With Assistant']")
-    PUBLIC_KEBAB_PROPERTIES = (By.XPATH, "//span[text()='Properties']")
-    PUBLIC_KEBAB_CHECK_SKILLS = (By.XPATH, "//span[text()='Check Skills']")
-    PUBLIC_USE_BUTTON = (
-        By.XPATH,
-        f"//div[contains(@class,'public')]//span[text()='{public_va_name}']/../..//button["
-        f"contains(@class,'primary')]",
-    )
+    UNLISTED_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='UNLISTED_LINK']")
+    PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='PUBLIC_TEMPLATE']")
 
-    PUBLIC_USE_MW_USE_BUTTON = (By.XPATH, "//button[contains(text(),'Create')]")
-    PUBLIC_USE_MW_CANCEL_BUTTON = (By.XPATH, "//form[contains(@class,'_assistantModal')]//button[1]")
+    CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
+                                            "[class*='_baseModal'] button[class*='_button_theme_primary']")
+    CANCEL_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
+                                          "[class*='_baseModal'] button[class*='_button_theme_secondary']")
 
-    SHOW_ALL_PUBLIC_TEMPLATES = (By.CSS_SELECTOR, "[href='/allbots']>button")
 
-    PROPERTIES_PANEL_HEADER = (By.XPATH, "//li[text()='Properties']")
-
-    # YOUR ASSISTANTS
-
-    CREATE_VA_BUTTON = (By.XPATH, "//button[contains(@class,'_forCard')]")
-    CREATE_VA_LANGUAGE_DROPDOWN = (By.CSS_SELECTOR, "input[name='language']")
-    CREATE_VA_LANGUAGE_EN = (By.XPATH, "//li//span[contains(text(),'English')]/..")
-    CREATE_VA_LANGUAGE_RU = (By.XPATH, "//li//span[contains(text(),'Russian')]/..")
+class CreateVA_MW_Locators:
     CREATE_VA_NAME_TEXTAREA = (By.CSS_SELECTOR, "[name='display_name']")
     CREATE_VA_DESCRIPTION_TEXTAREA = (By.CSS_SELECTOR, "[name='description']")
     CREATE_VA_CANCEL_BUTTON = (By.XPATH, "//button[text()='Cancel']")
     CREATE_VA_CLOSE_BUTTON = (By.CSS_SELECTOR, "[stroke='inherit']")
     CREATE_VA_CREATE_BUTTON = (By.XPATH, "//button[text()='Create']")
+
+    EDIT_VA_SAVE_BUTTON = (By.CSS_SELECTOR, "[type='submit']")
 
     CREATE_VA_ERROR_NAME_CANT_BE_EMPTY = (
         By.XPATH, "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']")
@@ -100,14 +94,21 @@ class AllGAPageLocators:
     CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
         By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 1000 characters']")
 
-    YOUR_EDIT_BUTTON = (By.XPATH, f"//button[text()='Edit']")
-    YOUR_RIGHT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnR')][contains(@class,'_private')]")
-    YOUR_LEFT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnL')][contains(@class,'_private')]")
 
-    YOUR_KEBAB = (By.XPATH, f"//div[contains(@class,'_wrapper')][2]//span[text()='{your_va_name}']/../..//button[2]")
+class PropertiesAPanelLocators:
+    MORE_BUTTON_SIDE_PANEL = (By.CSS_SELECTOR, "div[class*='_base'] button[class*='secondary']")
+    EDIT_BUTTON_SIDE_PANEL = (By.CSS_SELECTOR, "div[class*='_base'] button[class*='primary']")
+    RENAME_ASSISTANT_BUTTON_SIDE_PANEL = (By.CSS_SELECTOR, "button[class*='_edit']")
+    CLOSE_BUTTON_SIDE_PANEL = (By.CSS_SELECTOR, "button[class*='_close']")
+
+    DETAILS_TAB = (By.XPATH, "//li[text()='Details']")
+
+
+class YourAKebabLocators:
     YOUR_KEBAB_CHAT = (By.XPATH, "//span[text()='Chat With Assistant']")
 
     YOUR_KEBAB_SHARE = (By.XPATH, "//span[text()='Share']")
+    CLOSE_BUTTON_SHARE_MW = (By.CSS_SELECTOR, "[class*='_baseModal'] [class*='_close']")
     SHARE_LINK = (By.CSS_SELECTOR, "[name='link']")
     COPY_LINK_BUTTON = (By.XPATH, "//button[contains(@class,'_close')]")
     OPEN_IN_ANOTHER_TAB_BUTTON = (
@@ -127,21 +128,57 @@ class AllGAPageLocators:
     YOUR_KEBAB_DELETE = (By.XPATH, "//span[text()='Delete']")
     YOUR_A_DELETE_MW_DELETE = (By.XPATH, "//button[text()='Delete']")
 
-    PRIVATE_VISIBILITY_MW = (By.CSS_SELECTOR, "#Private")
-    UNLISTED_VISIBILITY_MW = (By.CSS_SELECTOR, "#Unlisted")
-    PUBLIC_TEMPLATE_VISIBILITY_MW = (By.CSS_SELECTOR, "#Public")
-    SAVE_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'Save')]")
-    PUBLISH_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'Publish')]")
-    NO_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(text(),'No')]")
-    CLOSE_BUTTON_VISIBILITY_MW = (By.XPATH, "//button[contains(@class,'_close')]")
 
-    UNLISTED_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='UNLISTED_LINK']")
-    PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='PUBLIC_TEMPLATE']")
+class SkillKebabLocators:
+    SKILL_KEBAB_DELETE = (By.XPATH, "//span[text()='Delete']")
+    SKILL_KEBAB_RENAME = (By.XPATH, "//span[text()='Rename']")
+    SKILL_KEBAB_PROPERTIES = (By.XPATH, "//span[text()='Properties']")
 
-    CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
-                                            "[class*='_baseModal'] button[class*='_button_theme_primary']")
-    CANCEL_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
-                                          "[class*='_baseModal'] button[class*='_button_theme_secondary']")
+
+class AllGAPageLocators(YourAKebabLocators):
+    CHANGE_VIEW_TYPE = (By.CSS_SELECTOR, "button[data-tooltip-id='viewType']")
+    # PUBLIC TEMPLATES ASSISTANTS
+    PUBLIC_TEMPLATE_CARD = (By.XPATH, f"//span[text()='{public_va_name}']/../..")
+    PUBLIC_TEMPLATE_CARD_LIST_VIEW = (By.XPATH, f"//p[text()='{public_va_name}']/../..")
+
+    PUBLIC_RIGHT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnR')][contains(@class,'_sub')]")
+    PUBLIC_LEFT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnL')][contains(@class,'_sub')]")
+    PUBLIC_KEBAB = (By.XPATH, f"//span[text()='{public_va_name}']/../..//button[contains(@class,'secondary')]")
+    PUBLIC_KEBAB_LIST_VIEW = (By.XPATH,
+                              f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'secondary')]")
+
+    PUBLIC_KEBAB_CHAT = (By.XPATH, "//span[text()='Chat With Assistant']")
+    PUBLIC_KEBAB_PROPERTIES = (By.XPATH, "//span[text()='Properties']")
+    PUBLIC_KEBAB_CHECK_SKILLS = (By.XPATH, "//span[text()='Check Skills']")
+    PUBLIC_USE_BUTTON = (
+        By.XPATH,
+        f"//div[contains(@class,'public')]//span[text()='{public_va_name}']/../..//button["
+        f"contains(@class,'primary')]"
+    )
+    PUBLIC_USE_BUTTON_LIST_VIEW = (
+        By.XPATH, f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'primary')]")
+
+    PUBLIC_USE_MW_USE_BUTTON = (By.XPATH, "//button[contains(text(),'Create')]")
+    PUBLIC_USE_MW_CANCEL_BUTTON = (By.XPATH, "//form[contains(@class,'_assistantModal')]//button[1]")
+
+    SHOW_ALL_PUBLIC_TEMPLATES = (By.CSS_SELECTOR, "[href='/allbots']>button")
+
+    PROPERTIES_PANEL_HEADER = (By.XPATH, "//li[text()='Properties']")
+
+    # YOUR ASSISTANTS
+    YOUR_CARD = (By.XPATH, f"//span[text()='{your_va_name}']/../..")
+    YOUR_CARD_LIST_VIEW = (By.XPATH, f"//p[text()='{your_va_name}']/../..")
+    YOUR_KEBAB = (By.XPATH, f"//span[text()='{your_va_name}']/../..//button[2]")
+    YOUR_KEBAB_LIST_VIEW = (By.XPATH, f"//p[text()='Your VA name']/../../..//button[2]")
+
+    CREATE_VA_BUTTON = (By.XPATH, "//button[contains(@class,'_for')]")
+    CREATE_VA_LANGUAGE_DROPDOWN = (By.CSS_SELECTOR, "input[name='language']")
+    CREATE_VA_LANGUAGE_EN = (By.XPATH, "//li//span[contains(text(),'English')]/..")
+    CREATE_VA_LANGUAGE_RU = (By.XPATH, "//li//span[contains(text(),'Russian')]/..")
+
+    YOUR_EDIT_BUTTON = (By.XPATH, f"//button[text()='Edit']")
+    YOUR_RIGHT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnR')][contains(@class,'_private')]")
+    YOUR_LEFT_SCROLL_BUTTON = (By.CSS_SELECTOR, "//button[contains(@class,'_btnL')][contains(@class,'_private')]")
 
     SHOW_ALL_YOUR_VA = (By.CSS_SELECTOR, "[href='/yourbots']>button")
 
@@ -163,30 +200,38 @@ class AllGAPageLocators:
     GITHUB_LOGO = (By.CSS_SELECTOR, "[alt='GitHub']")
 
 
+class AllYourAPageLocators(AllGAPageLocators):
+    pass
+
+
+class AllTemplatesAPageLocators(AllGAPageLocators):
+    pass
+
+
 class SkillPageLocators:
     # SKILLS TAB
     SKILLS_TAB = (By.CSS_SELECTOR, "[data-tooltip-id='sidebarSkillTab']")
     # EDIT_SKILL_BUTTON = (By.XPATH, f"//p[contains(text(),'{skill_name}')]/../..//button[contains(text(),'Edit')]")
     EDIT_SKILL_BUTTON = (By.XPATH, f"//p[contains(text(),'Generative')]/../../..//button[contains(text(),'Edit')]")
-    CHAT_WITH_ASSISTANT_BUTTON = (By.CSS_SELECTOR, "[id='testDialog']")
     BUILD_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Build Assistant')]")
     STOP_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Stop Assistant')]")
     DUPLICATE_ASSISTANT_BUTTON = (By.XPATH, "//button[contains(text(),'Duplicate Assistant')]")
-    INFO_ASSISTANT_BUTTON = (By.XPATH, "//div[contains(@class,'_wrapper')][1]/div[2]//button[1]")
+    PROPERTIES_ASSISTANT_BUTTON = (By.XPATH, "//div[contains(@class,'_wrapper')][1]/div[1]//button[1]")
 
     VISIBILITY_BUTTON = (By.XPATH, "//input")
-    PRIVATE_VISIBILITY_BUTTON = (By.XPATH, "//button[contains(text(),'Visibility')]")
-    UNLISTED_VISIBILITY_BUTTON = (By.XPATH, "//li[contains(text(),'Unlisted')]")
-    PUBLIC_TEMPLATE_VISIBILITY_BUTTON = (By.XPATH, "//li[contains(text(),'Public Template')]")
-
     SHARE_BUTTON = (By.XPATH, "//div[contains(@class,'_wrapper')][1]/div[3]//button")
+
+    SKILL_KEBAB = (By.XPATH, f"//p[text()='{skill_name}']/../..//button[contains(@class,'secondary')]")
 
     READ_FIRST_BUTTON = (By.CSS_SELECTOR, "//button[contains(text(),'Read First!')]")
     CLOSE_READ_FIRST_PANEL = (By.CSS_SELECTOR, "[id='sp_right'] [stroke='inherit']")
-    CHANGE_VIEW_BUTTON = (By.CSS_SELECTOR, "//div[contains(@class,'_wrapper')][2]/div//button[2]")
+    CHANGE_VIEW_BUTTON_TO_LIST = (By.CSS_SELECTOR, "//div[contains(@class,'_wrapper')][2]/div//button[2]")
+    CHANGE_VIEW_BUTTON_TO_CARD = (By.CSS_SELECTOR, "//div[contains(@class,'_wrapper')][2]/div//button[1]")
 
     CREATE_SKILL_BUTTON = (By.XPATH, "//button[contains(@class,'_forCard')]")
     CREATE_FROM_SCRATCH_BUTTON = (By.XPATH, "//p[text()='Create From Scratch']/..")
+    ADD_SKILL_BUTTON_IN_CHOOSE_SKILL_MW = (By.XPATH, f"//p[text()='{added_skill_name}']/../../..//button")
+
     CREATE_SKILL_NAME_TEXTAREA = (By.CSS_SELECTOR, "[name='display_name']")
     CREATE_SKILL_DESCRIPTION_TEXTAREA = (By.CSS_SELECTOR, "[name='description']")
     CREATE_SKILL_CANCEL_BUTTON = (By.XPATH, "//button[text()='Cancel']")
@@ -203,14 +248,16 @@ class SkillPageLocators:
     CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
         By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 500 characters']")
 
-    SKILL_CARD = (By.XPATH, f"//p[text()='{skill_name}']")
+    SKILL_CARD = (By.XPATH, f"//p[contains(@class,'_generative')]")
     SKILL_CARD_CONTEXT_MENU = (
         By.XPATH, f"//p[contains(@class,'_generative')]/../../..//button[contains(@class,'_secondary')]")
     SKILL_CARD_CONTEXT_MENU_RENAME = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[1]")
     SKILL_CARD_CONTEXT_MENU_PROPERTIES = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[2]")
     SKILL_CARD_CONTEXT_MENU_DELETE = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[3]")
 
-    PROPERTIES_PANEL_HEADER = (By.XPATH, "//li[text()='Properties']")
+    DELETE_SKILL_DELETE_MW = (By.XPATH, "//button[text()='Delete']")
+
+    PROPERTIES_PANEL_HEADER = (By.XPATH, "//li[text()='Properties']/../../../..")
 
     CARD_MODE_TAB = (By.XPATH, "//button[contains(@class,'_left')]")
     LIST_MODE_TAB = (By.XPATH, "//button[contains(@class,'_right')]")
@@ -263,6 +310,8 @@ class SkillEditorPageLocators:
 
     BCB_SKILLS = (By.XPATH, f"//a[text()='Skills']")
     BCB_SKILL_NAME = (By.XPATH, f"//a[text()='{skill_name}']")
+
+    CLOSE_SKILL_EDITOR_BUTTON = (By.CSS_SELECTOR, f"[class*='_close']")
 
 
 class ProfilePageLocators:
@@ -353,7 +402,6 @@ class DialogPanelLocators:
     ERROR_TOKEN_MESSAGE = (By.XPATH, "//p[contains(text(),"
                                      "'Enter your personal access token for OpenAI to talk to this AI Assistant')]")
     ENTER_TOKEN_BUTTON = (By.XPATH, "//button[contains(text(),'Enter token')]")
-
 
 
 class DeepyLocators:

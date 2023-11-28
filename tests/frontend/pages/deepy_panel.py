@@ -5,6 +5,18 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class DeepyPanel(BasePage):
+    def __init__(self, browser, url, timeout=15):
+        #source_type = "va_dialog_panel"
+        source_type = "va_sidepanel"
+        page_type = self.page_type
+        view = self.view
+        auth_status = self.auth_status
+
+        super().__init__(browser, url, timeout)
+        self.browser = browser
+        self.url = url
+        self.browser.implicitly_wait(timeout)
+
     def check_welcome_dialogue(self):
         deepy_message = 0
         try:
@@ -27,6 +39,10 @@ class DeepyPanel(BasePage):
 
     def send_message_deepy(self):
         textarea = self.browser.find_element(*DeepyLocators.SEND_BUTTON)
+        textarea.click()
+
+    def refresh_dialog_deepy(self):
+        textarea = self.browser.find_element(*DeepyLocators.RESTART_BUTTON)
         textarea.click()
 
     def check_deepy_message(self):

@@ -36,8 +36,12 @@ base_url = settings_test.test.base_url
 generative_model = "ChatGPT"
 public_va_name = "Marketing Assistant"
 #your_va_name = RandomWords().get_random_word()
+
 your_va_name = "Your VA name"
 skill_name = "Marketing Skill"
+your_skill_name = "Marketing Skill"
+default_skill_name = "Dream Persona Skill"
+added_skill_name = "Plan for Article Skill"
 
 public_template_list = [
     "ai_faq_assistant",

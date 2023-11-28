@@ -274,7 +274,7 @@ export type ChatForm = { message: string }
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
-  | 'Generative'
+  | 'generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'
@@ -320,6 +320,8 @@ export interface IApiService {
 export interface IUserApiKey {
   api_service: IApiService
   token_value: string
+  useForDeepy?: boolean
+  id: number
 }
 
 export interface IPostChat {

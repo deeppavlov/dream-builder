@@ -64,7 +64,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
       skill,
       visibility: type,
       activeTab: 'properties',
-      isOpen: true,
+      isOpen: !isActive,
       distName: distName || '',
     })
   }

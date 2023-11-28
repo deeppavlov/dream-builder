@@ -2,8 +2,8 @@ import { Badge } from './Badge/Badge'
 import { Banner } from './Banner/Banner'
 import { Container } from './Container/Container'
 import { Details } from './Details/Details'
-import { DummyAlert } from './DummyAlert/DummyAlert'
 import { EditablePlaceholder } from './EditablePlaceholder/EditablePlaceholder'
+import { ErrorCard } from './ErrorCard/ErrorCard'
 import { ErrorHandler } from './ErrorHandler/ErrorHandler'
 import Hint from './Hint/Hint'
 import { Main } from './Main/Main'
@@ -21,7 +21,7 @@ export {
   Banner,
   Container,
   Details,
-  DummyAlert,
+  ErrorCard,
   EditablePlaceholder,
   ErrorHandler,
   Hint,

@@ -1,19 +1,21 @@
 import { AxiosError } from 'axios'
-import { useUIOptions } from 'context'
+import { useAuth, useUIOptions } from 'context'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
-import { DEEPY_ASSISTANT } from 'constants/constants'
+import { DEEPY_ASSISTANT, OPEN_AI_LM } from 'constants/constants'
 import { createDialogSession, getHistory, sendMessage } from 'api/chat'
 import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { consts } from 'utils/consts'
+import { getLSApiKeyByName } from 'utils/getLSApiKeys'
 
 export const useDeepyChat = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sidepanels.deepy' })
   const { UIOptions } = useUIOptions()
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   const deepyActive = UIOptions[consts.COPILOT_SP_IS_ACTIVE]
   const [deepyHistory, setDeepyHistory] = useState<ChatHistory[]>([])
   const [deepyMessage, setDeepyMessage] = useState<string>('')
@@ -57,10 +59,24 @@ export const useDeepyChat = () => {
         { text, author: 'me', hidden: hidden },
       ])
     },
-    mutationFn: (variables: IPostChat) => sendMessage(variables),
+    mutationFn: (variables: IPostChat) => {
+      const openaiApiKey =
+        getLSApiKeyByName(user?.id!, OPEN_AI_LM, true) || undefined
+
+      return sendMessage({ ...variables, openai_api_key: openaiApiKey })
+    },
     onSuccess: data => {
+      const localSession = store('deepySession', data)
+      store('deepySession', {
+        ...localSession,
+        dummy: data.active_skill.name === 'dummy_skill',
+      })
+
       deepyChatSend(deepyHistory.length)
-      setDeepyHistory(state => [...state, { text: data?.text, author: 'bot' }])
+      setDeepyHistory(state => [
+        ...state,
+        { text: data?.text, author: 'bot', active_skill: data.active_skill },
+      ])
     },
     onError: (data: AxiosError) => {
       const needToRenew =
@@ -73,11 +89,13 @@ export const useDeepyChat = () => {
     'deepyHistory',
     () => getHistory(deepySession?.id),
     {
+      initialData: [],
       enabled: deepyActive,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       retry: 0,
       onError: () => {
+        setDeepyHistory([])
         sendToDeepy.mutateAsync({
           dialog_session_id: deepySession?.id,
           text: t('first_msg_greeting'),

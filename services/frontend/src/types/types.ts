@@ -320,6 +320,8 @@ export interface IApiService {
 export interface IUserApiKey {
   api_service: IApiService
   token_value: string
+  useForDeepy?: boolean
+  id: number
 }
 
 export interface IPostChat {

@@ -87,6 +87,7 @@
         "label": "Add a new personal access token:",
         "placeholder": "Enter token..."
       },
+      "checkbox": "Allow using your OpenAI key to interact with Deepy",
       "service_dropbox": {
         "label": "Choose service:",
         "placeholder": "Choose service..."
@@ -357,7 +358,8 @@
         "sent_for_deploy": "Sent for deploy!",
         "stop_deploy": "Stop deploy...",
         "deploy_stopped": "Deploy stopped!"
-      }
+      },
+      "dummy_error": "Someting went wrong<br />Restart the system"
     },
     "assistant": {
       "accordions": {
@@ -379,6 +381,12 @@
       },
       "btns": {
         "send": "Send"
+      },
+      "error": {
+        "token_error": "You see this error message because this platform installation wasn't provided with a working OpenAI key or that key has been expired or has insufficient funds on it. You can either fix the key or you can provide your end user OpenAI key in the profile to make Deepy work for you.",
+        "auth_error": "You see this error message because this platform installation wasn't provided with a working OpenAI key. To interact with Deepy, you need to sign in and then you can enter your OpenAI key in your profile.",
+        "button_api-key": "Enter token",
+        "button_auth": "Sign in"
       }
     },
     "skill_details": {

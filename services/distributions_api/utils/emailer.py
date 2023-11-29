@@ -135,3 +135,49 @@ class Emailer:
             display_name=display_name,
         )
         self._send_message(msg)
+
+    def send_publish_request_confirmed_to_owner(
+        self, owner_address: str, owner_name: str, display_name: str, dist_url: str
+    ) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was confirmed",
+            owner_address,
+            env.get_template("publish_request_confirmed_to_owner.html"),
+            owner_name=owner_name,
+            display_name=display_name,
+            dist_url=dist_url,
+        )
+        self._send_message(msg)
+
+    def send_publish_request_declined_to_owner(self, owner_address: str, owner_name: str, display_name: str) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was declined",
+            owner_address,
+            env.get_template("publish_request_declined_to_owner.html"),
+            owner_name=owner_name,
+            display_name=display_name,
+        )
+        self._send_message(msg)
+
+    def send_publish_request_confirmed_to_owner(self, owner_address: str, display_name: str) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was confirmed",
+            owner_address,
+            env.get_template("publish_request_confirmed_to_owner.html"),
+            owner_address=owner_address,
+            display_name=display_name,
+        )
+        self._send_message(msg)
+
+    def send_publish_request_declined_to_owner(self, owner_address: str, display_name: str) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was declined",
+            owner_address,
+            env.get_template("publish_request_declined_to_owner.html"),
+            owner_address=owner_address,
+            display_name=display_name,
+        )
+        self._send_message(msg)
+
+
+# emailer = Emailer(settings.smtp.server, settings.smtp.port, settings.smtp.user, settings.smtp.password)

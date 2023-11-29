@@ -20,7 +20,7 @@ export const Checkbox = ({
   name,
   checked,
   disabled,
-  // onChange,
+  onChange,
   props,
 }: Props) => {
   let cx = classNames.bind(s)

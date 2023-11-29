@@ -59,16 +59,6 @@ class Emailer:
 
         return msg
 
-    def _create_message_from_template(self, subject: str, to: str, template: Template, **template_kwargs):
-        msg = EmailMessage()
-
-        msg["Subject"] = subject
-        msg["From"] = self.user
-        msg["To"] = to
-        msg.set_content(template.render(**template_kwargs), subtype="html")
-
-        return msg
-
     def _send_message(self, msg, **kwargs):
         try:
             self._server.send_message(msg, **kwargs)
@@ -118,6 +108,29 @@ class Emailer:
             f"Publish Request for {display_name} from you",
             owner_address,
             env.get_template("publish_request_created_to_owner.html"),
+            owner_name=owner_name,
+            display_name=display_name,
+        )
+        self._send_message(msg)
+
+    def send_publish_request_confirmed_to_owner(
+        self, owner_address: str, owner_name: str, display_name: str, dist_url: str
+    ) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was confirmed",
+            owner_address,
+            env.get_template("publish_request_confirmed_to_owner.html"),
+            owner_name=owner_name,
+            display_name=display_name,
+            dist_url=dist_url,
+        )
+        self._send_message(msg)
+
+    def send_publish_request_declined_to_owner(self, owner_address: str, owner_name: str, display_name: str) -> None:
+        msg = self._create_message_from_template(
+            f"Your Publish Request for {display_name} was declined",
+            owner_address,
+            env.get_template("publish_request_declined_to_owner.html"),
             owner_name=owner_name,
             display_name=display_name,
         )

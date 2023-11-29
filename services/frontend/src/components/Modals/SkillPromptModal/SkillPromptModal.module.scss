@@ -22,7 +22,7 @@
   position: relative;
   display: flex;
   background-color: $bcgrnd3;
-  min-width: 725px;
+  min-width: 380px;
   height: 100%;
   flex-grow: 1;
   flex-direction: column;
@@ -32,10 +32,6 @@
   .btns {
     padding-right: 10px;
   }
-}
-
-.withSidePanel {
-  margin-left: 368px;
 }
 
 .editor-container {

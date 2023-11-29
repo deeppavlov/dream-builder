@@ -86,12 +86,9 @@ class GithubAuth(auth_type.OAuth):
             github_user.crud.add_user(db, github_user_create, general_user.id)
 
         github_uservalid.crud.add_user(db=db, user_id=general_user.id, access_token=access_token)
-        general_user = User.from_orm(general_user)
+        general_user = User.from_orm(general_user).__dict__ | {"first_auth": first_auth}
 
-        return UserToken(
-            **general_user.__dict__,
-            token=access_token,
-        ).__dict__ | {"first_auth": first_auth}
+        return UserToken(**general_user, token=access_token)
 
     ########################################################################
 
@@ -225,11 +222,9 @@ class GoogleOAuth2(auth_type.OAuth2):
             db.rollback()
             raise e
 
-        return UserToken(
-            **User.from_orm(general_user).__dict__,
-            token=access_token,
-            refresh_token=refresh_token
-        ).__dict__ | {"first_auth": first_auth}
+        general_user = User.from_orm(general_user).__dict__ | {"first_auth": first_auth}
+
+        return UserToken(**general_user, token=access_token, refresh_token=refresh_token)
 
     async def update_access_token(self, db: Session, refresh_token: str) -> UserToken:
         uservalid_: GoogleUserValid = google_uservalid.crud.get_by_refresh_token(db, refresh_token)

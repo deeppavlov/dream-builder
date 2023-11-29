@@ -34,6 +34,7 @@ export const Checkbox = ({
           checked={checked}
           disabled={disabled}
           {...props}
+          onChange={onChange}
         />
         <CheckBoxMarkIcon className={s.checkmark} />
       </div>

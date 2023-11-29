@@ -58,7 +58,10 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'user') {
-        setUser(event.newValue as UserInterface | null)
+        // event.newValue has the type string | null
+        typeof event.newValue === 'string'
+          ? setUser(JSON.parse(event.newValue))
+          : setUser(event.newValue) // null
         location.reload()
       }
     }

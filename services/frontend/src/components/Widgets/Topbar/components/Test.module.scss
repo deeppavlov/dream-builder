@@ -9,6 +9,8 @@
   border-radius: 12px;
   padding: 10px 14px;
   gap: 12px;
+  flex-shrink: 0;
+
   svg {
     @include icon_size_24;
     path {

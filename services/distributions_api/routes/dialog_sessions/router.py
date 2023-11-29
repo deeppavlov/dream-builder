@@ -26,7 +26,7 @@ async def send_chat_request_to_deployed_agent(
 ):
     """ """
     data = {
-        "user_id": f"{settings.app.agent_user_id_prefix}_{session_id}",
+        "user_id": f"agent-{settings.app.agent_user_id_prefix}_{session_id}",
         "payload": text,
     }
     if prompt:

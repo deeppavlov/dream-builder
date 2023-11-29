@@ -36,10 +36,19 @@ export const HomePage = () => {
   const publicDists = fetchPublicDists()
   const privateDists = fetchPrivateDists()
 
-  const { vaPageOpen } =useGaAssistant()
+  const { vaPageOpen } = useGaAssistant()
   useEffect(() => {
     vaPageOpen()
   }, [auth?.user])
+
+  const tableHeaders = [
+    t('assistant_table.name'),
+    t('assistant_table.author'),
+    t('assistant_table.desc'),
+    t('assistant_table.visibility'),
+    t('assistant_table.language'),
+    t('assistant_table.actions'),
+  ]
 
   return (
     <>
@@ -59,7 +68,7 @@ export const HomePage = () => {
             <>
               {isTableView ? (
                 <Table
-                  assistants
+                  headers={tableHeaders}
                   addButton={<AddButton forTable disabled={!auth?.user} />}
                 >
                   {publicDists?.isLoading && (
@@ -101,7 +110,7 @@ export const HomePage = () => {
           {isTableView ? (
             <>
               <Table
-                assistants
+                headers={tableHeaders}
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>

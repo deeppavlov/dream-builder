@@ -28,13 +28,15 @@ export const Topbar = () => {
   return (
     <div className={cx('topbar', isEditor && 'editor', !user && 'gapForBtns')}>
       <BurgerMenu type={type} dist={dist} />
-      <div className={s.crumbs}>
-        <Breadcrumbs />
-      </div>
-      <div className={s.btns}>
-        {isTableViewSwitcher && <Display />}
-        {isEditor && <Test />}
-        {user ? <Profile auth={auth} /> : <SignInButton />}
+      <div className={s.container}>
+        <div className={s.crumbs}>
+          <Breadcrumbs />
+        </div>
+        <div className={s.btns}>
+          {isTableViewSwitcher && <Display />}
+          {isEditor && <Test />}
+          {user ? <Profile auth={auth} /> : <SignInButton />}
+        </div>
       </div>
     </div>
   )

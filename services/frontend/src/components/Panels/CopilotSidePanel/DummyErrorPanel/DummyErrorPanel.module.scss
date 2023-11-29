@@ -1,0 +1,16 @@
+.errorPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px 24px 24px;
+
+  .errorPanelBtns {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+  }
+}

@@ -3,7 +3,7 @@ import { useAuth, useUIOptions } from 'context'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import {
   BotInfoInterface,
@@ -36,7 +36,7 @@ import { SvgIcon } from 'components/Helpers'
 import { Loader, TextLoader } from 'components/Loaders'
 import { BaseToolTip } from 'components/Menus'
 import { SidePanelButtons, SidePanelHeader } from 'components/Panels'
-import { DummyAlert } from 'components/UI'
+import { ErrorCard } from 'components/UI'
 import { TRIGGER_RIGHT_SP_EVENT } from '../BaseSidePanel/BaseSidePanel'
 import s from './AssistantDialogSidePanel.module.scss'
 
@@ -229,7 +229,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // get existing dialog session || create new
   useEffect(() => {
     const availableSession =
-      readyToGetSession && getAvailableDialogSession(bot?.name)
+      readyToGetSession && getAvailableDialogSession(bot?.name, user?.id)
 
     availableSession
       ? remoteHistory
@@ -361,7 +361,17 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 </>
               )}
             </div>
-            {hereIsDummy && <DummyAlert />}
+            {hereIsDummy && (
+              <div className={s.dummyContainer}>
+                <ErrorCard
+                  isWhite
+                  type='warning'
+                  message={
+                    <Trans i18nKey='sidepanels.assistant_dialog.dummy_error' />
+                  }
+                />
+              </div>
+            )}
             <form onKeyDown={handleKeyDown} onSubmit={handleSubmit(handleSend)}>
               <textarea
                 spellCheck='false'

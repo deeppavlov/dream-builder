@@ -274,7 +274,7 @@ export type ChatForm = { message: string }
 export type ComponentType =
   | 'fallback'
   | 'retrieval'
-  | 'Generative'
+  | 'generative'
   | 'q_a'
   | 'script'
   | 'script_with_nns'

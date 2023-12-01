@@ -70,7 +70,7 @@ def dialog_session_permission(
         user_id = None
 
     if dialog_session.user_id:
-        if user_id != dialog_session.user_id:
+        if user_id != dialog_session.user_id or user_id is None:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
 
     return dialog_session

@@ -20,6 +20,12 @@ def user2():
 
 
 @pytest.fixture(scope="function")
+def unauth_user():
+    unauth_user = UserMethods("", "")
+    return unauth_user
+
+
+@pytest.fixture(scope="function")
 def admin():
     admin = AdminMethods(admin_token, "github")
     return admin

@@ -332,6 +332,9 @@
         "send": "Send"
       }
     },
+    "warningsInfo": {
+      "header": "Errors"
+    },
     "assistant_dialog": {
       "tabs": {
         "name": "Chat:"
@@ -343,6 +346,7 @@
         "loading_time_text": "This may take a few minutes.",
         "error": "The Assistant build failed, please try again later."
       },
+
       "message_field": {
         "placeholder": "Type..."
       },
@@ -487,6 +491,9 @@
       "deepy": "Ask Deepy if you need help with building your Assistant"
     }
   },
+  "assistantMenuInfo": {
+    "errors": "Errors"
+  },
   "field_validation": {
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
@@ -545,6 +552,15 @@
     "btns": {
       "retry": "Retry"
     }
+  },
+  "error_massage": {
+    "prompt": {
+      "input": "Invalid value",
+      "length": "Prompt length is only 1 characters",
+      "language": "Skill does not support language"
+    },
+    "error": "You can't build the assistant with huge errors, please fix them.",
+    "warning": "You have recommendations; perhaps your assistant will not work the way you want."
   },
   "language": {
     "en": "English",

@@ -83,6 +83,7 @@ const WarningsInfo = () => {
         </div>
       )
     })
+
     return massage
   }
 
@@ -127,8 +128,10 @@ const WarningsInfo = () => {
             </div>
             {skills.name}
           </div>
-          {renderMassage('error', skills.data)}
-          {renderMassage('warning', skills.data)}
+          <div className={s.errorContendBox}>
+            {renderMassage('error', skills.data)}
+            {renderMassage('warning', skills.data)}
+          </div>
         </div>
       </div>
     )
@@ -166,7 +169,7 @@ const WarningsInfo = () => {
         >
           {assistant.name}
         </div>
-        <div className={s.assistantSkills} >
+        <div className={s.assistantSkills}>
           {assistant.skill.map((e, index: number) =>
             renderSkillAssistant(e, assistant.bot, index)
           )}

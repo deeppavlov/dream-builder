@@ -1,35 +1,49 @@
-import { UseQueryResult } from 'react-query'
-import { ICollectionError, ISkill, TComponents } from 'types/types'
+import { franc, francAll } from 'https://esm.sh/franc@6';
+import i18n from 'i18n';
+import LanguageDetect from 'languagedetect';
+import { UseQueryResult } from 'react-query';
+import { ICollectionError, ISkill, TComponents } from 'types/types';
 
-const InputError = (skill: ISkill, acc: ICollectionError) => {
+
+//(?:\b\w+\b|\[.*?\]|[А-я_]+)
+const arrInitPromptBlock = [
+  'Act as [YOUR INPUT].',
+  'YOUR PERSONALITY: \nYour name is [YOUR INPUT]. Your interests are: [YOUR INPUT].',
+  'TASK: \nour task is to do [YOUR INPUT].',
+  'Use [YOUR INPUT] voice and tone.',
+  'Reply in [YOUR INPUT] language.',
+  'The target audience is [YOUR INPUT].',
+  'I want you to reply in [YOUR INPUT] format.',
+  'Limit your replies to [YOUR INPUT] words.',
+  'Your ultimate goal is to persuade human to do [YOUR INPUT].',
+  'CONTEXT ABOUT HUMAN: \n"""[YOUR INPUT]""".',
+  'INSTRUCTION: \n"""[YOUR INPUT]""".',
+  'EXAMPLE:\n"""[YOUR INPUT]""".',
+  "Don't reply to following topics: [YOUR INPUT].",
+  'Reply to human from [YOUR INPUT] point of view.',
+  'Я хочу, чтобы вы выступили в роли [ВАШ ВВОД].',
+  'ВАША ЛИЧНОСТЬ: Ваше имя: [ВАШ ВВОД]. Ваши интересы: [ВАШ ВВОД].',
+]
+
+const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
     return
   }
 
-  const regex = /\[YOUR INPUT]/g
-  const result = regex.test(skill.prompt)
-  if (result) {
+  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]']
+  const str = arrInputs.reduce(
+    (acc, str) => (skill.prompt?.includes(str) ? (acc += ' ' + str) : acc),
+    ''
+  )
+
+  // console.log(str)
+
+  if (true) {
     const newError = {
       status: 'error',
-      massage: 'Не допустимое значение [YOUR INPUT]',
+      massage: `${i18n.t('error_massage.prompt.input')} ${str}`,
     }
     acc.error = [...acc.error, newError]
-  }
-}
-
-const languageWarning = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
-    return
-  }
-
-  const regex = /[A-z]/g
-  const result = regex.test(skill.prompt)
-  if (result) {
-    const newWarning = {
-      status: 'warning',
-      massage: 'Нет поддержки en',
-    }
-    acc.warning = [...acc.warning, newWarning]
   }
 }
 
@@ -38,88 +52,84 @@ const lengthPrompt = (skill: ISkill, acc: ICollectionError) => {
     return
   }
 
-  const result = skill.prompt.length < 5
+  const result = skill.prompt.length < 1
   if (result) {
     const newWarning = {
-      status: 'warning',
-      massage: 'длинна промта всего 5 символов',
+      status: 'error',
+      massage: i18n.t('error_massage.prompt.length'),
     }
     acc.warning = [...acc.warning, newWarning]
   }
 }
 
-const test1 = (skill: ISkill, acc: ICollectionError) => {
+const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
     return
   }
 
-  const result = true
-  if (result) {
-    const newError = {
-      status: 'error',
-      massage: 'тестовая ошибка 1',
-    }
-    acc.error = [...acc.error, newError]
-  }
-}
+  const languageArrSkill: string[] | undefined =
+    skill.lm_service?.languages?.map(el => el.value)
 
-const test2 = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
+
+
+ const r = franc(skill.prompt, {only: ['rus', 'eng']})
+
+ console.log(r)
+
+  if (!languageArrSkill) {
     return
   }
 
-  const result = true
-  if (result) {
-    const newError = {
-      status: 'error',
-      massage: 'тестовая ошибка 2',
-    }
-    acc.error = [...acc.error, newError]
-  }
-}
+  const promptLanguage = 'заглушка'
 
-const test3 = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
-    return
-  }
-
-  const result = true
-  if (result) {
+  if (true) {
     const newWarning = {
-      status: 'warning',
-      massage: 'тестовая ошибка 3',
+      status: 'error',
+      massage: `${i18n.t('error_massage.prompt.language')} ${promptLanguage}`,
     }
     acc.warning = [...acc.warning, newWarning]
   }
 }
 
-const test4 = (skill: ISkill, acc: ICollectionError) => {
+const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined) {
     return
   }
 
-  const result = true
-  if (result) {
-    const newError = {
-      status: 'error',
-      massage:
-        'Очень длинная критическая ошибка которая описывает ошибку скила и как ее исправить что бы было правильно.',
+  if (skill.lm_service?.prompt_blocks?.length === 0) {
+    return
+  }
+
+  let accString = ''
+
+  const promptBlocks = skill.lm_service?.prompt_blocks?.map(el => el.template)
+
+  const invalidBlocks = arrInitPromptBlock.filter(
+    el => !promptBlocks?.includes(el)
+  )
+
+  const arrIsinvalidBlocks = invalidBlocks?.map(el => {
+    const regString = '(?:\\b\\w+\\b|\\[.*?\\]|[А-я_]+)'
+
+    const strReg = el
+      .replaceAll('[YOUR INPUT]', regString)
+      .replaceAll('[ВАШ ВВОД]', regString)
+
+    const reg = new RegExp(strReg, 'g')
+
+    const result = reg.test(skill.prompt)
+
+    if (result) {
+      accString += el
     }
-    acc.error = [...acc.error, newError]
-  }
-}
 
-const test5 = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
-    return
-  }
+    return result
+  })
 
-  const result = true
-  if (result) {
+  if (arrIsinvalidBlocks.includes(true)) {
     const newWarning = {
       status: 'warning',
-      massage:
-        'Очень длинное предупреждение о том что ваш скилл может работать не корректно, и то как это можно поправить. ',
+      massage: `Возожно вы используете блок который не поддерживает этот скилл ${accString}`,
     }
     acc.warning = [...acc.warning, newWarning]
   }
@@ -131,14 +141,10 @@ export const examination = (data: ISkill) => {
     warning: [],
   }
 
-  InputError(data, acc)
-  languageWarning(data, acc)
+  InputPrompt(data, acc)
   lengthPrompt(data, acc)
-  test1(data, acc)
-  test2(data, acc)
-  test3(data, acc)
-  test4(data, acc)
-  test5(data, acc)
+  languagePrompt(data, acc)
+  promptBlocks(data, acc)
   return acc
 }
 
@@ -168,10 +174,8 @@ export const examinationMassage = (
     : 'success'
 
   const massageMap = {
-    error:
-      'Вы не можете собрать ассистента с критическими ошибками, пожалуйста, исправите их.',
-    warning:
-      'У вас есть рекомендации, возможно ваш ассистент будет работать не так как вы хотите.',
+    error: i18n.t('error_massage.error'),
+    warning: i18n.t('error_massage.warning'),
     success: 'success',
   }
 

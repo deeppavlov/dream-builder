@@ -1,22 +1,23 @@
-import { ReactComponent as Information } from '@assets/icons/information.svg'
-import classNames from 'classnames/bind'
-import { useAuth, useUIOptions } from 'context'
-import { CSSProperties, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useQuery, useQueryClient } from 'react-query'
-import { BotInfoInterface, ISkill, IСounter } from 'types/types'
-import { TOOLTIP_DELAY } from 'constants/constants'
-import { getComponents } from 'api/components'
-import { useAssistants, useComponent } from 'hooks/api'
-import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
-import { examination } from 'utils/checkingAssistants'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import { BaseToolTip } from 'components/Menus'
-import { WarningsInfo } from 'components/Panels'
-import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Hint } from 'components/UI'
-import s from './AssistantMenuInfo.module.scss'
+import { ReactComponent as Information } from '@assets/icons/information.svg';
+import classNames from 'classnames/bind';
+import { useAuth, useUIOptions } from 'context';
+import { CSSProperties, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery, useQueryClient } from 'react-query';
+import { BotInfoInterface, ISkill, IСounter } from 'types/types';
+import { TOOLTIP_DELAY } from 'constants/constants';
+import { getComponents } from 'api/components';
+import { useAssistants, useComponent } from 'hooks/api';
+import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy';
+import { examination } from 'utils/checkingAssistants';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import { BaseToolTip } from 'components/Menus';
+import { WarningsInfo } from 'components/Panels';
+import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel';
+import { Hint } from 'components/UI';
+import s from './AssistantMenuInfo.module.scss';
+
 
 export const HELPER_TAB_ID = 'helperTabError'
 
@@ -26,7 +27,9 @@ export const AssistantMenuInfo = () => {
   const { user } = useAuth()
   const { UIOptions } = useUIOptions()
   const { deepyChatOpened } = useGaDeepy()
-  const { t } = useTranslation('translation', { keyPrefix: 'sidebar.tooltips' })
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'assistantMenuInfo',
+  })
   const copilotIsActive = UIOptions[consts.WARNING_WINDOW_SP_IS_ACTIVE]
   const [hintIsVisited, setHintIsVisited] = useState<boolean>(
     JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
@@ -137,14 +140,14 @@ export const AssistantMenuInfo = () => {
         <BaseToolTip
           delayShow={TOOLTIP_DELAY}
           id={HELPER_TAB_ID}
-          content='Ошибки'
+          content={t('errors')}
           place='right'
         />
       ) : (
         <Hint
           tooltipId={HELPER_TAB_ID}
           name={HELPER_TAB_ID}
-          text={'Ошибки'}
+          text={t('errors')}
           handleClose={() => setHintIsVisited(true)}
         />
       )}

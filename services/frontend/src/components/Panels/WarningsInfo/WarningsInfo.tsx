@@ -1,19 +1,25 @@
-import { ReactComponent as Error } from '@assets/icons/error_circle.svg';
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
 import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
-import { useUIOptions } from 'context';
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
-import { RoutesList } from 'router/RoutesList';
-import { BotInfoInterface, ICollectionError, IMassage, ISkill, IStackElement } from 'types/types';
-import { VISIBILITY_STATUS } from 'constants/constants';
-import { useAssistants, useComponent } from 'hooks/api';
-import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant';
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
-import { examination } from 'utils/checkingAssistants';
-import { consts } from 'utils/consts';
-import { trigger } from 'utils/events';
-import s from './WarningsInfo.module.scss';
+import { useUIOptions } from 'context'
+import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { RoutesList } from 'router/RoutesList'
+import {
+  BotInfoInterface,
+  ICollectionError,
+  IMassage,
+  ISkill,
+  IStackElement,
+} from 'types/types'
+import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants, useComponent } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { examination } from 'utils/checkingAssistants'
+import { consts } from 'utils/consts'
+import { trigger } from 'utils/events'
+import s from './WarningsInfo.module.scss'
 
 const WarningsInfo = () => {
   const { fetchPrivateDists } = useAssistants()
@@ -21,7 +27,9 @@ const WarningsInfo = () => {
   const { getAllComponents } = useComponent()
   const navigate = useNavigate()
   const privateDists = fetchPrivateDists()
-  const { t } = useTranslation('translation', { keyPrefix: 'sidepanels.deepy' })
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'sidepanels.warningsInfo',
+  })
   const { setVaArchitectureOptions } = useGaAssistant()
   const nav = useNavigate()
   const { name } = useParams()
@@ -158,16 +166,18 @@ const WarningsInfo = () => {
         >
           {assistant.name}
         </div>
-        {assistant.skill.map((e, index: number) =>
-          renderSkillAssistant(e, assistant.bot, index)
-        )}
+        <div className={s.assistantSkills} >
+          {assistant.skill.map((e, index: number) =>
+            renderSkillAssistant(e, assistant.bot, index)
+          )}
+        </div>
       </div>
     )
   }
 
   const contendTitle = (
     <div className={s.contendTitle}>
-      <div className={s.title}>Errors</div>
+      <div className={s.title}>{t('header')}</div>
     </div>
   )
 

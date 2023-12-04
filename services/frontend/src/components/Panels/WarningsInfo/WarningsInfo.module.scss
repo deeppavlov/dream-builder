@@ -22,13 +22,14 @@
     text-decoration-thickness: 2px;
     text-underline-offset: 17px;
     text-decoration-color: #3300ff;
+    margin-bottom: 16px;
   }
 
   .assistantBlock {
     overflow: hidden;
     white-space: nowrap;
     display: block;
-    padding: 0px 10px;
+    padding: 0px 24px;
     text-overflow: ellipsis;
     margin-bottom: 22px;
 
@@ -48,6 +49,10 @@
       }
     }
 
+    .assistantSkills {
+      border-left: 1px solid #d8dbe5;
+    }
+
     .skill {
       display: flex;
 
@@ -63,6 +68,9 @@
           margin-left: 12px;
           display: flex;
           gap: 5px;
+          position: relative;
+          background: white;
+          z-index: 1;
 
           .massageCountError {
             font-family: Inter;

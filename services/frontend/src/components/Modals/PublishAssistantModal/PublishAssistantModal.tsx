@@ -96,6 +96,15 @@ export const PublishAssistantModal = () => {
       closeModal()
       return
     }
+    if (isAlreadyPublicTemplate) {
+      trigger('PublicToPrivateModal', {
+        bot,
+        action: 'unpublish',
+        newVisibility,
+      })
+      closeModal()
+      return
+    }
 
     toast
       .promise(publish(), {

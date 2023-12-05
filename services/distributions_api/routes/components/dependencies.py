@@ -23,7 +23,10 @@ def component_patch_permission(
     if user.id == component.author.id or user.id == 1:
         return component
     else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to {component.display_name} with id: {component.id} for user {user.name}"
+        )
 
 
 def component_delete_permission(
@@ -34,4 +37,7 @@ def component_delete_permission(
     if user.id == component.author.id or user.id == 1:
         return component
     else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to {component.display_name} with id: {component.id} for user {user.name}"
+        )

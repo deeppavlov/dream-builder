@@ -57,7 +57,8 @@ async def create_virtual_assistant(
         template_dist = TEMPLATE_DIST_PROMPT_BASED[payload.language]
     except KeyError:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"No template for language {payload.language}"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"No template for language {payload.language} for virtual assistant {payload.display_name}"
         )
 
     new_virtual_assistant = flows.create_virtual_assistant(

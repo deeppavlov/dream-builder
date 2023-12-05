@@ -45,7 +45,11 @@ def dialog_session_create_permission(
             return virtual_assistant
 
     if virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.PRIVATE:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to dialog session of virtual assistant {virtual_assistant.id} for user."
+                   f"Either user is not author or can't view private assistants"
+        )
 
     elif virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION:
         raise NotImplementedError(
@@ -71,6 +75,10 @@ def dialog_session_permission(
 
     if dialog_session.user_id:
         if user_id != dialog_session.user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"No access for dialog session for user {user.id}. "
+                       f"This is not the user which started dialog session"
+            )
 
     return dialog_session

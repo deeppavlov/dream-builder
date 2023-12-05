@@ -32,13 +32,20 @@ def deployment_view_permission(
             return deployment
 
     if deployment.virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.PRIVATE:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to deployment {deployment.id} for user {user.id}. "
+                   f"Either user is not author or can't view deployment for current virtual assistant"
+        )
 
     elif deployment.virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_LINK:
         if user:
             return deployment
         else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not logged in")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Current user is Not logged in"
+            )
 
     elif deployment.virtual_assistant.visibility == enums.VirtualAssistantPrivateVisibility.UNLISTED_INVITATION:
         raise NotImplementedError(
@@ -58,7 +65,11 @@ def deployment_patch_permission(
 ):
     """"""
     if user.id != deployment.virtual_assistant.author.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to deployment {deployment.id} for user {user.id}. "
+                   f"User is not an author of current virtual assistant"
+        )
     return deployment
 
 
@@ -68,5 +79,9 @@ def deployment_delete_permission(
 ):
     """"""
     if user.id != deployment.virtual_assistant.author.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"No access to deployment {deployment.id} for user {user.id}. "
+                   f"User is not an author of current virtual assistant"
+        )
     return deployment

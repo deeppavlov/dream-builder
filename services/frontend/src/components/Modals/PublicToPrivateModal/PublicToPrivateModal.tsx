@@ -15,22 +15,31 @@ import s from './PublicToPrivateModal.module.scss'
 
 type ActionTypes = 'edit' | 'rename' | 'unpublish'
 
+interface IEventDetail {
+  detail: {
+    bot: BotInfoInterface
+    action: ActionTypes
+    newVisibility?: TDistVisibility
+  }
+}
+
 export const PublicToPrivateModal = () => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const [action, setAction] = useState<ActionTypes | null>(null)
   const [newVisibility, setNewVisibility] = useState<TDistVisibility>(
-    VISIBILITY_STATUS.PRIVATE as TDistVisibility
+    VISIBILITY_STATUS.PRIVATE
   )
   const navigate = useNavigate()
 
-  const handleEventUpdate = ({ detail }: any) => {
-    // FIX any
-    setBot(detail?.bot)
-    setAction(detail?.action)
+  const handleEventUpdate = ({
+    detail: { bot, action, newVisibility },
+  }: IEventDetail) => {
+    setBot(bot)
+    setAction(action)
     setIsOpen(!isOpen)
-    detail.newVisibility && setNewVisibility(detail.newVisibility)
+    setNewVisibility(newVisibility || VISIBILITY_STATUS.PRIVATE)
   }
   const queryClient = useQueryClient()
   const { changeVisibility } = useAssistants()

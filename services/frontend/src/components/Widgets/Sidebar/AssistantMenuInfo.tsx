@@ -64,7 +64,7 @@ export const AssistantMenuInfo = () => {
     : []
 
   const { data: componentsList } = useQuery(
-    ['user_skills', user?.id],
+    ['skills_of_current_user_assistants'],
     () =>
       Promise.all(
         sortedDists.map(async (el: BotInfoInterface) => {

@@ -171,6 +171,7 @@ export const useComponent = () => {
       { component_id, distName, lm_service, type }
     ) => {
       //fix lm_service on patchComponent endpoint not return from backend
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       updateCachedComponent({
         id: component_id,
         distName,

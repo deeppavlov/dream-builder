@@ -1,4 +1,5 @@
 import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
+import { useAuth } from 'context'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import store from 'store2'
@@ -12,12 +13,27 @@ interface IProps {
   apiKey: IUserApiKey
   updateApiKey: (newToken: IUserApiKey) => void
 }
-
 const AccessTokenKey = ({ removeApiKey, apiKey, updateApiKey }: IProps) => {
   const { t } = useTranslation()
   const [useForDeepy, setUseForDeepy] = useState(apiKey.useForDeepy)
 
+  const { user } = useAuth()
+
   const isOpenAi = apiKey.api_service.name === 'openai_api_key'
+
+  const handleChange = () => {
+    const deepySessionName = `deepySession_${user!.id}`
+    const localSession = store(deepySessionName)
+    if (!useForDeepy) {
+      store(deepySessionName, {
+        ...localSession,
+        dummy: false,
+      })
+    }
+    updateApiKey({ ...apiKey, useForDeepy: !useForDeepy })
+    setUseForDeepy(prev => !prev)
+    trigger('AccessTokensChanged', { newValue: !useForDeepy })
+  }
 
   return (
     <li className={s.container}>
@@ -38,24 +54,11 @@ const AccessTokenKey = ({ removeApiKey, apiKey, updateApiKey }: IProps) => {
           <Checkbox
             label={t('modals.access_api_keys.checkbox')}
             checked={useForDeepy}
-            onChange={() => {
-              const localSession = store('deepySession')
-              if (!useForDeepy) {
-                store('deepySession', {
-                  ...localSession,
-                  dummy: false,
-                })
-              }
-              updateApiKey({ ...apiKey, useForDeepy: !useForDeepy })
-              setUseForDeepy(prev => !prev)
-              trigger('AccessTokensChanged', { newValue: !useForDeepy })
-            }}
-            props={{ className: s.checkbox }}
+            props={{ className: s.checkbox, onChange: handleChange }}
           />
         </div>
       )}
     </li>
   )
 }
-
 export default AccessTokenKey

@@ -64,7 +64,7 @@ const SkillPromptModal = () => {
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const {setUIOption} = useUIOptions()
+  const { setUIOption } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -175,7 +175,7 @@ const SkillPromptModal = () => {
           .then(data => {
             skillChanged(skill, data)
             const name = bot?.name!
-            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+            const newVisibility = VISIBILITY_STATUS.PRIVATE
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
               deleteDeployment.mutateAsync(bot!).then(() => {
                 bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&

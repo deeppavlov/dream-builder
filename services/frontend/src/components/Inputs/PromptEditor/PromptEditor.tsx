@@ -138,8 +138,8 @@ export const PromptEditor = ({
     if (isEmpty) {
       setLength(0)
       setIsCounting(false)
+      setEditorContext({ ...editorContext, code: field.value })
     }
-    setEditorContext({ ...editorContext, code: field.value })
   }, [field.value])
 
   useEffect(() => {

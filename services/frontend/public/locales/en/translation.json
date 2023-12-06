@@ -171,7 +171,7 @@
       }
     },
     "hide_public_assistant": {
-      "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
+      "header": "Your Assistant will be removed from public templates. Continue?",
       "subheader": "You will have to publish it again to make it a Public Template",
       "btns": {
         "cancel": "Cancel",

@@ -96,8 +96,7 @@ export const AssistantModule = () => {
         deleteDeployment
           .mutateAsync(bot!, {
             onSuccess: () => {
-              const newVisibility: TDistVisibility =
-                VISIBILITY_STATUS.PRIVATE as TDistVisibility
+              const newVisibility = VISIBILITY_STATUS.PRIVATE
               if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
                 changeVisibility.mutateAsync(
                   { name: bot?.name || '', newVisibility },

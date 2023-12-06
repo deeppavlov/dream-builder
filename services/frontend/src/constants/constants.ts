@@ -1,5 +1,11 @@
 import i18n from 'i18n'
-import { ELOCALES_KEY, ELOCALES_TITLE, TLocales } from 'types/types'
+import {
+  ELOCALES_KEY,
+  ELOCALES_TITLE,
+  TDeploymentState,
+  TDistVisibility,
+  TLocales,
+} from 'types/types'
 
 export const DEBUG_EN_DIST = 'universal_prompted_assistant'
 export const DEBUG_RU_DIST = 'universal_ru_prompted_assistant'
@@ -8,7 +14,7 @@ export const DUMMY_SKILL = 'dummy_skill'
 export const TOOLTIP_DELAY = 1000
 export const OPEN_AI_LM = 'OpenAI'
 
-export const DEPLOY_STATUS = {
+export const DEPLOY_STATUS: { [key: string]: TDeploymentState } = {
   STARTED: 'STARTED',
   CREATING_CONFIG_FILES: 'CREATING_CONFIG_FILES',
   BUILDING_IMAGE: 'BUILDING_IMAGE',
@@ -17,7 +23,7 @@ export const DEPLOY_STATUS = {
   DEPLOYED: 'DEPLOYED',
   UP: 'UP',
 }
-export const VISIBILITY_STATUS = {
+export const VISIBILITY_STATUS: { [key: string]: TDistVisibility } = {
   PRIVATE: 'PRIVATE',
   UNLISTED_LINK: 'UNLISTED_LINK',
   PUBLIC_TEMPLATE: 'PUBLIC_TEMPLATE',

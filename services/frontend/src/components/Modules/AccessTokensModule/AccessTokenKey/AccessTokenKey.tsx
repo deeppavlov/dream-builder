@@ -13,7 +13,6 @@ interface IProps {
   apiKey: IUserApiKey
   updateApiKey: (newToken: IUserApiKey) => void
 }
-
 const AccessTokenKey = ({ removeApiKey, apiKey, updateApiKey }: IProps) => {
   const { t } = useTranslation()
   const [useForDeepy, setUseForDeepy] = useState(apiKey.useForDeepy)
@@ -55,13 +54,11 @@ const AccessTokenKey = ({ removeApiKey, apiKey, updateApiKey }: IProps) => {
           <Checkbox
             label={t('modals.access_api_keys.checkbox')}
             checked={useForDeepy}
-            onChange={handleChange}
-            props={{ className: s.checkbox }}
+            props={{ className: s.checkbox, onChange: handleChange }}
           />
         </div>
       )}
     </li>
   )
 }
-
 export default AccessTokenKey

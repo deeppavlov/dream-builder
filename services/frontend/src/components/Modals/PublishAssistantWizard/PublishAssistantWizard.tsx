@@ -44,7 +44,7 @@ export const PublishAssistantWizard = () => {
 
   const handlePublish = () => {
     const name = bot?.name!
-    const newVisibility = VISIBILITY_STATUS.PUBLIC_TEMPLATE as TDistVisibility
+    const newVisibility = VISIBILITY_STATUS.PUBLIC_TEMPLATE
     setIsOpen(false)
     toast.promise(
       changeVisibility.mutateAsync({

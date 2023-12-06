@@ -146,7 +146,8 @@ export const useAssistants = () => {
       const requestToPublicTemplate =
         newVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
-      if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
+      if (!requestToPublicTemplate)
+        queryClient.invalidateQueries([PUBLIC_DISTS])
       if (inEditor) queryClient.invalidateQueries([DIST, name])
       queryClient
         .invalidateQueries([PRIVATE_DISTS])

@@ -149,6 +149,16 @@ const WarningsInfo = () => {
       return null
     }
 
+    const countAllError = assistant.skill.reduce((acc, el) => {
+      const errorCount = el.data.error.length
+      const warningWarning = el.data.warning.length
+      return acc + errorCount + warningWarning
+    }, 0)
+
+    if (countAllError === 0) {
+      return null
+    }
+
     const handlEditClick = (
       e: React.MouseEvent<HTMLButtonElement>,
       bot: BotInfoInterface

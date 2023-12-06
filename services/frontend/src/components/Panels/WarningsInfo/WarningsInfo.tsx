@@ -88,10 +88,17 @@ const WarningsInfo = () => {
   }
 
   const renderSkillAssistant = (
-    skills: any,
+    skill: any,
     bot: BotInfoInterface,
     i: number
   ) => {
+    const errorCount = skill.data.error.length
+    const warningCount = skill.data.warning.length
+
+    if (errorCount === 0 && warningCount === 0) {
+      return null
+    }
+
     const handleEditBtnClick = (e: React.MouseEvent, skill: IStackElement) => {
       skillEditorOpened('skill_block', skill)
       if (skill.component_type === ('Generative' as any)) {
@@ -106,13 +113,13 @@ const WarningsInfo = () => {
       }
     }
 
-    const countError = skills.data.error.length + skills.data.warning.length
+    const countError = skill.data.error.length + skill.data.warning.length
     const massageCountError = countError === 0 ? '' : `(${countError})`
 
     const colorError =
-      skills.data.error.length !== 0
+      skill.data.error.length !== 0
         ? { color: '#b20000' }
-        : skills.data.warning.length !== 0
+        : skill.data.warning.length !== 0
         ? { color: '#FF9500' }
         : {}
 
@@ -121,16 +128,16 @@ const WarningsInfo = () => {
         <div className={s.skillBlock}>
           <div
             className={s.skillName}
-            onClick={e => handleEditBtnClick(e, skills.skill)}
+            onClick={e => handleEditBtnClick(e, skill.skill)}
           >
             <div className={`${s.massageCountError}`} style={colorError}>
               {massageCountError}
             </div>
-            {skills.name}
+            {skill.name}
           </div>
           <div className={s.errorContendBox}>
-            {renderMassage('error', skills.data)}
-            {renderMassage('warning', skills.data)}
+            {renderMassage('error', skill.data)}
+            {renderMassage('warning', skill.data)}
           </div>
         </div>
       </div>

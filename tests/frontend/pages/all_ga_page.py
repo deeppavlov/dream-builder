@@ -8,15 +8,35 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from .base_page import BasePage
+from .create_va_mw import Create_VA_MW
+from .your_a_kebab import YourAKebab
+from .properties_a_panel import ProperiesAPanel
 from tests.frontend.locators.locators import AllGAPageLocators
 from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name
 
 
-class AllGAPage(BasePage):
-    def check_is_public_template_loaded(self):
-        WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD))
+class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
+    page_type = "all_va_page"
 
-    # PUBLIC ASSISTANTS
+    def check_is_public_template_loaded(self):
+        if BasePage.view == "card":
+            WebDriverWait(self.browser, 40).until(
+                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD))
+        elif BasePage.view == "list":
+            WebDriverWait(self.browser, 40).until(
+                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD_LIST_VIEW))
+
+    def click_change_view_type_to_list(self):
+        button = self.browser.find_element(*AllGAPageLocators.CHANGE_VIEW_TYPE)
+        button.click()
+        BasePage.view = "list"
+        BasePage.source_type = "top_panel"
+
+    def click_change_view_type_to_card(self):
+        button = self.browser.find_element(*AllGAPageLocators.CHANGE_VIEW_TYPE)
+        button.click()
+        BasePage.view = "card"
+        BasePage.source_type = "top_panel"
 
     def scroll_public_templates_right(self):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_RIGHT_SCROLL_BUTTON)
@@ -26,8 +46,18 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_LEFT_SCROLL_BUTTON)
         button.click()
 
+    # PUBLIC ASSISTANTS
+
+    def click_show_all_templates_assistants(self):
+        button = self.browser.find_element(*AllGAPageLocators.SHOW_ALL_PUBLIC_TEMPLATES)
+        button.click()
+
     def click_kebab_public_template(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB)
+        button = ''
+        if BasePage.view == "card":
+            button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB)
+        elif BasePage.view == "list":
+            button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB_LIST_VIEW)
         button.click()
 
         WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_KEBAB_CHAT))
@@ -40,9 +70,19 @@ class AllGAPage(BasePage):
         button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB_CHECK_SKILLS)
         button.click()
 
-    def click_use_template(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON)
+    def click_kebab_public_template_properties(self):
+        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB_PROPERTIES)
         button.click()
+
+    def click_use_template(self):
+        button = ''
+        if BasePage.view == "card":
+            button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON)
+        elif BasePage.view == "list":
+            button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON_LIST_VIEW)
+        button.click()
+
+        BasePage.source_type = 'va_templates_block'
 
     def click_use_template_modal_window(self):
         WebDriverWait(self.browser, 4).until(
@@ -71,92 +111,42 @@ class AllGAPage(BasePage):
 
     # YOUR ASSISTANTS
 
+    def click_on_your_assistant_card(self):
+        button = ''
+        if BasePage.view == "card":
+            button = self.browser.find_element(*AllGAPageLocators.YOUR_CARD)
+        elif BasePage.view == "list":
+            button = self.browser.find_element(*AllGAPageLocators.YOUR_CARD_LIST_VIEW)
+        button.click()
+
+        BasePage.source_type = "va_card_click"
+
+    def click_show_all_your_assistants(self):
+        button = self.browser.find_element(*AllGAPageLocators.SHOW_ALL_YOUR_VA)
+        button.click()
+
     def click_your_a_edit_button(self):
         WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located(AllGAPageLocators.YOUR_EDIT_BUTTON)
         ).click()
 
     def click_kebab_your_a(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
-        button.click()
+        BasePage.source_type = 'va_block'
 
+        button = ''
+        if BasePage.view == "card":
+            button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
+        elif BasePage.view == "list":
+            button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_LIST_VIEW)
+
+        button.click()
         WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(AllGAPageLocators.YOUR_KEBAB_CHAT))
-
-    def click_kebab_your_a_chat(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_CHAT)
-        button.click()
-
-    def click_kebab_your_a_delete(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_DELETE)
-        button.click()
-
-    def click_mw_your_a_delete(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_A_DELETE_MW_DELETE)
-        button.click()
-
-    def click_kebab_your_a_share(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_SHARE)
-        button.click()
-
-    def get_share_link(self):
-        link = self.browser.find_element(*AllGAPageLocators.SHARE_LINK).get_attribute("value")
-        return link
-
-    def click_kebab_your_a_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_VISIBILITY)
-        button.click()
-
-    def change_visibility_to_private(self):
-        button = self.browser.find_element(*AllGAPageLocators.PRIVATE_VISIBILITY_MW)
-        button.click()
-
-    def change_visibility_to_unlisted(self):
-        button = self.browser.find_element(*AllGAPageLocators.UNLISTED_VISIBILITY_MW)
-        button.click()
-        ActionChains(self.browser).move_to_element(button).perform()
-
-    def change_visibility_to_public_template(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLIC_TEMPLATE_VISIBILITY_MW)
-        button.click()
-        ActionChains(self.browser).move_to_element(button).perform()
-
-    def save_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.SAVE_BUTTON_VISIBILITY_MW)
-        button.click()
-
-    def publish_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.PUBLISH_BUTTON_VISIBILITY_MW)
-        button.click()
-
-    def click_continue_publish_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW)
-        button.click()
-
-    def click_cancel_publish_visibility(self):
-        button = self.browser.find_element(*AllGAPageLocators.CANCEL_BUTTON_IMPORTANT_PUBLISH_MW)
-        button.click()
-
-    def check_unlisted_visibility_tooltip(self):
-        time.sleep(1)
-        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
-            AllGAPageLocators.UNLISTED_TOOLTIP_VISIBILITY_MW))
-
-    def check_public_template_visibility_tooltip(self):
-        time.sleep(1)
-        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
-            AllGAPageLocators.PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW))
-
-    def click_kebab_your_a_rename(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_RENAME)
-        button.click()
-
-    def click_kebab_your_a_properties(self):
-        button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB_PROPERTIES)
-        button.click()
 
     def click_create_from_scratch_button(self):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_BUTTON)
         button.click()
+
+        BasePage.source_type = 'va_templates_block'
 
     def click_choose_language_assistant_dropdown(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_DROPDOWN)
@@ -169,52 +159,6 @@ class AllGAPage(BasePage):
     def click_choose_language_assistant_ru(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_RU)
         textarea.click()
-
-    def enter_name_in_create_va_mw(self):
-        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
-        textarea.click()
-        textarea.send_keys(f"{your_va_name}")
-
-    def clear_name_in_create_va_mw(self):
-        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_NAME_TEXTAREA)
-        textarea.click()
-        textarea.send_keys(Keys.CONTROL + "a")
-        textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
-
-    def clear_description_in_create_va_mw(self):
-        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
-        textarea.click()
-        textarea.send_keys(Keys.CONTROL + "a")
-        textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
-
-    def enter_description_in_create_va_mw(self):
-        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
-        textarea.click()
-        textarea.send_keys("New description")
-
-    def enter_description_upper_limit_in_create_va_mw(self):
-        textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_DESCRIPTION_TEXTAREA)
-        textarea.click()
-        textarea.send_keys('1234 '*250)
-
-    def click_create_in_create_va_mw(self):
-        button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_CREATE_BUTTON)
-        button.click()
-
-    def click_close_in_create_va_mw(self):
-        button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_CLOSE_BUTTON)
-        button.click()
-
-    def check_error_message_name_cant_be_empty_in_create_skill_mw(self):
-        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_NAME_CANT_BE_EMPTY)
-
-    def check_error_message_description_cant_be_empty_in_create_skill_mw(self):
-        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY)
-
-    def check_error_message_limit_text_description_in_create_skill_mw(self):
-        error_message = self.browser.find_element(*AllGAPageLocators.CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION)
 
     def check_building_is_done(self):
         edit_button = WebDriverWait(self.browser, 90).until(

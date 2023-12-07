@@ -4,10 +4,33 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tests.frontend.locators.locators import BasePageLocators
+from tests.frontend.config import your_va_name, public_va_name, default_skill_name
 
 
 class BasePage:
-    def __init__(self, browser, url, timeout=15):
+    source_type = "va_block"
+    page_type = "all_va_page"
+    view = "card"
+    auth_status = "false"
+    va_prev_status = "private"
+    va_temp_status = "private"
+    services = "none"
+
+    skill_created_type = "default"
+    skill_view = "card"
+    skill_type = "Generative"
+    va_name = your_va_name
+    skill_name = default_skill_name
+    skill_template_name = public_va_name
+    model_name = "ChatGPT (Advanced, 4K tokens)"
+    old_model_name = "GPT-JT 6B (Basic, 2K tokens)"
+    new_model_name = "GPT-JT 6B (Basic, 2K tokens)"
+
+    def __init__(self,
+                 browser,
+                 url,
+                 timeout=15):
+
         self.browser = browser
         self.url = url
         self.browser.implicitly_wait(timeout)
@@ -30,6 +53,37 @@ class BasePage:
 
     def click_profile_settings_button(self):
         button = self.browser.find_element(*BasePageLocators.PROFILE_SETTINGS_BUTTON)
+        button.click()
+
+        BasePage.source_type = "profile_settings"
+        BasePage.services = "none"
+
+    def click_chat_with_assistant_button(self):
+        button = self.browser.find_element(*BasePageLocators.CHAT_WITH_ASSISTANT_BUTTON)
+        button.click()
+
+        BasePage.source_type = "va_dialog_panel"
+
+    # BREADCRUMB BAR
+
+    def click_home_button(self):
+        button = self.browser.find_element(*BasePageLocators.HOME_BUTTON)
+        button.click()
+
+    def click_bcb_your_assistants_button(self):
+        button = self.browser.find_element(*BasePageLocators.BCB_YOUR_ASSISTANTS)
+        button.click()
+
+    def click_bcb_your_assistant_name_button(self):
+        button = self.browser.find_element(*BasePageLocators.BCB_YOUR_ASSISTANT_NAME)
+        button.click()
+
+    def click_bcb_public_templates_button(self):
+        button = self.browser.find_element(*BasePageLocators.BCB_PUBLIC_TEMPLATES)
+        button.click()
+
+    def click_bcb_public_template_name_button(self):
+        button = self.browser.find_element(*BasePageLocators.BCB_PUBLIC_ASSISTANT_NAME)
         button.click()
 
     # SIGN IN
@@ -55,6 +109,8 @@ class BasePage:
     def click_main_menu(self):
         button = self.browser.find_element(*BasePageLocators.MAIN_MENU_BUTTON)
         button.click()
+
+        self.source_type = "va_action_menu"
 
     def check_main_menu_is_opened(self):
         WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(
@@ -97,9 +153,9 @@ class BasePage:
         button = self.browser.find_element(*BasePageLocators.MAIN_MENU_DELETE)
         button.click()
 
-    def click_home_button(self):
-        button = self.browser.find_element(*BasePageLocators.HOME_BUTTON)
-        button.click()
+    # LEFT PANEL
+
+    # DEEPY
 
     def click_deepy_button(self):
         button = (
@@ -108,7 +164,25 @@ class BasePage:
             .click()
         )
 
+        BasePage.source_type = "left_panel"
+
+    # SETTINGS BUTTON
+
+    def click_settings_button(self):
+        button = (
+            WebDriverWait(self.browser, 3)
+                .until(EC.visibility_of_element_located(BasePageLocators.SETTINGS_BUTTON))
+                .click()
+        )
+        BasePage.source_type = "services_common_button"
+        BasePage.services = "none"
+
     # SUCCESS TOASTS
+
+    def check_saving_toast(self):
+        success_toast = WebDriverWait(self.browser, 25).until(
+            EC.text_to_be_present_in_element(BasePageLocators.SAVING_TOAST, "Saving")
+        )
 
     def check_success_toast(self):
         success_toast = WebDriverWait(self.browser, 25).until(

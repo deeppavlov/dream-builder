@@ -75,6 +75,5 @@ def pytest_runtest_makereport(item, call):
     rep = outcome.get_result()
     if rep.when == "call" and rep.failed:
         fixture_browser = item.funcargs["browser"]
-        fixture_browser.save_screenshot(f"screen_{item.name}.png")
-
+        #fixture_browser.save_screenshot(f"screen_{item.name}.png")
         qase.attach(f"screen_{item.name}.png")

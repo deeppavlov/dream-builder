@@ -10,9 +10,13 @@ from tests.frontend.config import lm_service_en_list, lm_service_ru_list, defaul
 
 
 class SkillEditorPage(BasePage):
+    page_type = "va_skill_editor"
+
     def open_models_dropdown(self):
         button = self.browser.find_element(*SkillEditorPageLocators.OPEN_MODELS_DROPDOWN)
         button.click()
+
+        BasePage.source_type = "skill_editor_prompt_panel"
 
     def check_dropdown_opened(self):
         time.sleep(1)
@@ -26,6 +30,9 @@ class SkillEditorPage(BasePage):
     def choose_generative_model(self):
         button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
         button.click()
+
+        BasePage.new_model_name = "ChatGPT (Advanced, 4K tokens)"
+        BasePage.model_name = "ChatGPT (Advanced, 4K tokens)"
 
     def select_specific_model(self, model_name):
         button = self.browser.find_element(By.XPATH, f"//span[contains(text(),'{model_name}')]")
@@ -81,6 +88,8 @@ class SkillEditorPage(BasePage):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
         textarea.send_keys("Your name is Sale Assistant. You work with sales specialists and you help them do sales.")
+
+        BasePage.source_type = "skill_editor_prompt_panel"
 
     def enter_new_prompt_upper_limit(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
@@ -165,8 +174,9 @@ class SkillEditorPage(BasePage):
         button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_BUTTON_MODAL_WINDOW)
         button.click()
 
-    def check_prompt_is_not_builderbot(self):
-        textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
-        prompt = textarea.text
-        assert prompt != "Your name is BuilderBot, act like you know a lot about building bots"
-        assert prompt is not None
+    def click_close_skill_editor_page(self):
+        button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_SKILL_EDITOR_BUTTON)
+        button.click()
+
+    def update_model_status(self):
+        BasePage.old_model_name = BasePage.new_model_name

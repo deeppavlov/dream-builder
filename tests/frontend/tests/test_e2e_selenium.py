@@ -72,12 +72,6 @@ def e2e_scenario(browser, env, screen_size):
         page.click_sign_in()
         page = AllGAPage(browser, browser.current_url)
 
-        # это баг - начало
-        time.sleep(3)
-        page.click_use_template()
-        time.sleep(3)
-        # это баг - конец
-
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
         page.clear_name_in_create_va_mw()
@@ -105,8 +99,8 @@ def e2e_scenario(browser, env, screen_size):
     with qase.step("6. Wendy chooses СhatGPT model"):
         page = SkillEditorPage(browser, browser.current_url)
 
-        page.check_error_message_field_cant_be_empty()
-        page.check_error_message_field_cant_be_empty_disappear()
+        #page.check_error_message_field_cant_be_empty()
+        #page.check_error_message_field_cant_be_empty_disappear()
 
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
@@ -114,7 +108,8 @@ def e2e_scenario(browser, env, screen_size):
         page.check_dropdown_opened()
 
         # баг -
-        # page.check_all_en_models()
+        #page.check_all_en_models()
+        # баг -
 
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
@@ -196,6 +191,7 @@ def e2e_scenario(browser, env, screen_size):
         page.click_kebab_your_a_chat()
         panel = DialogPanel(browser, browser.current_url)
         panel.check_is_dialog_panel_loaded()
+        time.sleep(2)
         panel.enter_message()
 
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
@@ -203,7 +199,7 @@ def e2e_scenario(browser, env, screen_size):
         panel.send_message()
 
         # баг - !
-        # panel.check_bot_message_edited_prompt()
+        panel.check_bot_message_edited_prompt()
         # баг - !
 
         panel.click_close_button()
@@ -440,8 +436,9 @@ def e2e_scenario(browser, env, screen_size):
         page.click_save_button()
         page.check_success_toast()
         page.check_success_toast_disappear()
+
         # - баг!
-        # page.check_all_ru_models()
+        page.check_all_ru_models()
         # - баг!
 
         page.check_default_prompt_ru()

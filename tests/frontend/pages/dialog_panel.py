@@ -5,6 +5,18 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class DialogPanel(BasePage):
+    def __init__(self, browser, url, timeout=15):
+        #source_type = "va_dialog_panel"
+        source_type = "va_sidepanel"
+        page_type = self.page_type
+        view = self.view
+        auth_status = self.auth_status
+
+        super().__init__(browser, url, timeout)
+        self.browser = browser
+        self.url = url
+        self.browser.implicitly_wait(timeout)
+
     def check_is_dialog_panel_loaded(self):
         WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(DialogPanelLocators.CLOSE_BUTTON))
 
@@ -83,4 +95,4 @@ class DialogPanel(BasePage):
     def click_enter_token_button(self):
         error = self.browser.find_element(*DialogPanelLocators.ENTER_TOKEN_BUTTON)
 
-
+        BasePage.services = "OpenAI"

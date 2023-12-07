@@ -350,7 +350,7 @@ class TestDistributions:
     #    user.send_dialog_session_message(dialog_session_id)
     #    user.get_dialog_session_history(dialog_session_id)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.parametrize("va_name", [*public_va_names_en, *public_va_names_ru])
@@ -692,7 +692,7 @@ class TestDistributions:
         user.delete_va_by_name(name)
 
     # @pytest.mark.atom
-    @pytest.mark.permissions
+    @pytest.mark.regression
     @qase.title(f"{counter()}. test_non_owner_cannot_access_private_assistant_dialog_session")
     def test_non_owner_cannot_access_private_assistant_dialog_session(self, user, user2):
         display_name = va_data["name"]
@@ -726,3 +726,293 @@ class TestDistributions:
         user2.decline_publish_request_no_access(publish_request_id)
 
         user.delete_va_by_name(name)
+
+    ##@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_unauth_user_cannot_access_someone_else_dialog_session_with_public_template")
+    def test_unauth_user_cannot_access_someone_else_dialog_session_with_public_template(self, user, unauth_user):
+        va_name = public_va_names_en[0]
+
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+
+        unauth_user.get_dialog_sessions_no_access(dialog_session_id)
+        unauth_user.send_dialog_session_message_no_access(dialog_session_id)
+        unauth_user.get_dialog_session_history_no_access(dialog_session_id)
+
+    ##@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_non_owner_cannot_access_someone_else_dialog_session_with_public_template")
+    def test_non_owner_cannot_access_someone_else_dialog_session_with_public_template(self, user, user2):
+        va_name = public_va_names_en[0]
+
+        dialog_session_id = user.create_dialog_sessions(va_name)["id"]
+        user.send_dialog_session_message(dialog_session_id)
+
+        user2.get_dialog_sessions_no_access(dialog_session_id)
+        user2.send_dialog_session_message_no_access(dialog_session_id)
+        user2.get_dialog_session_history_no_access(dialog_session_id)
+
+    ##@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_unauth_user_can_access_someone_else_unauth_dialog_session_with_public_template")
+    def test_unauth_user_can_access_someone_else_unauth_dialog_session_with_public_template(self, unauth_user):
+        va_name = public_va_names_en[0]
+        unauth_user2 = UserMethods("", "")
+
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message(dialog_session_id)
+
+        #unauth_user2.get_dialog_sessions_no_access(dialog_session_id)
+        #unauth_user2.send_dialog_session_message_no_access(dialog_session_id)
+        #unauth_user2.get_dialog_session_history_no_access(dialog_session_id)
+
+        unauth_user2.get_dialog_sessions(dialog_session_id)
+        unauth_user2.send_dialog_session_message(dialog_session_id)
+        unauth_user2.get_dialog_session_history(dialog_session_id)
+
+
+    #blah
+    #bla http
+    #blah
+
+    #@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_create_ru_assistant")
+    def test_wo_token_create_ru_assistant(self, unauth_user):
+        display_name = va_data["name"]
+        unauth_user.create_virtual_assistant(name=display_name, language="ru", status_code=400)
+
+    #@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_create_en_assistant")
+    def test_wo_token_create_en_assistant(self, unauth_user):
+        display_name = va_data["name"]
+        unauth_user.create_virtual_assistant(name=display_name, language="en", status_code=400)
+
+    #@pytest.mark.atom
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_list_of_public_va")
+    def test_wo_token_get_list_of_public_va(self, unauth_user):
+        unauth_user.get_list_of_public_va()
+
+    #@pytest.mark.atom
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_list_of_your_va")
+    def test_wo_token_get_list_of_your_a(self, unauth_user):
+        unauth_user.get_list_of_private_va(public_va_names_en[0], status_code=400)
+
+    #@pytest.mark.atom
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_public_va_by_name")
+    def test_wo_token_get_public_va_by_name(self, unauth_user):
+        name = public_va_names_en[0]
+        unauth_user.get_va_by_name(name)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_delete_your_va_by_name")
+    def test_wo_token_delete_your_va_by_name(self, unauth_user):
+        unauth_user.delete_va_by_name(public_va_names_en[0], status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_patch_your_va_by_name")
+    def test_wo_token_patch_your_va_by_name(self, unauth_user):
+        unauth_user.patch_va_by_name(public_va_names_en[0], status_code=400)
+
+    # @pytest.mark.atom
+    @pytest.mark.smoke
+    @pytest.mark.parametrize("va_name", [public_va_names_visible_en[0], public_va_names_ru[0]])
+    @qase.title(f"{counter()}. test_wo_token_clone_public_va_smoke")
+    def test_wo_token_clone_public_va_smoke(self, unauth_user, va_name):
+        display_name = va_name
+        unauth_user.clone_va(display_name, status_code=400)
+
+    # VA COMPONENTS
+
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_public_va_components_by_name")
+    def test_wo_token_get_public_va_components_by_name(self, unauth_user):
+        unauth_user.get_va_components(public_va_names_en[0])
+
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_create_from_scratch_va_component")
+    def test_wo_token_create_from_scratch_va_component(self, unauth_user):
+        unauth_user.create_component(status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_delete_va_component")
+    def test_wo_token_delete_va_component(self, unauth_user):
+        unauth_user.delete_va_component(public_va_names_en[0], 188, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_patch_cloned_va_component")
+    def test_wo_token_patch_cloned_va_component(self, user):
+        user.patch_va_component(public_va_names_en[0], 188, status_code=400)
+
+    # PUBLISH
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_publish_dist_unlisted")
+    def test_wo_token_publish_dist_unlisted(self, unauth_user):
+        visibility = "UNLISTED_INVITATION"
+        unauth_user.publish_va(public_va_names_en[0], visibility, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_publish_dist_private")
+    def test_wo_token_publish_dist_private(self, unauth_user):
+        visibility = "PRIVATE"
+        unauth_user.publish_va(public_va_names_en[0], visibility, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_publish_dist_public_template")
+    def test_wo_token_publish_dist_public_template(self, unauth_user):
+        visibility = "PUBLIC_TEMPLATE"
+        unauth_user.publish_va(public_va_names_en[0], visibility, status_code=400)
+
+    # COMPONENTS
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_list_of_components")
+    def test_wo_token_get_list_of_components(self, unauth_user):
+        unauth_user.get_list_of_components()
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_component")
+    def test_wo_token_create_get_patch_delete_component(self, unauth_user):
+        component_id = 188
+        unauth_user.create_component(status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_patch_component")
+    def test_wo_token_patch_component(self, unauth_user):
+        component_id = 188
+        unauth_user.patch_component(component_id, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_delete_component")
+    def test_wo_token_delete_component(self, unauth_user):
+        component_id = 188
+        unauth_user.delete_component(component_id, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_list_of_group_components")
+    def test_wo_token_get_list_of_group_components(self, unauth_user):
+        group_name = "Generative"
+        unauth_user.get_list_of_group_components(group_name)
+
+    # USERS
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_user_self")
+    def test_wo_token_get_user_self(self, unauth_user):
+        unauth_user.get_user_self()
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_user_by_id")
+    def test_wo_token_get_user_self(self, unauth_user):
+        unauth_user.get_user_self(status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_user_by_id")
+    def test_wo_token_get_user_by_id(self, unauth_user):
+        unauth_user.get_user_by_id("1", status_code=200)
+
+    # API_TOKENS
+
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_all_api_keys")
+    def test_wo_token_get_all_api_keys(self, unauth_user):
+        unauth_user.get_all_api_keys()
+
+    # DIALOG_SESSIONS
+
+    @pytest.mark.smoke
+    @pytest.mark.parametrize("va_name", [public_va_names_en[0], public_va_names_ru[0]])
+    @qase.title(f"{counter()}. test_wo_token_get_dialog_session_history_with_public_va_not_required_token_smoke")
+    def test_wo_token_get_dialog_session_history_with_public_va_not_required_token_smoke(self, unauth_user, va_name):
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message(dialog_session_id)
+        unauth_user.get_dialog_session_history(dialog_session_id)
+
+    @pytest.mark.atom
+    @pytest.mark.regression
+    @pytest.mark.parametrize("va_name", [public_va_names_en[1], public_va_names_en[-1]])
+    @qase.title(f"{counter()}. test_wo_token_empty_openai_dialog_with_public_template_va_dummy_response")
+    def test_wo_token_empty_openai_dialog_with_public_template_va_dummy_response(self, unauth_user, va_name):
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message(dialog_session_id, openai_api_key="")
+        unauth_user.get_dialog_session_history(dialog_session_id)
+
+    @pytest.mark.atom
+    @pytest.mark.regression
+    @pytest.mark.parametrize("va_name", [public_va_names_en[1], public_va_names_en[-1]])
+    @qase.title(f"{counter()}. test_wo_token_invalid_openai_dialog_with_public_template_va_dummy_response")
+    def test_wo_token_invalid_openai_dialog_with_public_template_va_dummy_response(self, unauth_user, va_name):
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message(dialog_session_id, openai_api_key="string")
+        unauth_user.get_dialog_session_history(dialog_session_id)
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("lm_service_id", [5])
+    @qase.title(f"{counter()}. test_wo_token_empty_openai_dialog_with_universal_prompted_assistant_dummy_response")
+    def test_wo_token_empty_openai_dialog_with_universal_prompted_assistant_dummy_response(
+            self, unauth_user, lm_service_id):
+        va_name = "universal_prompted_assistant"
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id, openai_api_key="")
+        unauth_user.get_dialog_session_history(dialog_session_id)
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("lm_service_id", [5])
+    @qase.title(f"{counter()}. test_wo_token_invalid_openai_dialog_with_universal_prompted_assistant_dummy_response")
+    def test_wo_token_invalid_openai_dialog_with_universal_prompted_assistant_dummy_response(
+            self, unauth_user, lm_service_id):
+        va_name = "universal_prompted_assistant"
+        dialog_session_id = unauth_user.create_dialog_sessions(va_name)["id"]
+        unauth_user.send_dialog_session_message_various_lm(dialog_session_id, lm_service_id, openai_api_key="string")
+        unauth_user.get_dialog_session_history(dialog_session_id)
+
+    # DEPLOYMENT
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_build_assistant")
+    def test_wo_token_build_assistant(self, unauth_user):
+        unauth_user.create_deployment(public_va_names_en[0], status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_deployment")
+    def test_wo_token_get_deployment(self, unauth_user):
+        unauth_user.get_deployment(1)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_patch_deployment")
+    def test_wo_token_patch_deployment(self, unauth_user):
+        unauth_user.patch_deployment(1, status_code=400)
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_delete_deployment")
+    def test_wo_token_delete_deployment(self, unauth_user):
+        unauth_user.delete_deployment(1, status_code=400)
+
+    # LM_SERVICES
+
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_all_lm_services")
+    def test_wo_token_get_all_lm_services(self, unauth_user):
+        unauth_user.get_all_lm_services()
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_all_lm_services_en")
+    def test_wo_token_get_all_lm_services_en(self, unauth_user):
+        unauth_user.get_all_lm_services_for_language("en")
+
+    @pytest.mark.regression
+    @qase.title(f"{counter()}. test_wo_token_get_all_lm_services_ru")
+    def test_wo_token_get_all_lm_services_ru(self, unauth_user):
+        unauth_user.get_all_lm_services_for_language("ru")

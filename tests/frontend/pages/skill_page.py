@@ -3,19 +3,32 @@ from tests.frontend.locators.locators import SkillPageLocators
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from .create_va_mw import Create_VA_MW
+from .properties_a_panel import ProperiesAPanel
+from .your_a_kebab import YourAKebab
+from .skill_kebab import SkillKebab
+from tests.frontend.config import skill_name, your_skill_name, default_skill_name, added_skill_name
 
 
-class SkillPage(BasePage):
+class SkillPage(BasePage, Create_VA_MW, ProperiesAPanel, YourAKebab, SkillKebab):
+    page_type = "va_skillset_page"
+    view = "none"
+
     def click_edit_skill(self):
         edit_button = (
-            WebDriverWait(self.browser, 6)
+            WebDriverWait(self.browser, 8)
             .until(EC.element_to_be_clickable(SkillPageLocators.EDIT_SKILL_BUTTON))
             .click()
         )
 
-    def click_chat_with_assistant_button(self):
-        button = self.browser.find_element(*SkillPageLocators.CHAT_WITH_ASSISTANT_BUTTON)
+        BasePage.source_type = "skill_editor_dialog_panel"
+        #BasePage.skill_view = "none"
+
+    def click_properties_assistant_button(self):
+        button = self.browser.find_element(*SkillPageLocators.PROPERTIES_ASSISTANT_BUTTON)
         button.click()
+
+        self.source_type = 'va_sidepanel'
 
     def click_create_skill_button(self):
         button = (
@@ -28,10 +41,26 @@ class SkillPage(BasePage):
         button = self.browser.find_element(*SkillPageLocators.CREATE_FROM_SCRATCH_BUTTON)
         button.click()
 
+        BasePage.skill_created_type = "from_scratch"
+        BasePage.old_model_name = "GPT-3.5 (Advanced, 4K tokens)"
+
+    def click_add_skill_in_choose_skill_mw(self):
+        button = self.browser.find_element(*SkillPageLocators.ADD_SKILL_BUTTON_IN_CHOOSE_SKILL_MW)
+        button.click()
+
+        BasePage.skill_created_type = "from_from_template"
+        BasePage.skill_template_name = added_skill_name
+        BasePage.skill_name = added_skill_name
+        BasePage.new_model_name = "GPT-3.5 (Advanced, 4K tokens)"
+        BasePage.old_model_name = "GPT-3.5 (Advanced, 4K tokens)"
+        BasePage.model_name = "GPT-3.5 (Advanced, 4K tokens)"
+
     def enter_name_in_create_skill_mw(self):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_NAME_TEXTAREA)
         textarea.click()
-        textarea.send_keys("New Skill Name")
+        textarea.send_keys(your_skill_name)
+
+        BasePage.skill_name = your_skill_name
 
     def enter_description_in_create_skill_mw(self):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
@@ -94,6 +123,8 @@ class SkillPage(BasePage):
         button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU)
         button.click()
 
+        BasePage.source_type = "skill_block_context_menu"
+
     def click_on_skill_card_context_menu_rename(self):
         button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU_RENAME)
         button.click()
@@ -104,6 +135,10 @@ class SkillPage(BasePage):
 
     def click_on_skill_card_context_menu_delete(self):
         button = self.browser.find_element(*SkillPageLocators.SKILL_CARD_CONTEXT_MENU_DELETE)
+        button.click()
+
+    def click_delete_skill_delete_mw(self):
+        button = self.browser.find_element(*SkillPageLocators.DELETE_SKILL_DELETE_MW)
         button.click()
 
     def check_is_properties_panel_present(self):
@@ -126,36 +161,30 @@ class SkillPage(BasePage):
         button = self.browser.find_element(*SkillPageLocators.BUILD_ASSISTANT_BUTTON)
         button.click()
 
+        BasePage.source_type = "va_control_block"
+
     def click_stop_assistant(self):
         button = self.browser.find_element(*SkillPageLocators.STOP_ASSISTANT_BUTTON)
         button.click()
 
+        BasePage.source_type = "va_control_block"
+
+    def check_assistant_stopped(self):
+        build_button = (
+            WebDriverWait(self.browser, 5).until(
+                EC.presence_of_element_located(SkillPageLocators.BUILD_ASSISTANT_BUTTON)
+            ))
+
     def click_duplicate_assistant(self):
         button = self.browser.find_element(*SkillPageLocators.DUPLICATE_ASSISTANT_BUTTON)
-        button.click()
-
-    def click_info_assistant(self):
-        button = self.browser.find_element(*SkillPageLocators.INFO_ASSISTANT_BUTTON)
         button.click()
 
     def click_share_buton(self):
         button = self.browser.find_element(*SkillPageLocators.SHARE_BUTTON)
         button.click()
 
-    def click_visibility_dropbox(self):
-        button = self.browser.find_element(*SkillPageLocators.VISIBILITY_DROPBOX)
-        button.click()
-
-    def select_private_visibility(self):
-        button = self.browser.find_element(*SkillPageLocators.PRIVATE_VISIBILITY_BUTTON)
-        button.click()
-
-    def select_unlisted_visibility(self):
-        button = self.browser.find_element(*SkillPageLocators.UNLISTED_VISIBILITY_BUTTON)
-        button.click()
-
-    def select_public_template_visibility(self):
-        button = self.browser.find_element(*SkillPageLocators.PUBLIC_TEMPLATE_VISIBILITY_BUTTON)
+    def click_visibility_button(self):
+        button = self.browser.find_element(*SkillPageLocators.VISIBILITY_BUTTON)
         button.click()
 
     def click_read_first(self):
@@ -166,9 +195,17 @@ class SkillPage(BasePage):
         button = self.browser.find_element(*SkillPageLocators.CLOSE_READ_FIRST_PANEL)
         button.click()
 
-    def click_change_view(self):
-        button = self.browser.find_element(*SkillPageLocators.CHANGE_VIEW_BUTTON)
+    def click_change_view_to_list(self):
+        button = self.browser.find_element(*SkillPageLocators.CHANGE_VIEW_BUTTON_TO_LIST)
         button.click()
+
+        BasePage.skill_view = "list"
+
+    def click_change_view_to_card(self):
+        button = self.browser.find_element(*SkillPageLocators.CHANGE_VIEW_BUTTON_TO_LIST)
+        button.click()
+
+        BasePage.skill_view = "card"
 
     # INTEGRATION TAB
 

@@ -35,7 +35,8 @@ async def send_chat_request_to_deployed_agent(
         data["lm_service_url"] = lm_service
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
-
+    elif isinstance(openai_api_key, str):
+        data["openai_api_key"] = " "
     # logger.warning(f"Sending {agent_url} data:\n{data}")
 
     async with aiohttp.ClientSession() as session:

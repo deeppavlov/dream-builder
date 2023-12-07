@@ -1,5 +1,6 @@
 import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
 import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
+import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'react-tooltip'
 import { ICollectionError } from 'types/types'
 import style from './StatusToolTip.module.scss'
@@ -11,6 +12,9 @@ const StatusToolTipCard = ({
   data: ICollectionError
   id?: number
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'toolTip_massage',
+  })
   const render = (key: string) => {
     if (data[key].length === 0) {
       return null
@@ -48,7 +52,7 @@ const StatusToolTipCard = ({
           style={{ zIndex: 1, opacity: 1, width: 'auto', height: 'auto' }}
         >
           <div>
-            <h3>{key === 'error' ? 'Критические ошибки' : 'Рекомендации'}</h3>
+            <h3>{key === 'error' ? t('error') : t('warning')}</h3>
             <ul>{massage}</ul>
           </div>
         </Tooltip>

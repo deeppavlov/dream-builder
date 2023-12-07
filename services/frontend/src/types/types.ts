@@ -1,8 +1,8 @@
 import { RouteObject } from 'react-router-dom'
 
 export interface IСounter {
-  countError: number
-  countWarning: number
+  error: number
+  warning: number
   [key: string]: number
 }
 export interface ICollectionError {

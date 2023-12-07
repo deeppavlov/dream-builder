@@ -1,9 +1,9 @@
-import { ReactComponent as Error } from '@assets/icons/errorIcon.svg';
-import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg';
-import { Tooltip } from 'react-tooltip';
-import { ICollectionError, IСounter } from 'types/types';
-import s from './StatusToolTip.module.scss';
-
+import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
+import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
+import { useTranslation } from 'react-i18next'
+import { Tooltip } from 'react-tooltip'
+import { ICollectionError, IСounter } from 'types/types'
+import s from './StatusToolTip.module.scss'
 
 const StatusToolTipAssistant = ({
   data,
@@ -12,19 +12,22 @@ const StatusToolTipAssistant = ({
   data?: ICollectionError[]
   id?: number
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'toolTip_massage',
+  })
   if (data === undefined || data.length === 0) {
     return null
   }
 
   const count: IСounter = data.reduce(
     (acc: IСounter, el: ICollectionError) => {
-      const countError = el.error.length
-      const countWarning = el.warning.length
-      acc.countError += countError
-      acc.countWarning += countWarning
+      const error = el.error.length
+      const warning = el.warning.length
+      acc.error += error
+      acc.warning += warning
       return acc
     },
-    { countError: 0, countWarning: 0 }
+    { error: 0, warning: 0 }
   )
 
   const render = (key: string) => {
@@ -33,12 +36,12 @@ const StatusToolTipAssistant = ({
     }
 
     const massage =
-      key === 'countError'
-        ? `критических ошибок ${count?.countError}`
-        : `рекомендаций ${count?.countWarning}`
+      key === 'error'
+        ? `${t('error')} ${count[key]}`
+        : `${t('warning')} ${count[key]}`
 
     const icon =
-      key === 'countError' ? (
+      key === 'error' ? (
         <Error
           style={{ width: 16, height: 17 }}
           data-tooltip-id={`tooltip_error${id}${key}`}
@@ -73,8 +76,8 @@ const StatusToolTipAssistant = ({
   return (
     <>
       <div className={s.statusBox}>
-        {render('countError')}
-        {render('countWarning')}
+        {render('error')}
+        {render('warning')}
       </div>
     </>
   )

@@ -562,6 +562,10 @@
     "error": "You can't build the assistant with huge errors, please fix them.",
     "warning": "You have recommendations; perhaps your assistant will not work the way you want."
   },
+  "toolTip_massage": {
+    "error": "Critical errors",
+    "warning": "Recommendations"
+  },
   "language": {
     "en": "English",
     "ru": "Russian"

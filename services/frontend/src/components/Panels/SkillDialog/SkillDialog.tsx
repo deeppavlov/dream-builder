@@ -160,7 +160,7 @@ const SkillDialog = forwardRef(
     useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
     useEffect(() => {
       bot && renewDialogSession()
-    }, [bot])
+    }, [])
     useEffect(() => handleCheckChatSettings(), [skill, user?.id])
 
     return (

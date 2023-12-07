@@ -81,13 +81,13 @@ public_va_names_ru = [
 access_token_expired = {'detail': "Access token has expired or token is bad. Response: {'error_description': 'Either "
                                   "access_token, id_token, or token_handle required'}"}
 
-lm_service_id_en_list = [2, 4, 5, 6, 7]
-lm_service_id_ru_list = [4, 5, 6, 7, 12, 13]
+lm_service_id_en_list = [2, 4, 5, 6, 7, 14]
+lm_service_id_ru_list = [4, 5, 6, 7, 12, 13, 14]
 
-lm_service_id_en_nominal_list = [2, 4, 5, 6, 7, 8, 9, 10]
-lm_service_id_ru_nominal_list = [4, 5, 6, 7, 8, 12, 13]
+lm_service_id_en_nominal_list = [2, 4, 5, 6, 7, 8, 9, 10, 14]
+lm_service_id_ru_nominal_list = [4, 5, 6, 7, 8, 12, 13, 14]
 
-lm_service_id_union_list = [2, 4, 5, 6, 7, 8, 9, 10, 12, 13]
+lm_service_id_union_list = [2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14]
 
 
 base_url_distributions_api = settings_url.url_distributions_api

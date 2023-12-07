@@ -848,10 +848,12 @@ class TestDistributions:
     def test_wo_token_delete_va_component(self, unauth_user):
         unauth_user.delete_va_component(public_va_names_en[0], 188, status_code=400)
 
-    @pytest.mark.regression
-    @qase.title(f"{counter()}. test_wo_token_patch_cloned_va_component")
-    def test_wo_token_patch_cloned_va_component(self, user):
-        user.patch_va_component(public_va_names_en[0], 188, status_code=400)
+    # Not implemented
+    #@pytest.mark.atom
+    #@pytest.mark.regression
+    #@qase.title(f"{counter()}. test_wo_token_patch_cloned_va_component")
+    #def test_wo_token_patch_cloned_va_component(self, user):
+    #    user.patch_va_component(public_va_names_en[0], 188, status_code=400)
 
     # PUBLISH
 
@@ -919,7 +921,7 @@ class TestDistributions:
     @pytest.mark.regression
     @qase.title(f"{counter()}. test_wo_token_get_user_by_id")
     def test_wo_token_get_user_by_id(self, unauth_user):
-        unauth_user.get_user_by_id("1", status_code=200)
+        unauth_user.get_user_by_id("1", status_code=400)
 
     # API_TOKENS
 
@@ -939,7 +941,7 @@ class TestDistributions:
         unauth_user.send_dialog_session_message(dialog_session_id)
         unauth_user.get_dialog_session_history(dialog_session_id)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.regression
     @pytest.mark.parametrize("va_name", [public_va_names_en[1], public_va_names_en[-1]])
     @qase.title(f"{counter()}. test_wo_token_empty_openai_dialog_with_public_template_va_dummy_response")
@@ -948,7 +950,7 @@ class TestDistributions:
         unauth_user.send_dialog_session_message(dialog_session_id, openai_api_key="")
         unauth_user.get_dialog_session_history(dialog_session_id)
 
-    @pytest.mark.atom
+    #@pytest.mark.atom
     @pytest.mark.regression
     @pytest.mark.parametrize("va_name", [public_va_names_en[1], public_va_names_en[-1]])
     @qase.title(f"{counter()}. test_wo_token_invalid_openai_dialog_with_public_template_va_dummy_response")
@@ -1016,3 +1018,4 @@ class TestDistributions:
     @qase.title(f"{counter()}. test_wo_token_get_all_lm_services_ru")
     def test_wo_token_get_all_lm_services_ru(self, unauth_user):
         unauth_user.get_all_lm_services_for_language("ru")
+

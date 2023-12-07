@@ -73,6 +73,7 @@ lm_service_en_list = [
     "GPT-4 (Advanced, 8K tokens)",
     "GPT-4 32K (Advanced, 32K tokens)",
     "GPT-JT 6B (Basic, 2K tokens)",
+    "GPT-4 Turbo (Advanced, 128K tokens)"
 ]
 
 lm_service_token_list = {}
@@ -85,6 +86,7 @@ lm_service_ru_list = [
     "GPT-4 32K (Advanced, 32K tokens)",
     "Russian XGLM 4.5B (2K tokens)",
     "ruGPT-3.5-13B (2K tokens)",
+    "GPT-4 Turbo (Advanced, 128K tokens)"
 ]
 
 default_prompt_ru = ["Отвечай новому пользователю дружелюбно и в соответствии с твоей личностью.\n\nТвоя "

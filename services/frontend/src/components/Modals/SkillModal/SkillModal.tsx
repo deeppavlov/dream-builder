@@ -4,8 +4,8 @@ import toast from 'react-hot-toast'
 import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { ISkill, TDistVisibility } from 'types/types'
-import { VISIBILITY_STATUS } from 'constants/constants'
+import { ISkill } from 'types/types'
+import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
@@ -84,15 +84,17 @@ export const SkillModal = () => {
                 skillId: (skill?.component_id ?? skill?.id)?.toString(),
               })
             )
-            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
-            deleteDeployment.mutateAsync(bot!).then(() => {
-              bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                changeVisibility.mutateAsync({
-                  name: bot?.name!,
-                  newVisibility,
-                })
-              vaChangeDeployState('VA_Undeployed')
-            })
+            const newVisibility = VISIBILITY_STATUS.PRIVATE
+            bot?.deployment?.state === DEPLOY_STATUS.UP &&
+              deleteDeployment.mutateAsync(bot!).then(() => {
+                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                  changeVisibility.mutateAsync({
+                    name: bot?.name!,
+                    newVisibility,
+                    inEditor: true,
+                  })
+                vaChangeDeployState('VA_Undeployed')
+              })
           },
         }
       ),

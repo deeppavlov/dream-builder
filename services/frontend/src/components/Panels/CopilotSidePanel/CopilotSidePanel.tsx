@@ -132,7 +132,8 @@ export const CopilotSidePanel = () => {
     setErrorPanel(null)
     const openaiApiKey =
       getLSApiKeyByName(user?.id!, OPEN_AI_LM, true) || undefined
-    const localSession = store('deepySession')
+    const deepySessionName = user ? `deepySession_${user.id}` : 'deepySession'
+    const localSession = store(deepySessionName)
     if (
       localSession?.dummy ||
       (deepyHistory.at(-1)?.active_skill?.name === 'dummy_skill' &&

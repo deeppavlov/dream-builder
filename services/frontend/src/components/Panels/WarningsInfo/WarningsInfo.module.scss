@@ -3,6 +3,15 @@
   overflow: auto;
   margin-right: 0px;
 
+  .noWarning {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 160%;
+    font-size: 15px;
+  }
+
   .contendTitle {
     min-height: 48px;
     max-height: 48px;

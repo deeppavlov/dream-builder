@@ -8,7 +8,6 @@ import { RoutesList } from 'router/RoutesList'
 import {
   BotInfoInterface,
   ICollectionError,
-  IMassage,
   ISkill,
   IStackElement,
 } from 'types/types'
@@ -66,7 +65,7 @@ const WarningsInfo = () => {
     if (data[key].length === 0) {
       return null
     }
-    const massage = data[key].map((el: IMassage, i: number) => {
+    const massage = data[key].map((el: string, i: number) => {
       return (
         <div
           key={i}
@@ -78,7 +77,7 @@ const WarningsInfo = () => {
           <div className={s.cluster}></div>
           <div className={s.hederError}>
             {key === 'error' ? <Error /> : <Warning />}
-            <span className={s.infoAll}>{el.massage}</span>
+            <span className={s.infoAll}>{el}</span>
           </div>
         </div>
       )
@@ -150,7 +149,8 @@ const WarningsInfo = () => {
       skill: ICollectionError[]
       bot: BotInfoInterface
     },
-    i: number
+    i: number,
+    target?: boolean
   ) => {
     if (!assistant.skill) {
       return null
@@ -162,7 +162,7 @@ const WarningsInfo = () => {
       return acc + errorCount + warningWarning
     }, 0)
 
-    if (countAllError === 0) {
+    if (countAllError === 0 && target !== true) {
       return null
     }
 
@@ -176,6 +176,20 @@ const WarningsInfo = () => {
         ? trigger('PublicToPrivateModal', { bot, action: 'edit' })
         : navigate(generatePath(RoutesList.editor.skills, { name: bot?.name }))
       e.stopPropagation()
+    }
+
+    if (target && countAllError === 0) {
+      return (
+        <div key={i} className={s.assistantBlock}>
+          <div
+            className={s.assistantName}
+            onClick={(e: any) => handlEditClick(e, assistant.bot)}
+          >
+            {assistant.name}
+          </div>
+          <div className={s.noWarning}>Скилл не имеет ошибок</div>
+        </div>
+      )
     }
 
     return (
@@ -217,7 +231,7 @@ const WarningsInfo = () => {
   return (
     <div className={s.contend}>
       {contendTitle}
-      <div>{targetAssistant.map(renderAssistant)}</div>
+      <div>{renderAssistant(targetAssistant[0], 1, true)}</div>
     </div>
   )
 }

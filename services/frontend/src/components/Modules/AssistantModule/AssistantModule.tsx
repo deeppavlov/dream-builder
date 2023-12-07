@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Tooltip } from 'react-tooltip'
-import { IExaminationLite, TDistVisibility } from 'types/types'
+import { TDistVisibility } from 'types/types'
 import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
@@ -156,6 +156,8 @@ export const AssistantModule = () => {
 
   const resultExamination = examinationMassage(components)
 
+  const isPreviewTooltip = resultExamination.status === 'success' ? false : true
+
   return (
     <>
       <Wrapper
@@ -182,7 +184,9 @@ export const AssistantModule = () => {
                 data-tooltip-variant={resultExamination.status}
                 data-tooltip-place='bottom'
               >
-                <Tooltip style={{ zIndex: 1, opacity: 1 }} id={`tooltip`} />
+                {isPreviewTooltip && (
+                  <Tooltip style={{ zIndex: 1, opacity: 1 }} id={`tooltip`} />
+                )}
                 <Button
                   loader={isDeploying}
                   theme={!error ? 'purple' : 'error'}

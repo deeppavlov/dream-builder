@@ -1,7 +1,7 @@
 import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
 import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
 import { Tooltip } from 'react-tooltip'
-import { ICollectionError, IMassage } from 'types/types'
+import { ICollectionError } from 'types/types'
 import style from './StatusToolTip.module.scss'
 
 const StatusToolTipCard = ({
@@ -16,10 +16,10 @@ const StatusToolTipCard = ({
       return null
     }
 
-    const massage = data[key].map((el: IMassage, i: number) => {
+    const massage = data[key].map((el: string, i: number) => {
       return (
         <li key={i}>
-          {i + 1}. {el.massage}
+          {i + 1}. {el}
         </li>
       )
     })
@@ -45,7 +45,7 @@ const StatusToolTipCard = ({
         <div className={style.massageCountError}>{data[key].length}</div>
         <Tooltip
           id={`tooltip_error${id}${key}`}
-          style={{ zIndex: 1, opacity: 1 }}
+          style={{ zIndex: 1, opacity: 1, width: 'auto', height: 'auto' }}
         >
           <div>
             <h3>{key === 'error' ? 'Критические ошибки' : 'Рекомендации'}</h3>

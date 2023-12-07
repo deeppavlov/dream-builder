@@ -1,6 +1,5 @@
-import { franc, francAll } from 'https://esm.sh/franc@6'
+import { franc } from 'https://esm.sh/franc@6'
 import i18n from 'i18n'
-import LanguageDetect from 'languagedetect'
 import { UseQueryResult } from 'react-query'
 import { ICollectionError, ISkill, TComponents } from 'types/types'
 
@@ -80,11 +79,8 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
   )
 
   if (str.length !== 0) {
-    const newError = {
-      status: 'error',
-      massage: `${i18n.t('error_massage.prompt.input')} ${str}`,
-    }
-    acc.error = [...acc.error, newError]
+    const mas = `${i18n.t('error_massage.prompt.input')} ${str}`
+    acc.error = [...acc.error, mas]
   }
 }
 
@@ -94,11 +90,8 @@ const lengthPrompt = (skill: ISkill, acc: ICollectionError) => {
   }
 
   if (skill.prompt.length < 3) {
-    const newWarning = {
-      status: 'warning',
-      massage: i18n.t('error_massage.prompt.length'),
-    }
-    acc.warning = [...acc.warning, newWarning]
+    const massage = i18n.t('error_massage.prompt.length')
+    acc.warning = [...acc.warning, massage]
   }
 }
 
@@ -116,12 +109,10 @@ const typePrompt = (skill: ISkill, acc: ICollectionError) => {
   const arrIsIncludes = arr.map(el => result.includes(el))
 
   if (arrIsIncludes.includes(true) && str === null) {
-    const newWarning = {
-      status: 'warning',
-      massage:
-        'Возможно вы используете арифметические выражение в своей инструкции',
-    }
-    acc.warning = [...acc.warning, newWarning]
+    const massage =
+      'Возможно вы используете арифметические выражение в своей инструкции'
+
+    acc.warning = [...acc.warning, massage]
     return
   }
 }
@@ -140,23 +131,17 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
   }).slice(0, 2)
 
   if (result === 'un') {
-    const newError = {
-      status: 'error',
-      massage: `мы не смогли определить язык вашего промта`,
-    }
-    acc.error = [...acc.error, newError]
+    const massage = `мы не смогли определить язык вашего промта`
+    acc.error = [...acc.error, massage]
     return
   }
 
   if (languageArrSkill?.includes(result)) {
     return
   }
+  const massage = `${i18n.t('error_massage.prompt.language')} ${result}`
 
-  const newWarning = {
-    status: 'error',
-    massage: `${i18n.t('error_massage.prompt.language')} ${result}`,
-  }
-  acc.warning = [...acc.warning, newWarning]
+  acc.warning = [...acc.warning, massage]
 }
 
 const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
@@ -168,8 +153,6 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   const invalidBlocks = arrInitPromptBlock2.filter(
     el => !promptBlocks?.includes(Object.keys(el)[0])
   )
-
-  console.log()
 
   const arrIsinvalidBlocks = invalidBlocks?.reduce((acc: string[], el: any) => {
     const key = Object.keys(el)[0]
@@ -185,13 +168,11 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   }, [])
 
   if (arrIsinvalidBlocks.length !== 0) {
-    const newWarning = {
-      status: 'warning',
-      massage: `Возожно вы используете блок который не поддерживает этот скилл \n${arrIsinvalidBlocks.join(
-        ',\n '
-      )}`,
-    }
-    acc.warning = [...acc.warning, newWarning]
+    const massage = `Возожно вы используете блок который не поддерживает этот скилл \n${arrIsinvalidBlocks.join(
+      ',\n '
+    )}`
+
+    acc.warning = [...acc.warning, massage]
   }
 }
 

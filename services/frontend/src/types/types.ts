@@ -5,21 +5,10 @@ export interface IСounter {
   countWarning: number
   [key: string]: number
 }
-export interface IExaminationLite {
-  status: string
-  massage: string
-  isError: boolean
-}
-
-export interface IMassage {
-  status: string
-  massage: string
-}
-
 export interface ICollectionError {
-  error: IMassage[]
-  warning: IMassage[]
-  [key: string]: IMassage[]
+  error: string[]
+  warning: string[]
+  [key: string]: string[]
 }
 
 export interface UserInterface {

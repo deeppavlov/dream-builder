@@ -1,21 +1,38 @@
+import time
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from .base_page import BasePage
 from tests.frontend.locators.locators import SkillEditorPageLocators
-from tests.frontend.config import lm_service_en_list, lm_service_ru_list, default_prompt_ru, default_prompt_en, \
-    description_1001_symbol, gigant_prompt
+from tests.frontend.config import lm_service_en_list, lm_service_ru_list, default_prompt_ru, default_prompt_en
 
 
 class SkillEditorPage(BasePage):
+    page_type = "va_skill_editor"
+
     def open_models_dropdown(self):
         button = self.browser.find_element(*SkillEditorPageLocators.OPEN_MODELS_DROPDOWN)
         button.click()
 
+        BasePage.source_type = "skill_editor_prompt_panel"
+
+    def check_dropdown_opened(self):
+        time.sleep(1)
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(SkillEditorPageLocators.DROPDOWN_IS_OPEN))
+
+    def check_dropdown_closed(self):
+        WebDriverWait(self.browser, 1).until(
+            EC.presence_of_element_located(SkillEditorPageLocators.WHOLE_MODELS_DROPDOWN)
+        )
+
     def choose_generative_model(self):
         button = self.browser.find_element(*SkillEditorPageLocators.CHOOSE_MODEL)
         button.click()
+
+        BasePage.new_model_name = "ChatGPT (Advanced, 4K tokens)"
+        BasePage.model_name = "ChatGPT (Advanced, 4K tokens)"
 
     def select_specific_model(self, model_name):
         button = self.browser.find_element(By.XPATH, f"//span[contains(text(),'{model_name}')]")
@@ -40,17 +57,13 @@ class SkillEditorPage(BasePage):
     def check_default_prompt_ru(self):
         prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         actual_prompt_ru = [prompt.text for prompt in prompt_list]
-        assert (
-                actual_prompt_ru == default_prompt_ru
-        ), f"Incorrect russian default prompt, actual is: {actual_prompt_ru}"
+        assert actual_prompt_ru == default_prompt_ru, f"Incorrect russian default prompt, actual is: {actual_prompt_ru}"
 
     def check_default_prompt_en(self):
         prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         actual_prompt_en = [prompt.text for prompt in prompt_list]
         print(actual_prompt_en)
-        assert (
-                actual_prompt_en == default_prompt_en
-        ), f"Incorrect english default prompt, actual is: {actual_prompt_en}"
+        assert actual_prompt_en == default_prompt_en, f"Incorrect english default prompt, actual is: {actual_prompt_en}"
 
     def click_enter_token_here(self):
         button = self.browser.find_element(*SkillEditorPageLocators.ENTER_TOKEN_HERE)
@@ -60,22 +73,24 @@ class SkillEditorPage(BasePage):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        #textarea.send_keys('')
+        # textarea.send_keys('')
 
-        #textarea.clear()
-        #WebDriverWait(self.browser, 5).until(
+        # textarea.clear()
+        # WebDriverWait(self.browser, 5).until(
         #    EC.text_to_be_present_in_element(SkillEditorPageLocators.PROMPT_TEXTAREA, "")
-        #)
+        # )
 
     def enter_new_prompt(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
         textarea.send_keys("Your name is Sale Assistant. You work with sales specialists and you help them do sales.")
 
+        BasePage.source_type = "skill_editor_prompt_panel"
+
     def enter_new_prompt_upper_limit(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
-        #textarea.send_keys(description_1001_symbol*50)
+        # textarea.send_keys(description_1001_symbol*50)
         textarea.send_keys(default_prompt_en)
 
     def check_error_message_limit_prompt(self):
@@ -83,6 +98,11 @@ class SkillEditorPage(BasePage):
 
     def check_error_message_field_cant_be_empty(self):
         error = self.browser.find_element(*SkillEditorPageLocators.ERROR_MESSAGE_FIELD_CANT_BE_EMPTY)
+
+    def check_error_message_field_cant_be_empty_disappear(self):
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located(SkillEditorPageLocators.ERROR_MESSAGE_FIELD_CANT_BE_EMPTY)
+        )
 
     def click_save_button(self):
         button = self.browser.find_element(*SkillEditorPageLocators.SAVE_BUTTON)
@@ -150,8 +170,9 @@ class SkillEditorPage(BasePage):
         button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_BUTTON_MODAL_WINDOW)
         button.click()
 
-    def check_prompt_is_not_builderbot(self):
-        textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
-        prompt = textarea.text
-        assert prompt != "Your name is BuilderBot, act like you know a lot about building bots"
-        assert prompt is not None
+    def click_close_skill_editor_page(self):
+        button = self.browser.find_element(*SkillEditorPageLocators.CLOSE_SKILL_EDITOR_BUTTON)
+        button.click()
+
+    def update_model_status(self):
+        BasePage.old_model_name = BasePage.new_model_name

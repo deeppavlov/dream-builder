@@ -20,13 +20,21 @@ def user2():
 
 
 @pytest.fixture(scope="function")
+def unauth_user():
+    unauth_user = UserMethods("", "")
+    return unauth_user
+
+
+@pytest.fixture(scope="function")
 def admin():
     admin = AdminMethods(admin_token, "github")
     return admin
 
 
-@pytest.fixture(scope="session")
-def delete_all_users_assistant():
-    user = UserMethods(test_token_github1, "github")
-    names_list = user.get_list_of_private_va_wo_assert()
-    print(names_list)
+def pytest_sessionfinish(session, exitstatus):
+    if not hasattr(session.config, "workerinput"):
+        user = UserMethods()
+        names_list = user.get_list_of_private_va_wo_assert()
+        if names_list:
+            for name in names_list:
+                user.delete_va_by_name(name)

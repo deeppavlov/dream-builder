@@ -1,8 +1,13 @@
 import requests
 import pytest
 from qaseio.pytest import qase
-from tests.backend.config import auth_endpoint, admin_token, test_token_github1, auth_refresh_token, \
-    counter_auth as counter
+from tests.backend.config import (
+    auth_endpoint,
+    admin_token,
+    test_token_github1,
+    auth_refresh_token,
+    counter_auth as counter,
+)
 
 
 class TestAuth:
@@ -20,7 +25,8 @@ class TestAuth:
     @qase.title(f"{counter()}. test_auth_valid_token")
     def test_auth_valid_token(self):
         response = requests.get(
-            url=auth_endpoint + "/token", headers={"token": test_token_github1, "accept": "application/json"}
+            url=auth_endpoint + "/token",
+            headers={"token": test_token_github1, "accept": "application/json", "auth-type": "github"},
         )
         assert response.status_code == 200, response.json()
 
@@ -61,6 +67,8 @@ class TestAuth:
     #    user_id = requests.get(
     #        url=auth_endpoint + "/token", headers={"token": test_token_github1, "accept": "application/json"}
     #    ).json()["id"]
+
+
 #
 #    response = requests.post(
 #        url=auth_endpoint + f"/update_user/{user_id}",

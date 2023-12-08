@@ -57,17 +57,13 @@ class SkillEditorPage(BasePage):
     def check_default_prompt_ru(self):
         prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         actual_prompt_ru = [prompt.text for prompt in prompt_list]
-        assert (
-                actual_prompt_ru == default_prompt_ru
-        ), f"Incorrect russian default prompt, actual is: {actual_prompt_ru}"
+        assert actual_prompt_ru == default_prompt_ru, f"Incorrect russian default prompt, actual is: {actual_prompt_ru}"
 
     def check_default_prompt_en(self):
         prompt_list = self.browser.find_elements(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         actual_prompt_en = [prompt.text for prompt in prompt_list]
         print(actual_prompt_en)
-        assert (
-                actual_prompt_en == default_prompt_en
-        ), f"Incorrect english default prompt, actual is: {actual_prompt_en}"
+        assert actual_prompt_en == default_prompt_en, f"Incorrect english default prompt, actual is: {actual_prompt_en}"
 
     def click_enter_token_here(self):
         button = self.browser.find_element(*SkillEditorPageLocators.ENTER_TOKEN_HERE)
@@ -77,12 +73,12 @@ class SkillEditorPage(BasePage):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        #textarea.send_keys('')
+        # textarea.send_keys('')
 
-        #textarea.clear()
-        #WebDriverWait(self.browser, 5).until(
+        # textarea.clear()
+        # WebDriverWait(self.browser, 5).until(
         #    EC.text_to_be_present_in_element(SkillEditorPageLocators.PROMPT_TEXTAREA, "")
-        #)
+        # )
 
     def enter_new_prompt(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
@@ -94,7 +90,7 @@ class SkillEditorPage(BasePage):
     def enter_new_prompt_upper_limit(self):
         textarea = self.browser.find_element(*SkillEditorPageLocators.PROMPT_TEXTAREA)
         textarea.click()
-        #textarea.send_keys(description_1001_symbol*50)
+        # textarea.send_keys(description_1001_symbol*50)
         textarea.send_keys(default_prompt_en)
 
     def check_error_message_limit_prompt(self):

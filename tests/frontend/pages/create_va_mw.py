@@ -34,14 +34,14 @@ class Create_VA_MW:
         textarea.click()
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
+        textarea.send_keys("")
 
     def clear_description_in_create_va_mw(self):
         textarea = self.browser.find_element(*CreateVA_MW_Locators.CREATE_VA_DESCRIPTION_TEXTAREA)
         textarea.click()
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
+        textarea.send_keys("")
 
     def enter_description_in_create_va_mw(self):
         textarea = self.browser.find_element(*CreateVA_MW_Locators.CREATE_VA_DESCRIPTION_TEXTAREA)
@@ -51,7 +51,7 @@ class Create_VA_MW:
     def enter_description_upper_limit_in_create_va_mw(self):
         textarea = self.browser.find_element(*CreateVA_MW_Locators.CREATE_VA_DESCRIPTION_TEXTAREA)
         textarea.click()
-        textarea.send_keys('1234 ' * 250)
+        textarea.send_keys("1234 " * 250)
 
     def click_create_in_create_va_mw(self):
         button = self.browser.find_element(*CreateVA_MW_Locators.CREATE_VA_CREATE_BUTTON)

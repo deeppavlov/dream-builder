@@ -22,19 +22,19 @@ class SkillPage(BasePage, Create_VA_MW, ProperiesAPanel, YourAKebab, SkillKebab)
         )
 
         BasePage.source_type = "skill_editor_dialog_panel"
-        #BasePage.skill_view = "none"
+        # BasePage.skill_view = "none"
 
     def click_properties_assistant_button(self):
         button = self.browser.find_element(*SkillPageLocators.PROPERTIES_ASSISTANT_BUTTON)
         button.click()
 
-        self.source_type = 'va_sidepanel'
+        self.source_type = "va_sidepanel"
 
     def click_create_skill_button(self):
         button = (
             WebDriverWait(self.browser, 6)
-                .until(EC.element_to_be_clickable(SkillPageLocators.CREATE_SKILL_BUTTON))
-                .click()
+            .until(EC.element_to_be_clickable(SkillPageLocators.CREATE_SKILL_BUTTON))
+            .click()
         )
 
     def click_create_skill_from_scratch_button(self):
@@ -70,21 +70,21 @@ class SkillPage(BasePage, Create_VA_MW, ProperiesAPanel, YourAKebab, SkillKebab)
     def enter_description_upper_limit_in_create_skill_mw(self):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
         textarea.click()
-        textarea.send_keys('1234 '*101)
+        textarea.send_keys("1234 " * 101)
 
     def clear_name_in_create_skill_mw(self):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_NAME_TEXTAREA)
         textarea.click()
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
+        textarea.send_keys("")
 
     def clear_description_in_create_skill_mw(self):
         textarea = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_DESCRIPTION_TEXTAREA)
         textarea.click()
         textarea.send_keys(Keys.CONTROL + "a")
         textarea.send_keys(Keys.DELETE)
-        textarea.send_keys('')
+        textarea.send_keys("")
 
     def click_create_in_create_skill_mw(self):
         button = self.browser.find_element(*SkillPageLocators.CREATE_SKILL_CREATE_BUTTON)
@@ -170,10 +170,9 @@ class SkillPage(BasePage, Create_VA_MW, ProperiesAPanel, YourAKebab, SkillKebab)
         BasePage.source_type = "va_control_block"
 
     def check_assistant_stopped(self):
-        build_button = (
-            WebDriverWait(self.browser, 5).until(
-                EC.presence_of_element_located(SkillPageLocators.BUILD_ASSISTANT_BUTTON)
-            ))
+        build_button = WebDriverWait(self.browser, 5).until(
+            EC.presence_of_element_located(SkillPageLocators.BUILD_ASSISTANT_BUTTON)
+        )
 
     def click_duplicate_assistant(self):
         button = self.browser.find_element(*SkillPageLocators.DUPLICATE_ASSISTANT_BUTTON)
@@ -240,5 +239,3 @@ class SkillPage(BasePage, Create_VA_MW, ProperiesAPanel, YourAKebab, SkillKebab)
     def click_copy_code_button(self):
         button = self.browser.find_element(*SkillPageLocators.COPY_CODE)
         button.click()
-
-

@@ -7,7 +7,7 @@ from tests.frontend.pages.base_page import BasePage
 
 
 class ImageComparer:
-    #ACCURACY = 0.0001
+    # ACCURACY = 0.0001
     ACCURACY = 0.002
 
     def compare_pictures(self, screen_staging, screen_production, i):
@@ -19,8 +19,8 @@ class ImageComparer:
 
         result_image = Image.open(BytesIO(screen_staging))
 
-        #columns = 60
-        #rows = 80
+        # columns = 60
+        # rows = 80
         columns = 40
         rows = 40
         screen_width, screen_height = screenshot_staging.size
@@ -64,10 +64,10 @@ def create_screen_folder_if_not_exists(env, browser_name, window_size):
     str_size = f"{window_size[0]},{window_size[1]}"
     directory = f"./screen/{env}_screen/{browser_name}/{str_size}"
     if not os.path.exists(directory):
-        print('directory successfully created')
+        print("directory successfully created")
         os.makedirs(directory)
     else:
-        print('directory is already exists')
+        print("directory is already exists")
 
 
 def save_screenshot(browser, env, browser_name, window_size, screen_counter, full_screen=True, element=None):
@@ -84,7 +84,7 @@ def save_screenshot(browser, env, browser_name, window_size, screen_counter, ful
 
 
 def compare_pictures(env, str_size, browser_name):
-    print(f'env = {env}')
+    print(f"env = {env}")
     window_size = f"{str_size[0]},{str_size[1]}"
     create_screen_folder_if_not_exists("compare", browser_name, window_size)
     stage_dir = f"./screen/{env}_screen/{browser_name}/{window_size}"
@@ -106,10 +106,10 @@ def compare_pictures(env, str_size, browser_name):
         alpha_file.close()
 
         get_compare = ImageComparer()
-        error, result_image = get_compare.compare_pictures(screen_staging=stage_screen,
-                                                           screen_production=alpha_screen,
-                                                           i=i+1)
-        print(f'{stage_screen_list[i]} vs {alpha_screen_list[i]}: error = {error}')
+        error, result_image = get_compare.compare_pictures(
+            screen_staging=stage_screen, screen_production=alpha_screen, i=i + 1
+        )
+        print(f"{stage_screen_list[i]} vs {alpha_screen_list[i]}: error = {error}")
         if error != 0:
             errors += 1
             result_image.show()

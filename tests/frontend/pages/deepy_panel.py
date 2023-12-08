@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class DeepyPanel(BasePage):
     def __init__(self, browser, url, timeout=15):
-        #source_type = "va_dialog_panel"
+        # source_type = "va_dialog_panel"
         source_type = "va_sidepanel"
         page_type = self.page_type
         view = self.view

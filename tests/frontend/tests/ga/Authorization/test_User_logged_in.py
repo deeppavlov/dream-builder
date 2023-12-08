@@ -1,6 +1,3 @@
-import pytest
-from qaseio.pytest import qase
-import time
 from tests.frontend.pages.all_ga_page import AllGAPage
 from tests.frontend.pages.all_your_a_page import AllYourAPage
 from tests.frontend.pages.github_auth_page import GithubAuthPage
@@ -15,12 +12,8 @@ from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service
 from tests.backend.distributions_methods import UserMethods
 import pytest
 from qaseio.pytest import qase
-
 import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
@@ -32,11 +25,11 @@ class TestGA:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_user_logged_in")
-    def test_user_logged_in(self, browser, screen_size):
-
+    def test_user_logged_in(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         with qase.step("1.1. unauth, from all_va_page, site open"):
             page = AllGAPage(browser, url)
             page.open()
@@ -62,7 +55,7 @@ class TestGA:
 
             get_ga_requests(browser, "User_logged_out", page)
 
-            page = AllGAPage(browser,browser.current_url)
+            page = AllGAPage(browser, browser.current_url)
             page.check_is_public_template_loaded()
 
         with qase.step("1.2. auth_button, allbots, logout allbots"):

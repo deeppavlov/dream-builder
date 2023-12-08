@@ -21,10 +21,12 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
     def check_is_public_template_loaded(self):
         if BasePage.view == "card":
             WebDriverWait(self.browser, 40).until(
-                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD))
+                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD)
+            )
         elif BasePage.view == "list":
             WebDriverWait(self.browser, 40).until(
-                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD_LIST_VIEW))
+                EC.visibility_of_element_located(AllGAPageLocators.PUBLIC_TEMPLATE_CARD_LIST_VIEW)
+            )
 
     def click_change_view_type_to_list(self):
         button = self.browser.find_element(*AllGAPageLocators.CHANGE_VIEW_TYPE)
@@ -53,7 +55,7 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
         button.click()
 
     def click_kebab_public_template(self):
-        button = ''
+        button = ""
         if BasePage.view == "card":
             button = self.browser.find_element(*AllGAPageLocators.PUBLIC_KEBAB)
         elif BasePage.view == "list":
@@ -75,14 +77,14 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
         button.click()
 
     def click_use_template(self):
-        button = ''
+        button = ""
         if BasePage.view == "card":
             button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON)
         elif BasePage.view == "list":
             button = self.browser.find_element(*AllGAPageLocators.PUBLIC_USE_BUTTON_LIST_VIEW)
         button.click()
 
-        BasePage.source_type = 'va_templates_block'
+        BasePage.source_type = "va_templates_block"
 
     def click_use_template_modal_window(self):
         WebDriverWait(self.browser, 4).until(
@@ -112,7 +114,7 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
     # YOUR ASSISTANTS
 
     def click_on_your_assistant_card(self):
-        button = ''
+        button = ""
         if BasePage.view == "card":
             button = self.browser.find_element(*AllGAPageLocators.YOUR_CARD)
         elif BasePage.view == "list":
@@ -131,9 +133,9 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
         ).click()
 
     def click_kebab_your_a(self):
-        BasePage.source_type = 'va_block'
+        BasePage.source_type = "va_block"
 
-        button = ''
+        button = ""
         if BasePage.view == "card":
             button = self.browser.find_element(*AllGAPageLocators.YOUR_KEBAB)
         elif BasePage.view == "list":
@@ -146,7 +148,7 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
         button = self.browser.find_element(*AllGAPageLocators.CREATE_VA_BUTTON)
         button.click()
 
-        BasePage.source_type = 'va_templates_block'
+        BasePage.source_type = "va_templates_block"
 
     def click_choose_language_assistant_dropdown(self):
         textarea = self.browser.find_element(*AllGAPageLocators.CREATE_VA_LANGUAGE_DROPDOWN)
@@ -181,9 +183,5 @@ class AllGAPage(BasePage, Create_VA_MW, YourAKebab, ProperiesAPanel):
         )
 
     def check_google_github_logo(self):
-        WebDriverWait(self.browser, 3).until(
-            EC.visibility_of_element_located(AllGAPageLocators.GOOGLE_LOGO)
-        )
-        WebDriverWait(self.browser, 3).until(
-            EC.visibility_of_element_located(AllGAPageLocators.GITHUB_LOGO)
-        )
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(AllGAPageLocators.GOOGLE_LOGO))
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(AllGAPageLocators.GITHUB_LOGO))

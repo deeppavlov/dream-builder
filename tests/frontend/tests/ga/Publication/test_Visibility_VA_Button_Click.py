@@ -15,14 +15,7 @@ from tests.frontend.pages.messenger_page import MessengerPage
 from tests.frontend.pages.admin_page import AdminPage
 from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service_ru_list
 from tests.backend.distributions_methods import UserMethods
-import pytest
-from qaseio.pytest import qase
-
-import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
@@ -34,11 +27,12 @@ class TestGA:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_visibility_va_button_click")
-    def test_visibility_va_button_click(self, browser, screen_size):
-
+    def test_visibility_va_button_click(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox,
+                                        screen_size):
         page = AllGAPage(browser, url)
         page.open()
 
@@ -80,15 +74,15 @@ class TestGA:
 
             page.update_visibility_status()
 
-            #не можем проверить, т.к. не доступна админка
-            #page.click_more_button_side_panel()
-            #page.click_kebab_your_a_visibility()
-            #get_ga_requests(browser, "Visibility_VA_Button_Click", page)
-            #page.change_visibility_to_public_template()
-            #page.publish_visibility()
-            #page.click_continue_publish_visibility()
-            #get_ga_requests(browser, "VA_Published", page)
-            #page.update_visibility_status()
+            # не можем проверить, т.к. не доступна админка
+            # page.click_more_button_side_panel()
+            # page.click_kebab_your_a_visibility()
+            # get_ga_requests(browser, "Visibility_VA_Button_Click", page)
+            # page.change_visibility_to_public_template()
+            # page.publish_visibility()
+            # page.click_continue_publish_visibility()
+            # get_ga_requests(browser, "VA_Published", page)
+            # page.update_visibility_status()
 
             page.click_more_button_side_panel()
             page.click_kebab_your_a_visibility()
@@ -228,15 +222,15 @@ class TestGA:
 
             page.update_visibility_status()
 
-            #не можем проверить, т.к. не доступна админка
-            #page.click_more_button_side_panel()
-            #page.click_kebab_your_a_visibility()
-            #get_ga_requests(browser, "Visibility_VA_Button_Click", page)
-            #page.change_visibility_to_public_template()
-            #page.publish_visibility()
-            #page.click_continue_publish_visibility()
-            #get_ga_requests(browser, "VA_Published", page)
-            #page.update_visibility_status()
+            # не можем проверить, т.к. не доступна админка
+            # page.click_more_button_side_panel()
+            # page.click_kebab_your_a_visibility()
+            # get_ga_requests(browser, "Visibility_VA_Button_Click", page)
+            # page.change_visibility_to_public_template()
+            # page.publish_visibility()
+            # page.click_continue_publish_visibility()
+            # get_ga_requests(browser, "VA_Published", page)
+            # page.update_visibility_status()
 
             page.click_more_button_side_panel()
             page.click_kebab_your_a_visibility()

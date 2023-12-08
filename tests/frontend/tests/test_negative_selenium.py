@@ -12,6 +12,7 @@ from tests.frontend.pages.messenger_page import MessengerPage
 from tests.frontend.pages.admin_page import AdminPage
 from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service_ru_list
 from tests.backend.distributions_methods import UserMethods
+from selenium import webdriver
 
 
 class TestUI:
@@ -23,10 +24,12 @@ class TestUI:
                 user.delete_va_by_name(name)
 
     @pytest.mark.negative_ui
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_create_assistant_from_scratch_negative_inputs")
-    def test_create_assistant_from_scratch_negative_inputs(self, browser, screen_size):
+    def test_create_assistant_from_scratch_negative_inputs(self, browser: webdriver.Chrome |
+                                                                          webdriver.Edge |
+                                                                          webdriver.Firefox, screen_size):
         with qase.step(f"1. Open site: {browser.name}"):
             page = AllGAPage(browser, url)
             page.open()
@@ -128,28 +131,3 @@ class TestUI:
             page.clear_old_prompt()
             page.click_save_button()
             page.check_error_message_field_cant_be_empty()
-
-    #    with qase.step(f"5.2 Select all models and fill the prompt upper limit"):
-    #        for model_name in lm_service_en_list:
-    #            page.open_models_dropdown()
-    #            print(f'model_name = {model_name}')
-    #            page.select_specific_model(model_name)
-    #            page.clear_old_prompt()
-#
-#            for i in range(0, 9):
-#                page.enter_new_prompt_upper_limit()
-#                #page.enter_new_prompt()
-#                time.sleep(2)
-#            page.click_save_button()
-#            page.check_error_message_limit_prompt()
-#
-#    for model_name in lm_service_ru_list:
-#        page.select_specific_model(model_name)
-#        page.clear_old_prompt()
-#        page.enter_new_prompt_upper_limit()
-#        page.check_tokens_is_more_than_limit()
-#
-#        page.click_save_button()
-#        page.check_that_save_button_is_non_clickable()
-#        page.check_error_message()
-#

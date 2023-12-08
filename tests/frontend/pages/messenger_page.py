@@ -37,17 +37,15 @@ class MessengerPage(BasePage):
                 assistant_message is False
             ), f"assistant_message.text is (1): {self.browser.find_element(*MessengerPageLocators.BOT_MESSAGE).text}"
         assistant_message = self.browser.find_element(*MessengerPageLocators.BOT_MESSAGE).text
-        #assert (
-        #    "Sale" in assistant_message
-        #    or "sale" in assistant_message
-        #    or "sales" in assistant_message
-        #    or "Sales" in assistant_message
-        #), f"assistant_message.text is: {assistant_message}"
+        assert (
+            "Sale" in assistant_message
+            or "sale" in assistant_message
+            or "sales" in assistant_message
+            or "Sales" in assistant_message
+        ), f"assistant_message.text is: {assistant_message}"
 
     def check_dialog_is_restarted(self):
-        WebDriverWait(self.browser, 2).until(
-            EC.invisibility_of_element(MessengerPageLocators.BOT_MESSAGE_CONTAINER)
-        )
+        WebDriverWait(self.browser, 2).until(EC.invisibility_of_element(MessengerPageLocators.BOT_MESSAGE_CONTAINER))
 
     def click_restart_button(self):
         button = self.browser.find_element(*MessengerPageLocators.REFRESH_BUTTON)
@@ -62,8 +60,9 @@ class MessengerPage(BasePage):
         button.click()
 
     def check_properties_is_opened(self):
-        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(
-            MessengerPageLocators.PROPERTIES_PANEL_WHOLE))
+        WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(MessengerPageLocators.PROPERTIES_PANEL_WHOLE)
+        )
 
     def check_properties_is_closed(self):
         WebDriverWait(self.browser, 1).until(
@@ -79,13 +78,10 @@ class MessengerPage(BasePage):
         button.click()
 
     def check_main_menu_is_opened(self):
-        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(
-            MessengerPageLocators.MAIN_MENU_WHOLE))
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(MessengerPageLocators.MAIN_MENU_WHOLE))
 
     def check_main_menu_is_closed(self):
-        WebDriverWait(self.browser, 1).until(
-            EC.presence_of_element_located(MessengerPageLocators.MAIN_MENU_WHOLE)
-        )
+        WebDriverWait(self.browser, 1).until(EC.presence_of_element_located(MessengerPageLocators.MAIN_MENU_WHOLE))
 
     def click_make_copy(self):
         button = self.browser.find_element(*MessengerPageLocators.MAKE_COPY_BUTTON)

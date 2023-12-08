@@ -46,4 +46,3 @@ class YourAKebab(Visibility_MW):
         button.click()
 
         BasePage.source_type = "va_card_context_menu"
-

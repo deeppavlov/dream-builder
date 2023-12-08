@@ -1,6 +1,3 @@
-import pytest
-from qaseio.pytest import qase
-import time
 from tests.frontend.pages.all_ga_page import AllGAPage
 from tests.frontend.pages.all_your_a_page import AllYourAPage
 from tests.frontend.pages.all_templates_a_page import AllTemplatesAPage
@@ -17,12 +14,8 @@ from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service
 from tests.backend.distributions_methods import UserMethods
 import pytest
 from qaseio.pytest import qase
-
 import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
@@ -34,10 +27,11 @@ class TestGA:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_language_changed")
-    def test_language_changed(self, browser, screen_size):
+    def test_language_changed(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         page = AllGAPage(browser, url)
         page.open()
 
@@ -66,19 +60,17 @@ class TestGA:
             page = AllGAPage(browser, browser.current_url)
             page.check_building_is_done()
 
-            get_ga_requests(browser, "VA_Deployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Deployed", page)
 
-            #time.sleep(2)
-            #browser.refresh()
-            #time.sleep(2)
+            # time.sleep(2)
+            # browser.refresh()
+            # time.sleep(2)
             page.click_your_a_edit_button()
             page = SkillPage(browser, browser.current_url)
             page.click_stop_assistant()
             page.check_assistant_stopped()
 
-            get_ga_requests(browser, "VA_Undeployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Undeployed", page)
 
         with qase.step("2. va_skillset_page sidepanel, delete skill"):
             page.click_chat_with_assistant_button()
@@ -88,12 +80,8 @@ class TestGA:
             page = AllGAPage(browser, browser.current_url)
             page.check_building_is_done()
 
-            get_ga_requests(browser, "VA_Deployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Deployed", page)
 
-            #time.sleep(2)
-            #browser.refresh()
-            #time.sleep(2)
             page.click_your_a_edit_button()
             page = SkillPage(browser, browser.current_url)
             page.click_on_skill_card_context_menu()
@@ -103,8 +91,7 @@ class TestGA:
             page.check_success_toast_disappear()
             page.check_assistant_stopped()
 
-            get_ga_requests(browser, "VA_Undeployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Undeployed", page)
 
         with qase.step("3. va_skillset_page visibility, add skill"):
             page.click_visibility_button()
@@ -116,12 +103,8 @@ class TestGA:
             page = AllGAPage(browser, browser.current_url)
             page.check_building_is_done()
 
-            get_ga_requests(browser, "VA_Deployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Deployed", page)
 
-            #time.sleep(2)
-            #browser.refresh()
-            #time.sleep(2)
             page.click_your_a_edit_button()
             page = SkillPage(browser, browser.current_url)
             page.click_create_skill_button()
@@ -135,8 +118,7 @@ class TestGA:
             page.click_bcb_your_assistant_name_button()
             page.check_assistant_stopped()
 
-            get_ga_requests(browser, "VA_Undeployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Undeployed", page)
 
         with qase.step("4. all_va_page va_sidepanel, edit prompt"):
             page.click_home_button()
@@ -149,8 +131,7 @@ class TestGA:
 
             page.check_building_is_done()
 
-            get_ga_requests(browser, "VA_Deployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Deployed", page)
 
             page.click_your_a_edit_button()
             page = SkillPage(browser, browser.current_url)
@@ -170,8 +151,7 @@ class TestGA:
             page = SkillPage(browser, browser.current_url)
             page.check_assistant_stopped()
 
-            get_ga_requests(browser, "VA_Undeployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Undeployed", page)
 
         with qase.step("6. va_skillset_page va_action_menu visibility, stop va_skillset_page va_action_menu add skill"):
             page.click_main_menu()
@@ -186,8 +166,7 @@ class TestGA:
             page = AllGAPage(browser, browser.current_url)
             page.check_building_is_done()
 
-            get_ga_requests(browser, "VA_Deployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Deployed", page)
 
             page.click_your_a_edit_button()
             page = SkillPage(browser, browser.current_url)
@@ -203,5 +182,4 @@ class TestGA:
             page.click_bcb_your_assistant_name_button()
             page.check_assistant_stopped()
 
-            get_ga_requests(browser, "VA_Undeployed",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Undeployed", page)

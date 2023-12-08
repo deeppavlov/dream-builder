@@ -1,6 +1,3 @@
-import pytest
-from qaseio.pytest import qase
-import time
 from tests.frontend.pages.all_ga_page import AllGAPage
 from tests.frontend.pages.all_your_a_page import AllYourAPage
 from tests.frontend.pages.all_templates_a_page import AllTemplatesAPage
@@ -17,107 +14,100 @@ from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service
 from tests.backend.distributions_methods import UserMethods
 import pytest
 from qaseio.pytest import qase
-
-import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
-def check_va_properties_opened():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--lang=en-GB")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    browser = webdriver.Chrome(options=options)
-    browser.set_window_size(1920, 1080)
-    url = "https://stage.builder.deeppavlov.ai/"
+class TestGA:
+    def teardown_method(self):
+        user = UserMethods()
+        names_list = user.get_list_of_private_va_wo_assert()
+        if names_list:
+            for name in names_list:
+                user.delete_va_by_name(name)
 
-    page = AllGAPage(browser, url)
-    page.open()
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
+    @qase.title(f"test_va_properties_opened")
+    def test_va_properties_opened(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
+        page = AllGAPage(browser, url)
+        page.open()
+        with qase.step("1. va_skillset_page, control block"):
+            page.click_kebab_public_template()
+            page.click_kebab_public_template_check_skills()
 
-    page.check_is_public_template_loaded()
-    browser.execute_script("scrollTo(0,0);")
+            page = SkillPage(browser, browser.current_url)
+            page.click_properties_assistant_button()
 
-    with qase.step("1. va_skillset_page, control block"):
-        page.click_kebab_public_template()
-        page.click_kebab_public_template_check_skills()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-        page = SkillPage(browser, browser.current_url)
-        page.click_properties_assistant_button()
+        with qase.step("2.1 all_va_page, va_card_click, card view"):
+            page.click_home_button()
+            page = AllGAPage(browser, browser.current_url)
+            page.click_on_public_template_card()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("2.1 all_va_page, va_card_click, card view"):
-        page.click_home_button()
-        page = AllGAPage(browser, browser.current_url)
-        page.click_on_public_template_card()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("2.2 all_va_page, va_card_click, list view"):
+            page.click_change_view_type_to_list()
+            page.click_on_public_template_card()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("2.2 all_va_page, va_card_click, list view"):
-        page.click_change_view_type_to_list()
-        page.click_on_public_template_card()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("2.3 all_va_page, va_card_context_menu, list view"):
+            page.click_change_view_type_to_list()
+            page.click_kebab_public_template()
+            page.click_kebab_public_template_properties()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("2.3 all_va_page, va_card_context_menu, list view"):
-        page.click_change_view_type_to_list()
-        page.click_kebab_public_template()
-        page.click_kebab_public_template_properties()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("2.4 all_va_page, va_card_context_menu, card view"):
+            page.click_change_view_type_to_card()
+            page.click_kebab_public_template()
+            page.click_kebab_public_template_properties()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("2.4 all_va_page, va_card_context_menu, card view"):
-        page.click_change_view_type_to_card()
-        page.click_kebab_public_template()
-        page.click_kebab_public_template_properties()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("3.1 yourbots, va_card_click, card view"):
+            page.click_show_all_templates_assistants()
+            page = AllTemplatesAPage(browser, browser.current_url)
+            page.click_on_public_template_card()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("3.1 yourbots, va_card_click, card view"):
-        page.click_show_all_templates_assistants()
-        page = AllTemplatesAPage(browser, browser.current_url)
-        page.click_on_public_template_card()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("3.2 yourbots, va_card_click, list view"):
+            page.click_change_view_type_to_list()
+            page.click_on_public_template_card()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("3.2 yourbots, va_card_click, list view"):
-        page.click_change_view_type_to_list()
-        page.click_on_public_template_card()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("3.3 yourbots, va_card_context_menu, list view"):
+            page.click_change_view_type_to_list()
+            page.click_kebab_public_template()
+            page.click_kebab_public_template_properties()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("3.3 yourbots, va_card_context_menu, list view"):
-        page.click_change_view_type_to_list()
-        page.click_kebab_public_template()
-        page.click_kebab_public_template_properties()
+            page.click_close_button_side_panel()
 
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
+        with qase.step("3.4 yourbots, va_card_context_menu, card view"):
+            page.click_change_view_type_to_card()
+            page.click_kebab_public_template()
+            page.click_kebab_public_template_properties()
 
-        page.click_close_button_side_panel()
+            get_ga_requests(browser, "Template_VA_Properties_Opened", page)
 
-    with qase.step("3.4 yourbots, va_card_context_menu, card view"):
-        page.click_change_view_type_to_card()
-        page.click_kebab_public_template()
-        page.click_kebab_public_template_properties()
-
-        get_ga_requests(browser, "Template_VA_Properties_Opened", page)
-
-        page.click_close_button_side_panel()
-
-
-check_va_properties_opened()
+            page.click_close_button_side_panel()

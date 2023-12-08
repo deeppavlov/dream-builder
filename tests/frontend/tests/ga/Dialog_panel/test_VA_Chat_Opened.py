@@ -1,6 +1,3 @@
-import pytest
-from qaseio.pytest import qase
-import time
 from tests.frontend.pages.all_ga_page import AllGAPage
 from tests.frontend.pages.all_your_a_page import AllYourAPage
 from tests.frontend.pages.all_templates_a_page import AllTemplatesAPage
@@ -17,12 +14,8 @@ from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service
 from tests.backend.distributions_methods import UserMethods
 import pytest
 from qaseio.pytest import qase
-
 import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
@@ -34,11 +27,11 @@ class TestGA:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_va_chat_opened")
-    def test_va_chat_opened(self, browser, screen_size):
-
+    def test_va_chat_opened(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         page = AllGAPage(browser, url)
         page.open()
 
@@ -68,26 +61,22 @@ class TestGA:
             page.click_more_button_side_panel()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -98,26 +87,22 @@ class TestGA:
             page.click_more_button_side_panel()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -125,26 +110,22 @@ class TestGA:
             page.click_kebab_your_a()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -153,26 +134,22 @@ class TestGA:
             page.click_kebab_your_a()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -183,26 +160,22 @@ class TestGA:
             page.click_more_button_side_panel()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -213,26 +186,22 @@ class TestGA:
             page.click_more_button_side_panel()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -240,26 +209,22 @@ class TestGA:
             page.click_kebab_your_a()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -268,26 +233,22 @@ class TestGA:
             page.click_kebab_your_a()
             page.click_kebab_your_a_chat()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -297,26 +258,22 @@ class TestGA:
             page = SkillPage(browser, browser.current_url)
             page.click_chat_with_assistant_button()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()
 
@@ -326,25 +283,21 @@ class TestGA:
             page = SkillEditorPage(browser, browser.current_url)
             page.click_chat_with_assistant_button()
 
-            get_ga_requests(browser, "VA_Chat_Opened",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Opened", page)
 
             panel = DialogPanel(browser, browser.current_url)
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Start",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Start", page)
 
             panel.enter_message()
             panel.send_message()
 
-            get_ga_requests(browser, "VA_Chat_Send",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Send", page)
 
             panel.click_restart_button()
 
-            get_ga_requests(browser, "VA_Chat_Refresh",
-                            page.source_type, page.page_type, page.view, page.auth_status)
+            get_ga_requests(browser, "VA_Chat_Refresh", page)
 
             panel.click_close_button()

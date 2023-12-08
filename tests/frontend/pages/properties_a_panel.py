@@ -21,31 +21,31 @@ class ProperiesAPanel:
         button = self.browser.find_element(*PropertiesAPanelLocators.MORE_BUTTON_SIDE_PANEL)
         button.click()
 
-        #BasePage.source_type = 'va_sidepanel'
+        # BasePage.source_type = 'va_sidepanel'
 
     def click_rename_assistant_button_side_panel(self):
         button = self.browser.find_element(*PropertiesAPanelLocators.RENAME_ASSISTANT_BUTTON_SIDE_PANEL)
         button.click()
 
-        #BasePage.source_type = 'va_sidepanel'
+        # BasePage.source_type = 'va_sidepanel'
 
     def click_close_button_side_panel(self):
         button = self.browser.find_element(*PropertiesAPanelLocators.CLOSE_BUTTON_SIDE_PANEL)
         button.click()
 
-        #BasePage.source_type = 'va_sidepanel'
+        # BasePage.source_type = 'va_sidepanel'
 
     def click_edit_button_side_panel(self):
         button = self.browser.find_element(*PropertiesAPanelLocators.CLOSE_BUTTON_SIDE_PANEL)
         button.click()
 
-        #BasePage.source_type = 'va_sidepanel'
+        # BasePage.source_type = 'va_sidepanel'
 
     def click_details_tab(self):
         button = self.browser.find_element(*PropertiesAPanelLocators.DETAILS_TAB)
         button.click()
 
-        #BasePage.source_type = 'va_sidepanel'
+        # BasePage.source_type = 'va_sidepanel'
 
     def click_rename_skill_button_side_panel(self):
         button = self.browser.find_element(*PropertiesAPanelLocators.RENAME_ASSISTANT_BUTTON_SIDE_PANEL)
@@ -57,5 +57,5 @@ class ProperiesAPanel:
         button = self.browser.find_element(*PropertiesAPanelLocators.EDIT_BUTTON_SIDE_PANEL)
         button.click()
 
-        BasePage.source_type = 'sidepanel_details_edit'
-        #BasePage.skill_view = "none"
+        BasePage.source_type = "sidepanel_details_edit"
+        # BasePage.skill_view = "none"

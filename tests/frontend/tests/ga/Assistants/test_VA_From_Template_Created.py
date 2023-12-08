@@ -1,6 +1,3 @@
-import pytest
-from qaseio.pytest import qase
-import time
 from tests.frontend.pages.all_ga_page import AllGAPage
 from tests.frontend.pages.all_your_a_page import AllYourAPage
 from tests.frontend.pages.all_templates_a_page import AllTemplatesAPage
@@ -17,12 +14,8 @@ from tests.frontend.config import url, admin_url, lm_service_en_list, lm_service
 from tests.backend.distributions_methods import UserMethods
 import pytest
 from qaseio.pytest import qase
-
 import time
-
-import pychrome
 from seleniumwire import webdriver
-
 from tests.frontend.tests.ga.ga_config import get_ga_requests
 
 
@@ -34,10 +27,12 @@ class TestGA:
             for name in names_list:
                 user.delete_va_by_name(name)
 
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.ga_events
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @qase.title(f"test_va_from_template_created")
-    def test_va_from_template_created(self, browser, screen_size):
+    def test_va_from_template_created(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox,
+                                      screen_size):
         page = AllGAPage(browser, url)
         page.open()
 
@@ -58,11 +53,6 @@ class TestGA:
             page.click_sign_in()
             page = AllGAPage(browser, browser.current_url)
             page.check_is_public_template_loaded()
-
-            # баг - убрать!
-            page.click_use_template()
-            # баг - убрать!
-
             page.clear_name_in_create_va_mw()
             page.enter_name_in_create_va_mw()
             page.enter_description_in_create_va_mw()

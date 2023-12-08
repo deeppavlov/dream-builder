@@ -56,14 +56,15 @@ class Visibility_MW:
 
     def check_unlisted_visibility_tooltip(self):
         time.sleep(1)
-        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
-            Visibility_MW_Locators.UNLISTED_TOOLTIP_VISIBILITY_MW))
+        WebDriverWait(self.browser, 2).until(
+            EC.visibility_of_element_located(Visibility_MW_Locators.UNLISTED_TOOLTIP_VISIBILITY_MW)
+        )
 
     def check_public_template_visibility_tooltip(self):
         time.sleep(1)
-        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located(
-            Visibility_MW_Locators.PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW))
+        WebDriverWait(self.browser, 2).until(
+            EC.visibility_of_element_located(Visibility_MW_Locators.PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW)
+        )
 
     def update_visibility_status(self):
         BasePage.va_prev_status = BasePage.va_temp_status
-

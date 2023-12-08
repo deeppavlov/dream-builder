@@ -1,6 +1,14 @@
 from selenium.webdriver.common.by import By
-from tests.frontend.config import public_va_name, users_email, skill_name, generative_model, your_va_name, \
-    added_skill_name, your_skill_name, default_skill_name
+from tests.frontend.config import (
+    public_va_name,
+    users_email,
+    skill_name,
+    generative_model,
+    your_va_name,
+    added_skill_name,
+    your_skill_name,
+    default_skill_name,
+)
 
 
 class BasePageLocators:
@@ -72,10 +80,14 @@ class Visibility_MW_Locators:
     UNLISTED_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='UNLISTED_LINK']")
     PUBLIC_TEMPLATE_TOOLTIP_VISIBILITY_MW = (By.CSS_SELECTOR, "[id='PUBLIC_TEMPLATE']")
 
-    CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
-                                            "[class*='_baseModal'] button[class*='_button_theme_primary']")
-    CANCEL_BUTTON_IMPORTANT_PUBLISH_MW = (By.CSS_SELECTOR,
-                                          "[class*='_baseModal'] button[class*='_button_theme_secondary']")
+    CONTINUE_BUTTON_IMPORTANT_PUBLISH_MW = (
+        By.CSS_SELECTOR,
+        "[class*='_baseModal'] button[class*='_button_theme_primary']",
+    )
+    CANCEL_BUTTON_IMPORTANT_PUBLISH_MW = (
+        By.CSS_SELECTOR,
+        "[class*='_baseModal'] button[class*='_button_theme_secondary']",
+    )
 
 
 class CreateVA_MW_Locators:
@@ -88,11 +100,17 @@ class CreateVA_MW_Locators:
     EDIT_VA_SAVE_BUTTON = (By.CSS_SELECTOR, "[type='submit']")
 
     CREATE_VA_ERROR_NAME_CANT_BE_EMPTY = (
-        By.XPATH, "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']")
+        By.XPATH,
+        "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']",
+    )
     CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY = (
-        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']")
+        By.XPATH,
+        "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']",
+    )
     CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
-        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 1000 characters']")
+        By.XPATH,
+        "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 1000 characters']",
+    )
 
 
 class PropertiesAPanelLocators:
@@ -144,8 +162,10 @@ class AllGAPageLocators(YourAKebabLocators):
     PUBLIC_RIGHT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnR')][contains(@class,'_sub')]")
     PUBLIC_LEFT_SCROLL_BUTTON = (By.XPATH, "//button[contains(@class,'_btnL')][contains(@class,'_sub')]")
     PUBLIC_KEBAB = (By.XPATH, f"//span[text()='{public_va_name}']/../..//button[contains(@class,'secondary')]")
-    PUBLIC_KEBAB_LIST_VIEW = (By.XPATH,
-                              f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'secondary')]")
+    PUBLIC_KEBAB_LIST_VIEW = (
+        By.XPATH,
+        f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'secondary')]",
+    )
 
     PUBLIC_KEBAB_CHAT = (By.XPATH, "//span[text()='Chat With Assistant']")
     PUBLIC_KEBAB_PROPERTIES = (By.XPATH, "//span[text()='Properties']")
@@ -153,10 +173,12 @@ class AllGAPageLocators(YourAKebabLocators):
     PUBLIC_USE_BUTTON = (
         By.XPATH,
         f"//div[contains(@class,'public')]//span[text()='{public_va_name}']/../..//button["
-        f"contains(@class,'primary')]"
+        f"contains(@class,'primary')]",
     )
     PUBLIC_USE_BUTTON_LIST_VIEW = (
-        By.XPATH, f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'primary')]")
+        By.XPATH,
+        f"//p[text()='{public_va_name}']/../../..//button[contains(@class,'primary')]",
+    )
 
     PUBLIC_USE_MW_USE_BUTTON = (By.XPATH, "//button[contains(text(),'Create')]")
     PUBLIC_USE_MW_CANCEL_BUTTON = (By.XPATH, "//form[contains(@class,'_assistantModal')]//button[1]")
@@ -242,15 +264,23 @@ class SkillPageLocators:
     RENAME_SKILL_SAVE_BUTTON = (By.XPATH, "[type='submit']")
 
     CREATE_VA_ERROR_NAME_CANT_BE_EMPTY = (
-        By.XPATH, "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']")
+        By.XPATH,
+        "//div[contains(@class,'_input')]/label[text()='This field can’t be empty']",
+    )
     CREATE_VA_ERROR_DESCRIPTION_CANT_BE_EMPTY = (
-        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']")
+        By.XPATH,
+        "//div[contains(@class,'_textArea')]/label[text()='This field can’t be empty']",
+    )
     CREATE_VA_ERROR_LIMIT_TEXT_DESCRIPTION = (
-        By.XPATH, "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 500 characters']")
+        By.XPATH,
+        "//div[contains(@class,'_textArea')]/label[text()='Limit text description to 500 characters']",
+    )
 
     SKILL_CARD = (By.XPATH, f"//p[contains(@class,'_generative')]")
     SKILL_CARD_CONTEXT_MENU = (
-        By.XPATH, f"//p[contains(@class,'_generative')]/../../..//button[contains(@class,'_secondary')]")
+        By.XPATH,
+        f"//p[contains(@class,'_generative')]/../../..//button[contains(@class,'_secondary')]",
+    )
     SKILL_CARD_CONTEXT_MENU_RENAME = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[1]")
     SKILL_CARD_CONTEXT_MENU_PROPERTIES = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[2]")
     SKILL_CARD_CONTEXT_MENU_DELETE = (By.XPATH, f"//div[contains(@class,'react-tooltip')]//button[3]")
@@ -399,8 +429,10 @@ class DialogPanelLocators:
 
     WHOLE_DIALOG_PANEL = (By.CSS_SELECTOR, "[id='assistantDialogPanel']")
 
-    ERROR_TOKEN_MESSAGE = (By.XPATH, "//p[contains(text(),"
-                                     "'Enter your personal access token for OpenAI to talk to this AI Assistant')]")
+    ERROR_TOKEN_MESSAGE = (
+        By.XPATH,
+        "//p[contains(text()," "'Enter your personal access token for OpenAI to talk to this AI Assistant')]",
+    )
     ENTER_TOKEN_BUTTON = (By.XPATH, "//button[contains(text(),'Enter token')]")
 
 

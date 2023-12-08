@@ -78,8 +78,10 @@ public_va_names_ru = [
     "journalist_helper_ru_assistant",
 ]
 
-access_token_expired = {'detail': "Access token has expired or token is bad. Response: {'error_description': 'Either "
-                                  "access_token, id_token, or token_handle required'}"}
+access_token_expired = {
+    "detail": "Access token has expired or token is bad. Response: {'error_description': 'Either "
+    "access_token, id_token, or token_handle required'}"
+}
 
 lm_service_id_en_list = [2, 4, 5, 6, 7, 14]
 lm_service_id_ru_list = [4, 5, 6, 7, 12, 13, 14]

@@ -26,4 +26,3 @@ class SkillKebab:
         button.click()
 
         BasePage.source_type = "skill_block_context_menu"
-

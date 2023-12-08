@@ -26,11 +26,7 @@ class BasePage:
     old_model_name = "GPT-JT 6B (Basic, 2K tokens)"
     new_model_name = "GPT-JT 6B (Basic, 2K tokens)"
 
-    def __init__(self,
-                 browser,
-                 url,
-                 timeout=15):
-
+    def __init__(self, browser, url, timeout=15):
         self.browser = browser
         self.url = url
         self.browser.implicitly_wait(timeout)
@@ -113,13 +109,10 @@ class BasePage:
         self.source_type = "va_action_menu"
 
     def check_main_menu_is_opened(self):
-        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(
-            BasePageLocators.MAIN_MENU_WHOLE))
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(BasePageLocators.MAIN_MENU_WHOLE))
 
     def check_main_menu_is_closed(self):
-        WebDriverWait(self.browser, 1).until(
-            EC.presence_of_element_located(BasePageLocators.MAIN_MENU_WHOLE)
-        )
+        WebDriverWait(self.browser, 1).until(EC.presence_of_element_located(BasePageLocators.MAIN_MENU_WHOLE))
 
     def click_main_menu_about(self):
         button = self.browser.find_element(*BasePageLocators.MAIN_MENU_ABOUT)
@@ -171,8 +164,8 @@ class BasePage:
     def click_settings_button(self):
         button = (
             WebDriverWait(self.browser, 3)
-                .until(EC.visibility_of_element_located(BasePageLocators.SETTINGS_BUTTON))
-                .click()
+            .until(EC.visibility_of_element_located(BasePageLocators.SETTINGS_BUTTON))
+            .click()
         )
         BasePage.source_type = "services_common_button"
         BasePage.services = "none"
@@ -245,9 +238,9 @@ class BasePage:
         location = element.location
         size = element.size
 
-        left = location['x']
-        top = location['y']
-        right = location['x'] + size['width']
-        bottom = location['y'] + size['height']
+        left = location["x"]
+        top = location["y"]
+        right = location["x"] + size["width"]
+        bottom = location["y"] + size["height"]
 
         return left, top, right, bottom

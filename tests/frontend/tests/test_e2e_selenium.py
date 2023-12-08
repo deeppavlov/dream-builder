@@ -15,6 +15,7 @@ from tests.backend.config import counter_ui as counter
 from tests.backend.config import empty_counter
 from tests.backend.distributions_methods import UserMethods
 from tests.frontend.tests.screen.screenshots_processing import save_screenshot, create_screen_folder_if_not_exists
+from selenium import webdriver
 
 
 def e2e_scenario(browser, env, screen_size):
@@ -99,17 +100,11 @@ def e2e_scenario(browser, env, screen_size):
     with qase.step("6. Wendy chooses СhatGPT model"):
         page = SkillEditorPage(browser, browser.current_url)
 
-        #page.check_error_message_field_cant_be_empty()
-        #page.check_error_message_field_cant_be_empty_disappear()
-
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
         page.open_models_dropdown()
         page.check_dropdown_opened()
-
-        # баг -
-        #page.check_all_en_models()
-        # баг -
+        page.check_all_en_models()
 
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
@@ -139,10 +134,12 @@ def e2e_scenario(browser, env, screen_size):
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
         page.click_close_button()
+
     with qase.step("8. Wendy chooses her created VAs"):
         page.click_home_button()
         page = AllGAPage(browser, browser.current_url)
         page.click_your_a_edit_button()
+
     with qase.step("9. Wendy edits prompts till she likes dialog of the skill"):
         page = SkillPage(browser, browser.current_url)
         page.click_edit_skill()
@@ -197,11 +194,7 @@ def e2e_scenario(browser, env, screen_size):
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
         panel.send_message()
-
-        # баг - !
         panel.check_bot_message_edited_prompt()
-        # баг - !
-
         panel.click_close_button()
         panel.check_is_dialog_panel_closed()
 
@@ -213,7 +206,6 @@ def e2e_scenario(browser, env, screen_size):
         page.click_kebab_your_a_visibility()
 
     with qase.step("13. Wendy changes visibility to Unlisted"):
-
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
         page.change_visibility_to_unlisted()
@@ -436,11 +428,7 @@ def e2e_scenario(browser, env, screen_size):
         page.click_save_button()
         page.check_success_toast()
         page.check_success_toast_disappear()
-
-        # - баг!
         page.check_all_ru_models()
-        # - баг!
-
         page.check_default_prompt_ru()
         save_screenshot(browser, env, browser.name, screen_size, screen_counter)
 
@@ -474,52 +462,52 @@ class TestUI:
                 user.delete_va_by_name(name)
 
     @pytest.mark.chrome_e2e
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Chrome")
-    def test_chrome_e2e(self, browser, screen_size):
+    def test_chrome_e2e(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         pass
 
     @pytest.mark.edge_e2e
-    @pytest.mark.parametrize('browser', ['edge'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.parametrize("browser", ["edge"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Edge")
-    def test_edge_e2e(self, browser, screen_size):
+    def test_edge_e2e(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         pass
 
     @pytest.mark.firefox_e2e
-    @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
-    @pytest.mark.parametrize('screen_size', [['1920,1080']], indirect=True)
+    @pytest.mark.parametrize("browser", ["firefox"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Firefox")
-    def test_firefox_e2e(self, browser, screen_size):
+    def test_firefox_e2e(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox, screen_size):
         pass
 
     @pytest.mark.chrome_e2e_parametrize_screen_size
-    @pytest.mark.parametrize('browser', ['chrome'], indirect=True)
-    @pytest.mark.parametrize('screen_size',
-                             [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
+    @pytest.mark.parametrize("browser", ["chrome"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Chrome")
-    def test_chrome_e2e_parametrize_screen_size(self, browser, screen_size):
+    def test_chrome_e2e_parametrize_screen_size(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox,
+                                                screen_size):
         pass
 
     @pytest.mark.edge_e2e_parametrize_screen_size
-    @pytest.mark.parametrize('browser', ['edge'], indirect=True)
-    @pytest.mark.parametrize('screen_size',
-                             [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
+    @pytest.mark.parametrize("browser", ["edge"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Edge")
-    def test_edge_e2e_parametrize_screen_size(self, browser, screen_size):
+    def test_edge_e2e_parametrize_screen_size(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox,
+                                              screen_size):
         pass
 
     @pytest.mark.firefox_e2e_parametrize_screen_size
-    @pytest.mark.parametrize('browser', ['firefox'], indirect=True)
-    @pytest.mark.parametrize('screen_size',
-                             [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
+    @pytest.mark.parametrize("browser", ["firefox"], indirect=True)
+    @pytest.mark.parametrize("screen_size", [["1920,1080"], ["1536,864"], ["1366,768"], ["1280,720"]], indirect=True)
     @decorator_base_test
     @qase.title(f"{counter()}. e2e - Firefox ")
-    def test_firefox_e2e_parametrize_screen_size(self, browser, screen_size):
+    def test_firefox_e2e_parametrize_screen_size(self, browser: webdriver.Chrome | webdriver.Edge | webdriver.Firefox,
+                                                 screen_size):
         pass

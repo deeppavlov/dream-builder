@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class DialogPanel(BasePage):
     def __init__(self, browser, url, timeout=15):
-        #source_type = "va_dialog_panel"
+        # source_type = "va_dialog_panel"
         source_type = "va_sidepanel"
         page_type = self.page_type
         view = self.view
@@ -21,9 +21,7 @@ class DialogPanel(BasePage):
         WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(DialogPanelLocators.CLOSE_BUTTON))
 
     def check_is_dialog_panel_closed(self):
-        WebDriverWait(self.browser, 1).until(
-            EC.presence_of_element_located(DialogPanelLocators.WHOLE_DIALOG_PANEL)
-        )
+        WebDriverWait(self.browser, 1).until(EC.presence_of_element_located(DialogPanelLocators.WHOLE_DIALOG_PANEL))
 
     def click_build_assistant(self):
         button = self.browser.find_element(*DialogPanelLocators.BUILD_ASSISTANT)

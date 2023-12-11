@@ -87,8 +87,10 @@ def create_google_api_component(db, user, new_component):
         lm_service_id=None,
         lm_config=None,
     )
-
-    return schemas.ComponentRead.from_orm(component)
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
 
 
 def create_component(
@@ -181,7 +183,10 @@ def create_component(
             lm_config=prompted_component.lm_config,
         )
 
-    return schemas.ComponentRead.from_orm(component)
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
 
 
 async def patch_component(

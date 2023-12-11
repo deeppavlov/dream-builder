@@ -108,7 +108,10 @@ class ComponentRead(BaseOrmModel):
     prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
     lm_config: Optional[dict]
+    cloned_from_id: Optional[int]
+    skill_created_type: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
+
 
     @validator("ram_usage", "gpu_usage")
     def check_memory_format(cls, v):

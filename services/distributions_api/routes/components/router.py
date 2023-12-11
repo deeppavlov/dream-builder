@@ -1,9 +1,9 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database.models.component.crud import get_all, get_by_group_name
+from database.models.component.crud import get_all, get_by_group_name, get_by_virtual_assistant_cloned_status
 from services.distributions_api import schemas, const
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.routes.components import flows
@@ -30,13 +30,28 @@ async def create_component(
     db: Session = Depends(get_db),
 ) -> schemas.ComponentRead:
     new_component = flows.create_component(db, payload, user, clone_from_id)
-    return new_component
+    if new_component:
+        if clone_from_id:
+            setattr(new_component, "cloned_from_id", clone_from_id)
+            setattr(new_component, "skill_created_type", "from_template")
+        else:
+            setattr(new_component, "skill_created_type", "from_scratch")
+        return new_component
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create component for {payload.display_name} of lm_service {payload.lm_service_id }"
+        )
 
 
 @components_router.get("/{component_id}", status_code=status.HTTP_200_OK)
 async def get_component(
     component: schemas.ComponentRead = Depends(get_component), db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:
+    cloned_from_id = get_by_virtual_assistant_cloned_status(db, component.id)
+    if cloned_from_id and type(cloned_from_id[0]) == int:
+        setattr(component, "cloned_from_id", cloned_from_id)
+        setattr(component, "skill_created_type", "default")
     return component
 
 

@@ -22,7 +22,13 @@ dialog_sessions_router = APIRouter(prefix="/api/dialog_sessions", tags=["dialog_
 
 
 async def send_chat_request_to_deployed_agent(
-    agent_url: str, session_id: int, text: str, prompt: str = None, lm_service: str = None, openai_api_key: str = None
+        agent_url: str,
+        session_id: int,
+        text: str,
+        prompt: str = None,
+        lm_service: str = None,
+        openai_api_key: str = None,
+        max_tokens: int = None
 ):
     """ """
     data = {
@@ -33,6 +39,8 @@ async def send_chat_request_to_deployed_agent(
         data["prompt"] = prompt
     if lm_service:
         data["lm_service_url"] = lm_service
+    if max_tokens:
+        data["max_tokens"] = max_tokens
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
     elif isinstance(openai_api_key, str):
@@ -134,6 +142,8 @@ async def send_dialog_session_message(
     else:
         lm_service_url = None
 
+    max_tokens = getattr(payload, 'max_tokens', None)
+
     agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
         chat_url,
         dialog_session.id,
@@ -141,6 +151,7 @@ async def send_dialog_session_message(
         payload.prompt,
         lm_service_url,
         payload.openai_api_key,
+        max_tokens
     )
 
     crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)

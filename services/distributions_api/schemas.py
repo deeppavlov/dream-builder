@@ -285,6 +285,7 @@ class DialogChatMessageCreate(BaseModel):
     prompt: Optional[str]
     lm_service_id: Optional[int]
     openai_api_key: Optional[str]
+    max_tokens: Optional[int]
 
 
 class DialogChatMessageRead(BaseModel):

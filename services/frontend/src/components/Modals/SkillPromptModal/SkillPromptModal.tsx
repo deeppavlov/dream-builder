@@ -162,7 +162,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: prompt,
+            prompt: editorContext.code,
             distName: distName || '',
             type: 'skills',
           })
@@ -269,6 +269,9 @@ const SkillPromptModal = () => {
     changeSkillModel(lm)
   }
 
+  const isEmpty = editorContext.code.length === 0
+  const isDiff = skill?.prompt === editorContext.code
+
   return (
     <Modal
       isOpen={isOpen}
@@ -282,7 +285,7 @@ const SkillPromptModal = () => {
     >
       <Wrapper>
         <div className={s.container}>
-          <form onSubmit={handleSubmit(onFormSubmit)} className={s.editor}>
+          <form className={s.editor}>
             <div className={s.top}>
               <SkillDropboxSearch
                 label={t('modals.skill_prompt.service_dropbox.label')}
@@ -373,13 +376,16 @@ const SkillPromptModal = () => {
                 }}
               /> */}
             </div>
-            <div className={s.btns}>
+            <div className={s.btns} onClick={() => onFormSubmit(skill)}>
               <Button
                 theme='primary'
                 props={{
-                  type: 'submit',
                   disabled:
-                    updateComponent.isLoading || isSubmitting || !isDirty,
+                    updateComponent.isLoading ||
+                    isSubmitting ||
+                    !isDirty ||
+                    isEmpty ||
+                    isDiff,
                 }}
               >
                 {t('modals.skill_prompt.btns.save')}

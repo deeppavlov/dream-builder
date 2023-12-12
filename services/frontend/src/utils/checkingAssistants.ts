@@ -1,7 +1,13 @@
 import { franc } from 'https://esm.sh/franc@6'
 import i18n from 'i18n'
 import { UseQueryResult } from 'react-query'
-import { ICollectionError, ISkill, TComponents } from 'types/types'
+import {
+  ICollectionError,
+  ISkill,
+  LanguageModel,
+  TComponents,
+} from 'types/types'
+import getTokensLength from 'utils/getTokensLength'
 
 const arrInitPromptBlock2 = [
   { 'Act as [YOUR INPUT].': /[Aa]ct as (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm },
@@ -84,7 +90,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
   }
 }
 
-const lengthPrompt = (skill: ISkill, acc: ICollectionError) => {
+const lengthMinPrompt = (skill: ISkill, acc: ICollectionError) => {
   if (skill.prompt === undefined || skill.prompt === null) {
     return
   }
@@ -176,6 +182,29 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   }
 }
 
+const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
+  if (skill.prompt === undefined || skill.prompt === null) {
+    return
+  }
+
+  const lmServiceName = skill?.lm_service?.name as LanguageModel
+
+  const maxToken: number = skill.lm_service?.max_tokens ?? 0
+
+  if (skill.prompt.length < maxToken) {
+    // избежать лишних отрисовок
+    return
+  }
+
+  const curentCountToken = getTokensLength(lmServiceName, skill.prompt)
+  const isСrowded = maxToken < curentCountToken
+
+  if (isСrowded) {
+    const massage = `количество токенов больше допустимых  ${curentCountToken}/${maxToken}`
+    acc.error = [...acc.error, massage]
+  }
+}
+
 export const examination = (data: ISkill) => {
   const acc = {
     error: [],
@@ -183,7 +212,8 @@ export const examination = (data: ISkill) => {
   }
 
   InputPrompt(data, acc)
-  lengthPrompt(data, acc)
+  lengthMinPrompt(data, acc)
+  lengthMaxPrompt(data, acc)
   languagePrompt(data, acc)
   promptBlocks(data, acc)
   typePrompt(data, acc)

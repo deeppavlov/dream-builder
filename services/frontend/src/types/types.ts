@@ -1,5 +1,11 @@
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router-dom';
 
+
+export interface ICustomAssistant {
+  name: string
+  skill: ICustomSkill[]
+  bot: BotInfoInterface
+}
 export interface IСounter {
   error: number
   warning: number
@@ -9,6 +15,12 @@ export interface ICollectionError {
   error: string[]
   warning: string[]
   [key: string]: string[]
+}
+
+export interface ICustomSkill {
+  data: ICollectionError
+  name: string
+  skill: ISkill
 }
 
 export interface UserInterface {

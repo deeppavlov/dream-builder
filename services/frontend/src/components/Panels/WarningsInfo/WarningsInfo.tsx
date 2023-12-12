@@ -8,6 +8,8 @@ import { RoutesList } from 'router/RoutesList'
 import {
   BotInfoInterface,
   ICollectionError,
+  ICustomAssistant,
+  ICustomSkill,
   ISkill,
   IStackElement,
 } from 'types/types'
@@ -87,7 +89,7 @@ const WarningsInfo = () => {
   }
 
   const renderSkillAssistant = (
-    skill: any,
+    skill: ICustomSkill,
     bot: BotInfoInterface,
     i: number
   ) => {
@@ -144,11 +146,7 @@ const WarningsInfo = () => {
   }
 
   const renderAssistant = (
-    assistant: {
-      name: string
-      skill: ICollectionError[]
-      bot: BotInfoInterface
-    },
+    assistant: ICustomAssistant,
     i: number,
     target?: boolean
   ) => {
@@ -156,9 +154,9 @@ const WarningsInfo = () => {
       return null
     }
 
-    const countAllError = assistant.skill.reduce((acc, el) => {
-      const errorCount = el.data.error.length
-      const warningWarning = el.data.warning.length
+    const countAllError = assistant.skill.reduce((acc, el: ICustomSkill) => {
+      const errorCount = el?.data.error.length
+      const warningWarning = el?.data.warning.length
       return acc + errorCount + warningWarning
     }, 0)
 
@@ -166,10 +164,7 @@ const WarningsInfo = () => {
       return null
     }
 
-    const handlEditClick = (
-      e: React.MouseEvent<HTMLButtonElement>,
-      bot: BotInfoInterface
-    ) => {
+    const handlEditClick = (e: React.MouseEvent, bot: BotInfoInterface) => {
       const isPublished = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
       setVaArchitectureOptions('va_block')
       isPublished
@@ -183,7 +178,7 @@ const WarningsInfo = () => {
         <div key={i} className={s.assistantBlock}>
           <div
             className={s.assistantName}
-            onClick={(e: any) => handlEditClick(e, assistant.bot)}
+            onClick={(e: React.MouseEvent) => handlEditClick(e, assistant.bot)}
           >
             {assistant.name}
           </div>
@@ -196,7 +191,7 @@ const WarningsInfo = () => {
       <div key={i} className={s.assistantBlock}>
         <div
           className={s.assistantName}
-          onClick={(e: any) => handlEditClick(e, assistant.bot)}
+          onClick={(e: React.MouseEvent) => handlEditClick(e, assistant.bot)}
         >
           {assistant.name}
         </div>

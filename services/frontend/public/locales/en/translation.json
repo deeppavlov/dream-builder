@@ -556,8 +556,12 @@
   "error_massage": {
     "prompt": {
       "input": "Invalid value",
-      "length": "Prompt length is only 1 characters",
-      "language": "Skill does not support language"
+      "lengthMin": "Prompt length is only 1 characters",
+      "lengthMax": "The length of the prom exceeds the permissible value.",
+      "language": "Skill does not support language",
+      "languageUndefined": "We were unable to determine the language of your prompt.",
+      "type": "Your invitation does not contain a test. Make sure it's written correctly.",
+      "blocks": "You may be using a block that does not support this prompt:"
     },
     "error": "You can't build the assistant with huge errors, please fix them.",
     "warning": "You have recommendations; perhaps your assistant will not work the way you want."

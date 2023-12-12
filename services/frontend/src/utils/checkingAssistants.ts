@@ -115,9 +115,7 @@ const typePrompt = (skill: ISkill, acc: ICollectionError) => {
   const arrIsIncludes = arr.map(el => result.includes(el))
 
   if (arrIsIncludes.includes(true) && str === null) {
-    const massage =
-      'Возможно вы используете арифметические выражение в своей инструкции'
-
+    const massage = i18n.t('error_massage.prompt.type')
     acc.warning = [...acc.warning, massage]
     return
   }
@@ -137,7 +135,7 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
   }).slice(0, 2)
 
   if (result === 'un') {
-    const massage = `мы не смогли определить язык вашего промта`
+    const massage = i18n.t('error_massage.prompt.languageUndefined')
     acc.error = [...acc.error, massage]
     return
   }
@@ -174,9 +172,9 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   }, [])
 
   if (arrIsinvalidBlocks.length !== 0) {
-    const massage = `Возожно вы используете блок который не поддерживает этот скилл \n${arrIsinvalidBlocks.join(
-      ',\n '
-    )}`
+    const massage = `${i18n.t(
+      'error_massage.prompt.blocks'
+    )} \n${arrIsinvalidBlocks.join(',\n ')}`
 
     acc.warning = [...acc.warning, massage]
   }
@@ -192,15 +190,15 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
   const maxToken: number = skill.lm_service?.max_tokens ?? 0
 
   if (skill.prompt.length < maxToken) {
-    // избежать лишних отрисовок
     return
   }
-
   const curentCountToken = getTokensLength(lmServiceName, skill.prompt)
   const isСrowded = maxToken < curentCountToken
 
   if (isСrowded) {
-    const massage = `количество токенов больше допустимых  ${curentCountToken}/${maxToken}`
+    const massage = `${i18n.t(
+      'error_massage.prompt.lengthMax'
+    )} ${curentCountToken}/${maxToken}`
     acc.error = [...acc.error, massage]
   }
 }

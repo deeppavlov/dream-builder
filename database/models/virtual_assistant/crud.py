@@ -48,9 +48,10 @@ def get_all_by_author(db: Session, user_id: int) -> [VirtualAssistant]:
 
 
 def get_virtual_assistant_dist_name(db:Session, parent_assistant_id: int) -> str:
-    return db.execute(
-        select(VirtualAssistant.name).where(VirtualAssistant.id == parent_assistant_id)
+    return db.scalar(
+        select(VirtualAssistant).where(VirtualAssistant.id == parent_assistant_id)
     ).returning(VirtualAssistant.name)
+
 
 def create(
     db: Session,

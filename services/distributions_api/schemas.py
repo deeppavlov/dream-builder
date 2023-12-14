@@ -211,6 +211,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
 
 class VirtualAssistantRead(VirtualAssistantBaseRead):
     deployment: Optional[DeploymentBaseRead]
+    cloned_from_name: Optional[str]
 
 
 class VirtualAssistantCreate(BaseModel):

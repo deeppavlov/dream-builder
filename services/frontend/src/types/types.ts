@@ -6,14 +6,14 @@ export interface ICustomAssistant {
   skill: ICustomSkill[]
   bot: BotInfoInterface
 }
-export interface IСounter {
-  error: number
-  warning: number
+export interface ICounter {
+  errors: number
+  warnings: number
   [key: string]: number
 }
 export interface ICollectionError {
-  error: string[]
-  warning: string[]
+  errors: string[]
+  warnings: string[]
   [key: string]: string[]
 }
 

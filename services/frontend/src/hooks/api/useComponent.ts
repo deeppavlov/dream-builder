@@ -124,8 +124,7 @@ export const useComponent = () => {
       skillDeleted()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       queryClient.invalidateQueries([type, distName])
-      // queryClient.invalidateQueries(['skills_of_current_user_assistants']
-      // )
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })
@@ -162,6 +161,7 @@ export const useComponent = () => {
     onSuccess: (data: IStackElement, { component_id, distName, type }) => {
       skillRenamed(data)
       queryClient.invalidateQueries([ALL_COMPONENTS])
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       updateCachedComponent({ id: component_id, distName, type, data })
     },
   })

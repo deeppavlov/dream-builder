@@ -156,7 +156,7 @@ export const AssistantModule = () => {
 
   const resultExamination = examinationMessage(components)
 
-  const isPreviewTooltip = resultExamination.status === 'success' ? false : true
+  const isPreviewTooltip = resultExamination.status !== 'success'
 
   return (
     <>

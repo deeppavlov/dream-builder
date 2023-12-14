@@ -3,8 +3,8 @@ import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
-import { BotInfoInterface, ISkill, IСounter } from 'types/types'
+import { UseQueryResult, useQuery } from 'react-query'
+import { BotInfoInterface, ICounter, ISkill } from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { getComponents } from 'api/components'
 import { useAssistants } from 'hooks/api'
@@ -15,10 +15,8 @@ import { trigger } from 'utils/events'
 import { BaseToolTip } from 'components/Menus'
 import { WarningsInfo } from 'components/Panels'
 import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
-import { Hint } from 'components/UI'
 import s from './AssistantMenuInfo.module.scss'
 
-///hintIsVisited, setHintIsVisited, HELPER_TAB_ID
 export const HELPER_TAB_ID = 'helperTabError'
 
 export const AssistantMenuInfo = () => {
@@ -31,7 +29,7 @@ export const AssistantMenuInfo = () => {
   })
   const copilotIsActive = UIOptions[consts.WARNING_WINDOW_SP_IS_ACTIVE]
 
-  const [privateDists, setPrivateDists] = useState({})
+  const [privateDists, setPrivateDists] = useState<UseQueryResult<BotInfoInterface[]>>()
 
   useEffect(() => {
     if (privateDistsInit.status === 'success') {
@@ -56,19 +54,20 @@ export const AssistantMenuInfo = () => {
       )
     : []
 
-  const { data: componentsList } = useQuery(
+  const result = useQuery(
     ['skills_of_current_user_assistants'],
     () =>
       Promise.all(
         sortedDists.map(async (el: BotInfoInterface) => {
-          const acc = { countError: 0, countWarning: 0 }
+          const acc: ICounter = { errors: 0, warnings: 0 }
           const components = await getComponents(el.name) // no error handling
+          console.log(components, el.display_name)
           components.skills
             .filter((el: ISkill) => el.name !== 'dummy_skill')
             .forEach((el: ISkill) => {
               const resultExamination = examination(el)
-              acc.countError += resultExamination.error.length
-              acc.countWarning += resultExamination.warning.length
+              acc.errors += resultExamination.errors.length
+              acc.warnings += resultExamination.warnings.length
             })
           return acc
         })
@@ -81,32 +80,30 @@ export const AssistantMenuInfo = () => {
     }
   )
 
-  const count = componentsList?.reduce(
-    (acc: IСounter, el: IСounter) => {
-      const countError = el.countError
-      const countWarning = el.countWarning
-      acc.countError += countError
-      acc.countWarning += countWarning
+  const count = result.data?.reduce(
+    (acc: ICounter, el: ICounter) => {
+      acc.errors += el.errors
+      acc.warnings += el.warnings
       return acc
     },
-    { countError: 0, countWarning: 0 }
+    { errors: 0, warnings: 0 }
   )
 
   const RenderCountError = () => {
     const icon = <Information style={{ width: 24, height: 24 }} />
 
-    if (count.countError !== 0) {
+    if (count?.errors !== 0) {
       return (
         <div className={s.iconError}>
-          <div className={`${s.count} ${s.error}`}>{count.countError}</div>
+          <div className={`${s.count} ${s.error}`}>{count?.errors}</div>
           {icon}
         </div>
       )
     }
-    if (count.countWarning !== 0) {
+    if (count.warnings !== 0) {
       return (
         <div className={s.iconError}>
-          <div className={`${s.count} ${s.warning}`}>{count.countWarning}</div>
+          <div className={`${s.count} ${s.warning}`}>{count.warnings}</div>
           {icon}
         </div>
       )
@@ -115,7 +112,7 @@ export const AssistantMenuInfo = () => {
   }
 
   const myStyle: CSSProperties =
-    count.countError === 0 && count.countWarning === 0
+    count?.errors === 0 && count.warnings === 0
       ? { pointerEvents: 'none', opacity: 0.3 }
       : {}
 

@@ -3,9 +3,9 @@ import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'react-tooltip'
 import { ICollectionError } from 'types/types'
-import style from './StatusToolTip.module.scss'
+import style from './StatusTooltip.module.scss'
 
-const StatusToolTipCard = ({
+const StatusTooltipSkill = ({
   data,
   id,
 }: {
@@ -29,16 +29,16 @@ const StatusToolTipCard = ({
     })
 
     const icon =
-      key === 'error' ? (
+      key === 'errors' ? (
         <Error
           data-tooltip-id={`tooltip_error${id}${key}`}
-          data-tooltip-variant={key}
+          data-tooltip-variant={'error'}
           data-tooltip-place='right'
         ></Error>
       ) : (
         <Warning
           data-tooltip-id={`tooltip_error${id}${key}`}
-          data-tooltip-variant={key}
+          data-tooltip-variant={'warning'}
           data-tooltip-place='right'
         ></Warning>
       )
@@ -52,7 +52,7 @@ const StatusToolTipCard = ({
           style={{ zIndex: 1, opacity: 1, width: 'auto', height: 'auto' }}
         >
           <div>
-            <h3>{key === 'error' ? t('error') : t('warning')}</h3>
+            <h3>{key === 'errors' ? t('error') : t('warning')}</h3>
             <ul>{message}</ul>
           </div>
         </Tooltip>
@@ -62,10 +62,10 @@ const StatusToolTipCard = ({
 
   return (
     <div className={style.statusBox}>
-      {render('error')}
-      {render('warning')}
+      {render('errors')}
+      {render('warnings')}
     </div>
   )
 }
 
-export default StatusToolTipCard
+export default StatusTooltipSkill

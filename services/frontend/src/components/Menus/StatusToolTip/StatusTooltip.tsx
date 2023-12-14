@@ -1,7 +1,7 @@
 import { BotInfoInterface, ISkill, IStackElement } from 'types/types'
 import { examination } from 'utils/checkingAssistants'
-import StatusToolTipAssistant from './StatusToolTipAssistant'
-import StatusToolTipCard from './StatusToolTipCard'
+import StatusToolTipAssistant from './StatusTooltipAssistant'
+import StatusTooltipSkill from './StatusTooltipSkill'
 
 const StatusToolTip = ({
   name,
@@ -9,16 +9,16 @@ const StatusToolTip = ({
   skills,
   bot,
 }: {
-  name: string
+  name: 'skill' | 'assistant'
   skill?: IStackElement
   skills?: IStackElement[]
   bot?: BotInfoInterface
 }) => {
-  if (name === 'SkillCard' && skill?.name !== 'dummy_skill' && skill) {
-    return <StatusToolTipCard data={examination(skill)} id={skill?.id} />
+  if (name === 'skill' && skill?.name !== 'dummy_skill' && skill) {
+    return <StatusTooltipSkill data={examination(skill)} id={skill?.id} />
   }
 
-  if ('AssistantCard' === name) {
+  if ('assistant' === name) {
     const result = skills
       ?.filter(el => el.name !== 'dummy_skill')
       .map((el: ISkill) => {

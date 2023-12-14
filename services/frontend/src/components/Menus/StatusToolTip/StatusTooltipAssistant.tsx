@@ -2,10 +2,10 @@ import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
 import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'react-tooltip'
-import { ICollectionError, IСounter } from 'types/types'
-import s from './StatusToolTip.module.scss'
+import { ICollectionError, ICounter } from 'types/types'
+import s from './StatusTooltip.module.scss'
 
-const StatusToolTipAssistant = ({
+const StatusTooltipAssistant = ({
   data,
   id,
 }: {
@@ -19,15 +19,15 @@ const StatusToolTipAssistant = ({
     return null
   }
 
-  const count: IСounter = data.reduce(
-    (acc: IСounter, el: ICollectionError) => {
-      const error = el.error.length
-      const warning = el.warning.length
-      acc.error += error
-      acc.warning += warning
+  const count: ICounter = data.reduce(
+    (acc: ICounter, el: ICollectionError) => {
+      const errors = el.errors.length
+      const warnings = el.warnings.length
+      acc.errors += errors
+      acc.warnings += warnings
       return acc
     },
-    { error: 0, warning: 0 }
+    { errors: 0, warnings: 0 }
   )
 
   const render = (key: string) => {
@@ -36,12 +36,12 @@ const StatusToolTipAssistant = ({
     }
 
     const message =
-      key === 'error'
+      key === 'errors'
         ? `${t('error')} ${count[key]}`
         : `${t('warning')} ${count[key]}`
 
     const icon =
-      key === 'error' ? (
+      key === 'errors' ? (
         <Error
           style={{ width: 16, height: 17 }}
           data-tooltip-id={`tooltip_error${id}${key}`}
@@ -76,11 +76,11 @@ const StatusToolTipAssistant = ({
   return (
     <>
       <div className={s.statusBox}>
-        {render('error')}
-        {render('warning')}
+        {render('errors')}
+        {render('warnings')}
       </div>
     </>
   )
 }
 
-export default StatusToolTipAssistant
+export default StatusTooltipAssistant

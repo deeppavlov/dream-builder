@@ -71,14 +71,12 @@ const WarningsInfo = () => {
       return (
         <div
           key={i}
-          className={`${s.errorContend}  ${
-            i === 0 && key === 'error' ? s.first : ''
-          }`}
+          className={`${s.errorContend}`}
         >
           <div className={s.verticalLine}></div>
           <div className={s.cluster}></div>
           <div className={s.hederError}>
-            {key === 'error' ? <Error /> : <Warning />}
+            {key === 'errors' ? <Error /> : <Warning />}
             <span className={s.infoAll}>{el}</span>
           </div>
         </div>
@@ -93,8 +91,8 @@ const WarningsInfo = () => {
     bot: BotInfoInterface,
     i: number
   ) => {
-    const errorCount = skill.data.error.length
-    const warningCount = skill.data.warning.length
+    const errorCount = skill.data.errors.length
+    const warningCount = skill.data.warnings.length
 
     if (errorCount === 0 && warningCount === 0) {
       return null
@@ -114,13 +112,13 @@ const WarningsInfo = () => {
       }
     }
 
-    const countError = skill.data.error.length + skill.data.warning.length
+    const countError = skill.data.errors.length + skill.data.warnings.length
     const messageCountError = countError === 0 ? '' : `(${countError})`
 
     const colorError =
-      skill.data.error.length !== 0
+      skill.data.errors.length !== 0
         ? { color: '#b20000' }
-        : skill.data.warning.length !== 0
+        : skill.data.warnings.length !== 0
         ? { color: '#FF9500' }
         : {}
 
@@ -137,8 +135,8 @@ const WarningsInfo = () => {
             {skill.name}
           </div>
           <div className={s.errorContendBox}>
-            {renderMessage('error', skill.data)}
-            {renderMessage('warning', skill.data)}
+            {renderMessage('errors', skill.data)}
+            {renderMessage('warnings', skill.data)}
           </div>
         </div>
       </div>
@@ -155,8 +153,8 @@ const WarningsInfo = () => {
     }
 
     const countAllError = assistant.skill.reduce((acc, el: ICustomSkill) => {
-      const errorCount = el?.data.error.length
-      const warningWarning = el?.data.warning.length
+      const errorCount = el?.data.errors.length
+      const warningWarning = el?.data.warnings.length
       return acc + errorCount + warningWarning
     }, 0)
 

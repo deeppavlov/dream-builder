@@ -7,7 +7,7 @@ import MenuToolTip from './MenuToolTip/MenuToolTip'
 import { Profile } from './Profile/Profile'
 import { ProfileContextMenu } from './ProfileContextMenu/ProfileContextMenu'
 import SkillCardToolTip from './SkillCardToolTip/SkillCardToolTip'
-import StatusToolTip from './StatusToolTip/StatusToolTip'
+import StatusToolTip from './StatusToolTip/StatusTooltip'
 
 export {
   AssistantContextMenu,

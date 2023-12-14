@@ -1,16 +1,16 @@
-import { useUIOptions } from 'context';
-import { useEffect, useState } from 'react';
-import { Outlet, useMatch, useParams } from 'react-router-dom';
-import { RoutesList } from 'router/RoutesList';
-import { usePreview } from 'context/PreviewProvider';
-import { VISIBILITY_STATUS } from 'constants/constants';
-import { useAssistants } from 'hooks/api';
-import { consts } from 'utils/consts';
-import { AssistantModal, DeleteAssistantModal, DeleteSkillModal, PublishAssistantModal, ShareAssistantModal, SignInModal, SkillModal, SkillQuitModal, SkillsListModal } from 'components/Modals';
-import { BaseSidePanel } from 'components/Panels';
-import { Container } from 'components/UI';
-import { Sidebar } from 'components/Widgets';
-import { AssistantMenuInfo, DeepyHelperTab, IntegrationTab, SettingsTab, SkillsTab } from 'components/Widgets/Sidebar';
+import { useUIOptions } from 'context'
+import { useEffect, useState } from 'react'
+import { Outlet, useMatch, useParams } from 'react-router-dom'
+import { RoutesList } from 'router/RoutesList'
+import { usePreview } from 'context/PreviewProvider'
+import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants } from 'hooks/api'
+import { consts } from 'utils/consts'
+import { AssistantModal, DeleteAssistantModal, DeleteSkillModal, PublishAssistantModal, ShareAssistantModal, SignInModal, SkillModal, SkillQuitModal, SkillsListModal } from 'components/Modals'
+import { BaseSidePanel } from 'components/Panels'
+import { Container } from 'components/UI'
+import { Sidebar } from 'components/Widgets'
+import { AssistantMenuInfo, DeepyHelperTab, IntegrationTab, SettingsTab, SkillsTab } from 'components/Widgets/Sidebar'
 
 
 export const EditorPage = () => {

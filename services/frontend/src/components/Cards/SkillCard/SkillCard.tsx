@@ -128,7 +128,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
               <p className={s.dateText}>{dateCreated ?? '------'}</p>
-              <StatusToolTip name='SkillCard' skill={skill} />
+              <StatusToolTip name='skill' skill={skill} />
             </div>
           </div>
         </div>

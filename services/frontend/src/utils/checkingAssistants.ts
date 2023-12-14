@@ -1,4 +1,4 @@
-import { franc } from 'https://esm.sh/franc@6'
+import { franc } from 'franc'
 import i18n from 'i18n'
 import { UseQueryResult } from 'react-query'
 import {
@@ -9,7 +9,7 @@ import {
 } from 'types/types'
 import getTokensLength from 'utils/getTokensLength'
 
-const arrInitPromptBlock2 = [
+const arrInitPromptBlock = [
   { 'Act as [YOUR INPUT].': /[Aa]ct as (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm },
   {
     'YOUR PERSONALITY: \nYour name is [YOUR INPUT]. Your interests are: [YOUR INPUT].':
@@ -86,7 +86,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
 
   if (str.length !== 0) {
     const mas = `${i18n.t('error_message.prompt.input')} ${str}`
-    acc.error = [...acc.error, mas]
+    acc.errors = [...acc.errors, mas]
   }
 }
 
@@ -97,7 +97,7 @@ const lengthMinPrompt = (skill: ISkill, acc: ICollectionError) => {
 
   if (skill.prompt.length < 3) {
     const message = i18n.t('error_message.prompt.lengthMin')
-    acc.warning = [...acc.warning, message]
+    acc.warnings = [...acc.warnings, message]
   }
 }
 
@@ -136,7 +136,7 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
 
   if (result === 'un') {
     const message = i18n.t('error_message.prompt.languageUndefined')
-    acc.error = [...acc.error, message]
+    acc.errors = [...acc.errors, message]
     return
   }
 
@@ -145,7 +145,7 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
   }
   const message = `${i18n.t('error_message.prompt.language')} ${result}`
 
-  acc.warning = [...acc.warning, message]
+  acc.warnings = [...acc.warnings, message]
 }
 
 const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
@@ -154,7 +154,7 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
 
   const promptBlocks = skill.lm_service?.prompt_blocks?.map(el => el.template)
 
-  const invalidBlocks = arrInitPromptBlock2.filter(
+  const invalidBlocks = arrInitPromptBlock.filter(
     el => !promptBlocks?.includes(Object.keys(el)[0])
   )
 
@@ -176,7 +176,7 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
       'error_message.prompt.blocks'
     )} \n${arrIsinvalidBlocks.join(',\n ')}`
 
-    acc.warning = [...acc.warning, message]
+    acc.warnings = [...acc.warnings, message]
   }
 }
 
@@ -199,14 +199,14 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
     const message = `${i18n.t(
       'error_message.prompt.lengthMax'
     )} ${curentCountToken}/${maxToken}`
-    acc.error = [...acc.error, message]
+    acc.errors = [...acc.errors, message]
   }
 }
 
 export const examination = (data: ISkill) => {
   const acc = {
-    error: [],
-    warning: [],
+    errors: [],
+    warnings: [],
   }
 
   InputPrompt(data, acc)
@@ -225,7 +225,7 @@ export const examinationMessage = (
     ?.filter((el: ISkill) => el.name !== 'dummy_skill')
     .map((el: ISkill) => {
       const resultExamination = examination(el)
-      return resultExamination?.error.length !== 0 ? true : false
+      return resultExamination?.errors.length !== 0 ? true : false
     })
     .includes(true)
 
@@ -233,7 +233,7 @@ export const examinationMessage = (
     ?.filter((el: ISkill) => el.name !== 'dummy_skill')
     .map((el: ISkill) => {
       const resultExamination = examination(el)
-      return resultExamination?.warning.length !== 0 ? true : false
+      return resultExamination?.warnings.length !== 0 ? true : false
     })
     .includes(true)
 

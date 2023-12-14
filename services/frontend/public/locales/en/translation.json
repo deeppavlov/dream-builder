@@ -553,7 +553,7 @@
       "retry": "Retry"
     }
   },
-  "error_massage": {
+  "error_message": {
     "prompt": {
       "input": "Invalid value",
       "lengthMin": "Prompt length is only 1 characters",

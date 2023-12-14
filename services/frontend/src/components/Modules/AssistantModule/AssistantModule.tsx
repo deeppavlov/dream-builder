@@ -12,7 +12,7 @@ import { useAssistants, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
-import { examinationMassage } from 'utils/checkingAssistants'
+import { examinationMessage } from 'utils/checkingAssistants'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -154,7 +154,7 @@ export const AssistantModule = () => {
     refetchOnMount: true,
   })
 
-  const resultExamination = examinationMassage(components)
+  const resultExamination = examinationMessage(components)
 
   const isPreviewTooltip = resultExamination.status === 'success' ? false : true
 
@@ -180,7 +180,7 @@ export const AssistantModule = () => {
             {!isPreview && (
               <div
                 data-tooltip-id={`tooltip`}
-                data-tooltip-content={resultExamination.massage}
+                data-tooltip-content={resultExamination.message}
                 data-tooltip-variant={resultExamination.status}
                 data-tooltip-place='bottom'
               >

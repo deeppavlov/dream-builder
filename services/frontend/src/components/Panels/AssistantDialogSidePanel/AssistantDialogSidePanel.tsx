@@ -27,7 +27,7 @@ import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
-import { examinationMassage } from 'utils/checkingAssistants'
+import { examinationMessage } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
@@ -256,9 +256,9 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     refetchOnMount: true,
   })
 
-  const resultExamination = examinationMassage(components)
+  const resultExamination = examinationMessage(components)
 
-  const { massage, isError } = resultExamination
+  const { isError } = resultExamination
 
   return (
     <div id='assistantDialogPanel' className={s.container}>
@@ -314,7 +314,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 style={isError ? { color: 'red' } : {}}
               >
                 {isError
-                  ? massage
+                  ? resultExamination.message
                   : t('sidepanels.assistant_dialog.deploy.subheader')}
               </p>
             </div>

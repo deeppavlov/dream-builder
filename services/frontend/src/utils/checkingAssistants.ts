@@ -85,7 +85,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
   )
 
   if (str.length !== 0) {
-    const mas = `${i18n.t('error_massage.prompt.input')} ${str}`
+    const mas = `${i18n.t('error_message.prompt.input')} ${str}`
     acc.error = [...acc.error, mas]
   }
 }
@@ -96,8 +96,8 @@ const lengthMinPrompt = (skill: ISkill, acc: ICollectionError) => {
   }
 
   if (skill.prompt.length < 3) {
-    const massage = i18n.t('error_massage.prompt.length')
-    acc.warning = [...acc.warning, massage]
+    const message = i18n.t('error_message.prompt.lengthMin')
+    acc.warning = [...acc.warning, message]
   }
 }
 
@@ -115,8 +115,8 @@ const typePrompt = (skill: ISkill, acc: ICollectionError) => {
   const arrIsIncludes = arr.map(el => result.includes(el))
 
   if (arrIsIncludes.includes(true) && str === null) {
-    const massage = i18n.t('error_massage.prompt.type')
-    acc.warning = [...acc.warning, massage]
+    const message = i18n.t('error_message.prompt.type')
+    acc.warning = [...acc.warning, message]
     return
   }
 }
@@ -135,17 +135,17 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
   }).slice(0, 2)
 
   if (result === 'un') {
-    const massage = i18n.t('error_massage.prompt.languageUndefined')
-    acc.error = [...acc.error, massage]
+    const message = i18n.t('error_message.prompt.languageUndefined')
+    acc.error = [...acc.error, message]
     return
   }
 
   if (languageArrSkill?.includes(result)) {
     return
   }
-  const massage = `${i18n.t('error_massage.prompt.language')} ${result}`
+  const message = `${i18n.t('error_message.prompt.language')} ${result}`
 
-  acc.warning = [...acc.warning, massage]
+  acc.warning = [...acc.warning, message]
 }
 
 const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
@@ -172,11 +172,11 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   }, [])
 
   if (arrIsinvalidBlocks.length !== 0) {
-    const massage = `${i18n.t(
-      'error_massage.prompt.blocks'
+    const message = `${i18n.t(
+      'error_message.prompt.blocks'
     )} \n${arrIsinvalidBlocks.join(',\n ')}`
 
-    acc.warning = [...acc.warning, massage]
+    acc.warning = [...acc.warning, message]
   }
 }
 
@@ -196,10 +196,10 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
   const isСrowded = maxToken < curentCountToken
 
   if (isСrowded) {
-    const massage = `${i18n.t(
-      'error_massage.prompt.lengthMax'
+    const message = `${i18n.t(
+      'error_message.prompt.lengthMax'
     )} ${curentCountToken}/${maxToken}`
-    acc.error = [...acc.error, massage]
+    acc.error = [...acc.error, message]
   }
 }
 
@@ -218,7 +218,7 @@ export const examination = (data: ISkill) => {
   return acc
 }
 
-export const examinationMassage = (
+export const examinationMessage = (
   component: UseQueryResult<TComponents, unknown>
 ) => {
   const isError = component.data?.skills
@@ -243,12 +243,12 @@ export const examinationMassage = (
     ? 'warning'
     : 'success'
 
-  const massageMap = {
-    error: i18n.t('error_massage.error'),
-    warning: i18n.t('error_massage.warning'),
+  const messageMap = {
+    error: i18n.t('error_message.error'),
+    warning: i18n.t('error_message.warning'),
     success: 'success',
   }
 
-  const massage = massageMap[status]
-  return { status, massage, isError }
+  const message = messageMap[status]
+  return { status, message, isError }
 }

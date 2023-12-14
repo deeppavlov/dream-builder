@@ -1,5 +1,5 @@
-import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
-import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'react-tooltip'
 import { ICollectionError, IСounter } from 'types/types'
@@ -13,7 +13,7 @@ const StatusToolTipAssistant = ({
   id?: number
 }) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'toolTip_massage',
+    keyPrefix: 'toolTip_message',
   })
   if (data === undefined || data.length === 0) {
     return null
@@ -35,7 +35,7 @@ const StatusToolTipAssistant = ({
       return null
     }
 
-    const massage =
+    const message =
       key === 'error'
         ? `${t('error')} ${count[key]}`
         : `${t('warning')} ${count[key]}`
@@ -60,13 +60,13 @@ const StatusToolTipAssistant = ({
     return (
       <div className={s.errorBox}>
         {icon}
-        <div className={s.massageCountError}>{count[key]}</div>
+        <div className={s.messageCountError}>{count[key]}</div>
         <Tooltip
           id={`tooltip_error${id}${key}`}
           style={{ zIndex: 1, opacity: 1 }}
         >
           <div>
-            <p>{massage}</p>
+            <p>{message}</p>
           </div>
         </Tooltip>
       </div>

@@ -124,6 +124,8 @@ export const useComponent = () => {
       skillDeleted()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       queryClient.invalidateQueries([type, distName])
+      // queryClient.invalidateQueries(['skills_of_current_user_assistants']
+      // )
       updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })

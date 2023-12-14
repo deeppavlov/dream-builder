@@ -13,14 +13,14 @@ const StatusToolTipCard = ({
   id?: number
 }) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'toolTip_massage',
+    keyPrefix: 'toolTip_message',
   })
   const render = (key: string) => {
     if (data[key].length === 0) {
       return null
     }
 
-    const massage = data[key].map((el: string, i: number) => {
+    const message = data[key].map((el: string, i: number) => {
       return (
         <li key={i}>
           {i + 1}. {el}
@@ -46,14 +46,14 @@ const StatusToolTipCard = ({
     return (
       <div className={style.errorBox}>
         {icon}
-        <div className={style.massageCountError}>{data[key].length}</div>
+        <div className={style.messageCountError}>{data[key].length}</div>
         <Tooltip
           id={`tooltip_error${id}${key}`}
           style={{ zIndex: 1, opacity: 1, width: 'auto', height: 'auto' }}
         >
           <div>
             <h3>{key === 'error' ? t('error') : t('warning')}</h3>
-            <ul>{massage}</ul>
+            <ul>{message}</ul>
           </div>
         </Tooltip>
       </div>

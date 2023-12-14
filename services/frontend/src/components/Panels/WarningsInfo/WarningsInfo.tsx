@@ -63,11 +63,11 @@ const WarningsInfo = () => {
     return { name: el.display_name, skill: result, bot: el }
   })
 
-  const renderMassage = (key: string, data: ICollectionError) => {
+  const renderMessage = (key: string, data: ICollectionError) => {
     if (data[key].length === 0) {
       return null
     }
-    const massage = data[key].map((el: string, i: number) => {
+    const message = data[key].map((el: string, i: number) => {
       return (
         <div
           key={i}
@@ -85,7 +85,7 @@ const WarningsInfo = () => {
       )
     })
 
-    return massage
+    return message
   }
 
   const renderSkillAssistant = (
@@ -115,7 +115,7 @@ const WarningsInfo = () => {
     }
 
     const countError = skill.data.error.length + skill.data.warning.length
-    const massageCountError = countError === 0 ? '' : `(${countError})`
+    const messageCountError = countError === 0 ? '' : `(${countError})`
 
     const colorError =
       skill.data.error.length !== 0
@@ -131,14 +131,14 @@ const WarningsInfo = () => {
             className={s.skillName}
             onClick={e => handleEditBtnClick(e, skill.skill)}
           >
-            <div className={`${s.massageCountError}`} style={colorError}>
-              {massageCountError}
+            <div className={`${s.messageCountError}`} style={colorError}>
+              {messageCountError}
             </div>
             {skill.name}
           </div>
           <div className={s.errorContendBox}>
-            {renderMassage('error', skill.data)}
-            {renderMassage('warning', skill.data)}
+            {renderMessage('error', skill.data)}
+            {renderMessage('warning', skill.data)}
           </div>
         </div>
       </div>

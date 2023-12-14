@@ -18,6 +18,7 @@ import { TRIGGER_LEFT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSideP
 import { Hint } from 'components/UI'
 import s from './AssistantMenuInfo.module.scss'
 
+///hintIsVisited, setHintIsVisited, HELPER_TAB_ID
 export const HELPER_TAB_ID = 'helperTabError'
 
 export const AssistantMenuInfo = () => {
@@ -29,10 +30,6 @@ export const AssistantMenuInfo = () => {
     keyPrefix: 'assistantMenuInfo',
   })
   const copilotIsActive = UIOptions[consts.WARNING_WINDOW_SP_IS_ACTIVE]
-  const [hintIsVisited, setHintIsVisited] = useState<boolean>(
-    JSON.parse(`${localStorage.getItem(`${HELPER_TAB_ID}_IS_VISITED`)}`) ===
-      true
-  )
 
   const [privateDists, setPrivateDists] = useState({})
 
@@ -51,8 +48,6 @@ export const AssistantMenuInfo = () => {
       children: <WarningsInfo />,
       isOpen: !copilotIsActive,
     })
-    setHintIsVisited(true)
-    localStorage.setItem(`${HELPER_TAB_ID}_IS_VISITED`, JSON.stringify(true))
   }
 
   const sortedDists = privateDists?.data
@@ -134,21 +129,12 @@ export const AssistantMenuInfo = () => {
     >
       <RenderCountError />
 
-      {hintIsVisited ? (
-        <BaseToolTip
-          delayShow={TOOLTIP_DELAY}
-          id={HELPER_TAB_ID}
-          content={t('errors')}
-          place='right'
-        />
-      ) : (
-        <Hint
-          tooltipId={HELPER_TAB_ID}
-          name={HELPER_TAB_ID}
-          text={t('errors')}
-          handleClose={() => setHintIsVisited(true)}
-        />
-      )}
+      <BaseToolTip
+        delayShow={TOOLTIP_DELAY}
+        id={HELPER_TAB_ID}
+        content={t('errors')}
+        place='right'
+      />
     </button>
   )
 }

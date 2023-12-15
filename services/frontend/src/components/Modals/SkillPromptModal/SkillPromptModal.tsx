@@ -381,18 +381,11 @@ const SkillPromptModal = () => {
                 }}
               /> */}
             </div>
-            <div
-              className={s.btns}
-              onClick={(e: any) => {
-                const tagName = e.target.tagName.toLowerCase()
-                if ('button' === tagName) {
-                  onFormSubmit(skill)
-                }
-              }}
-            >
+            <div className={s.btns}>
               <Button
                 theme='primary'
                 props={{
+                  onClick: () => onFormSubmit(skill),
                   disabled:
                     updateComponent.isLoading ||
                     isSubmitting ||

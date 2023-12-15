@@ -5,7 +5,6 @@ import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UseQueryResult, useQuery } from 'react-query'
 import { BotInfoInterface, ICounter, ISkill } from 'types/types'
-import { TOOLTIP_DELAY } from 'constants/constants'
 import { getComponents } from 'api/components'
 import { useAssistants } from 'hooks/api'
 import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
@@ -87,15 +86,17 @@ export const AssistantMenuInfo = () => {
       return acc
     },
     { errors: 0, warnings: 0 }
-  )
+  ) ?? { errors: 0, warnings: 0 }
 
   const RenderCountError = () => {
     const icon = <Information style={{ width: 24, height: 24 }} />
 
-    if (count?.errors !== 0) {
+    if (count.errors !== 0) {
       return (
         <div className={s.iconError}>
-          <div className={`${s.count} ${s.error}`}>{count?.errors}</div>
+          <div className={`${s.count} ${s.error}`}>
+            {count.errors <= 99 ? count.errors : '99+'}
+          </div>
           {icon}
         </div>
       )
@@ -103,7 +104,9 @@ export const AssistantMenuInfo = () => {
     if (count.warnings !== 0) {
       return (
         <div className={s.iconError}>
-          <div className={`${s.count} ${s.warning}`}>{count.warnings}</div>
+          <div className={`${s.count} ${s.warning}`}>
+            {count.warnings <= 99 ? count.warnings : '99+'}
+          </div>
           {icon}
         </div>
       )
@@ -126,12 +129,7 @@ export const AssistantMenuInfo = () => {
     >
       <RenderCountError />
 
-      <BaseToolTip
-        delayShow={TOOLTIP_DELAY}
-        id={HELPER_TAB_ID}
-        content={t('errors')}
-        place='right'
-      />
+      <BaseToolTip id={HELPER_TAB_ID} content={t('errors')} place='right' />
     </button>
   )
 }

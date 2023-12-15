@@ -327,7 +327,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
               }}
             >
               {t('sidepanels.assistant_dialog.btns.build_assistant')}
-            </Button>{' '}
+            </Button>
           </div>
         )}
         {chatPanel && (

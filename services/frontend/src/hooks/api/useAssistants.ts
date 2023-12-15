@@ -99,6 +99,7 @@ export const useAssistants = () => {
     mutationFn: ({ name, data }: IClone) => cloneAssistant(name, data),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       vaCreated()
     },
   })
@@ -109,6 +110,7 @@ export const useAssistants = () => {
       createAssistant(createPayload),
     onSuccess: (dist: BotInfoInterface) => {
       navigate(generatePath(RoutesList.editor.skills, { name: dist.name }))
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       vaCreated()
     },
   })
@@ -122,6 +124,7 @@ export const useAssistants = () => {
         queryClient.invalidateQueries([PUBLIC_DISTS]).then(() => {
           updateCachedDist(name)
         })
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
       vaDeleted()
     },
   })
@@ -167,6 +170,7 @@ export const useAssistants = () => {
     mutationFn: (name: string) => getAssistant(name),
     onSuccess: (dist, name) => {
       queryClient.setQueryData<BotInfoInterface | null>([DIST, name], dist)
+      refetchDist
     },
   })
 

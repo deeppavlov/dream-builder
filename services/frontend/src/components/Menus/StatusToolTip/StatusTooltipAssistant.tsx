@@ -1,9 +1,10 @@
-import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
-import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
-import { useTranslation } from 'react-i18next'
-import { Tooltip } from 'react-tooltip'
-import { ICollectionError, ICounter } from 'types/types'
-import s from './StatusTooltip.module.scss'
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg';
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg';
+import { useTranslation } from 'react-i18next';
+import { Tooltip } from 'react-tooltip';
+import { ICollectionError, ICounter } from 'types/types';
+import s from './StatusTooltip.module.scss';
+
 
 const StatusTooltipAssistant = ({
   data,
@@ -30,7 +31,7 @@ const StatusTooltipAssistant = ({
     { errors: 0, warnings: 0 }
   )
 
-  const render = (key: string) => {
+  const render = (key: 'errors' | 'warnings') => {
     if (count[key] === 0) {
       return null
     }

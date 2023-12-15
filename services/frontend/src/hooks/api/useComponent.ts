@@ -1,25 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import {
-  ICloneComponent,
-  IStackElement,
-  LM_Service,
-  PostDistParams,
-  StackType,
-  TComponents,
-} from 'types/types'
-import {
-  addComponent,
-  cloneComponent,
-  createComponent,
-  deleteComoponent,
-  editComponent,
-  getComponent as fetchComponent,
-  getComponents,
-  getComponentsGroup,
-  patchComponent,
-} from 'api/components'
-import { IPatchComponentParams } from 'api/components/patchComponent'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { ICloneComponent, IStackElement, LM_Service, PostDistParams, StackType, TComponents } from 'types/types';
+import { addComponent, cloneComponent, createComponent, deleteComoponent, editComponent, getComponent as fetchComponent, getComponents, getComponentsGroup, patchComponent } from 'api/components';
+import { IPatchComponentParams } from 'api/components/patchComponent';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+
 
 interface IGet {
   distName: string
@@ -115,7 +99,9 @@ export const useComponent = () => {
 
   const addComponentToDist = useMutation({
     mutationFn: ({ distName, id }: IAdd) => addComponent(distName, id),
-    onSuccess: () => queryClient.invalidateQueries([ALL_COMPONENTS]),
+    onSuccess: () => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+    },
   })
 
   const deleteComponent = useMutation({
@@ -152,6 +138,7 @@ export const useComponent = () => {
     onSuccess: ({ id }: IStackElement, { distName, type }) => {
       console.log('data = ', id, distName, type)
       addComponentToDist.mutateAsync({ distName, id: id, type })
+      queryClient.invalidateQueries(['skills_of_current_user_assistants'])
     },
   })
 

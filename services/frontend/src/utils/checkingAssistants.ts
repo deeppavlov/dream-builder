@@ -116,7 +116,7 @@ const typePrompt = (skill: ISkill, acc: ICollectionError) => {
 
   if (arrIsIncludes.includes(true) && str === null) {
     const message = i18n.t('error_message.prompt.type')
-    acc.warning = [...acc.warning, message]
+    acc.warnings = [...acc.warnings, message]
     return
   }
 }

@@ -63,16 +63,16 @@ const WarningsInfo = () => {
     return { name: el.display_name, skill: result, bot: el }
   })
 
-  const renderMessage = (key: string, data: ICollectionError) => {
+  const renderMessage = (
+    key: 'errors' | 'warnings',
+    data: ICollectionError
+  ) => {
     if (data[key].length === 0) {
       return null
     }
     const message = data[key].map((el: string, i: number) => {
       return (
-        <div
-          key={i}
-          className={`${s.errorContend}`}
-        >
+        <div key={i} className={`${s.errorContend}`}>
           <div className={s.verticalLine}></div>
           <div className={s.cluster}></div>
           <div className={s.hederError}>

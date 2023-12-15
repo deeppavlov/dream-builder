@@ -1,5 +1,5 @@
-import { ReactComponent as Error } from '@assets/icons/errorIcon.svg'
-import { ReactComponent as Warning } from '@assets/icons/warningIcon.svg'
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'react-tooltip'
 import { ICollectionError } from 'types/types'
@@ -15,7 +15,7 @@ const StatusTooltipSkill = ({
   const { t } = useTranslation('translation', {
     keyPrefix: 'toolTip_message',
   })
-  const render = (key: string) => {
+  const render = (key: 'errors' | 'warnings') => {
     if (data[key].length === 0) {
       return null
     }

@@ -8,7 +8,13 @@ import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { IPromptBlock, ISkill, LM_Service, LanguageModel, TDistVisibility } from 'types/types'
+import {
+  IPromptBlock,
+  ISkill,
+  LM_Service,
+  LanguageModel,
+  TDistVisibility,
+} from 'types/types'
 import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
@@ -35,7 +41,6 @@ import { SkillDialog } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Modal, Wrapper } from 'components/UI'
 import s from './SkillPromptModal.module.scss'
-
 
 interface ITriggerProps {
   skill?: ISkill
@@ -376,7 +381,15 @@ const SkillPromptModal = () => {
                 }}
               /> */}
             </div>
-            <div className={s.btns} onClick={() => onFormSubmit(skill)}>
+            <div
+              className={s.btns}
+              onClick={(e: any) => {
+                const tagName = e.target.tagName.toLowerCase()
+                if ('button' === tagName) {
+                  onFormSubmit(skill)
+                }
+              }}
+            >
               <Button
                 theme='primary'
                 props={{

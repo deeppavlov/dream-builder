@@ -9,12 +9,10 @@ export interface ICustomAssistant {
 export interface ICounter {
   errors: number
   warnings: number
-  [key: string]: number
 }
 export interface ICollectionError {
   errors: string[]
   warnings: string[]
-  [key: string]: string[]
 }
 
 export interface ICustomSkill {
@@ -72,6 +70,7 @@ export interface IAuthor {
 
 export type TEvents =
   | 'TRIGGER_RIGHT_SP_EVENT'
+  | 'TRIGGER_LEFT_SP_EVENT'
   | 'ShareAssistantModal'
   | 'SignInModal'
   | 'RenewChat'

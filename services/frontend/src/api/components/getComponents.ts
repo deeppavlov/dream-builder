@@ -3,18 +3,14 @@ import { privateApi } from 'api/axiosConfig'
 
 export async function getComponents(
   distName: string,
-  isDistName: undefined | BotInfoInterface = undefined
+  isDistName?: BotInfoInterface
 ) {
   try {
     const { data } = await privateApi.get(
       `assistant_dists/${distName}/components`
     )
-    if (isDistName) {
-      data['distName'] = distName
 
-      return data
-    }
-    return data
+    return isDistName ? { ...data, distName } : data
   } catch (e) {
     throw e
   }

@@ -159,9 +159,6 @@ const WarningsInfo = () => {
     if (!assistant.skill) {
       return null
     }
-
-    console.log(assistant, 'assistant')
-
     const countAllError = assistant.skill.reduce((acc, el: ICustomSkill) => {
       const errorCount = el?.data.errors.length
       const warningWarning = el?.data.warnings.length

@@ -28,7 +28,7 @@ async def send_chat_request_to_deployed_agent(
         prompt: str = None,
         lm_service: str = None,
         openai_api_key: str = None,
-        max_tokens: int = None
+        lm_service_config: dict = None
 ):
     """ """
     data = {
@@ -39,8 +39,8 @@ async def send_chat_request_to_deployed_agent(
         data["prompt"] = prompt
     if lm_service:
         data["lm_service_url"] = lm_service
-    if max_tokens:
-        data["max_tokens"] = max_tokens
+        if lm_service_config:
+            data["lm_service_config"] = lm_service_config
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
     elif isinstance(openai_api_key, str):
@@ -142,7 +142,7 @@ async def send_dialog_session_message(
     else:
         lm_service_url = None
 
-    max_tokens = getattr(payload, 'max_tokens', None)
+    lm_service_config = getattr(payload, 'lm_service_config', None)
 
     agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
         chat_url,
@@ -151,7 +151,7 @@ async def send_dialog_session_message(
         payload.prompt,
         lm_service_url,
         payload.openai_api_key,
-        max_tokens
+        lm_service_config
     )
 
     crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)

@@ -1,31 +1,26 @@
-import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
-import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
-import { useUIOptions } from 'context'
-import React, { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import { RoutesList } from 'router/RoutesList'
-import {
-  BotInfoInterface,
-  ICollectionError,
-  ICustomAssistant,
-  ICustomSkill,
-  ISkill,
-  IStackElement,
-} from 'types/types'
-import { VISIBILITY_STATUS } from 'constants/constants'
-import { useAssistants, useComponent } from 'hooks/api'
-import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
-import { examination } from 'utils/checkingAssistants'
-import { consts } from 'utils/consts'
-import { trigger } from 'utils/events'
-import s from './WarningsInfo.module.scss'
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg';
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg';
+import { useUIOptions } from 'context';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { QueryObserverSuccessResult, UseBaseQueryResult, UseQueryResult } from 'react-query';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { RoutesList } from 'router/RoutesList';
+import { BotInfoInterface, ICollectionError, ICustomAssistant, ICustomSkill, ISkill, IStackElement, LM_Service } from 'types/types';
+import { VISIBILITY_STATUS } from 'constants/constants';
+import { useAssistants, useComponent } from 'hooks/api';
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+import { examination } from 'utils/checkingAssistants';
+import { consts } from 'utils/consts';
+import { trigger } from 'utils/events';
+import s from './WarningsInfo.module.scss';
+
 
 const WarningsInfo = () => {
   const { fetchPrivateDists } = useAssistants()
   const { skillEditorOpened } = useGaSkills()
-  const { getAllComponents } = useComponent()
+  const { getAllComponentsArr } = useComponent()
   const navigate = useNavigate()
   const privateDists = fetchPrivateDists()
   const { t } = useTranslation('translation', {
@@ -51,16 +46,27 @@ const WarningsInfo = () => {
     (a: BotInfoInterface, b: BotInfoInterface) => a.id - b.id
   )
 
-  const data = initState?.map((el: BotInfoInterface) => {
-    const components = getAllComponents(el.name || '')
-    const result = components.data?.skills
-      ?.filter(el => el.name !== 'dummy_skill')
-      .map((el: ISkill) => {
-        const resultExamination = examination(el)
-        return { name: el.display_name, data: resultExamination, skill: el }
-      })
+  const userQueries = getAllComponentsArr(initState)
 
-    return { name: el.display_name, skill: result, bot: el }
+  const data = userQueries?.map(el => {
+    if (el.isSuccess) {
+      const request = el.data
+
+      const result = request?.skills
+        ?.filter((el: ISkill) => el.name !== 'dummy_skill')
+        .map((el: ISkill) => {
+          const resultExamination = examination(el)
+          return { name: el.display_name, data: resultExamination, skill: el }
+        })
+
+      const bot = initState.filter(
+        (el: BotInfoInterface) => el.name === request.distName
+      )[0]
+
+      console.log(bot)
+
+      return { name: bot.display_name, skill: result, bot: bot }
+    }
   })
 
   const renderMessage = (
@@ -151,6 +157,8 @@ const WarningsInfo = () => {
     if (!assistant.skill) {
       return null
     }
+
+    console.log(assistant, 'assistant')
 
     const countAllError = assistant.skill.reduce((acc, el: ICustomSkill) => {
       const errorCount = el?.data.errors.length

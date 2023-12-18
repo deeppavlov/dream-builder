@@ -3,10 +3,9 @@ import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { UseQueryResult, useQuery } from 'react-query'
+import { UseQueryResult } from 'react-query'
 import { BotInfoInterface, ICounter, ISkill } from 'types/types'
-import { getComponents } from 'api/components'
-import { useAssistants } from 'hooks/api'
+import { useAssistants, useComponent } from 'hooks/api'
 import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { examination } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
@@ -20,21 +19,14 @@ export const HELPER_TAB_ID = 'helperTabError'
 
 export const AssistantMenuInfo = () => {
   const { fetchPrivateDists } = useAssistants()
-  const privateDistsInit = fetchPrivateDists()
+  const privateDists = fetchPrivateDists()
   const { UIOptions } = useUIOptions()
+  const { getAllComponentsArr } = useComponent()
   const { deepyChatOpened } = useGaDeepy()
   const { t } = useTranslation('translation', {
     keyPrefix: 'assistantMenuInfo',
   })
   const copilotIsActive = UIOptions[consts.WARNING_WINDOW_SP_IS_ACTIVE]
-
-  const [privateDists, setPrivateDists] = useState<UseQueryResult<BotInfoInterface[]>>()
-
-  useEffect(() => {
-    if (privateDistsInit.status === 'success') {
-      setPrivateDists(privateDistsInit)
-    }
-  }, [privateDistsInit.data])
 
   let cx = classNames.bind(s)
 
@@ -53,40 +45,23 @@ export const AssistantMenuInfo = () => {
       )
     : []
 
-  const result = useQuery(
-    ['skills_of_current_user_assistants'],
-    () =>
-      Promise.all(
-        sortedDists.map(async (el: BotInfoInterface) => {
-          const acc: ICounter = { errors: 0, warnings: 0 }
-          const components = await getComponents(el.name) // no error handling
-          console.log(components, el.display_name)
-          components.skills
-            .filter((el: ISkill) => el.name !== 'dummy_skill')
-            .forEach((el: ISkill) => {
-              const resultExamination = examination(el)
-              acc.errors += resultExamination.errors.length
-              acc.warnings += resultExamination.warnings.length
-            })
-          return acc
-        })
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      enabled: sortedDists?.length! > 0,
-      initialData: [],
-    }
-  )
+  const userQueries = getAllComponentsArr(sortedDists)
 
-  const count = result.data?.reduce(
-    (acc: ICounter, el: ICounter) => {
-      acc.errors += el.errors
-      acc.warnings += el.warnings
+  const count = userQueries?.reduce(
+    (acc: ICounter, el) => {
+      if (el.isSuccess) {
+        el.data.skills
+          .filter((el: ISkill) => el.name !== 'dummy_skill')
+          .forEach((el: ISkill) => {
+            const resultExamination = examination(el)
+            acc.errors += resultExamination.errors.length
+            acc.warnings += resultExamination.warnings.length
+          })
+      }
       return acc
     },
     { errors: 0, warnings: 0 }
-  ) ?? { errors: 0, warnings: 0 }
+  )
 
   const RenderCountError = () => {
     const icon = <Information style={{ width: 24, height: 24 }} />

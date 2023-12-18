@@ -1,6 +1,7 @@
 import aiohttp
 from deeppavlov_dreamtools.distconfigs.components import DreamComponent, create_generative_prompted_skill_component
-from deeppavlov_dreamtools.distconfigs.services import create_generative_prompted_skill_service
+from deeppavlov_dreamtools.distconfigs.services import (create_generative_prompted_skill_service,
+                                                        create_google_api_skill_service)
 from deeppavlov_dreamtools.utils import generate_unique_name, load_json
 from sqlalchemy.orm import Session
 
@@ -10,6 +11,9 @@ from database.models.lm_service import crud as lm_service_crud
 from database.models.service import crud as service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
+from services.distributions_api.utils.name_generator import from_email
+from services.distributions_api.routes.components.models import ComponentType
+
 
 dream_git = GitManager(
     settings.git.local_path,
@@ -37,6 +41,58 @@ async def generate_prompt_goals(prompt_goals_url: str, prompt: str, openai_api_t
     return goals
 
 
+def create_google_api_component(db, user, new_component):
+    google_api_service_name = generate_unique_name()
+    google_api_skill_name = f"dff_{google_api_service_name}_prompted_skill"
+    google_api_skill_container_name = f"dff-{google_api_service_name}-prompted-skill"
+    google_api_skill_port = 8199  # hardcoded until we implement dynamic port assignment
+    google_api_service = create_google_api_skill_service(
+        settings.db.dream_root_path,
+        f"skills/dff_google_api_skill/service_configs/{google_api_skill_name}",
+        google_api_skill_name,
+        google_api_skill_port
+    )
+
+    google_api_component_name = generate_unique_name()
+    google_api_component = create_generative_prompted_skill_component(
+        settings.db.dream_root_path,
+        google_api_service,
+        f"components/{google_api_component_name}.yml",
+        f"http://{google_api_skill_container_name}:{google_api_skill_port}/respond",
+        google_api_skill_name,
+        new_component.display_name,
+        user.email,
+        new_component.description,
+    )
+    dream_git.commit_all_files(user.id, 1)
+
+    service = service_crud.get_or_create(db, google_api_service.service.name, str(google_api_service.config_dir))
+    component = create(
+        db,
+        service_id=service.id,
+        source=str(google_api_component.component_file),
+        name=google_api_component.component.name,
+        display_name=google_api_component.component.display_name,
+        component_type=google_api_component.component.component_type,
+        is_customizable=google_api_component.component.is_customizable,
+        author_id=user.id,
+        ram_usage=google_api_component.component.ram_usage,
+        group="skills",
+        endpoint="respond",
+        model_type=google_api_component.component.model_type,
+        gpu_usage=google_api_component.component.gpu_usage,
+        description=google_api_component.component.description,
+        prompt=None,
+        prompt_goals=None,
+        lm_service_id=None,
+        lm_config=None,
+    )
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
+
+
 def create_component(
     db: Session,
     new_component: schemas.ComponentCreate,
@@ -48,9 +104,13 @@ def create_component(
 
         if clone_from_id:
             original_component = get_by_id(db, clone_from_id)
-            lm_service = original_component.lm_service
-            prompt = original_component.prompt
-            prompt_goals = original_component.prompt_goals
+            match original_component.name:
+                case ComponentType.google_api:
+                    return create_google_api_component(db, user, new_component)
+                case _:
+                    lm_service = original_component.lm_service
+                    prompt = original_component.prompt
+                    prompt_goals = original_component.prompt_goals
         else:
             if new_component.lm_service_id:
                 lm_service = lm_service_crud.get_lm_service(db, new_component.lm_service_id)
@@ -81,8 +141,8 @@ def create_component(
             prompted_service_name,
             prompted_skill_name,
             prompted_skill_port,
-            lm_service.name,
-            lm_service.port,
+            lm_service.name if lm_service else None,
+            lm_service.port if lm_service else None,
             lm_config,
             prompt,
             prompt_goals,
@@ -96,7 +156,7 @@ def create_component(
             f"http://{prompted_skill_container_name}:{prompted_skill_port}/respond",
             prompted_skill_name,
             new_component.display_name,
-            user.email,
+            from_email(user),
             new_component.description,
         )
         dream_git.commit_all_files(user.id, 1)
@@ -123,7 +183,10 @@ def create_component(
             lm_config=prompted_component.lm_config,
         )
 
-    return schemas.ComponentRead.from_orm(component)
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
 
 
 async def patch_component(

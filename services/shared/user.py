@@ -26,6 +26,7 @@ class User(BaseOrmModel):
     picture: Optional[str]
     name: Optional[str]
     role: RoleRead
+    first_auth: Optional[bool]
 
     @classmethod
     def from_orm(cls, obj: GeneralUser):

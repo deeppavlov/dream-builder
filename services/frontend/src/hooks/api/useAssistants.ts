@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { useAuth } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -61,7 +62,8 @@ export const useAssistants = () => {
   const PRIVATE_DISTS = 'privateDists'
   const DIST = 'dist'
   const { deploy } = useDeploy()
-  const { vaCreated, vaRenamed, vaDeleted } = useGaAssistant()
+  const { vaCreated, vaRenamed, vaDeleted, vaChangeDeployState } =
+    useGaAssistant()
   const { vaVisibilityChanged } = useGaPublication()
 
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
@@ -75,6 +77,11 @@ export const useAssistants = () => {
     return useQuery<BotInfoInterface>({
       queryKey: [DIST, distName],
       queryFn: () => getAssistant(distName!),
+      onError: error => {
+        if (error instanceof AxiosError && error?.response?.status === 401) {
+          navigate('/')
+        }
+      },
       refetchOnMount: Boolean(options?.refetchOnMount),
       refetchOnWindowFocus: true,
       initialData: () => getCachedDist(distName!),
@@ -129,7 +136,7 @@ export const useAssistants = () => {
   const changeVisibility = useMutation({
     onMutate: ({ name, newVisibility, deploymentState }) => {
       if (newVisibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
-        deploy.mutateAsync(name)
+        deploy.mutateAsync(name).then(() => vaChangeDeployState('VA_Deployed'))
       }
     },
     mutationFn: ({ name, newVisibility }: IChangeVisibility) =>
@@ -139,7 +146,8 @@ export const useAssistants = () => {
       const requestToPublicTemplate =
         newVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 
-      if (requestToPublicTemplate) queryClient.invalidateQueries([PUBLIC_DISTS])
+      if (!requestToPublicTemplate)
+        queryClient.invalidateQueries([PUBLIC_DISTS])
       if (inEditor) queryClient.invalidateQueries([DIST, name])
       queryClient
         .invalidateQueries([PRIVATE_DISTS])

@@ -6,6 +6,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
@@ -22,6 +23,7 @@ export const DeleteSkillModal = () => {
   const { deleteComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
   const { data: bot } = getDist({ distName })
+  const { vaChangeDeployState } = useGaAssistant()
 
   const handleEventUpdate = ({ detail }: any) => {
     setSkill(detail?.skill)
@@ -47,10 +49,11 @@ export const DeleteSkillModal = () => {
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish
                 const name = bot?.name
-                const newVisibility =
-                  VISIBILITY_STATUS.PRIVATE as TDistVisibility
+                const newVisibility = VISIBILITY_STATUS.PRIVATE
                 bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
                   changeVisibility.mutateAsync({ name, newVisibility })
+
+                vaChangeDeployState('VA_Undeployed')
               })
           },
         }

@@ -38,12 +38,19 @@ export const PublishAssistantModal = () => {
       },
     })
   const { changeVisibility } = useAssistants()
-  const visibilityList = getAssistantVisibility()
+  const botOnModeration =
+    bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
+  const visibilityList = getAssistantVisibility(botOnModeration)
   const selectedVisibility = watch('visibility')
   const isSelectedVisibilityPublic =
     selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-  const isVisibilityChange = selectedVisibility !== bot?.visibility
   const currentVisibility = bot?.visibility
+  const isVisibilityChange = selectedVisibility !== currentVisibility
+
+  const sendButtonIsDisabled =
+    changeVisibility?.isLoading ||
+    (!isVisibilityChange && !botOnModeration) ||
+    (botOnModeration && isSelectedVisibilityPublic)
 
   const handleEventUpdate = (data: { detail: any }) => {
     setBot(data?.detail.bot)
@@ -61,29 +68,18 @@ export const PublishAssistantModal = () => {
 
     const isAlreadyPublicTemplate =
       currentVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
-    const isVisibilityChange = newVisibility !== currentVisibility
     const isPublicTemplate = newVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
     const isInReview = bot?.publish_state == PUBLISH_REQUEST_STATUS.IN_REVIEW
     // if assistant on review it means that it pretend to be public template,
     // so no need to publish it again
 
     const publish = async () => {
-      await changeVisibility.mutateAsync(
-        {
-          name,
-          newVisibility,
-          inEditor,
-          deploymentState,
-        },
-        {
-          onSuccess: () => {
-            isAlreadyPublicTemplate &&
-              queryClient.invalidateQueries(['publicDists'])
-            // The invalidation from the hook does not work for some reason.
-            // TODO:FIX
-          },
-        }
-      )
+      await changeVisibility.mutateAsync({
+        name,
+        newVisibility,
+        inEditor,
+        deploymentState,
+      })
     }
 
     const user = store('user')
@@ -100,18 +96,25 @@ export const PublishAssistantModal = () => {
       closeModal()
       return
     }
+    if (isAlreadyPublicTemplate) {
+      trigger('PublicToPrivateModal', {
+        bot,
+        action: 'unpublish',
+        newVisibility,
+      })
+      closeModal()
+      return
+    }
 
-    isVisibilityChange
-      ? toast
-          .promise(publish(), {
-            loading: t('modals.publish_assistant.toasts.loading'),
-            success: isPublicTemplate
-              ? t('modals.publish_assistant.toasts.submitted')
-              : t('toasts.success'),
-            error: t('toasts.error'),
-          })
-          .then(() => closeModal())
-      : closeModal()
+    toast
+      .promise(publish(), {
+        loading: t('modals.publish_assistant.toasts.loading'),
+        success: isPublicTemplate
+          ? t('modals.publish_assistant.toasts.submitted')
+          : t('toasts.success'),
+        error: t('toasts.error'),
+      })
+      .then(() => closeModal())
   }
 
   const closeModal = () => {
@@ -122,7 +125,11 @@ export const PublishAssistantModal = () => {
 
   useEffect(() => {
     const isVisibility = bot?.visibility !== undefined
-    if (isVisibility) setValue('visibility', bot?.visibility)
+    const newVisibility =
+      bot?.publish_state === 'IN_REVIEW'
+        ? 'PUBLIC_TEMPLATE'
+        : bot?.visibility ?? null
+    if (isVisibility) setValue('visibility', newVisibility)
   }, [bot?.visibility])
 
   useObserver('PublishAssistantModal', handleEventUpdate)
@@ -163,7 +170,7 @@ export const PublishAssistantModal = () => {
               theme='primary'
               props={{
                 type: 'submit',
-                disabled: changeVisibility?.isLoading || !isVisibilityChange,
+                disabled: sendButtonIsDisabled,
               }}
             >
               {isSelectedVisibilityPublic

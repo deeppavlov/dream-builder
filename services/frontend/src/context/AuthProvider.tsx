@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { UserContext, UserInterface } from 'types/types'
 import {
+  clearBeforeLoginAnalyticsState,
   clearBeforeLoginLocation,
   clearBeforeLoginModal,
+  getBeforeLoginAnalyticsState,
   getBeforeLoginLocation,
   getBeforeLoginModal,
 } from 'utils/beforeSignInManager'
@@ -12,6 +14,7 @@ import {
   getLocalStorageUser,
   setLocalStorageUser,
 } from 'utils/localStorageUser'
+import { useGAContext } from './GaContext'
 
 export const AuthContext = createContext<UserContext>({
   user: null,
@@ -21,10 +24,13 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
   const [user, setUser] = useState<UserInterface | null>(getLocalStorageUser())
+  const { setGaState } = useGAContext()
 
   useEffect(() => {
     if (user) setLocalStorageUser(user)
-    else deleteLocalStorageUser()
+    else {
+      deleteLocalStorageUser()
+    }
   }, [user])
 
   // Trigger requested before login Modal window,
@@ -39,9 +45,32 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
     if (beforeLoginModal && location.href === beforeLoginUrl)
       trigger(beforeLoginModal.name, beforeLoginModal.options)
 
+    const beforeLoginAnalyticsState = getBeforeLoginAnalyticsState()
+    if (beforeLoginAnalyticsState) {
+      setGaState(beforeLoginAnalyticsState)
+      clearBeforeLoginAnalyticsState()
+    }
+
     clearBeforeLoginLocation()
     clearBeforeLoginModal()
   }, [user])
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'user') {
+        // event.newValue has the type string | null
+        typeof event.newValue === 'string'
+          ? setUser(JSON.parse(event.newValue))
+          : setUser(event.newValue) // null
+        location.reload()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const userContextValue = useMemo(
     () => ({

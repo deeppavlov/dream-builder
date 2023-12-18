@@ -10,7 +10,6 @@ interface Props {
   name?: string
   label?: React.ReactNode
   props?: React.InputHTMLAttributes<HTMLInputElement>
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   defaultChecked?: boolean
 }
 
@@ -20,8 +19,7 @@ export const Checkbox = ({
   name,
   checked,
   disabled,
-  // onChange,
-  props,
+  props, // includes onChange
 }: Props) => {
   let cx = classNames.bind(s)
 

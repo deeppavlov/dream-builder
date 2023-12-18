@@ -48,11 +48,14 @@ def get_by_role(db: Session, role_id: int) -> [GoogleUser]:
     return db.scalars(select(GoogleUser).filter_by(role_id=role_id)).all()
 
 
-def update_by_id(db: Session, id: int, **kwargs) -> GoogleUser:
+def update_by_id(db: Session, user_id: int, **kwargs) -> GoogleUser:
+    if name := kwargs.get("name"):
+        kwargs["fullname"] = name
+
     kwargs = {k: v for k, v in kwargs.items() if k in GoogleUser.__table__.columns.keys()}
 
-    user = db.scalar(update(GoogleUser).filter_by(id=id).values(**kwargs).returning(GoogleUser))
+    user = db.scalar(update(GoogleUser).filter_by(user_id=user_id).values(**kwargs).returning(GoogleUser))
     if not user:
-        raise ValueError(f"GoogleUser with id={id} does not exist")
+        raise ValueError(f"GoogleUser with id={user_id} does not exist")
 
     return user

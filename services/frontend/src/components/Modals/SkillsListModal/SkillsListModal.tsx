@@ -10,6 +10,7 @@ import { ISkill, TDistVisibility } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
@@ -32,6 +33,7 @@ export const SkillsListModal = () => {
   const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
   const { skillAdded } = useGaSkills()
+  const { vaChangeDeployState } = useGaAssistant()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
     {
@@ -63,10 +65,14 @@ export const SkillsListModal = () => {
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish /
                 const name = bot?.name!
-                const newVisibility =
-                  VISIBILITY_STATUS.PRIVATE as TDistVisibility
-                bot?.publish_state !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({ name, newVisibility })
+                const newVisibility = VISIBILITY_STATUS.PRIVATE
+                bot.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                  changeVisibility.mutateAsync({
+                    name,
+                    newVisibility,
+                    inEditor: true,
+                  })
+                vaChangeDeployState('VA_Undeployed')
               })
 
             skillAdded(skill, template)
@@ -102,9 +108,15 @@ export const SkillsListModal = () => {
     >
       <div className={s.container}>
         <div className={s.header}>{t('modals.choose_skill.header')}</div>
+
         <Table
-          second={t('skill_table.type')}
-          withoutDate={rightSidepanelIsActive}
+          headers={[
+            t('skill_table.name'),
+            t('skill_table.type'),
+            t('skill_table.desc'),
+            ...(rightSidepanelIsActive ? [] : [t('skill_table.created')]),
+            t('skill_table.actions'),
+          ]}
           addButton={
             <AddButton
               forTable

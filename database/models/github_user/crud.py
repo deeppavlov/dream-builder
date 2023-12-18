@@ -1,5 +1,5 @@
 from database.models.github_user.model import GithubUser
-from sqlalchemy import String, cast
+from sqlalchemy import String, cast, update
 from sqlalchemy.orm import Session
 
 
@@ -38,3 +38,13 @@ def check_user_exists(db: Session, github_id: str) -> bool:
     if get_by_outer_id(db, github_id):
         return True
     return False
+
+
+def update_by_id(db: Session, user_id: int, **kwargs) -> GithubUser:
+    kwargs = {k: v for k, v in kwargs.items() if k in GithubUser.__table__.columns.keys()}
+
+    user = db.scalar(update(GithubUser).filter_by(user_id=user_id).values(**kwargs).returning(GithubUser))
+    if not user:
+        raise ValueError(f"GithubUser with id={user_id} does not exist")
+
+    return user

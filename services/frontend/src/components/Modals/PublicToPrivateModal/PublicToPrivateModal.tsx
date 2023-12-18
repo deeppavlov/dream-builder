@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -12,20 +13,33 @@ import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
 import s from './PublicToPrivateModal.module.scss'
 
-type ActionTypes = 'edit' | 'rename'
+type ActionTypes = 'edit' | 'rename' | 'unpublish'
+
+interface IEventDetail {
+  detail: {
+    bot: BotInfoInterface
+    action: ActionTypes
+    newVisibility?: TDistVisibility
+  }
+}
 
 export const PublicToPrivateModal = () => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [bot, setBot] = useState<BotInfoInterface | null>(null)
   const [action, setAction] = useState<ActionTypes | null>(null)
+  const [newVisibility, setNewVisibility] = useState<TDistVisibility>(
+    VISIBILITY_STATUS.PRIVATE
+  )
   const navigate = useNavigate()
 
-  const handleEventUpdate = ({ detail }: any) => {
-    // FIX any
-    setBot(detail?.bot)
-    setAction(detail?.action)
+  const handleEventUpdate = ({
+    detail: { bot, action, newVisibility },
+  }: IEventDetail) => {
+    setBot(bot)
+    setAction(action)
     setIsOpen(!isOpen)
+    setNewVisibility(newVisibility || VISIBILITY_STATUS.PRIVATE)
   }
   const queryClient = useQueryClient()
   const { changeVisibility } = useAssistants()
@@ -33,7 +47,6 @@ export const PublicToPrivateModal = () => {
 
   const handleYesClick = () => {
     const name = bot?.name!
-    const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
     action === 'edit' &&
       changeVisibility
         .mutateAsync({ name, newVisibility })
@@ -49,6 +62,21 @@ export const PublicToPrivateModal = () => {
           setIsOpen(false)
         })
         .then(() => trigger('AssistantModal', { bot, action: 'edit' }))
+    action === 'unpublish' &&
+      toast
+        .promise(
+          changeVisibility.mutateAsync({
+            name,
+            newVisibility,
+            deploymentState: bot?.deployment.state,
+          }),
+          {
+            loading: t('modals.publish_assistant.toasts.loading'),
+            success: t('toasts.success'),
+            error: t('toasts.error'),
+          }
+        )
+        .then(() => setIsOpen(false))
   }
 
   useObserver('PublicToPrivateModal', handleEventUpdate)

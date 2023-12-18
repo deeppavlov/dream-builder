@@ -9,7 +9,7 @@ services:
       args:
         FRONTEND_ENV: dev
     ports:
-      - "6971:80"
+      - "5173:80"
 
     volumes:
       - ../nginx.conf:/etc/nginx/conf.d/default.conf

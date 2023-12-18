@@ -22,12 +22,6 @@ export const TextEditor = ({
   const ref = useRef<any>(null)
 
   useEffect(() => {
-    if (onChange) {
-      onChange(editorContext.code)
-    }
-  }, [editorContext.code])
-
-  useEffect(() => {
     if (editorContext.skill === '') {
       return
     }
@@ -79,26 +73,29 @@ export const TextEditor = ({
   })
 
   return (
-      <CodeMirror
-        ref={ref}
-        onBlur={onBlur}
-        value={editorContext.code}
-        theme={myTheme}
-        placeholder={placeholder}
-        basicSetup={{
-          lineNumbers: false,
-          foldGutter: false,
-          highlightSelectionMatches: false,
-        }}
-        extensions={[
-          inputDecoration,
-          titleDecoration,
-          baseTheme,
-          EditorView.lineWrapping,
-        ]}
-        onChange={(value: string) =>
-          setEditorContext({ ...editorContext, code: value })
+    <CodeMirror
+      ref={ref}
+      onBlur={onBlur}
+      value={editorContext.code}
+      theme={myTheme}
+      placeholder={placeholder}
+      basicSetup={{
+        lineNumbers: false,
+        foldGutter: false,
+        highlightSelectionMatches: false,
+      }}
+      extensions={[
+        inputDecoration,
+        titleDecoration,
+        baseTheme,
+        EditorView.lineWrapping,
+      ]}
+      onChange={(value: string) => {
+        setEditorContext({ ...editorContext, code: value })
+        if (onChange) {
+          onChange(value)
         }
-      />
+      }}
+    />
   )
 }

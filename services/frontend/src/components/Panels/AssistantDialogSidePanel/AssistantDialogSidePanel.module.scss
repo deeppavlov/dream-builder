@@ -92,9 +92,6 @@
 
   button {
     @include large_btn;
-    @include lnks_n_btns3;
-    @include primary_btn;
-    @include btn_primary_behavior;
   }
 }
 .alertName {
@@ -143,25 +140,19 @@
     text-align: center;
   }
 }
-.link {
-  text-decoration: underline;
-  align-self: flex-end;
-  text-underline-offset: 3px;
-}
+
 .alertName {
   @include t2;
 }
 .alertDesc {
   @include b3;
+  margin-bottom: 24px;
 }
 .runTest {
   margin-top: 24px;
 }
 .error {
   color: #ff3b30;
-  button {
-    background-color: #ff3b30;
-  }
 }
 
 .loaderWrapper {
@@ -169,4 +160,9 @@
   height: 100%;
   width: 100%;
   place-content: center;
+}
+
+.dummyContainer {
+  background-color: $bcgrnd2;
+  padding: 16px 24px;
 }

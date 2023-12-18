@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { logout } from 'api/user'
+import { useGaAuth } from 'hooks/googleAnalytics/useGaAuth'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { trigger } from 'utils/events'
 import { ContextMenuButton } from 'components/Buttons'
@@ -17,10 +18,16 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
     keyPrefix: 'topbar.ctx_menus.profile',
   })
   const { setTokenState } = useGaToken()
+  const { userLoggedOut } = useGaAuth()
 
   const handleProfileClick = () => {
     setTokenState('profile_settings')
     trigger('ProfileSettingsModal', {})
+  }
+
+  const logoutClick = () => {
+    userLoggedOut()
+    logout()
   }
 
   return (
@@ -37,7 +44,7 @@ export const ProfileContextMenu = ({ tooltipId, userEmail }: Props) => {
         type='logout'
         theme='dark'
         name={t('log_out')}
-        handleClick={logout}
+        handleClick={logoutClick}
       />
     </BaseContextMenu>
   )

@@ -87,6 +87,7 @@
         "label": "Add a new personal access token:",
         "placeholder": "Enter token..."
       },
+      "checkbox": "Allow using your OpenAI key to interact with Deepy",
       "service_dropbox": {
         "label": "Choose service:",
         "placeholder": "Choose service..."
@@ -170,7 +171,7 @@
       }
     },
     "hide_public_assistant": {
-      "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
+      "header": "Your Assistant will be removed from public templates. Continue?",
       "subheader": "You will have to publish it again to make it a Public Template",
       "btns": {
         "cancel": "Cancel",
@@ -181,9 +182,10 @@
       "header": "Change who can see your Assistant?",
       "subheader": "This action can’t be undone.",
       "radio_btns": {
-        "private": "Private (only you can see it)",
-        "unlisted": "Unlisted (only those you’ve shared the direct link can see it)",
-        "public": "Public Template (everyone can see it and re-use it)"
+        "private": "Only me",
+        "unlisted": "Only people with a link",
+        "public": "Public",
+        "on_moderation": "Public (on moderation)"
       },
       "tooltips": {
         "public": "Everyone can clone and talk to your VA",
@@ -360,7 +362,8 @@
         "sent_for_deploy": "Sent for deploy!",
         "stop_deploy": "Stop deploy...",
         "deploy_stopped": "Deploy stopped!"
-      }
+      },
+      "dummy_error": "Someting went wrong<br />Restart the system"
     },
     "assistant": {
       "accordions": {
@@ -382,6 +385,12 @@
       },
       "btns": {
         "send": "Send"
+      },
+      "error": {
+        "token_error": "You see this error message because this platform installation wasn't provided with a working OpenAI key or that key has been expired or has insufficient funds on it. You can either fix the key or you can provide your end user OpenAI key in the profile to make Deepy work for you.",
+        "auth_error": "You see this error message because this platform installation wasn't provided with a working OpenAI key. To interact with Deepy, you need to sign in and then you can enter your OpenAI key in your profile.",
+        "button_api-key": "Enter token",
+        "button_auth": "Sign in"
       }
     },
     "skill_details": {
@@ -430,7 +439,7 @@
     "skill": {
       "rename": "Rename",
       "properties": "Properties",
-      "delete": "delete"
+      "delete": "Delete"
     }
   },
   "tabs": {
@@ -515,8 +524,12 @@
   },
   "api_key": {
     "required": {
-      "label": "Enter your personal access token for OpenAI to run your Generative AI Skill",
-      "link": "Enter your personal access token here"
+      "skill_label": "Enter your personal access token for OpenAI to talk to this Generative AI Skill",
+      "assistant_label": "Enter your personal access token for OpenAI to talk to this AI Assistant",
+      "link": "Enter your personal access token here",
+      "api-key": "Enter token",
+      "auth": "Sign in",
+      "auth_required": "To start a talk with an AI assistant, you need to log in and enter your personal access token."
     }
   },
   "assistant_visibility": {
@@ -533,7 +546,8 @@
     "author": "Author",
     "desc": "Description",
     "visibility": "Visibility",
-    "created": "Language",
+    "created": "Created",
+    "language": "Language",
     "actions": "Actions",
     "create_from_scratch_btn": "Create From Scratch"
   },

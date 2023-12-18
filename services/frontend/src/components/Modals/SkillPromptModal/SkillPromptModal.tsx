@@ -21,6 +21,7 @@ import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
 import { getAllLMservices } from 'api/components'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import { useBrowserPrompt } from 'hooks/useBrowserPrompt'
 import { useObserver } from 'hooks/useObserver'
@@ -63,7 +64,7 @@ const SkillPromptModal = () => {
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const { UIOptions, setUIOption } = useUIOptions()
+  const { setUIOption } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -74,7 +75,6 @@ const SkillPromptModal = () => {
   const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
-  const leftSidePanelIsActive = UIOptions[consts.LEFT_SP_IS_ACTIVE]
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
   const {
@@ -84,6 +84,7 @@ const SkillPromptModal = () => {
     skillEditorClosed,
     changeSkillModel,
   } = useGaSkills()
+  const { vaChangeDeployState } = useGaAssistant()
 
   const [editorContext, setEditorContext] = useState<IEditorContext>({
     code: '',
@@ -174,15 +175,16 @@ const SkillPromptModal = () => {
           .then(data => {
             skillChanged(skill, data)
             const name = bot?.name!
-            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+            const newVisibility = VISIBILITY_STATUS.PRIVATE
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
-              deleteDeployment
-                .mutateAsync(bot!)
-                .then(
-                  () =>
-                    bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                    changeVisibility.mutateAsync({ name, newVisibility })
+              deleteDeployment.mutateAsync(bot!).then(() => {
+                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                  changeVisibility.mutateAsync({ name, newVisibility })
+                vaChangeDeployState(
+                  'VA_Undeployed',
+                  'skill_editor_prompt_panel'
                 )
+              })
             } else return
           }),
         toasts().updateComponent
@@ -281,10 +283,7 @@ const SkillPromptModal = () => {
     <Modal
       isOpen={isOpen}
       backdropClassName={s.backdrop}
-      modalClassName={cx(
-        'skillPromptModal',
-        leftSidePanelIsActive && 'withSidePanel'
-      )}
+      modalClassName={cx('skillPromptModal')}
       modalRef={modalRef}
       closeOnBackdropClick={false}
     >

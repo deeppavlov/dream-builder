@@ -1,4 +1,3 @@
-import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -15,6 +14,7 @@ import { getValidationSchema } from 'utils/getValidationSchema'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
 import { Wrapper } from 'components/UI'
+import AccessTokenKey from './AccessTokenKey/AccessTokenKey'
 import s from './AccessTokensModule.module.scss'
 
 interface FormValues {
@@ -83,7 +83,7 @@ export const AccessTokensModule = () => {
         saveTokens(newState)
         return newState
       })
-      resolve(t('modals.access_api_keys.toasts.token_created'))
+      resolve(t('modals.access_api_keys.toasts.token_updated'))
     })
 
   const createUserToken = ({ service, token }: FormValues) =>
@@ -100,6 +100,8 @@ export const AccessTokensModule = () => {
       const newToken: IUserApiKey = {
         api_service: selectedService,
         token_value: token,
+        useForDeepy: false,
+        id: Date.now(),
       }
       const apiTokenIndex = tokens?.findIndex(
         ({ api_service }) =>
@@ -139,8 +141,10 @@ export const AccessTokensModule = () => {
         success: data => `${data}`,
         error: data => `${data}`,
       })
-      .finally(() => handleChanges())
-    reset()
+      .finally(() => {
+        handleChanges()
+        reset()
+      })
   }
 
   useEffect(() => setTokens(getLSApiKeys(user?.id)), [user])
@@ -192,19 +196,15 @@ export const AccessTokensModule = () => {
         </form>
         {tokens && (
           <ul className={s.tokens}>
-            {tokens.map(({ api_service }: IUserApiKey) => (
-              <li className={s.token} key={api_service.id}>
-                <TokenKeyIcon className={s.icon} />
-                <div className={s.tokenName}>{api_service.display_name}</div>
-                <div className={s.right}>
-                  <button
-                    className={s.remove}
-                    onClick={() => handleRemoveBtnClick(api_service.id)}
-                  >
-                    {t('modals.access_api_keys.btns.remove')}
-                  </button>
-                </div>
-              </li>
+            {tokens.map((key: IUserApiKey, index) => (
+              <AccessTokenKey
+                removeApiKey={handleRemoveBtnClick}
+                updateApiKey={newToken => {
+                  updateToken(index, newToken)
+                }}
+                apiKey={key}
+                key={key.id}
+              />
             ))}
           </ul>
         )}

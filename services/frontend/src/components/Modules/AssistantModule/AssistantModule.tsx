@@ -33,7 +33,7 @@ export const AssistantModule = () => {
     createVaClick,
     vaPropsOpened,
     vaArchitectureOpened,
-    vaChangeDeployClick,
+    vaChangeDeployState,
   } = useGaAssistant()
   const { visibilityVaButtonClick } = useGaPublication()
   const { shareVaButtonClick } = useGaEvents()
@@ -87,37 +87,40 @@ export const AssistantModule = () => {
     })
   }
   const handleBuild = () => {
-    vaChangeDeployClick('va_control_block', isDeployed)
-
     !isDeployed &&
       !isDeploying &&
       !error &&
-      toast.promise(deploy.mutateAsync(bot?.name!), toasts().deploy)
+      toast
+        .promise(deploy.mutateAsync(bot?.name!), toasts().deploy)
+        .then(() => vaChangeDeployState('VA_Deployed', 'va_control_block'))
 
     isDeployed &&
       toast.promise(
-        deleteDeployment.mutateAsync(bot!, {
-          onSuccess: () => {
-            const newVisibility: TDistVisibility =
-              VISIBILITY_STATUS.PRIVATE as TDistVisibility
-            if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
-              changeVisibility.mutateAsync(
-                { name: bot?.name || '', newVisibility },
-                {
-                  onSuccess: data => {
-                    console.log('data = ', data)
-                  },
-                }
-              )
-            }
-          },
-        }),
+        deleteDeployment
+          .mutateAsync(bot!, {
+            onSuccess: () => {
+              const newVisibility = VISIBILITY_STATUS.PRIVATE
+              if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
+                changeVisibility.mutateAsync(
+                  { name: bot?.name || '', newVisibility },
+                  {
+                    onSuccess: data => {
+                      console.log('data = ', data)
+                    },
+                  }
+                )
+              }
+            },
+          })
+          .then(() => vaChangeDeployState('VA_Undeployed', 'va_control_block')),
         toasts().deleteDeployment
       )
 
     error &&
       toast.promise(
-        deleteDeployment.mutateAsync(bot),
+        deleteDeployment
+          .mutateAsync(bot)
+          .then(() => vaChangeDeployState('VA_Undeployed', 'va_control_block')),
         toasts().deleteDeployment
       )
   }

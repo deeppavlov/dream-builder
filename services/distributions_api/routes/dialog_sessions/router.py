@@ -39,8 +39,8 @@ async def send_chat_request_to_deployed_agent(
         data["prompt"] = prompt
     if lm_service:
         data["lm_service_url"] = lm_service
-    if lm_service_config:
-        data["lm_service_config"] = lm_service_config
+        if lm_service_config:
+            data["lm_service_config"] = lm_service_config
     if openai_api_key:
         data["openai_api_key"] = openai_api_key
     elif isinstance(openai_api_key, str):

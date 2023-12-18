@@ -1,21 +1,26 @@
-import { ReactComponent as Error } from '@assets/icons/error_circle.svg';
-import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg';
-import { useUIOptions } from 'context';
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { QueryObserverSuccessResult, UseBaseQueryResult, UseQueryResult } from 'react-query';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
-import { RoutesList } from 'router/RoutesList';
-import { BotInfoInterface, ICollectionError, ICustomAssistant, ICustomSkill, ISkill, IStackElement, LM_Service } from 'types/types';
-import { VISIBILITY_STATUS } from 'constants/constants';
-import { useAssistants, useComponent } from 'hooks/api';
-import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant';
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
-import { examination } from 'utils/checkingAssistants';
-import { consts } from 'utils/consts';
-import { trigger } from 'utils/events';
-import s from './WarningsInfo.module.scss';
-
+import { ReactComponent as Error } from '@assets/icons/error_circle.svg'
+import { ReactComponent as Warning } from '@assets/icons/warning_triangle.svg'
+import { useUIOptions } from 'context'
+import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { RoutesList } from 'router/RoutesList'
+import {
+  BotInfoInterface,
+  ICollectionError,
+  ICustomAssistant,
+  ICustomSkill,
+  ISkill,
+  IStackElement,
+} from 'types/types'
+import { VISIBILITY_STATUS } from 'constants/constants'
+import { useAssistants, useComponent } from 'hooks/api'
+import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { examination } from 'utils/checkingAssistants'
+import { consts } from 'utils/consts'
+import { trigger } from 'utils/events'
+import s from './WarningsInfo.module.scss'
 
 const WarningsInfo = () => {
   const { fetchPrivateDists } = useAssistants()
@@ -62,12 +67,9 @@ const WarningsInfo = () => {
       const bot = initState.filter(
         (el: BotInfoInterface) => el.name === request.distName
       )[0]
-
-      console.log(bot)
-
       return { name: bot.display_name, skill: result, bot: bot }
     }
-  })
+  }) as ICustomAssistant[]
 
   const renderMessage = (
     key: 'errors' | 'warnings',
@@ -220,7 +222,7 @@ const WarningsInfo = () => {
     return (
       <div className={s.contend}>
         {contendTitle}
-        {data?.map(renderAssistant)}
+        {data?.map((el, i: number) => renderAssistant(el, i, false))}
       </div>
     )
   }

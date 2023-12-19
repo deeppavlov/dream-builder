@@ -16,7 +16,7 @@ import { trigger } from 'utils/events'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { Button, Kebab } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
-import { BaseToolTip, SkillCardToolTip } from 'components/Menus'
+import { BaseToolTip, SkillCardToolTip, StatusToolTip } from 'components/Menus'
 import s from './SkillCard.module.scss'
 
 export interface SkillCardProps {
@@ -128,6 +128,7 @@ export const SkillCard: FC<SkillCardProps> = ({
             <div className={s.date}>
               <img className={s.icon} src={Calendar} />
               <p className={s.dateText}>{dateCreated ?? '------'}</p>
+              <StatusToolTip name='skill' skill={skill} />
             </div>
           </div>
         </div>

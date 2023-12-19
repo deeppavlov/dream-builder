@@ -175,6 +175,7 @@ export const useAssistants = () => {
     mutationFn: (name: string) => getAssistant(name),
     onSuccess: (dist, name) => {
       queryClient.setQueryData<BotInfoInterface | null>([DIST, name], dist)
+      refetchDist
     },
   })
 

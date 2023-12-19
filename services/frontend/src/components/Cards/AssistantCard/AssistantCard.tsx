@@ -5,10 +5,11 @@ import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { BotCardProps } from 'types/types'
+import { BotCardProps, BotInfoInterface } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
+import { useComponent } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -18,7 +19,35 @@ import { AssistantContextMenu } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { Badge, SmallTag } from 'components/UI'
+import { StatusToolTip } from '../../Menus/index'
 import s from './AssistantCard.module.scss'
+
+const RenderStatusToolTip = ({
+  type,
+  bot,
+  getAllComponents,
+}: {
+  type: string
+  bot: BotInfoInterface
+  getAllComponents: Function
+}) => {
+  if (type === 'your') {
+    const components = getAllComponents(bot.name || '', {
+      refetchOnMount: true,
+    })
+
+    if (components.data && components.data.skills) {
+      return (
+        <StatusToolTip
+          name='assistant'
+          skills={components.data.skills}
+          bot={bot}
+        />
+      )
+    }
+  }
+  return null
+}
 
 export const AssistantCard: FC<BotCardProps> = ({
   type,
@@ -26,6 +55,7 @@ export const AssistantCard: FC<BotCardProps> = ({
   size,
   disabled,
 }) => {
+  const { getAllComponents } = useComponent()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const tooltipId = useId()
@@ -154,9 +184,18 @@ export const AssistantCard: FC<BotCardProps> = ({
             {bot?.description}
           </div>
           <div className={s.langAndVersion}>
-            <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
-              {publishState}
-            </SmallTag>
+            <div className={s.box}>
+              <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
+                {publishState}
+              </SmallTag>
+              {
+                <RenderStatusToolTip
+                  type={type}
+                  bot={bot}
+                  getAllComponents={getAllComponents}
+                />
+              }
+            </div>
             <div className={s.lng}>{bot.language?.value}</div>
           </div>
         </div>

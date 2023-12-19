@@ -1,22 +1,19 @@
-.settings {
+.icon {
   position: relative;
   cursor: pointer;
   width: $sidebar-width;
-  // @include sidebar_btn_height;
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
   border-top: 1px solid #f0f0f3;
   padding-top: 10px;
 
-  svg {
-    cursor: pointer;
-    fill: #8d96b5;
-    @include icon_size_24;
+  img {
+    height: 36px;
+    width: 36px;
   }
-
-  &:hover,
-  &:active {
+  &:hover {
     @extend .active;
   }
 }
@@ -31,16 +28,33 @@
     height: 10px;
     background-color: $yellow;
     border-radius: 50%;
-    transform: translateY(-50%);
   }
-
   &:hover {
     &::before {
       background-color: $text5;
     }
   }
+}
 
-  svg {
-    fill: $text5;
+.iconError {
+  width: 24px;
+  height: 24px;
+  .count {
+    position: absolute;
+    top: 6px;
+    border-radius: 7px;
+    left: 43px;
+    width: max-content;
+    padding: 1px;
+    font-size: 11px;
+    min-width: 15px;
+
+    &.error {
+      background: #ff3333;
+    }
+
+    &.warning {
+      background: #ff9500;
+    }
   }
 }

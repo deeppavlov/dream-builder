@@ -1,10 +1,10 @@
-import { ReactComponent as CloseIcon } from '@assets/icons/close.svg';
-import { useUIOptions } from 'context';
-import React, { FC, useEffect, useState } from 'react';
-import { useObserver } from 'hooks/useObserver';
-import { consts } from 'utils/consts';
-import SidePanel from 'components/Panels/SidePanel/SidePanel';
-import s from './BaseSidePanel.module.scss';
+import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
+import { useUIOptions } from 'context'
+import React, { FC, useEffect, useState } from 'react'
+import { useObserver } from 'hooks/useObserver'
+import { consts } from 'utils/consts'
+import SidePanel from 'components/Panels/SidePanel/SidePanel'
+import s from './BaseSidePanel.module.scss'
 import './BaseSidePanel.module.scss'
 
 export const TRIGGER_RIGHT_SP_EVENT = 'TRIGGER_RIGHT_SP_EVENT'

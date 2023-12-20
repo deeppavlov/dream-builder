@@ -137,9 +137,9 @@ const WarningsInfo = () => {
             className={s.skillName}
             onClick={e => handleEditBtnClick(e, skill.skill)}
           >
-            <div className={`${s.messageCountError}`} style={colorError}>
+            <span className={`${s.messageCountError}`} style={colorError}>
               {messageCountError}
-            </div>
+            </span>{' '}
             {skill.name}
           </div>
           <div className={s.errorContendBox}>

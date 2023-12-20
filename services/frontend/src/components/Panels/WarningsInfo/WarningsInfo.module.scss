@@ -22,7 +22,6 @@
   font-size: 14px;
   overflow: auto;
   margin-right: 0px;
-  padding-top: 12px;
 
   .noWarning {
     text-align: center;
@@ -36,7 +35,7 @@
   .assistantBlock {
     display: block;
     padding: 0px 24px;
-    margin-bottom: 22px;
+    padding-top: 16px;
 
     .assistantName {
       color: var(--90, rgba(0, 0, 0, 0.9));
@@ -45,7 +44,7 @@
       font-style: normal;
       font-weight: 600;
       line-height: 150%;
-      padding-bottom: 8px;
+      margin-bottom: 8px;
 
       &:hover {
         cursor: pointer;
@@ -56,6 +55,9 @@
 
     .assistantSkills {
       border-left: 1px solid #d8dbe5;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .skill {
@@ -64,16 +66,13 @@
       .skillBlock {
         width: 100%;
         .skillName {
-          margin-bottom: 6px;
-          margin-top: 6px;
+          padding: 0 0 6px 12px;
           color: #190080;
           font-family: Inter;
           font-size: 12px;
           font-style: normal;
           font-weight: 500;
           line-height: 150%;
-          margin-left: 12px;
-          display: flex;
           gap: 5px;
           position: relative;
           background: white;

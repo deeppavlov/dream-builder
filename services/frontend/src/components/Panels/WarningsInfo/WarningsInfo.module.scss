@@ -1,7 +1,28 @@
-.contend {
+.contentTitle {
+  min-height: 48px;
+  max-height: 48px;
+  width: 100%;
+  border-bottom: 1px solid #f0f0f3;
+  display: flex;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 160%;
+  font-size: 18px;
+  align-items: center;
+  gap: 8px;
+  padding-left: 24px;
+  padding-right: 36px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 17px;
+  text-decoration-color: #3300ff;
+}
+.content {
   font-size: 14px;
   overflow: auto;
   margin-right: 0px;
+  padding-top: 12px;
 
   .noWarning {
     text-align: center;
@@ -12,34 +33,9 @@
     font-size: 15px;
   }
 
-  .contendTitle {
-    min-height: 48px;
-    max-height: 48px;
-    width: 100%;
-    border-bottom: 1px solid #f0f0f3;
-    display: flex;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 160%;
-    font-size: 18px;
-    align-items: center;
-    gap: 8px;
-    padding-left: 24px;
-    padding-right: 36px;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 17px;
-    text-decoration-color: #3300ff;
-    margin-bottom: 12px;
-  }
-
   .assistantBlock {
-    overflow: hidden;
-    white-space: nowrap;
     display: block;
     padding: 0px 24px;
-    text-overflow: ellipsis;
     margin-bottom: 22px;
 
     .assistantName {

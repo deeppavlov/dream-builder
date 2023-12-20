@@ -209,18 +209,20 @@ const WarningsInfo = () => {
     )
   }
 
-  const contendTitle = (
-    <div className={s.contendTitle}>
+  const contentTitle = (
+    <div className={s.contentTitle}>
       <div className={s.title}>{t('header')}</div>
     </div>
   )
 
   if (!name) {
     return (
-      <div className={s.contend}>
-        {contendTitle}
-        {data?.map((el, i: number) => renderAssistant(el, i, false))}
-      </div>
+      <>
+        {contentTitle}
+        <div className={s.content}>
+          {data?.map((el, i: number) => renderAssistant(el, i, false))}
+        </div>
+      </>
     )
   }
 
@@ -229,10 +231,12 @@ const WarningsInfo = () => {
   )
 
   return (
-    <div className={s.contend}>
-      {contendTitle}
-      <div>{renderAssistant(targetAssistant[0], 1, true)}</div>
-    </div>
+    <>
+      {contentTitle}
+      <div className={s.content}>
+        <div>{renderAssistant(targetAssistant[0], 1, true)}</div>
+      </div>
+    </>
   )
 }
 

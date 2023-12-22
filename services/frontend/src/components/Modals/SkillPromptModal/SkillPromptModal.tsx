@@ -279,6 +279,12 @@ const SkillPromptModal = () => {
   const isEmpty = editorContext.code.length === 0
   const isDiff = skill?.prompt === editorContext.code
 
+  const isLmServicelCange =
+    skill?.lm_service.display_name === selectedModel?.display_name
+
+  const isChange =
+    isDiff === false || isLmServicelCange === false ? false : true
+
   return (
     <Modal
       isOpen={isOpen}
@@ -390,7 +396,7 @@ const SkillPromptModal = () => {
                     isSubmitting ||
                     !isDirty ||
                     isEmpty ||
-                    isDiff,
+                    isChange,
                 }}
               >
                 {t('modals.skill_prompt.btns.save')}

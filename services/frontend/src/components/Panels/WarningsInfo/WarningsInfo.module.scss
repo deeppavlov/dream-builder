@@ -39,7 +39,7 @@
 
     .assistantName {
       color: var(--90, rgba(0, 0, 0, 0.9));
-      font-family: Inter;
+      font-family: 'Inter', sans-serif;
       font-size: 12px;
       font-style: normal;
       font-weight: 600;
@@ -68,7 +68,7 @@
         .skillName {
           padding: 0 0 6px 12px;
           color: #190080;
-          font-family: Inter;
+          font-family: 'Inter', sans-serif;
           font-size: 12px;
           font-style: normal;
           font-weight: 500;
@@ -79,7 +79,7 @@
           z-index: 1;
 
           .messageCountError {
-            font-family: Inter;
+            font-family: 'Inter', sans-serif;
             font-size: 12px;
             font-style: normal;
             font-weight: 400;
@@ -121,7 +121,7 @@
                 max-width: 250px;
                 outline: none;
                 resize: none;
-                font-family: 'Inter';
+                font-family: 'Inter', sans-serif;
                 font-style: normal;
                 font-weight: 400;
                 line-height: 160%;

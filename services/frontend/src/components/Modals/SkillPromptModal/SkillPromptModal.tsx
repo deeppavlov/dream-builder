@@ -13,7 +13,6 @@ import {
   ISkill,
   LM_Service,
   LanguageModel,
-  TDistVisibility,
 } from 'types/types'
 import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
@@ -115,7 +114,6 @@ const SkillPromptModal = () => {
   )
 
   const {
-    handleSubmit,
     reset,
     trigger: triggerField,
     getValues,
@@ -277,13 +275,6 @@ const SkillPromptModal = () => {
   }
 
   const isEmpty = editorContext.code.length === 0
-  const isDiff = skill?.prompt === editorContext.code
-
-  const isLmServicelCange =
-    skill?.lm_service.display_name === selectedModel?.display_name
-
-  const isChange =
-    isDiff === false || isLmServicelCange === false ? false : true
 
   return (
     <Modal
@@ -395,8 +386,7 @@ const SkillPromptModal = () => {
                     updateComponent.isLoading ||
                     isSubmitting ||
                     !isDirty ||
-                    isEmpty ||
-                    isChange,
+                    isEmpty,
                 }}
               >
                 {t('modals.skill_prompt.btns.save')}

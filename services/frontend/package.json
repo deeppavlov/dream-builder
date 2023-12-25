@@ -23,6 +23,7 @@
     "classnames": "^2.3.2",
     "esbuild": "^0.17.11",
     "fecha": "^4.2.3",
+    "franc": "^6.1.0",
     "i18next": "^23.2.2",
     "i18next-browser-languagedetector": "^7.0.2",
     "i18next-http-backend": "^2.2.1",

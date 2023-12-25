@@ -1,25 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import {
-  ICloneComponent,
-  IStackElement,
-  LM_Service,
-  PostDistParams,
-  StackType,
-  TComponents,
-} from 'types/types'
-import {
-  addComponent,
-  cloneComponent,
-  createComponent,
-  deleteComoponent,
-  editComponent,
-  getComponent as fetchComponent,
-  getComponents,
-  getComponentsGroup,
-  patchComponent,
-} from 'api/components'
-import { IPatchComponentParams } from 'api/components/patchComponent'
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import { r } from 'msw/lib/glossary-de6278a9';
+import { useMutation, useQueries, useQuery, useQueryClient } from 'react-query';
+import { BotInfoInterface, ICloneComponent, IStackElement, LM_Service, PostDistParams, StackType, TComponents } from 'types/types';
+import { addComponent, cloneComponent, createComponent, deleteComoponent, editComponent, getComponent as fetchComponent, getComponents, getComponentsGroup, patchComponent } from 'api/components';
+import { IPatchComponentParams } from 'api/components/patchComponent';
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
+
 
 interface IGet {
   distName: string
@@ -89,6 +74,18 @@ export const useComponent = () => {
       }
     )
 
+  const getAllComponentsArr = (sortedDists: BotInfoInterface[]) => {
+    const res = useQueries(
+      sortedDists.map((el: BotInfoInterface) => {
+        return {
+          queryKey: ['skill', el.name],
+          queryFn: () => getComponents(el.name, el),
+        }
+      })
+    )
+    return res
+  }
+
   const getGroupComponents = (
     { distName, group, component_type, author_id }: IGetGroup,
     { enabled }: { enabled?: boolean }
@@ -115,7 +112,9 @@ export const useComponent = () => {
 
   const addComponentToDist = useMutation({
     mutationFn: ({ distName, id }: IAdd) => addComponent(distName, id),
-    onSuccess: () => queryClient.invalidateQueries([ALL_COMPONENTS]),
+    onSuccess: () => {
+      queryClient.invalidateQueries([ALL_COMPONENTS])
+    },
   })
 
   const deleteComponent = useMutation({
@@ -124,6 +123,7 @@ export const useComponent = () => {
       skillDeleted()
       queryClient.invalidateQueries([ALL_COMPONENTS])
       queryClient.invalidateQueries([type, distName])
+      queryClient.invalidateQueries(['skill', distName])
       updateCachedComponent({ distName, id: component_id, type, data: null })
     },
   })
@@ -171,6 +171,7 @@ export const useComponent = () => {
       { component_id, distName, lm_service, type }
     ) => {
       //fix lm_service on patchComponent endpoint not return from backend
+      queryClient.invalidateQueries(['skill', distName])
       updateCachedComponent({
         id: component_id,
         distName,
@@ -259,5 +260,6 @@ export const useComponent = () => {
     clone,
     create,
     edit,
+    getAllComponentsArr,
   }
 }

@@ -87,8 +87,10 @@ def create_google_api_component(db, user, new_component):
         lm_service_id=None,
         lm_config=None,
     )
-
-    return schemas.ComponentRead.from_orm(component)
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
 
 
 def create_component(
@@ -106,7 +108,10 @@ def create_component(
                 case ComponentType.google_api:
                     return create_google_api_component(db, user, new_component)
                 case _:
-                    lm_service = original_component.lm_service
+                    if original_component.lm_service:
+                        lm_service = original_component.lm_service
+                    else:
+                        lm_service = lm_service_crud.get_lm_service(db, 4)
                     prompt = original_component.prompt
                     prompt_goals = original_component.prompt_goals
         else:
@@ -181,7 +186,10 @@ def create_component(
             lm_config=prompted_component.lm_config,
         )
 
-    return schemas.ComponentRead.from_orm(component)
+    if component:
+        return schemas.ComponentRead.from_orm(component)
+    else:
+        return None
 
 
 async def patch_component(

@@ -108,7 +108,10 @@ class ComponentRead(BaseOrmModel):
     prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
     lm_config: Optional[dict]
+    cloned_from_id: Optional[int]
+    skill_created_type: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
+
 
     @validator("ram_usage", "gpu_usage")
     def check_memory_format(cls, v):
@@ -208,6 +211,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
 
 class VirtualAssistantRead(VirtualAssistantBaseRead):
     deployment: Optional[DeploymentBaseRead]
+    cloned_from_name: Optional[str]
 
 
 class VirtualAssistantCreate(BaseModel):
@@ -285,6 +289,7 @@ class DialogChatMessageCreate(BaseModel):
     prompt: Optional[str]
     lm_service_id: Optional[int]
     openai_api_key: Optional[str]
+    lm_service_config: Optional[dict]
 
 
 class DialogChatMessageRead(BaseModel):

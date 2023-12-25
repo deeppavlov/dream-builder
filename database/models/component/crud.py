@@ -2,8 +2,12 @@ from typing import Optional
 
 from sqlalchemy import select, update, delete, func
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
+from database.models.virtual_assistant.model import VirtualAssistant
+from database.models.virtual_assistant_component.model import VirtualAssistantComponent
 from database.models.component.model import Component
 
 
@@ -23,6 +27,18 @@ def get_by_group_name(db: Session, group: str, component_type: str = None, autho
         filters["author_id"] = author_id
 
     return db.scalars(select(Component).filter_by(**filters)).all()
+
+def get_by_virtual_assistant_cloned_status(db: Session, component_id: int) -> Optional[Component]:
+    try:
+        virtual_assistant_component = db.scalars(
+                select(VirtualAssistant.cloned_from_id)
+                .join(VirtualAssistantComponent, VirtualAssistantComponent.virtual_assistant_id == VirtualAssistant.id)
+                .join(Component, VirtualAssistantComponent.component_id == Component.id)
+                .filter(Component.id == component_id)
+            )
+        return virtual_assistant_component
+    except NoResultFound:
+        return None
 
 
 def create(
@@ -48,41 +64,44 @@ def create(
     # compose_override: Optional[dict] = None,
     # compose_dev: Optional[dict] = None,
     # compose_proxy: Optional[dict] = None,
-) -> Component:
-    component = db.scalar(
-        insert(Component)
-        .values(
-            service_id=service_id,
-            source=source,
-            name=name,
-            display_name=display_name,
-            # container_name=container_name,
-            component_type=component_type,
-            model_type=model_type,
-            is_customizable=is_customizable,
-            author_id=author_id,
-            description=description,
-            ram_usage=ram_usage,
-            gpu_usage=gpu_usage,
-            # port=port,
-            group=group,
-            endpoint=endpoint,
-            prompt=prompt,
-            prompt_goals=prompt_goals,
-            lm_service_id=lm_service_id,
-            lm_config=lm_config,
-            # build_args=build_args,
-            # compose_override=compose_override,
-            # compose_dev=compose_dev,
-            # compose_proxy=compose_proxy,
+) -> Optional[Component]:
+    try:
+        component = db.scalar(
+            insert(Component)
+            .values(
+                service_id=service_id,
+                source=source,
+                name=name,
+                display_name=display_name,
+                # container_name=container_name,
+                component_type=component_type,
+                model_type=model_type,
+                is_customizable=is_customizable,
+                author_id=author_id,
+                description=description,
+                ram_usage=ram_usage,
+                gpu_usage=gpu_usage,
+                # port=port,
+                group=group,
+                endpoint=endpoint,
+                prompt=prompt,
+                prompt_goals=prompt_goals,
+                lm_service_id=lm_service_id,
+                lm_config=lm_config,
+                # build_args=build_args,
+                # compose_override=compose_override,
+                # compose_dev=compose_dev,
+                # compose_proxy=compose_proxy,
+            )
+            .on_conflict_do_nothing(index_elements=[Component.source])
+            .returning(Component)
         )
-        .on_conflict_do_nothing(index_elements=[Component.source])
-        .returning(Component)
-    )
-    if not component:
-        component = db.scalar(select(Component).filter_by(source=source))
+        if not component:
+            component = db.scalar(select(Component).filter_by(source=source))
 
-    return component
+        return component
+    except DatabaseError:
+        return None
 
 
 def update_by_id(db: Session, id: int, **kwargs) -> Component:

@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session
 from apiconfig.config import settings
 from database import enums
 from database.models.user import crud as user_crud
-from database.models.virtual_assistant.crud import get_all_public_templates, get_all_by_author
+from database.models.virtual_assistant.crud import (
+    get_all_public_templates,
+    get_all_by_author,
+    get_virtual_assistant_dist_name
+)
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from services.distributions_api import schemas, const
 from services.distributions_api.const import TEMPLATE_DIST_PROMPT_BASED
@@ -101,12 +105,20 @@ async def get_list_of_private_virtual_assistants(
     for dist in get_all_by_author(db, user.id):
         private_dists.append(schemas.VirtualAssistantRead.from_orm(dist))
 
+    for virtual_assistant in private_dists:
+        if virtual_assistant.cloned_from_id:
+            setattr(
+                virtual_assistant, "cloned_from_name",
+                get_virtual_assistant_dist_name(db, virtual_assistant.cloned_from_id)
+            )
+
     return private_dists
 
 
 @assistant_dists_router.get("/{dist_name}", status_code=status.HTTP_200_OK, dependencies=[])
 async def get_virtual_assistant_by_name(
     virtual_assistant: schemas.VirtualAssistantRead = Depends(virtual_assistant_view_permission),
+    db: Session = Depends(get_db)
 ) -> schemas.VirtualAssistantRead:
     """
     Returns existing dist with the given name
@@ -115,6 +127,11 @@ async def get_virtual_assistant_by_name(
 
     -``dist_name``: name of the distribution
     """
+    if virtual_assistant.cloned_from_id:
+        setattr(
+            virtual_assistant, "cloned_from_name",
+            get_virtual_assistant_dist_name(db, virtual_assistant.cloned_from_id)
+        )
 
     return virtual_assistant
 

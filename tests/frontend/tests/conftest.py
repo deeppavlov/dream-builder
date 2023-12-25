@@ -11,14 +11,15 @@ from selenium.webdriver.safari.options import Options as SafariOptions
 
 def pytest_addoption(parser):
     parser.addoption("--browser_name", default="chrome", help="Choose browser: chrome, firefox, edge")
-    parser.addoption("--window_size", default="1920,1080",
-                     help='Choose window-size: "1920,1080", "1536,864", "1366,768", "1280,720"')
+    parser.addoption(
+        "--window_size", default="1920,1080", help='Choose window-size: "1920,1080", "1536,864", "1366,768", "1280,720"'
+    )
 
 
 def set_options(options):
     options.add_argument("--lang=en-GB")
     # options.add_argument("--lang=ru")
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_argument(
     #    "--user-agent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -66,6 +67,7 @@ def browser(request):
 def screen_size(request, browser):
     window_size = tuple(request.param[0].split(","))
     browser.set_window_size(*window_size)
+    return window_size
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -74,6 +76,5 @@ def pytest_runtest_makereport(item, call):
     rep = outcome.get_result()
     if rep.when == "call" and rep.failed:
         fixture_browser = item.funcargs["browser"]
-        fixture_browser.save_screenshot(f"screen_{item.name}.png")
-
+        # fixture_browser.save_screenshot(f"screen_{item.name}.png")
         qase.attach(f"screen_{item.name}.png")

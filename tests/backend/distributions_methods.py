@@ -18,6 +18,7 @@ from .config import (
     lm_service_id_ru_nominal_list,
     lm_service_id_union_list,
     test_token_github1,
+    access_token_expired,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -59,7 +60,7 @@ class UserMethods:
 
     # ASSISTANT_DIST
 
-    def create_virtual_assistant(self, name, language="en"):
+    def create_virtual_assistant(self, name, language="en", status_code=201):
         response = requests.post(
             url=f"{assistant_dists_endpoint}",
             headers={
@@ -70,9 +71,15 @@ class UserMethods:
             },
             json={"display_name": name, "description": "TestBot", "language": language},
         )
-        assert_status_code(response, 201)
-        assert_validation(response.json(), models.VirtualAssistantRead)
-        assert response.json()["language"]["value"] == language
+        if status_code == 201:
+            assert_status_code(response, status_code)
+            assert_validation(response.json(), models.VirtualAssistantRead)
+            assert response.json()["language"]["value"] == language
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
     def create_virtual_assistant_bad_token(self):
@@ -112,7 +119,7 @@ class UserMethods:
             assert_validation(public_dist, models.VirtualAssistantRead)
         return public_dist_names_list
 
-    def get_list_of_private_va(self, created_va_name):
+    def get_list_of_private_va(self, created_va_name, status_code=200):
         private_dist_names_list = []
         response = requests.get(
             url=assistant_dists_endpoint + "/user_owned",
@@ -122,15 +129,22 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 200)
-        for private_dist in response.json():
-            private_dist_names_list.append(private_dist["name"])
-            assert_validation(private_dist, models.VirtualAssistantRead)
-        private_dist_names = [private_dist["name"] for private_dist in response.json()]
-        assert created_va_name in private_dist_names, (
-            f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}"
-            f"""{LOGGER.error(f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}")}"""
-        )
+        if status_code == 200:
+            assert_status_code(response, status_code)
+            for private_dist in response.json():
+                private_dist_names_list.append(private_dist["name"])
+                assert_validation(private_dist, models.VirtualAssistantRead)
+            private_dist_names = [private_dist["name"] for private_dist in response.json()]
+            assert created_va_name in private_dist_names, (
+                f"Created_va_name: {created_va_name} not in private_dist_names {private_dist_names}"
+                f"""{LOGGER.error(f"Created_va_name: "
+                                  f"{created_va_name} not in private_dist_names {private_dist_names}")}"""
+            )
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def get_list_of_private_va_wo_assert(self):
         private_dist_names_list = []
@@ -184,7 +198,7 @@ class UserMethods:
         assert_no_access(response)
         return response.json()
 
-    def delete_va_by_name(self, name):
+    def delete_va_by_name(self, name, status_code=204):
         response = requests.delete(
             url=assistant_dists_endpoint + "/" + name,
             headers={
@@ -193,7 +207,13 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 204)
+        if status_code == 204:
+            assert_status_code(response, status_code)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def delete_va_by_name_no_access(self, name):
         response = requests.delete(
@@ -206,7 +226,7 @@ class UserMethods:
         )
         assert_status_code(response, 500)
 
-    def patch_va_by_name(self, name):
+    def patch_va_by_name(self, name, status_code=200):
         response = requests.patch(
             url=assistant_dists_endpoint + "/" + name,
             headers={
@@ -217,8 +237,14 @@ class UserMethods:
             },
             json={"display_name": "Test_name", "description": "Test_description"},
         )
-        assert_status_code(response, 200)
-        assert_validation(response.json(), models.VirtualAssistantRead)
+        if status_code == 200:
+            assert_status_code(response, status_code)
+            assert_validation(response.json(), models.VirtualAssistantRead)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def patch_va_by_name_no_access(self, name):
         response = requests.patch(
@@ -233,7 +259,7 @@ class UserMethods:
         )
         assert_status_code(response, 500)
 
-    def clone_va(self, name):
+    def clone_va(self, name, status_code=201):
         response = requests.post(
             url=assistant_dists_endpoint + "/" + name + "/clone",
             headers={
@@ -244,8 +270,14 @@ class UserMethods:
             },
             json={"display_name": "Test_clone_name", "description": "Test_clone_description"},
         )
-        assert_status_code(response, 201)
-        assert_validation(response.json(), models.VirtualAssistantRead)
+        if status_code == 201:
+            assert_status_code(response, status_code)
+            assert_validation(response.json(), models.VirtualAssistantRead)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
     def clone_va_no_access(self, name):
@@ -355,7 +387,7 @@ class UserMethods:
         assert_status_code(response, 500)
         # assert_no_access(response)
 
-    def delete_va_component(self, name, component_id):
+    def delete_va_component(self, name, component_id, status_code=204):
         response = requests.delete(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
@@ -364,7 +396,13 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 204)
+        if status_code == 204:
+            assert_status_code(response, 204)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def delete_va_component_no_access(self, name, component_id):
         response = requests.delete(
@@ -378,16 +416,22 @@ class UserMethods:
         assert_status_code(response, 500)
         # assert_no_access(response)
 
-    def patch_va_component(self, name, component_id):
+    def patch_va_component(self, name, component_id, status_code=200):
         response = requests.patch(
             url=assistant_dists_endpoint + "/" + name + "/components/" + str(component_id),
             headers={
                 "accept": "application/json",
             },
         )
-        assert_status_code(response, 200)
-        # assert models.VirtualAssistantRead.parse_obj(get_dist_components_response.json()), \
-        #    "Error while patch_va_component"
+        if status_code == 200:
+            assert_status_code(response, 200)
+            # assert models.VirtualAssistantRead.parse_obj(get_dist_components_response.json()), \
+            #    "Error while patch_va_component"
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def patch_va_component_no_access(self, name, component_id):
         # display_name="Test_patch",
@@ -410,7 +454,7 @@ class UserMethods:
         assert_status_code(response, 500)
         # assert_no_access(response)
 
-    def publish_va(self, name, visibility):
+    def publish_va(self, name, visibility, status_code=204):
         response = requests.post(
             url=assistant_dists_endpoint + "/" + name + "/publish",
             headers={
@@ -421,7 +465,13 @@ class UserMethods:
             },
             json={"visibility": visibility},
         )
-        assert_status_code(response, 204)
+        if status_code == 204:
+            assert_status_code(response, status_code)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def publish_va_no_access(self, name, visibility):
         response = requests.post(
@@ -491,11 +541,12 @@ class UserMethods:
         )
 
     def create_component(
-            self,
-            display_name="Test_name",
-            description="Test_description",
-            lm_service_id=lm_service_id_en_list[0],
-            prompt="Test_prompt",
+        self,
+        display_name="Test_name",
+        description="Test_description",
+        lm_service_id=lm_service_id_en_list[0],
+        prompt="Test_prompt",
+        status_code=201,
     ):
         response = requests.post(
             components_endpoint,
@@ -512,22 +563,34 @@ class UserMethods:
                 "prompt": prompt,
             },
         )
-        assert_status_code(response, 201)
-        assert_validation(response.json(), models.ComponentRead)
+        if status_code == 201:
+            assert_status_code(response, 201)
+            assert_validation(response.json(), models.ComponentRead)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
-    def get_component(self, component_id):
+    def get_component(self, component_id, status_code=200):
         response = requests.get(
             url=components_endpoint + "/" + str(component_id),
             headers={
                 "accept": "application/json",
             },
         )
-        assert_status_code(response, 200)
-        assert_validation(response.json(), models.ComponentRead)
+        if status_code == 200:
+            assert_status_code(response, status_code)
+            assert_validation(response.json(), models.ComponentRead)
+        else:
+            assert_status_code(response, status_code)
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
-    def delete_component(self, component_id):
+    def delete_component(self, component_id, status_code=204):
         response = requests.delete(
             url=components_endpoint + "/" + str(component_id),
             headers={
@@ -536,15 +599,20 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 204)
+        assert_status_code(response, status_code)
+        if status_code != 204:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def patch_component(
-            self,
-            component_id,
-            display_name="string",
-            description="string",
-            prompt="Your prompt",
-            lm_service_id=lm_service_id_en_list[0],
+        self,
+        component_id,
+        display_name="string",
+        description="string",
+        prompt="Your prompt",
+        lm_service_id=lm_service_id_en_list[0],
+        status_code=200,
     ):
         response = requests.patch(
             url=components_endpoint + "/" + str(component_id),
@@ -561,8 +629,13 @@ class UserMethods:
                 "lm_service_id": lm_service_id,
             },
         )
-        assert_status_code(response, 200)
-        assert_validation(response.json(), models.ComponentRead)
+        assert_status_code(response, status_code)
+        if status_code == 200:
+            assert_validation(response.json(), models.ComponentRead)
+        else:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def get_list_of_group_components(self, group_name):
         response = requests.get(
@@ -577,7 +650,7 @@ class UserMethods:
 
     # USERS
 
-    def get_user_self(self):
+    def get_user_self(self, status_code=200):
         response = requests.get(
             url=users_endpoint + "/self",
             headers={
@@ -586,11 +659,16 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 200)
-        assert_validation(response.json(), models.UserRead)
+        assert_status_code(response, status_code)
+        if status_code == 200:
+            assert_validation(response.json(), models.UserRead)
+        else:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
-    def get_user_by_id(self, user_id):
+    def get_user_by_id(self, user_id, status_code=200):
         response = requests.get(
             url=users_endpoint + "/" + user_id,
             headers={
@@ -599,8 +677,13 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 200)
-        assert_validation(response.json(), models.UserRead)
+        assert_status_code(response, status_code)
+        if status_code == 200:
+            assert_validation(response.json(), models.UserRead)
+        else:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     # API TOKENS
 
@@ -691,7 +774,7 @@ class UserMethods:
         assert_status_code(response, 403)
         assert_no_access(response)
 
-    def send_dialog_session_message(self, dialog_session_id):
+    def send_dialog_session_message(self, dialog_session_id, openai_api_key=openai_token):
         response = requests.post(
             url=dialog_sessions_endpoint + "/" + str(dialog_session_id) + "/chat",
             headers={
@@ -700,15 +783,20 @@ class UserMethods:
                 "auth-type": self.auth_type,
                 "Content-Type": "application/json",
             },
-            json={
-                "text": "Hello! What is your name?",
-            },
+            json={"text": "Hello! What is your name?", "openai_api_key": openai_api_key},
         )
+        # print(f'openai_api_key = {openai_api_key}')
+        # print(response.json()["active_skill"]["name"])
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
-        assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
-        )
+        if len(openai_api_key) > 10:
+            assert (
+                response.json()["active_skill"]["name"] != "dummy_skill"
+            ), f"Dummy skill answers, {response.json()['text']}"
+        else:
+            assert (
+                response.json()["active_skill"]["name"] == "dummy_skill"
+            ), f"Not dummy skill answers, {response.json()['text']}, {response.json()['active_skill']['name']}"
 
     def send_dialog_session_message_no_access(self, dialog_session_id):
         response = requests.post(
@@ -726,7 +814,7 @@ class UserMethods:
         assert_status_code(response, 403)
         assert_no_access(response)
 
-    def send_dialog_session_message_various_lm(self, dialog_session_id, lm_service_id):
+    def send_dialog_session_message_various_lm(self, dialog_session_id, lm_service_id, openai_api_key=openai_token):
         response = requests.post(
             url=dialog_sessions_endpoint + "/" + str(dialog_session_id) + "/chat",
             headers={
@@ -738,21 +826,28 @@ class UserMethods:
             json={
                 "text": "Hello! What is your name?",
                 "prompt": "TASK:  You are a chatbot that can only answers questions below. "
-                          "FAQ: What is your name? My name is Paul.",
+                "FAQ: What is your name? My name is Paul.",
                 "lm_service_id": lm_service_id,
-                "openai_api_key": openai_token,
+                "openai_api_key": openai_api_key,
             },
         )
+        # print(f'openai_api_key = {openai_api_key}')
+        # print(response.json()["active_skill"]["name"])
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
-        assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
-        )
-        assert "Paul" in response.json()["text"], (
-            f"Skill answers incorrectly, {response.json()['text']}, "
-            f"{response.json()['active_skill']['name']}"
-            f"{LOGGER.error(f'Dummy skill answers')}"
-        )
+        if len(openai_api_key) > 10:
+            assert response.json()["active_skill"]["name"] != "dummy_skill", (
+                "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')}  {response.json()['text']}"
+            )
+            assert "Paul" in response.json()["text"], (
+                f"Skill answers incorrectly, {response.json()['text']}, "
+                f"{response.json()['active_skill']['name']}"
+                f"{LOGGER.error(f'Dummy skill answers')}"
+            )
+        else:
+            assert (
+                response.json()["active_skill"]["name"] == "dummy_skill"
+            ), f"Not dummy skill answers, {response.json()['text']}, {response.json()['active_skill']['name']}"
 
     def send_dialog_session_message_various_russian_lm(self, dialog_session_id, lm_service_id):
         response = requests.post(
@@ -781,7 +876,7 @@ class UserMethods:
         assert_status_code(response, 201)
         assert_validation(response.json(), models.DialogChatMessageRead)
         assert response.json()["active_skill"]["name"] != "dummy_skill", (
-            "Dummy skill answers"  f"{LOGGER.error(f'Dummy skill answers')} {response.json()['text']}"
+            "Dummy skill answers" f"{LOGGER.error(f'Dummy skill answers')} {response.json()['text']}"
         )
         assert "дом" in response.json()["text"], (
             f"Skill answers incorrectly, {response.json()['text']}, "
@@ -843,11 +938,13 @@ class UserMethods:
         actual_lm_service_id_list.sort()
 
         if language == "ru":
-            assert actual_lm_service_id_list == lm_service_id_ru_nominal_list, \
-                f"Actual lm service name list is {actual_lm_service_name_list} "
+            assert (
+                actual_lm_service_id_list == lm_service_id_ru_nominal_list
+            ), f"Actual lm service name list is {actual_lm_service_name_list} "
         if language == "en":
-            assert actual_lm_service_id_list == lm_service_id_en_nominal_list, \
-                f"Actual lm service name list is {actual_lm_service_name_list} "
+            assert (
+                actual_lm_service_id_list == lm_service_id_en_nominal_list
+            ), f"Actual lm service name list is {actual_lm_service_name_list} "
 
     # DEPLOYMENTS
 
@@ -866,7 +963,7 @@ class UserMethods:
         assert_status_code(response, 200)
         assert_validation(response.json(), models.DeploymentRead)
 
-    def create_deployment(self, va_name):
+    def create_deployment(self, va_name, status_code=201):
         response = requests.post(
             url=deployments_endpoint,
             headers={
@@ -879,8 +976,13 @@ class UserMethods:
                 f"virtual_assistant_name": va_name,
             },
         )
-        assert_status_code(response, 201)
-        assert_validation(response.json(), models.DeploymentRead)
+        assert_status_code(response, status_code)
+        if status_code == 201:
+            assert_validation(response.json(), models.DeploymentRead)
+        else:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
         return response.json()
 
     def create_deployment_no_access(self, va_name):
@@ -939,7 +1041,7 @@ class UserMethods:
             f"{LOGGER.error(f'Expected response is Deployment not found, actual:, {response.json()}')}"
         )
 
-    def delete_deployment(self, deployment_id):
+    def delete_deployment(self, deployment_id, status_code=204):
         response = requests.delete(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
@@ -948,7 +1050,11 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 204)
+        assert_status_code(response, status_code)
+        if status_code != 204:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def delete_deployment_no_access(self, deployment_id):
         response = requests.delete(
@@ -962,7 +1068,7 @@ class UserMethods:
         assert_status_code(response, 403)
         # assert_no_access(response)
 
-    def patch_deployment(self, deployment_id):
+    def patch_deployment(self, deployment_id, status_code=200):
         response = requests.patch(
             url=deployments_endpoint + "/" + str(deployment_id),
             headers={
@@ -971,7 +1077,11 @@ class UserMethods:
                 "auth-type": self.auth_type,
             },
         )
-        assert_status_code(response, 200)
+        assert_status_code(response, status_code)
+        if status_code != 200:
+            assert response.json() == access_token_expired, (
+                f"Expected response: {access_token_expired}, " f"actual response is {response.json()}"
+            )
 
     def patch_deployment_no_access(self, deployment_id, task_id):
         response = requests.patch(
@@ -1004,6 +1114,58 @@ class UserMethods:
             },
         )
         assert_status_code(response, 200)
+
+    # NON ACCESS TO ADMIN METHODS
+
+    def get_all_publish_requests_no_access(self):
+        response = requests.get(
+            url=admin_endpoint,
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def get_unreviewed_publish_requests_no_access(self):
+        response = requests.get(
+            url=admin_endpoint + "/unreviewed",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def confirm_publish_request_no_access(self, publish_request_id):
+        response = requests.post(
+            url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
+
+    def decline_publish_request_no_access(self, publish_request_id):
+        response = requests.post(
+            url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
+            headers={
+                "accept": "application/json",
+                "token": self.auth_token,
+                "auth-type": self.auth_type,
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        assert_status_code(response, 403)
+        assert_requires_admin_user(response)
 
 
 class AdminMethods:
@@ -1040,18 +1202,6 @@ class AdminMethods:
             assert_validation(publish_request, models.PublishRequestRead)
         return response.json()
 
-    def get_all_publish_requests_no_access(self):
-        response = requests.get(
-            url=admin_endpoint,
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def get_unreviewed_publish_requests(self):
         response = requests.get(
             url=admin_endpoint + "/unreviewed",
@@ -1066,18 +1216,6 @@ class AdminMethods:
             assert_validation(publish_request, models.PublishRequestRead)
         return response.json()
 
-    def get_unreviewed_publish_requests_no_access(self):
-        response = requests.get(
-            url=admin_endpoint + "/unreviewed",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def confirm_publish_request(self, publish_request_id):
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
@@ -1091,19 +1229,6 @@ class AdminMethods:
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
 
-    def confirm_publish_request_no_access(self, publish_request_id):
-        response = requests.post(
-            url=admin_endpoint + "/" + str(publish_request_id) + "/confirm",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-                "content-type": "application/x-www-form-urlencoded",
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)
-
     def decline_publish_request(self, publish_request_id):
         response = requests.post(
             url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
@@ -1116,16 +1241,3 @@ class AdminMethods:
         )
         assert_status_code(response, 200)
         assert_validation(response.json(), models.PublishRequestRead)
-
-    def decline_publish_request_no_access(self, publish_request_id):
-        response = requests.post(
-            url=admin_endpoint + "/" + str(publish_request_id) + "/decline",
-            headers={
-                "accept": "application/json",
-                "token": self.auth_token,
-                "auth-type": self.auth_type,
-                "content-type": "application/x-www-form-urlencoded",
-            },
-        )
-        assert_status_code(response, 403)
-        assert_requires_admin_user(response)

@@ -1,5 +1,25 @@
 import { RouteObject } from 'react-router-dom'
 
+export interface ICustomAssistant {
+  name: string
+  skill: ICustomSkill[]
+  bot: BotInfoInterface
+}
+export interface ICounter {
+  errors: number
+  warnings: number
+}
+export interface ICollectionError {
+  errors: string[]
+  warnings: string[]
+}
+
+export interface ICustomSkill {
+  data: ICollectionError
+  name: string
+  skill: ISkill
+}
+
 export interface UserInterface {
   id: number
   email: string
@@ -49,6 +69,7 @@ export interface IAuthor {
 
 export type TEvents =
   | 'TRIGGER_RIGHT_SP_EVENT'
+  | 'TRIGGER_LEFT_SP_EVENT'
   | 'ShareAssistantModal'
   | 'SignInModal'
   | 'RenewChat'

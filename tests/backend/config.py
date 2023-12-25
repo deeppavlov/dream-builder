@@ -59,6 +59,17 @@ public_va_names_en = [
     "deepy_assistant",
 ]
 
+public_va_names_visible_en = [
+    "ai_faq_assistant",
+    "fairytale_assistant",
+    "fashion_stylist_assistant",
+    "life_coaching_assistant",
+    "marketing_assistant",
+    "nutrition_assistant",
+    "multiskill_ai_assistant",
+    "dream_persona_openai_prompted",
+]
+
 public_va_names_ru = [
     "dream_persona_ruxglm_prompted",
     "fairytale_ru_assistant",
@@ -67,13 +78,18 @@ public_va_names_ru = [
     "journalist_helper_ru_assistant",
 ]
 
-lm_service_id_en_list = [2, 4, 5, 6, 7]
-lm_service_id_ru_list = [4, 5, 6, 7, 12, 13]
+access_token_expired = {
+    "detail": "Access token has expired or token is bad. Response: {'error_description': 'Either "
+    "access_token, id_token, or token_handle required'}"
+}
 
-lm_service_id_en_nominal_list = [2, 4, 5, 6, 7, 8, 9, 10]
-lm_service_id_ru_nominal_list = [4, 5, 6, 7, 8, 12, 13]
+lm_service_id_en_list = [2, 4, 5, 6, 7, 14]
+lm_service_id_ru_list = [4, 5, 6, 7, 12, 13, 14]
 
-lm_service_id_union_list = [2, 4, 5, 6, 7, 8, 9, 10, 12, 13]
+lm_service_id_en_nominal_list = [2, 4, 5, 6, 7, 8, 9, 10, 14]
+lm_service_id_ru_nominal_list = [4, 5, 6, 7, 8, 12, 13, 14]
+
+lm_service_id_union_list = [2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14]
 
 
 base_url_distributions_api = settings_url.url_distributions_api
@@ -95,6 +111,17 @@ def create_counter(title: str):
         nonlocal i
         i += 1
         return f"{title}: {i}"
+
+    return func
+
+
+def empty_counter():
+    i = 0
+
+    def func():
+        nonlocal i
+        i += 1
+        return f"{i}"
 
     return func
 

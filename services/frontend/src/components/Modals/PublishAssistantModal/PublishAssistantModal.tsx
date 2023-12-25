@@ -74,22 +74,12 @@ export const PublishAssistantModal = () => {
     // so no need to publish it again
 
     const publish = async () => {
-      await changeVisibility.mutateAsync(
-        {
-          name,
-          newVisibility,
-          inEditor,
-          deploymentState,
-        },
-        {
-          onSuccess: () => {
-            isAlreadyPublicTemplate &&
-              queryClient.invalidateQueries(['publicDists'])
-            // The invalidation from the hook does not work for some reason.
-            // TODO:FIX
-          },
-        }
-      )
+      await changeVisibility.mutateAsync({
+        name,
+        newVisibility,
+        inEditor,
+        deploymentState,
+      })
     }
 
     const user = store('user')
@@ -103,6 +93,15 @@ export const PublishAssistantModal = () => {
       return
     }
     if (isInReview && isPublicTemplate) {
+      closeModal()
+      return
+    }
+    if (isAlreadyPublicTemplate) {
+      trigger('PublicToPrivateModal', {
+        bot,
+        action: 'unpublish',
+        newVisibility,
+      })
       closeModal()
       return
     }

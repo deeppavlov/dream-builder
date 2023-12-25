@@ -2,10 +2,12 @@
   position: relative;
   cursor: pointer;
   width: $sidebar-width;
-  @include sidebar_btn_height;
+  // @include sidebar_btn_height;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-top: 1px solid #f0f0f3;
+  padding-top: 10px;
 
   svg {
     cursor: pointer;

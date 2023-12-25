@@ -40,6 +40,7 @@ const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.ACTIVE_ANNOTATOR_SP_ID, null],
   [consts.INTEGRATION_ACTIVE_TAB, defaultIntegrationTab],
   [consts.API_CALL_ACTIVE_TAB, defaultApiCallTab],
+  [consts.WARNING_WINDOW_SP_IS_ACTIVE, false],
 ])
 
 const UIOptionsContext = createContext({})

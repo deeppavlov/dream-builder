@@ -64,7 +64,7 @@ const SkillPromptModal = () => {
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const {setUIOption} = useUIOptions()
+  const { setUIOption } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -168,14 +168,14 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: prompt,
+            prompt: editorContext.code,
             distName: distName || '',
             type: 'skills',
           })
           .then(data => {
             skillChanged(skill, data)
             const name = bot?.name!
-            const newVisibility = VISIBILITY_STATUS.PRIVATE as TDistVisibility
+            const newVisibility = VISIBILITY_STATUS.PRIVATE
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
               deleteDeployment.mutateAsync(bot!).then(() => {
                 bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
@@ -276,6 +276,9 @@ const SkillPromptModal = () => {
     changeSkillModel(lm)
   }
 
+  const isEmpty = editorContext.code.length === 0
+  const isDiff = skill?.prompt === editorContext.code
+
   return (
     <Modal
       isOpen={isOpen}
@@ -286,7 +289,7 @@ const SkillPromptModal = () => {
     >
       <Wrapper>
         <div className={s.container}>
-          <form onSubmit={handleSubmit(onFormSubmit)} className={s.editor}>
+          <form className={s.editor}>
             <div className={s.top}>
               <SkillDropboxSearch
                 label={t('modals.skill_prompt.service_dropbox.label')}
@@ -381,9 +384,13 @@ const SkillPromptModal = () => {
               <Button
                 theme='primary'
                 props={{
-                  type: 'submit',
+                  onClick: () => onFormSubmit(skill),
                   disabled:
-                    updateComponent.isLoading || isSubmitting || !isDirty,
+                    updateComponent.isLoading ||
+                    isSubmitting ||
+                    !isDirty ||
+                    isEmpty ||
+                    isDiff,
                 }}
               >
                 {t('modals.skill_prompt.btns.save')}

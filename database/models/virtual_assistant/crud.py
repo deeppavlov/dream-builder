@@ -55,7 +55,7 @@ def get_virtual_assistant_dist_name(db:Session, parent_assistant_id: int) -> str
 
     return virtual_assistant.name
 
-
+  
 def create(
     db: Session,
     author_id: int,

@@ -19,9 +19,16 @@ export const useDeepyChat = () => {
   const deepyActive = UIOptions[consts.COPILOT_SP_IS_ACTIVE]
   const [deepyHistory, setDeepyHistory] = useState<ChatHistory[]>([])
   const [deepyMessage, setDeepyMessage] = useState<string>('')
+  const sessionName = user ? `deepySession_${user.id}` : 'deepySession'
   const [deepySession, setDeepySession] = useState<SessionConfig>(
-    store('deepySession')
+    store(sessionName) || store('deepySession')
   )
+
+  if (deepySession?.user_id === null && user) {
+    store.remove('deepySession')
+    store(sessionName, { ...deepySession, dummy: false })
+  }
+
   const [isDeepy, setIsDeepy] = useState<boolean>(
     Boolean(deepySession?.id) && deepyActive //FIX!!!
   )
@@ -31,7 +38,7 @@ export const useDeepyChat = () => {
     onMutate: () => {
       setDeepyMessage('')
       setDeepyHistory([])
-      store.remove('deepySession')
+      store.remove(sessionName)
       setDeepySession(null!)
       setIsDeepy(true)
     },
@@ -40,14 +47,14 @@ export const useDeepyChat = () => {
       deepyChatRefresh()
       async function updateDeepyAssistant() {
         setDeepySession(data)
-        store('deepySession', data)
+        store(sessionName, data)
       }
       updateDeepyAssistant().then(() =>
         queryClient.removeQueries('deepyHistory')
       )
     },
     onError: () => {
-      store.remove('deepySession')
+      store.remove(sessionName)
     },
   })
 
@@ -66,8 +73,8 @@ export const useDeepyChat = () => {
       return sendMessage({ ...variables, openai_api_key: openaiApiKey })
     },
     onSuccess: data => {
-      const localSession = store('deepySession', data)
-      store('deepySession', {
+      const localSession = store(sessionName, data)
+      store(sessionName, {
         ...localSession,
         dummy: data.active_skill.name === 'dummy_skill',
       })

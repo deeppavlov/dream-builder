@@ -8,6 +8,7 @@ import SidePanelHeader from './SidePanelHeader/SidePanelHeader'
 import SidePanelName from './SidePanelName/SidePanelName'
 import SkillDialog from './SkillDialog/SkillDialog'
 import SkillSidePanel from './SkillSidePanel/SkillSidePanel'
+import WarningsInfo from './WarningsInfo/WarningsInfo'
 
 export {
   AssistantDialogSidePanel,
@@ -20,4 +21,5 @@ export {
   SidePanelName,
   SkillDialog,
   SkillSidePanel,
+  WarningsInfo,
 }

@@ -41,7 +41,6 @@ def get_by_virtual_assistant_cloned_status(db: Session, component_id: int) -> Op
         return None
 
 
-
 def create(
     db: Session,
     service_id: int,

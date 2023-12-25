@@ -12,6 +12,7 @@
   @include min_max_height;
   @include bot-card_behavior;
   .header {
+    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -51,6 +52,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .box {
+      display: flex;
+      align-items: center;
+    }
 
     .lng {
       height: 100%;

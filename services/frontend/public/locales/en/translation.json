@@ -171,7 +171,7 @@
       }
     },
     "hide_public_assistant": {
-      "header": "Your Assistant will be removed from public templates. Are you sure want to edit?",
+      "header": "Your Assistant will be removed from public templates. Continue?",
       "subheader": "You will have to publish it again to make it a Public Template",
       "btns": {
         "cancel": "Cancel",
@@ -334,6 +334,9 @@
         "send": "Send"
       }
     },
+    "warningsInfo": {
+      "header": "Errors"
+    },
     "assistant_dialog": {
       "tabs": {
         "name": "Chat:"
@@ -345,6 +348,7 @@
         "loading_time_text": "This may take a few minutes.",
         "error": "The Assistant build failed, please try again later."
       },
+
       "message_field": {
         "placeholder": "Type..."
       },
@@ -496,6 +500,9 @@
       "deepy": "Ask Deepy if you need help with building your Assistant"
     }
   },
+  "assistantMenuInfo": {
+    "errors": "Errors"
+  },
   "field_validation": {
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
@@ -559,6 +566,23 @@
     "btns": {
       "retry": "Retry"
     }
+  },
+  "error_message": {
+    "prompt": {
+      "input": "Invalid value",
+      "lengthMin": "Prompt length is only 1 characters",
+      "lengthMax": "The length of the prom exceeds the permissible value.",
+      "language": "Skill does not support language",
+      "languageUndefined": "We were unable to determine the language of your prompt.",
+      "type": "Your invitation does not contain a test. Make sure it's written correctly.",
+      "blocks": "You may be using a block that does not support this prompt:"
+    },
+    "error": "You can't build the assistant with huge errors, please fix them.",
+    "warning": "You have recommendations; perhaps your assistant will not work the way you want."
+  },
+  "toolTip_message": {
+    "error": "Critical errors",
+    "warning": "Recommendations"
   },
   "language": {
     "en": "English",

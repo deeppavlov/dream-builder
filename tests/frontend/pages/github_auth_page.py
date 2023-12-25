@@ -13,5 +13,6 @@ class GithubAuthPage(BasePage):
         email_textarea.send_keys(github_password)
 
     def click_sign_in(self):
+        BasePage.auth_status = "true"
         email_textarea = self.browser.find_element(*GithubAuthPageLocators.SIGN_IN)
         email_textarea.click()

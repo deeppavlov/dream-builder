@@ -48,10 +48,14 @@ def get_all_by_author(db: Session, user_id: int) -> [VirtualAssistant]:
 
 
 def get_virtual_assistant_dist_name(db:Session, parent_assistant_id: int) -> str:
-    return db.execute(
-        select(VirtualAssistant.name).where(VirtualAssistant.id == parent_assistant_id)
-    ).returning(VirtualAssistant.name)
+    virtual_assistant = db.query(VirtualAssistant).filter(VirtualAssistant.id == parent_assistant_id).first()
 
+    if not virtual_assistant:
+        raise ValueError(f"Virtual assistant with id = {parent_assistant_id} does not exist")
+
+    return virtual_assistant.name
+
+  
 def create(
     db: Session,
     author_id: int,

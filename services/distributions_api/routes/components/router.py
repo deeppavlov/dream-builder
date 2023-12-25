@@ -49,7 +49,7 @@ async def get_component(
     component: schemas.ComponentRead = Depends(get_component), db: Session = Depends(get_db)
 ) -> schemas.ComponentRead:
     cloned_from_id = get_by_virtual_assistant_cloned_status(db, component.id)
-    if cloned_from_id and type(cloned_from_id[0]) == int:
+    if cloned_from_id:
         setattr(component, "cloned_from_id", cloned_from_id)
         setattr(component, "skill_created_type", "default")
     return component

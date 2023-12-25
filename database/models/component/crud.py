@@ -31,16 +31,14 @@ def get_by_group_name(db: Session, group: str, component_type: str = None, autho
 def get_by_virtual_assistant_cloned_status(db: Session, component_id: int) -> Optional[Component]:
     try:
         virtual_assistant_component = db.scalars(
-            select(
-                VirtualAssistant.cloned_from_id
-            ).join(
-                VirtualAssistantComponent,VirtualAssistantComponent.component_id==Component.id,
-                VirtualAssistant, VirtualAssistantComponent.virtual_assistant_id==VirtualAssistant.id)
-            .filter_by(id==component_id)).first()
+                select(VirtualAssistant.cloned_from_id)
+                .join(VirtualAssistantComponent, VirtualAssistantComponent.virtual_assistant_id == VirtualAssistant.id)
+                .join(Component, VirtualAssistantComponent.component_id == Component.id)
+                .filter(Component.id == component_id)
+            )
         return virtual_assistant_component
     except NoResultFound:
         return None
-
 
 
 def create(

@@ -108,7 +108,10 @@ def create_component(
                 case ComponentType.google_api:
                     return create_google_api_component(db, user, new_component)
                 case _:
-                    lm_service = original_component.lm_service
+                    if original_component.lm_service:
+                        lm_service = original_component.lm_service
+                    else:
+                        lm_service = lm_service_crud.get_lm_service(db, 4)
                     prompt = original_component.prompt
                     prompt_goals = original_component.prompt_goals
         else:

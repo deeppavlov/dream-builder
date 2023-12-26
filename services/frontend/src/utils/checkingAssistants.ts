@@ -16,8 +16,8 @@ const arrInitPromptBlock = [
       /YOUR PERSONALITY: [Yy]our name is (?:\b\w+\b|\[.*?\]|[А-я_]+). [Yy]our interests are: (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
   },
   {
-    'TASK: \nour task is to do [YOUR INPUT].':
-      /TASK: our task is to do (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+    'TASK: \nYour task is to do [YOUR INPUT].':
+      /TASK: [Yy]our task is to do (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
   },
   {
     'Use [YOUR INPUT] voice and tone.':
@@ -174,7 +174,7 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
   if (arrIsinvalidBlocks.length !== 0) {
     const message = `${i18n.t(
       'error_message.prompt.blocks'
-    )} \n${arrIsinvalidBlocks.join(',\n ')}`
+    )} \n● ${arrIsinvalidBlocks.join(',\n ● ')}`
 
     acc.warnings = [...acc.warnings, message]
   }

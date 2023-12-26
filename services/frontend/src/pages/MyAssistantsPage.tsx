@@ -2,6 +2,7 @@ import { useAuth, useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -39,7 +40,7 @@ export const MyAssistantsPage = () => {
             <>
               {isTableView ? (
                 <Table
-                  assistants
+                  headers={getAssistantTableHeaders()}
                   addButton={
                     <AddButton forTable fromScratch disabled={!auth?.user} />
                   }

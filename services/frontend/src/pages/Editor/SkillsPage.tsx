@@ -70,6 +70,7 @@ const SkillsPage = () => {
               t('skill_table.name'),
               t('skill_table.type'),
               t('skill_table.desc'),
+              t('skill_table.error'),
               t('skill_table.created'),
               t('skill_table.actions'),
             ]}

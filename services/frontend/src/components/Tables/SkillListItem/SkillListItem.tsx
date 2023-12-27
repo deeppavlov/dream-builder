@@ -16,7 +16,7 @@ import { timeToUTC } from 'utils/timeToUTC'
 import triggerSkillSidePanel from 'utils/triggerSkillSidePanel'
 import { Button, Kebab } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
-import { SkillCardToolTip } from 'components/Menus'
+import { SkillCardToolTip, StatusToolTip } from 'components/Menus'
 import s from './SkillListItem.module.scss'
 
 interface SkillListItemProps {
@@ -143,6 +143,13 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           /> */}
         </div>
       </td>
+
+      <td className={s.td}>
+        <div className={s.listError}>
+          <StatusToolTip name='skill' skill={skill} />
+        </div>
+      </td>
+
       {!withoutDate && (
         <td className={s.td}>
           <div className={s.date}>

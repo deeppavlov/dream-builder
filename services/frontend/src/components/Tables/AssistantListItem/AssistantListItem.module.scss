@@ -29,6 +29,7 @@
     text-align: start;
     background: #fff;
     padding: 0px 12px;
+
     .fillIcon {
       fill: $text2;
       @include icon_size_24;
@@ -36,6 +37,12 @@
     .strokeIcon {
       stroke: $text2;
       @include icon_size_24;
+    }
+
+    .listError > div:first-child {
+      padding-left: 0px;
+      justify-content: center;
+      
     }
   }
   .checkboxArea {

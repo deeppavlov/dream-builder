@@ -50,6 +50,16 @@ export const HomePage = () => {
     t('assistant_table.actions'),
   ]
 
+  const tableHeadersPriva = [
+    t('assistant_table.name'),
+    t('assistant_table.author'),
+    t('assistant_table.desc'),
+    t('assistant_table.error'),
+    t('assistant_table.visibility'),
+    t('assistant_table.language'),
+    t('assistant_table.actions'),
+  ]
+
   return (
     <>
       <Main sidebar>
@@ -110,7 +120,7 @@ export const HomePage = () => {
           {isTableView ? (
             <>
               <Table
-                headers={tableHeaders}
+                headers={tableHeadersPriva}
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>

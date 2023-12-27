@@ -36,7 +36,9 @@ def get_by_virtual_assistant_cloned_status(db: Session, component_id: int) -> Op
             .join(Component, VirtualAssistantComponent.component_id == Component.id)
             .filter(Component.id == component_id)
         ).scalar()
+  
         return virtual_assistant_component
+
     except NoResultFound:
         return None
 

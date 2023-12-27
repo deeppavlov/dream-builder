@@ -13,6 +13,7 @@ import {
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 
 export const MyAssistantsPage = () => {
   const { t } = useTranslation('translation', {
@@ -23,6 +24,8 @@ export const MyAssistantsPage = () => {
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
   const { fetchPrivateDists } = useAssistants()
   const privateDists = fetchPrivateDists()
+
+  const tableHeaders = getAssistantTableHeaders('private')
 
   return (
     <>
@@ -39,7 +42,7 @@ export const MyAssistantsPage = () => {
             <>
               {isTableView ? (
                 <Table
-                  assistants
+                  headers={tableHeaders}
                   addButton={
                     <AddButton forTable fromScratch disabled={!auth?.user} />
                   }

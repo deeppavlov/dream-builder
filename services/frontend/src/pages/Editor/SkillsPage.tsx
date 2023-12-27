@@ -6,6 +6,7 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants, useComponent } from 'hooks/api'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton, SwitchViewButton } from 'components/Buttons'
 import { SkillList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -70,6 +71,7 @@ const SkillsPage = () => {
               t('skill_table.name'),
               t('skill_table.type'),
               t('skill_table.desc'),
+              t('skill_table.error'),
               t('skill_table.created'),
               t('skill_table.actions'),
             ]}

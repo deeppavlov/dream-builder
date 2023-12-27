@@ -15,12 +15,12 @@ import {
   VISIBILITY_STATUS,
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
-import { useAssistants } from 'hooks/api'
+import { useAssistants, useComponent } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { Button, Kebab } from 'components/Buttons'
-import { AssistantContextMenu } from 'components/Menus'
+import { AssistantContextMenu, StatusToolTip } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { SmallTag } from 'components/UI'
@@ -32,11 +32,37 @@ interface AssistantListItemProps {
   disabled?: boolean
 }
 
+const RenderStatusToolTip = ({
+  type,
+  bot,
+  getAllComponents,
+}: {
+  type: string
+  bot: BotInfoInterface
+  getAllComponents: Function
+}) => {
+  const components = getAllComponents(bot.name || '', {
+    refetchOnMount: true,
+  })
+
+  if (components.data && components.data.skills) {
+    return (
+      <StatusToolTip
+        name='assistant'
+        skills={components.data.skills}
+        bot={bot}
+      />
+    )
+  }
+  return null
+}
+
 export const AssistantListItem: FC<AssistantListItemProps> = ({
   type,
   bot,
   disabled,
 }) => {
+  const { getAllComponents } = useComponent()
   const cx = classNames.bind(s)
   const navigate = useNavigate()
   const { refetchDist } = useAssistants()
@@ -177,6 +203,19 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
           {bot?.description}
         </div>
       </td>
+
+      {type === 'your' ? (
+        <td className={s.td}>
+          <div className={s.listError}>
+            <RenderStatusToolTip
+              getAllComponents={getAllComponents}
+              type={type}
+              bot={bot}
+            />
+          </div>
+        </td>
+      ) : null}
+
       <td className={s.td}>
         <div className={s.visibility}>
           {

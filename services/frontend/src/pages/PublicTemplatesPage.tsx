@@ -2,6 +2,7 @@ import { useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
 import { AssistantModal, SignInModal } from 'components/Modals'
@@ -17,6 +18,8 @@ export const PublicTemplatesPage = () => {
   const { UIOptions } = useUIOptions()
   const isTableView = UIOptions[consts.IS_TABLE_VIEW]
 
+  const tableHeaders = getAssistantTableHeaders('public')
+
   return (
     <>
       <Main sidebar fullWidth>
@@ -26,7 +29,9 @@ export const PublicTemplatesPage = () => {
           ) : (
             <>
               {isTableView ? (
-                <Table assistants>
+                <Table
+                headers={tableHeaders}
+                >
                   {publicDists?.isLoading && (
                     <TableRowsLoader rowsCount={6} colCount={6} />
                   )}

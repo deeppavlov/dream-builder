@@ -50,7 +50,7 @@ export const HomePage = () => {
     t('assistant_table.actions'),
   ]
 
-  const tableHeadersPriva = [
+  const tableHeadersPrivat = [
     t('assistant_table.name'),
     t('assistant_table.author'),
     t('assistant_table.desc'),
@@ -120,7 +120,7 @@ export const HomePage = () => {
           {isTableView ? (
             <>
               <Table
-                headers={tableHeadersPriva}
+                headers={tableHeadersPrivat}
                 addButton={
                   privateDists?.data?.length === 0 || !auth?.user ? (
                     <Placeholder type='table'>

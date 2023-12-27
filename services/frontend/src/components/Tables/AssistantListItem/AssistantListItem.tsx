@@ -41,20 +41,18 @@ const RenderStatusToolTip = ({
   bot: BotInfoInterface
   getAllComponents: Function
 }) => {
-  if (type === 'your') {
-    const components = getAllComponents(bot.name || '', {
-      refetchOnMount: true,
-    })
+  const components = getAllComponents(bot.name || '', {
+    refetchOnMount: true,
+  })
 
-    if (components.data && components.data.skills) {
-      return (
-        <StatusToolTip
-          name='assistant'
-          skills={components.data.skills}
-          bot={bot}
-        />
-      )
-    }
+  if (components.data && components.data.skills) {
+    return (
+      <StatusToolTip
+        name='assistant'
+        skills={components.data.skills}
+        bot={bot}
+      />
+    )
   }
   return null
 }
@@ -206,15 +204,17 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
 
-      <td className={s.td}>
-        <div className={s.listError}>
-          <RenderStatusToolTip
-            getAllComponents={getAllComponents}
-            type={type}
-            bot={bot}
-          />
-        </div>
-      </td>
+      {type === 'your' ? (
+        <td className={s.td}>
+          <div className={s.listError}>
+            <RenderStatusToolTip
+              getAllComponents={getAllComponents}
+              type={type}
+              bot={bot}
+            />
+          </div>
+        </td>
+      ) : null}
 
       <td className={s.td}>
         <div className={s.visibility}>

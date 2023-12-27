@@ -5,6 +5,7 @@ import { RoutesList } from 'router/RoutesList'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -41,24 +42,9 @@ export const HomePage = () => {
     vaPageOpen()
   }, [auth?.user])
 
-  const tableHeaders = [
-    t('assistant_table.name'),
-    t('assistant_table.author'),
-    t('assistant_table.desc'),
-    t('assistant_table.visibility'),
-    t('assistant_table.language'),
-    t('assistant_table.actions'),
-  ]
+  const tableHeaders = getAssistantTableHeaders('public')
 
-  const tableHeadersPrivat = [
-    t('assistant_table.name'),
-    t('assistant_table.author'),
-    t('assistant_table.desc'),
-    t('assistant_table.error'),
-    t('assistant_table.visibility'),
-    t('assistant_table.language'),
-    t('assistant_table.actions'),
-  ]
+  const tableHeadersPrivat = getAssistantTableHeaders('private')
 
   return (
     <>

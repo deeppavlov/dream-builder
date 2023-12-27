@@ -18,6 +18,7 @@ import {
   Table,
   Wrapper,
 } from 'components/UI'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 
 const SkillsPage = () => {
   const auth = useAuth()
@@ -39,6 +40,8 @@ const SkillsPage = () => {
 
   // const handleReadFirst = () =>
   //   trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })
+
+  const tableHeadersPrivate = getAssistantTableHeaders('private')
 
   return (
     <Main sidebar column>
@@ -66,14 +69,7 @@ const SkillsPage = () => {
         {components?.error && <ErrorHandler error={components?.error} />}
         {!components?.error && isTableView && (
           <Table
-            headers={[
-              t('skill_table.name'),
-              t('skill_table.type'),
-              t('skill_table.desc'),
-              t('skill_table.error'),
-              t('skill_table.created'),
-              t('skill_table.actions'),
-            ]}
+            headers={tableHeadersPrivate}
             addButton={
               !isPreview ? (
                 <AddButton

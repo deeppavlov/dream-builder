@@ -144,7 +144,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
         </div>
       </td>
 
-      {!forModal && (
+      {type === 'your' && (
         <td className={s.td}>
           <div className={s.listError}>
             <StatusToolTip name='skill' skill={skill} />

@@ -53,23 +53,25 @@ const WarningsInfo = () => {
 
   const userQueries = getAllComponentsArr(initState)
 
-  const data = userQueries?.map(el => {
-    if (el.isSuccess) {
-      const request = el.data
+  const data = userQueries
+    ?.map(el => {
+      if (el.isSuccess) {
+        const request = el.data
 
-      const result = request?.skills
-        ?.filter((el: ISkill) => el.name !== 'dummy_skill')
-        .map((el: ISkill) => {
-          const resultExamination = examination(el)
-          return { name: el.display_name, data: resultExamination, skill: el }
-        })
+        const result = request?.skills
+          ?.filter((el: ISkill) => el.name !== 'dummy_skill')
+          .map((el: ISkill) => {
+            const resultExamination = examination(el)
+            return { name: el.display_name, data: resultExamination, skill: el }
+          })
 
-      const bot = initState.filter(
-        (el: BotInfoInterface) => el.name === request.distName
-      )[0]
-      return { name: bot.display_name, skill: result, bot: bot }
-    }
-  }) as ICustomAssistant[]
+        const bot = initState.filter(
+          (el: BotInfoInterface) => el.name === request.distName
+        )[0]
+        return { name: bot.display_name, skills: result, bot: bot }
+      }
+    })
+    .filter(Boolean) as ICustomAssistant[]
 
   const renderMessage = (
     key: 'errors' | 'warnings',
@@ -156,10 +158,10 @@ const WarningsInfo = () => {
     i: number,
     target?: boolean
   ) => {
-    if (!assistant.skill) {
+    if (!assistant.skills) {
       return null
     }
-    const countAllError = assistant.skill.reduce((acc, el: ICustomSkill) => {
+    const countAllError = assistant.skills.reduce((acc, el: ICustomSkill) => {
       const errorCount = el?.data.errors.length
       const warningWarning = el?.data.warnings.length
       return acc + errorCount + warningWarning
@@ -201,7 +203,7 @@ const WarningsInfo = () => {
           {assistant.name}
         </div>
         <div className={s.assistantSkills}>
-          {assistant.skill.map((e, index: number) =>
+          {assistant.skills.map((e, index: number) =>
             renderSkillAssistant(e, assistant.bot, index)
           )}
         </div>

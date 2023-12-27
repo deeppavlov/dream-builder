@@ -8,12 +8,7 @@ import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import {
-  IPromptBlock,
-  ISkill,
-  LM_Service,
-  LanguageModel,
-} from 'types/types'
+import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
 import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
@@ -239,7 +234,7 @@ const SkillPromptModal = () => {
             display_name: skill?.lm_service?.display_name,
             disabled: false,
           },
-          prompt: skill?.prompt,
+          prompt: skill?.prompt || '',
         },
         { keepDirty: false }
       )
@@ -325,31 +320,26 @@ const SkillPromptModal = () => {
                   />
                 </div>
               )}
-              {skill?.prompt && (
-                <PromptEditor
-                  editorContext={editorContext}
-                  setEditorContext={setEditorContext}
-                  label={t('modals.skill_prompt.prompt_field.label')}
-                  name='prompt'
-                  placeholder={t(
-                    'modals.skill_prompt.prompt_field.placeholder'
-                  )}
-                  defaultValue={skill?.prompt}
-                  tokenizerModel={selectedModel?.name as LanguageModel}
-                  resizable={false}
-                  control={control}
-                  rules={{
-                    required: validationSchema.globals.required,
-                    maxLength:
-                      selectedModel?.max_tokens &&
-                      validationSchema.skill.prompt.maxLength(
-                        selectedModel?.max_tokens
-                      ),
-                  }}
-                  triggerField={triggerField}
-                />
-              )}
-
+              <PromptEditor
+                editorContext={editorContext}
+                setEditorContext={setEditorContext}
+                label={t('modals.skill_prompt.prompt_field.label')}
+                name='prompt'
+                placeholder={t('modals.skill_prompt.prompt_field.placeholder')}
+                defaultValue={skill?.prompt}
+                tokenizerModel={selectedModel?.name as LanguageModel}
+                resizable={false}
+                control={control}
+                rules={{
+                  required: validationSchema.globals.required,
+                  maxLength:
+                    selectedModel?.max_tokens &&
+                    validationSchema.skill.prompt.maxLength(
+                      selectedModel?.max_tokens
+                    ),
+                }}
+                triggerField={triggerField}
+              />
               {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'

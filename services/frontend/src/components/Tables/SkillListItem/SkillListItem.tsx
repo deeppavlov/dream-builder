@@ -144,11 +144,13 @@ export const SkillListItem: FC<SkillListItemProps> = ({
         </div>
       </td>
 
-      <td className={s.td}>
-        <div className={s.listError}>
-          <StatusToolTip name='skill' skill={skill} />
-        </div>
-      </td>
+      {!forModal && (
+        <td className={s.td}>
+          <div className={s.listError}>
+            <StatusToolTip name='skill' skill={skill} />
+          </div>
+        </td>
+      )}
 
       {!withoutDate && (
         <td className={s.td}>

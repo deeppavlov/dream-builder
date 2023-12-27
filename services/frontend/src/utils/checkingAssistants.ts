@@ -74,7 +74,7 @@ const arrInitPromptBlock = [
 ]
 
 const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
+  if (!skill.prompt) {
     return
   }
 
@@ -102,7 +102,7 @@ const lengthMinPrompt = (skill: ISkill, acc: ICollectionError) => {
 }
 
 const typePrompt = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined || skill.prompt === null) {
+  if (!skill.prompt) {
     return
   }
 
@@ -122,7 +122,7 @@ const typePrompt = (skill: ISkill, acc: ICollectionError) => {
 }
 
 const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
-  if (skill.prompt === undefined) {
+  if (!skill.prompt) {
     return
   }
 
@@ -149,8 +149,9 @@ const languagePrompt = (skill: ISkill, acc: ICollectionError) => {
 }
 
 const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
-  const promtText =
-    skill.prompt === undefined ? '' : skill.prompt.replace(/\s+/g, ' ').trim()
+  const promptText = !skill.prompt
+    ? ''
+    : skill.prompt.replace(/\s+/g, ' ').trim()
 
   const promptBlocks = skill.lm_service?.prompt_blocks?.map(el => el.template)
 
@@ -162,9 +163,9 @@ const promptBlocks = (skill: ISkill, acc: ICollectionError) => {
     const key = Object.keys(el)[0]
     const reg = el[key]
 
-    const arrString = promtText.match(reg)
+    const arrString = promptText?.match(reg)
 
-    if (arrString === null) {
+    if (!arrString) {
       return acc
     }
 

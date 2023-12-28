@@ -2,7 +2,7 @@ import { RouteObject } from 'react-router-dom'
 
 export interface ICustomAssistant {
   name: string
-  skill: ICustomSkill[]
+  skills: ICustomSkill[]
   bot: BotInfoInterface
 }
 export interface ICounter {

@@ -30,6 +30,14 @@
     svg {
       @include icon_size_24;
     }
+
+    .listError > div:first-child {
+      padding-left: 0px;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
   }
   .checkboxArea {
     background: #fff;

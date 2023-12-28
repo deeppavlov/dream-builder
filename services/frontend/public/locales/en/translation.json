@@ -583,8 +583,8 @@
     "warning": "You have recommendations; perhaps your assistant will not work the way you want."
   },
   "toolTip_message": {
-    "error": "Critical errors",
-    "warning": "Recommendations"
+    "error": "Critical errors:",
+    "warning": "Recommendations:"
   },
   "language": {
     "en": "English",

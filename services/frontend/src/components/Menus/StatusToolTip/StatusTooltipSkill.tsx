@@ -33,13 +33,13 @@ const StatusTooltipSkill = ({
         <Error
           data-tooltip-id={`tooltip_error${id}${key}`}
           data-tooltip-variant={'error'}
-          data-tooltip-place='right'
+          data-tooltip-place='top'
         ></Error>
       ) : (
         <Warning
           data-tooltip-id={`tooltip_error${id}${key}`}
           data-tooltip-variant={'warning'}
-          data-tooltip-place='right'
+          data-tooltip-place='top'
         ></Warning>
       )
 
@@ -49,7 +49,7 @@ const StatusTooltipSkill = ({
         <div className={style.messageCountError}>{data[key].length}</div>
         <Tooltip
           id={`tooltip_error${id}${key}`}
-          style={{ zIndex: 1, opacity: 1, width: 'auto', height: 'auto' }}
+          style={{ zIndex: 99, opacity: 1, width: '65%', height: 'auto' }}
         >
           <div>
             <h3>{key === 'errors' ? t('error') : t('warning')}</h3>

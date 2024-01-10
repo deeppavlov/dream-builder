@@ -335,7 +335,8 @@
       }
     },
     "warningsInfo": {
-      "header": "Ошибки"
+      "header": "Ошибки",
+      "no_error": "Выбранная модель не содержит ошибки"
     },
     "assistant_dialog": {
       "tabs": {

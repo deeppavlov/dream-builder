@@ -335,7 +335,8 @@
       }
     },
     "warningsInfo": {
-      "header": "Errors"
+      "header": "Errors",
+      "no_error": "The selected model does not contain any errors"
     },
     "assistant_dialog": {
       "tabs": {

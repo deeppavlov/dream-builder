@@ -1,48 +1,25 @@
 //  import { autocompletion } from '@codemirror/autocomplete'
-import CodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
-import { IEditorContext } from 'types/types'
+import CodeMirror, {
+  EditorView,
+  ReactCodeMirrorRef,
+} from '@uiw/react-codemirror'
 import { inputDecoration, titleDecoration } from './editorPlugins'
 
 interface IProps {
   placeholder?: string
   onChange?: (value: string) => void
   onBlur?: () => void
-  editorContext: IEditorContext
-  setEditorContext: Dispatch<SetStateAction<IEditorContext>>
+  value: string
+  codeEditorRef: ReactCodeMirrorRef | any
 }
 
 export const TextEditor = ({
-  editorContext,
-  setEditorContext,
   onChange,
   onBlur,
   placeholder,
+  value,
+  codeEditorRef,
 }: IProps) => {
-  const ref = useRef<any>(null)
-
-  useEffect(() => {
-    if (editorContext.skill === '') {
-      return
-    }
-    setTimeout(() => {
-      const state = ref.current.view.viewState.state
-      const range = state.selection.ranges[0]
-
-      ref.current.view.dispatch({
-        changes: {
-          from: range.from,
-          to: range.to,
-          insert: editorContext.skill,
-        },
-      })
-
-      const newEditorContextCode = ref.current.view.state.doc.text.join('\n')
-
-      setEditorContext({ skill: '', code: newEditorContextCode })
-    }, 200)
-  }, [editorContext.skill])
-
   const myTheme = EditorView.theme({
     '.cm-activeLine': {
       backgroundColor: 'transparent',
@@ -74,9 +51,9 @@ export const TextEditor = ({
 
   return (
     <CodeMirror
-      ref={ref}
+      ref={codeEditorRef}
       onBlur={onBlur}
-      value={editorContext.code}
+      value={value}
       theme={myTheme}
       placeholder={placeholder}
       basicSetup={{
@@ -91,7 +68,6 @@ export const TextEditor = ({
         EditorView.lineWrapping,
       ]}
       onChange={(value: string) => {
-        setEditorContext({ ...editorContext, code: value })
         if (onChange) {
           onChange(value)
         }

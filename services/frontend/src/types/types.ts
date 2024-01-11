@@ -464,7 +464,3 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
-export interface IEditorContext {
-  code: string
-  skill: string
-}

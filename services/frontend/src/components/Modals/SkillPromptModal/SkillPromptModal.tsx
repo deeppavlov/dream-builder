@@ -1,3 +1,4 @@
+import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
 import { createRef, useEffect, useRef, useState } from 'react'
@@ -9,7 +10,6 @@ import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
-import { IEditorContext } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { serviceCompanyMap } from 'mapping/serviceCompanyMap'
 import { toasts } from 'mapping/toasts'
@@ -69,6 +69,7 @@ const SkillPromptModal = () => {
   const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
+  const codeEditorRef = useRef<ReactCodeMirrorRef | any>({})
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
   const {
@@ -80,10 +81,7 @@ const SkillPromptModal = () => {
   } = useGaSkills()
   const { vaChangeDeployState } = useGaAssistant()
 
-  const [editorContext, setEditorContext] = useState<IEditorContext>({
-    code: '',
-    skill: '',
-  })
+  const [editorContext, setEditorContext] = useState('')
 
   useEffect(() => {
     return () => skillEditorClosed()
@@ -161,7 +159,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: editorContext.code,
+            prompt: editorContext,
             distName: distName || '',
             type: 'skills',
           })
@@ -199,7 +197,21 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-    setEditorContext({ ...editorContext, skill: formattedBlock })
+
+    const state = codeEditorRef.current.view?.viewState.state
+    const range = state.selection.ranges[0]
+
+    codeEditorRef.current.view.dispatch({
+      changes: {
+        from: range.from,
+        to: range.to,
+        insert: formattedBlock,
+      },
+    })
+
+    const newEditorContextCode =
+      codeEditorRef.current.view.state.doc.text.join('\n')
+    setEditorContext(newEditorContextCode)
   }
 
   const handleAssistantDelete = () => setPreventExit(false)
@@ -269,7 +281,7 @@ const SkillPromptModal = () => {
     changeSkillModel(lm)
   }
 
-  const isEmpty = editorContext.code.length === 0
+  const isEmpty = editorContext.length === 0
 
   return (
     <Modal
@@ -321,7 +333,7 @@ const SkillPromptModal = () => {
                 </div>
               )}
               <PromptEditor
-                editorContext={editorContext}
+                codeEditorRef={codeEditorRef}
                 setEditorContext={setEditorContext}
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'

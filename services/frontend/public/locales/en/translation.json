@@ -335,7 +335,8 @@
       }
     },
     "warningsInfo": {
-      "header": "Errors"
+      "header": "Errors",
+      "no_error": "The selected model does not contain any errors"
     },
     "assistant_dialog": {
       "tabs": {
@@ -583,8 +584,8 @@
     "warning": "You have recommendations; perhaps your assistant will not work the way you want."
   },
   "toolTip_message": {
-    "error": "Critical errors",
-    "warning": "Recommendations"
+    "error": "Critical errors:",
+    "warning": "Recommendations:"
   },
   "language": {
     "en": "English",

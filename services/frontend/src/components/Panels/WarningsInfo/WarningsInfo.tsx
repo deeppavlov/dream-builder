@@ -189,7 +189,7 @@ const WarningsInfo = () => {
           >
             {assistant.name}
           </div>
-          <div className={s.noWarning}>Скилл не имеет ошибок</div>
+          <div className={s.noWarning}>{t('no_error')}</div>
         </div>
       )
     }

@@ -1,3 +1,4 @@
+import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
@@ -9,7 +10,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as TextAreaLogo } from 'assets/icons/textarea.svg'
-import { IEditorContext, LanguageModel } from 'types/types'
+import { LanguageModel } from 'types/types'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 import getTokensLength from 'utils/getTokensLength'
 import { TextEditor } from '../TextEditor/TextEditor'
@@ -26,8 +27,8 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
-  editorContext: IEditorContext
-  setEditorContext: Dispatch<SetStateAction<IEditorContext>>
+  setEditorContext: Dispatch<SetStateAction<string>>
+  codeEditorRef: ReactCodeMirrorRef | any
 }
 
 interface IValidateTokens {
@@ -68,7 +69,6 @@ const validateTokens = AwesomeDebouncePromise(
 )
 
 export const PromptEditor = ({
-  editorContext,
   setEditorContext,
   label,
   about,
@@ -80,6 +80,7 @@ export const PromptEditor = ({
   name,
   rules,
   triggerField,
+  codeEditorRef,
 }: IProps) => {
   const {
     field,
@@ -126,6 +127,7 @@ export const PromptEditor = ({
 
   const handleTextEditorChange = (value: string) => {
     skillPromptEdited()
+    setEditorContext(value)
     field.onChange(value)
   }
 
@@ -138,13 +140,8 @@ export const PromptEditor = ({
     if (isEmpty) {
       setLength(0)
       setIsCounting(false)
-      setEditorContext({ ...editorContext, code: field.value })
     }
   }, [field.value])
-
-  useEffect(() => {
-    setEditorContext({ ...editorContext, code: field.value })
-  }, [])
 
   useEffect(() => {
     const isValue = field.value?.length > 0
@@ -190,8 +187,8 @@ export const PromptEditor = ({
         {resizable && <TextAreaLogo className={s.resizer} />}
         <div className={s.field}>
           <TextEditor
-            editorContext={editorContext}
-            setEditorContext={setEditorContext}
+            codeEditorRef={codeEditorRef}
+            value={field.value}
             placeholder={placeholder}
             onChange={handleTextEditorChange}
             onBlur={handleTextEditorBlur}

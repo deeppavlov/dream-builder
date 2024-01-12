@@ -197,21 +197,22 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-
     const state = codeEditorRef.current.view?.viewState.state
     const range = state.selection.ranges[0]
-
     codeEditorRef.current.view.dispatch({
       changes: {
         from: range.from,
         to: range.to,
         insert: formattedBlock,
       },
+      selection: {
+        anchor: range.to + formattedBlock.length,
+      },
     })
-
     const newEditorContextCode =
       codeEditorRef.current.view.state.doc.text.join('\n')
     setEditorContext(newEditorContextCode)
+    codeEditorRef.current.view.focus()
   }
 
   const handleAssistantDelete = () => setPreventExit(false)

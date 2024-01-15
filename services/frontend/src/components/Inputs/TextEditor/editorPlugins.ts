@@ -1,6 +1,13 @@
 import { CompletionContext } from '@codemirror/autocomplete'
-import { Decoration, EditorView, MatchDecorator, ViewPlugin, ViewUpdate, WidgetType } from '@uiw/react-codemirror'
-
+import {
+  Decoration,
+  EditorView,
+  MatchDecorator,
+  ViewPlugin,
+  ViewUpdate,
+  WidgetType,
+  hoverTooltip,
+} from '@uiw/react-codemirror'
 
 export const inputDecoration = ViewPlugin.fromClass(
   class {
@@ -111,3 +118,26 @@ export const myAutocomplete = (context: CompletionContext) => {
   }
   //autocompletion({ override: [myAutocomplete] }),
 }
+
+export const wordHover = hoverTooltip((view, pos, side) => {
+  let { from, to, text } = view.state.doc.lineAt(pos)
+  let start = pos,
+    end = pos
+  while (start > from && /\w/.test(text[start - from - 1])) start--
+  while (end < to && /\w/.test(text[end - from])) end++
+  const word =
+    start - from === end - from ? text.slice(start - from, end - from + 12) : ''
+  if (word !== '[YOUR INPUT]') {
+    return null
+  }
+  return {
+    pos: start,
+    end,
+    above: true,
+    create() {
+      let dom = document.createElement('div')
+      dom.textContent = 'вместо [YOUR INPUT] укажите свое значение'
+      return { dom }
+    },
+  }
+})

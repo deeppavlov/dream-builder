@@ -94,7 +94,6 @@ def create_virtual_assistant(
             cloned_from_id = None
             if group == "skills" and "_prompted_skill" in name and cloned_skills_ids:
                 cloned_from_id = cloned_skills_ids.pop(0)
-                print("Cloned from id with assist clone ", cloned_from_id)
 
             if dream_component.lm_service:
                 lm_service_id = lm_service_crud.get_lm_service_by_name(

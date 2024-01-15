@@ -18,6 +18,7 @@ from database.models.virtual_assistant.crud import get_by_name, create, update_m
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
+from services.distributions_api.routes.components.schemas import ComponentCreationStatus
 
 dream_git = GitManager(
     settings.git.local_path,
@@ -53,6 +54,10 @@ def create_virtual_assistant(
         original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(
             db, template_virtual_assistant.id, "_prompted_skill"
         )
+
+        cloned_skills_ids = []
+        if original_prompted_skills:
+            cloned_skills_ids = [skill.component_id for skill in original_prompted_skills]
         existing_prompted_skills = []
 
         for skill in original_prompted_skills:
@@ -85,7 +90,11 @@ def create_virtual_assistant(
         for group, name, dream_component in new_dist.pipeline.iter_components():
             service = service_crud.get_or_create(
                 db, dream_component.service.service.name, str(dream_component.service.config_dir)
-            )
+        )
+            cloned_from_id = None
+            if group == "skills" and "_prompted_skill" in name and cloned_skills_ids:
+                cloned_from_id = cloned_skills_ids.pop(0)
+                print("Cloned from id with assist clone ", cloned_from_id)
 
             if dream_component.lm_service:
                 lm_service_id = lm_service_crud.get_lm_service_by_name(
@@ -113,6 +122,8 @@ def create_virtual_assistant(
                 prompt_goals=dream_component.prompt_goals,
                 lm_service_id=lm_service_id,
                 lm_config=dream_component.lm_config,
+                creation_type=ComponentCreationStatus.ASSISTANT_CLONE,
+                cloned_from_id=cloned_from_id,
             )
             new_components.append(component)
 

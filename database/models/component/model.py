@@ -4,6 +4,7 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
+    Enum,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.event import listens_for
@@ -46,6 +47,12 @@ class Component(Base):
     lm_service_id = Column(Integer, ForeignKey("lm_service.id"), nullable=True)
     lm_service = relationship("LmService", uselist=False, foreign_keys="Component.lm_service_id")
     lm_config = Column(mutable.MutableDict.as_mutable(JSONB), nullable=True)
+
+    creation_type = Column(
+        Enum("new", "assistant_clone", "component_clone", name="creation_status_enum"),
+        nullable=True, default="new"
+    )
+    cloned_from_id = Column(Integer, nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

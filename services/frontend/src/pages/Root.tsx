@@ -6,6 +6,7 @@ import {
   ProfileSettings,
   PublishAssistantWizard,
 } from 'components/Modals'
+import { Feedback } from 'components/Modals/Feedback/Feedback'
 import { BaseSidePanel } from 'components/Panels'
 import { Sidebar, Topbar } from 'components/Widgets'
 import {
@@ -17,7 +18,6 @@ import {
 const Root = () => {
   const { name } = useParams()
   const isEditor = Boolean(name)
-
 
   return (
     <>
@@ -36,7 +36,8 @@ const Root = () => {
             }}
           >
             <DeepyHelperTab />
-            <AssistantMenuInfo  />
+            <AssistantMenuInfo />
+            <Feedback />
             <SettingsTab />
           </div>
         </Sidebar>

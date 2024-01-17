@@ -108,8 +108,8 @@ class ComponentRead(BaseOrmModel):
     prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
     lm_config: Optional[dict]
+    creation_type: Optional[str]
     cloned_from_id: Optional[int]
-    skill_created_type: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -237,6 +237,8 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     name: str
     display_name: str
     component_type: Optional[COMPONENT_TYPES]
+    creation_type: Optional[str]
+    cloned_from_id: Optional[int]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
     author: UserRead
@@ -266,6 +268,8 @@ class VirtualAssistantComponentRead(BaseOrmModel):
         obj.gpu_usage = obj.component.gpu_usage
         obj.prompt = obj.component.prompt
         obj.lm_service = obj.component.lm_service
+        obj.creation_type = obj.component.creation_type
+        obj.cloned_from_id = obj.component.cloned_from_id
         obj.date_created = obj.component.date_created
 
         return super().from_orm(obj)

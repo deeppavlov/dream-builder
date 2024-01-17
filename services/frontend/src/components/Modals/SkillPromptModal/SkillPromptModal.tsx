@@ -236,6 +236,10 @@ const SkillPromptModal = () => {
   useEffect(() => {}, [watch(['prompt'])])
 
   useEffect(() => {
+    setEditorContext(skill?.prompt ?? '')
+  }, [skill])
+
+  useEffect(() => {
     const { EDITOR_ACTIVE_SKILL } = consts
 
     if (isOpen)

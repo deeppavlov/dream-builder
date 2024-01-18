@@ -110,6 +110,7 @@ class ComponentRead(BaseOrmModel):
     lm_config: Optional[dict]
     creation_type: Optional[str]
     cloned_from_id: Optional[int]
+    cloned_from_name: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -239,6 +240,7 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     component_type: Optional[COMPONENT_TYPES]
     creation_type: Optional[str]
     cloned_from_id: Optional[int]
+    cloned_from_name: Optional[str]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
     author: UserRead
@@ -270,6 +272,7 @@ class VirtualAssistantComponentRead(BaseOrmModel):
         obj.lm_service = obj.component.lm_service
         obj.creation_type = obj.component.creation_type
         obj.cloned_from_id = obj.component.cloned_from_id
+        obj.cloned_from_name = obj.component.cloned_from_name
         obj.date_created = obj.component.date_created
 
         return super().from_orm(obj)

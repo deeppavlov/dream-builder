@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 from urllib.parse import urlencode, parse_qs
 
@@ -245,9 +246,10 @@ class GoogleOAuth2(auth_type.OAuth2):
         )
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.URL_TOKENINFO, data=info) as resp:
+            async with session.post(self.URL_UPDATE_TOKEN, data=json.dumps(info)) as resp:
                 response = await resp.json()
                 resp_status = resp.status
+
         if resp_status != 200:
             raise ValueError(f"Google token is bad. Response: {response}, status_code: {resp_status}")
 
@@ -288,4 +290,5 @@ class GoogleOAuth2(auth_type.OAuth2):
     @staticmethod
     def _validate_date(expire_data: datetime):
         if datetime.now() > expire_data:
-            raise ValueError("Token has expired")
+            return False
+        return True

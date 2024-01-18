@@ -141,6 +141,12 @@ export const AssistantModal = () => {
 
   useObserver('AssistantModal', handleEventUpdate)
 
+  const formValidation = (value: string) => {
+    if (value.length === 0 || value.trim() === '') {
+      return t('field_validation.required')
+    }
+  }
+
   useEffect(() => {
     const botLang = bot?.language?.value!
     const botDisplayLang = language()[botLang] as TLang
@@ -212,8 +218,10 @@ export const AssistantModal = () => {
           name={NAME_ID}
           control={control}
           rules={{
-            required: validationSchema.globals.required,
             pattern: validationSchema.globals.regExpPattern,
+            validate: {
+              required: value => formValidation(value),
+            },
           }}
           props={{
             placeholder: t('modals.assistant.name_field.placeholder'),
@@ -226,9 +234,11 @@ export const AssistantModal = () => {
             control={control}
             withCounter
             rules={{
-              required: validationSchema.globals.required,
               maxLength: validationSchema.globals.desc.maxLength(1000),
               pattern: validationSchema.globals.regExpPattern,
+              validate: {
+                required: value => formValidation(value),
+              },
             }}
             props={{
               placeholder: t('modals.assistant.desc_field.placeholder'),

@@ -1,7 +1,7 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Control,
   RegisterOptions,
@@ -27,7 +27,6 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
-  setEditorContext: Dispatch<SetStateAction<string>>
   codeEditorRef: ReactCodeMirrorRef | any
 }
 
@@ -69,7 +68,6 @@ const validateTokens = AwesomeDebouncePromise(
 )
 
 export const PromptEditor = ({
-  setEditorContext,
   label,
   about,
   placeholder,
@@ -127,7 +125,6 @@ export const PromptEditor = ({
 
   const handleTextEditorChange = (value: string) => {
     skillPromptEdited()
-    setEditorContext(value)
     field.onChange(value)
   }
 

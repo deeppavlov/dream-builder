@@ -207,7 +207,6 @@ const SkillPromptModal = () => {
         anchor: range.to + formattedBlock.length,
       },
     })
-    codeEditorRef.current.view.state.doc.text.join('\n')
     codeEditorRef.current.view.focus()
   }
 

@@ -62,7 +62,7 @@ class ImageComparer:
 
 def create_screen_folder_if_not_exists(env, browser_name, window_size):
     str_size = f"{window_size[0]},{window_size[1]}"
-    directory = f"./screen/{env}_screen/{browser_name}/{str_size}"
+    directory = f"./frontend/tests/screen/{env}_screen/{browser_name}/{str_size}"
     if not os.path.exists(directory):
         print("directory successfully created")
         os.makedirs(directory)
@@ -73,23 +73,22 @@ def create_screen_folder_if_not_exists(env, browser_name, window_size):
 def save_screenshot(browser, env, browser_name, window_size, screen_counter, full_screen=True, element=None):
     str_size = f"{window_size[0]},{window_size[1]}"
     if full_screen:
-        browser.save_screenshot(f"./screen/{env}_screen/{browser_name}/{str_size}/{screen_counter()}_{env}.png")
+        browser.save_screenshot(f"./frontend/tests/screen/{env}_screen/{browser_name}/{str_size}/{screen_counter()}_{env}.png")
     else:
         bp = BasePage(browser, browser.current_url)
         png = browser.get_screenshot_as_png()
         im = Image.open(BytesIO(png))
         coordinates = bp.get_coordinates_of_element(element)
         im = im.crop(*coordinates)
-        im.save(f"./screen/{env}_screen/{browser_name}/{str_size}/{screen_counter()}_{env}.png")
+        im.save(f"./frontend/tests/screen/{env}_screen/{browser_name}/{str_size}/{screen_counter()}_{env}.png")
 
 
 def compare_pictures(env, str_size, browser_name):
-    print(f"env = {env}")
     window_size = f"{str_size[0]},{str_size[1]}"
-    create_screen_folder_if_not_exists("compare", browser_name, window_size)
-    stage_dir = f"./screen/{env}_screen/{browser_name}/{window_size}"
-    alpha_dir = f"./screen/alpha_screen/{browser_name}/{window_size}"
-    compare_dir = f"./screen/compare_screen/{browser_name}/{window_size}"
+    create_screen_folder_if_not_exists("compare", browser_name, str_size)
+    stage_dir = f"./frontend/tests/screen/{env}_screen/{browser_name}/{window_size}"
+    alpha_dir = f"./frontend/tests/screen/alpha_screen/{browser_name}/{window_size}"
+    compare_dir = f"./frontend/tests/screen/compare_screen/{browser_name}/{window_size}"
 
     stage_screen_list = os.listdir(stage_dir)
     alpha_screen_list = os.listdir(alpha_dir)

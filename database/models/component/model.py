@@ -53,6 +53,7 @@ class Component(Base):
         nullable=True, default="new"
     )
     cloned_from_id = Column(Integer, nullable=True)
+    cloned_from_name = Column(String, nullable=True)
 
     date_created = Column(DateTime, nullable=False, server_default=DateTimeUtcNow())
 

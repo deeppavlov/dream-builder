@@ -54,10 +54,6 @@ def create_virtual_assistant(
         original_prompted_skills = virtual_assistant_component_crud.get_by_component_name_like(
             db, template_virtual_assistant.id, "_prompted_skill"
         )
-        cloned_skills_ids = []
-        if is_cloned and original_prompted_skills:
-            cloned_skills_ids = [skill.component_id for skill in original_prompted_skills]
-
         existing_prompted_skills = []
 
         for skill in original_prompted_skills:
@@ -91,10 +87,12 @@ def create_virtual_assistant(
             service = service_crud.get_or_create(
                 db, dream_component.service.service.name, str(dream_component.service.config_dir)
         )
-            cloned_from_id = None
+            cloned_from_id = cloned_from_name = None
             creation_type = ComponentCreationStatus.NEW
-            if group == "skills" and "_prompted_skill" in name and cloned_skills_ids:
-                cloned_from_id = cloned_skills_ids.pop(0)
+            if group == "skills" and "_prompted_skill" in name and original_prompted_skills:
+                original_skill = original_prompted_skills.pop(0)
+                cloned_from_id = original_skill.component_id
+                cloned_from_name = original_skill.component.display_name
             if is_cloned:
                 creation_type = ComponentCreationStatus.ASSISTANT_CLONE
             if dream_component.lm_service:
@@ -125,6 +123,7 @@ def create_virtual_assistant(
                 lm_config=dream_component.lm_config,
                 creation_type=creation_type,
                 cloned_from_id=cloned_from_id,
+                cloned_from_name=cloned_from_name,
             )
             new_components.append(component)
 

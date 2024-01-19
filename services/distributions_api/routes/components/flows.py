@@ -101,12 +101,13 @@ def create_component(
     clone_from_id: int = None,
 ):
     with db.begin():
-        lm_service = prompt = prompt_goals = lm_config = creation_type = cloned_from_id = None
+        lm_service = prompt = prompt_goals = lm_config = cloned_from_id = cloned_from_name = None
 
         if clone_from_id:
             original_component = get_by_id(db, clone_from_id)
             creation_type = ComponentCreationStatus.COMPONENT_CLONE
             cloned_from_id = original_component.id
+            cloned_from_name = original_component.display_name
 
             match original_component.name:
                 case ComponentType.google_api:
@@ -191,6 +192,7 @@ def create_component(
             lm_config=prompted_component.lm_config,
             creation_type=creation_type,
             cloned_from_id=cloned_from_id,
+            cloned_from_name=cloned_from_name,
         )
 
     if component:

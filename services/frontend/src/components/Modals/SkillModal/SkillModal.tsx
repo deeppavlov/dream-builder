@@ -153,9 +153,7 @@ export const SkillModal = () => {
             control={control}
             rules={{
               pattern: validationSchema.globals.regExpPattern,
-              validate: {
-                required: value => validationSchema.validationEmpty(value),
-              },
+              required: validationSchema.globals.required,
             }}
             props={{
               placeholder: t('modals.skill.name_field.placeholder'),
@@ -172,9 +170,7 @@ export const SkillModal = () => {
                 maxLength:
                   validationSchema.globals.desc.maxLength(descriptionMaxLenght),
                 pattern: validationSchema.globals.regExpPattern,
-                validate: {
-                  required: value => validationSchema.validationEmpty(value),
-                },
+                required: validationSchema.globals.required,
               }}
               props={{
                 placeholder: t('modals.skill.desc_field.placeholder'),

@@ -212,10 +212,8 @@ export const AssistantModal = () => {
           name={NAME_ID}
           control={control}
           rules={{
+            required: validationSchema.globals.required,
             pattern: validationSchema.globals.regExpPattern,
-            validate: {
-              required: value => validationSchema.validationEmpty(value),
-            },
           }}
           props={{
             placeholder: t('modals.assistant.name_field.placeholder'),
@@ -228,11 +226,9 @@ export const AssistantModal = () => {
             control={control}
             withCounter
             rules={{
+              required: validationSchema.globals.required,
               maxLength: validationSchema.globals.desc.maxLength(1000),
               pattern: validationSchema.globals.regExpPattern,
-              validate: {
-                required: value => validationSchema.validationEmpty(value),
-              },
             }}
             props={{
               placeholder: t('modals.assistant.desc_field.placeholder'),

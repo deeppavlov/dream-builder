@@ -24,13 +24,13 @@ const buildEventBody = ({
     va_id: assistant?.id,
     va_name: assistant?.display_name,
     va_language: assistant?.language?.value,
-    skill_created_type: 'TODO',
+    skill_created_type: skill?.creation_type,
     skill_type: skill?.component_type,
     skill_id: skill?.id,
     skill_name: skill?.display_name,
     skill_language: skillLanguages.map(l => l.value).join(', '),
-    skill_template_id: 'TODO',
-    skill_template_name: 'TODO',
+    skill_template_id: skill?.cloned_from_id,
+    skill_template_name: skill?.cloned_from_name,
     event_type: 'Skills',
   }
 }

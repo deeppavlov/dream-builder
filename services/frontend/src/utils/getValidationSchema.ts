@@ -30,5 +30,10 @@ export const getValidationSchema = () => {
         }),
       },
     },
+    validationEmpty: (value: string) => {
+      if (value.length === 0 || value.trim() === '') {
+        return t('required')
+      }
+    },
   }
 }

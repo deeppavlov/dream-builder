@@ -141,12 +141,6 @@ export const AssistantModal = () => {
 
   useObserver('AssistantModal', handleEventUpdate)
 
-  const formValidation = (value: string) => {
-    if (value.length === 0 || value.trim() === '') {
-      return t('field_validation.required')
-    }
-  }
-
   useEffect(() => {
     const botLang = bot?.language?.value!
     const botDisplayLang = language()[botLang] as TLang
@@ -220,7 +214,7 @@ export const AssistantModal = () => {
           rules={{
             pattern: validationSchema.globals.regExpPattern,
             validate: {
-              required: value => formValidation(value),
+              required: value => validationSchema.validationEmpty(value),
             },
           }}
           props={{
@@ -237,7 +231,7 @@ export const AssistantModal = () => {
               maxLength: validationSchema.globals.desc.maxLength(1000),
               pattern: validationSchema.globals.regExpPattern,
               validate: {
-                required: value => formValidation(value),
+                required: value => validationSchema.validationEmpty(value),
               },
             }}
             props={{

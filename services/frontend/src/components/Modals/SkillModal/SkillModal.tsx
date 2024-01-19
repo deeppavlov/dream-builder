@@ -123,12 +123,6 @@ export const SkillModal = () => {
 
   useObserver('SkillModal', handleEventUpdate)
 
-  const formValidation = (value: string) => {
-    if (value.length === 0 || value.trim() === '') {
-      return t('field_validation.required')
-    }
-  }
-
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
@@ -160,7 +154,7 @@ export const SkillModal = () => {
             rules={{
               pattern: validationSchema.globals.regExpPattern,
               validate: {
-                required: value => formValidation(value),
+                required: value => validationSchema.validationEmpty(value),
               },
             }}
             props={{
@@ -175,12 +169,11 @@ export const SkillModal = () => {
               defaultValue={getValues()[DESC_ID]}
               withCounter
               rules={{
-                // required: validationSchema.globals.required,
                 maxLength:
                   validationSchema.globals.desc.maxLength(descriptionMaxLenght),
                 pattern: validationSchema.globals.regExpPattern,
                 validate: {
-                  required: value => formValidation(value),
+                  required: value => validationSchema.validationEmpty(value),
                 },
               }}
               props={{

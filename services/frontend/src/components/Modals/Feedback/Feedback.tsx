@@ -6,7 +6,7 @@ import BaseModal from '../BaseModal/BaseModal'
 import s from './Feedback.module.scss'
 
 export const Feedback: FC = () => {
-  const { register, handleSubmit, setValue } = useForm({
+  const { register, handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
       description: '',
       fileList: [],
@@ -21,6 +21,8 @@ export const Feedback: FC = () => {
 
   const fileInput = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpenModalСhanges, setisOpenModalСhanges] = useState<boolean>(false)
+
   const { t } = useTranslation()
 
   const handleEventUpdate = () => setIsOpen(!isOpen)
@@ -64,10 +66,31 @@ export const Feedback: FC = () => {
     })
   }
 
+  const resF = (value: boolean) => {
+    const isEmpty = fileList.length !== 0 || getValues().description !== ''
+
+    console.log(getValues())
+
+    if (isEmpty) {
+      setisOpenModalСhanges(true)
+      return
+    }
+
+    setIsOpen(value)
+  }
+
+  const clearingForm = () => {
+    setValue('description', '')
+    setValue('fileList', [])
+    setFileList([])
+    setIsOpen(false)
+    setisOpenModalСhanges(false)
+  }
+
   return (
     <>
       <div onClick={handleEventUpdate}>123</div>
-      <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <BaseModal isOpen={isOpen} setIsOpen={resF} closeOnBackdropClick={false}>
         <form onSubmit={handleSubmit(onSubmit)} className={s.form}>
           <div className={s.description}>
             <label htmlFor='description'>
@@ -115,6 +138,33 @@ export const Feedback: FC = () => {
             Отправить
           </Button>
         </form>
+      </BaseModal>
+      <BaseModal
+        isOpen={isOpenModalСhanges}
+        setIsOpen={setisOpenModalСhanges}
+        closeOnBackdropClick={false}
+      >
+        <div className={s.savModal}>
+          <div className={s.text}>у вас есть заполненная форма </div>
+          <div className={s.buttons}>
+            <Button
+              theme='primary'
+              props={{
+                onClick: () => setisOpenModalСhanges(false),
+              }}
+            >
+              продолжить
+            </Button>
+            <Button
+              theme='primary'
+              props={{
+                onClick: () => clearingForm(),
+              }}
+            >
+              отчистить
+            </Button>
+          </div>
+        </div>
       </BaseModal>
     </>
   )

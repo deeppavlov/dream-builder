@@ -256,6 +256,9 @@ export interface LM_Service {
 export interface ISkill extends IStackElement {
   prompt?: string
   lm_service?: LM_Service
+  cloned_from_id: number
+  cloned_from_name: string
+  creation_type: string
 }
 
 export interface SessionConfig {

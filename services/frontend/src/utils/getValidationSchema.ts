@@ -1,23 +1,21 @@
-import { useTranslation } from 'react-i18next'
+import i18n from 'i18n'
 
 export const getValidationSchema = () => {
-  const { t } = useTranslation('translation', { keyPrefix: 'field_validation' })
-
   return {
     globals: {
-      required: t('required'),
+      required: i18n.t('field_validation.required'),
       regExpPattern: {
         value: /^[\s\p{L}.'’,!-?«»]+$/giu,
-        message: t('invalid'),
+        message: i18n.t('field_validation.invalid'),
       },
       emailPattern: {
         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        message: t('email'),
+        message: i18n.t('field_validation.email'),
       },
       desc: {
         maxLength: (max: number) => ({
           value: max,
-          message: t('desc_max', { max }),
+          message: i18n.t('field_validation.desc_max', { max }),
         }),
       },
     },
@@ -26,7 +24,7 @@ export const getValidationSchema = () => {
       prompt: {
         maxLength: (max: number) => ({
           value: max,
-          message: t('prompt_max', { max }),
+          message: i18n.t('field_validation.prompt_max', { max }),
         }),
       },
     },

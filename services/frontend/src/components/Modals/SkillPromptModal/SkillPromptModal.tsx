@@ -81,8 +81,6 @@ const SkillPromptModal = () => {
   } = useGaSkills()
   const { vaChangeDeployState } = useGaAssistant()
 
-  const [editorContext, setEditorContext] = useState('')
-
   useEffect(() => {
     return () => skillEditorClosed()
   }, [])
@@ -159,7 +157,7 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: editorContext,
+            prompt: prompt,
             distName: distName || '',
             type: 'skills',
           })
@@ -209,9 +207,6 @@ const SkillPromptModal = () => {
         anchor: range.to + formattedBlock.length,
       },
     })
-    const newEditorContextCode =
-      codeEditorRef.current.view.state.doc.text.join('\n')
-    setEditorContext(newEditorContextCode)
     codeEditorRef.current.view.focus()
   }
 
@@ -282,7 +277,7 @@ const SkillPromptModal = () => {
     changeSkillModel(lm)
   }
 
-  const isEmpty = editorContext.length === 0
+  const isEmpty = getValues()?.prompt?.trim()?.length === 0
 
   return (
     <Modal
@@ -335,7 +330,6 @@ const SkillPromptModal = () => {
               )}
               <PromptEditor
                 codeEditorRef={codeEditorRef}
-                setEditorContext={setEditorContext}
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
                 placeholder={t('modals.skill_prompt.prompt_field.placeholder')}
@@ -384,7 +378,11 @@ const SkillPromptModal = () => {
               <Button
                 theme='primary'
                 props={{
-                  onClick: () => onFormSubmit(skill),
+                  onClick: () =>
+                    onFormSubmit({
+                      prompt: getValues().prompt,
+                      model: getValues().model,
+                    }),
                   disabled:
                     updateComponent.isLoading ||
                     isSubmitting ||

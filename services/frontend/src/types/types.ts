@@ -351,7 +351,7 @@ export interface IPostChat {
   text: string
   prompt?: string
   lm_service_id?: number
-  openai_api_key?: string
+  apiKeys?: { [keyName: string]: string | null }
 }
 
 export type TComponents = {
@@ -463,4 +463,3 @@ export type PageType =
   | 'va_skillset_page'
   | 'va_template_skillset_page'
   | 'va_skill_editor'
-

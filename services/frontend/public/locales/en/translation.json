@@ -364,7 +364,7 @@
         "stop_deploy": "Stop deploy...",
         "deploy_stopped": "Deploy stopped!"
       },
-      "dummy_error": "Someting went wrong<br />Restart the system"
+      "dummy_error": "Something went wrong<br />Restart the system"
     },
     "assistant": {
       "accordions": {

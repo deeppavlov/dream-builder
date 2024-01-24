@@ -15,7 +15,7 @@ import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
 import { сopyToClipboard } from 'utils/copyToClipboard'
 import { trigger } from 'utils/events'
-import { getLSApiKeyByName } from 'utils/getLSApiKeys'
+import { getLSApiKeyByDisplayName } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { Loader, TextLoader } from 'components/Loaders'
@@ -130,8 +130,7 @@ export const CopilotSidePanel = () => {
 
   useEffect(() => {
     setErrorPanel(null)
-    const openaiApiKey =
-      getLSApiKeyByName(user?.id!, OPEN_AI_LM, true) || undefined
+    const openaiApiKey = getLSApiKeyByDisplayName(user?.id!, OPEN_AI_LM, true)
     const deepySessionName = user ? `deepySession_${user.id}` : 'deepySession'
     const localSession = store(deepySessionName)
     if (

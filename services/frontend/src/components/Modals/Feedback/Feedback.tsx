@@ -5,15 +5,22 @@ import { Button } from 'components/Buttons'
 import BaseModal from '../BaseModal/BaseModal'
 import s from './Feedback.module.scss'
 
+interface feedback {
+  description: string
+  fileList: string[]
+}
+
 export const Feedback: FC = () => {
+  const defaultValues: feedback = {
+    description: '',
+    fileList: [],
+  }
+
   const { register, handleSubmit, setValue, getValues } = useForm({
-    defaultValues: {
-      description: '',
-      fileList: [],
-    },
+    defaultValues: defaultValues,
   })
 
-  const [fileList, setFileList] = useState<any>([])
+  const [fileList, setFileList] = useState<string[]>([])
 
   useEffect(() => {
     setValue('fileList', fileList)
@@ -21,7 +28,7 @@ export const Feedback: FC = () => {
 
   const fileInput = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [isOpenModalСhanges, setisOpenModalСhanges] = useState<boolean>(false)
+  const [isOpenModalChanges, setIsOpenModalChanges] = useState<boolean>(false)
 
   const { t } = useTranslation()
 
@@ -33,7 +40,7 @@ export const Feedback: FC = () => {
     }
   }
 
-  const handleFileChange = (event: any) => {
+  const handleAddFile = (event: any) => {
     const file = event.target.files
     const key = Object.keys(file)
 
@@ -42,14 +49,11 @@ export const Feedback: FC = () => {
       FReader.onload = (e: any) => {
         const src = e.target.result
         const img = new Image()
-
         img.onload = () => {
           setFileList(prev => [...prev, src])
         }
-
         img.src = e.target.result
       }
-
       FReader.readAsDataURL(file[key])
     })
   }
@@ -57,7 +61,7 @@ export const Feedback: FC = () => {
   const onSubmit = (data: any) => console.log(data)
 
   const renderFile = () => {
-    return fileList.map((file: any, index: number) => {
+    return fileList.map((file: string, index: number) => {
       return (
         <div className={s.file} key={index}>
           <img src={file} alt='' style={{ width: 50, height: 50 }} />
@@ -66,16 +70,12 @@ export const Feedback: FC = () => {
     })
   }
 
-  const resF = (value: boolean) => {
+  const handleIsOpen = (value: boolean) => {
     const isEmpty = fileList.length !== 0 || getValues().description !== ''
-
-    console.log(getValues())
-
     if (isEmpty) {
-      setisOpenModalСhanges(true)
+      setIsOpenModalChanges(true)
       return
     }
-
     setIsOpen(value)
   }
 
@@ -84,20 +84,23 @@ export const Feedback: FC = () => {
     setValue('fileList', [])
     setFileList([])
     setIsOpen(false)
-    setisOpenModalСhanges(false)
+    setIsOpenModalChanges(false)
   }
 
   return (
     <>
       <div onClick={handleEventUpdate}>123</div>
-      <BaseModal isOpen={isOpen} setIsOpen={resF} closeOnBackdropClick={false}>
+      <BaseModal
+        isOpen={isOpen}
+        setIsOpen={handleIsOpen}
+        closeOnBackdropClick={false}
+      >
         <form onSubmit={handleSubmit(onSubmit)} className={s.form}>
           <div className={s.description}>
             <label htmlFor='description'>
               Оставляя отзыв вы делаете нас лучше
             </label>
           </div>
-
           <div className={s.text}>
             <textarea
               {...register('description', {
@@ -108,14 +111,13 @@ export const Feedback: FC = () => {
               placeholder='Опишите проблему с которой вы столкнулись'
             />
           </div>
-
           <div>
             <div className={s.listFile}>{renderFile()}</div>
             <input
               type='file'
               accept='.jpg, .jpeg, .png'
               multiple
-              onChange={e => handleFileChange(e)}
+              onChange={e => handleAddFile(e)}
               ref={fileInput}
               hidden={true}
             />
@@ -140,8 +142,8 @@ export const Feedback: FC = () => {
         </form>
       </BaseModal>
       <BaseModal
-        isOpen={isOpenModalСhanges}
-        setIsOpen={setisOpenModalСhanges}
+        isOpen={isOpenModalChanges}
+        setIsOpen={setIsOpenModalChanges}
         closeOnBackdropClick={false}
       >
         <div className={s.savModal}>
@@ -150,7 +152,7 @@ export const Feedback: FC = () => {
             <Button
               theme='primary'
               props={{
-                onClick: () => setisOpenModalСhanges(false),
+                onClick: () => setIsOpenModalChanges(false),
               }}
             >
               продолжить

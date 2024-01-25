@@ -14,4 +14,5 @@ export const serviceCompanyMap: serviceCompanyMap = {
   'anthropic-api-claude-instant-v1': 'anthropic_company',
   'transformers-lm-rugpt35': 'sber_devices',
   'transformers-lm-ruxglm': 'zdeeppavlov', // starts with z because it's sorted by company names
+  'gigachat-api': 'sber_devices',
 } as const

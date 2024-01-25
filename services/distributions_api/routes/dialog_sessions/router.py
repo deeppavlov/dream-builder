@@ -28,6 +28,7 @@ async def send_chat_request_to_deployed_agent(
         prompt: str = None,
         lm_service: str = None,
         openai_api_key: str = None,
+        gigachat_credential: str = None,
         lm_service_config: dict = None
 ):
     """ """
@@ -45,6 +46,10 @@ async def send_chat_request_to_deployed_agent(
         data["openai_api_key"] = openai_api_key
     elif isinstance(openai_api_key, str):
         data["openai_api_key"] = " "
+    if gigachat_credential:
+        data["gigachat_credential"] = gigachat_credential
+    elif isinstance(gigachat_credential, str):
+        data["gigachat_credential"] = " "
     # logger.warning(f"Sending {agent_url} data:\n{data}")
 
     async with aiohttp.ClientSession() as session:
@@ -151,6 +156,7 @@ async def send_dialog_session_message(
         payload.prompt,
         lm_service_url,
         payload.openai_api_key,
+        payload.gigachat_credential,
         lm_service_config
     )
 

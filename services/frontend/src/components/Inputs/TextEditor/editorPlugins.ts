@@ -31,7 +31,7 @@ export const inputDecoration = ViewPlugin.fromClass(
 )
 
 const placeholderInput = new MatchDecorator({
-  regexp: /\[YOUR INPUT]/g,
+  regexp: /\[YOUR INPUT]|\[ВВЕДИТЕ ДАННЫЕ]/g,
   decoration: match =>
     Decoration.replace({
       widget: new PlaceholderWidget(match[0]),
@@ -93,8 +93,14 @@ class PlaceholderWidget extends WidgetType {
 
   toDOM() {
     const wrap = document.createElement('span')
-    wrap.className =
-      this.label === '[YOUR INPUT]' ? 'widget-input' : 'widget-title'
+
+    console.log(this.label)
+
+    const arrValues = ['[YOUR INPUT]', '[ВВЕДИТЕ ДАННЫЕ]']
+
+    wrap.className = arrValues.includes(this.label)
+      ? 'widget-input'
+      : 'widget-title'
     wrap.innerHTML = this.label
     return wrap
   }

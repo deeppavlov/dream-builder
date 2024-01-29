@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "msw": "vite --host --mode MSW",
+    "demo": "vite --host --mode DEMO",
     "dev": "vite --host --mode DEV",
     "stage": "vite --host --mode STAGE",
     "prod": "vite --host --mode PROD",
+    "build-demo": "vite build --mode DEMO",
     "build-dev": "vite build --mode DEV",
     "build-stage": "vite build --mode STAGE",
     "build-prod": "vite build --mode PROD",

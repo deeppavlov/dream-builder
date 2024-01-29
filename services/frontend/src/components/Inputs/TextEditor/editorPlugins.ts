@@ -94,8 +94,6 @@ class PlaceholderWidget extends WidgetType {
   toDOM() {
     const wrap = document.createElement('span')
 
-    console.log(this.label)
-
     const arrValues = ['[YOUR INPUT]', '[ВВЕДИТЕ ДАННЫЕ]']
 
     wrap.className = arrValues.includes(this.label)

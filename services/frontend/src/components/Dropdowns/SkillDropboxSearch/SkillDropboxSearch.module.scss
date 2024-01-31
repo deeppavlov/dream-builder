@@ -6,7 +6,6 @@ $animation-delay: 300ms;
   max-width: 310px;
   width: 100%;
   height: fit-content;
-  cursor: pointer;
   &.disabled * {
     @include disabled;
   }
@@ -82,6 +81,7 @@ $animation-delay: 300ms;
   border-radius: 12px;
   padding: 11px 16px;
   background-color: $bcgrnd1;
+  cursor: pointer;
 }
 
 .icon {

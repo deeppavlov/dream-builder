@@ -56,39 +56,40 @@ export const SkillsListModal = () => {
   const handleOk = () => handleClose()
 
   const handleAdd = (template: ISkill) => {
-    toast.promise(
-      clone.mutateAsync(
-        { skill: template, distName: distName!, type: 'skills' },
-        {
-          onSuccess: (skill: ISkill) => {
-            bot?.deployment?.state === DEPLOY_STATUS.UP &&
-              deleteDeployment.mutateAsync(bot).then(() => {
-                // unpublish /
-                const name = bot?.name!
-                const newVisibility = VISIBILITY_STATUS.PRIVATE
-                bot.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({
-                    name,
-                    newVisibility,
-                    inEditor: true,
-                  })
-                vaChangeDeployState('VA_Undeployed')
-              })
+    !clone.isLoading &&
+      toast.promise(
+        clone.mutateAsync(
+          { skill: template, distName: distName!, type: 'skills' },
+          {
+            onSuccess: (skill: ISkill) => {
+              bot?.deployment?.state === DEPLOY_STATUS.UP &&
+                deleteDeployment.mutateAsync(bot).then(() => {
+                  // unpublish /
+                  const name = bot?.name!
+                  const newVisibility = VISIBILITY_STATUS.PRIVATE
+                  bot.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                    changeVisibility.mutateAsync({
+                      name,
+                      newVisibility,
+                      inEditor: true,
+                    })
+                  vaChangeDeployState('VA_Undeployed')
+                })
 
-            skillAdded(skill, template)
+              skillAdded(skill, template)
 
-            handleClose()
-            navigate(
-              generatePath(RoutesList.editor.skillEditor, {
-                name: distName || '',
-                skillId: (skill?.component_id ?? skill?.id)?.toString(),
-              })
-            )
-          },
-        }
-      ),
-      toasts().addComponent
-    )
+              handleClose()
+              navigate(
+                generatePath(RoutesList.editor.skillEditor, {
+                  name: distName || '',
+                  skillId: (skill?.component_id ?? skill?.id)?.toString(),
+                })
+              )
+            },
+          }
+        ),
+        toasts().addComponent
+      )
   }
 
   const handleEventUpdate = () => setIsOpen(true)

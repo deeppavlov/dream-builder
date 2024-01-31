@@ -7,17 +7,13 @@ import {
   PublishAssistantWizard,
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
+import { Container } from 'components/UI'
 import { Sidebar, Topbar } from 'components/Widgets'
-import {
-  AssistantMenuInfo,
-  DeepyHelperTab,
-  SettingsTab,
-} from 'components/Widgets/Sidebar'
+import { AssistantMenuInfo, SettingsTab } from 'components/Widgets/Sidebar'
 
 const Root = () => {
   const { name } = useParams()
   const isEditor = Boolean(name)
-
 
   return (
     <>
@@ -25,20 +21,10 @@ const Root = () => {
       {!isEditor && (
         <Sidebar>
           <div style={{ height: '100%' }}></div>
-          <div
-            style={{
-              width: '100%',
-              borderTop: '1px solid #F0F0F3',
-              paddingTop: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            <DeepyHelperTab />
-            <AssistantMenuInfo  />
+          <Container layoutForBottomBtns>
+            <AssistantMenuInfo />
             <SettingsTab />
-          </div>
+          </Container>
         </Sidebar>
       )}
       <Outlet />

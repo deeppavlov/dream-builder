@@ -103,7 +103,7 @@ export const AssistantModal = () => {
   const name = bot?.name!
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const disabled = create?.isLoading || clone?.isLoading || rename.isLoading
-    submitOnEnter(e, !disabled, handleSubmit(onFormSubmit))
+    // submitOnEnter(e, !disabled, handleSubmit(onFormSubmit))
   }
   const onFormSubmit: SubmitHandler<AssistantFormValues> = formValues => {
     const language = formValues.language.id as ELOCALES_KEY

@@ -1,10 +1,25 @@
-import { r } from 'msw/lib/glossary-de6278a9';
-import { useMutation, useQueries, useQuery, useQueryClient } from 'react-query';
-import { BotInfoInterface, ICloneComponent, IStackElement, LM_Service, PostDistParams, StackType, TComponents } from 'types/types';
-import { addComponent, cloneComponent, createComponent, deleteComoponent, editComponent, getComponent as fetchComponent, getComponents, getComponentsGroup, patchComponent } from 'api/components';
-import { IPatchComponentParams } from 'api/components/patchComponent';
-import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills';
-
+import { useMutation, useQueries, useQuery, useQueryClient } from 'react-query'
+import {
+  BotInfoInterface,
+  ICloneComponent,
+  IStackElement,
+  LM_Service,
+  StackType,
+  TComponents,
+} from 'types/types'
+import {
+  addComponent,
+  cloneComponent,
+  createComponent,
+  deleteComoponent,
+  editComponent,
+  getComponent as fetchComponent,
+  getComponents,
+  getComponentsGroup,
+  patchComponent,
+} from 'api/components'
+import { IPatchComponentParams } from 'api/components/patchComponent'
+import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
 
 interface IGet {
   distName: string
@@ -30,7 +45,7 @@ interface IEdit {
   distName: string
   component_id: number
   type: StackType
-  data: PostDistParams
+  data: { display_name: string; description: string }
 }
 
 interface ICachedComponent {

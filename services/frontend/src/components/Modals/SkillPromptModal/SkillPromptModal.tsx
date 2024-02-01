@@ -58,7 +58,7 @@ const SkillPromptModal = () => {
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const { setUIOption } = useUIOptions()
+  const { setUIOption, UIOptions } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -182,8 +182,10 @@ const SkillPromptModal = () => {
   }
 
   const handlePropertiesClick = () => {
+    const activeSkillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
     skillsPropsOpened('skill_editor', skill)
     triggerSkillSidePanel({
+      isOpen: activeSkillId !== skill.id,
       skill,
       distName: distName!,
       activeTab: 'properties',

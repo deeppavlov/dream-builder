@@ -1,14 +1,12 @@
 import { useTranslation } from 'react-i18next'
-import { trigger } from 'utils/events'
+import { login } from 'api/user'
 import { Button } from 'components/Buttons'
 
 const SignInButton = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'topbar.btns' })
 
-  const handleBtnClick = () => trigger('SignInModal', {})
-
   return (
-    <Button theme='secondary' small props={{ onClick: handleBtnClick }}>
+    <Button theme='secondary' small props={{ onClick: login.gitHub }}>
       {t('sign_in')}
     </Button>
   )

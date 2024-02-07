@@ -168,7 +168,14 @@ export const SkillListItem: FC<SkillListItemProps> = ({
                 theme='primary'
                 small
                 withIcon
-                props={{ onClick: handleAddClick }}
+                props={{
+                  onClick: handleAddClick,
+                  style: {
+                    height: '48px',
+                    width: '48px',
+                    borderRadius: '12px',
+                  },
+                }}
               >
                 <Add />
               </Button>

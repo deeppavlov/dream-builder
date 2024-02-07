@@ -8,22 +8,22 @@
   padding-bottom: 22px;
 }
 .btnL {
-  left: -16px;
+  left: -20px;
   @include slider_btns;
   &.privateAssistants {
     border-color: $purple;
   }
 }
 .btnR {
-  right: -16px;
+  right: -20px;
   @include slider_btns;
   &.privateAssistants {
     border-color: $purple;
   }
 }
 .subWrapperL {
-  left: -32px;
+  left: -36px;
 }
 .subWrapperR {
-  right: -32px;
+  right: -36px;
 }

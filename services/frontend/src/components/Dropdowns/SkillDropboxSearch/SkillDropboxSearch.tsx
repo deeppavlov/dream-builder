@@ -75,10 +75,7 @@ const SkillDropboxSearch = ({
 
   const handleSearchClick = (e: React.MouseEvent) => {
     if (disabled) return
-    const targetIsInput =
-      (e.target as HTMLElement).tagName.toLocaleUpperCase() === 'INPUT'
-    if (!isOpen && targetIsInput) setIsOpen(true)
-    if (!targetIsInput) setIsOpen(prev => !prev)
+    setIsOpen(prev => !prev)
   }
 
   const handleItemClick = (item: Item) => {
@@ -91,7 +88,6 @@ const SkillDropboxSearch = ({
 
   return (
     <div
-      ref={dropboxRef}
       className={cx(
         'skillDropboxSearch',
         isOpen && 'open',
@@ -101,7 +97,6 @@ const SkillDropboxSearch = ({
         small && 'small',
         className && className
       )}
-      onFocus={() => !disabled && setIsOpen(true)}
     >
       {label && (
         <span id='label' className={s.label}>
@@ -112,6 +107,7 @@ const SkillDropboxSearch = ({
       <div
         className={cx(s.search, disabled && s.disabled)}
         onClick={handleSearchClick}
+        ref={dropboxRef}
       >
         {!withoutSearch && <LoupeIcon className={s.icon} />}
         {withoutSearch && serviceIconName && (

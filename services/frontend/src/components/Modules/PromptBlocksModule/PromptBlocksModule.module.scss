@@ -45,7 +45,7 @@
 
 .block {
   width: 100%;
-  padding: 2px 4px;
+  padding: 12px 4px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,6 +54,7 @@
   cursor: pointer;
   @include b4;
   color: $text1;
+  line-height: 140%;
 }
 
 .type {

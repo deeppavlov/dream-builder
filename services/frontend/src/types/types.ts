@@ -235,6 +235,9 @@ export interface IStackElement {
   date_created: string | Date
   description: string
   is_customizable: boolean
+  cloned_from_id: number
+  cloned_from_name: string
+  creation_type: string
 }
 
 export interface LM_Service {
@@ -256,9 +259,6 @@ export interface LM_Service {
 export interface ISkill extends IStackElement {
   prompt?: string
   lm_service?: LM_Service
-  cloned_from_id: number
-  cloned_from_name: string
-  creation_type: string
 }
 
 export interface SessionConfig {
@@ -369,7 +369,7 @@ export interface IBeforeLoginModal {
 export type TDialogError =
   | 'lm-service'
   | 'prompt'
-  | 'api-key'
+  // | 'api-key'
   | 'dist-name'
   | 'deploy'
   | 'chat'

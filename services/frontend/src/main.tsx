@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
   },
 })
 
-if (import.meta.env.MODE !== 'DEV') {
+if (import.meta.env.MODE !== 'DEV' && import.meta.env.MODE !== 'DEMO') {
   ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS)
 }
 

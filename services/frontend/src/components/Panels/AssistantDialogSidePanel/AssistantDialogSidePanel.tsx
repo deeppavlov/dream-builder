@@ -10,7 +10,6 @@ import {
   ChatForm,
   ChatHistory,
   IDialogError,
-  IUserApiKey,
   TDialogError,
 } from 'types/types'
 import { DEPLOY_STATUS, DUMMY_SKILL, TOOLTIP_DELAY } from 'constants/constants'
@@ -18,15 +17,12 @@ import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
 import { useAssistants, useChat, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
-import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useChatScroll } from 'hooks/useChatScroll'
-import { useObserver } from 'hooks/useObserver'
 import { examinationMessage } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
-import { getLSApiKeys } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
@@ -55,50 +51,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { user } = useAuth()
   const { send, renew, session, message, history, setSession, remoteHistory } =
     useChat()
-  const [usedApiKeys, setUsedApiKeys] = useState<IUserApiKey[]>([])
   const { vaChangeDeployState } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
-  const { setTokenState, missingTokenError } = useGaToken()
 
   const dummyAnswersCounter = history.filter(message => {
     return message?.active_skill?.name! === DUMMY_SKILL
   }).length
 
   const hereIsDummy = dummyAnswersCounter > 2
-
-  const checkIsChatSettings = (userId: number | undefined) => {
-    setErrorPanel(null)
-    const requiredKeys = (bot?.required_api_keys || []).map(k => k.display_name)
-
-    if (requiredKeys.length > 0) {
-      if (!userId) {
-        setErrorPanel({
-          type: 'auth',
-          msg: t('api_key.required.auth_required'),
-        })
-        return false
-      }
-      const userApiKeys = getLSApiKeys(userId) || []
-      setUsedApiKeys(userApiKeys)
-      const userApiKeyNames = userApiKeys.map(k => k.api_service.display_name)
-
-      const missingKeys = requiredKeys.filter(k => !userApiKeyNames.includes(k))
-      if (missingKeys.length) {
-        setErrorPanel({
-          type: 'api-key',
-          msg: t('api_key.required.assistant_label', {
-            service: missingKeys.join(', '),
-          }),
-        })
-        const services = [
-          ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
-        ].join(', ')
-        missingTokenError('va_dialog_panel', services)
-        return false
-      }
-    }
-    return true
-  }
 
   const cx = classNames.bind(s)
   const chatRef = useRef<HTMLDivElement>(null)
@@ -158,23 +118,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     const isMessage = message.replace(/\s/g, '').length > 0
     if (!isMessage) return
 
-    const keys = (bot?.required_api_keys || [])
-      .map(k => k.name)
-      .reduce((acc, keyName) => {
-        return {
-          ...acc,
-          [keyName]: usedApiKeys.find(k => k.api_service.name === keyName)
-            ?.token_value,
-        }
-      }, {})
-
     const id = session?.id!
 
     send.mutate(
       {
         dialog_session_id: id,
         text: message,
-        apiKeys: keys,
       },
       {
         // onError: () => setError('chat'),
@@ -203,18 +152,8 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       toasts().deploy
     )
   }
-  const handleCheckChatSettings = () => {
-    readyToGetSession && checkIsChatSettings(user?.id)
-  }
 
   const handleErrorBtnClick = (type: TDialogError) => {
-    if (type === 'api-key') {
-      const services = [
-        ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
-      ].join(', ')
-      setTokenState('va_dialog_panel', services)
-      trigger('AccessTokensModal', {})
-    }
     if (type === 'auth') {
       trigger('SignInModal', {
         requestModal: { name: 'AccessTokensModal', options: {} },
@@ -228,10 +167,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   // проверяем настройки
   useEffect(() => {
     if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-
-    handleCheckChatSettings()
   }, [user, bot])
-  useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new
   useEffect(() => {
@@ -287,7 +223,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
           <>
             <span className={s.alertName}>Error!</span>
             <p className={s.alertDesc}>{errorPanel.msg}</p>
-            {(errorPanel.type === 'auth' || errorPanel.type === 'api-key') && (
+            {errorPanel.type === 'auth' && (
               <Button
                 theme='primary'
                 props={{ onClick: () => handleErrorBtnClick(errorPanel.type) }}

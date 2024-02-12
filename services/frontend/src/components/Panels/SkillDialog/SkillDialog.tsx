@@ -57,46 +57,10 @@ const SkillDialog = forwardRef(
       )
     }
 
-    const checkIsChatSettings = (userId: number) => {
-      if (userId === undefined || userId === null) return
-      setError(null)
-
-      const lmApiKey = skill?.lm_service?.api_key
-
-      if (lmApiKey) {
-        const requiredApiKeyDisplayName = lmApiKey.display_name
-        const requiredKeyValue = getLSApiKeyByDisplayName(
-          userId,
-          requiredApiKeyDisplayName
-        )
-
-        if (!requiredKeyValue) {
-          setError({
-            type: 'api-key',
-            msg: t('api_key.required.skill_label', {
-              service: requiredApiKeyDisplayName,
-            }),
-          })
-          missingTokenError(
-            'skill_editor_dialog_panel',
-            skill?.lm_service?.api_key?.display_name
-          )
-          return false
-        }
-
-        apiKeyRef.current = { [lmApiKey.name]: requiredKeyValue }
-      }
-
-      return true
-    }
-
     // handlers
     const handleSend = ({ message }: ChatForm) => {
       const isMessage = message.replace(/\s/g, '').length > 0
       if (!isMessage) return
-
-      const isChatSettings = checkIsChatSettings(user?.id)
-      if (!isChatSettings) return
 
       send.mutate({
         dialog_session_id: session?.id!,
@@ -121,13 +85,8 @@ const SkillDialog = forwardRef(
     const handleRetryBtnClick = () => {
       setIsChecking(true)
       setTimeout(() => {
-        checkIsChatSettings(user?.id)
         setIsChecking(false)
       }, 1000)
-    }
-
-    const handleCheckChatSettings = () => {
-      checkIsChatSettings(user?.id)
     }
 
     const handleEnterTokenClick = () => {
@@ -141,11 +100,9 @@ const SkillDialog = forwardRef(
 
     useChatScroll(chatRef, [history, message])
     useObserver('RenewChat', renewDialogSession)
-    useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
     useEffect(() => {
       bot && renewDialogSession()
     }, [])
-    useEffect(() => handleCheckChatSettings(), [skill, user?.id])
 
     return (
       <form

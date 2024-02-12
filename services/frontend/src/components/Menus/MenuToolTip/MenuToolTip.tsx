@@ -60,28 +60,16 @@ const MenuToolTip = ({ tooltipId, type, bot }: Props) => {
     <BaseContextMenu tooltipId={tooltipId} place='bottom'>
       <ContextMenuButton
         type='about'
-        linkTo='http://deepdream.builders'
+        linkTo='https://aicenter.mipt.ru/'
         name={t('main_burger.about')}
       />
       {type === 'editor' && (
         <>
           <ContextMenuButton
-            name={t('assistant_burger.welcome_guide')}
-            type='properties'
-            linkTo='https://builder.deeppavlov.ai/ '
-          />
-          <hr />
-          <ContextMenuButton
             disabled={isPreview}
             name={t('assistant_burger.rename')}
             type='edit'
             handleClick={handleRenameClick}
-          />
-          <hr />
-          <ContextMenuButton
-            name={t('assistant_burger.feedback')}
-            linkTo='https://forum.deeppavlov.ai/c/dream-builder/57'
-            type='architecture'
           />
           <hr />
           <ContextMenuButton

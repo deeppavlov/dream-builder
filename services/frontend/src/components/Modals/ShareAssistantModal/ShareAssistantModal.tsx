@@ -4,16 +4,10 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import {
-  FacebookIcon,
-  FacebookShareButton,
-  LinkedinIcon,
-  LinkedinShareButton,
-  RedditIcon,
-  RedditShareButton,
   TelegramIcon,
   TelegramShareButton,
-  TwitterIcon,
-  TwitterShareButton,
+  VKIcon,
+  VKShareButton
 } from 'react-share'
 import { useObserver } from 'hooks/useObserver'
 import { Button } from 'components/Buttons'
@@ -64,29 +58,14 @@ export const ShareAssistantModal = () => {
           <div className={s.header}>{t('header')}</div>
           <div className={s.main}>
             <div className={s.icons}>
-              <FacebookShareButton
-                quote={shareText}
-                children={<FacebookIcon />}
-                url={url}
-              />
-              <TwitterShareButton
+              <VKShareButton
                 title={shareText}
-                children={<TwitterIcon />}
+                children={<VKIcon />}
                 url={url}
               />
               <TelegramShareButton
                 title={shareText}
                 children={<TelegramIcon />}
-                url={url}
-              />
-              <LinkedinShareButton
-                title={shareText}
-                children={<LinkedinIcon />}
-                url={url}
-              />
-              <RedditShareButton
-                title={shareText}
-                children={<RedditIcon />}
                 url={url}
               />
             </div>

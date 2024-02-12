@@ -369,7 +369,7 @@ export interface IBeforeLoginModal {
 export type TDialogError =
   | 'lm-service'
   | 'prompt'
-  | 'api-key'
+  // | 'api-key'
   | 'dist-name'
   | 'deploy'
   | 'chat'

@@ -17,16 +17,10 @@ export const MockModal = (props: IMockModal) => {
   const handleCancelClick = () => setIsOpenMock(false)
 
   return (
-    <BaseModal
-      isOpen={isOpenModal}
-      setIsOpen={setIsOpenMock}
-    >
+    <BaseModal isOpen={isOpenModal} setIsOpen={setIsOpenMock}>
       <div className={s.mockModal}>
         <h4>{t('text')}</h4>
         <div className={s.btns}>
-          <Button theme='secondary' props={{ onClick: handleCancelClick }}>
-            {t('btns.cancel')}
-          </Button>
           <Button theme='primary' props={{ onClick: handleCancelClick }}>
             {t('btns.close')}
           </Button>

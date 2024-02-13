@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 0 24px;
+    padding: 0 20px 0 24px;
   }
   .name {
     color: $text1;
@@ -53,7 +53,6 @@
   .scroll {
     overflow: hidden;
     overflow-y: overlay;
-    margin-right: 4px;
 
     // &::-webkit-scrollbar {
     //   width: 8px;
@@ -96,13 +95,10 @@
   .author {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 4px;
     margin-bottom: 4px;
     @include b3;
-    span {
-      @include text_ellipsis;
-    }
     img {
       @include icon_size_24;
       border-radius: 50%;

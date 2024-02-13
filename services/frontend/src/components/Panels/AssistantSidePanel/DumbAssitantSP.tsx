@@ -43,7 +43,9 @@ const DumbAssistantSP = ({ bot, disabled, type, fromEditor }: Props) => {
 
   const isDeepyPavlova =
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
-  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
+  const author = isDeepyPavlova
+    ? 'Лаборатория нейронных систем и глубокого обучения'
+    : bot?.author?.name
 
   const isCustomizable = !isPublic && !isPreviewEditor && !onModeration
   const { name } = useParams()

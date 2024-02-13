@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { FC, useId } from 'react'
+import { FC, MouseEvent, useId } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -97,7 +97,9 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
 
   const isDeepyPavlova =
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === bot?.author?.outer_id
-  const author = isDeepyPavlova ? 'Dream Builder Team' : bot?.author?.name
+  const author = isDeepyPavlova
+    ? 'Лаборатория нейронных систем и глубокого обучения'
+    : bot?.author?.name
 
   const handleAssistantListItemClick = () => {
     const isOpen = activeAssistantId !== infoSPId

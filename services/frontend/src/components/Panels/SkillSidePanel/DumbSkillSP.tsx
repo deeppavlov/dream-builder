@@ -100,7 +100,9 @@ const DumbSkillSP: FC<Props> = ({
           <div className={s.author}>
             <img src={isDeepyPavlova ? logo : skill?.author?.picture} />
             <span>
-              {isDeepyPavlova ? 'Dream Builder Team' : skill?.author.name}
+              {isDeepyPavlova
+                ? 'Лаборатория нейронных систем и глубокого обучения'
+                : skill?.author.name}
             </span>
           </div>
           <ul className={s.table}>
@@ -111,7 +113,9 @@ const DumbSkillSP: FC<Props> = ({
                     {t('sidepanels.skill_properties.original_author')}
                   </span>
                   <span className={s.value}>
-                    {isDeepyPavlova ? 'Dream Builder Team' : skill?.author.name}
+                    {isDeepyPavlova
+                      ? 'Лаборатория нейронных систем и глубокого обучения'
+                      : skill?.author.name}
                   </span>
                 </>
               )}

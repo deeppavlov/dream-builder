@@ -184,7 +184,7 @@
       "radio_btns": {
         "private": "Only me",
         "unlisted": "Only people with a link",
-        "public": "Public",
+        "public": "Public (disabled in the demo version)",
         "on_moderation": "Public (on moderation)"
       },
       "tooltips": {
@@ -204,7 +204,7 @@
     },
     "share_assistant": {
       "header": "Share it with your community!",
-      "content_to_share": "Check out this Generative Assistant I made with https://deepdream.builders/ !",
+      "content_to_share": "Check out this Generative Assistant I made !",
       "separator_text": "or copy link",
       "btns": {
         "copy": "Copy",
@@ -290,7 +290,7 @@
     },
     "change_language_modal": {
       "header": {
-        "annotation": "Pick which language to use for Dream Builder’s platform, and emails",
+        "annotation": "Pick which language to use in the Service for creating AI assistants.",
         "title": "Change Language"
       },
       "footer": {

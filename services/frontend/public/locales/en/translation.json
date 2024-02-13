@@ -587,6 +587,13 @@
     "error": "Critical errors:",
     "warning": "Recommendations:"
   },
+  "mock_modal": {
+    "btns": {
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "text": "This functionality is limited in the demo version"
+  },
   "language": {
     "en": "English",
     "ru": "Russian"

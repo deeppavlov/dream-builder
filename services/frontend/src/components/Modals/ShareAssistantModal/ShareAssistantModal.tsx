@@ -1,26 +1,17 @@
-import classNames from 'classnames/bind'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
-import {
-  FacebookIcon,
-  FacebookShareButton,
-  LinkedinIcon,
-  LinkedinShareButton,
-  RedditIcon,
-  RedditShareButton,
-  TelegramIcon,
-  TelegramShareButton,
-  TwitterIcon,
-  TwitterShareButton,
-} from 'react-share'
-import { useObserver } from 'hooks/useObserver'
-import { Button } from 'components/Buttons'
-import { Input } from 'components/Inputs'
-import { BaseModal } from 'components/Modals'
-import { ToastCopySucces } from 'components/UI'
-import s from './ShareAssistantModal.module.scss'
+import classNames from 'classnames/bind';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { TelegramIcon, TelegramShareButton, VKIcon, VKShareButton } from 'react-share';
+import { useObserver } from 'hooks/useObserver';
+import { Button } from 'components/Buttons';
+import { Input } from 'components/Inputs';
+import { BaseModal } from 'components/Modals';
+import { MockModal } from 'components/Modals';
+import { ToastCopySucces } from 'components/UI';
+import s from './ShareAssistantModal.module.scss';
+
 
 export const ShareAssistantModal = () => {
   const { t } = useTranslation('translation', {
@@ -28,6 +19,7 @@ export const ShareAssistantModal = () => {
   })
   const [bot, setBot] = useState<string>('not yet')
   const [isOpen, setIsOpen] = useState(false)
+  const [isOpenMockModal, setIsOpenMockModal] = useState(false)
   const cx = classNames.bind(s)
   const handleEventUpdate = (data: any) => {
     setBot(data?.detail?.bot?.name || data?.detail)
@@ -64,30 +56,23 @@ export const ShareAssistantModal = () => {
           <div className={s.header}>{t('header')}</div>
           <div className={s.main}>
             <div className={s.icons}>
-              <FacebookShareButton
-                quote={shareText}
-                children={<FacebookIcon />}
-                url={url}
-              />
-              <TwitterShareButton
+              <VKShareButton
+                onClick={() => {
+                  setIsOpenMockModal(true)
+                }}
                 title={shareText}
-                children={<TwitterIcon />}
+                children={<VKIcon />}
                 url={url}
+                openShareDialogOnClick={false}
               />
               <TelegramShareButton
+                onClick={() => {
+                  setIsOpenMockModal(true)
+                }}
                 title={shareText}
                 children={<TelegramIcon />}
                 url={url}
-              />
-              <LinkedinShareButton
-                title={shareText}
-                children={<LinkedinIcon />}
-                url={url}
-              />
-              <RedditShareButton
-                title={shareText}
-                children={<RedditIcon />}
-                url={url}
+                openShareDialogOnClick={false}
               />
             </div>
           </div>
@@ -112,6 +97,10 @@ export const ShareAssistantModal = () => {
           </div>
         </div>
       </BaseModal>
+      <MockModal
+      isOpenModal={isOpenMockModal}
+      setIsOpenMock={setIsOpenMockModal}
+      />
     </>
   )
 }

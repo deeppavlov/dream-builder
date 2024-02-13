@@ -155,6 +155,7 @@ export const PublishAssistantModal = () => {
                     id={type.name}
                     htmlFor={type.name}
                     value={type.id}
+                    disabled={type.name === 'Public'}
                   >
                     {type.description}
                   </RadioButton>

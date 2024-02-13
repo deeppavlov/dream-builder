@@ -42,7 +42,6 @@
     .listError > div:first-child {
       padding-left: 0px;
       justify-content: center;
-      
     }
   }
   .checkboxArea {
@@ -91,9 +90,7 @@
     color: $text5;
     @include b3;
     width: 100%;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+    display: block;
     @include text_ellipsis;
   }
 }

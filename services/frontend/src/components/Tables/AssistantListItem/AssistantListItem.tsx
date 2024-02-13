@@ -101,7 +101,14 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
     ? 'Лаборатория нейронных систем и глубокого обучения'
     : bot?.author?.name
 
-  const handleAssistantListItemClick = () => {
+  const handleAssistantListItemClick = (e: MouseEvent) => {
+    if (
+      document
+        .querySelector(`[data-tooltip-id="${tooltipId}"]`)
+        ?.contains(e.target as Node)
+    ) {
+      return
+    }
     const isOpen = activeAssistantId !== infoSPId
     isOpen && vaPropsOpened('va_card_click', bot)
 
@@ -245,9 +252,9 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
           </Button>
           {type === 'your' ? (
             <>
-              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <Kebab tooltipId={tooltipId} theme='card' />
               <AssistantContextMenu
-                tooltipId={'ctxMenu' + tooltipId}
+                tooltipId={tooltipId}
                 bot={bot}
                 type={type}
                 isDeployed={deployed}

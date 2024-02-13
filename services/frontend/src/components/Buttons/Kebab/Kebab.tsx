@@ -27,7 +27,6 @@ export const Kebab: FC<KebabProps> = ({
       withIcon
       props={{
         disabled,
-        onClick: stopPropagation,
         'data-tooltip-id': tooltipId,
       }}
     >

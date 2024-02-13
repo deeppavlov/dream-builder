@@ -52,8 +52,14 @@ export const SkillCard: FC<SkillCardProps> = ({
   }
 
   const handleSkillCardClick = (e: React.MouseEvent) => {
+    if (
+      document
+        .querySelector(`[data-tooltip-id="${tooltipId}"]`)
+        ?.contains(e.target as Node)
+    ) {
+      return
+    }
     !isActive && skillsPropsOpened('card_click', skill)
-    e.stopPropagation()
     triggerSkillSidePanel({
       skill,
       visibility: type,
@@ -167,14 +173,10 @@ export const SkillCard: FC<SkillCardProps> = ({
                   {t('card_btns.edit')}
                 </Button>
               </div>
-              <Kebab
-                disabled={disabled}
-                tooltipId={'ctxMenu' + tooltipId}
-                theme='card'
-              />
+              <Kebab disabled={disabled} tooltipId={tooltipId} theme='card' />
               <SkillCardToolTip
                 skill={skill}
-                tooltipId={'ctxMenu' + tooltipId}
+                tooltipId={tooltipId}
                 isPreview={isPreview}
               />
             </>

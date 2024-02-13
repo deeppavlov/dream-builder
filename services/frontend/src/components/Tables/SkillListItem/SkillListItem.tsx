@@ -58,6 +58,13 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const isActive = skill.id === activeSKillId
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
+    if (
+      document
+        .querySelector(`[data-tooltip-id="${tooltipId}"]`)
+        ?.contains(e.target as Node)
+    ) {
+      return
+    }
     !isActive && skillsPropsOpened('card_click', skill)
 
     triggerSkillSidePanel({
@@ -204,12 +211,12 @@ export const SkillListItem: FC<SkillListItemProps> = ({
                   <Edit />
                 </Button>
               )}
-              <Kebab tooltipId={'ctxMenu' + tooltipId} theme='card' />
+              <Kebab tooltipId={tooltipId} theme='card' />
             </>
           )}
           <SkillCardToolTip
             skill={skill}
-            tooltipId={'ctxMenu' + tooltipId}
+            tooltipId={tooltipId}
             isPreview={isPreview}
           />
         </div>

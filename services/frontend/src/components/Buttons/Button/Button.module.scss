@@ -30,7 +30,8 @@
   }
 
   &_small {
-    min-height: 36px;
+    min-height: 42px;
+    min-width: 42px;
     border-radius: 8px;
     padding: 6px 24px;
     @include lnks_n_btns5;

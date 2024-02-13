@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { FC, useId } from 'react'
+import { FC, MouseEvent, useId } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -91,7 +91,14 @@ export const AssistantCard: FC<BotCardProps> = ({
     ? t('assistant_visibility.private')
     : null
 
-  const handleBotCardClick = () => {
+  const handleBotCardClick = (e: MouseEvent) => {
+    if (
+      document
+        .querySelector(`[data-tooltip-id="${tooltipId}"]`)
+        ?.contains(e.target as Node)
+    ) {
+      return
+    }
     const isOpen = activeAssistantId !== infoSPId
     isOpen && vaPropsOpened('va_card_click', bot)
 

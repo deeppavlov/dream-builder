@@ -17,6 +17,7 @@ def _default_agent_user_id_prefix():
 
 class AppSettings(BaseModel):
     default_openai_api_key: str
+    default_gigachat_api_key: str
     agent_user_id_prefix: str
     add_cors_middleware: Optional[bool] = False
 

@@ -69,7 +69,7 @@ services:
       dockerfile: ./services/distributions_api/Dockerfile
       args:
         DREAM_ROOT_PATH: /dream
-        DREAM_BRANCH: dev
+        DREAM_BRANCH: demo/exhibition
         PORT: 6998
 #    depends_on:
 #      - auth-api

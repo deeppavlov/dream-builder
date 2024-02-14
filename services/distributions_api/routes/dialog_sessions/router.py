@@ -46,10 +46,8 @@ async def send_chat_request_to_deployed_agent(
         data["openai_api_key"] = openai_api_key
     elif isinstance(openai_api_key, str):
         data["openai_api_key"] = " "
-    if gigachat_credential:
-        data["gigachat_credential"] = gigachat_credential
-    elif isinstance(gigachat_credential, str):
-        data["gigachat_credential"] = " "
+
+    data["gigachat_credential"] = settings.app.default_gigachat_api_key
     # logger.warning(f"Sending {agent_url} data:\n{data}")
 
     async with aiohttp.ClientSession() as session:

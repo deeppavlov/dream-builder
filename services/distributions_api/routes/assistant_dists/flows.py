@@ -1,3 +1,5 @@
+import asyncio
+
 from typing import Union
 from urllib.parse import urlparse
 
@@ -175,6 +177,18 @@ def delete_virtual_assistant(db: Session, virtual_assistant: schemas.VirtualAssi
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.delete()
         dream_git.commit_all_files(user_id, 1)
+    except FileNotFoundError:
+        pass
+
+    delete_by_name(db, virtual_assistant.name)
+    db.commit()
+
+
+async def delete_virtual_assistants(db: Session, virtual_assistant: schemas.VirtualAssistantRead, user_id: int) -> None:
+    try:
+        dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+        dream_dist.delete()
+        await asyncio.to_thread(dream_git.commit_all_files_async, user_id, 1)
     except FileNotFoundError:
         pass
 

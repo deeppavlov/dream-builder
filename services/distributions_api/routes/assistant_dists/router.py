@@ -1,3 +1,5 @@
+import asyncio
+
 from typing import List
 
 from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException, Header
@@ -20,6 +22,7 @@ from services.distributions_api.routes.assistant_dists.dependencies import (
     virtual_assistant_view_permission,
     virtual_assistant_patch_permission,
     virtual_assistant_delete_permission,
+    virtual_assistants_patch_permission,
 )
 from services.distributions_api.security.auth import get_current_user
 from services.distributions_api.utils.emailer import Emailer
@@ -164,6 +167,17 @@ async def patch_virtual_assistant_by_name(
         db, virtual_assistant, user.id, payload.display_name, payload.description
     )
     return new_virtual_assistant
+
+
+@assistant_dists_router.delete("/bulk", status_code=status.HTTP_204_NO_CONTENT)
+async def bulk_delete_virtual_assistants(
+        dist_names: List[str],
+        user: schemas.UserRead = Depends(get_current_user),
+        db: Session = Depends(get_db),
+):
+    virtual_assistants = await virtual_assistants_patch_permission(dist_names, user, db)
+
+    await asyncio.gather(*[flows.delete_virtual_assistants(db, va, user.id) for va in virtual_assistants])
 
 
 @assistant_dists_router.delete("/{dist_name}", status_code=status.HTTP_204_NO_CONTENT)

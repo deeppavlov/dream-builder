@@ -208,6 +208,7 @@ export const AssistantModal = () => {
           </div>
         )}
         <Input
+          big
           label={t('modals.assistant.name_field.label')}
           name={NAME_ID}
           control={control}

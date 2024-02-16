@@ -114,7 +114,7 @@ $animation-delay: 300ms;
 
 .item {
   @include b2;
-  padding: 4px 16px;
+  padding: 10px 16px;
   width: 100%;
   color: $text1;
   display: flex;

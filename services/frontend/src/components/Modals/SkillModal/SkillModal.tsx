@@ -148,6 +148,7 @@ export const SkillModal = () => {
         </div>
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <Input
+            big
             label={t('modals.skill.name_field.label')}
             name={NAME_ID}
             defaultValue={getValues()[NAME_ID]}

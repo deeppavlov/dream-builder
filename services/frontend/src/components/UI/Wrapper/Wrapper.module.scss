@@ -81,6 +81,7 @@
         padding: 7px 12px;
         @include ghost_btn;
         @include btn_ghost_behavior;
+        @include b2;
       }
       .amount {
         color: rgba(0, 0, 0, 0.9);

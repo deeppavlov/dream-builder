@@ -1,3 +1,5 @@
+import asyncio
+
 from git import Repo, GitError, GitCommandError
 from pathlib import Path
 
@@ -102,6 +104,10 @@ class GitManager:
     def commit_all_files(self, user_id: int, change_id: int):
         paths = [str(self.local_path / dir_name) for dir_name in self.commit_dirs]
         self.commit(user_id, change_id, *paths)
+
+    async def commit_all_files_async(self, user_id: int, change_id: int):
+        paths = [str(self.local_path / dir_name) for dir_name in self.commit_dirs]
+        await asyncio.to_thread(self.commit, user_id, change_id, *paths)
 
     def push_to_copy_remote_origin(self):
         self.pull_copy_remote_origin()

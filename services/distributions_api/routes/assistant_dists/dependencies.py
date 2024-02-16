@@ -2,6 +2,7 @@ from deeppavlov_dreamtools import AssistantDist
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
+from typing import List
 
 from apiconfig.config import settings
 from database import enums
@@ -24,6 +25,25 @@ def get_virtual_assistant(dist_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Virtual assistant '{virtual_assistant.source}' not found locally")
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
+
+
+def get_virtual_assistants(dist_names: List[str], db: Session = Depends(get_db)) -> List[schemas.VirtualAssistantRead]:
+    virtual_assistants = []
+
+    for dist_name in dist_names:
+        try:
+            virtual_assistant = get_by_name(db, dist_name)
+        except ValueError:
+            raise HTTPException(status_code=404, detail=f"Virtual assistant '{dist_name}' not found in database")
+
+        try:
+            dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail=f"Assistant '{virtual_assistant.source}' not found locally")
+
+        virtual_assistants.append(schemas.VirtualAssistantRead.from_orm(virtual_assistant))
+
+    return virtual_assistants
 
 
 def virtual_assistant_view_permission(
@@ -69,3 +89,17 @@ def virtual_assistant_delete_permission(
     """"""
     if user.id == virtual_assistant.author.id:
         return virtual_assistant
+
+
+async def virtual_assistants_patch_permission(
+        dist_names: List[str],
+        user: schemas.UserRead = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    virtual_assistants = get_virtual_assistants(dist_names, db)
+
+    for virtual_assistant in virtual_assistants:
+        if user.id != virtual_assistant.author.id:
+            raise HTTPException(status_code=403, detail="User does not have permission to modify virtual assistant")
+
+    return virtual_assistants

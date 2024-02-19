@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 import { useAuth } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { generatePath, useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import {
   BotInfoInterface,
@@ -20,6 +20,7 @@ import {
   getPublicAssistants,
   publishAssistant,
 } from 'api/assistants'
+import { deleteAssistants } from 'api/assistants/deleteAssistant'
 import { useDeploy } from 'hooks/api/useDeploy'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
@@ -55,6 +56,7 @@ interface ICreateAssistantPayload {
 }
 export const useAssistants = () => {
   const auth = useAuth()
+  const { name = '' } = useParams()
   const userIsAuthorized = !!auth?.user
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -130,6 +132,18 @@ export const useAssistants = () => {
           updateCachedDist(name)
         })
       vaDeleted()
+    },
+  })
+
+  const deleteDists = useMutation({
+    mutationFn: async (names: string[]) => {
+      await deleteAssistants(names)
+      await queryClient.invalidateQueries([PRIVATE_DISTS])
+      await queryClient.invalidateQueries([PUBLIC_DISTS])
+    },
+
+    onSuccess: (_, names) => {
+      names.includes(name) && navigate(RoutesList.start)
     },
   })
 
@@ -212,6 +226,7 @@ export const useAssistants = () => {
     create,
     clone,
     deleteDist,
+    deleteDists,
     refetchDist,
   }
 }

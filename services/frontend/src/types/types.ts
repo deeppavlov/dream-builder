@@ -76,6 +76,7 @@ export type TEvents =
   | 'AssistantModal'
   | 'ChooseBotModal'
   | 'DeleteAssistantModal'
+  | 'DeleteAssistantsModal'
   | 'DeployNotificationModal'
   | 'IntentCatcherModal'
   | 'IntentResponderModal'

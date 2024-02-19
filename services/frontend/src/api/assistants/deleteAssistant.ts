@@ -8,3 +8,14 @@ export async function deleteAssistant(dist_name: string) {
     throw e
   }
 }
+
+export async function deleteAssistants(distNames: string[]) {
+  try {
+    const data = await privateApi.delete('/assistant_dists/bulk', {
+      data: distNames,
+    })
+    return data
+  } catch (e) {
+    throw e
+  }
+}

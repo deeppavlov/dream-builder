@@ -2,11 +2,14 @@ import classNames from 'classnames/bind'
 import { useAuth } from 'context'
 import { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQueryClient } from 'react-query'
 import store from 'store2'
-import { ELOCALES_KEY } from 'types/types'
-import { I18N_STORE_KEY, language } from 'constants/constants'
+import { BotInfoInterface, ELOCALES_KEY } from 'types/types'
+import { I18N_STORE_KEY, PRIVATE_DISTS, language } from 'constants/constants'
+import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
+import { Button } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
 import { AccessTokensModule } from 'components/Modules'
 import s from './ProfileSettings.module.scss'
@@ -48,6 +51,17 @@ export const ProfileSettings: FC = () => {
   const handleLanguageClick = () => trigger('ChangeLanguageModal', {})
 
   useObserver('ProfileSettingsModal', handleEventUpdate)
+
+  const { deleteDists } = useAssistants()
+  const queryClient = useQueryClient()
+  const privateDists = queryClient.getQueryData([
+    PRIVATE_DISTS,
+  ]) as BotInfoInterface[]
+
+  const removeAll = () => {
+    const privateDistNames = privateDists.map(d => d.name)
+    trigger('DeleteAssistantsModal', { names: privateDistNames })
+  }
 
   return (
     <BaseModal
@@ -101,6 +115,22 @@ export const ProfileSettings: FC = () => {
                   <button className={s.btn} onClick={handleLanguageClick}>
                     {t('modals.profile_settings.tabs.account.change')}
                   </button>
+                </div>
+                <hr />
+                <div className={s.block}>
+                  <span className={cx(s.key, s.clear)}>
+                    {t('modals.profile_settings.tabs.account.clear')}
+                  </span>
+                  <Button
+                    props={{
+                      onClick: removeAll,
+                      disabled: deleteDists.isLoading || !privateDists.length,
+                    }}
+                    theme='error'
+                    tiny
+                  >
+                    {t('modals.profile_settings.tabs.account.clear_btn')}
+                  </Button>
                 </div>
               </div>
             </>

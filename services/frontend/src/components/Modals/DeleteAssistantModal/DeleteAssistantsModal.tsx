@@ -23,10 +23,11 @@ export const DeleteAssistantsModal = () => {
   }
 
   const handleDeleteBtnClick = () => {
-    setIsOpen(false)
     trigger('AssistantDeleted', {})
 
-    toast.promise(deleteDists.mutateAsync(distNames), toasts().deleteAssistant)
+    toast
+      .promise(deleteDists.mutateAsync(distNames), toasts().deleteAssistant)
+      .finally(handleClose)
   }
 
   const handleEventUpdate = (data: { detail: { names: string[] } }) => {
@@ -46,7 +47,13 @@ export const DeleteAssistantsModal = () => {
           <Button theme='secondary' props={{ onClick: handleClose }}>
             {t('btns.cancel')}
           </Button>
-          <Button theme='error' props={{ onClick: handleDeleteBtnClick }}>
+          <Button
+            theme='error'
+            props={{
+              onClick: handleDeleteBtnClick,
+              disabled: deleteDists.isLoading,
+            }}
+          >
             {t('btns.delete')}
           </Button>
         </div>

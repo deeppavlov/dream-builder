@@ -2,10 +2,9 @@ import classNames from 'classnames/bind'
 import { useAuth } from 'context'
 import { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQueryClient } from 'react-query'
 import store from 'store2'
-import { BotInfoInterface, ELOCALES_KEY } from 'types/types'
-import { I18N_STORE_KEY, PRIVATE_DISTS, language } from 'constants/constants'
+import { ELOCALES_KEY } from 'types/types'
+import { I18N_STORE_KEY, language } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
@@ -52,14 +51,11 @@ export const ProfileSettings: FC = () => {
 
   useObserver('ProfileSettingsModal', handleEventUpdate)
 
-  const { deleteDists } = useAssistants()
-  const queryClient = useQueryClient()
-  const privateDists = queryClient.getQueryData([
-    PRIVATE_DISTS,
-  ]) as BotInfoInterface[]
+  const { fetchPrivateDists } = useAssistants()
+  const privateDists = fetchPrivateDists()
 
   const removeAll = () => {
-    const privateDistNames = privateDists.map(d => d.name)
+    const privateDistNames = privateDists.data?.map(d => d.name)
     trigger('DeleteAssistantsModal', { names: privateDistNames })
   }
 
@@ -124,7 +120,7 @@ export const ProfileSettings: FC = () => {
                   <Button
                     props={{
                       onClick: removeAll,
-                      disabled: deleteDists.isLoading || !privateDists.length,
+                      disabled: !privateDists?.data?.length,
                     }}
                     theme='error'
                     tiny

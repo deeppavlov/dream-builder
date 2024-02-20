@@ -17,6 +17,7 @@ import {
   SkillQuitModal,
   SkillsListModal,
 } from 'components/Modals'
+import { DeleteAssistantsModal } from 'components/Modals/DeleteAssistantModal/DeleteAssistantsModal'
 import { BaseSidePanel } from 'components/Panels'
 import { Container } from 'components/UI'
 import { Sidebar } from 'components/Widgets'
@@ -75,6 +76,7 @@ export const EditorPage = () => {
       <SkillQuitModal />
       <PublishAssistantModal />
       <DeleteAssistantModal />
+      <DeleteAssistantsModal />
       <AssistantModal />
       <SignInModal />
       <ShareAssistantModal />

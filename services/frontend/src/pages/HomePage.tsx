@@ -17,6 +17,7 @@ import {
   ShareAssistantModal,
   SignInModal,
 } from 'components/Modals'
+import { DeleteAssistantsModal } from 'components/Modals/DeleteAssistantModal/DeleteAssistantsModal'
 import { BaseSidePanel } from 'components/Panels'
 import {
   Container,
@@ -149,6 +150,7 @@ export const HomePage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
+        <DeleteAssistantsModal />
         <ShareAssistantModal />
         <PublicToPrivateModal />
         <SignInModal />

@@ -65,6 +65,9 @@
         .key {
           @include t2;
         }
+        .clear {
+          margin-bottom: 8px;
+        }
         .value {
           @include b2;
         }

@@ -2,6 +2,7 @@ import { useAuth, useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -11,9 +12,9 @@ import {
   PublishAssistantModal,
   ShareAssistantModal,
 } from 'components/Modals'
+import { DeleteAssistantsModal } from 'components/Modals/DeleteAssistantModal/DeleteAssistantsModal'
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
-import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 
 export const MyAssistantsPage = () => {
   const { t } = useTranslation('translation', {
@@ -33,7 +34,11 @@ export const MyAssistantsPage = () => {
         <Wrapper
           primary
           title={t('wrapper.title')}
-          amount={privateDists?.data?.length > 0 && privateDists?.data?.length}
+          amount={
+            Number(privateDists?.data?.length) <= 0
+              ? undefined
+              : privateDists?.data?.length
+          }
           // fullHeight
         >
           {privateDists?.error ? (
@@ -52,7 +57,7 @@ export const MyAssistantsPage = () => {
                   )}
                   <DistList
                     view='table'
-                    dists={privateDists?.data}
+                    dists={privateDists?.data || []}
                     type='your'
                   />
                 </Table>
@@ -64,7 +69,7 @@ export const MyAssistantsPage = () => {
                   )}
                   <DistList
                     view='cards'
-                    dists={privateDists?.data}
+                    dists={privateDists?.data || []}
                     type='your'
                     size='big'
                   />
@@ -77,6 +82,7 @@ export const MyAssistantsPage = () => {
         <AssistantModal />
         <PublishAssistantModal />
         <DeleteAssistantModal />
+        <DeleteAssistantsModal />
         <ShareAssistantModal />
       </Main>
     </>

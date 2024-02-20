@@ -162,6 +162,14 @@
         "delete": "Delete"
       }
     },
+    "delete_assistants": {
+      "header": "All your assistants will be deleted",
+      "subheader": "This action can’t be undone.",
+      "btns": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
     "delete_skill": {
       "header": "Do you really want to delete skill:",
       "subheader": "This action can’t be undone.",
@@ -284,7 +292,9 @@
           "name": "Name",
           "email": "Email",
           "language": "Language",
-          "change": "Change language"
+          "change": "Change language",
+          "clear": "Clear user data",
+          "clear_btn": "Clear data"
         }
       }
     },

@@ -1,17 +1,21 @@
-import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
-import { TelegramIcon, TelegramShareButton, VKIcon, VKShareButton } from 'react-share';
-import { useObserver } from 'hooks/useObserver';
-import { Button } from 'components/Buttons';
-import { Input } from 'components/Inputs';
-import { BaseModal } from 'components/Modals';
-import { MockModal } from 'components/Modals';
-import { ToastCopySucces } from 'components/UI';
-import s from './ShareAssistantModal.module.scss';
-
+import classNames from 'classnames/bind'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+import {
+  TelegramIcon,
+  TelegramShareButton,
+  VKIcon,
+  VKShareButton,
+} from 'react-share'
+import { useObserver } from 'hooks/useObserver'
+import { Button } from 'components/Buttons'
+import { Input } from 'components/Inputs'
+import { BaseModal } from 'components/Modals'
+import { MockModal } from 'components/Modals'
+import { ToastCopySucces } from 'components/UI'
+import s from './ShareAssistantModal.module.scss'
 
 export const ShareAssistantModal = () => {
   const { t } = useTranslation('translation', {
@@ -42,10 +46,13 @@ export const ShareAssistantModal = () => {
   }
 
   useObserver('ShareAssistantModal', handleEventUpdate)
+
   useEffect(() => {
-    const modePrefix = import.meta.env.MODE === 'PROD' ? '' : 'stage.'
+    const messengerLink = import.meta.env[
+      `VITE_MESSENGER_LINK_${import.meta.env.MODE}`
+    ]
     reset({
-      link: `https://${modePrefix}assistants.builder.deeppavlov.ai/${bot}`,
+      link: `${messengerLink}${bot}`,
     })
   }, [bot])
 
@@ -98,8 +105,8 @@ export const ShareAssistantModal = () => {
         </div>
       </BaseModal>
       <MockModal
-      isOpenModal={isOpenMockModal}
-      setIsOpenMock={setIsOpenMockModal}
+        isOpenModal={isOpenMockModal}
+        setIsOpenMock={setIsOpenMockModal}
       />
     </>
   )

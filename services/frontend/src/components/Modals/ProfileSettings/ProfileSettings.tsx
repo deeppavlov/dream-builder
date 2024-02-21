@@ -123,7 +123,7 @@ export const ProfileSettings: FC = () => {
                       disabled: !privateDists?.data?.length,
                     }}
                     theme='error'
-                    tiny
+                    small
                   >
                     {t('modals.profile_settings.tabs.account.clear_btn')}
                   </Button>

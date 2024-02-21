@@ -54,7 +54,7 @@ export const SignInModal = ({ msg: propsMsg }: Props) => {
         </h4>
 
         <Button theme='secondary' long props={{ onClick: login.gitHub }}>
-          {t('sign_in')}
+          <Trans i18nKey='modals.sign_in.sign_in' />
         </Button>
       </div>
     </BaseModal>

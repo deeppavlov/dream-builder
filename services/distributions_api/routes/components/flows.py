@@ -28,10 +28,10 @@ dream_git = GitManager(
 )
 
 
-async def generate_prompt_goals(prompt_goals_url: str, prompt: str, openai_api_token):
+async def generate_prompt_goals(prompt_goals_url: str, prompt: str, default_gigachat_api_key):
     data = {
         "prompts": [prompt],
-        "openai_api_keys": [openai_api_token],
+        "gigachat_credentials": [default_gigachat_api_key],
     }
 
     async with aiohttp.ClientSession() as session:
@@ -116,7 +116,7 @@ def create_component(
                     if original_component.lm_service:
                         lm_service = original_component.lm_service
                     else:
-                        lm_service = lm_service_crud.get_lm_service(db, 4)
+                        lm_service = lm_service_crud.get_lm_service(db, 1)
                     prompt = original_component.prompt
                     prompt_goals = original_component.prompt_goals
         else:
@@ -124,7 +124,7 @@ def create_component(
             if new_component.lm_service_id:
                 lm_service = lm_service_crud.get_lm_service(db, new_component.lm_service_id)
             else:
-                lm_service = lm_service_crud.get_lm_service(db, 4)
+                lm_service = lm_service_crud.get_lm_service(db, 1)
 
             if new_component.prompt and new_component.prompt_goals:
                 prompt = new_component.prompt
@@ -218,10 +218,10 @@ async def patch_component(
 
     prompt_goals = None
     if component_update.prompt:
-        goals_lm_service = lm_service_crud.get_lm_service_by_name(db, "openai-api-chatgpt")
+        goals_lm_service = lm_service_crud.get_lm_service_by_name(db, "gigachat-api")
         goals_lm_service_url = f"http://{goals_lm_service.host}:{goals_lm_service.port}/generate_goals"
         prompt_goals = await generate_prompt_goals(
-            goals_lm_service_url, component_update.prompt, settings.app.default_openai_api_key
+            goals_lm_service_url, component_update.prompt, settings.app.default_gigachat_api_key
         )
         dream_component.update_prompt(component_update.prompt, prompt_goals)
 

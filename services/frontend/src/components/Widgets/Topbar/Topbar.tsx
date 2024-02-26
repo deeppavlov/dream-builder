@@ -9,6 +9,7 @@ import { BurgerMenu } from 'components/Menus/BurgerMenu/BurgerMenu'
 import s from './Topbar.module.scss'
 import { Breadcrumbs } from './components/Breadcrumbs/Breadcrumbs'
 import { Display } from './components/Display'
+import { LanguageToggle } from './components/LanguageToggle'
 import { Test } from './components/Test'
 
 export const Topbar = () => {
@@ -18,11 +19,6 @@ export const Topbar = () => {
   const { UIOptions } = useUIOptions()
   const type: TTopbar = name !== undefined ? 'editor' : 'main'
   const isEditor = type === 'editor'
-  const editorActiveTab = UIOptions[consts.EDITOR_ACTIVE_TAB]
-  const skillEditorIsActive = UIOptions[consts.EDITOR_ACTIVE_SKILL]
-  const isTableViewSwitcher = isEditor
-    ? editorActiveTab == 'Architecture' && !skillEditorIsActive
-    : location.pathname !== '/profile'
   const cx = classNames.bind(s)
   const dist = UIOptions[consts.ACTIVE_ASSISTANT]
   return (
@@ -32,9 +28,15 @@ export const Topbar = () => {
         <div className={s.crumbs}>
           <Breadcrumbs />
         </div>
-        <div className={s.btns}>
-          {isTableViewSwitcher && <Display />}
-          {isEditor && <Test />}
+        <div className={s.topBarPanel}>
+          {isEditor ? (
+            <Test />
+          ) : (
+            <div className={s.btns}>
+              <LanguageToggle />
+              <Display />
+            </div>
+          )}
           {user ? <Profile auth={auth} /> : <SignInButton />}
         </div>
       </div>

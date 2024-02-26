@@ -1,26 +1,19 @@
-.display {
+.language {
+  @include d3;
+  line-height: normal;
+  color: $text3;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 63px;
   width: 44px;
-  svg {
-    stroke: $text3;
-    @include icon_size_24;
-  }
-  &:hover {
+
+  &:hover,
+  &:focus-visible,
+  &.active {
+    color: $text5;
+    border-color: $text5;
     background: #f0f0f3;
-    svg {
-      stroke: #3300ff;
-    }
-  }
-  &:active {
-    svg {
-      stroke: #190080;
-    }
-  }
-  &:disable {
-    opacity: 0.3;
   }
 }
 .tooltips {

@@ -490,7 +490,8 @@
     },
     "tooltips": {
       "home": "Go to home page",
-      "table_view": "Change view type"
+      "table_view": "Change view type",
+      "language": "Change language"
     },
     "btns": {
       "chat_with_assistant": "Chat with Assistant",

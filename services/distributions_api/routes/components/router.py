@@ -77,6 +77,12 @@ async def get_list_of_group_components(
 ) -> List[schemas.ComponentRead]:
     group_components = []
 
+    if group_name == "skills":
+        for c in get_by_group_name(db, group_name, component_type, author_id):
+            if c.name in const.DEMO_SKILL_NAMES:
+                group_components.append(schemas.ComponentRead.from_orm(c))
+        return group_components
+
     for c in get_by_group_name(db, group_name, component_type, author_id):
         if c.name not in const.INVISIBLE_COMPONENT_NAMES:
             group_components.append(schemas.ComponentRead.from_orm(c))

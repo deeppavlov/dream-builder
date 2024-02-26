@@ -63,6 +63,9 @@ class GithubAuth(auth_type.OAuth):
 
         github_id = user_data["id"]
 
+        if github_id not in settings.auth.valid_github_account_ids:
+            raise HTTPException(status_code=403, detail=" Forbidden ")
+
         github_user_create = GithubUserCreate(
             email=user_data["email"],
             github_id=github_id,

@@ -13,6 +13,7 @@ import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
+import { MockModal } from 'components/Modals'
 import { Wrapper } from 'components/UI'
 import AccessTokenKey from './AccessTokenKey/AccessTokenKey'
 import s from './AccessTokensModule.module.scss'
@@ -86,65 +87,9 @@ export const AccessTokensModule = () => {
       resolve(t('modals.access_api_keys.toasts.token_updated'))
     })
 
-  const createUserToken = ({ service, token }: FormValues) =>
-    new Promise((resolve, reject) => {
-      const selectedService = api_services?.find(
-        ({ id }) => `${id}` === service?.id?.toString()
-      )
-      const isService = selectedService !== undefined
-      const isUserId = user?.id !== undefined
-
-      if (!isService || !isUserId)
-        return reject(t('modals.access_api_keys.toasts.not_found_service'))
-
-      const newToken: IUserApiKey = {
-        api_service: selectedService,
-        token_value: token,
-        useForDeepy: false,
-        id: Date.now(),
-      }
-      const apiTokenIndex = tokens?.findIndex(
-        ({ api_service }) =>
-          api_service.id.toString() === service?.id?.toString()
-      )
-      const isIndex = apiTokenIndex !== undefined && apiTokenIndex !== -1
-
-      if (isIndex) {
-        trigger('ConfirmApiTokenUpdateModal', {
-          serviceName: selectedService.display_name,
-          onContinue: () => {
-            updateToken(apiTokenIndex, newToken)
-            resolve(t('modals.access_api_keys.toasts.token_updated'))
-          },
-          onCancel: () =>
-            resolve(t('modals.access_api_keys.toasts.token_canceled')),
-        })
-        return
-      }
-
-      setTokens(prev => {
-        const newState = prev ?? []
-
-        newState.push(newToken)
-        saveTokens(newState)
-        return newState
-      })
-
-      resolve(t('modals.access_api_keys.toasts.token_added'))
-      addOrDeleteToken(selectedService.display_name, 'add')
-    })
-
-  const onSubmit = (data: FormValues) => {
-    toast
-      .promise(createUserToken(data), {
-        loading: t('modals.access_api_keys.toasts.token_adding'),
-        success: data => `${data}`,
-        error: data => `${data}`,
-      })
-      .finally(() => {
-        handleChanges()
-        reset()
-      })
+  const onSubmit = () => {
+    setMockIsOpen(true)
+    reset()
   }
 
   useEffect(() => setTokens(getLSApiKeys(user?.id)), [user])
@@ -157,6 +102,8 @@ export const AccessTokensModule = () => {
   useEffect(() => {
     openTokenModal()
   }, [])
+
+  const [mockIsOpen, setMockIsOpen] = useState(false)
 
   return (
     <div className={s.module}>
@@ -223,6 +170,7 @@ export const AccessTokensModule = () => {
           </div>
         </Wrapper>
       </div>
+      <MockModal isOpenModal={mockIsOpen} setIsOpenMock={setMockIsOpen} />
     </div>
   )
 }

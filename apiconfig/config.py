@@ -1,8 +1,8 @@
 import secrets
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 
-from pydantic import BaseModel, BaseSettings, Field
+from pydantic import BaseModel, BaseSettings, Field, validator
 
 URL_TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="
 CLIENT_SECRET_FILENAME = "client_secret.json"
@@ -44,6 +44,11 @@ class AuthSettings(BaseModel):
     google_client_secret: str
     refresh_token_lifetime_days: int
     redirect_uri: str
+    valid_github_account_ids: List[int]
+
+    @validator('valid_github_account_ids', pre=True)
+    def parse_github_account_ids(cls, v):
+        return [int(x) for x in v.split(',')]
 
 
 class SmtpSettings(BaseModel):

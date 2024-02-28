@@ -19,6 +19,7 @@ import { useAssistants, useComponent } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
+import { updateAssistantLastUsedDate } from 'utils/updateAssistantLastUsedDate'
 import { Button, Kebab } from 'components/Buttons'
 import { AssistantContextMenu, StatusToolTip } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
@@ -102,6 +103,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
     : bot?.author?.name
 
   const handleAssistantListItemClick = (e: MouseEvent) => {
+    updateAssistantLastUsedDate(bot.name)
     if (
       document
         .querySelector(`[data-tooltip-id="${tooltipId}"]`)

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { RoutesList } from 'router/RoutesList'
 import { useAssistants } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
+import { useAssistantCleanup } from 'hooks/useAssistantCleanup'
 import { consts } from 'utils/consts'
 import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
@@ -37,6 +38,8 @@ export const HomePage = () => {
   const { fetchPublicDists, fetchPrivateDists } = useAssistants()
   const publicDists = fetchPublicDists()
   const privateDists = fetchPrivateDists()
+
+  useAssistantCleanup()
 
   const { vaPageOpen } = useGaAssistant()
   useEffect(() => {

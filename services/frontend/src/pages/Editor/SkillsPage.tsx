@@ -7,6 +7,7 @@ import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants, useComponent } from 'hooks/api'
 import { consts } from 'utils/consts'
 import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
+import { updateAssistantLastUsedDate } from 'utils/updateAssistantLastUsedDate'
 import { AddButton, SwitchViewButton } from 'components/Buttons'
 import { SkillList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -37,6 +38,8 @@ const SkillsPage = () => {
     if (!auth.user && dist?.visibility !== VISIBILITY_STATUS.PUBLIC_TEMPLATE)
       navigate('/')
   }, [auth.user])
+
+  useEffect(() => () => updateAssistantLastUsedDate(name!))
 
   // const handleReadFirst = () =>
   //   trigger(TRIGGER_RIGHT_SP_EVENT, { children: <ReadFirstSidePanel /> })

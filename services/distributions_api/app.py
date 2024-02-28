@@ -1,5 +1,10 @@
+import logging
+import os
+
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from logging_loki import LokiQueueHandler
+from multiprocessing import Queue
 
 from apiconfig.config import settings
 from git_storage.git_manager import GitManager
@@ -12,8 +17,21 @@ from services.distributions_api.routes.dialog_sessions.router import dialog_sess
 from services.distributions_api.routes.users.router import users_router
 from services.distributions_api.routes.lm_services.router import lm_services_router
 
+
 app = FastAPI()
 
+loki_logs_handler = LokiQueueHandler(
+    Queue(-1),
+    url=os.getenv("LOKI_URL"),
+    tags={"application": f"distributions-api-{os.getenv('SERVICE_PREFIX')}"},
+    version="1",
+)
+
+uvicorn_access_logger = logging.getLogger("uvicorn.access")
+uvicorn_error_logger = logging.getLogger("uvicorn.error")
+
+uvicorn_access_logger.addHandler(loki_logs_handler)
+uvicorn_error_logger.addHandler(loki_logs_handler)
 
 dream_git = GitManager(
     settings.git.local_path,

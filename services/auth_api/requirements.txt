@@ -10,3 +10,4 @@ httpx
 itsdangerous
 python-dotenv
 PyYAML==6.0
+python-logging-loki==0.3.1

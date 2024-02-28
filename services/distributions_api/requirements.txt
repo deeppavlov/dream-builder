@@ -13,3 +13,4 @@ celery~=5.2.7
 flower~=1.2.0
 redis~=4.5.5
 gitpython==3.1.31
+python-logging-loki==0.3.1

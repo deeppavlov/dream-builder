@@ -46,20 +46,14 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
 
     if (beforeLoginModal && location.href === beforeLoginUrl) {
       if (beforeLoginModal.name === TRIGGER_RIGHT_SP_EVENT) {
-        setTimeout(
-          () =>
-            trigger(TRIGGER_RIGHT_SP_EVENT, {
-              children: (
-                <AssistantDialogSidePanel
-                  key={
-                    beforeLoginModal.options.dist.name + 'chat_with_assistant'
-                  }
-                  dist={beforeLoginModal.options.dist}
-                />
-              ),
-            }),
-          500
-        )
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
+          children: (
+            <AssistantDialogSidePanel
+              key={beforeLoginModal.options.dist.name + 'chat_with_assistant'}
+              dist={beforeLoginModal.options.dist}
+            />
+          ),
+        })
       } else {
         trigger(beforeLoginModal.name, beforeLoginModal.options)
       }

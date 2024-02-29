@@ -46,7 +46,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { data: bot } = getDist(
+  const { data: bot, isLoading } = getDist(
     { distName: dist?.name },
     { refetchOnMount: true }
   )
@@ -187,10 +187,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
-    if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+    if (!isLoading && !bot)
+      return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+  }, [bot])
 
+  useEffect(() => {
     handleCheckChatSettings()
-  }, [user, bot, i18n.language])
+  }, [user, i18n.language])
 
   // get existing dialog session || create new
   useEffect(() => {

@@ -140,6 +140,7 @@ export const useAssistants = () => {
       await deleteAssistants(names)
       await queryClient.invalidateQueries([PRIVATE_DISTS])
       await queryClient.invalidateQueries([PUBLIC_DISTS])
+      names.forEach(name => updateCachedDist(name))
     },
 
     onSuccess: (_, names) => {

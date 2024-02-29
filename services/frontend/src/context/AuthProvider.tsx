@@ -14,6 +14,8 @@ import {
   getLocalStorageUser,
   setLocalStorageUser,
 } from 'utils/localStorageUser'
+import { AssistantDialogSidePanel } from 'components/Panels'
+import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import { useGAContext } from './GaContext'
 
 export const AuthContext = createContext<UserContext>({
@@ -42,8 +44,20 @@ export const AuthProvider = ({ children }: { children?: JSX.Element }) => {
 
     const beforeLoginModal = getBeforeLoginModal()
 
-    if (beforeLoginModal && location.href === beforeLoginUrl)
-      trigger(beforeLoginModal.name, beforeLoginModal.options)
+    if (beforeLoginModal && location.href === beforeLoginUrl) {
+      if (beforeLoginModal.name === TRIGGER_RIGHT_SP_EVENT) {
+        trigger(TRIGGER_RIGHT_SP_EVENT, {
+          children: (
+            <AssistantDialogSidePanel
+              key={beforeLoginModal.options.dist.name + 'chat_with_assistant'}
+              dist={beforeLoginModal.options.dist}
+            />
+          ),
+        })
+      } else {
+        trigger(beforeLoginModal.name, beforeLoginModal.options)
+      }
+    }
 
     const beforeLoginAnalyticsState = getBeforeLoginAnalyticsState()
     if (beforeLoginAnalyticsState) {

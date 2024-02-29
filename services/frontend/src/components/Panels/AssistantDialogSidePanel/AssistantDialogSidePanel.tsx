@@ -15,10 +15,12 @@ import {
 import { DEPLOY_STATUS, DUMMY_SKILL, TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
+import { login } from 'api/user'
 import { useAssistants, useChat, useComponent, useDeploy } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaChat } from 'hooks/googleAnalytics/useGaVaChat'
 import { useChatScroll } from 'hooks/useChatScroll'
+import { saveBeforeLoginModal } from 'utils/beforeSignInManager'
 import { examinationMessage } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
@@ -39,12 +41,12 @@ interface Props {
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { getAllComponents } = useComponent()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   // queries
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
   const { deploy, deleteDeployment } = useDeploy()
-  const { data: bot } = getDist(
+  const { data: bot, isLoading } = getDist(
     { distName: dist?.name },
     { refetchOnMount: true }
   )
@@ -59,6 +61,20 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   }).length
 
   const hereIsDummy = dummyAnswersCounter > 2
+
+  const checkIsChatSettings = (userId: number | undefined) => {
+    setErrorPanel(null)
+
+    if (!userId) {
+      setErrorPanel({
+        type: 'auth',
+        msg: t('api_key.required.auth_required'),
+      })
+      return false
+    }
+
+    return true
+  }
 
   const cx = classNames.bind(s)
   const chatRef = useRef<HTMLDivElement>(null)
@@ -152,12 +168,17 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       toasts().deploy
     )
   }
+  const handleCheckChatSettings = () => {
+    readyToGetSession && checkIsChatSettings(user?.id)
+  }
 
   const handleErrorBtnClick = (type: TDialogError) => {
     if (type === 'auth') {
-      trigger('SignInModal', {
-        requestModal: { name: 'AccessTokensModal', options: {} },
+      saveBeforeLoginModal({
+        name: 'TRIGGER_RIGHT_SP_EVENT',
+        options: { dist: bot },
       })
+      login.gitHub()
     }
   }
 
@@ -166,8 +187,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   // проверяем настройки
   useEffect(() => {
-    if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
-  }, [user, bot])
+    if (!isLoading && !bot)
+      return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
+  }, [bot])
+
+  useEffect(() => {
+    handleCheckChatSettings()
+  }, [user, i18n.language])
 
   // get existing dialog session || create new
   useEffect(() => {

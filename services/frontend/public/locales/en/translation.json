@@ -541,7 +541,7 @@
       "link": "Enter your personal access token here",
       "api-key": "Enter token",
       "auth": "Sign in",
-      "auth_required": "To start a talk with an AI assistant, you need to log in and enter your personal access token."
+      "auth_required": "To start a talk with an AI assistant, you need to log in."
     }
   },
   "assistant_visibility": {

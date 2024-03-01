@@ -59,6 +59,9 @@ def create_virtual_assistant(
         existing_prompted_skills = []
 
         for skill in original_prompted_skills:
+            if skill.component.name in ["dff_dream_persona_ru_prompted_skill", "dff_dream_persona_prompted_skill"]:
+                continue
+
             existing_prompted_skill = {
                 "name": skill.component.name,
                 "port": dream_dist.pipeline.skills[skill.component.name].service.environment.get("SERVICE_PORT"),
@@ -89,6 +92,9 @@ def create_virtual_assistant(
             service = service_crud.get_or_create(
                 db, dream_component.service.service.name, str(dream_component.service.config_dir)
         )
+            if name in ["dff_dream_persona_ru_prompted_skill", "dff_dream_persona_prompted_skill"]:
+                continue
+
             cloned_from_id = cloned_from_name = None
             creation_type = ComponentCreationStatus.NEW
             if group == "skills" and "_prompted_skill" in name and original_prompted_skills:

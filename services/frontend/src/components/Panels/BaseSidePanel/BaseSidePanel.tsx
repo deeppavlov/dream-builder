@@ -23,7 +23,7 @@ interface BaseSidePanel {
     bottom: number | 'auto'
   }>
   children?: React.ReactNode
-  childData: {
+  childData?: {
     key: string
     dist: BotInfoInterface
     componentName: string

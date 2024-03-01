@@ -10,6 +10,7 @@ i18n
   .init({
     // debug: true,
     fallbackLng: 'en',
+    supportedLngs: ['en', 'ru'],
     react: {
       transEmptyNodeValue: '', // what to return for empty Trans
       transSupportBasicHtmlNodes: true,

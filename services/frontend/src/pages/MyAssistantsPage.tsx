@@ -1,6 +1,7 @@
 import { useAuth, useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
+import { useAssistantCleanup } from 'hooks/useAssistantCleanup'
 import { consts } from 'utils/consts'
 import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
@@ -27,6 +28,8 @@ export const MyAssistantsPage = () => {
   const privateDists = fetchPrivateDists()
 
   const tableHeaders = getAssistantTableHeaders('private')
+
+  useAssistantCleanup()
 
   return (
     <>

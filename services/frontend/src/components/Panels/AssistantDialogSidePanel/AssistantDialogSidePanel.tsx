@@ -26,6 +26,7 @@ import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
 import { submitOnEnter } from 'utils/submitOnEnter'
+import { updateAssistantLastUsedDate } from 'utils/updateAssistantLastUsedDate'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
 import { Loader, TextLoader } from 'components/Loaders'
@@ -146,6 +147,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       }
     )
     chatSend(history.length)
+    updateAssistantLastUsedDate(bot?.name!)
 
     reset()
   }

@@ -2,6 +2,7 @@ import { AxiosError } from 'axios'
 import { useAuth } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import store from 'store2'
 import { RoutesList } from 'router/RoutesList'
 import {
   BotInfoInterface,
@@ -24,6 +25,8 @@ import { deleteAssistants } from 'api/assistants/deleteAssistant'
 import { useDeploy } from 'hooks/api/useDeploy'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
+import { ILocalStorageDist } from 'hooks/useAssistantCleanup'
+import { updateAssistantLastUsedDate } from 'utils/updateAssistantLastUsedDate'
 
 interface IChangeVisibility {
   name: string
@@ -71,7 +74,25 @@ export const useAssistants = () => {
   const fetchPublicDists = () => useQuery(PUBLIC_DISTS, getPublicAssistants)
 
   const fetchPrivateDists = () =>
-    useQuery(PRIVATE_DISTS, getPrivateAssistants, { enabled: userIsAuthorized })
+    useQuery(
+      PRIVATE_DISTS,
+      async () => {
+        const dists = await getPrivateAssistants()
+        const localStorageDists: ILocalStorageDist[] =
+          store('myAssistants') || []
+        const filteredDists = dists
+          .filter(
+            dist =>
+              !localStorageDists.some(
+                storageDist => storageDist.name === dist.name
+              )
+          )
+          .map(({ name }) => ({ name, date: Date.now() }))
+        store('myAssistants', [...localStorageDists, ...filteredDists])
+        return dists
+      },
+      { enabled: userIsAuthorized }
+    )
 
   const getDist = ({ distName }: IGetDist, options?: IGetDistOptions) => {
     const isRetry = options?.retry !== undefined
@@ -101,6 +122,7 @@ export const useAssistants = () => {
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
       vaRenamed()
+      updateAssistantLastUsedDate(name)
     },
   })
 
@@ -132,6 +154,12 @@ export const useAssistants = () => {
           updateCachedDist(name)
         })
       vaDeleted()
+
+      const localStorageDists: ILocalStorageDist[] = store('myAssistants') || []
+      const remainingLocalStorageDists = localStorageDists.filter(
+        dist => dist.name !== name
+      )
+      store('myAssistants', remainingLocalStorageDists)
     },
   })
 
@@ -145,6 +173,11 @@ export const useAssistants = () => {
 
     onSuccess: (_, names) => {
       names.includes(name) && navigate(RoutesList.start)
+      const localStorageDists: ILocalStorageDist[] = store('myAssistants') || []
+      const remainingLocalStorageDists = localStorageDists.filter(
+        dist => !names.includes(dist.name)
+      )
+      store('myAssistants', remainingLocalStorageDists)
     },
   })
 
@@ -167,6 +200,7 @@ export const useAssistants = () => {
       queryClient
         .invalidateQueries([PRIVATE_DISTS])
         .finally(() => updateCachedDist(name))
+      updateAssistantLastUsedDate(name)
     },
   })
 

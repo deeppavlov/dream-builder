@@ -14,6 +14,7 @@ import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
+import { updateAssistantLastUsedDate } from 'utils/updateAssistantLastUsedDate'
 import { Button, Kebab } from 'components/Buttons'
 import { AssistantContextMenu } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
@@ -92,6 +93,7 @@ export const AssistantCard: FC<BotCardProps> = ({
     : null
 
   const handleBotCardClick = (e: MouseEvent) => {
+    updateAssistantLastUsedDate(bot.name)
     if (
       document
         .querySelector(`[data-tooltip-id="${tooltipId}"]`)

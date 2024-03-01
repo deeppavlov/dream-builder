@@ -1,9 +1,11 @@
 import { ReactComponent as CloseIcon } from '@assets/icons/close.svg'
 import { useUIOptions } from 'context'
 import React, { FC, useEffect, useState } from 'react'
+import { BotInfoInterface } from 'types/types'
 import { useObserver } from 'hooks/useObserver'
 import { consts } from 'utils/consts'
 import SidePanel from 'components/Panels/SidePanel/SidePanel'
+import { AssistantDialogSidePanel } from '../AssistantDialogSidePanel/AssistantDialogSidePanel'
 import s from './BaseSidePanel.module.scss'
 import './BaseSidePanel.module.scss'
 
@@ -21,6 +23,11 @@ interface BaseSidePanel {
     bottom: number | 'auto'
   }>
   children?: React.ReactNode
+  childData?: {
+    key: string
+    dist: BotInfoInterface
+    componentName: string
+  }
   isClosable?: boolean
   transition?: TTransition | 'none'
 }
@@ -59,7 +66,17 @@ export const BaseSidePanel: FC<BaseSidePanel> = ({
 
     if (requestToClose) return handleClose()
 
-    setContent(children)
+    const { childData } = data.detail
+    if (childData?.componentName === 'AssistantDialogSidePanel') {
+      setContent(
+        <AssistantDialogSidePanel
+          key={childData.dist.name + 'chat_with_assistant'}
+          dist={childData.dist}
+        />
+      )
+    } else {
+      setContent(children)
+    }
     setIsOpen(true)
   }
 

@@ -1,6 +1,7 @@
-from typing import Optional
-
+import asyncio
 import aiohttp
+
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
@@ -50,9 +51,12 @@ async def send_chat_request_to_deployed_agent(
     data["gigachat_credential"] = settings.app.default_gigachat_api_key
     # logger.warning(f"Sending {agent_url} data:\n{data}")
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(agent_url, json=data) as response:
-            response_data = await response.json()
+    try:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as session:
+            async with session.post(agent_url, json=data) as response:
+                response_data = await response.json()
+    except asyncio.TimeoutError:
+        raise HTTPException(status_code=408, detail=str("TimeoutError"))
 
     # logger.warning(f"{agent_url} response:\n{response_data}")
 
@@ -147,7 +151,7 @@ async def send_dialog_session_message(
 
     lm_service_config = getattr(payload, 'lm_service_config', None)
 
-    agent_dialog_id, bot_response, active_skill = await send_chat_request_to_deployed_agent(
+    chat_request_to_deployed_agent = await send_chat_request_to_deployed_agent(
         chat_url,
         dialog_session.id,
         payload.text,
@@ -157,6 +161,10 @@ async def send_dialog_session_message(
         payload.gigachat_credential,
         lm_service_config
     )
+    if isinstance(chat_request_to_deployed_agent, HTTPException):
+        return chat_request_to_deployed_agent
+
+    agent_dialog_id, bot_response, active_skill = chat_request_to_deployed_agent
 
     crud.update_dialog_session(db, dialog_session.id, agent_dialog_id)
 

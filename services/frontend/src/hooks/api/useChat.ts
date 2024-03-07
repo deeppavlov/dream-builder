@@ -32,6 +32,7 @@ export const useChat = () => {
     },
     mutationFn: (data: string) => createDialogSession(data),
     onSuccess: (data, variables) => {
+      setShowNetworkIssue(false)
       const isDebug = variables === DEBUG_EN_DIST || variables === DEBUG_RU_DIST
       const localStorageSessionName = data.user_id
         ? `${variables}_session_${data.user_id}`

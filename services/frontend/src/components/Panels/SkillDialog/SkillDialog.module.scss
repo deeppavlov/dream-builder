@@ -20,6 +20,10 @@
   overflow: hidden;
 }
 
+.errorContainer {
+  margin: 0 16px 16px 16px;
+}
+
 .chat {
   width: 100%;
   height: 100%;
@@ -131,7 +135,7 @@
   padding: 0 24px 24px 24px;
   padding-bottom: 10px;
   overflow: hidden;
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 
 .link {

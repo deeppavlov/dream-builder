@@ -374,7 +374,10 @@
         "stop_deploy": "Stop deploy...",
         "deploy_stopped": "Deploy stopped!"
       },
-      "dummy_error": "Something went wrong<br />Restart the system"
+      "warning": "Warning!",
+      "error": "Error!",
+      "dummy_error": "Something went wrong<br />Restart the system",
+      "timeout_error": "The server is taking longer than usual to process your request. There may have been a network problem.<br />Refresh the dialog session or wait for the response processing to complete."
     },
     "assistant": {
       "accordions": {

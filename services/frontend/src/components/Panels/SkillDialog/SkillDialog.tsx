@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
 import { BotInfoInterface, ChatForm, IDialogError, ISkill } from 'types/types'
@@ -18,6 +18,7 @@ import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
 import { BaseToolTip } from 'components/Menus'
+import { ErrorCard } from 'components/UI'
 import SidePanelHeader from '../SidePanelHeader/SidePanelHeader'
 import s from './SkillDialog.module.scss'
 
@@ -31,7 +32,8 @@ interface Props {
 const SkillDialog = forwardRef(
   ({ isDebug, distName, skill, bot }: Props, ref) => {
     const { t } = useTranslation()
-    const { send, renew, session, message, history } = useChat()
+    const { send, renew, session, message, history, showNetworkIssue } =
+      useChat()
     const { data: user } = useQuery(['user'], () => getUserId())
     const { handleSubmit, register, reset } = useForm<ChatForm>()
     const [error, setError] = useState<IDialogError | null>(null)
@@ -120,91 +122,75 @@ const SkillDialog = forwardRef(
             </li>
           </ul>
         </SidePanelHeader>
-        {error?.type === 'api-key' && (
-          <div className={s.error}>
-            <span className={s.alertName}>
-              {t('sidepanels.skill_dialog.error_header')}
-            </span>
-            <p className={s.alertDesc}>{error.msg}</p>
-            {error.type === 'api-key' && (
-              <div className={s.link}>
-                <Button
-                  theme='ghost'
-                  props={{ onClick: handleEnterTokenClick }}
+
+        <div className={s.container}>
+          <ul ref={chatRef} className={s.chat}>
+            {history?.map(
+              (block: { author: string; text: string }, i: number) => (
+                <li
+                  key={`${block?.author == 'bot'}${i}`}
+                  className={cx('msg', block?.author == 'bot' && 'bot')}
                 >
-                  {t('api_key.required.link')}
-                </Button>
-              </div>
+                  {block?.text}
+                </li>
+              )
             )}
-            <Button
-              theme='error'
-              props={{ disabled: isChecking, onClick: handleRetryBtnClick }}
-            >
-              {t('sidepanels.skill_dialog.btns.retry')}
-            </Button>
+            {send.isLoading && (
+              <>
+                <li className={cx('bot', 'msg')}>
+                  <TextLoader />
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+        {showNetworkIssue && (
+          <div className={s.errorContainer}>
+            <ErrorCard
+              isWhite
+              type='warning'
+              message={
+                <Trans i18nKey='sidepanels.assistant_dialog.timeout_error' />
+              }
+            />
           </div>
         )}
-        {error?.type !== 'api-key' && (
-          <>
-            <div className={s.container}>
-              <ul ref={chatRef} className={s.chat}>
-                {history?.map(
-                  (block: { author: string; text: string }, i: number) => (
-                    <li
-                      key={`${block?.author == 'bot'}${i}`}
-                      className={cx('msg', block?.author == 'bot' && 'bot')}
-                    >
-                      {block?.text}
-                    </li>
-                  )
-                )}
-                {send.isLoading && (
-                  <>
-                    <li className={cx('bot', 'msg')}>
-                      <TextLoader />
-                    </li>
-                  </>
-                )}
-              </ul>
-            </div>
-            <div className={s.bottom}>
-              <div className={s['textarea-container']}>
-                <textarea
-                  className={s.textarea}
-                  rows={4}
-                  placeholder={t(
-                    'sidepanels.skill_dialog.message_field.placeholder'
-                  )}
-                  {...register('message', { required: true })}
-                  spellCheck='false'
-                />
-              </div>
+        <div className={s.bottom}>
+          <div className={s['textarea-container']}>
+            <textarea
+              className={s.textarea}
+              rows={4}
+              placeholder={t(
+                'sidepanels.skill_dialog.message_field.placeholder'
+              )}
+              {...register('message', { required: true })}
+              spellCheck='false'
+            />
+          </div>
 
-              <div className={s.btns}>
-                <Button
-                  theme='secondary'
-                  props={{
-                    onClick: handleRenewClick,
-                    disabled: send?.isLoading || !!error,
-                    'data-tooltip-id': 'renew',
-                  }}
-                >
-                  <Renew />
-                </Button>
-                <Button
-                  theme='secondary'
-                  props={{
-                    disabled: send?.isLoading || !!error,
-                    type: 'submit',
-                  }}
-                >
-                  {t('sidepanels.skill_dialog.btns.send')}
-                </Button>
-              </div>
-              <BaseToolTip id='renew' content={t('tooltips.dialog_renew')} />
-            </div>
-          </>
-        )}
+          <div className={s.btns}>
+            <Button
+              theme='secondary'
+              props={{
+                onClick: handleRenewClick,
+                disabled: send?.isLoading || !!error,
+                'data-tooltip-id': 'renew',
+              }}
+            >
+              <Renew />
+            </Button>
+            <Button
+              theme='secondary'
+              props={{
+                disabled: send?.isLoading || !!error,
+                type: 'submit',
+              }}
+            >
+              {t('sidepanels.skill_dialog.btns.send')}
+            </Button>
+          </div>
+          <BaseToolTip id='renew' content={t('tooltips.dialog_renew')} />
+        </div>
       </form>
     )
   }

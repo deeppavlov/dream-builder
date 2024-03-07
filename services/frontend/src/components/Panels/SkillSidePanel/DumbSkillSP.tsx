@@ -44,6 +44,7 @@ const DumbSkillSP: FC<Props> = ({
   })
   let cx = classNames.bind(s)
   const { editSkillButtonClick, skillDetailsOpened } = useGaSkills()
+  const isDummy = skill.name === 'dummy_skill'
 
   const isDeepyPavlova =
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === skill?.author?.outer_id
@@ -91,7 +92,9 @@ const DumbSkillSP: FC<Props> = ({
       {tabsInfo.activeTabId === properties && (
         <div role='tabpanel' className={s.properties}>
           <div className={s.header}>
-            <span className={s.name}>{skill?.display_name}</span>
+            <span className={s.name}>
+              {isDummy ? t('cards.skill.dummy') : skill?.display_name}
+            </span>
             <EditPencilButton
               disabled={!isCustomizable}
               onClick={handleRenameBtnClick}
@@ -149,7 +152,9 @@ const DumbSkillSP: FC<Props> = ({
           <li className={cx('item', 'big-item')}>
             <Accordion title={t('accordions.desc')} rounded isActive>
               <p className={cx('value', 'accardion-value')}>
-                {skill?.description}
+                {isDummy
+                  ? t('cards.skill.dummyDescription')
+                  : skill?.description}
               </p>
             </Accordion>
           </li>

@@ -45,6 +45,7 @@ export const SkillCard: FC<SkillCardProps> = ({
   const { skillsPropsOpened, skillEditorOpened } = useGaSkills()
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
+  const isDummy = skill.name === 'dummy_skill'
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -108,7 +109,9 @@ export const SkillCard: FC<SkillCardProps> = ({
       data-active={isActive}
     >
       <div className={s.header}>
-        <p className={s.botName}>{skill?.display_name ?? '------'} </p>
+        <p className={s.botName}>
+          {isDummy ? t('cards.skill.dummy') : skill?.display_name ?? '------'}{' '}
+        </p>
       </div>
       <div className={s.body}>
         <div className={s.top}>
@@ -118,7 +121,9 @@ export const SkillCard: FC<SkillCardProps> = ({
               svgProp={{ className: s.typeLogo }}
             />
             <p className={cx('typeText', nameForComponentType)}>
-              {skill?.component_type ?? '------'}
+              {isDummy
+                ? t('cards.skill.fallback')
+                : t('cards.skill.generative')}
             </p>
           </div>
           <div
@@ -127,7 +132,9 @@ export const SkillCard: FC<SkillCardProps> = ({
             data-tooltip-id={'skillCardDesc' + tooltipId}
           >
             <div className={s.descriptionText}>
-              {skill?.description ?? 'Empty'}
+              {isDummy
+                ? t('cards.skill.dummyDescription')
+                : skill?.description ?? 'Empty'}
             </div>
           </div>
           <div className={s.info}>

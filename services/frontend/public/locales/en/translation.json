@@ -465,6 +465,10 @@
   },
   "cards": {
     "skill": {
+      "dummy": "Dummy Skill",
+      "dummyDescription": "A skill that responds things like \"I do not know\" when there are no relevant skills to generate an answer.",
+      "fallback": "Fallback",
+      "generative": "Generative",
       "tooltips": {
         "clone_for_edit": "You need to clone the virtual Assistant to edit"
       }

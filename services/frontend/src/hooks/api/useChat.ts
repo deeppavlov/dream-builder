@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { useUIOptions } from 'context'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation } from 'react-query'
 import store from 'store2'
 import { ChatHistory, IPostChat, SessionConfig } from 'types/types'
@@ -15,6 +15,9 @@ export const useChat = () => {
   const [history, setHistory] = useState<ChatHistory[]>([])
   const [message, setMessage] = useState<string>('')
   const [error, setError] = useState<boolean>(false)
+
+  const [showNetworkIssue, setShowNetworkIssue] = useState(false)
+  const networkIssueTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // const checkAvailableSession = useMutation({
   //   mutationFn: (data: number) => getDialogSession(data),
@@ -42,6 +45,11 @@ export const useChat = () => {
 
   const send = useMutation({
     onMutate: ({ text }: IPostChat) => {
+      const timeout = setTimeout(() => {
+        setShowNetworkIssue(true)
+      }, 20000)
+      networkIssueTimeoutRef.current = timeout
+
       setMessage(text)
       setHistory(state => [...state, { text, author: 'me' }])
     },
@@ -53,9 +61,17 @@ export const useChat = () => {
       ])
     },
     onError: (data: AxiosError) => {
+      setHistory(state => state.slice(0, -1))
       const needToRenew =
         data.response?.status === 404 || data.response?.status === 403
       needToRenew && renew.mutateAsync(bot?.name)
+    },
+    onSettled: () => {
+      if (networkIssueTimeoutRef.current) {
+        clearTimeout(networkIssueTimeoutRef.current)
+        networkIssueTimeoutRef.current = null
+        setShowNetworkIssue(false)
+      }
     },
   })
 
@@ -75,5 +91,6 @@ export const useChat = () => {
     setSession,
     remoteHistory,
     error,
+    showNetworkIssue,
   }
 }

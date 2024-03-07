@@ -52,8 +52,16 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     { refetchOnMount: true }
   )
   const { user } = useAuth()
-  const { send, renew, session, message, history, setSession, remoteHistory } =
-    useChat()
+  const {
+    send,
+    renew,
+    session,
+    message,
+    history,
+    setSession,
+    remoteHistory,
+    showNetworkIssue,
+  } = useChat()
   const { vaChangeDeployState } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
 
@@ -341,6 +349,19 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
                 </>
               )}
             </div>
+
+            {showNetworkIssue && (
+              <div className={s.dummyContainer}>
+                <ErrorCard
+                  isWhite
+                  type='warning'
+                  message={
+                    <Trans i18nKey='sidepanels.assistant_dialog.timeout_error' />
+                  }
+                />
+              </div>
+            )}
+
             {hereIsDummy && (
               <div className={s.dummyContainer}>
                 <ErrorCard

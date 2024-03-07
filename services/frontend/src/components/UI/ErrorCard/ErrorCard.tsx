@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { useTranslation } from 'react-i18next'
 import { SvgIcon } from 'components/Helpers'
 import s from './ErrorCard.module.scss'
 
@@ -15,12 +16,13 @@ const icon = {
 
 export const ErrorCard = ({ message, type, isWhite }: IProps) => {
   const cx = classNames.bind(s)
+  const { t } = useTranslation()
 
   return (
     <div className={cx('container', isWhite && 'white')}>
       <div className={s.header}>
         <SvgIcon iconName={icon[type]} />
-        {type === 'error' ? 'Error!' : 'Attention!'}
+        {t(`sidepanels.assistant_dialog.${type}`)}
       </div>
       <div className={s.message}>{message}</div>
     </div>

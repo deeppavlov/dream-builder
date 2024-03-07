@@ -463,7 +463,7 @@
   "cards": {
     "skill": {
       "dummy": "Dummy Skill",
-      "dummyDescription": "A fallback skill with multiple non-toxic candidate responses.",
+      "dummyDescription": "A skill that responds things like \"I do not know\" when there are no relevant skills to generate an answer.",
       "fallback": "Fallback",
       "generative": "Generative",
       "tooltips": {

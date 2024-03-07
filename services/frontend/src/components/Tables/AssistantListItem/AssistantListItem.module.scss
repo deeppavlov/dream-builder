@@ -41,7 +41,7 @@
 
     .listError > div:first-child {
       padding-left: 0px;
-      justify-content: center;
+      justify-content: flex-start;
     }
   }
   .checkboxArea {
@@ -113,7 +113,7 @@
 .visibility {
   width: 110px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .lng {
   height: 26px;

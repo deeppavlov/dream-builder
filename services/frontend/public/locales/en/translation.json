@@ -377,7 +377,7 @@
       "warning": "Warning!",
       "error": "Error!",
       "dummy_error": "Something went wrong<br />Restart the system",
-      "timeout_error": "The server is taking longer than usual to process your request. There may be temporary network issues.<br />Refresh the session or wait for the response processing to complete."
+      "timeout_error": "The server is taking longer than usual to process your request. There may have been temporary network issues.<br />Refresh the dialog session or wait for the response processing to complete."
     },
     "assistant": {
       "accordions": {

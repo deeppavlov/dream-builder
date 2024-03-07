@@ -462,6 +462,10 @@
   },
   "cards": {
     "skill": {
+      "dummy": "Dummy Skill",
+      "dummyDescription": "A fallback skill with multiple non-toxic candidate responses.",
+      "fallback": "Fallback",
+      "generative": "Generative",
       "tooltips": {
         "clone_for_edit": "You need to clone the virtual Assistant to edit"
       }

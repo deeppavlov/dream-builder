@@ -34,7 +34,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   withoutDate,
   handleAdd,
 }) => {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const date = dateToUTC(skill?.date_created, i18n.language as TLocale, {
     year: 'numeric',
     month: 'long',
@@ -56,6 +56,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
   const nameForComponentType = componentTypeMap[skill?.component_type!]
   let cx = classNames.bind(s)
   const isActive = skill.id === activeSKillId
+  const isDummy = skill.name === 'dummy_skill'
 
   const handleSkillListItemClick = (e: React.MouseEvent) => {
     if (
@@ -119,7 +120,9 @@ export const SkillListItem: FC<SkillListItemProps> = ({
     >
       <td className={s.td}>
         <div className={s.name}>
-          <p className={s.skillName}>{skill?.display_name || '------'}</p>
+          <p className={s.skillName}>
+            {isDummy ? t('cards.skill.dummy') : skill?.display_name || '------'}
+          </p>
         </div>
       </td>
       <td className={s.td}>
@@ -130,7 +133,9 @@ export const SkillListItem: FC<SkillListItemProps> = ({
               svgProp={{ className: s.typeLogo }}
             />
             <p className={cx('typeText', nameForComponentType)}>
-              {skill?.component_type || '------'}
+              {isDummy
+                ? t('cards.skill.fallback')
+                : t('cards.skill.generative')}
             </p>
           </div>
         )}
@@ -141,7 +146,7 @@ export const SkillListItem: FC<SkillListItemProps> = ({
           data-tip
           data-tooltip-id={'skillTableDesc' + tooltipId}
         >
-          {skill?.description}
+          {isDummy ? t('cards.skill.dummyDescription') : skill?.description}
           {/* <BaseToolTip
             delayShow={TOOLTIP_DELAY}
             id={'skillTableDesc' + tooltipId}

@@ -68,7 +68,7 @@ const arrInitPromptBlock = [
       /[Яя] хочу, чтобы вы выступили в роли (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
-    'ВАША ЛИЧНОСТЬ: Ваше имя: [ВАШ ВВОД]. Ваши интересы: [ВАШ ВВОД].':
+    'ЛИЧНОСТЬ: Ваше имя: [ВАШ ВВОД]. Ваши интересы: [ВАШ ВВОД].':
       /ВАША ЛИЧНОСТЬ: [Вв]аше имя: (?:\b\w+\b|\[.*?\]|[А-я_]+). Ваши интересы: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
 
@@ -126,7 +126,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
     return
   }
 
-  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]']
+  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]', '[ВВЕДИТЕ ДАННЫЕ]' ]
   const str = arrInputs.reduce(
     (acc, str) => (skill.prompt?.includes(str) ? (acc += ' ' + str) : acc),
     ''

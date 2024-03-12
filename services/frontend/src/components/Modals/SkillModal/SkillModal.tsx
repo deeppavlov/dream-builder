@@ -125,7 +125,7 @@ export const SkillModal = () => {
   useObserver('SkillModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal handleClose={closeModal} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
           {action == 'create' && (

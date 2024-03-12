@@ -197,7 +197,8 @@
       },
       "tooltips": {
         "public": "Everyone can clone and talk to your VA",
-        "unlisted": "Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category"
+        "unlisted": "Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category",
+        "error": "You cannot change the visibility of the assistant with critical errors, please fix them"
       },
       "btns": {
         "no": "No",

@@ -5,15 +5,21 @@ import { useTranslation } from 'react-i18next'
 import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
 import store from 'store2'
-import { BotInfoInterface, TDistVisibility, Visibility } from 'types/types'
+import {
+  BotInfoInterface,
+  ISkill,
+  TDistVisibility,
+  Visibility,
+} from 'types/types'
 import {
   HIDE_PUBLISH_ALERT_KEY,
   PUBLISH_REQUEST_STATUS,
   VISIBILITY_STATUS,
 } from 'constants/constants'
 import { getAssistantVisibility } from 'mapping/assistantVisibility'
-import { useAssistants } from 'hooks/api'
+import { useAssistants, useComponent } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
+import { examination } from 'utils/checkingAssistants'
 import { trigger } from 'utils/events'
 import { Button, RadioButton } from 'components/Buttons'
 import { BaseToolTip } from 'components/Menus'
@@ -37,6 +43,7 @@ export const PublishAssistantModal = () => {
         visibility: bot?.visibility,
       },
     })
+  const { getAllComponents } = useComponent()
   const { changeVisibility } = useAssistants()
   const botOnModeration =
     bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
@@ -46,6 +53,11 @@ export const PublishAssistantModal = () => {
     selectedVisibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const currentVisibility = bot?.visibility
   const isVisibilityChange = selectedVisibility !== currentVisibility
+
+  const componentsQueries = getAllComponents(bot?.name || '')
+  const haveErrors = componentsQueries.data?.skills
+    .filter((el: ISkill) => el.name !== 'dummy_skill')
+    .some(skill => !!examination(skill).errors.length)
 
   const sendButtonIsDisabled =
     changeVisibility?.isLoading ||
@@ -155,7 +167,11 @@ export const PublishAssistantModal = () => {
                     id={type.name}
                     htmlFor={type.name}
                     value={type.id}
-                    disabled={type.name === 'Public'}
+                    disabled={
+                      type.name === 'Private'
+                        ? false
+                        : haveErrors || type.name === 'Public'
+                    }
                   >
                     {type.description}
                   </RadioButton>
@@ -183,12 +199,20 @@ export const PublishAssistantModal = () => {
       </div>
       <BaseToolTip
         id={VISIBILITY_STATUS.PUBLIC_TEMPLATE}
-        content={t('modals.publish_assistant.tooltips.public')}
+        content={
+          haveErrors
+            ? t('modals.publish_assistant.tooltips.error')
+            : t('modals.publish_assistant.tooltips.public')
+        }
         theme='small'
       />
       <BaseToolTip
         id={VISIBILITY_STATUS.UNLISTED_LINK}
-        content={t('modals.publish_assistant.tooltips.unlisted')}
+        content={
+          haveErrors
+            ? t('modals.publish_assistant.tooltips.error')
+            : t('modals.publish_assistant.tooltips.unlisted')
+        }
         theme='small'
       />
     </BaseModal>

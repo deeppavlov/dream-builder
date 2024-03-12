@@ -44,7 +44,7 @@ const DumbSkillSP: FC<Props> = ({
   })
   let cx = classNames.bind(s)
   const { editSkillButtonClick, skillDetailsOpened } = useGaSkills()
-  const isDummy = skill.name === 'dummy_skill'
+  const isDummy = skill?.name === 'dummy_skill'
 
   const isDeepyPavlova =
     import.meta.env.VITE_SUB_FOR_DEFAULT_TEMPLATES === skill?.author?.outer_id

@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
-    apt-get install -y --no-install-recommends docker-ce=5:24.0.9-1~debian.10~buster docker-ce-cli=5:24.0.9-1~debian.10~buster containerd.io docker-buildx-plugin >
+    apt-get install -y --no-install-recommends docker-ce=5:24.0.9-1~debian.10~buster docker-ce-cli=5:24.0.9-1~debian.10~buster containerd.io docker-buildx-plugin docker-compose-plugin=2.14.1~debian-buster
 
 COPY services/deployment_worker/requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir -r /src/requirements.txt

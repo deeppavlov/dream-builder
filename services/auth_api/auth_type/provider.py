@@ -48,11 +48,10 @@ class GithubAuth(auth_type.OAuth):
                 raise ValueError("The user with this token couldn't be found or token is not valid.")
 
             self._validate_date(uservalid_info_from_db.expire_date)
-            user_info_from_github = await self._fetch_user_info_by_access_token(token=token)
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
-        user_ = user.crud.get_general_user_by_outer_id(db, user_info_from_github["id"], self.PROVIDER_NAME)
+        user_ = user.crud.get_general_user_by_id(db, uservalid_info_from_db.user_id, self.PROVIDER_NAME)
         return User.from_orm(user_)
 
     async def logout(self, db: Session, token: str) -> None:

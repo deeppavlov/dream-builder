@@ -72,34 +72,35 @@ export const SkillModal = () => {
   const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
-    toast.promise(
-      create.mutateAsync(
-        { data, distName: distName || '', type: 'skills' },
-        {
-          onSuccess: skill => {
-            closeModal()
-            nav(
-              generatePath(RoutesList.editor.skillEditor, {
-                name: distName || '',
-                skillId: (skill?.component_id ?? skill?.id)?.toString(),
-              })
-            )
-            const newVisibility = VISIBILITY_STATUS.PRIVATE
-            bot?.deployment?.state === DEPLOY_STATUS.UP &&
-              deleteDeployment.mutateAsync(bot!).then(() => {
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({
-                    name: bot?.name!,
-                    newVisibility,
-                    inEditor: true,
-                  })
-                vaChangeDeployState('VA_Undeployed')
-              })
-          },
-        }
-      ),
-      toasts().createComponent
-    )
+    !create.isLoading &&
+      toast.promise(
+        create.mutateAsync(
+          { data, distName: distName || '', type: 'skills' },
+          {
+            onSuccess: skill => {
+              closeModal()
+              nav(
+                generatePath(RoutesList.editor.skillEditor, {
+                  name: distName || '',
+                  skillId: (skill?.component_id ?? skill?.id)?.toString(),
+                })
+              )
+              const newVisibility = VISIBILITY_STATUS.PRIVATE
+              bot?.deployment?.state === DEPLOY_STATUS.UP &&
+                deleteDeployment.mutateAsync(bot!).then(() => {
+                  bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
+                    changeVisibility.mutateAsync({
+                      name: bot?.name!,
+                      newVisibility,
+                      inEditor: true,
+                    })
+                  vaChangeDeployState('VA_Undeployed')
+                })
+            },
+          }
+        ),
+        toasts().createComponent
+      )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
     const isDist = distName && distName?.length > 0
@@ -124,7 +125,7 @@ export const SkillModal = () => {
   useObserver('SkillModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal handleClose={closeModal} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
           {action == 'create' && (
@@ -182,7 +183,10 @@ export const SkillModal = () => {
             <Button theme='secondary' props={{ onClick: closeModal }}>
               {t('modals.skill.btns.cancel')}
             </Button>
-            <Button theme='primary' props={{ type: 'submit' }}>
+            <Button
+              theme='primary'
+              props={{ type: 'submit', disabled: create.isLoading }}
+            >
               {action == 'create' && t('modals.skill.btns.create')}
               {action == 'edit' && t('modals.skill.btns.save')}
             </Button>

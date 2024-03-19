@@ -28,6 +28,12 @@ def get_general_user_by_outer_id(db: Session, outer_id: str, provider_name: str)
     return db.query(gu).where(gu.provider_id == provider_id, gu.outer_id == cast(outer_id, String)).first()
 
 
+def get_general_user_by_id(db: Session, user_id: str, provider_name: str) -> GeneralUser:
+    provider_id = providers.crud.get_provider_id_by_name(db, provider_name)
+    gu = GeneralUser
+    return db.query(gu).where(gu.provider_id == provider_id, gu.id == user_id).first()
+
+
 def get_all(db: Session) -> [GeneralUser]:
     return db.scalars(select(GeneralUser)).all()
 

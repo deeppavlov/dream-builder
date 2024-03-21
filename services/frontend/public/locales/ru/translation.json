@@ -543,6 +543,11 @@
     "unlisted": "По ссылке",
     "private": "Скрыт"
   },
+  "assistant_deployment": {
+    "not_built": "Не запущен",
+    "building": "Запуск...",
+    "ready": "Готов"
+  },
   "your_assistants": {
     "empty_placeholder": "Ваши Ассистенты появятся здесь"
   },
@@ -552,6 +557,7 @@
     "desc": "Описание",
     "visibility": "Видимость",
     "error": "Ошибки",
+    "status": "Статус",
     "created": "Создан",
     "language": "Язык",
     "actions": "Действия",

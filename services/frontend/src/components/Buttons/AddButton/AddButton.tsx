@@ -86,7 +86,7 @@ export const AddButton: FC<Props> = ({
   ) : (
     <tbody>
       <tr className={s.tr}>
-        <td colSpan={6} className={s.td}>
+        <td colSpan={8} className={s.td}>
           <button className={s.forTable} onClick={handleClick}>
             <img src={Add} />
             <p>

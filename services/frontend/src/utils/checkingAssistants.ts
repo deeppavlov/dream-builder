@@ -126,7 +126,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
     return
   }
 
-  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]', '[ВВЕДИТЕ ДАННЫЕ]' ]
+  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]', '[ВВЕДИТЕ ДАННЫЕ]']
   const str = arrInputs.reduce(
     (acc, str) => (skill.prompt?.includes(str) ? (acc += ' ' + str) : acc),
     ''
@@ -238,9 +238,6 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
 
   const maxToken: number = skill.lm_service?.max_tokens ?? 0
 
-  if (skill.prompt.length < maxToken) {
-    return
-  }
   const curentCountToken = getTokensLength(lmServiceName, skill.prompt)
   const isСrowded = maxToken < curentCountToken
 

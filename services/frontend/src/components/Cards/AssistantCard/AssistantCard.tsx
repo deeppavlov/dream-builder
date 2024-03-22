@@ -1,12 +1,16 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { FC, useId } from 'react'
+import { FC, useEffect, useId } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
 import { BotCardProps, BotInfoInterface } from 'types/types'
-import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
+import {
+  DEPLOY_STATUS,
+  PRIVATE_DISTS,
+  VISIBILITY_STATUS,
+} from 'constants/constants'
 import { getDeploy } from 'api/deploy/getDeploy'
 import { useAssistants } from 'hooks/api'
 import { useComponent } from 'hooks/api'
@@ -160,6 +164,9 @@ export const AssistantCard: FC<BotCardProps> = ({
       }
     },
   })
+  useEffect(() => {
+    queryClient.invalidateQueries([PRIVATE_DISTS])
+  }, [status.data?.state])
 
   return (
     <div

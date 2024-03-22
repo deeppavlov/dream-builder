@@ -540,6 +540,11 @@
     "unlisted": "Unlisted",
     "private": "Private"
   },
+  "assistant_deployment": {
+    "not_built": "Not built",
+    "building": "Building...",
+    "ready": "Ready"
+  },
   "your_assistants": {
     "empty_placeholder": "Your Assistants will appear here"
   },
@@ -549,6 +554,7 @@
     "desc": "Description",
     "visibility": "Visibility",
     "error": "Errors",
+    "status": "Status",
     "created": "Created",
     "language": "Language",
     "actions": "Actions",

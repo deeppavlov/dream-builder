@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import { useUIOptions } from 'context'
-import { FC, useId } from 'react'
+import { FC, useEffect, useId } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from 'react-query'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -11,7 +11,7 @@ import { RoutesList } from 'router/RoutesList'
 import { BotAvailabilityType, BotInfoInterface } from 'types/types'
 import {
   DEPLOY_STATUS,
-  PUBLISH_REQUEST_STATUS,
+  PRIVATE_DISTS,
   VISIBILITY_STATUS,
 } from 'constants/constants'
 import { getDeploy } from 'api/deploy'
@@ -19,6 +19,7 @@ import { useAssistants, useComponent } from 'hooks/api'
 import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
+import { getAssistantState } from 'utils/getAssistantState'
 import { Button, Kebab } from 'components/Buttons'
 import { AssistantContextMenu, StatusToolTip } from 'components/Menus'
 import { AssistantSidePanel } from 'components/Panels'
@@ -76,7 +77,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
   const isActive =
     infoSPId === activeAssistantId || bot.id === activeAssistantId
 
-  const onModeration = bot?.publish_state === PUBLISH_REQUEST_STATUS.IN_REVIEW
+  const { onModeration, isDeployed, isDeploying } = getAssistantState(bot)
   const published = bot?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
   const deployed = bot?.deployment?.state === DEPLOY_STATUS.UP //FIX
   const deploying =
@@ -162,7 +163,7 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
       if (
         data?.state !== DEPLOY_STATUS.UP &&
         data?.state !== null &&
-        data?.error == null
+        data?.error === null
       ) {
         //FIX
         setTimeout(() => {
@@ -173,6 +174,15 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
       }
     },
   })
+  useEffect(() => {
+    queryClient.invalidateQueries([PRIVATE_DISTS])
+  }, [status.data?.state])
+
+  const deploymentState = isDeploying
+    ? 'building'
+    : isDeployed
+    ? 'ready'
+    : 'not_built'
 
   return (
     <tr
@@ -204,25 +214,32 @@ export const AssistantListItem: FC<AssistantListItemProps> = ({
         </div>
       </td>
 
-      {type === 'your' ? (
-        <td className={s.td}>
-          <div className={s.listError}>
-            <RenderStatusToolTip
-              getAllComponents={getAllComponents}
-              type={type}
-              bot={bot}
-            />
-          </div>
-        </td>
-      ) : null}
+      {type === 'your' && (
+        <>
+          <td className={s.td}>
+            <div className={s.listError}>
+              <RenderStatusToolTip
+                getAllComponents={getAllComponents}
+                type={type}
+                bot={bot}
+              />
+            </div>
+          </td>
+          <td className={s.td}>
+            <div className={s.status}>
+              <SmallTag theme={deploymentState}>
+                {t(`assistant_deployment.${deploymentState}`)}
+              </SmallTag>
+            </div>
+          </td>
+        </>
+      )}
 
       <td className={s.td}>
         <div className={s.visibility}>
-          {
-            <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
-              {publishState}
-            </SmallTag>
-          }
+          <SmallTag theme={onModeration ? 'validating' : bot?.visibility}>
+            {publishState}
+          </SmallTag>
         </div>
       </td>
       <td className={s.td}>

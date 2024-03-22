@@ -52,21 +52,31 @@
   }
 }
 
+.validating,
+.building {
+  .icon {
+    -webkit-animation: loader-1-1 2s linear infinite;
+    animation: loader-1-1 2s linear infinite;
+  }
+}
+
 .validating {
   color: $pink;
   border-color: $pink;
   background: rgba(204, 102, 204, 0.1);
-
   .icon {
-    -webkit-animation: loader-1-1 2s linear infinite;
-    animation: loader-1-1 2s linear infinite;
-    // loader backgorund
-    path:first-child {
+    path {
       fill: $pink;
     }
-    // loader proggress line
-    path:last-child {
-      fill: $pink;
+  }
+}
+.building {
+  color: $purple;
+  border-color: $purple;
+  background: #3300ff1a;
+  .icon {
+    path {
+      fill: $purple;
     }
   }
 }
@@ -104,7 +114,17 @@
   }
 }
 
+.not_built,
+.building,
+.ready {
+  @extend .text-capitalize;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 8px 1px 4px;
+}
+
 .public,
+.ready,
 .PUBLIC_TEMPLATE {
   @extend .success;
   color: #009973;
@@ -123,6 +143,7 @@
 }
 
 .your,
+.not_built,
 .PRIVATE {
   background: #8d96b51a;
   border-color: $text3;

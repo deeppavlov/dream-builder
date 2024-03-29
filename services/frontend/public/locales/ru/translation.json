@@ -79,6 +79,29 @@
       "back_to_home": "Вернуться на главную"
     }
   },
+  "admin_page": {
+    "requests": "Запросы на публикацию",
+    "deployments": "Запущенные ассистенты",
+    "request_card": {
+      "id": "Id",
+      "name": "Название",
+      "display_name": "Отображаемое название",
+      "description": "Описание",
+      "date_created": "Дата создания",
+      "author": "Автор",
+      "email": "Email",
+      "approve": "Утвердить",
+      "decline": "Отклонить"
+    },
+    "deployment_card": {
+      "id": "Id",
+      "name": "Название",
+      "display_name": "Отображаемое название",
+      "author": "Автор",
+      "description": "Описание",
+      "stop": "Остановить"
+    }
+  },
   "modals": {
     "access_api_keys": {
       "header": "Личные токены доступа",

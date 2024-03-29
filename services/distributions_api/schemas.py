@@ -67,6 +67,7 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
+    model_name: Optional[str]
     api_key: Optional[ApiKeyRead] = None
     prompt_blocks: Optional[list[PromptBlockRead]] = None
     is_hosted: bool
@@ -361,3 +362,18 @@ class DialogSessionRead(BaseOrmModel):
     agent_dialog_id: Optional[str]
     deployment: DeploymentRead
     is_active: bool
+
+
+class UserApiKey(BaseModel):
+    api_key_value: str
+    lm_service: LmServiceRead
+
+
+class UserApiKeyResponse(BaseModel):
+    status_code: int = 200
+    message: Optional[str]
+
+
+class ErrorMessage(BaseModel):
+    code: int = Field(..., title="Error code")
+    message: str = Field(..., title="Error text")

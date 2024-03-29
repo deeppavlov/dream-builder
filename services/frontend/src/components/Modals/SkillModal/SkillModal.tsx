@@ -88,12 +88,11 @@ export const SkillModal = () => {
               const newVisibility = VISIBILITY_STATUS.PRIVATE
               bot?.deployment?.state === DEPLOY_STATUS.UP &&
                 deleteDeployment.mutateAsync(bot!).then(() => {
-                  bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                    changeVisibility.mutateAsync({
-                      name: bot?.name!,
-                      newVisibility,
-                      inEditor: true,
-                    })
+                  changeVisibility.mutateAsync({
+                    name: bot?.name!,
+                    newVisibility,
+                    inEditor: true,
+                  })
                   vaChangeDeployState('VA_Undeployed')
                 })
             },

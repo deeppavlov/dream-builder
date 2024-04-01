@@ -2,8 +2,9 @@ import { FC } from 'react'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { IDeploymentState } from 'types/types'
+import { VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
-import { useDeploy } from 'hooks/api'
+import { useAssistants, useDeploy } from 'hooks/api'
 import { Button } from 'components/Buttons'
 import { BaseToolTip } from 'components/Menus'
 import { Wrapper } from 'components/UI'
@@ -21,6 +22,7 @@ interface ICardProps {
 export const DeploymentCard: FC<ICardProps> = ({ deployment }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'admin_page' })
   const { deleteDeployment } = useDeploy()
+  const { changeVisibility } = useAssistants()
 
   const handleStop: IHandlerStop = (e, deployment) => {
     const assistantWithoutDeploymentField = deployment.virtual_assistant
@@ -32,7 +34,12 @@ export const DeploymentCard: FC<ICardProps> = ({ deployment }) => {
     }
 
     toast.promise(
-      deleteDeployment.mutateAsync(assistant),
+      deleteDeployment.mutateAsync(assistant).then(() => {
+        changeVisibility.mutateAsync({
+          name: virtual_assistant.name,
+          newVisibility: VISIBILITY_STATUS.PRIVATE,
+        })
+      }),
       toasts().deleteDeployment
     )
     e.stopPropagation()

@@ -73,10 +73,10 @@ class GithubAuth(auth_type.OAuth):
         if github_user.crud.check_user_exists(db, github_id):
             first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
-            try:
-                github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
-            except sqlalchemy.exc.IntegrityError as e:
-                db.rollback()
+            # try:
+            #     github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
+            # except sqlalchemy.exc.IntegrityError as e:
+            #     db.rollback()
         else:
             general_user = user.crud.add_user(
                 db=db,

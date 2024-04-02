@@ -44,7 +44,11 @@ def update_by_id(db: Session, user_id: int, **kwargs) -> GithubUser:
     kwargs = {k: v for k, v in kwargs.items() if k in GithubUser.__table__.columns.keys()}
 
     user = db.scalar(update(GithubUser).filter_by(user_id=user_id).values(**kwargs).returning(GithubUser))
+
     if not user:
         raise ValueError(f"GithubUser with id={user_id} does not exist")
+
+    db.commit()
+    db.refresh(user)
 
     return user

@@ -34,6 +34,15 @@ class UserRead(User):
     role: RoleRead
 
 
+class UserUpdate(BaseModel):
+    id: int
+    provider_name: str
+    email: Union[EmailStr, str, None]
+    picture: Optional[str]
+    name: Optional[str]
+    role_id: Optional[int]
+
+
 class LanguageRead(BaseOrmModel):
     id: int
     value: str

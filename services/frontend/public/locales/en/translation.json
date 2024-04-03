@@ -255,7 +255,8 @@
         "placeholder": "Pick words you might use"
       },
       "btns": {
-        "save": "Save"
+        "save": "Save",
+        "error": "You cannot save a prompt whose size is 3 times larger than the allowed size"
       }
     },
     "skill_prompt_quit": {

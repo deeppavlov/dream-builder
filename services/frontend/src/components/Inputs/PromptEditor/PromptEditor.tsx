@@ -28,6 +28,8 @@ interface IProps {
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
   codeEditorRef: ReactCodeMirrorRef | any
+  length: number
+  setLength: (length: number) => void
 }
 
 interface IValidateTokens {
@@ -79,6 +81,8 @@ export const PromptEditor = ({
   rules,
   triggerField,
   codeEditorRef,
+  length,
+  setLength,
 }: IProps) => {
   const {
     field,
@@ -100,7 +104,6 @@ export const PromptEditor = ({
     defaultValue,
   })
   const maxLength = rules?.maxLength as { value: number; message: string }
-  const [length, setLength] = useState(0)
   const [isCounting, setIsCounting] = useState(false)
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const containerRef = useRef<HTMLDivElement>(null)

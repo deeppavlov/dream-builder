@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import { Tooltip } from 'react-tooltip'
 import { RoutesList } from 'router/RoutesList'
 import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
@@ -66,10 +67,13 @@ const SkillPromptModal = () => {
     : null
   const bot = distName ? getDist({ distName }).data : null
   const [selectedModel, setSelectedModel] = useState<LM_Service | null>(null)
+
   const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
   const codeEditorRef = useRef<ReactCodeMirrorRef | any>({})
+
+  const [length, setLength] = useState(0)
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
   const {
@@ -280,7 +284,8 @@ const SkillPromptModal = () => {
   }
 
   const isEmpty = getValues()?.prompt?.trim()?.length === 0
-
+  const maxLength: number = selectedModel?.max_tokens ?? 0
+  const isOverflow = maxLength * 3 < length
   return (
     <Modal
       isOpen={isOpen}
@@ -331,6 +336,8 @@ const SkillPromptModal = () => {
                 </div>
               )}
               <PromptEditor
+                length={length}
+                setLength={setLength}
                 codeEditorRef={codeEditorRef}
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
@@ -377,23 +384,49 @@ const SkillPromptModal = () => {
               /> */}
             </div>
             <div className={s.btns}>
-              <Button
-                theme='primary'
-                props={{
-                  onClick: () =>
-                    onFormSubmit({
-                      prompt: getValues().prompt,
-                      model: getValues().model,
-                    }),
-                  disabled:
-                    updateComponent.isLoading ||
-                    isSubmitting ||
-                    !isDirty ||
-                    isEmpty,
-                }}
+              <div
+                data-tooltip-id={`tooltip-1`}
+                data-tooltip-variant={'error'}
+                data-tooltip-place='top'
               >
-                {t('modals.skill_prompt.btns.save')}
-              </Button>
+                <Button
+                  theme='primary'
+                  props={{
+                    onClick: () =>
+                      onFormSubmit({
+                        prompt: getValues().prompt,
+                        model: getValues().model,
+                      }),
+                    disabled:
+                      updateComponent.isLoading ||
+                      isSubmitting ||
+                      !isDirty ||
+                      isEmpty ||
+                      isOverflow,
+                  }}
+                >
+                  {t('modals.skill_prompt.btns.save')}
+                </Button>
+              </div>
+
+              {isOverflow && (
+                <Tooltip
+                  id={`tooltip-1`}
+                  style={{
+                    zIndex: 99,
+                    opacity: 1,
+                    maxWidth: '45%',
+                    height: 'auto',
+                  }}
+                >
+                  <div>
+                    <h3>
+                      вы не можете сохранить промт если он в 3 раза превышает
+                      доступное количество токенов
+                    </h3>
+                  </div>
+                </Tooltip>
+              )}
             </div>
           </form>
           <div className={s.resizer}>

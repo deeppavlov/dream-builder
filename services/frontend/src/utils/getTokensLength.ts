@@ -3,10 +3,12 @@ import { modelEncodingMap } from 'mapping/modelEncodingMap'
 import { LanguageModel } from '../types/types'
 
 const getTokensLength = (lm: LanguageModel | undefined, value: string) => {
-  const defaultEncodingModel = 'gpt2'
-  const currentEncodingModel: any = lm
-    ? modelEncodingMap[lm] ?? defaultEncodingModel
-    : defaultEncodingModel
+  // const defaultEncodingModel = 'gpt2'
+  // const currentEncodingModel: any = lm
+  //   ? modelEncodingMap[lm] ?? defaultEncodingModel
+  //   : defaultEncodingModel
+
+  const currentEncodingModel = 'cl100k_base' //Временное решение
   const encoding = get_encoding(currentEncodingModel)
   const tokens = encoding.encode(value)
 

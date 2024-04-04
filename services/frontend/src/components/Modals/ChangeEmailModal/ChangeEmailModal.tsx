@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { authApi } from 'api/axiosConfig'
 import { getValidationSchema } from 'utils/getValidationSchema'
-import { Button } from 'components/Buttons'
+import { Button,} from 'components/Buttons'
 import { Input } from 'components/Inputs'
 import s from './ChangeEmailModal.module.scss'
 

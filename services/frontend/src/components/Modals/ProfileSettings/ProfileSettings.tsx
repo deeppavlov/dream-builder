@@ -7,6 +7,7 @@ import { ELOCALES_KEY } from 'types/types'
 import { I18N_STORE_KEY, language } from 'constants/constants'
 import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
+import { EditPencilButton } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
 import { AccessTokensModule } from 'components/Modules'
 import { ChangeEmailModal } from '../ChangeEmailModal/ChangeEmailModal'
@@ -97,9 +98,7 @@ export const ProfileSettings: FC = () => {
                   </span>
                   <div className={s.box}>
                     <span className={s.value}>{user?.email}</span>
-                    <button onClick={() => setIsOpenEmail(true)}>
-                      изменить
-                    </button>
+                    <EditPencilButton onClick={() => setIsOpenEmail(true)} />
                   </div>
                 </div>
                 <hr />

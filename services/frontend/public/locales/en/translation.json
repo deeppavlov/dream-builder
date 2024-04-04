@@ -315,6 +315,11 @@
       "form": {
         "placeholder": "Enter your email"
       },
+      "request": {
+        "loading": "Loading...",
+        "success": "Successfully!",
+        "error": "Something went wrong..."
+      },
       "btns": {
         "cancel": "Cancel",
         "continue": "Continue"

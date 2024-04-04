@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from database.models import google_user, github_user
+from database.models.providers.crud import get_provider_by_id
 from database.models.user import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
@@ -43,21 +44,20 @@ async def update_user_by_id(
         current_user: schemas.UserRead = Depends(get_current_user),
         db: Session = Depends(get_db)
 ):
-    if not updated_user.provider_name:
-        raise HTTPException(status_code=400, detail=f"Provider name not specified!")
-    if current_user.id != user_id:
-        raise HTTPException(status_code=403, detail=f"The authorization token does not apply to this user!")
-    if user_id != updated_user.id:
+    if current_user.id != updated_user.id:
         if current_user.role.name != "admin":
             raise HTTPException(status_code=403, detail=f"No access!")
 
-    match updated_user.provider_name:
+    provider_id = crud.get_by_id(db, updated_user.id).provider_id
+    provider_name = get_provider_by_id(db, provider_id).service_name
+
+    match provider_name:
         case PROVIDERS.GOOGLE:
             google_user.crud.update_by_id(db, user_id, **updated_user.dict())
         case PROVIDERS.GITHUB:
             github_user.crud.update_by_id(db, user_id, **updated_user.dict())
         case _:
-            raise HTTPException(status_code=404, detail=f"No provider name {updated_user.provider_name}!")
+            raise HTTPException(status_code=404, detail=f"No provider name {provider_name}!")
 
     selected_user = crud.get_by_id(db, user_id)
 

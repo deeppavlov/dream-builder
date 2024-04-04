@@ -36,11 +36,9 @@ class UserRead(User):
 
 class UserUpdate(BaseModel):
     id: int
-    provider_name: str
-    email: Union[EmailStr, str, None]
-    picture: Optional[str]
-    name: Optional[str]
-    role_id: Optional[int]
+
+    class Config:
+        extra = 'allow'
 
 
 class LanguageRead(BaseOrmModel):

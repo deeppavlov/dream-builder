@@ -69,6 +69,10 @@
           @include b2;
         }
       }
+      .box {
+        display: flex;
+        gap: 20px;
+      }
     }
   }
 }

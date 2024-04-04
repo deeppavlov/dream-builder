@@ -22,10 +22,16 @@ export const getValidationSchema = () => {
 
     skill: {
       prompt: {
-        maxLength: (max: number) => ({
-          value: max,
-          message: i18n.t('field_validation.prompt_max', { max }),
-        }),
+        maxLength: (max: number, n: number) => {
+          const messageText =
+            max * 3 > n
+              ? i18n.t('field_validation.prompt_max', { max })
+              : '!!! Вы в 3 раза превысили допустимое значение, такой промпт сохранить нельзя'
+          return {
+            value: max,
+            message: messageText,
+          }
+        },
       },
     },
   }

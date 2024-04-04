@@ -351,7 +351,8 @@ const SkillPromptModal = () => {
                   maxLength:
                     selectedModel?.max_tokens &&
                     validationSchema.skill.prompt.maxLength(
-                      selectedModel?.max_tokens
+                      selectedModel?.max_tokens,
+                      length
                     ),
                 }}
                 triggerField={triggerField}
@@ -384,49 +385,24 @@ const SkillPromptModal = () => {
               /> */}
             </div>
             <div className={s.btns}>
-              <div
-                data-tooltip-id={`tooltip-1`}
-                data-tooltip-variant={'error'}
-                data-tooltip-place='top'
+              <Button
+                theme='primary'
+                props={{
+                  onClick: () =>
+                    onFormSubmit({
+                      prompt: getValues().prompt,
+                      model: getValues().model,
+                    }),
+                  disabled:
+                    updateComponent.isLoading ||
+                    isSubmitting ||
+                    !isDirty ||
+                    isEmpty ||
+                    isOverflow,
+                }}
               >
-                <Button
-                  theme='primary'
-                  props={{
-                    onClick: () =>
-                      onFormSubmit({
-                        prompt: getValues().prompt,
-                        model: getValues().model,
-                      }),
-                    disabled:
-                      updateComponent.isLoading ||
-                      isSubmitting ||
-                      !isDirty ||
-                      isEmpty ||
-                      isOverflow,
-                  }}
-                >
-                  {t('modals.skill_prompt.btns.save')}
-                </Button>
-              </div>
-
-              {isOverflow && (
-                <Tooltip
-                  id={`tooltip-1`}
-                  style={{
-                    zIndex: 99,
-                    opacity: 1,
-                    maxWidth: '45%',
-                    height: 'auto',
-                  }}
-                >
-                  <div>
-                    <h3>
-                      вы не можете сохранить промт если он в 3 раза превышает
-                      доступное количество токенов
-                    </h3>
-                  </div>
-                </Tooltip>
-              )}
+                {t('modals.skill_prompt.btns.save')}
+              </Button>
             </div>
           </form>
           <div className={s.resizer}>

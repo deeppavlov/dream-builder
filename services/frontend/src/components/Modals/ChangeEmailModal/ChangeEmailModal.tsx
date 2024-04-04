@@ -1,12 +1,13 @@
 import { useAuth } from 'context'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { authApi } from 'api/axiosConfig'
 import { getValidationSchema } from 'utils/getValidationSchema'
 import { Button } from 'components/Buttons'
 import { Input } from 'components/Inputs'
-import s from './AddEmailModule.module.scss'
+import s from './ChangeEmailModal.module.scss'
 
 interface FormValues {
   email: string
@@ -15,9 +16,10 @@ interface FormValues {
 interface IProps {
   onClose: () => void
   onContinue: () => void
+  mode?: string
 }
 
-export const AddEmailModule: FC<IProps> = ({ onClose, onContinue }) => {
+export const ChangeEmailModal: FC<IProps> = ({ onClose, onContinue, mode }) => {
   const { reset, control, handleSubmit, setError } = useForm<FormValues>()
   const { setUser, user } = useAuth()
   const { t } = useTranslation('translation', {
@@ -26,6 +28,7 @@ export const AddEmailModule: FC<IProps> = ({ onClose, onContinue }) => {
   const schema = getValidationSchema()
 
   const onSubmit = async ({ email }: FormValues) => {
+    const toastId = toast.loading(t('request.loading'))
     if (!user) {
       onClose()
       return
@@ -39,7 +42,13 @@ export const AddEmailModule: FC<IProps> = ({ onClose, onContinue }) => {
       setUser(updatedUser)
       reset()
       onContinue()
+      toast.success(t('request.success'), {
+        id: toastId,
+      })
     } catch (err) {
+      toast.error(t('request.error'), {
+        id: toastId,
+      })
       setError('email', { type: 'manual', message: t('error') })
     }
   }
@@ -48,7 +57,11 @@ export const AddEmailModule: FC<IProps> = ({ onClose, onContinue }) => {
     <div className={s.container}>
       <div className={s.header}>
         <h3 className={s.title}>{t('title')}</h3>
-        <span className={s.subtitle}>{t('subtitle')}</span>
+        {mode === 'add' ? (
+          <span className={s.subtitle}>{t('subtitle')}</span>
+        ) : (
+          ''
+        )}
       </div>
 
       <div className={s.body}>

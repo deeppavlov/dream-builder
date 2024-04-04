@@ -1,17 +1,16 @@
-import classNames from 'classnames/bind';
-import { useAuth } from 'context';
-import { FC, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import store from 'store2';
-import { ELOCALES_KEY } from 'types/types';
-import { I18N_STORE_KEY, language } from 'constants/constants';
-import { useObserver } from 'hooks/useObserver';
-import { trigger } from 'utils/events';
-import { BaseModal } from 'components/Modals';
-import { AccessTokensModule } from 'components/Modules';
-import { ChangeEmail } from '../ChangeEmail/ChangeEmail'
-import s from './ProfileSettings.module.scss';
-
+import classNames from 'classnames/bind'
+import { useAuth } from 'context'
+import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import store from 'store2'
+import { ELOCALES_KEY } from 'types/types'
+import { I18N_STORE_KEY, language } from 'constants/constants'
+import { useObserver } from 'hooks/useObserver'
+import { trigger } from 'utils/events'
+import { BaseModal } from 'components/Modals'
+import { AccessTokensModule } from 'components/Modules'
+import { ChangeEmailModal } from '../ChangeEmailModal/ChangeEmailModal'
+import s from './ProfileSettings.module.scss'
 
 export enum ProfileTabs {
   account = 'account',
@@ -123,7 +122,7 @@ export const ProfileSettings: FC = () => {
           handleClose={hendleCloseEmail}
           setIsOpen={setIsOpenEmail}
         >
-          <ChangeEmail
+          <ChangeEmailModal
             onClose={hendleCloseEmail}
             onContinue={hendleCloseEmail}
           />

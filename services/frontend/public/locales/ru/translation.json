@@ -337,6 +337,11 @@
       "form": {
         "placeholder": "Введите ваш email"
       },
+      "request": {
+        "loading": "Загрузка...",
+        "success": "Успешно!",
+        "error": "Что-то пошло не так..."
+      },
       "btns": {
         "cancel": "Отмена",
         "continue": "Продолжить"

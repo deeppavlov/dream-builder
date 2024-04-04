@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 582px;
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+    gap: 8px;
+
+    .title {
+      color: $primary1;
+      @include t1;
+    }
+    .subtitle {
+      color: $text3;
+      @include t3;
+    }
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    width: 100;
+    gap: 24px;
+  }
+}

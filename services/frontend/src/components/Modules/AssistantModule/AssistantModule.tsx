@@ -103,17 +103,17 @@ export const AssistantModule = () => {
         deleteDeployment
           .mutateAsync(bot!, {
             onSuccess: () => {
-              const newVisibility = VISIBILITY_STATUS.PRIVATE
-              if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
-                changeVisibility.mutateAsync(
-                  { name: bot?.name || '', newVisibility },
-                  {
-                    onSuccess: data => {
-                      console.log('data = ', data)
-                    },
-                  }
-                )
-              }
+              changeVisibility.mutateAsync(
+                {
+                  name: bot?.name || '',
+                  newVisibility: VISIBILITY_STATUS.PRIVATE,
+                },
+                {
+                  onSuccess: data => {
+                    console.log('data = ', data)
+                  },
+                }
+              )
             },
           })
           .then(() => vaChangeDeployState('VA_Undeployed', 'va_control_block')),
@@ -148,7 +148,9 @@ export const AssistantModule = () => {
   }
 
   useEffect(() => {
-    const redirectConditions = isFetched && (onModeration || isDeploying)
+    const isAdmin = auth.user?.role.id === 2 || auth.user?.role.id === 3
+    const redirectConditions =
+      isFetched && (onModeration || isDeploying) && !isAdmin
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])

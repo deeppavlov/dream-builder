@@ -61,6 +61,7 @@
 }
 
 .validating {
+  overflow: hidden;
   color: $pink;
   border-color: $pink;
   background: rgba(204, 102, 204, 0.1);

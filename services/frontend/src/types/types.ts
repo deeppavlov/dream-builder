@@ -381,12 +381,7 @@ export interface IDialogError {
   msg: string
 }
 export interface RequestProps {
-  cardClickHandler: () => void
-  r: IPublicationRequest
-  confirm: any
-  decline: any
-  handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
-  handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  request: IPublicationRequest
 }
 export interface IDeploymentState extends IDeployment {
   virtual_assistant: BotInfoInterface

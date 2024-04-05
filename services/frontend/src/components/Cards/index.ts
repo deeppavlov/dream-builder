@@ -1,4 +1,6 @@
 import { AssistantCard } from './AssistantCard/AssistantCard'
+import { DeploymentCard } from './DeploymentCard/DeployentCard'
+import { PublicationRequestCard } from './PublicationRequestCard/PublicationRequestCard'
 import { SkillCard } from './SkillCard/SkillCard'
 
-export { SkillCard, AssistantCard }
+export { SkillCard, AssistantCard, PublicationRequestCard, DeploymentCard }

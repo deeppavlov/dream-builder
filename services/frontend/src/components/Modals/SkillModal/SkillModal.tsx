@@ -1,3 +1,4 @@
+import { useAuth } from 'context'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -39,6 +40,7 @@ export const SkillModal = () => {
   const validationSchema = getValidationSchema()
   const bot = distName ? getDist({ distName }).data : null
   const { vaChangeDeployState } = useGaAssistant()
+  const { user } = useAuth()
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
@@ -74,31 +76,36 @@ export const SkillModal = () => {
   const handleCreate = (data: any) => {
     !create.isLoading &&
       toast.promise(
-        create.mutateAsync(
-          { data, distName: distName || '', type: 'skills' },
-          {
-            onSuccess: skill => {
+        bot?.author.id !== user?.id
+          ? // if a moderator attempts to add a skill to an assistant for which they are not the author
+            new Promise((_resolve, reject) => {
               closeModal()
-              nav(
-                generatePath(RoutesList.editor.skillEditor, {
-                  name: distName || '',
-                  skillId: (skill?.component_id ?? skill?.id)?.toString(),
-                })
-              )
-              const newVisibility = VISIBILITY_STATUS.PRIVATE
-              bot?.deployment?.state === DEPLOY_STATUS.UP &&
-                deleteDeployment.mutateAsync(bot!).then(() => {
-                  bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                    changeVisibility.mutateAsync({
-                      name: bot?.name!,
-                      newVisibility,
-                      inEditor: true,
+              reject(new Error('No access'))
+            })
+          : create.mutateAsync(
+              { data, distName: distName || '', type: 'skills' },
+              {
+                onSuccess: skill => {
+                  closeModal()
+                  nav(
+                    generatePath(RoutesList.editor.skillEditor, {
+                      name: distName || '',
+                      skillId: (skill?.component_id ?? skill?.id)?.toString(),
                     })
-                  vaChangeDeployState('VA_Undeployed')
-                })
-            },
-          }
-        ),
+                  )
+                  const newVisibility = VISIBILITY_STATUS.PRIVATE
+                  bot?.deployment?.state === DEPLOY_STATUS.UP &&
+                    deleteDeployment.mutateAsync(bot!).then(() => {
+                      changeVisibility.mutateAsync({
+                        name: bot?.name!,
+                        newVisibility,
+                        inEditor: true,
+                      })
+                      vaChangeDeployState('VA_Undeployed')
+                    })
+                },
+              }
+            ),
         toasts().createComponent
       )
   }

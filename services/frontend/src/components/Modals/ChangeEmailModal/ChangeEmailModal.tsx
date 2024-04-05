@@ -43,6 +43,7 @@ export const ChangeEmailModal: FC<IProps> = ({ onClose, onContinue, mode }) => {
       onContinue()
     } catch (err) {
       setError('email', { type: 'manual', message: t('error') })
+      throw err
     }
   }
 

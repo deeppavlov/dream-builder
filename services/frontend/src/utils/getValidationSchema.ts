@@ -22,14 +22,14 @@ export const getValidationSchema = () => {
 
     skill: {
       prompt: {
-        maxLength: (max: number, n: number) => {
-          const messageText =
-            max * 3 > n
-              ? i18n.t('field_validation.prompt_max', { max })
-              : '!!! Вы в 3 раза превысили допустимое значение, такой промпт сохранить нельзя'
+        maxLength: (max: number, isOverflow: boolean) => {
+          const count = isOverflow ? max * 3 : max
+          const message = isOverflow
+            ? i18n.t('field_validation.prompt_max_overflow', { max })
+            : i18n.t('field_validation.prompt_max', { max })
           return {
-            value: max,
-            message: messageText,
+            value: count,
+            message: message,
           }
         },
       },

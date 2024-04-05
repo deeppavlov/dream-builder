@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { generatePath, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { Tooltip } from 'react-tooltip'
 import { RoutesList } from 'router/RoutesList'
 import { IPromptBlock, ISkill, LM_Service, LanguageModel } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
@@ -351,8 +350,8 @@ const SkillPromptModal = () => {
                   maxLength:
                     selectedModel?.max_tokens &&
                     validationSchema.skill.prompt.maxLength(
-                      selectedModel?.max_tokens,
-                      length
+                      maxLength,
+                      isOverflow
                     ),
                 }}
                 triggerField={triggerField}

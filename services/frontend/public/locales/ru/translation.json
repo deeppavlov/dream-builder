@@ -126,7 +126,8 @@
         "token_updated": "Токен обновлен!",
         "token_canceled": "Обновление токена отменено!",
         "not_found_token": "Токены не найдены.",
-        "not_found_service": "Не найден сервис или id пользователя"
+        "not_found_service": "Не найден сервис или id пользователя",
+        "login": "Отправка..."
       },
       "attention": {
         "annotation": {
@@ -337,11 +338,6 @@
       "form": {
         "placeholder": "Введите ваш email"
       },
-      "request": {
-        "loading": "Загрузка...",
-        "success": "Успешно!",
-        "error": "Что-то пошло не так..."
-      },
       "btns": {
         "cancel": "Отмена",
         "continue": "Продолжить"
@@ -454,7 +450,8 @@
     "save": "Сохранение...",
     "create": "Создание...",
     "approve": "Подтверждение...",
-    "decline": "Отклонение..."
+    "decline": "Отклонение...",
+    "loading": "Отправка..."
   },
   "ctx_menus": {
     "assistant": {

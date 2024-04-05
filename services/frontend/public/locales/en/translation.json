@@ -126,7 +126,8 @@
         "token_updated": "Successfully updated!",
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
-        "not_found_service": "Not found Service or User id."
+        "not_found_service": "Not found Service or User id.",
+        "login": "Loading..."
       },
       "attention": {
         "annotation": {
@@ -336,11 +337,6 @@
       "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
       "form": {
         "placeholder": "Enter your email"
-      },
-      "request": {
-        "loading": "Loading...",
-        "success": "Successfully!",
-        "error": "Something went wrong..."
       },
       "btns": {
         "cancel": "Cancel",

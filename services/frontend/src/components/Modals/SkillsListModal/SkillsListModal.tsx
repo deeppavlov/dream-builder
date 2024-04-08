@@ -1,12 +1,12 @@
 import classNames from 'classnames/bind'
-import { useUIOptions } from 'context'
+import { useAuth, useUIOptions } from 'context'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router'
 import { generatePath } from 'react-router-dom'
 import { RoutesList } from 'router/RoutesList'
-import { ISkill, TDistVisibility } from 'types/types'
+import { ISkill } from 'types/types'
 import { DEPLOY_STATUS, VISIBILITY_STATUS } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { useAssistants, useComponent, useDeploy } from 'hooks/api'
@@ -33,6 +33,7 @@ export const SkillsListModal = () => {
   const { getGroupComponents, clone } = useComponent()
   const navigate = useNavigate()
   const { skillAdded } = useGaSkills()
+  const { user } = useAuth()
   const { vaChangeDeployState } = useGaAssistant()
   const { data: bot } = getDist({ distName: distName! })
   const { data: skillsList } = getGroupComponents(
@@ -58,36 +59,40 @@ export const SkillsListModal = () => {
   const handleAdd = (template: ISkill) => {
     !clone.isLoading &&
       toast.promise(
-        clone.mutateAsync(
-          { skill: template, distName: distName!, type: 'skills' },
-          {
-            onSuccess: (skill: ISkill) => {
-              bot?.deployment?.state === DEPLOY_STATUS.UP &&
-                deleteDeployment.mutateAsync(bot).then(() => {
-                  // unpublish /
-                  const name = bot?.name!
-                  const newVisibility = VISIBILITY_STATUS.PRIVATE
-                  bot.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                    changeVisibility.mutateAsync({
-                      name,
-                      newVisibility,
-                      inEditor: true,
-                    })
-                  vaChangeDeployState('VA_Undeployed')
-                })
-
-              skillAdded(skill, template)
-
+        bot?.author.id !== user?.id
+          ? // if a moderator attempts to add a skill to an assistant for which they are not the author
+            new Promise((_resolve, reject) => {
               handleClose()
-              navigate(
-                generatePath(RoutesList.editor.skillEditor, {
-                  name: distName || '',
-                  skillId: (skill?.component_id ?? skill?.id)?.toString(),
-                })
-              )
-            },
-          }
-        ),
+              reject(new Error('No access'))
+            })
+          : clone.mutateAsync(
+              { skill: template, distName: distName!, type: 'skills' },
+              {
+                onSuccess: (skill: ISkill) => {
+                  bot?.deployment?.state === DEPLOY_STATUS.UP &&
+                    deleteDeployment.mutateAsync(bot).then(() => {
+                      // unpublish /
+                      const name = bot?.name!
+                      changeVisibility.mutateAsync({
+                        name,
+                        newVisibility: VISIBILITY_STATUS.PRIVATE,
+                        inEditor: true,
+                      })
+                      vaChangeDeployState('VA_Undeployed')
+                    })
+
+                  skillAdded(skill, template)
+
+                  handleClose()
+                  navigate(
+                    generatePath(RoutesList.editor.skillEditor, {
+                      name: distName || '',
+                      skillId: (skill?.component_id ?? skill?.id)?.toString(),
+                    })
+                  )
+                },
+              }
+            ),
         toasts().addComponent
       )
   }

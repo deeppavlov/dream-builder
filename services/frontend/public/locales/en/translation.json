@@ -79,6 +79,29 @@
       "back_to_home": "Back to home"
     }
   },
+  "admin_page": {
+    "requests": "Publication Requests",
+    "deployments": "Deployments",
+    "request_card": {
+      "id": "Id",
+      "name": "Name",
+      "display_name": "Display name",
+      "description": "Description",
+      "date_created": "Date created",
+      "author": "Author",
+      "email": "Email",
+      "approve": "Approve",
+      "decline": "Decline"
+    },
+    "deployment_card": {
+      "id": "Id",
+      "name": "Name",
+      "display_name": "Display name",
+      "author": "Author",
+      "description": "Description",
+      "stop": "Stop"
+    }
+  },
   "modals": {
     "access_api_keys": {
       "header": "Personal access tokens",

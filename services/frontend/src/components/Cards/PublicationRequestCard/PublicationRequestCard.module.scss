@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+}
+
+.displayName,
+.description {
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.displayName {
+  max-height: 44px;
+}
+
+.description {
+  max-height: 66px;
+}
+
+.author {
+  display: flex;
+  gap: 2px;
+
+  .img {
+    margin-left: 4px;
+    height: 20px;
+    border-radius: 50%;
+  }
+}
+
+.buttons {
+  flex-grow: 1;
+  margin-top: 4px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}

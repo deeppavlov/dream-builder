@@ -164,11 +164,12 @@ const SkillPromptModal = () => {
           .then(data => {
             skillChanged(skill, data)
             const name = bot?.name!
-            const newVisibility = VISIBILITY_STATUS.PRIVATE
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
               deleteDeployment.mutateAsync(bot!).then(() => {
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({ name, newVisibility })
+                changeVisibility.mutateAsync({
+                  name,
+                  newVisibility: VISIBILITY_STATUS.PRIVATE,
+                })
                 vaChangeDeployState(
                   'VA_Undeployed',
                   'skill_editor_prompt_panel'

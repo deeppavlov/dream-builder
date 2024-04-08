@@ -55,7 +55,11 @@ def update_by_id(db: Session, user_id: int, **kwargs) -> GoogleUser:
     kwargs = {k: v for k, v in kwargs.items() if k in GoogleUser.__table__.columns.keys()}
 
     user = db.scalar(update(GoogleUser).filter_by(user_id=user_id).values(**kwargs).returning(GoogleUser))
+
     if not user:
         raise ValueError(f"GoogleUser with id={user_id} does not exist")
+
+    db.commit()
+    db.refresh(user)
 
     return user

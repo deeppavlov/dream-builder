@@ -31,6 +31,7 @@ class LmService(Base):
     max_tokens = Column(Integer)
     description = Column(String)
     project_url = Column(String)
+    model_name = Column(String)
 
     lm_service_language_associations = relationship(
         "LmServiceLanguage", uselist=True, back_populates="lm_service", passive_deletes=True

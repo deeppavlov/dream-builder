@@ -309,7 +309,8 @@
           "name": "Name",
           "email": "Email",
           "language": "Language",
-          "change": "Change language"
+          "change": "Change language",
+          "add_email": "Add email"
         }
       }
     },

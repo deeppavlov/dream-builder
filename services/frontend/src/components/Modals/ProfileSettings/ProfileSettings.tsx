@@ -55,21 +55,20 @@ export const ProfileSettings: FC = () => {
 
   useObserver('ProfileSettingsModal', handleEventUpdate)
 
-  const changeMail = () => {
-    if (user?.email === undefined || user.email === null) {
-      return (
-        <button className={s.btn} onClick={() => setIsOpenEmail(true)}>
-          {t('modals.profile_settings.tabs.account.add_email')}
-        </button>
-      )
-    }
-    return (
-      <>
-        <span className={s.value}>{user.email}</span>
-        <EditPencilButton onClick={() => setIsOpenEmail(true)} />
-      </>
-    )
-  }
+  const addEmailButton = (
+    <button className={s.btn} onClick={() => setIsOpenEmail(true)}>
+      {t('modals.profile_settings.tabs.account.add_email')}
+    </button>
+  )
+
+  const changeMailButton = (
+    <>
+      <span className={s.value}>{user?.email}</span>
+      <EditPencilButton onClick={() => setIsOpenEmail(true)} />
+    </>
+  )
+
+  const isNotEmail = user?.email === undefined || user.email === null
 
   return (
     <BaseModal
@@ -112,7 +111,9 @@ export const ProfileSettings: FC = () => {
                   <span className={s.key}>
                     {t('modals.profile_settings.tabs.account.email')}
                   </span>
-                  <div className={s.box}>{changeMail()}</div>
+                  <div className={s.box}>
+                    {isNotEmail ? addEmailButton : changeMailButton}
+                  </div>
                 </div>
                 <hr />
                 <div className={s.block}>

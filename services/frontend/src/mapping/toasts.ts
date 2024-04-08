@@ -1,5 +1,4 @@
-import i18n from 'i18n';
-
+import i18n from 'i18n'
 
 interface ToastSettings {
   loading: string
@@ -29,7 +28,7 @@ type Toasts = Record<ToastKeys, ToastSettings>
 
 export const toasts: () => Toasts = () => ({
   changeEmail: {
-    loading: i18n.t('modals.access_api_keys.toasts.login'),
+    loading: i18n.t('modals.change_email_modal.toasts.loading'),
     success: i18n.t('toasts.success'),
     error: i18n.t('toasts.error'),
   },

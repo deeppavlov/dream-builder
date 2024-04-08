@@ -1,14 +1,15 @@
-import { useAuth } from 'context'
-import { FC } from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
-import { toasts } from 'mapping/toasts'
-import { authApi } from 'api/axiosConfig'
-import { getValidationSchema } from 'utils/getValidationSchema'
-import { Button } from 'components/Buttons'
-import { Input } from 'components/Inputs'
-import s from './ChangeEmailModal.module.scss'
+import { useAuth } from 'context';
+import { FC } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { toasts } from 'mapping/toasts';
+import { authApi } from 'api/axiosConfig';
+import { getValidationSchema } from 'utils/getValidationSchema';
+import { Button } from 'components/Buttons';
+import { Input } from 'components/Inputs';
+import s from './ChangeEmailModal.module.scss';
+
 
 interface FormValues {
   email: string
@@ -24,7 +25,7 @@ export const ChangeEmailModal: FC<IProps> = ({ onClose, onContinue, mode }) => {
   const { reset, control, handleSubmit, setError } = useForm<FormValues>()
   const { setUser, user } = useAuth()
   const { t } = useTranslation('translation', {
-    keyPrefix: 'modals.add_email_modal',
+    keyPrefix: 'modals.change_email_modal',
   })
   const schema = getValidationSchema()
 

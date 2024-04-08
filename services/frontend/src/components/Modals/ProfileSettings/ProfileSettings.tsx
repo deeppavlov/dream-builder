@@ -58,7 +58,7 @@ export const ProfileSettings: FC = () => {
   const changeMail = () => {
     if (user?.email === undefined || user.email === null) {
       return (
-        <button className={s.btn}>
+        <button className={s.btn} onClick={() => setIsOpenEmail(true)}>
           {t('modals.profile_settings.tabs.account.add_email')}
         </button>
       )

@@ -115,8 +115,12 @@
         "label": "Выберите сервис:",
         "placeholder": "Выберите сервис..."
       },
-      "btns": {
-        "remove": "Удалить"
+      "table": {
+        "service": "Сервис",
+        "model": "Модель",
+        "token": "Токен",
+        "status": "Статус",
+        "actions": "Действия"
       },
       "toasts": {
         "token_adding": "Добавление...",

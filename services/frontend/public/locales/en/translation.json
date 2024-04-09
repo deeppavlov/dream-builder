@@ -115,8 +115,12 @@
         "label": "Choose service:",
         "placeholder": "Choose service..."
       },
-      "btns": {
-        "remove": "Remove"
+      "table": {
+        "service": "Service",
+        "model": "Model",
+        "token": "Token",
+        "status": "Status",
+        "actions": "Actions"
       },
       "toasts": {
         "token_adding": "Adding...",

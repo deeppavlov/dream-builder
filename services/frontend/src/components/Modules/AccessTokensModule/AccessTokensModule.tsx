@@ -3,19 +3,22 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import store from 'store2'
 import { ReactComponent as Attention } from 'assets/icons/attention.svg'
-import { IApiService, IUserApiKey, LM_Service } from 'types/types'
-import { toasts } from 'mapping/toasts'
-import { getTokens, getUserId } from 'api/user'
+import { ReactComponent as Microscope } from 'assets/icons/microscope.svg'
+import { IUserApiKey, LM_Service } from 'types/types'
+import { getUserId } from 'api/user'
+import { useApiKeys } from 'hooks/api/useApiKeys'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { trigger } from 'utils/events'
 import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { getValidationSchema } from 'utils/getValidationSchema'
+import { isKeyRequiredForModel, saveTokens } from 'utils/localStorageTokens'
+import { Button, Checkbox } from 'components/Buttons'
 import { SkillDropboxSearch } from 'components/Dropdowns'
 import { Input } from 'components/Inputs'
-import { Wrapper } from 'components/UI'
-import AccessTokenKey from './AccessTokenKey/AccessTokenKey'
 import s from './AccessTokensModule.module.scss'
+import { AccessTokensTable } from './AccessTokensTable/AccessTokensTable'
 
 interface FormValues {
   token: string
@@ -25,52 +28,16 @@ interface FormValues {
 export const AccessTokensModule = () => {
   const { t } = useTranslation()
   const { data: user } = useQuery(['user'], () => getUserId())
-  const { data: api_services } = useQuery<IApiService[]>(['api_services'], () =>
-    getTokens()
-  )
+  const { openTokenModal, tokenPasted, addOrDeleteToken } = useGaToken()
+  const { apiServices, lmServices, checkApiKey } = useApiKeys()
   const [tokens, setTokens] = useState<IUserApiKey[] | null>(null)
   const { handleSubmit, reset, control, watch } = useForm<FormValues>({
     mode: 'onSubmit',
   })
   const localStorageName = getApiKeysLSId(user?.id)
   const validationSchema = getValidationSchema()
-  const { openTokenModal, tokenPasted, addOrDeleteToken } = useGaToken()
 
   const handleChanges = () => trigger('AccessTokensChanged', {})
-
-  const clearTokens = () => localStorage.removeItem(localStorageName)
-
-  const saveTokens = (newState: IUserApiKey[] | null) => {
-    const isTokens = newState !== null && newState?.length > 0
-
-    if (!isTokens) return clearTokens()
-    localStorage.setItem(localStorageName, JSON.stringify(newState))
-  }
-
-  const deleteToken = (token_id: number) =>
-    new Promise((resolve, reject) => {
-      const isTokens = tokens !== undefined && tokens !== null
-
-      if (!isTokens)
-        return reject(t('modals.access_api_keys.toasts.not_found_token'))
-      setTokens(prev => {
-        const newState =
-          prev?.filter(({ api_service }) => api_service.id !== token_id) ?? prev
-
-        saveTokens(newState)
-        return newState
-      })
-
-      const service = api_services?.find(({ id }) => id === token_id)
-      addOrDeleteToken(service?.display_name, 'delete')
-      resolve(true)
-    })
-
-  const handleRemoveBtnClick = (token_id: number) => {
-    toast
-      .promise(deleteToken(token_id), toasts().deleteToken)
-      .finally(() => handleChanges())
-  }
 
   const updateToken = (index: number, token: IUserApiKey) =>
     new Promise(resolve => {
@@ -80,7 +47,7 @@ export const AccessTokensModule = () => {
 
         if (!isPrev) return newState
         newState?.splice(index, 1, token)
-        saveTokens(newState)
+        saveTokens(localStorageName, newState)
         return newState
       })
       resolve(t('modals.access_api_keys.toasts.token_updated'))
@@ -88,9 +55,10 @@ export const AccessTokensModule = () => {
 
   const createUserToken = ({ service, token }: FormValues) =>
     new Promise((resolve, reject) => {
-      const selectedService = api_services?.find(
+      const selectedService = apiServices.data?.find(
         ({ id }) => `${id}` === service?.id?.toString()
       )
+
       const isService = selectedService !== undefined
       const isUserId = user?.id !== undefined
 
@@ -102,6 +70,8 @@ export const AccessTokensModule = () => {
         token_value: token,
         useForDeepy: false,
         id: Date.now(),
+        lmValidationState: {},
+        lmUsageState: {},
       }
       const apiTokenIndex = tokens?.findIndex(
         ({ api_service }) =>
@@ -124,9 +94,8 @@ export const AccessTokensModule = () => {
 
       setTokens(prev => {
         const newState = prev ?? []
-
         newState.push(newToken)
-        saveTokens(newState)
+        saveTokens(localStorageName, newState)
         return newState
       })
 
@@ -158,6 +127,49 @@ export const AccessTokensModule = () => {
     openTokenModal()
   }, [])
 
+  const openAIToken = tokens?.find(t => t.api_service.name === 'openai_api_key')
+
+  const [useOpenAIForDeepy, setUseOpenAIForDeepy] = useState<boolean>(false)
+  useEffect(() => {
+    setUseOpenAIForDeepy(
+      !!tokens?.find(t => t.api_service.name === 'openai_api_key')?.useForDeepy
+    )
+  }, [tokens])
+
+  const handleCheckBoxChange = () => {
+    const deepySessionName = `deepySession_${user!.id}`
+    const localSession = store(deepySessionName)
+    if (!useOpenAIForDeepy) {
+      store(deepySessionName, {
+        ...localSession,
+        dummy: false,
+      })
+    }
+
+    const openAITokenIndex = tokens?.indexOf(openAIToken!)!
+    updateToken(openAITokenIndex, {
+      ...openAIToken!,
+      useForDeepy: !useOpenAIForDeepy,
+    })
+
+    setUseOpenAIForDeepy(prev => !prev)
+    trigger('AccessTokensChanged', { newValue: !useOpenAIForDeepy })
+  }
+
+  const checkAllLmServices = () => {
+    lmServices.data?.forEach(lmService => {
+      const currentToken = tokens?.find(token =>
+        isKeyRequiredForModel(token, lmService.name)
+      )
+      if (!currentToken) return
+
+      checkApiKey.mutateAsync({
+        lmService,
+        tokenValue: currentToken.token_value,
+      })
+    })
+  }
+
   return (
     <div className={s.module}>
       <div className={s.body}>
@@ -178,7 +190,7 @@ export const AccessTokensModule = () => {
             name='service'
             label={t('modals.access_api_keys.service_dropbox.label')}
             list={
-              api_services?.map(s => ({
+              apiServices.data?.map(s => ({
                 id: s.id.toString(),
                 name: s.name,
                 display_name: s.display_name,
@@ -194,34 +206,43 @@ export const AccessTokensModule = () => {
             withoutSearch
           />
         </form>
-        {tokens && (
-          <ul className={s.tokens}>
-            {tokens.map((key: IUserApiKey, index) => (
-              <AccessTokenKey
-                removeApiKey={handleRemoveBtnClick}
-                updateApiKey={newToken => {
-                  updateToken(index, newToken)
-                }}
-                apiKey={key}
-                key={key.id}
-              />
-            ))}
-          </ul>
+
+        {!!tokens?.length && (
+          <AccessTokensTable tokens={tokens} setTokens={setTokens} />
+        )}
+
+        {openAIToken && (
+          <div className={s.checkboxString}>
+            <Checkbox
+              theme='secondary'
+              checked={useOpenAIForDeepy}
+              props={{ onChange: handleCheckBoxChange }}
+            />
+            {t('modals.access_api_keys.checkbox')}
+          </div>
         )}
       </div>
       <div className={s.footer}>
-        <Wrapper>
-          <div className={s.container}>
-            <div className={s.attention}>
-              <Attention />
-            </div>
-            <div className={s.annotation}>
-              {t('modals.access_api_keys.attention.annotation.first_line')}
-              <br />
-              {t('modals.access_api_keys.attention.annotation.second_line')}
-            </div>
+        <div className={s.container}>
+          <div className={s.attention}>
+            <Attention />
           </div>
-        </Wrapper>
+          <div className={s.annotation}>
+            {t('modals.access_api_keys.attention.annotation.first_line')}
+            <br />
+            {t('modals.access_api_keys.attention.annotation.second_line')}
+          </div>
+          {!!tokens?.length && (
+            <Button
+              small
+              theme='primary'
+              props={{ onClick: () => checkAllLmServices() }}
+            >
+              <Microscope className={s.buttonIcon} />
+              <span>Проверить все</span>
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   )

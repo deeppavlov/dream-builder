@@ -2,22 +2,23 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: 100%;
+  height: 100%;
   justify-content: space-between;
   background-color: $bcgrnd3;
+  overflow: auto;
+  padding: 0 48px 12px 0;
 
   .body {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
-    height: 100%;
     .title {
       @include t1;
     }
 
     .annotations {
-      @include b1;
+      @include b3;
     }
 
     .add {
@@ -31,30 +32,26 @@
         height: 48px;
       }
     }
-
-    .tokens {
-      margin-top: -24px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+  }
+  .checkboxString {
+    @include t4;
+    font-weight: 500;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    align-items: center;
   }
   .footer {
     display: flex;
     flex-direction: column;
-    height: 100%;
+
     justify-content: flex-end;
     .container {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       .attention {
-        border-radius: 50%;
-        background-color: rgba(51, 0, 255, 0.1);
-        min-width: 40px;
-        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -62,9 +59,21 @@
           stroke: $primary1;
           @include icon_size_24;
         }
-        .annotation {
-          color: rgba(0, 0, 0, 0.7);
-          @include b1;
+      }
+      .annotation {
+        flex-grow: 1;
+        color: rgba(0, 0, 0, 0.7);
+        @include b3;
+      }
+      button {
+        white-space: nowrap;
+        display: flex;
+        gap: 8px;
+
+        .buttonIcon {
+          path {
+            stroke: none;
+          }
         }
       }
     }

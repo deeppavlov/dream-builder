@@ -22,10 +22,16 @@ export const getValidationSchema = () => {
 
     skill: {
       prompt: {
-        maxLength: (max: number) => ({
-          value: max,
-          message: i18n.t('field_validation.prompt_max', { max }),
-        }),
+        maxLength: (max: number, isOverflow: boolean) => {
+          const count = isOverflow ? max * 3 : max
+          const message = isOverflow
+            ? i18n.t('field_validation.prompt_max_overflow', { max })
+            : i18n.t('field_validation.prompt_max', { max })
+          return {
+            value: count,
+            message: message,
+          }
+        },
       },
     },
   }

@@ -43,7 +43,7 @@ interface Props {
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { getAllComponents } = useComponent()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   // queries
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
@@ -102,13 +102,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       )
 
       if (missingKeys.length) {
+        const lmServicesWithoutKeys = modelsApiKeyRequired
+          .filter(({ name }) => missingKeys.includes(name))
+          .map(({ display_name }) => display_name)
         setErrorPanel({
           type: 'api-key',
           msg: t('api_key.required.assistant_label', {
-            service: modelsApiKeyRequired
-              .filter(({ name }) => missingKeys.includes(name))
-              .map(({ display_name }) => display_name)
-              .join(', '),
+            count: lmServicesWithoutKeys.length,
+            service: lmServicesWithoutKeys.join(', '),
           }),
         })
         const services = [
@@ -251,7 +252,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     handleCheckChatSettings()
-  }, [user, bot])
+  }, [user, bot, i18n.language])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new

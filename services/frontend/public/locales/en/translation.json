@@ -137,7 +137,8 @@
           "first_line": "The API key for this AI Assistant is stored in your browser.",
           "second_line": "Please be aware that without adding the API key, the Assistant will not function as intended."
         }
-      }
+      },
+      "validateAll": "Check all"
     },
     "assistant": {
       "clone": {
@@ -554,7 +555,11 @@
   "api_key": {
     "required": {
       "skill_label": "Enter your personal access token for {{service}} to talk to this Generative AI Skill",
-      "assistant_label": "Enter your personal access token for {{service}} to talk to this AI Assistant",
+      "assistant_label_one": "Enter your personal access token for {{service}} to talk to this AI Assistant",
+      "assistant_label_two": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
+      "assistant_label_few": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
+      "assistant_label_many": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
+      "assistant_label_other": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
       "link": "Enter your personal access token here",
       "api-key": "Enter token",
       "auth": "Sign in",

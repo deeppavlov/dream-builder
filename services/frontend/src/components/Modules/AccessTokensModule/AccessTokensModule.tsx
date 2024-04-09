@@ -1,13 +1,12 @@
+import { useAuth } from 'context'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import store from 'store2'
 import { ReactComponent as Attention } from 'assets/icons/attention.svg'
 import { ReactComponent as Microscope } from 'assets/icons/microscope.svg'
 import { IUserApiKey, LM_Service } from 'types/types'
-import { getUserId } from 'api/user'
 import { useApiKeys } from 'hooks/api/useApiKeys'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
 import { trigger } from 'utils/events'
@@ -26,15 +25,17 @@ interface FormValues {
 }
 
 export const AccessTokensModule = () => {
-  const { t } = useTranslation()
-  const { data: user } = useQuery(['user'], () => getUserId())
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'modals.access_api_keys',
+  })
+  const { user } = useAuth()
   const { openTokenModal, tokenPasted, addOrDeleteToken } = useGaToken()
   const { apiServices, lmServices, checkApiKey } = useApiKeys()
   const [tokens, setTokens] = useState<IUserApiKey[] | null>(null)
   const { handleSubmit, reset, control, watch } = useForm<FormValues>({
     mode: 'onSubmit',
   })
-  const localStorageName = getApiKeysLSId(user?.id)
+  const localStorageName = getApiKeysLSId(user?.id!)
   const validationSchema = getValidationSchema()
 
   const handleChanges = () => trigger('AccessTokensChanged', {})
@@ -50,7 +51,7 @@ export const AccessTokensModule = () => {
         saveTokens(localStorageName, newState)
         return newState
       })
-      resolve(t('modals.access_api_keys.toasts.token_updated'))
+      resolve(t('toasts.token_updated'))
     })
 
   const createUserToken = ({ service, token }: FormValues) =>
@@ -62,8 +63,7 @@ export const AccessTokensModule = () => {
       const isService = selectedService !== undefined
       const isUserId = user?.id !== undefined
 
-      if (!isService || !isUserId)
-        return reject(t('modals.access_api_keys.toasts.not_found_service'))
+      if (!isService || !isUserId) return reject(t('toasts.not_found_service'))
 
       const newToken: IUserApiKey = {
         api_service: selectedService,
@@ -84,10 +84,9 @@ export const AccessTokensModule = () => {
           serviceName: selectedService.display_name,
           onContinue: () => {
             updateToken(apiTokenIndex, newToken)
-            resolve(t('modals.access_api_keys.toasts.token_updated'))
+            resolve(t('toasts.token_updated'))
           },
-          onCancel: () =>
-            resolve(t('modals.access_api_keys.toasts.token_canceled')),
+          onCancel: () => resolve(t('toasts.token_canceled')),
         })
         return
       }
@@ -99,14 +98,14 @@ export const AccessTokensModule = () => {
         return newState
       })
 
-      resolve(t('modals.access_api_keys.toasts.token_added'))
+      resolve(t('toasts.token_added'))
       addOrDeleteToken(selectedService.display_name, 'add')
     })
 
   const onSubmit = (data: FormValues) => {
     toast
       .promise(createUserToken(data), {
-        loading: t('modals.access_api_keys.toasts.token_adding'),
+        loading: t('toasts.token_adding'),
         success: data => `${data}`,
         error: data => `${data}`,
       })
@@ -116,7 +115,7 @@ export const AccessTokensModule = () => {
       })
   }
 
-  useEffect(() => setTokens(getLSApiKeys(user?.id)), [user])
+  useEffect(() => setTokens(getLSApiKeys(user?.id!)), [user])
 
   const tokenValue = watch('token')
   useEffect(() => {
@@ -173,22 +172,22 @@ export const AccessTokensModule = () => {
   return (
     <div className={s.module}>
       <div className={s.body}>
-        <h5 className={s.title}>{t('modals.access_api_keys.header')}</h5>
-        <p className={s.annotations}>{t('modals.access_api_keys.desc')}</p>
+        <h5 className={s.title}>{t('header')}</h5>
+        <p className={s.annotations}>{t('desc')}</p>
         <form className={s.add} onSubmit={handleSubmit(onSubmit)}>
           <Input
             name='token'
-            label={t('modals.access_api_keys.token_field.label')}
+            label={t('token_field.label')}
             control={control}
             withEnterButton
             rules={{ required: validationSchema.globals.required }}
             props={{
-              placeholder: t('modals.access_api_keys.token_field.placeholder'),
+              placeholder: t('token_field.placeholder'),
             }}
           />
           <SkillDropboxSearch
             name='service'
-            label={t('modals.access_api_keys.service_dropbox.label')}
+            label={t('service_dropbox.label')}
             list={
               apiServices.data?.map(s => ({
                 id: s.id.toString(),
@@ -199,9 +198,7 @@ export const AccessTokensModule = () => {
             control={control}
             rules={{ required: true }}
             props={{
-              placeholder: t(
-                'modals.access_api_keys.service_dropbox.placeholder'
-              ),
+              placeholder: t('service_dropbox.placeholder'),
             }}
             withoutSearch
           />
@@ -218,7 +215,7 @@ export const AccessTokensModule = () => {
               checked={useOpenAIForDeepy}
               props={{ onChange: handleCheckBoxChange }}
             />
-            {t('modals.access_api_keys.checkbox')}
+            {t('checkbox')}
           </div>
         )}
       </div>
@@ -228,9 +225,9 @@ export const AccessTokensModule = () => {
             <Attention />
           </div>
           <div className={s.annotation}>
-            {t('modals.access_api_keys.attention.annotation.first_line')}
+            {t('attention.annotation.first_line')}
             <br />
-            {t('modals.access_api_keys.attention.annotation.second_line')}
+            {t('attention.annotation.second_line')}
           </div>
           {!!tokens?.length && (
             <Button
@@ -239,7 +236,7 @@ export const AccessTokensModule = () => {
               props={{ onClick: () => checkAllLmServices() }}
             >
               <Microscope className={s.buttonIcon} />
-              <span>Проверить все</span>
+              <span>{t('validateAll')}</span>
             </Button>
           )}
         </div>

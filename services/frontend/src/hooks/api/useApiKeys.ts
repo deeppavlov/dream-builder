@@ -6,6 +6,7 @@ import { IApiService, IModelValidationState, LM_Service } from 'types/types'
 import { getAllLMservices } from 'api/components'
 import { getTokens } from 'api/user'
 import { validateApiKey } from 'api/user/validateApiKey'
+import { trigger } from 'utils/events'
 import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { isKeyRequiredForModel, saveTokens } from 'utils/localStorageTokens'
 
@@ -30,6 +31,7 @@ export const useApiKeys = () => {
       return key
     })
     saveTokens(localStorageName, newLsApiKeys)
+    trigger('AccessTokensChanged', [])
   }
 
   const { user } = useAuth()

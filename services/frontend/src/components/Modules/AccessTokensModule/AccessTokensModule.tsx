@@ -9,6 +9,7 @@ import { ReactComponent as Microscope } from 'assets/icons/microscope.svg'
 import { IUserApiKey, LM_Service } from 'types/types'
 import { useApiKeys } from 'hooks/api/useApiKeys'
 import { useGaToken } from 'hooks/googleAnalytics/useGaToken'
+import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
 import { getApiKeysLSId, getLSApiKeys } from 'utils/getLSApiKeys'
 import { getValidationSchema } from 'utils/getValidationSchema'
@@ -168,6 +169,10 @@ export const AccessTokensModule = () => {
       })
     })
   }
+
+  useObserver('AccessTokensChanged', () => {
+    user?.id && setTokens(getLSApiKeys(user?.id))
+  })
 
   return (
     <div className={s.module}>

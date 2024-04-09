@@ -1,7 +1,7 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
-import { useEffect, useRef, useState } from 'react'
+import React, { Dispatch, useEffect, useRef, useState } from 'react'
 import {
   Control,
   RegisterOptions,
@@ -30,6 +30,7 @@ interface IProps {
   codeEditorRef: ReactCodeMirrorRef | any
   length: number
   setLength: (length: number) => void
+  setErrorMessage: Dispatch<React.SetStateAction<string | undefined>>
 }
 
 interface IValidateTokens {
@@ -71,7 +72,6 @@ const validateTokens = AwesomeDebouncePromise(
 
 export const PromptEditor = ({
   label,
-  about,
   placeholder,
   defaultValue,
   tokenizerModel,
@@ -83,6 +83,7 @@ export const PromptEditor = ({
   codeEditorRef,
   length,
   setLength,
+  setErrorMessage,
 }: IProps) => {
   const {
     field,
@@ -103,6 +104,7 @@ export const PromptEditor = ({
     }),
     defaultValue,
   })
+
   const maxLength = rules?.maxLength as { value: number; message: string }
   const [isCounting, setIsCounting] = useState(false)
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
@@ -160,6 +162,10 @@ export const PromptEditor = ({
     setIsCounting(true)
   }, [triggerField, tokenizerModel, maxLength?.value])
 
+  useEffect(() => {
+    setErrorMessage(error?.message)
+  }, [error])
+
   return (
     <div
       className={cx('promptEditor')}
@@ -195,12 +201,6 @@ export const PromptEditor = ({
           />
         </div>
       </div>
-
-      {(about || error) && (
-        <label className={cx('label', 'about')}>
-          {error ? <>{error.message}</> : about}
-        </label>
-      )}
     </div>
   )
 }

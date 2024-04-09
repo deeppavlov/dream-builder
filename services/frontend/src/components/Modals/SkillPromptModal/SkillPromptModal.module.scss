@@ -2,6 +2,16 @@
   background-color: transparent;
 }
 
+.label {
+  @include b3;
+  color: $text2;
+  display: flex;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  color: red;
+}
+
 .skillPromptModal {
   display: flex;
   height: 100%;
@@ -89,7 +99,7 @@
 
 .btns {
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: flex-end;
   width: 100%;
   gap: 24px;

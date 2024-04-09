@@ -54,6 +54,9 @@ interface IFormValues {
 
 const SkillPromptModal = () => {
   const { t } = useTranslation()
+
+  const [errorMessage, setErrorMessage] = useState<string | undefined>('')
+
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
@@ -285,6 +288,7 @@ const SkillPromptModal = () => {
   const isEmpty = getValues()?.prompt?.trim()?.length === 0
   const maxLength: number = selectedModel?.max_tokens ?? 0
   const isOverflow = maxLength * 3 < length
+
   return (
     <Modal
       isOpen={isOpen}
@@ -355,6 +359,7 @@ const SkillPromptModal = () => {
                     ),
                 }}
                 triggerField={triggerField}
+                setErrorMessage={setErrorMessage}
               />
               {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
@@ -384,6 +389,9 @@ const SkillPromptModal = () => {
               /> */}
             </div>
             <div className={s.btns}>
+              {errorMessage && (
+                <label className={s.label}>{errorMessage}</label>
+              )}
               <Button
                 theme='primary'
                 props={{

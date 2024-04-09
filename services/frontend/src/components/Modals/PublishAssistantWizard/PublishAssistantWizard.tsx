@@ -11,7 +11,7 @@ import { toasts } from 'mapping/toasts'
 import { useAssistants } from 'hooks/api'
 import { useObserver } from 'hooks/useObserver'
 import { BaseModal } from 'components/Modals'
-import { AddEmailModule } from './AddEmailModule/AddEmailModule'
+import { ChangeEmailModal } from '../ChangeEmailModal/ChangeEmailModal'
 import { WarningModule } from './WarningModule/WarningModule'
 
 export const PublishAssistantWizard = () => {
@@ -61,7 +61,13 @@ export const PublishAssistantWizard = () => {
 
   const steps: { [key: number]: ReactNode } = {
     0: <WarningModule onClose={handleCancel} onContinue={handleContinue} />,
-    1: <AddEmailModule onClose={handleCancel} onContinue={handlePublish} />,
+    1: (
+      <ChangeEmailModal
+        onClose={handleCancel}
+        onContinue={handlePublish}
+        mode='add'
+      />
+    ),
   }
   return (
     <>

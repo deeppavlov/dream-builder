@@ -126,7 +126,8 @@
         "token_updated": "Successfully updated!",
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
-        "not_found_service": "Not found Service or User id."
+        "not_found_service": "Not found Service or User id.",
+        "login": "Loading..."
       },
       "attention": {
         "annotation": {
@@ -309,7 +310,8 @@
           "name": "Name",
           "email": "Email",
           "language": "Language",
-          "change": "Change language"
+          "change": "Change language",
+          "add_email": "Add email"
         }
       }
     },
@@ -332,9 +334,12 @@
       },
       "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
     },
-    "add_email_modal": {
+    "change_email_modal": {
       "title": "Enter your email address",
       "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
+      "toasts": {
+        "loading": "Loading..."
+      },
       "form": {
         "placeholder": "Enter your email"
       },

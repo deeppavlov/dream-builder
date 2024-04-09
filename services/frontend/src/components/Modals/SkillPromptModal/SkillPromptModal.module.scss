@@ -103,6 +103,11 @@
   justify-content: flex-end;
   width: 100%;
   gap: 24px;
+  padding-top: 8px;
+  button {
+    align-self: flex-end;
+    margin-top: 8px;
+  }
 }
 
 .resizer {
@@ -130,10 +135,6 @@
   border: 1px solid $text3;
   border-bottom: none;
   border-radius: 12px 12px 0px 0px;
-}
-
-.blocks {
-  padding-bottom: 24px;
 }
 
 .blocks-label {

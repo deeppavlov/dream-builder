@@ -126,7 +126,8 @@
         "token_updated": "Successfully updated!",
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
-        "not_found_service": "Not found Service or User id."
+        "not_found_service": "Not found Service or User id.",
+        "login": "Loading..."
       },
       "attention": {
         "annotation": {
@@ -278,7 +279,8 @@
         "placeholder": "Pick words you might use"
       },
       "btns": {
-        "save": "Save"
+        "save": "Save",
+        "error": "You cannot save a prompt whose size is 3 times larger than the allowed size"
       }
     },
     "skill_prompt_quit": {
@@ -308,7 +310,8 @@
           "name": "Name",
           "email": "Email",
           "language": "Language",
-          "change": "Change language"
+          "change": "Change language",
+          "add_email": "Add email"
         }
       }
     },
@@ -331,9 +334,12 @@
       },
       "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
     },
-    "add_email_modal": {
+    "change_email_modal": {
       "title": "Enter your email address",
       "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
+      "toasts": {
+        "loading": "Loading..."
+      },
       "form": {
         "placeholder": "Enter your email"
       },
@@ -532,7 +538,8 @@
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
-    "prompt_max": "Limit prompt to {{max}} tokens",
+    "prompt_max": "The prompt text for the selected model should not exceed {{max}} tokens.",
+    "prompt_max_overflow": "The prompt text for the selected model should not exceed {{max}} tokens. Currently, the prompt is more than 3 times longer than the allowed maximum length, so its saving is disabled.",
     "email": "Please, enter a valid email"
   },
   "tokenizer": {

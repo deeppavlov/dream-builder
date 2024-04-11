@@ -19,15 +19,13 @@ export const getLSApiKeyByDisplayName = (
   userId: number,
   displayName: string,
   forDeepy: boolean = false
-): string | null => {
+): IUserApiKey | null => {
   return (
-    getLSApiKeys(userId)?.filter(
-      ({ api_service, useForDeepy }: IUserApiKey) => {
-        return forDeepy
-          ? api_service.display_name === displayName && useForDeepy
-          : api_service.display_name === displayName
-      }
-    )?.[0]?.token_value ?? null
+    getLSApiKeys(userId)?.find(({ api_service, useForDeepy }: IUserApiKey) => {
+      return forDeepy
+        ? api_service.display_name === displayName && useForDeepy
+        : api_service.display_name === displayName
+    }) ?? null
   )
 }
 

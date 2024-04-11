@@ -96,7 +96,7 @@ export const ProfileSettings: FC = () => {
         </div>
         <div className={s.body}>
           {isAccount && (
-            <>
+            <div className={s.profile}>
               <div className={s.left}>
                 <img src={user?.picture} alt='avatar' />
               </div>
@@ -126,7 +126,7 @@ export const ProfileSettings: FC = () => {
                   </button>
                 </div>
               </div>
-            </>
+            </div>
           )}
           {isTokens && <AccessTokensModule />}
         </div>

@@ -1,64 +1,56 @@
-import { ReactComponent as TokenKeyIcon } from '@assets/icons/token_key.svg'
-import { useAuth } from 'context'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import store from 'store2'
-import { IUserApiKey } from 'types/types'
-import { trigger } from 'utils/events'
-import { Checkbox } from 'components/Buttons'
+import { ReactComponent as Trash } from '@assets/icons/delete.svg'
+import { IUserApiKey, LM_Service } from 'types/types'
+import { Button } from 'components/Buttons'
+import { SvgIcon } from 'components/Helpers'
+import LanguageModelItem from '../LanguageModelItem/LanguageModelItem'
 import s from './AccessTokenKey.module.scss'
 
+const apiServiceMap: { [key: string]: string } = {
+  openai_api_key: 'openai_company',
+  gigachat_credential: 'sber_devices',
+  anthropic_api_key: 'anthropic_company',
+}
 interface IProps {
   removeApiKey: (apiServiceId: number) => void
   apiKey: IUserApiKey
-  updateApiKey: (newToken: IUserApiKey) => void
+  lmListForToken: LM_Service[]
 }
-const AccessTokenKey = ({ removeApiKey, apiKey, updateApiKey }: IProps) => {
-  const { t } = useTranslation()
-  const [useForDeepy, setUseForDeepy] = useState(apiKey.useForDeepy)
 
-  const { user } = useAuth()
-
-  const isOpenAi = apiKey.api_service.name === 'openai_api_key'
-
-  const handleChange = () => {
-    const deepySessionName = `deepySession_${user!.id}`
-    const localSession = store(deepySessionName)
-    if (!useForDeepy) {
-      store(deepySessionName, {
-        ...localSession,
-        dummy: false,
-      })
-    }
-    updateApiKey({ ...apiKey, useForDeepy: !useForDeepy })
-    setUseForDeepy(prev => !prev)
-    trigger('AccessTokensChanged', { newValue: !useForDeepy })
-  }
+const AccessTokenKey = ({ apiKey, removeApiKey, lmListForToken }: IProps) => {
+  const [firstModelService, ...restModelServices] = lmListForToken
 
   return (
-    <li className={s.container}>
-      <div className={s.token}>
-        <TokenKeyIcon className={s.icon} />
-        <div className={s.tokenName}>{apiKey.api_service.display_name}</div>
-        <div className={s.right}>
-          <button
-            className={s.remove}
-            onClick={() => removeApiKey(apiKey.api_service.id)}
+    <>
+      <tr>
+        <td className={s.td} rowSpan={lmListForToken.length}>
+          <div className={s.service}>
+            <SvgIcon
+              iconName={apiServiceMap[apiKey.api_service.name]}
+              svgProp={{ className: s.serviceIcon }}
+            />
+            {apiKey.api_service.display_name}
+          </div>
+        </td>
+        {firstModelService && (
+          <LanguageModelItem lmService={firstModelService} apiKey={apiKey} />
+        )}
+        <td className={s.td} rowSpan={lmListForToken.length}>
+          <Button
+            props={{ onClick: () => removeApiKey(apiKey.api_service.id) }}
+            small
+            withIcon
+            theme='secondary'
           >
-            {t('modals.access_api_keys.btns.remove')}
-          </button>
-        </div>
-      </div>
-      {isOpenAi && (
-        <div className={s.string}>
-          <Checkbox
-            label={t('modals.access_api_keys.checkbox')}
-            checked={useForDeepy}
-            props={{ className: s.checkbox, onChange: handleChange }}
-          />
-        </div>
-      )}
-    </li>
+            <Trash className={s.buttonIcon} />
+          </Button>
+        </td>
+      </tr>
+      {restModelServices.map(lm => (
+        <tr key={lm.id}>
+          <LanguageModelItem lmService={lm} apiKey={apiKey} />
+        </tr>
+      ))}
+    </>
   )
 }
 export default AccessTokenKey

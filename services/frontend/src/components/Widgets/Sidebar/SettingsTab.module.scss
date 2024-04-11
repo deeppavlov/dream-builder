@@ -25,7 +25,7 @@
   &::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: calc(50% + 5px);
     left: 4px;
     width: 10px;
     height: 10px;

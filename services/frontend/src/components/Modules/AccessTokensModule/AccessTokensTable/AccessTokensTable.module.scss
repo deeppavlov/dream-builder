@@ -1,0 +1,36 @@
+.table {
+  background-color: $bcgrnd1;
+  border-radius: 12px;
+  border-collapse: collapse;
+  @include b3;
+
+  th,
+  td {
+    font-weight: 400;
+  }
+  th {
+    text-align: left;
+    padding-left: 12px;
+
+    &.service {
+      padding-left: 48px;
+    }
+    &.model {
+      padding-left: 44px;
+    }
+  }
+  tr {
+    height: 52px;
+    border-top: 1px solid $bcgrnd3;
+
+    &:first-child {
+      border-top: none;
+      border-bottom: 1px solid $bcgrnd3;
+    }
+  }
+
+  thead {
+    color: $text3;
+    height: 34px;
+  }
+}

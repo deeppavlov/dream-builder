@@ -67,11 +67,9 @@ export const useDeepyChat = () => {
       ])
     },
     mutationFn: (variables: IPostChat) => {
-      const openai_api_key = getLSApiKeyByDisplayName(
-        user?.id!,
-        OPEN_AI_LM,
-        true
-      )
+      const openai_api_key =
+        getLSApiKeyByDisplayName(user?.id!, OPEN_AI_LM, true)?.token_value ||
+        null
 
       return sendMessage({
         ...variables,

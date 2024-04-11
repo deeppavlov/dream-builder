@@ -43,7 +43,7 @@ interface Props {
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { getAllComponents } = useComponent()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   // queries
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
@@ -68,7 +68,14 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const checkIsChatSettings = (userId: number | undefined) => {
     setErrorPanel(null)
-    const requiredKeys = (bot?.required_api_keys || []).map(k => k.display_name)
+
+    const modelsApiKeyRequired =
+      bot?.used_lm_services.map(({ name, display_name }) => ({
+        name,
+        display_name,
+      })) || []
+
+    const requiredKeys = modelsApiKeyRequired.map(m => m.name)
 
     if (requiredKeys.length > 0) {
       if (!userId) {
@@ -80,14 +87,29 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       }
       const userApiKeys = getLSApiKeys(userId) || []
       setUsedApiKeys(userApiKeys)
-      const userApiKeyNames = userApiKeys.map(k => k.api_service.display_name)
 
-      const missingKeys = requiredKeys.filter(k => !userApiKeyNames.includes(k))
+      const modelsWithUserKeys = userApiKeys.flatMap(k =>
+        Object.entries(k.lmUsageState).reduce(
+          (acc: string[], [name, status]) => {
+            if (!status) return acc
+            return [...acc, name]
+          },
+          []
+        )
+      )
+      const missingKeys = requiredKeys.filter(
+        k => !modelsWithUserKeys.includes(k)
+      )
+
       if (missingKeys.length) {
+        const lmServicesWithoutKeys = modelsApiKeyRequired
+          .filter(({ name }) => missingKeys.includes(name))
+          .map(({ display_name }) => display_name)
         setErrorPanel({
           type: 'api-key',
           msg: t('api_key.required.assistant_label', {
-            service: missingKeys.join(', '),
+            count: lmServicesWithoutKeys.length,
+            service: lmServicesWithoutKeys.join(', '),
           }),
         })
         const services = [
@@ -230,7 +252,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     handleCheckChatSettings()
-  }, [user, bot])
+  }, [user, bot, i18n.language])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new

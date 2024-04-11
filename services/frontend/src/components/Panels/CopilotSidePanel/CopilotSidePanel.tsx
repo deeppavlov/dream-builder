@@ -136,7 +136,7 @@ export const CopilotSidePanel = () => {
     if (
       localSession?.dummy ||
       (deepyHistory.at(-1)?.active_skill?.name === 'dummy_skill' &&
-        !openaiApiKey)
+        !openaiApiKey?.token_value)
     ) {
       if (!user) {
         setErrorPanel({

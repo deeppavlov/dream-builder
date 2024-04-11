@@ -149,6 +149,7 @@ export interface BotInfoInterface {
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
   required_api_keys: TKey[] | null
+  used_lm_services: LM_Service[]
   language?: { id: number; value: ELOCALES_KEY }
   cloned_from_id: number | null
 }
@@ -341,11 +342,21 @@ export interface IApiService {
   name: string
 }
 
+export interface IModelValidationState {
+  status: 'valid' | 'invalid' | 'unchecked' | 'loading'
+  message?: string
+}
 export interface IUserApiKey {
   api_service: IApiService
   token_value: string
   useForDeepy?: boolean
   id: number
+  lmValidationState: {
+    [lmServiceName: string]: IModelValidationState
+  }
+  lmUsageState: {
+    [lmServiceName: string]: boolean
+  }
 }
 
 export interface IPostChat {

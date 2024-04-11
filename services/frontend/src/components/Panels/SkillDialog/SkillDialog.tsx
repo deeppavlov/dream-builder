@@ -4,7 +4,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
-import { BotInfoInterface, ChatForm, IDialogError, ISkill } from 'types/types'
+import {
+  BotInfoInterface,
+  ChatForm,
+  IDialogError,
+  ISkill,
+  IUserApiKey,
+} from 'types/types'
 import { getUserId } from 'api/user'
 import { useChat } from 'hooks/api'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
@@ -13,7 +19,7 @@ import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { chooseUniversalPrompted } from 'utils/chooseUniversalPrompted'
 import { trigger } from 'utils/events'
-import { getLSApiKeyByDisplayName } from 'utils/getLSApiKeys'
+import { getLSApiKeys } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
@@ -63,14 +69,19 @@ const SkillDialog = forwardRef(
 
       const lmApiKey = skill?.lm_service?.api_key
 
-      if (lmApiKey) {
-        const requiredApiKeyDisplayName = lmApiKey.display_name
-        const requiredKeyValue = getLSApiKeyByDisplayName(
-          userId,
-          requiredApiKeyDisplayName
+      if (lmApiKey && skill.lm_service) {
+        const { name } = skill.lm_service
+        const requiredApiKeyDisplayName = skill?.lm_service?.display_name
+        const requiredKey = getLSApiKeys(userId)?.find(
+          ({ api_service, lmUsageState }: IUserApiKey) => {
+            return (
+              api_service.display_name === lmApiKey.display_name &&
+              lmUsageState[name]
+            )
+          }
         )
 
-        if (!requiredKeyValue) {
+        if (!requiredKey) {
           setError({
             type: 'api-key',
             msg: t('api_key.required.skill_label', {
@@ -83,8 +94,7 @@ const SkillDialog = forwardRef(
           )
           return false
         }
-
-        apiKeyRef.current = { [lmApiKey.name]: requiredKeyValue }
+        apiKeyRef.current = { [lmApiKey.name]: requiredKey.token_value }
       }
 
       return true
@@ -97,7 +107,6 @@ const SkillDialog = forwardRef(
 
       const isChatSettings = checkIsChatSettings(user?.id)
       if (!isChatSettings) return
-
       send.mutate({
         dialog_session_id: session?.id!,
         text: message,

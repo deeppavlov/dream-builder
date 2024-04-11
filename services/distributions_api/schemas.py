@@ -190,7 +190,6 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
     publish_state: Optional[enums.PublishRequestState]
     cloned_from_id: Optional[int]
-    required_api_keys: Optional[List[ApiKeyRead]]
     used_lm_services: Optional[List[LmServiceRead]]
     # clones: List[VirtualAssistant]
 
@@ -205,18 +204,14 @@ class VirtualAssistantBaseRead(BaseOrmModel):
         else:
             obj.visibility = obj.private_visibility
 
-        required_api_keys = []
         used_lm_services = []
         for c in obj.components:
             try:
                 if lm_services := c.component.lm_service:
                     used_lm_services.append(lm_services)
-                if api_key := c.component.lm_service.api_key:
-                    required_api_keys.append(api_key)
             except AttributeError:
                 pass
 
-        obj.required_api_keys = required_api_keys
         obj.used_lm_services = used_lm_services
 
         return super().from_orm(obj)

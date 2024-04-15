@@ -18,7 +18,7 @@ export const useDeploy = () => {
   const { user } = useAuth()
 
   const deployments = useQuery('deployments', getDeployments, {
-    enabled: loc.pathname === '/admin',
+    enabled: loc.pathname === '/admin' || loc.pathname === '/admin/requests',
   })
 
   // TODO create undeploy method

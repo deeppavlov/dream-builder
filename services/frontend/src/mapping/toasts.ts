@@ -1,9 +1,10 @@
 import i18n from 'i18n'
+import { Renderable, ValueOrFunction } from 'react-hot-toast'
 
 interface ToastSettings {
   loading: string
-  success: string
-  error: string
+  success: ValueOrFunction<Renderable, string>
+  error: ValueOrFunction<Renderable, string>
 }
 
 type ToastKeys =
@@ -23,6 +24,7 @@ type ToastKeys =
   | 'publishAssistant'
   | 'renameComponent'
   | 'changeEmail'
+  | 'changeUserRole'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -106,5 +108,13 @@ export const toasts: () => Toasts = () => ({
     loading: i18n.t('toasts.delete'),
     success: i18n.t('toasts.success'),
     error: i18n.t('toasts.error'),
+  },
+  changeUserRole: {
+    success: i18n.t('toasts.success'),
+    error: (error: string) =>
+      error === 'selfRoleChanging'
+        ? i18n.t('admin_page.user_list.toasts.self_role_change_error')
+        : i18n.t('toasts.error'),
+    loading: i18n.t('admin_page.user_list.toasts.role_changing'),
   },
 })

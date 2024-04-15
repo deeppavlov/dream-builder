@@ -100,6 +100,20 @@
       "author": "Author",
       "description": "Description",
       "stop": "Stop"
+    },
+    "user_list": {
+      "name": "Name",
+      "id": "ID",
+      "email": "Email",
+      "role": "Role",
+      "actions": "Actions",
+      "admin": "Administrator",
+      "moderator": "Moderator",
+      "user": "User",
+      "toasts": {
+        "role_changing": "Role change...",
+        "self_role_change_error": "You cannot change your own role"
+      }
     }
   },
   "modals": {
@@ -442,6 +456,12 @@
       "accordions": {
         "model_details": "Model Details"
       }
+    },
+    "user": {
+      "details": "Details",
+      "id": "ID:",
+      "email": "Email:",
+      "role": "Role:"
     }
   },
   "tooltips": {
@@ -515,7 +535,8 @@
     },
     "tooltips": {
       "home": "Go to home page",
-      "table_view": "Change view type"
+      "table_view": "Change view type",
+      "admin_page": "Go to the administrator's page"
     },
     "btns": {
       "chat_with_assistant": "Chat with Assistant",
@@ -526,14 +547,19 @@
     "your_assistants": "Your Assistants",
     "public_templates": "Public Templates",
     "skills": "Skills",
-    "integration": "Integration"
+    "integration": "Integration",
+    "admin": "Administrator",
+    "requests": "Publication Requests",
+    "users": "User list"
   },
   "sidebar": {
     "tooltips": {
       "skills": "Skills",
       "integration": "Integration",
       "settings": "Settings",
-      "deepy": "Ask Deepy if you need help with building your Assistant"
+      "deepy": "Ask Deepy if you need help with building your Assistant",
+      "requests": "Publication Requests",
+      "users": "User list"
     }
   },
   "assistantMenuInfo": {

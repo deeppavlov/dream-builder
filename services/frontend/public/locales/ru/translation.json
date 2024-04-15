@@ -100,6 +100,20 @@
       "author": "Автор",
       "description": "Описание",
       "stop": "Остановить"
+    },
+    "user_list": {
+      "name": "Имя",
+      "id": "ID",
+      "email": "Почта",
+      "role": "Роль",
+      "actions": "Действия",
+      "admin": "Администратор",
+      "moderator": "Модератор",
+      "user": "Пользователь",
+      "toasts": {
+        "role_changing": "Изменение роли...",
+        "self_role_change_error": "Нельзя менять свою роль"
+      }
     }
   },
   "modals": {
@@ -442,6 +456,12 @@
       "accordions": {
         "model_details": "Детали модели"
       }
+    },
+    "user": {
+      "details": "Детали",
+      "id": "ID:",
+      "email": "Почта:",
+      "role": "Роль:"
     }
   },
   "tooltips": {
@@ -519,7 +539,8 @@
     },
     "tooltips": {
       "home": "Вернуться на домашнюю страницу",
-      "table_view": "Изменить вид"
+      "table_view": "Изменить вид",
+      "admin_page": "Перейти на страницу администратора"
     },
     "btns": {
       "chat_with_assistant": "Чат с Ассистентом",
@@ -530,14 +551,19 @@
     "your_assistants": "Мои Ассистенты",
     "public_templates": "Шаблоны ассистентов",
     "skills": "Навыки",
-    "integration": "Интеграции"
+    "integration": "Интеграции",
+    "admin": "Администратор",
+    "requests": "Запросы на публикацию",
+    "users": "Список пользователей"
   },
   "sidebar": {
     "tooltips": {
       "skills": "Навыки",
       "integration": "Интеграции",
       "settings": "Настройки",
-      "deepy": "Спросите Deepy, если вам нужна помощь в создании вашего Ассистента."
+      "deepy": "Спросите Deepy, если вам нужна помощь в создании вашего Ассистента.",
+      "requests": "Запросы на публикацию",
+      "users": "Список пользователей"
     }
   },
   "assistantMenuInfo": {

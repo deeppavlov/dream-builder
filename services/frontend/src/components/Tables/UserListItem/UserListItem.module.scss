@@ -1,0 +1,62 @@
+.item {
+  cursor: pointer;
+  transition: all 200ms ease;
+
+  &:hover {
+    background-color: $bcgrnd2;
+  }
+  &.active {
+    background-color: $primary2;
+  }
+
+  td {
+    height: 64px;
+    padding-left: 12px;
+
+    &:last-of-type {
+      padding-right: 12px;
+    }
+  }
+}
+
+.space {
+  width: 5%;
+}
+
+.td_role {
+  width: 0;
+  padding-right: 12px;
+}
+
+.name {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+
+  .img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+  }
+}
+
+.email {
+  color: $text5;
+  font-weight: 400;
+}
+
+.actions {
+  width: 120px;
+
+  .btns {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .block path {
+    stroke: $red;
+  }
+}

@@ -1,4 +1,6 @@
-import { AdminPage } from 'pages/AdminPage'
+import { AdminPage } from 'pages/AdminPage/AdminPage'
+import { PublicationRequestsPage } from 'pages/AdminPage/PublicationRequestsPage'
+import UsersPage from 'pages/AdminPage/UsersPage'
 import { AuthPage } from 'pages/AuthPage'
 import { EditorPage } from 'pages/Editor/EditorPage'
 import { IntegrationPage } from 'pages/Editor/IntegrationPage'
@@ -146,12 +148,45 @@ export const RouterConfig: CustomRouteConfig[] = [
   // Dev pages
 
   {
-    path: RoutesList.admin,
+    path: RoutesList.admin.default,
     element: (
       <AdminRoute>
         <AdminPage />
       </AdminRoute>
     ),
-    handle: 'Its For Crumbs',
+    loader: ({ params }) => params,
+    handle: {
+      crumb: ({ t }: IRouterCrumb) => {
+        return [
+          <Link to={RoutesList.admin.default}>{t('breadcrumbs.admin')}</Link>,
+        ]
+      },
+    },
+    children: [
+      {
+        path: RoutesList.admin.requests,
+        element: <PublicationRequestsPage />,
+        handle: {
+          crumb: ({ t }: IRouterCrumb) => {
+            return [
+              <Link to={RoutesList.admin.requests}>
+                {t('breadcrumbs.requests')}
+              </Link>,
+            ]
+          },
+        },
+      },
+      {
+        path: RoutesList.admin.users,
+        element: <UsersPage />,
+        handle: {
+          crumb: ({ t }: IRouterCrumb) => {
+            return [
+              <Link to={RoutesList.admin.users}>{t('breadcrumbs.users')}</Link>,
+            ]
+          },
+        },
+      },
+    ],
   },
 ]

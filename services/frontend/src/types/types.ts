@@ -30,7 +30,7 @@ export interface UserInterface {
   refresh_token: string
   role: {
     id: number
-    name: string
+    name: 'user' | 'moderator' | 'admin'
     can_set_roles: boolean
     can_confirm_publish: boolean
     can_view_private_assistants: boolean

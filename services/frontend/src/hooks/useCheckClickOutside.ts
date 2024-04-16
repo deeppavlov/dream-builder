@@ -1,14 +1,21 @@
-import { useEffect } from 'react'
+import { MutableRefObject, useEffect } from 'react'
 
 export const useCheckClickOutside = (
-  open: any,
-  ref: any,
+  open: boolean,
+  ref: MutableRefObject<HTMLDivElement | null>,
   handleClick?: (e: MouseEvent) => void,
+  parent?: HTMLElement | null,
   closeOnRefClick?: boolean
 ) => {
   useEffect(() => {
     const checkIfClickedOutside = (e: MouseEvent) => {
-      if (open && ref.current && !ref?.current.contains(e.target)) {
+      const targetNode = e.target as Node | null
+      if (
+        open &&
+        ref.current &&
+        !ref?.current.contains(targetNode) &&
+        !parent?.contains(targetNode)
+      ) {
         handleClick && handleClick(e)
       }
 
@@ -16,10 +23,10 @@ export const useCheckClickOutside = (
         closeOnRefClick &&
         open &&
         ref.current &&
-        ref?.current.contains(e.target)
+        ref?.current.contains(targetNode)
       ) {
-        e.target?.dispatchEvent(new Event('click', e))
-        handleClick && handleClick(e)        
+        targetNode?.dispatchEvent(new Event('click', e))
+        handleClick && handleClick(e)
       }
 
       document.removeEventListener('mousedown', checkIfClickedOutside)

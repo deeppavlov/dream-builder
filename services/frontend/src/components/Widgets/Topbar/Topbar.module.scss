@@ -30,7 +30,7 @@
     @include accent_text;
   }
 
-  .btns {
+  .rightSide {
     display: flex;
     align-items: center;
     justify-content: end;
@@ -67,7 +67,6 @@
     padding: 0px 14px;
     gap: 12px;
     color: #3300ff;
-    background-color: $bcgrnd1;
     overflow: hidden;
     flex-shrink: 10;
 
@@ -77,24 +76,11 @@
       line-height: 160%;
     }
   }
-  .another_area {
+  .btns {
     display: flex;
-    flex-direction: row;
+    gap: 4px;
+    justify-content: center;
     align-items: center;
-    gap: 16px;
-    padding: 12px;
-  }
-  .yet_another_area {
-    display: flex;
-    align-items: center;
-    padding: 12px 24px;
-    padding: 0px 24px;
-    gap: 12px;
-    height: 63px;
-    background: #f9fafc;
-    border: 1px solid #f0f0f3;
-    border-bottom: none;
-    border-top: none;
   }
 }
 a {

@@ -21,3 +21,4 @@ from database.models.unauth_user.model import UnauthUser
 from database.models.unauth_uservalid.model import UnauthUserValid
 from database.models.providers.model import Provider
 from database.models.basic_user.model import BasicUser
+from database.models.feedback.model import FeedBack, Picture, FeedbackPicture

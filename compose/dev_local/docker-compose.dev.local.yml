@@ -118,6 +118,33 @@ services:
       - ../../services/deployment_worker:/src/services/deployment_worker
       - ~/.aws:/.aws
       - /var/run/docker.sock:/var/run/docker.sock
+
+  feedback-api:
+    platform: linux/amd64
+    restart: on-failure
+    env_file: [ ../.envs/.env.dev.local ]
+    build:
+      context: ../..
+      dockerfile: ./services/feedback_api/Dockerfile
+      args:
+        PORT: 6997
+    ports:
+      - "6977:6997"
+    environment:
+      ENV_TYPE: stage
+    volumes:
+      - ../../services/feedback_api:/src/services/feedback_api
+      - ../../database:/src/database
+      - ../../apiconfig:/src/apiconfig
+      - ../../services/shared:/src/services/shared
+    #    depends_on:
+    #      - postgres
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
 #    depends_on:
 #      - redis
 

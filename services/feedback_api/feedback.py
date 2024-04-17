@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from database.core import init_db
 from apiconfig.config import settings
-from database.models.feedback.crud import add_feedback, get_all_feedbacks
+from database.models.feedback.crud import add_feedback
 from services.feedback_api.models import FeedbackCreate, FeedbackResponse
 
 router = APIRouter(prefix="/feedback")
@@ -25,13 +25,3 @@ async def create_feedback(
     """
     """
     return add_feedback(db, **payload.dict())
-
-
-@router.get("/all_feedbacks")
-async def get_feedbacks(
-        db: Session = Depends(get_db)
-):
-    """
-    For testing
-    """
-    return get_all_feedbacks(db)

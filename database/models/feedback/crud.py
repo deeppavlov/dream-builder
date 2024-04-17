@@ -23,7 +23,3 @@ def add_feedback(
     db.refresh(new_feedback)
 
     return db.query(FeedBack).filter_by(id=new_feedback.id).options(joinedload(FeedBack.pictures)).first()
-
-
-def get_all_feedbacks(db: Session) -> List[FeedBack]:
-    return db.query(FeedBack).options(joinedload(FeedBack.pictures)).all()

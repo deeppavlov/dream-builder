@@ -44,6 +44,7 @@ async def update_user_by_id(
         current_user: schemas.UserRead = Depends(get_current_user),
         db: Session = Depends(get_db)
 ):
+    updated_user.id = user_id
     if current_user.id != updated_user.id:
         if current_user.role.name != "admin":
             raise HTTPException(status_code=403, detail=f"No access!")

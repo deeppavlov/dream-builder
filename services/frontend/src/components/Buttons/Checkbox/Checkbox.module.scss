@@ -1,5 +1,5 @@
 .container {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 9px;
   cursor: pointer;
@@ -47,6 +47,7 @@
   position: relative;
   width: 20px;
   height: 20px;
+  min-width: 20px;
   border: calc(1.5 / 16) + rem solid $text2;
   border-radius: 6px;
   background-color: $bcgrnd1;

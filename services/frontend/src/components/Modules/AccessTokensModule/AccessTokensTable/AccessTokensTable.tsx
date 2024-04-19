@@ -52,33 +52,36 @@ export const AccessTokensTable: FC<IProps> = ({ tokens, setTokens }) => {
   }
 
   return (
-    <table className={s.table}>
-      <thead>
-        <tr>
-          <th className={s.service}>{t('table.service')}</th>
-          <th className={s.model}>{t('table.model')}</th>
-          <th>{t('table.token')}</th>
-          <th>{t('table.status')}</th>
-          <th colSpan={2}>{t('table.actions')}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {tokens.map(token => {
-          const lmListForToken =
-            lmServices.data?.filter(service =>
-              isKeyRequiredForModel(token, service.name)
-            ) || []
+    <div className={s.container}>
+      <table className={s.table}>
+        <thead>
+          <tr>
+            <th className={s.service}>{t('table.service')}</th>
+            <th className={s.model}>{t('table.model')}</th>
+            <th>{t('table.token')}</th>
+            <th>{t('table.status')}</th>
+            <th colSpan={2}>{t('table.actions')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tokens.map(token => {
+            const lmListForToken =
+              lmServices.data?.filter(service =>
+                isKeyRequiredForModel(token, service.name)
+              ) || []
 
-          return (
-            <AccessTokenKey
-              key={token.id}
-              removeApiKey={handleTokenDeletion}
-              apiKey={token}
-              lmListForToken={lmListForToken}
-            />
-          )
-        })}
-      </tbody>
-    </table>
+            return (
+              <AccessTokenKey
+                key={token.id}
+                removeApiKey={handleTokenDeletion}
+                apiKey={token}
+                lmListForToken={lmListForToken}
+              />
+            )
+          })}
+        </tbody>
+      </table>
+      <div className={s.caption}>{t('table.caption')}</div>
+    </div>
   )
 }

@@ -35,7 +35,7 @@ class UserRead(User):
 
 
 class UserUpdate(BaseModel):
-    id: int
+    id: Optional[int]
 
     class Config:
         extra = 'allow'

@@ -39,7 +39,7 @@ async def get_current_user_or_none(
 
 
 async def get_admin_user(user: schemas.UserRead = Depends(get_current_user)) -> Optional[schemas.UserRead]:
-    if not user.role.name == "admin":
+    if not user.role.name in ("admin", "moderator"):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires admin user")
 
     return user

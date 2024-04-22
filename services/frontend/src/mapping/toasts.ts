@@ -3,8 +3,8 @@ import { Renderable, ValueOrFunction } from 'react-hot-toast'
 
 interface ToastSettings {
   loading: string
-  success: ValueOrFunction<Renderable, string>
-  error: ValueOrFunction<Renderable, string>
+  success: ValueOrFunction<Renderable, any>
+  error: ValueOrFunction<Renderable, any>
 }
 
 type ToastKeys =

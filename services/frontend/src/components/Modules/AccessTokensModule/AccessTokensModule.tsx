@@ -69,10 +69,18 @@ export const AccessTokensModule = () => {
       const newToken: IUserApiKey = {
         api_service: selectedService,
         token_value: token,
-        useForDeepy: false,
+        useForDeepy: selectedService.name === 'openai_api_key',
         id: Date.now(),
         lmValidationState: {},
-        lmUsageState: {},
+        lmUsageState: (lmServices.data || [])
+          .filter(lmService => lmService.api_key?.name === selectedService.name)
+          .reduce(
+            (acc: { [key: string]: boolean }, { name }) => ({
+              ...acc,
+              [name]: true,
+            }),
+            {}
+          ),
       }
       const apiTokenIndex = tokens?.findIndex(
         ({ api_service }) =>
@@ -219,8 +227,8 @@ export const AccessTokensModule = () => {
               theme='secondary'
               checked={useOpenAIForDeepy}
               props={{ onChange: handleCheckBoxChange }}
+              label={t('checkbox')}
             />
-            {t('checkbox')}
           </div>
         )}
       </div>

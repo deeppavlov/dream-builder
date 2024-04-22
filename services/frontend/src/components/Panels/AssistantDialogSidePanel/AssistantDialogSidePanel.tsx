@@ -12,6 +12,7 @@ import {
   IDialogError,
   IUserApiKey,
   TDialogError,
+  TKey,
 } from 'types/types'
 import { DEPLOY_STATUS, DUMMY_SKILL, TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
@@ -69,11 +70,12 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const checkIsChatSettings = (userId: number | undefined) => {
     setErrorPanel(null)
 
-    const modelsApiKeyRequired =
-      bot?.used_lm_services.map(({ name, display_name }) => ({
+    const modelsApiKeyRequired = (bot?.used_lm_services || [])
+      .filter(service => service.api_key)
+      .map(({ name, display_name }) => ({
         name,
         display_name,
-      })) || []
+      }))
 
     const requiredKeys = modelsApiKeyRequired.map(m => m.name)
 
@@ -102,9 +104,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
       )
 
       if (missingKeys.length) {
-        const lmServicesWithoutKeys = modelsApiKeyRequired
-          .filter(({ name }) => missingKeys.includes(name))
-          .map(({ display_name }) => display_name)
+        const lmServicesWithoutKeys = Array.from(
+          new Set(
+            modelsApiKeyRequired
+              .filter(({ name }) => missingKeys.includes(name))
+              .map(({ display_name }) => display_name)
+          )
+        )
         setErrorPanel({
           type: 'api-key',
           msg: t('api_key.required.assistant_label', {
@@ -112,8 +118,13 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
             service: lmServicesWithoutKeys.join(', '),
           }),
         })
+
         const services = [
-          ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+          ...new Set(
+            bot?.used_lm_services
+              .map(s => s.api_key?.display_name)
+              .filter(name => name)
+          ),
         ].join(', ')
         missingTokenError('va_dialog_panel', services)
         return false
@@ -180,7 +191,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     const isMessage = message.replace(/\s/g, '').length > 0
     if (!isMessage) return
 
-    const keys = (bot?.required_api_keys || [])
+    const requiredApiKeys = (bot?.used_lm_services || [])
+      .map(s => s.api_key)
+      .filter(key => !!key) as TKey[] // after filtering there will be no elements equal to null in the array
+
+    const keys = requiredApiKeys
       .map(k => k.name)
       .reduce((acc, keyName) => {
         return {
@@ -232,7 +247,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleErrorBtnClick = (type: TDialogError) => {
     if (type === 'api-key') {
       const services = [
-        ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+        ...new Set(
+          bot?.used_lm_services
+            ?.map(item => item.api_key?.display_name)
+            .filter(name => name)
+        ),
       ].join(', ')
       setTokenState('va_dialog_panel', services)
       trigger('AccessTokensModal', {})

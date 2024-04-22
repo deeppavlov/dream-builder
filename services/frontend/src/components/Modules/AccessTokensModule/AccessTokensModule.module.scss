@@ -33,19 +33,16 @@
       }
     }
   }
-  .checkboxString {
+  .checkboxString label {
     @include t4;
     font-weight: 500;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-start;
-    align-items: center;
   }
   .footer {
     display: flex;
     flex-direction: column;
-
     justify-content: flex-end;
+    color: $text2;
+
     .container {
       display: flex;
       flex-direction: row;
@@ -62,13 +59,13 @@
       }
       .annotation {
         flex-grow: 1;
-        color: rgba(0, 0, 0, 0.7);
         @include b3;
       }
       button {
         white-space: nowrap;
         display: flex;
         gap: 8px;
+        align-self: flex-end;
 
         .buttonIcon {
           path {

@@ -1,4 +1,5 @@
-import i18n from 'i18n'
+import i18n from 'i18n';
+
 
 interface ToastSettings {
   loading: string
@@ -22,6 +23,7 @@ type ToastKeys =
   | 'deleteToken'
   | 'publishAssistant'
   | 'renameComponent'
+  | 'sendFeedBack'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -98,6 +100,11 @@ export const toasts: () => Toasts = () => ({
   },
   deleteComponent: {
     loading: i18n.t('toasts.delete'),
+    success: i18n.t('toasts.success'),
+    error: i18n.t('toasts.error'),
+  },
+  sendFeedBack: {
+    loading: i18n.t('toasts.send'),
     success: i18n.t('toasts.success'),
     error: i18n.t('toasts.error'),
   },

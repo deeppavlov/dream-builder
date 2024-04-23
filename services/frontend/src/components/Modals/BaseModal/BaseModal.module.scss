@@ -36,8 +36,15 @@
   }
 }
 
-// .baseModal.skillsListModal {
-//   background-color: #f0f0f3;
-//   padding: 24px;
-//   max-width: 100%;
-// }
+@media (max-width: 980px) {
+  .modalFeedback {
+    width: 70%;
+    height: 70%;
+    min-height: 820px;
+  }
+}
+
+.modalFeedback {
+  width: 55%;
+  height: 70%;
+}

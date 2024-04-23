@@ -127,7 +127,7 @@ export interface IDeployment {
 export interface IDeploymentStatus extends IDeployment {
   virtual_assistant: BotInfoInterface
 }
-type TKey = {
+export type TKey = {
   base_url: string
   description: string
   display_name: string
@@ -148,7 +148,6 @@ export interface BotInfoInterface {
   visibility: TDistVisibility
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
-  required_api_keys: TKey[] | null
   used_lm_services: LM_Service[]
   language?: { id: number; value: ELOCALES_KEY }
   cloned_from_id: number | null

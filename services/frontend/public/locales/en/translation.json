@@ -134,7 +134,8 @@
         "model": "Model",
         "token": "Token",
         "status": "Status",
-        "actions": "Actions"
+        "actions": "Actions",
+        "caption": "To restrict the use of the key for a specific model, uncheck the box next to its name"
       },
       "toasts": {
         "token_adding": "Adding...",
@@ -589,7 +590,6 @@
     "required": {
       "skill_label": "Enter your personal access token for {{service}} to talk to this Generative AI Skill",
       "assistant_label_one": "Enter your personal access token for {{service}} to talk to this AI Assistant",
-      "assistant_label_two": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
       "assistant_label_few": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
       "assistant_label_many": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
       "assistant_label_other": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",

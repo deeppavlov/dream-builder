@@ -150,7 +150,10 @@ const SkillDialog = forwardRef(
 
     useChatScroll(chatRef, [history, message])
     useObserver('RenewChat', renewDialogSession)
-    useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
+    useObserver('AccessTokensChanged', handleCheckChatSettings, [
+      user?.id,
+      skill,
+    ])
     useEffect(() => {
       bot && renewDialogSession()
     }, [])

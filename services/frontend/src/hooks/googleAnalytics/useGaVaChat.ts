@@ -35,7 +35,10 @@ export const useGaChat = () => {
         : isPublicTemplate
         ? `va_template_${source}`
         : `va_${source}`
-    const additional_services = !!assistant.required_api_keys?.length
+
+    const additional_services = !!assistant.used_lm_services
+      .map(s => s.api_key)
+      .filter(key => !!key).length
     const page_type = getPageType(pathname, isPreview, skillId)
     const view = getView(page_type, isTableView)
 
@@ -69,13 +72,15 @@ export const useGaChat = () => {
 
   const chatSend = (historyLength: number) => {
     const isAuth = !!auth?.user
-    const assistant = UIOptions[consts.CHAT_SP_IS_ACTIVE]
+    const assistant = UIOptions[consts.CHAT_SP_IS_ACTIVE] as BotInfoInterface
     const isPublicTemplate =
       assistant.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
     const source_type = isPublicTemplate
       ? 'va_template_sidepanel'
       : 'va_sidepanel'
-    const additional_services = !!assistant.required_api_keys?.length
+    const additional_services = !!assistant.used_lm_services
+      .map(s => s.api_key)
+      .filter(key => !!key).length
     const page_type = getPageType(pathname, isPreview, skillId)
     const view = getView(page_type, isTableView)
 
@@ -117,7 +122,9 @@ export const useGaChat = () => {
     const page_type = getPageType(pathname, isPreview, skillId)
     const view = getView(page_type, isTableView)
     const isAuth = !!auth?.user
-    const additional_services = !!assistant?.required_api_keys?.length
+    const additional_services = !!assistant?.used_lm_services
+      .map(s => s.api_key)
+      .filter(key => !!key).length
     const isPublicTemplate =
       assistant?.visibility === VISIBILITY_STATUS.PUBLIC_TEMPLATE
 

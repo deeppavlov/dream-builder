@@ -6,7 +6,7 @@ import {
   ProfileSettings,
   PublishAssistantWizard,
 } from 'components/Modals'
-import { Feedback } from 'components/Modals/Feedback/Feedback'
+import { Feedback } from 'components/Modals/FeedBack/FeedBack'
 import { BaseSidePanel } from 'components/Panels'
 import { Sidebar, Topbar } from 'components/Widgets'
 import {

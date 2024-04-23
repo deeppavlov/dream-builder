@@ -17,6 +17,7 @@ import {
   SkillQuitModal,
   SkillsListModal,
 } from 'components/Modals'
+import { Feedback } from 'components/Modals/FeedBack/FeedBack'
 import { BaseSidePanel } from 'components/Panels'
 import { Container } from 'components/UI'
 import { Sidebar } from 'components/Widgets'
@@ -27,7 +28,6 @@ import {
   SettingsTab,
   SkillsTab,
 } from 'components/Widgets/Sidebar'
-import { Feedback } from 'components/Modals/Feedback/Feedback'
 
 export const EditorPage = () => {
   const { setUIOption } = useUIOptions()

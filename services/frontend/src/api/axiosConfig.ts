@@ -1,11 +1,8 @@
-import axios from 'axios'
-import { getAuthType } from 'utils/localStorageAuth'
-import {
-  getAccessToken,
-  getLocale,
-  setAccessToken,
-} from 'utils/localStorageUser'
-import { logout, updateAccessToken } from './user'
+import axios from 'axios';
+import { getAuthType } from 'utils/localStorageAuth';
+import { getAccessToken, getLocale, setAccessToken } from 'utils/localStorageUser';
+import { logout, updateAccessToken } from './user';
+
 
 const { MODE } = import.meta.env
 
@@ -14,6 +11,10 @@ const { MODE } = import.meta.env
  */
 export const api = axios.create({
   baseURL: import.meta.env['VITE_DIST_API_URL_' + MODE],
+})
+
+export const apiFeedback = axios.create({
+  baseURL: import.meta.env['VITE_FEEDBACK_API_URL'],
 })
 
 /**

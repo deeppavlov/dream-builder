@@ -1,0 +1,33 @@
+name: Dreambuilder stage tests
+on:
+  push:
+    branches:
+    - "main"
+  pull_request:
+    branches: [ "main" ]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3   
+    - name: Create .env file
+      run: |
+        mkdir compose/.envs && touch compose/.envs/.env.stage && echo ${{ secrets.STAGE__ENV_DATA}} > compose/.envs/.env.stage
+    - name: Create client_secret
+      run: |
+        touch client_secret.json && echo ${{ secrets.CLIENT_SECRET}} > client_secret.json
+    - name: Create .env for tests
+      run: |
+        touch compose/.envs/.env.test && echo ${{ secrets.STAGE__TEST_ENV}} > compose/.envs/.env.test
+    - name: Build stack
+      run: docker-compose -f compose/stage/docker-compose.stage.yml build --no-cache postgres redis auth-api distributions-api deployment-worker
+    - name: Start stack
+      run: |
+        docker-compose -f compose/stage/docker-compose.stage.yml up -d postgres redis 
+        docker-compose -f compose/stage/docker-compose.stage.yml up -d auth-api
+        docker-compose -f compose/stage/docker-compose.stage.yml up -d distributions-api deployment-worker
+    - name: Build tests
+      run: |
+       docker-compose -f compose/stage/docker-compose.stage.yml up tests

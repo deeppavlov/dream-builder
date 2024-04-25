@@ -117,7 +117,7 @@ services:
       - ../../apiconfig:/src/apiconfig
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
-      -../../tests:/src/tests
+      - ../../tests:/src/tests
 #
 #  flower:
 #    env_file: [ ../.envs/.env.dev.local ]

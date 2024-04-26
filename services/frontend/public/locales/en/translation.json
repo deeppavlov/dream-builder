@@ -322,7 +322,7 @@
     "feedback": {
       "btns": {
         "send": "Send",
-        "сlean": "Secondary"
+        "сlean": "Reset"
       },
       "description": "By leaving a review, you make us better",
       "placeholder": "Describe your problem"

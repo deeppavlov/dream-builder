@@ -39,9 +39,10 @@ export const Feedback: FC = () => {
     email: dataLocalStorage.email ?? user?.email ?? '',
   }
 
-  const { handleSubmit, setValue, control, getValues } = useForm({
-    defaultValues: defaultValues,
-  })
+  const { handleSubmit, setValue, control, getValues, watch, clearErrors } =
+    useForm({
+      defaultValues: defaultValues,
+    })
 
   const schema = getValidationSchema()
   const [fileList, setFileList] = useState<string[]>([])
@@ -50,14 +51,13 @@ export const Feedback: FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    const picturesList = fileList.map(src => src)
-    setValue('pictures', picturesList)
+    setValue('pictures', fileList)
   }, [fileList])
 
   useEffect(() => {
     const newDate = { text: getValues().text, email: getValues().email }
     localStorage.setItem(localStorageKey, JSON.stringify(newDate))
-  }, [getValues().text, getValues().email])
+  }, [watch('text'), watch('email')])
 
   const handleAddFile = (event: any) => {
     const file = event.target.files
@@ -98,30 +98,34 @@ export const Feedback: FC = () => {
       .then(() => setIsOpen(false))
   }
 
-  const renderFile = () => {
-    return fileList.map((el, indexFile) => {
-      return (
-        <div className={s.file} key={indexFile}>
-          <img src={el} alt='' />
-          <CloseIcon
-            className={s.close}
-            onClick={() => {
-              const newFileList = fileList.filter(
-                (_, indexNewFile: number) => indexNewFile !== indexFile
-              )
-              setFileList(newFileList)
-            }}
-          />
-        </div>
-      )
-    })
-  }
+  const renderFiles = () =>
+    !!fileList.length && (
+      <div className={s.listFile}>
+        {fileList.map((el, indexFile) => {
+          return (
+            <div className={s.file} key={indexFile}>
+              <img src={el} alt='' />
+              <CloseIcon
+                className={s.close}
+                onClick={() => {
+                  const newFileList = fileList.filter(
+                    (_, indexNewFile: number) => indexNewFile !== indexFile
+                  )
+                  setFileList(newFileList)
+                }}
+              />
+            </div>
+          )
+        })}
+      </div>
+    )
 
   const clearingForm = () => {
     setValue('text', '')
     setValue('pictures', [])
     if (user !== null) setValue('email', user?.email)
     setFileList([])
+    clearErrors()
   }
 
   const emailForm = () => {
@@ -143,12 +147,15 @@ export const Feedback: FC = () => {
 
   const addImgIcon = () =>
     fileList.length < 15 && (
-      <FileUpload
-        className={s.FileUpload}
+      <button
+        className={s.addFileBtn}
+        type='button'
         onClick={() => {
           fileInput.current && fileInput.current.click()
         }}
-      />
+      >
+        <FileUpload className={s.fileUploadIcon} />
+      </button>
     )
 
   return (
@@ -194,11 +201,10 @@ export const Feedback: FC = () => {
             />
           </div>
 
-          <div className={s.listFile}>
-            {renderFile()}
-            {addImgIcon()}
-          </div>
+          {renderFiles()}
+
           <div className={s.btns}>
+            {addImgIcon()}
             <input
               type='file'
               accept='.jpg, .jpeg, .png'
@@ -208,7 +214,7 @@ export const Feedback: FC = () => {
               hidden={true}
             />
 
-            <Button theme='primary' props={{ onClick: () => clearingForm() }}>
+            <Button theme='secondary' props={{ onClick: () => clearingForm() }}>
               {t('btns.сlean')}
             </Button>
             <Button

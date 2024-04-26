@@ -1,45 +1,3 @@
-.form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-
-  .text {
-    width: 100%;
-    height: 100%;
-    font-family: Inter, sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 160%;
-    font-size: 16px;
-    padding: 0px, 10px, 10px, 10px;
-  }
-}
-
-.listFile {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top: 20px;
-
-  .file {
-    padding: 5px;
-    width: 90px;
-    height: 90px;
-
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-.buttons {
-  display: flex;
-  justify-content: space-between;
-}
-
 .feedBackIcon {
   width: 24px;
   height: 24px;
@@ -79,88 +37,103 @@
   }
 }
 
-.active {
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 4px;
-    width: 10px;
-    height: 10px;
-    background-color: $yellow;
-    border-radius: 50%;
-  }
-  &:hover {
-    &::before {
-      background-color: $text5;
+.modalFeedback {
+  width: 55%;
+  height: 70%;
+
+  @media (max-width: 980px) {
+    .modalFeedback {
+      width: 70%;
+      height: 70%;
+      min-height: 820px;
     }
   }
-  svg {
-    fill: #3300ff;
-  }
-}
 
-.savModal {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 45px;
-  .text {
-    text-align: center;
-  }
-}
+  .form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 
-.btns {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 15px;
-  gap: 35px;
-  align-items: center;
-}
+    .text {
+      width: 100%;
+      height: 100%;
+      font-family: Inter, sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%;
+      font-size: 16px;
+      padding: 0px, 10px, 10px, 10px;
+    }
 
-.emailInput {
-  min-width: 250px;
-  width: 35%;
-  margin-top: 20px;
-}
+    .emailInput {
+      min-width: 250px;
+      width: 35%;
+      margin-top: 20px;
+    }
 
-.emailUser {
-  padding-bottom: 15px;
-}
+    .listFile {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 20px;
 
-.FileUpload {
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
+      .FileUpload {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
 
-  &:hover {
-    fill: #3300ff;
-  }
+        &:hover {
+          fill: #3300ff;
+        }
 
-  &:active {
-    scale: 0.85;
-    transition: 0.1s;
-  }
-}
+        &:active {
+          scale: 0.85;
+          transition: 0.1s;
+        }
+      }
 
-.close {
-  cursor: pointer;
-  position: relative;
-  bottom: 80px;
-  opacity: 0.1;
-  fill: red;
+      .file {
+        padding: 5px;
+        width: 90px;
+        height: 90px;
 
-  transition: 0.5s;
+        img {
+          width: 100%;
+          height: 100%;
+        }
 
-  @media (hover: none) and (pointer: coarse) {
-    opacity: 1;
-  }
+        .close {
+          cursor: pointer;
+          position: relative;
+          bottom: 80px;
+          opacity: 0.1;
+          fill: red;
 
-  &:hover {
-    opacity: 1;
-  }
+          transition: 0.5s;
 
-  path {
-    stroke: red;
+          @media (hover: none) and (pointer: coarse) {
+            opacity: 1;
+          }
+
+          &:hover {
+            opacity: 1;
+          }
+
+          path {
+            stroke: red;
+          }
+        }
+      }
+    }
+
+    .btns {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 15px;
+      gap: 24px;
+      align-items: center;
+    }
   }
 }

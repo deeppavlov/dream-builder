@@ -1,4 +1,4 @@
-import { useAuth } from 'context'
+import { useAuth, useUIOptions } from 'context'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { Trans, useTranslation } from 'react-i18next'
@@ -13,6 +13,7 @@ import { useGaAssistant } from 'hooks/googleAnalytics/useGaAssistant'
 import { useGaEvents } from 'hooks/googleAnalytics/useGaEvents'
 import { useGaPublication } from 'hooks/googleAnalytics/useGaPublication'
 import { examinationMessage } from 'utils/checkingAssistants'
+import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAssistantState } from 'utils/getAssistantState'
 import { Button } from 'components/Buttons'
@@ -29,6 +30,7 @@ export const AssistantModule = () => {
   const auth = useAuth()
   const { t } = useTranslation()
   const { getDist, changeVisibility } = useAssistants()
+  const { UIOptions } = useUIOptions()
   const {
     createVaClick,
     vaPropsOpened,
@@ -70,9 +72,11 @@ export const AssistantModule = () => {
 
   const handleInfo = () => {
     vaPropsOpened('va_control_block', bot)
+    const activeAssistantId = UIOptions[consts.ACTIVE_ASSISTANT_SP_ID]
+    const infoSPId = `info_${bot?.id}`
 
     trigger(TRIGGER_RIGHT_SP_EVENT, {
-      isOpen: true,
+      isOpen: activeAssistantId !== infoSPId,
       children: (
         <AssistantSidePanel
           type={
@@ -99,17 +103,17 @@ export const AssistantModule = () => {
         deleteDeployment
           .mutateAsync(bot!, {
             onSuccess: () => {
-              const newVisibility = VISIBILITY_STATUS.PRIVATE
-              if (bot?.visibility !== VISIBILITY_STATUS.PRIVATE) {
-                changeVisibility.mutateAsync(
-                  { name: bot?.name || '', newVisibility },
-                  {
-                    onSuccess: data => {
-                      console.log('data = ', data)
-                    },
-                  }
-                )
-              }
+              changeVisibility.mutateAsync(
+                {
+                  name: bot?.name || '',
+                  newVisibility: VISIBILITY_STATUS.PRIVATE,
+                },
+                {
+                  onSuccess: data => {
+                    console.log('data = ', data)
+                  },
+                }
+              )
             },
           })
           .then(() => vaChangeDeployState('VA_Undeployed', 'va_control_block')),
@@ -144,7 +148,9 @@ export const AssistantModule = () => {
   }
 
   useEffect(() => {
-    const redirectConditions = isFetched && (onModeration || isDeploying)
+    const isAdmin = auth.user?.role.id === 2 || auth.user?.role.id === 3
+    const redirectConditions =
+      isFetched && (onModeration || isDeploying) && !isAdmin
 
     if (redirectConditions) navigate('/')
   }, [bot, isFetched])

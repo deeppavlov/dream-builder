@@ -8,6 +8,7 @@ import { Profile } from './Profile/Profile'
 import { ProfileContextMenu } from './ProfileContextMenu/ProfileContextMenu'
 import SkillCardToolTip from './SkillCardToolTip/SkillCardToolTip'
 import StatusToolTip from './StatusToolTip/StatusTooltip'
+import UserRoleMenu from './UserRoleMenu/UserRoleMenu'
 
 export {
   AssistantContextMenu,
@@ -20,4 +21,5 @@ export {
   SkillSelectorStackToolTip,
   SkillStackToolTip,
   StatusToolTip,
+  UserRoleMenu,
 }

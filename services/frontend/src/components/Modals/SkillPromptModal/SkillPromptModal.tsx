@@ -54,11 +54,14 @@ interface IFormValues {
 
 const SkillPromptModal = () => {
   const { t } = useTranslation()
+
+  const [errorMessage, setErrorMessage] = useState<string | undefined>('')
+
   const [isOpen, setIsOpen] = useState(false)
   const { name: distName, skillId } = useParams()
   const { getComponent, updateComponent } = useComponent()
   const { deleteDeployment } = useDeploy()
-  const { setUIOption } = useUIOptions()
+  const { setUIOption, UIOptions } = useUIOptions()
   const { getDist, changeVisibility } = useAssistants()
   const isUrlParams = distName && skillId
   const skill = isUrlParams
@@ -66,10 +69,13 @@ const SkillPromptModal = () => {
     : null
   const bot = distName ? getDist({ distName }).data : null
   const [selectedModel, setSelectedModel] = useState<LM_Service | null>(null)
+
   const [preventExit, setPreventExit] = useState(false)
   const modalRef = useRef(null)
   const editorRef = createRef()
   const codeEditorRef = useRef<ReactCodeMirrorRef | any>({})
+
+  const [length, setLength] = useState(0)
   const validationSchema = getValidationSchema()
   const cx = classNames.bind(s)
   const {
@@ -80,8 +86,6 @@ const SkillPromptModal = () => {
     changeSkillModel,
   } = useGaSkills()
   const { vaChangeDeployState } = useGaAssistant()
-
-  const [editorContext, setEditorContext] = useState('')
 
   useEffect(() => {
     return () => skillEditorClosed()
@@ -159,18 +163,19 @@ const SkillPromptModal = () => {
             display_name,
             lm_service_id: selectedModel?.id!,
             lm_service: selectedModel, // FIX IT!
-            prompt: editorContext,
+            prompt: prompt,
             distName: distName || '',
             type: 'skills',
           })
           .then(data => {
             skillChanged(skill, data)
             const name = bot?.name!
-            const newVisibility = VISIBILITY_STATUS.PRIVATE
             if (bot?.deployment?.state === DEPLOY_STATUS.UP) {
               deleteDeployment.mutateAsync(bot!).then(() => {
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({ name, newVisibility })
+                changeVisibility.mutateAsync({
+                  name,
+                  newVisibility: VISIBILITY_STATUS.PRIVATE,
+                })
                 vaChangeDeployState(
                   'VA_Undeployed',
                   'skill_editor_prompt_panel'
@@ -184,8 +189,10 @@ const SkillPromptModal = () => {
   }
 
   const handlePropertiesClick = () => {
+    const activeSkillId = UIOptions[consts.ACTIVE_SKILL_SP_ID]
     skillsPropsOpened('skill_editor', skill)
     triggerSkillSidePanel({
+      isOpen: activeSkillId !== skill.id,
       skill,
       distName: distName!,
       activeTab: 'properties',
@@ -197,21 +204,19 @@ const SkillPromptModal = () => {
       prompt: getValues('prompt'),
       block,
     })
-
     const state = codeEditorRef.current.view?.viewState.state
     const range = state.selection.ranges[0]
-
     codeEditorRef.current.view.dispatch({
       changes: {
         from: range.from,
         to: range.to,
         insert: formattedBlock,
       },
+      selection: {
+        anchor: range.to + formattedBlock.length,
+      },
     })
-
-    const newEditorContextCode =
-      codeEditorRef.current.view.state.doc.text.join('\n')
-    setEditorContext(newEditorContextCode)
+    codeEditorRef.current.view.focus()
   }
 
   const handleAssistantDelete = () => setPreventExit(false)
@@ -281,7 +286,9 @@ const SkillPromptModal = () => {
     changeSkillModel(lm)
   }
 
-  const isEmpty = editorContext.length === 0
+  const isEmpty = getValues()?.prompt?.trim()?.length === 0
+  const maxLength: number = selectedModel?.max_tokens ?? 0
+  const isOverflow = maxLength * 3 < length
 
   return (
     <Modal
@@ -333,8 +340,9 @@ const SkillPromptModal = () => {
                 </div>
               )}
               <PromptEditor
+                length={length}
+                setLength={setLength}
                 codeEditorRef={codeEditorRef}
-                setEditorContext={setEditorContext}
                 label={t('modals.skill_prompt.prompt_field.label')}
                 name='prompt'
                 placeholder={t('modals.skill_prompt.prompt_field.placeholder')}
@@ -347,10 +355,12 @@ const SkillPromptModal = () => {
                   maxLength:
                     selectedModel?.max_tokens &&
                     validationSchema.skill.prompt.maxLength(
-                      selectedModel?.max_tokens
+                      maxLength,
+                      isOverflow
                     ),
                 }}
                 triggerField={triggerField}
+                setErrorMessage={setErrorMessage}
               />
               {/* <TextArea
                 label={t('modals.skill_prompt.prompt_field.label')}
@@ -380,15 +390,23 @@ const SkillPromptModal = () => {
               /> */}
             </div>
             <div className={s.btns}>
+              {errorMessage && (
+                <label className={s.label}>{errorMessage}</label>
+              )}
               <Button
                 theme='primary'
                 props={{
-                  onClick: () => onFormSubmit(skill),
+                  onClick: () =>
+                    onFormSubmit({
+                      prompt: getValues().prompt,
+                      model: getValues().model,
+                    }),
                   disabled:
                     updateComponent.isLoading ||
                     isSubmitting ||
                     !isDirty ||
-                    isEmpty,
+                    isEmpty ||
+                    isOverflow,
                 }}
               >
                 {t('modals.skill_prompt.btns.save')}

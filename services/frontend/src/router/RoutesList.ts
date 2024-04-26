@@ -15,5 +15,9 @@ export const RoutesList = {
   skillsAll: '/allskills',
   yourSkills: '/yourskills',
   // Dev routes
-  admin: '/admin',
+  admin: {
+    default: '/admin',
+    requests: '/admin/requests?',
+    users: '/admin/users',
+  },
 } as const

@@ -50,10 +50,13 @@ export const ShareAssistantModal = () => {
   }
 
   useObserver('ShareAssistantModal', handleEventUpdate)
+
   useEffect(() => {
-    const modePrefix = import.meta.env.MODE === 'PROD' ? '' : 'stage.'
+    const messengerLink = import.meta.env[
+      `VITE_MESSENGER_LINK_${import.meta.env.MODE}`
+    ]
     reset({
-      link: `https://${modePrefix}assistants.builder.deeppavlov.ai/${bot}`,
+      link: `${messengerLink}${bot}`,
     })
   }, [bot])
 

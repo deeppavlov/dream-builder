@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 from urllib.parse import urlencode, parse_qs
 
@@ -47,11 +48,10 @@ class GithubAuth(auth_type.OAuth):
                 raise ValueError("The user with this token couldn't be found or token is not valid.")
 
             self._validate_date(uservalid_info_from_db.expire_date)
-            user_info_from_github = await self._fetch_user_info_by_access_token(token=token)
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
-        user_ = user.crud.get_general_user_by_outer_id(db, user_info_from_github["id"], self.PROVIDER_NAME)
+        user_ = user.crud.get_general_user_by_id(db, uservalid_info_from_db.user_id, self.PROVIDER_NAME)
         return User.from_orm(user_)
 
     async def logout(self, db: Session, token: str) -> None:
@@ -73,10 +73,10 @@ class GithubAuth(auth_type.OAuth):
         if github_user.crud.check_user_exists(db, github_id):
             first_auth = False
             general_user = user.crud.get_general_user_by_outer_id(db, github_id, self.PROVIDER_NAME)
-            try:
-                github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
-            except sqlalchemy.exc.IntegrityError as e:
-                db.rollback()
+            # try:
+            #     github_user.crud.update_by_id(db, general_user.id, **github_user_create.__dict__)
+            # except sqlalchemy.exc.IntegrityError as e:
+            #     db.rollback()
         else:
             general_user = user.crud.add_user(
                 db=db,
@@ -245,9 +245,10 @@ class GoogleOAuth2(auth_type.OAuth2):
         )
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.URL_TOKENINFO, data=info) as resp:
+            async with session.post(self.URL_UPDATE_TOKEN, data=json.dumps(info)) as resp:
                 response = await resp.json()
                 resp_status = resp.status
+
         if resp_status != 200:
             raise ValueError(f"Google token is bad. Response: {response}, status_code: {resp_status}")
 
@@ -288,4 +289,5 @@ class GoogleOAuth2(auth_type.OAuth2):
     @staticmethod
     def _validate_date(expire_data: datetime):
         if datetime.now() > expire_data:
-            raise ValueError("Token has expired")
+            return False
+        return True

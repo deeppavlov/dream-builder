@@ -1,0 +1,35 @@
+.card {
+  @include b3;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.name,
+.displayName,
+.description {
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.name {
+  max-height: 44px;
+}
+
+.displayName {
+  max-height: 66px;
+}
+
+.description {
+  max-height: 88px;
+}
+
+.btnContainer {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-grow: 1;
+}

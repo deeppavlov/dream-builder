@@ -79,6 +79,43 @@
       "back_to_home": "Back to home"
     }
   },
+  "admin_page": {
+    "requests": "Publication Requests",
+    "deployments": "Deployments",
+    "request_card": {
+      "id": "Id",
+      "name": "Name",
+      "display_name": "Display name",
+      "description": "Description",
+      "date_created": "Date created",
+      "author": "Author",
+      "email": "Email",
+      "approve": "Approve",
+      "decline": "Decline"
+    },
+    "deployment_card": {
+      "id": "Id",
+      "name": "Name",
+      "display_name": "Display name",
+      "author": "Author",
+      "description": "Description",
+      "stop": "Stop"
+    },
+    "user_list": {
+      "name": "Name",
+      "id": "ID",
+      "email": "Email",
+      "role": "Role",
+      "actions": "Actions",
+      "admin": "Administrator",
+      "moderator": "Moderator",
+      "user": "User",
+      "toasts": {
+        "role_changing": "Role change...",
+        "self_role_change_error": "You cannot change your own role"
+      }
+    }
+  },
   "modals": {
     "access_api_keys": {
       "header": "Personal access tokens",
@@ -92,8 +129,13 @@
         "label": "Choose service:",
         "placeholder": "Choose service..."
       },
-      "btns": {
-        "remove": "Remove"
+      "table": {
+        "service": "Service",
+        "model": "Model",
+        "token": "Token",
+        "status": "Status",
+        "actions": "Actions",
+        "caption": "To restrict the use of the key for a specific model, uncheck the box next to its name"
       },
       "toasts": {
         "token_adding": "Adding...",
@@ -103,14 +145,16 @@
         "token_updated": "Successfully updated!",
         "token_canceled": "Successfully cancelled!",
         "not_found_token": "Tokens not found.",
-        "not_found_service": "Not found Service or User id."
+        "not_found_service": "Not found Service or User id.",
+        "login": "Loading..."
       },
       "attention": {
         "annotation": {
           "first_line": "The API key for this AI Assistant is stored in your browser.",
           "second_line": "Please be aware that without adding the API key, the Assistant will not function as intended."
         }
-      }
+      },
+      "validateAll": "Check all"
     },
     "assistant": {
       "clone": {
@@ -189,7 +233,8 @@
       },
       "tooltips": {
         "public": "Everyone can clone and talk to your VA",
-        "unlisted": "Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category"
+        "unlisted": "Anyone with this link can talk to your VA.\n\nThis VA won’t appear in Public Store\nunless you adds it to a public category",
+        "error": "You cannot change the visibility of the assistant with critical errors, please fix them"
       },
       "btns": {
         "no": "No",
@@ -254,7 +299,8 @@
         "placeholder": "Pick words you might use"
       },
       "btns": {
-        "save": "Save"
+        "save": "Save",
+        "error": "You cannot save a prompt whose size is 3 times larger than the allowed size"
       }
     },
     "skill_prompt_quit": {
@@ -284,7 +330,8 @@
           "name": "Name",
           "email": "Email",
           "language": "Language",
-          "change": "Change language"
+          "change": "Change language",
+          "add_email": "Add email"
         }
       }
     },
@@ -307,9 +354,12 @@
       },
       "upper": "When your assistant is added to \"Public Templates\", it goes through moderation. You can't edit it during this time. If approved, editing requires removal from public templates. If not approved, visibility reverts and you can freely edit it."
     },
-    "add_email_modal": {
+    "change_email_modal": {
       "title": "Enter your email address",
       "subtitle": "Getting your AI assistants published involves a review by our team. To keep you updated on the review outcomes, we'll need your email.",
+      "toasts": {
+        "loading": "Loading..."
+      },
       "form": {
         "placeholder": "Enter your email"
       },
@@ -372,7 +422,7 @@
         "stop_deploy": "Stop deploy...",
         "deploy_stopped": "Deploy stopped!"
       },
-      "dummy_error": "Someting went wrong<br />Restart the system"
+      "dummy_error": "Something went wrong<br />Restart the system"
     },
     "assistant": {
       "accordions": {
@@ -415,6 +465,12 @@
       "accordions": {
         "model_details": "Model Details"
       }
+    },
+    "user": {
+      "details": "Details",
+      "id": "ID:",
+      "email": "Email:",
+      "role": "Role:"
     }
   },
   "tooltips": {
@@ -489,7 +545,8 @@
     },
     "tooltips": {
       "home": "Go to home page",
-      "table_view": "Change view type"
+      "table_view": "Change view type",
+      "admin_page": "Go to the administrator's page"
     },
     "btns": {
       "chat_with_assistant": "Chat with Assistant",
@@ -500,14 +557,19 @@
     "your_assistants": "Your Assistants",
     "public_templates": "Public Templates",
     "skills": "Skills",
-    "integration": "Integration"
+    "integration": "Integration",
+    "admin": "Administrator",
+    "requests": "Publication Requests",
+    "users": "User list"
   },
   "sidebar": {
     "tooltips": {
       "skills": "Skills",
       "integration": "Integration",
       "settings": "Settings",
-      "deepy": "Ask Deepy if you need help with building your Assistant"
+      "deepy": "Ask Deepy if you need help with building your Assistant",
+      "requests": "Publication Requests",
+      "users": "User list"
     }
   },
   "assistantMenuInfo": {
@@ -517,7 +579,8 @@
     "required": "This field can’t be empty",
     "invalid": "Invalid data",
     "desc_max": "Limit text description to {{max}} characters",
-    "prompt_max": "Limit prompt to {{max}} tokens",
+    "prompt_max": "The prompt text for the selected model should not exceed {{max}} tokens.",
+    "prompt_max_overflow": "The prompt text for the selected model should not exceed {{max}} tokens. Currently, the prompt is more than 3 times longer than the allowed maximum length, so its saving is disabled.",
     "email": "Please, enter a valid email"
   },
   "tokenizer": {
@@ -534,8 +597,11 @@
   },
   "api_key": {
     "required": {
-      "skill_label": "Enter your personal access token for OpenAI to talk to this Generative AI Skill",
-      "assistant_label": "Enter your personal access token for OpenAI to talk to this AI Assistant",
+      "skill_label": "Enter your personal access token for {{service}} to talk to this Generative AI Skill",
+      "assistant_label_one": "Enter your personal access token for {{service}} to talk to this AI Assistant",
+      "assistant_label_few": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
+      "assistant_label_many": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
+      "assistant_label_other": "Enter your personal access tokens for {{service}} to talk to this AI Assistant",
       "link": "Enter your personal access token here",
       "api-key": "Enter token",
       "auth": "Sign in",
@@ -548,6 +614,11 @@
     "unlisted": "Unlisted",
     "private": "Private"
   },
+  "assistant_deployment": {
+    "not_built": "Not built",
+    "building": "Building...",
+    "ready": "Ready"
+  },
   "your_assistants": {
     "empty_placeholder": "Your Assistants will appear here"
   },
@@ -557,6 +628,7 @@
     "desc": "Description",
     "visibility": "Visibility",
     "error": "Errors",
+    "status": "Status",
     "created": "Created",
     "language": "Language",
     "actions": "Actions",

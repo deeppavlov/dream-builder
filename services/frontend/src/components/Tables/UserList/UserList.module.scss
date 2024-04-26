@@ -1,0 +1,72 @@
+.container {
+  border-radius: 12px;
+  border: 1px solid $bcgrnd3;
+  margin: 16px;
+  width: calc(100% - 32px);
+
+  transition: margin 0.3s ease-out, width 0.3s ease-out;
+
+  &.withSidePanel {
+    margin-right: 384px;
+    width: calc(100% - 400px);
+  }
+}
+
+.table {
+  width: 100%;
+  background-color: $bcgrnd1;
+  border-radius: 12px;
+  border-collapse: collapse;
+  @include b3;
+
+  thead {
+    height: 42px;
+
+    th {
+      font-weight: 400;
+      text-align: left;
+      padding-left: 12px;
+
+      &:first-of-type {
+        padding-left: 52px;
+      }
+      &:last-of-type {
+        padding-left: 0;
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    @include t4;
+    tr {
+      border-top: 1px solid $bcgrnd3;
+    }
+  }
+}
+
+.sortableHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    .arrow path {
+      fill: $text1;
+    }
+  }
+
+  .arrow {
+    @include icon_size_24;
+    path {
+      fill: $text3;
+    }
+    transition: all 200ms ease-in-out;
+    &.up {
+      transform: rotate(180deg);
+    }
+  }
+}

@@ -8,6 +8,7 @@ import SidePanelHeader from './SidePanelHeader/SidePanelHeader'
 import SidePanelName from './SidePanelName/SidePanelName'
 import SkillDialog from './SkillDialog/SkillDialog'
 import SkillSidePanel from './SkillSidePanel/SkillSidePanel'
+import UserSidePanel from './UserSidePanel/UserSidePanel'
 import WarningsInfo from './WarningsInfo/WarningsInfo'
 
 export {
@@ -22,4 +23,5 @@ export {
   SkillDialog,
   SkillSidePanel,
   WarningsInfo,
+  UserSidePanel,
 }

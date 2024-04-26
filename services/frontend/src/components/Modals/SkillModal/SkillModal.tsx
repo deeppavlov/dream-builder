@@ -1,3 +1,4 @@
+import { useAuth } from 'context'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -39,6 +40,7 @@ export const SkillModal = () => {
   const validationSchema = getValidationSchema()
   const bot = distName ? getDist({ distName }).data : null
   const { vaChangeDeployState } = useGaAssistant()
+  const { user } = useAuth()
 
   const { handleSubmit, control, reset, getValues } = useForm({ mode: 'all' })
 
@@ -72,34 +74,40 @@ export const SkillModal = () => {
   const { create, edit } = useComponent()
 
   const handleCreate = (data: any) => {
-    toast.promise(
-      create.mutateAsync(
-        { data, distName: distName || '', type: 'skills' },
-        {
-          onSuccess: skill => {
-            closeModal()
-            nav(
-              generatePath(RoutesList.editor.skillEditor, {
-                name: distName || '',
-                skillId: (skill?.component_id ?? skill?.id)?.toString(),
-              })
-            )
-            const newVisibility = VISIBILITY_STATUS.PRIVATE
-            bot?.deployment?.state === DEPLOY_STATUS.UP &&
-              deleteDeployment.mutateAsync(bot!).then(() => {
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({
-                    name: bot?.name!,
-                    newVisibility,
-                    inEditor: true,
-                  })
-                vaChangeDeployState('VA_Undeployed')
-              })
-          },
-        }
-      ),
-      toasts().createComponent
-    )
+    !create.isLoading &&
+      toast.promise(
+        bot?.author.id !== user?.id
+          ? // if a moderator attempts to add a skill to an assistant for which they are not the author
+            new Promise((_resolve, reject) => {
+              closeModal()
+              reject(new Error('No access'))
+            })
+          : create.mutateAsync(
+              { data, distName: distName || '', type: 'skills' },
+              {
+                onSuccess: skill => {
+                  closeModal()
+                  nav(
+                    generatePath(RoutesList.editor.skillEditor, {
+                      name: distName || '',
+                      skillId: (skill?.component_id ?? skill?.id)?.toString(),
+                    })
+                  )
+                  const newVisibility = VISIBILITY_STATUS.PRIVATE
+                  bot?.deployment?.state === DEPLOY_STATUS.UP &&
+                    deleteDeployment.mutateAsync(bot!).then(() => {
+                      changeVisibility.mutateAsync({
+                        name: bot?.name!,
+                        newVisibility,
+                        inEditor: true,
+                      })
+                      vaChangeDeployState('VA_Undeployed')
+                    })
+                },
+              }
+            ),
+        toasts().createComponent
+      )
   }
   const handleEdit = (data: { display_name: string; description: string }) => {
     const isDist = distName && distName?.length > 0
@@ -124,7 +132,7 @@ export const SkillModal = () => {
   useObserver('SkillModal', handleEventUpdate)
 
   return (
-    <BaseModal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <BaseModal handleClose={closeModal} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={s.skillModal}>
         <div>
           {action == 'create' && (
@@ -152,8 +160,8 @@ export const SkillModal = () => {
             defaultValue={getValues()[NAME_ID]}
             control={control}
             rules={{
-              required: validationSchema.globals.required,
               pattern: validationSchema.globals.regExpPattern,
+              required: validationSchema.globals.required,
             }}
             props={{
               placeholder: t('modals.skill.name_field.placeholder'),
@@ -167,10 +175,10 @@ export const SkillModal = () => {
               defaultValue={getValues()[DESC_ID]}
               withCounter
               rules={{
-                required: validationSchema.globals.required,
                 maxLength:
                   validationSchema.globals.desc.maxLength(descriptionMaxLenght),
                 pattern: validationSchema.globals.regExpPattern,
+                required: validationSchema.globals.required,
               }}
               props={{
                 placeholder: t('modals.skill.desc_field.placeholder'),
@@ -182,7 +190,10 @@ export const SkillModal = () => {
             <Button theme='secondary' props={{ onClick: closeModal }}>
               {t('modals.skill.btns.cancel')}
             </Button>
-            <Button theme='primary' props={{ type: 'submit' }}>
+            <Button
+              theme='primary'
+              props={{ type: 'submit', disabled: create.isLoading }}
+            >
               {action == 'create' && t('modals.skill.btns.create')}
               {action == 'edit' && t('modals.skill.btns.save')}
             </Button>

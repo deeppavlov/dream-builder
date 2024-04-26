@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from database.models import google_user, github_user
+from database.models.providers.crud import get_provider_by_id
 from database.models.user import crud
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
+from services.distributions_api.routes.users.schemas import PROVIDERS
 from services.distributions_api.security.auth import get_current_user, get_admin_user
 
 users_router = APIRouter(prefix="/api/users", tags=["users"])
@@ -29,6 +32,34 @@ async def get_user_self(user: schemas.UserRead = Depends(get_current_user)):
 async def get_user_by_id(
     user_id: int, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ):
+    selected_user = crud.get_by_id(db, user_id)
+
+    return schemas.UserRead.from_orm(selected_user)
+
+
+@users_router.put("/{user_id}", status_code=status.HTTP_200_OK)
+async def update_user_by_id(
+        user_id: int,
+        updated_user: schemas.UserUpdate,
+        current_user: schemas.UserRead = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    updated_user.id = user_id
+    if current_user.id != updated_user.id:
+        if current_user.role.name != "admin":
+            raise HTTPException(status_code=403, detail=f"No access!")
+
+    provider_id = crud.get_by_id(db, updated_user.id).provider_id
+    provider_name = get_provider_by_id(db, provider_id).service_name
+
+    match provider_name:
+        case PROVIDERS.GOOGLE:
+            google_user.crud.update_by_id(db, user_id, **updated_user.dict())
+        case PROVIDERS.GITHUB:
+            github_user.crud.update_by_id(db, user_id, **updated_user.dict())
+        case _:
+            raise HTTPException(status_code=404, detail=f"No provider name {provider_name}!")
+
     selected_user = crud.get_by_id(db, user_id)
 
     return schemas.UserRead.from_orm(selected_user)

@@ -15,6 +15,7 @@ export const getAssistantTableHeaders = (type: 'private' | 'public') => {
     i18n.t('assistant_table.author'),
     i18n.t('assistant_table.desc'),
     i18n.t('assistant_table.error'),
+    i18n.t('assistant_table.status'),
     i18n.t('assistant_table.visibility'),
     i18n.t('assistant_table.language'),
     i18n.t('assistant_table.actions'),

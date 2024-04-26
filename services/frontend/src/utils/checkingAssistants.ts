@@ -13,63 +13,111 @@ const arrInitPromptBlock = [
   { 'Act as [YOUR INPUT].': /[Aa]ct as (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm },
   {
     'YOUR PERSONALITY: \nYour name is [YOUR INPUT]. Your interests are: [YOUR INPUT].':
-      /YOUR PERSONALITY: [Yy]our name is (?:\b\w+\b|\[.*?\]|[А-я_]+). [Yy]our interests are: (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+      /YOUR PERSONALITY: [Yy]our name is (?:\b\w+\b|\[.*?\]|[А-я_]+).? [Yy]our interests are: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
     'TASK: \nYour task is to do [YOUR INPUT].':
-      /TASK: [Yy]our task is to do (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+      /TASK: [Yy]our task is to do (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
     'Use [YOUR INPUT] voice and tone.':
-      /[Uu]se (?:\b\w+\b|\[.*?\]|[А-я_]+) voice and tone/gm,
+      /[Uu]se (?:\b\w+\b|\[.*?\]|[А-я_]+) voice and tone.?/gm,
   },
   {
     'Reply in [YOUR INPUT] language.':
-      /[Rr]eply in (?:\b\w+\b|\[.*?\]|[А-я_]+) language/gm,
+      /[Rr]eply in (?:\b\w+\b|\[.*?\]|[А-я_]+) language.?/gm,
   },
   {
     'The target audience is [YOUR INPUT].':
-      /[Tt]he target audience is (?:\b\w+\b|\[.*?\]|[А-я_]+)./gm,
+      /[Tt]he target audience is (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
     'I want you to reply in [YOUR INPUT] format.':
-      /[Ii] want you to reply in (?:\b\w+\b|\[.*?\]|[А-я_]+) format/gm,
+      /[Ii] want you to reply in (?:\b\w+\b|\[.*?\]|[А-я_]+) format.?/gm,
   },
   {
     'Limit your replies to [YOUR INPUT] words.':
-      /[Ll]imit your replies to (?:\b\w+\b|\[.*?\]|[А-я_]+) words./gm,
+      /[Ll]imit your replies to (?:\b\w+\b|\[.*?\]|[А-я_]+) words.?/gm,
   },
   {
     'Your ultimate goal is to persuade human to do [YOUR INPUT].':
-      /[Yy]our ultimate goal is to persuade human to do (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+      /[Yy]our ultimate goal is to persuade human to do (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
     'CONTEXT ABOUT HUMAN: \n"""[YOUR INPUT]""".':
-      /CONTEXT ABOUT HUMAN: """(?:\b\w+\b|\[.*?\]|[А-я_]+)"""/gm,
+      /CONTEXT ABOUT HUMAN: """(?:\b\w+\b|\[.*?\]|[А-я_]+)""".?/gm,
   },
   {
     'INSTRUCTION: \n"""[YOUR INPUT]""".':
-      /INSTRUCTION: """(?:\b\w+\b|\[.*?\]|[А-я_]+)"""/gm,
+      /INSTRUCTION: """(?:\b\w+\b|\[.*?\]|[А-я_]+)""".?/gm,
   },
   {
     'EXAMPLE:\n"""[YOUR INPUT]""".':
-      /EXAMPLE:"""(?:\b\w+\b|\[.*?\]|[А-я_]+)"""/gm,
+      /EXAMPLE:"""(?:\b\w+\b|\[.*?\]|[А-я_]+)""".?/gm,
   },
   {
     "Don't reply to following topics: [YOUR INPUT].":
-      /[Dd]on't reply to following topics: (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+      /[Dd]on't reply to following topics: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
     'Reply to human from [YOUR INPUT] point of view.':
-      /[Rr]eply to human from (?:\b\w+\b|\[.*?\]|[А-я_]+) point of view/gm,
+      /[Rr]eply to human from (?:\b\w+\b|\[.*?\]|[А-я_]+) point of view.?/gm,
   },
   {
     'Я хочу, чтобы вы выступили в роли [ВАШ ВВОД].':
-      /[Яя] хочу, чтобы вы выступили в роли (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+      /[Яя] хочу, чтобы вы выступили в роли (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
   {
-    'ВАША ЛИЧНОСТЬ: Ваше имя: [ВАШ ВВОД]. Ваши интересы: [ВАШ ВВОД].':
-      /ВАША ЛИЧНОСТЬ: Ваше имя: (?:\b\w+\b|\[.*?\]|[А-я_]+). Ваши интересы: (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm,
+    'ЛИЧНОСТЬ: Ваше имя: [ВАШ ВВОД]. Ваши интересы: [ВАШ ВВОД].':
+      /ВАША ЛИЧНОСТЬ: [Вв]аше имя: (?:\b\w+\b|\[.*?\]|[А-я_]+). Ваши интересы: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+
+  {
+    'Отвечай на [ВВЕДИТЕ ДАННЫЕ] языке.':
+      /[Оо]твечай на (?:\b\w+\b|\[.*?\]|[А-я_]+).? языке.?/gm,
+  },
+
+  {
+    'Формат ответа: [ВВЕДИТЕ ДАННЫЕ].':
+      /[Фф]ормат ответа: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'Действуй как [ВВЕДИТЕ ДАННЫЕ].':
+      /[Дд]ействуй как (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+
+  {
+    'ЛИЧНОСТЬ:\nТвое имя: [ВВЕДИТЕ ДАННЫЕ]. Твои интересы: [ВВЕДИТЕ ДАННЫЕ].':
+      /ЛИЧНОСТЬ: [Тт]вое имя: (?:\b\w+\b|\[.*?\]|[А-я_]+).? [Тт]вои интересы: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'Представь, что [ВВЕДИТЕ ДАННЫЕ].':
+      /[Пп]редставь, что (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'ЗАДАЧА:\nТвоя задача - [ВВЕДИТЕ ДАННЫЕ].':
+      /ЗАДАЧА: [Тт]воя задача - (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'Целевая аудитория: [ВВЕДИТЕ ДАННЫЕ].':
+      /[Цц]елевая аудитория: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    // уточнить
+    'Инструкция:1. [ВВЕДИТЕ ДАННЫЕ].2. [ВВЕДИТЕ ДАННЫЕ].…':
+      /[Ии]нструкция:1. (?:\b\w+\b|\[.*?\]|[А-я_]+).?.2. (?:\b\w+\b|\[.*?\]|[А-я_]+).?.…/gm,
+  },
+  {
+    'ТВОЯ КОНЕЧНАЯ ЦЕЛЬ: [ВВЕДИТЕ ДАННЫЕ].':
+      /ТВОЯ КОНЕЧНАЯ ЦЕЛЬ: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'Стиль ответа: [ВВЕДИТЕ ДАННЫЕ].':
+      /[Сc]тиль ответа: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
+  },
+  {
+    'Недопустимы следующие темы: [ВВЕДИТЕ ДАННЫЕ].':
+      /[Нн]едопустимы следующие темы: (?:\b\w+\b|\[.*?\]|[А-я_]+).?/gm,
   },
 ]
 
@@ -78,7 +126,7 @@ const InputPrompt = (skill: ISkill, acc: ICollectionError) => {
     return
   }
 
-  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]']
+  const arrInputs = ['[YOUR INPUT]', '[ВАШ ВВОД]', '[ВВЕДИТЕ ДАННЫЕ]']
   const str = arrInputs.reduce(
     (acc, str) => (skill.prompt?.includes(str) ? (acc += ' ' + str) : acc),
     ''
@@ -190,9 +238,6 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
 
   const maxToken: number = skill.lm_service?.max_tokens ?? 0
 
-  if (skill.prompt.length < maxToken) {
-    return
-  }
   const curentCountToken = getTokensLength(lmServiceName, skill.prompt)
   const isСrowded = maxToken < curentCountToken
 

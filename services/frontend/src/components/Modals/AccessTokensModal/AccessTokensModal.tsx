@@ -26,7 +26,9 @@ export const AccessTokensModal = () => {
         setIsOpen={setIsOpen}
         modalClassName={s.accessTokensModal}
       >
-        <AccessTokensModule />
+        <div className={s.scrollBox}>
+          <AccessTokensModule />
+        </div>
       </BaseModal>
       <ConfirmApiTokenUpdate />
     </>

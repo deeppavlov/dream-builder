@@ -1,3 +1,4 @@
+import { useAuth } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import store from 'store2'
@@ -14,8 +15,10 @@ export const useDeploy = () => {
   const queryClient = useQueryClient()
   const loc = useLocation()
 
+  const { user } = useAuth()
+
   const deployments = useQuery('deployments', getDeployments, {
-    enabled: loc.pathname === '/admin',
+    enabled: loc.pathname === '/admin' || loc.pathname === '/admin/requests',
   })
 
   // TODO create undeploy method
@@ -40,7 +43,10 @@ export const useDeploy = () => {
       return deleteDeploy(bot?.deployment?.id)
     },
     onSuccess: (_, variables: BotInfoInterface) => {
-      store.remove(variables?.name + '_session') // delete existing dialog session because of agent reload
+      const sessionName = user?.id
+        ? `${variables?.name}_session_${user?.id}`
+        : `${variables?.name}_session`
+      store.remove(sessionName) // delete existing dialog session because of agent reload
       queryClient.invalidateQueries([DIST, variables?.name])
       queryClient?.invalidateQueries(['deployments'])
     },

@@ -1,7 +1,7 @@
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import classNames from 'classnames/bind'
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, useEffect, useRef, useState } from 'react'
 import {
   Control,
   RegisterOptions,
@@ -27,8 +27,10 @@ interface IProps {
   resizable?: boolean
   rules?: RegisterOptions
   triggerField?: UseFormTrigger<any>
-  setEditorContext: Dispatch<SetStateAction<string>>
   codeEditorRef: ReactCodeMirrorRef | any
+  length: number
+  setLength: (length: number) => void
+  setErrorMessage: Dispatch<React.SetStateAction<string | undefined>>
 }
 
 interface IValidateTokens {
@@ -69,9 +71,7 @@ const validateTokens = AwesomeDebouncePromise(
 )
 
 export const PromptEditor = ({
-  setEditorContext,
   label,
-  about,
   placeholder,
   defaultValue,
   tokenizerModel,
@@ -81,6 +81,9 @@ export const PromptEditor = ({
   rules,
   triggerField,
   codeEditorRef,
+  length,
+  setLength,
+  setErrorMessage,
 }: IProps) => {
   const {
     field,
@@ -101,8 +104,8 @@ export const PromptEditor = ({
     }),
     defaultValue,
   })
+
   const maxLength = rules?.maxLength as { value: number; message: string }
-  const [length, setLength] = useState(0)
   const [isCounting, setIsCounting] = useState(false)
   const [isActive, setIsActive] = useState(false) // for manage focus state (for styles)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -127,7 +130,6 @@ export const PromptEditor = ({
 
   const handleTextEditorChange = (value: string) => {
     skillPromptEdited()
-    setEditorContext(value)
     field.onChange(value)
   }
 
@@ -159,6 +161,10 @@ export const PromptEditor = ({
     triggerField(name)
     setIsCounting(true)
   }, [triggerField, tokenizerModel, maxLength?.value])
+
+  useEffect(() => {
+    setErrorMessage(error?.message)
+  }, [error])
 
   return (
     <div
@@ -195,12 +201,6 @@ export const PromptEditor = ({
           />
         </div>
       </div>
-
-      {(about || error) && (
-        <label className={cx('label', 'about')}>
-          {error ? <>{error.message}</> : about}
-        </label>
-      )}
     </div>
   )
 }

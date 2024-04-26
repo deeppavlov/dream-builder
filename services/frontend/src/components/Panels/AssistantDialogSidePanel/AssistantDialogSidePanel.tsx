@@ -10,14 +10,11 @@ import {
   ChatForm,
   ChatHistory,
   IDialogError,
+  IUserApiKey,
   TDialogError,
+  TKey,
 } from 'types/types'
-import {
-  DEPLOY_STATUS,
-  DUMMY_SKILL,
-  OPEN_AI_LM,
-  TOOLTIP_DELAY,
-} from 'constants/constants'
+import { DEPLOY_STATUS, DUMMY_SKILL, TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { getDeploy } from 'api/deploy'
 import { useAssistants, useChat, useComponent, useDeploy } from 'hooks/api'
@@ -30,7 +27,7 @@ import { examinationMessage } from 'utils/checkingAssistants'
 import { consts } from 'utils/consts'
 import { trigger } from 'utils/events'
 import { getAvailableDialogSession } from 'utils/getAvailableDialogSession'
-import { getLSApiKeyByName } from 'utils/getLSApiKeys'
+import { getLSApiKeys } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { SvgIcon } from 'components/Helpers'
@@ -47,7 +44,7 @@ interface Props {
 
 export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { getAllComponents } = useComponent()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   // queries
   const queryClient = useQueryClient()
   const { getDist, refetchDist } = useAssistants()
@@ -59,7 +56,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const { user } = useAuth()
   const { send, renew, session, message, history, setSession, remoteHistory } =
     useChat()
-  const [apiKey, setApiKey] = useState<string | null>(null)
+  const [usedApiKeys, setUsedApiKeys] = useState<IUserApiKey[]>([])
   const { vaChangeDeployState } = useGaAssistant()
   const { chatSend, refreshChat } = useGaChat()
   const { setTokenState, missingTokenError } = useGaToken()
@@ -72,11 +69,17 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
 
   const checkIsChatSettings = (userId: number | undefined) => {
     setErrorPanel(null)
-    const isOpenAIModelInside = () => {
-      return bot?.required_api_keys?.some(key => key?.name === 'openai_api_key')
-    }
 
-    if (isOpenAIModelInside()) {
+    const modelsApiKeyRequired = (bot?.used_lm_services || [])
+      .filter(service => service.api_key)
+      .map(({ name, display_name }) => ({
+        name,
+        display_name,
+      }))
+
+    const requiredKeys = modelsApiKeyRequired.map(m => m.name)
+
+    if (requiredKeys.length > 0) {
       if (!userId) {
         setErrorPanel({
           type: 'auth',
@@ -84,24 +87,49 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
         })
         return false
       }
-      const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
-      const isApiKey = Boolean(openaiApiKey)
+      const userApiKeys = getLSApiKeys(userId) || []
+      setUsedApiKeys(userApiKeys)
 
-      if (!isApiKey) {
+      const modelsWithUserKeys = userApiKeys.flatMap(k =>
+        Object.entries(k.lmUsageState).reduce(
+          (acc: string[], [name, status]) => {
+            if (!status) return acc
+            return [...acc, name]
+          },
+          []
+        )
+      )
+      const missingKeys = requiredKeys.filter(
+        k => !modelsWithUserKeys.includes(k)
+      )
+
+      if (missingKeys.length) {
+        const lmServicesWithoutKeys = Array.from(
+          new Set(
+            modelsApiKeyRequired
+              .filter(({ name }) => missingKeys.includes(name))
+              .map(({ display_name }) => display_name)
+          )
+        )
         setErrorPanel({
           type: 'api-key',
-          msg: t('api_key.required.assistant_label'),
+          msg: t('api_key.required.assistant_label', {
+            count: lmServicesWithoutKeys.length,
+            service: lmServicesWithoutKeys.join(', '),
+          }),
         })
+
         const services = [
-          ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+          ...new Set(
+            bot?.used_lm_services
+              .map(s => s.api_key?.display_name)
+              .filter(name => name)
+          ),
         ].join(', ')
         missingTokenError('va_dialog_panel', services)
         return false
       }
-
-      setApiKey(openaiApiKey)
     }
-
     return true
   }
 
@@ -163,13 +191,27 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     const isMessage = message.replace(/\s/g, '').length > 0
     if (!isMessage) return
 
+    const requiredApiKeys = (bot?.used_lm_services || [])
+      .map(s => s.api_key)
+      .filter(key => !!key) as TKey[] // after filtering there will be no elements equal to null in the array
+
+    const keys = requiredApiKeys
+      .map(k => k.name)
+      .reduce((acc, keyName) => {
+        return {
+          ...acc,
+          [keyName]: usedApiKeys.find(k => k.api_service.name === keyName)
+            ?.token_value,
+        }
+      }, {})
+
     const id = session?.id!
 
     send.mutate(
       {
         dialog_session_id: id,
         text: message,
-        openai_api_key: apiKey ?? undefined,
+        apiKeys: keys,
       },
       {
         // onError: () => setError('chat'),
@@ -205,7 +247,11 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
   const handleErrorBtnClick = (type: TDialogError) => {
     if (type === 'api-key') {
       const services = [
-        ...new Set(bot?.required_api_keys?.map(item => item.display_name)),
+        ...new Set(
+          bot?.used_lm_services
+            ?.map(item => item.api_key?.display_name)
+            .filter(name => name)
+        ),
       ].join(', ')
       setTokenState('va_dialog_panel', services)
       trigger('AccessTokensModal', {})
@@ -225,7 +271,7 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     if (!bot) return trigger(TRIGGER_RIGHT_SP_EVENT, { isOpen: false })
 
     handleCheckChatSettings()
-  }, [user, bot])
+  }, [user, bot, i18n.language])
   useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
 
   // get existing dialog session || create new

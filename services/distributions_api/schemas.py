@@ -34,6 +34,13 @@ class UserRead(User):
     role: RoleRead
 
 
+class UserUpdate(BaseModel):
+    id: Optional[int]
+
+    class Config:
+        extra = 'allow'
+
+
 class LanguageRead(BaseOrmModel):
     id: int
     value: str
@@ -67,6 +74,7 @@ class LmServiceRead(BaseOrmModel):
     max_tokens: int
     description: str
     project_url: str
+    model_name: Optional[str]
     api_key: Optional[ApiKeyRead] = None
     prompt_blocks: Optional[list[PromptBlockRead]] = None
     is_hosted: bool
@@ -108,8 +116,9 @@ class ComponentRead(BaseOrmModel):
     prompt_goals: Optional[str]
     lm_service: Optional[LmServiceRead]
     lm_config: Optional[dict]
+    creation_type: Optional[str]
     cloned_from_id: Optional[int]
-    skill_created_type: Optional[str]
+    cloned_from_name: Optional[str]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -181,7 +190,7 @@ class VirtualAssistantBaseRead(BaseOrmModel):
     visibility: Union[enums.VirtualAssistantPrivateVisibility, enums.VirtualAssistantPublicVisibility]
     publish_state: Optional[enums.PublishRequestState]
     cloned_from_id: Optional[int]
-    required_api_keys: Optional[List[ApiKeyRead]]
+    used_lm_services: Optional[List[LmServiceRead]]
     # clones: List[VirtualAssistant]
 
     @classmethod
@@ -195,16 +204,15 @@ class VirtualAssistantBaseRead(BaseOrmModel):
         else:
             obj.visibility = obj.private_visibility
 
-        required_api_keys = []
+        used_lm_services = []
         for c in obj.components:
             try:
-                api_key = c.component.lm_service.api_key
-                if api_key:
-                    required_api_keys.append(api_key)
+                if lm_services := c.component.lm_service:
+                    used_lm_services.append(lm_services)
             except AttributeError:
                 pass
 
-        obj.required_api_keys = required_api_keys
+        obj.used_lm_services = used_lm_services
 
         return super().from_orm(obj)
 
@@ -237,6 +245,9 @@ class VirtualAssistantComponentRead(BaseOrmModel):
     name: str
     display_name: str
     component_type: Optional[COMPONENT_TYPES]
+    creation_type: Optional[str]
+    cloned_from_id: Optional[int]
+    cloned_from_name: Optional[str]
     model_type: Optional[MODEL_TYPES]
     is_customizable: bool
     author: UserRead
@@ -266,6 +277,9 @@ class VirtualAssistantComponentRead(BaseOrmModel):
         obj.gpu_usage = obj.component.gpu_usage
         obj.prompt = obj.component.prompt
         obj.lm_service = obj.component.lm_service
+        obj.creation_type = obj.component.creation_type
+        obj.cloned_from_id = obj.component.cloned_from_id
+        obj.cloned_from_name = obj.component.cloned_from_name
         obj.date_created = obj.component.date_created
 
         return super().from_orm(obj)
@@ -289,6 +303,7 @@ class DialogChatMessageCreate(BaseModel):
     prompt: Optional[str]
     lm_service_id: Optional[int]
     openai_api_key: Optional[str]
+    gigachat_credential: Optional[str]
     lm_service_config: Optional[dict]
 
 
@@ -353,3 +368,18 @@ class DialogSessionRead(BaseOrmModel):
     agent_dialog_id: Optional[str]
     deployment: DeploymentRead
     is_active: bool
+
+
+class UserApiKey(BaseModel):
+    api_key_value: str
+    lm_service: LmServiceRead
+
+
+class UserApiKeyResponse(BaseModel):
+    status_code: int = 200
+    message: Optional[str]
+
+
+class ErrorMessage(BaseModel):
+    code: int = Field(..., title="Error code")
+    message: str = Field(..., title="Error text")

@@ -1,3 +1,4 @@
+import classNames from 'classnames/bind'
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
@@ -21,6 +22,8 @@ interface Props {
     x: number
     y: number
   }>
+  className?: string
+  noArrow?: boolean
 }
 
 const BaseContextMenu: React.FC<Props> = ({
@@ -28,13 +31,17 @@ const BaseContextMenu: React.FC<Props> = ({
   children,
   place = 'right',
   offset = { x: 0, y: 0 },
+  className,
+  noArrow = false,
 }) => {
+  const cx = classNames.bind(s)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const [domReady, setDomReady] = React.useState(false)
-  const [parent, setParent] = useState<HTMLElement | null>(null)
 
   const hideMenu = () => setIsOpen(false)
+
+  const [parent, setParent] = useState<HTMLElement | null>(null)
 
   useEffect(() => {
     const newParent = document.body.querySelector(
@@ -52,18 +59,24 @@ const BaseContextMenu: React.FC<Props> = ({
 
   useEffect(() => setDomReady(true), [])
   useCheckDocumentScroll(isOpen, setIsOpen)
-  useCheckClickOutside(isOpen, ref, hideMenu)
+  useCheckClickOutside(isOpen, ref, hideMenu, parent)
 
   return domReady
     ? createPortal(
         <ReactTooltip
-          className={s.contextMenu}
+          className={cx(
+            className ? className : s.contextMenu,
+            isOpen && 'open'
+          )}
           id={tooltipId}
           openOnClick
           clickable
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          setIsOpen={(newValue: boolean) => {
+            setIsOpen(prev => (prev ? false : newValue))
+          }}
           place={place}
+          noArrow={noArrow}
         >
           <div ref={ref}>{children}</div>
         </ReactTooltip>,

@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import { ReactComponent as LoaderIcon } from 'assets/icons/circle_loader_small.svg'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as DoneIcon } from 'assets/icons/done.svg'
+import { ReactComponent as EditIcon } from 'assets/icons/edit.svg'
 import { ReactComponent as PublicIcon } from 'assets/icons/eye.svg'
 import { ReactComponent as PrivateIcon } from 'assets/icons/private_eye.svg'
 import { VISIBILITY_STATUS } from 'constants/constants'
@@ -21,6 +22,9 @@ type Theme =
   | 'PUBLIC_TEMPLATE' //fix
   | 'UNLISTED_LINK'
   | 'PRIVATE'
+  | 'not_built'
+  | 'building'
+  | 'ready'
 
 interface SmallTagProps extends React.PropsWithChildren {
   theme?: Theme
@@ -40,8 +44,10 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
       case 'not-valid':
         return <CloseIcon className={s.icon} />
       case 'valid':
+      case 'ready':
         return <DoneIcon className={s.icon} />
       case 'validating':
+      case 'building':
         return <LoaderIcon className={s.icon} />
       case VISIBILITY_STATUS.PUBLIC_TEMPLATE:
         return <PublicIcon className={s.icon} />
@@ -49,6 +55,8 @@ export const SmallTag: FC<SmallTagProps> = ({ theme, isLoading, children }) => {
         return <PublicIcon className={s.icon} />
       case VISIBILITY_STATUS.PRIVATE:
         return <PrivateIcon className={s.icon} />
+      case 'not_built':
+        return <EditIcon className={s.icon} />
       default:
         break
     }

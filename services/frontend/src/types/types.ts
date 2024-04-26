@@ -30,7 +30,7 @@ export interface UserInterface {
   refresh_token: string
   role: {
     id: number
-    name: string
+    name: 'user' | 'moderator' | 'admin'
     can_set_roles: boolean
     can_confirm_publish: boolean
     can_view_private_assistants: boolean
@@ -127,7 +127,7 @@ export interface IDeployment {
 export interface IDeploymentStatus extends IDeployment {
   virtual_assistant: BotInfoInterface
 }
-type TKey = {
+export type TKey = {
   base_url: string
   description: string
   display_name: string
@@ -148,7 +148,7 @@ export interface BotInfoInterface {
   visibility: TDistVisibility
   publish_state: null | 'APPROVED' | 'IN_REVIEW' | 'REJECTED'
   deployment: IDeployment
-  required_api_keys: TKey[] | null
+  used_lm_services: LM_Service[]
   language?: { id: number; value: ELOCALES_KEY }
   cloned_from_id: number | null
 }
@@ -235,6 +235,9 @@ export interface IStackElement {
   date_created: string | Date
   description: string
   is_customizable: boolean
+  cloned_from_id: number
+  cloned_from_name: string
+  creation_type: string
 }
 
 export interface LM_Service {
@@ -338,11 +341,21 @@ export interface IApiService {
   name: string
 }
 
+export interface IModelValidationState {
+  status: 'valid' | 'invalid' | 'unchecked' | 'loading'
+  message?: string
+}
 export interface IUserApiKey {
   api_service: IApiService
   token_value: string
   useForDeepy?: boolean
   id: number
+  lmValidationState: {
+    [lmServiceName: string]: IModelValidationState
+  }
+  lmUsageState: {
+    [lmServiceName: string]: boolean
+  }
 }
 
 export interface IPostChat {
@@ -351,7 +364,7 @@ export interface IPostChat {
   text: string
   prompt?: string
   lm_service_id?: number
-  openai_api_key?: string
+  apiKeys?: { [keyName: string]: string | null }
 }
 
 export type TComponents = {
@@ -378,12 +391,7 @@ export interface IDialogError {
   msg: string
 }
 export interface RequestProps {
-  cardClickHandler: () => void
-  r: IPublicationRequest
-  confirm: any
-  decline: any
-  handleApprove: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
-  handleDecline: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  request: IPublicationRequest
 }
 export interface IDeploymentState extends IDeployment {
   virtual_assistant: BotInfoInterface

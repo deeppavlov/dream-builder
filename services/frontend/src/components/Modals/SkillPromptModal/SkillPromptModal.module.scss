@@ -2,6 +2,16 @@
   background-color: transparent;
 }
 
+.label {
+  @include b3;
+  color: $text2;
+  display: flex;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  color: red;
+}
+
 .skillPromptModal {
   display: flex;
   height: 100%;
@@ -89,10 +99,15 @@
 
 .btns {
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: flex-end;
   width: 100%;
   gap: 24px;
+  padding-top: 8px;
+  button {
+    align-self: flex-end;
+    margin-top: 8px;
+  }
 }
 
 .resizer {
@@ -120,10 +135,6 @@
   border: 1px solid $text3;
   border-bottom: none;
   border-radius: 12px 12px 0px 0px;
-}
-
-.blocks {
-  padding-bottom: 24px;
 }
 
 .blocks-label {

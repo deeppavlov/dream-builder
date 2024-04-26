@@ -49,9 +49,10 @@ export const DeleteSkillModal = () => {
               deleteDeployment.mutateAsync(bot).then(() => {
                 // unpublish
                 const name = bot?.name
-                const newVisibility = VISIBILITY_STATUS.PRIVATE
-                bot?.visibility !== VISIBILITY_STATUS.PRIVATE &&
-                  changeVisibility.mutateAsync({ name, newVisibility })
+                changeVisibility.mutateAsync({
+                  name,
+                  newVisibility: VISIBILITY_STATUS.PRIVATE,
+                })
 
                 vaChangeDeployState('VA_Undeployed')
               })

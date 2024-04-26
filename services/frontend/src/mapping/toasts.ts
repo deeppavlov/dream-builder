@@ -1,10 +1,10 @@
-import i18n from 'i18n';
-
+import i18n from 'i18n'
+import { Renderable, ValueOrFunction } from 'react-hot-toast'
 
 interface ToastSettings {
   loading: string
-  success: string
-  error: string
+  success: ValueOrFunction<Renderable, any>
+  error: ValueOrFunction<Renderable, any>
 }
 
 type ToastKeys =
@@ -23,11 +23,18 @@ type ToastKeys =
   | 'deleteToken'
   | 'publishAssistant'
   | 'renameComponent'
+  | 'changeEmail'
+  | 'changeUserRole'
   | 'sendFeedBack'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
 export const toasts: () => Toasts = () => ({
+  changeEmail: {
+    loading: i18n.t('modals.change_email_modal.toasts.loading'),
+    success: i18n.t('toasts.success'),
+    error: i18n.t('toasts.error'),
+  },
   deleteToken: {
     loading: i18n.t('modals.access_api_keys.toasts.token_removing'),
     success: i18n.t('modals.access_api_keys.toasts.token_removed'),
@@ -107,5 +114,13 @@ export const toasts: () => Toasts = () => ({
     loading: i18n.t('toasts.send'),
     success: i18n.t('toasts.success'),
     error: i18n.t('toasts.error'),
+  },
+  changeUserRole: {
+    success: i18n.t('toasts.success'),
+    error: (error: string) =>
+      error === 'selfRoleChanging'
+        ? i18n.t('admin_page.user_list.toasts.self_role_change_error')
+        : i18n.t('toasts.error'),
+    loading: i18n.t('admin_page.user_list.toasts.role_changing'),
   },
 })

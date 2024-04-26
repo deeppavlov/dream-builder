@@ -7,8 +7,10 @@ import { ELOCALES_KEY } from 'types/types'
 import { I18N_STORE_KEY, language } from 'constants/constants'
 import { useObserver } from 'hooks/useObserver'
 import { trigger } from 'utils/events'
+import { EditPencilButton } from 'components/Buttons'
 import { BaseModal } from 'components/Modals'
 import { AccessTokensModule } from 'components/Modules'
+import { ChangeEmailModal } from '../ChangeEmailModal/ChangeEmailModal'
 import s from './ProfileSettings.module.scss'
 
 export enum ProfileTabs {
@@ -25,6 +27,10 @@ export const ProfileSettings: FC = () => {
   const [activeTab, setActiveTab] = useState<ProfileTabs | null>(null)
   const { t } = useTranslation()
   const cx = classNames.bind(s)
+
+  const [isOpenEmail, setIsOpenEmail] = useState<boolean>(false)
+
+  const hendleCloseEmail = () => setIsOpenEmail(false)
 
   const isAccount = activeTab === ProfileTabs.account
   const isTokens = activeTab === ProfileTabs.tokens
@@ -48,6 +54,21 @@ export const ProfileSettings: FC = () => {
   const handleLanguageClick = () => trigger('ChangeLanguageModal', {})
 
   useObserver('ProfileSettingsModal', handleEventUpdate)
+
+  const addEmailButton = (
+    <button className={s.btn} onClick={() => setIsOpenEmail(true)}>
+      {t('modals.profile_settings.tabs.account.add_email')}
+    </button>
+  )
+
+  const changeMailButton = (
+    <>
+      <span className={s.value}>{user?.email}</span>
+      <EditPencilButton onClick={() => setIsOpenEmail(true)} />
+    </>
+  )
+
+  const isNotEmail = user?.email === undefined || user.email === null
 
   return (
     <BaseModal
@@ -75,7 +96,7 @@ export const ProfileSettings: FC = () => {
         </div>
         <div className={s.body}>
           {isAccount && (
-            <>
+            <div className={s.profile}>
               <div className={s.left}>
                 <img src={user?.picture} alt='avatar' />
               </div>
@@ -90,7 +111,9 @@ export const ProfileSettings: FC = () => {
                   <span className={s.key}>
                     {t('modals.profile_settings.tabs.account.email')}
                   </span>
-                  <span className={s.value}>{user?.email}</span>
+                  <div className={s.box}>
+                    {isNotEmail ? addEmailButton : changeMailButton}
+                  </div>
                 </div>
                 <hr />
                 <div className={s.block}>
@@ -103,10 +126,20 @@ export const ProfileSettings: FC = () => {
                   </button>
                 </div>
               </div>
-            </>
+            </div>
           )}
           {isTokens && <AccessTokensModule />}
         </div>
+        <BaseModal
+          isOpen={isOpenEmail}
+          handleClose={hendleCloseEmail}
+          setIsOpen={setIsOpenEmail}
+        >
+          <ChangeEmailModal
+            onClose={hendleCloseEmail}
+            onContinue={hendleCloseEmail}
+          />
+        </BaseModal>
       </div>
     </BaseModal>
   )

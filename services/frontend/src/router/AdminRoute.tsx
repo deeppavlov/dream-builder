@@ -1,15 +1,23 @@
-import { Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import store from 'store2'
 import { UserInterface } from 'types/types'
+import { RoutesList } from './RoutesList'
 
 export const AdminRoute = ({ children }: any) => {
-  // If not admin redirect to main page
-
-  const q = import.meta.env?.VITE_ADMINS?.split(' ')
   const user: UserInterface = store('user')
-  const isAdmin = q.includes(user?.email)
+  const isAdmin = user?.role.id === 3
+  const isModerator = user?.role.id === 2
+  const n = useNavigate()
 
-  if (!localStorage.getItem('user') || !isAdmin) return <Navigate to='/' />
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    // If not admin redirect to main page
+    if (!isAdmin && !isModerator) n(RoutesList.start)
+    if (pathname === RoutesList.admin.users && !isAdmin)
+      n(RoutesList.admin.default)
+  }, [user?.role.id])
 
   // If admin return Route
   return children

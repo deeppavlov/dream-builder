@@ -68,5 +68,7 @@ def deployment_delete_permission(
 ):
     """"""
     if user.id != deployment.virtual_assistant.author.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+        if not user.role.name in ("admin", "moderator"):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No access")
+
     return deployment

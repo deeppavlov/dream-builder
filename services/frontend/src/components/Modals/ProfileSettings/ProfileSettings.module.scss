@@ -6,7 +6,7 @@
   overflow: hidden;
   border-radius: 20px;
   width: 1000px;
-  height: 100%;
+  max-height: 100%;
   .header {
     background-color: #f9fafc;
     height: 74px;
@@ -30,17 +30,18 @@
     }
   }
   .body {
-    min-height: 500px;
+    min-height: 400px;
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    padding: 48px;
-    padding-top: 24px;
+    padding: 24px 0 36px 48px;
     background-color: #f0f0f3;
-    width: 100%;
-    gap: 32px;
+    .profile {
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+    }
     .left {
       width: 148px;
+      min-height: 400px;
       img {
         border-radius: 50%;
         width: 148px;
@@ -49,6 +50,7 @@
     }
     .right {
       width: 100%;
+      padding-right: 48px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -68,6 +70,11 @@
         .value {
           @include b2;
         }
+      }
+      .box {
+        display: flex;
+        gap: 20px;
+        align-items: center;
       }
     }
   }

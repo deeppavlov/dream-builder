@@ -15,19 +15,17 @@ export const getLSApiKeys = (userId: number): IUserApiKey[] | null => {
   return localStorageTokens ? JSON.parse(localStorageTokens) : null
 }
 
-export const getLSApiKeyByName = (
+export const getLSApiKeyByDisplayName = (
   userId: number,
-  name: string,
+  displayName: string,
   forDeepy: boolean = false
-): string | null => {
+): IUserApiKey | null => {
   return (
-    getLSApiKeys(userId)?.filter(
-      ({ api_service, useForDeepy }: IUserApiKey) => {
-        return forDeepy
-          ? api_service.display_name === name && useForDeepy
-          : api_service.display_name === name
-      }
-    )?.[0]?.token_value ?? null
+    getLSApiKeys(userId)?.find(({ api_service, useForDeepy }: IUserApiKey) => {
+      return forDeepy
+        ? api_service.display_name === displayName && useForDeepy
+        : api_service.display_name === displayName
+    }) ?? null
   )
 }
 

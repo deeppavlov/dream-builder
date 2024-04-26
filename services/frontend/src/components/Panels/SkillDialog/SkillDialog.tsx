@@ -4,8 +4,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ReactComponent as Renew } from 'assets/icons/renew.svg'
-import { BotInfoInterface, ChatForm, IDialogError, ISkill } from 'types/types'
-import { OPEN_AI_LM } from 'constants/constants'
+import {
+  BotInfoInterface,
+  ChatForm,
+  IDialogError,
+  ISkill,
+  IUserApiKey,
+} from 'types/types'
 import { getUserId } from 'api/user'
 import { useChat } from 'hooks/api'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
@@ -14,7 +19,7 @@ import { useChatScroll } from 'hooks/useChatScroll'
 import { useObserver } from 'hooks/useObserver'
 import { chooseUniversalPrompted } from 'utils/chooseUniversalPrompted'
 import { trigger } from 'utils/events'
-import { checkLMIsOpenAi, getLSApiKeyByName } from 'utils/getLSApiKeys'
+import { getLSApiKeys } from 'utils/getLSApiKeys'
 import { submitOnEnter } from 'utils/submitOnEnter'
 import { Button } from 'components/Buttons'
 import { TextLoader } from 'components/Loaders'
@@ -37,7 +42,7 @@ const SkillDialog = forwardRef(
     const { handleSubmit, register, reset } = useForm<ChatForm>()
     const [error, setError] = useState<IDialogError | null>(null)
     const [isChecking, setIsChecking] = useState(false)
-    const [apiKey, setApiKey] = useState<string | null>(null)
+    const apiKeyRef = useRef<{ [key: string]: string }>({})
     const chatRef = useRef<HTMLUListElement>(null)
     const cx = classNames.bind(s)
     const { skillChatRefresh, skillChatSend } = useGaSkills()
@@ -61,22 +66,27 @@ const SkillDialog = forwardRef(
     const checkIsChatSettings = (userId: number) => {
       if (userId === undefined || userId === null) return
       setError(null)
-      const isLMServiceId = skill?.lm_service?.id !== undefined
-      const isPrompt = skill?.prompt !== undefined
-      const skillHasOpenAiLM = checkLMIsOpenAi(skill?.lm_service?.name || '')
 
-      if (skillHasOpenAiLM) {
-        const openaiApiKey = getLSApiKeyByName(userId, OPEN_AI_LM)
+      const lmApiKey = skill?.lm_service?.api_key
 
-        const isApiKey =
-          openaiApiKey !== null &&
-          openaiApiKey !== undefined &&
-          openaiApiKey.length > 0
+      if (lmApiKey && skill.lm_service) {
+        const { name } = skill.lm_service
+        const requiredApiKeyDisplayName = skill?.lm_service?.display_name
+        const requiredKey = getLSApiKeys(userId)?.find(
+          ({ api_service, lmUsageState }: IUserApiKey) => {
+            return (
+              api_service.display_name === lmApiKey.display_name &&
+              lmUsageState[name]
+            )
+          }
+        )
 
-        if (!isApiKey) {
+        if (!requiredKey) {
           setError({
             type: 'api-key',
-            msg: t('api_key.required.skill_label'),
+            msg: t('api_key.required.skill_label', {
+              service: requiredApiKeyDisplayName,
+            }),
           })
           missingTokenError(
             'skill_editor_dialog_panel',
@@ -84,23 +94,7 @@ const SkillDialog = forwardRef(
           )
           return false
         }
-
-        setApiKey(openaiApiKey)
-      }
-      if (!isLMServiceId) {
-        setError({
-          type: 'lm-service',
-          msg: `Select one of the available Generative models in the ${skill?.name} editor to run your Generative AI Skill`,
-        })
-        return false
-      }
-      if (!isPrompt) {
-        setError({
-          type: 'prompt',
-          msg: `Enter your prompt in the ${skill?.name} editor to run your Generative AI Skill`,
-        })
-
-        return false
+        apiKeyRef.current = { [lmApiKey.name]: requiredKey.token_value }
       }
 
       return true
@@ -113,13 +107,12 @@ const SkillDialog = forwardRef(
 
       const isChatSettings = checkIsChatSettings(user?.id)
       if (!isChatSettings) return
-
       send.mutate({
         dialog_session_id: session?.id!,
         text: message,
         lm_service_id: skill?.lm_service?.id,
         prompt: skill?.prompt,
-        openai_api_key: apiKey ?? undefined,
+        apiKeys: apiKeyRef.current,
       })
       skillChatSend(skill, history.length)
 
@@ -157,7 +150,10 @@ const SkillDialog = forwardRef(
 
     useChatScroll(chatRef, [history, message])
     useObserver('RenewChat', renewDialogSession)
-    useObserver('AccessTokensChanged', handleCheckChatSettings, [user?.id])
+    useObserver('AccessTokensChanged', handleCheckChatSettings, [
+      user?.id,
+      skill,
+    ])
     useEffect(() => {
       bot && renewDialogSession()
     }, [])

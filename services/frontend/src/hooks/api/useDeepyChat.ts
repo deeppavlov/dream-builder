@@ -9,7 +9,7 @@ import { DEEPY_ASSISTANT, OPEN_AI_LM } from 'constants/constants'
 import { createDialogSession, getHistory, sendMessage } from 'api/chat'
 import { useGaDeepy } from 'hooks/googleAnalytics/useGaDeepy'
 import { consts } from 'utils/consts'
-import { getLSApiKeyByName } from 'utils/getLSApiKeys'
+import { getLSApiKeyByDisplayName } from 'utils/getLSApiKeys'
 
 export const useDeepyChat = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sidepanels.deepy' })
@@ -67,10 +67,14 @@ export const useDeepyChat = () => {
       ])
     },
     mutationFn: (variables: IPostChat) => {
-      const openaiApiKey =
-        getLSApiKeyByName(user?.id!, OPEN_AI_LM, true) || undefined
+      const openai_api_key =
+        getLSApiKeyByDisplayName(user?.id!, OPEN_AI_LM, true)?.token_value ||
+        null
 
-      return sendMessage({ ...variables, openai_api_key: openaiApiKey })
+      return sendMessage({
+        ...variables,
+        apiKeys: { openai_api_key },
+      })
     },
     onSuccess: data => {
       const localSession = store(sessionName, data)

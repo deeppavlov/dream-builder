@@ -11,6 +11,7 @@ from database.models.lm_service import crud as lm_service_crud
 from database.models.service import crud as service_crud
 from git_storage.git_manager import GitManager
 from services.distributions_api import schemas
+from services.distributions_api.routes.components.schemas import ComponentCreationStatus
 from services.distributions_api.utils.name_generator import from_email
 from services.distributions_api.routes.components.models import ComponentType
 
@@ -100,10 +101,14 @@ def create_component(
     clone_from_id: int = None,
 ):
     with db.begin():
-        lm_service = prompt = prompt_goals = lm_config = None
+        lm_service = prompt = prompt_goals = lm_config = cloned_from_id = cloned_from_name = None
 
         if clone_from_id:
             original_component = get_by_id(db, clone_from_id)
+            creation_type = ComponentCreationStatus.COMPONENT_CLONE
+            cloned_from_id = original_component.id
+            cloned_from_name = original_component.display_name
+
             match original_component.name:
                 case ComponentType.google_api:
                     return create_google_api_component(db, user, new_component)
@@ -115,6 +120,7 @@ def create_component(
                     prompt = original_component.prompt
                     prompt_goals = original_component.prompt_goals
         else:
+            creation_type = ComponentCreationStatus.NEW
             if new_component.lm_service_id:
                 lm_service = lm_service_crud.get_lm_service(db, new_component.lm_service_id)
             else:
@@ -184,6 +190,9 @@ def create_component(
             prompt_goals=prompted_component.prompt_goals,
             lm_service_id=lm_service.id,
             lm_config=prompted_component.lm_config,
+            creation_type=creation_type,
+            cloned_from_id=cloned_from_id,
+            cloned_from_name=cloned_from_name,
         )
 
     if component:

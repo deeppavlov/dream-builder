@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as FeedBack } from 'assets/icons/feedBack.svg'
 import { ReactComponent as FileUpload } from 'assets/icons/fileUpload.svg'
+import { IFeedback } from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { sendFeedBack } from 'api/components/index'
@@ -17,31 +18,10 @@ import { BaseToolTip } from 'components/Menus'
 import BaseModal from '../BaseModal/BaseModal'
 import s from './Feedback.module.scss'
 
-interface feedback {
-  text: string
-  pictures: string[]
-  email: string | undefined
-}
-
-interface elFileLists {
-  id: number
-  src: string
-}
-
-const generatorId = () => {
-  const acc: number[] = [0]
-  return () => {
-    const newNumber = acc.at(-1)
-    acc.push((newNumber ?? 0) + 1)
-    const id = acc.at(-1)
-    return id
-  }
-}
-
-const getId = generatorId()
-
 export const Feedback: FC = () => {
   const { user } = useAuth()
+
+  const localStorageKey = `feedBack_user_${user?.id ?? 'default'}`
 
   let cx = classNames.bind(s)
 
@@ -49,16 +29,14 @@ export const Feedback: FC = () => {
     keyPrefix: 'modals.feedback',
   })
 
-  const localStorageText = localStorage.getItem('text')
-  const localStoragePictures =
-    localStorage.getItem('pictures') === null
-      ? []
-      : JSON.parse(localStorage.getItem('pictures') || '')
+  const dataLocalStorage = JSON.parse(
+    localStorage.getItem(localStorageKey) || '{}'
+  )
 
-  const defaultValues: feedback = {
-    text: localStorageText ?? '',
-    pictures: localStoragePictures,
-    email: '',
+  const defaultValues: IFeedback = {
+    text: dataLocalStorage.text ?? '',
+    pictures: [],
+    email: dataLocalStorage.email ?? user?.email ?? '',
   }
 
   const { handleSubmit, setValue, control, getValues } = useForm({
@@ -66,39 +44,20 @@ export const Feedback: FC = () => {
   })
 
   const schema = getValidationSchema()
-  const [fileList, setFileList] = useState<elFileLists[]>([
-    ...localStoragePictures,
-  ])
+  const [fileList, setFileList] = useState<string[]>([])
 
   const fileInput = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    const picturesList = fileList.map(({ src }) => src)
+    const picturesList = fileList.map(src => src)
     setValue('pictures', picturesList)
-    localStorage.setItem('pictures', JSON.stringify(fileList))
   }, [fileList])
 
   useEffect(() => {
-    localStorage.setItem('text', getValues('text'))
-    localStorage.setItem('email', getValues('email') || '')
+    const newDate = { text: getValues().text, email: getValues().email }
+    localStorage.setItem(localStorageKey, JSON.stringify(newDate))
   }, [getValues().text, getValues().email])
-
-  useEffect(() => {
-    if (user === null) {
-      localStorage.setItem('email', '')
-    }
-  }, [user])
-
-  useEffect(() => {
-    const localStorageEmail =
-      localStorage.getItem('email') === ''
-        ? user?.email === null
-          ? ''
-          : user?.email
-        : localStorage.getItem('email') ?? ''
-    setValue('email', localStorageEmail)
-  }, [])
 
   const handleAddFile = (event: any) => {
     const file = event.target.files
@@ -123,11 +82,8 @@ export const Feedback: FC = () => {
         const src = e.target.result
         const img = new Image()
 
-        const id = getId() ?? 0
-        const el = { id: id, src }
-
         img.onload = () => {
-          setFileList(prev => [...prev, el])
+          setFileList(prev => [...prev, src])
         }
         img.src = e.target.result
       }
@@ -135,7 +91,7 @@ export const Feedback: FC = () => {
     })
   }
 
-  const onSubmit = (data: feedback) => {
+  const onSubmit = (data: IFeedback) => {
     toast
       .promise(sendFeedBack(data), toasts().sendFeedBack)
       .then(() => clearingForm())
@@ -143,24 +99,15 @@ export const Feedback: FC = () => {
   }
 
   const renderFile = () => {
-    return fileList.map((el: elFileLists, index: number) => {
+    return fileList.map((el, indexFile) => {
       return (
-        <div className={s.file} key={index}>
-          <img
-            src={el.src}
-            alt=''
-            onClick={() => {
-              const newFileList = fileList.filter(
-                (newEl: elFileLists) => newEl.id !== el.id
-              )
-              setFileList(newFileList)
-            }}
-          />
+        <div className={s.file} key={indexFile}>
+          <img src={el} alt='' />
           <CloseIcon
             className={s.close}
             onClick={() => {
               const newFileList = fileList.filter(
-                (newEl: elFileLists) => newEl.id !== el.id
+                (_, indexNewFile: number) => indexNewFile !== indexFile
               )
               setFileList(newFileList)
             }}
@@ -173,9 +120,7 @@ export const Feedback: FC = () => {
   const clearingForm = () => {
     setValue('text', '')
     setValue('pictures', [])
-    user?.email === undefined
-      ? setValue('email', '')
-      : setValue('email', user.email)
+    if (user !== null) setValue('email', user?.email)
     setFileList([])
   }
 
@@ -196,23 +141,15 @@ export const Feedback: FC = () => {
     )
   }
 
-  const addImgIcon = () => {
-    if (fileList.length >= 15) {
-      return null
-    }
-    return (
-      <div>
-        <FileUpload
-          className={s.FileUpload}
-          onClick={() => {
-            if (fileInput.current) {
-              fileInput.current.click()
-            }
-          }}
-        ></FileUpload>
-      </div>
+  const addImgIcon = () =>
+    fileList.length < 15 && (
+      <FileUpload
+        className={s.FileUpload}
+        onClick={() => {
+          fileInput.current && fileInput.current.click()
+        }}
+      />
     )
-  }
 
   return (
     <>
@@ -230,12 +167,10 @@ export const Feedback: FC = () => {
           place='right'
         />
       </button>
-
       <BaseModal
         isOpen={isOpen}
         setIsOpen={() => setIsOpen(false)}
-        modalClassName='modalFeedback'
-        id='modalFeedback'
+        modalClassName={s.modalFeedback}
       >
         <form onSubmit={handleSubmit(onSubmit)} className={s.form}>
           <div>

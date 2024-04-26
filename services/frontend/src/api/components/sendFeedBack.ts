@@ -1,6 +1,8 @@
-import { apiFeedback } from 'api/axiosConfig'
+import { IFeedback } from 'types/types';
+import { apiFeedback } from 'api/axiosConfig';
 
-export async function sendFeedBack(params: any) {
+
+export async function sendFeedBack(params: IFeedback) {
   try {
     const { data } = await apiFeedback.post(`/feedback`, { ...params })
     return data

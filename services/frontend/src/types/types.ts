@@ -464,3 +464,8 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
+export interface IFeedback {
+  text: string
+  pictures: string[]
+  email: string
+}

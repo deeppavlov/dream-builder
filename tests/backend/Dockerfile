@@ -5,9 +5,12 @@ WORKDIR src/
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
 
-COPY tests/backend/requirements.txt .
+RUN apt-get update && apt-get install -y --no-install-recommends git
+
+COPY tests/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY services/ services/
 COPY tests/backend /src/tests/backend
 
-CMD ["pytest", "tests/backend", "-v"]
+CMD ["pytest", "tests/backend", "-sv", "-m", "regression"]

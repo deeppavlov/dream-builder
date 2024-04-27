@@ -133,7 +133,17 @@ services:
           memory: 512M
   #    depends_on:
   #      - redis
-
+  tests:
+    env_file: [ ../.envs/.env.test ]
+    restart: on-failure
+    build:
+      context: ../..
+      dockerfile: ./tests/backend/Dockerfile
+    volumes:
+      - ../../apiconfig:/src/apiconfig
+      - ../../database:/src/database
+      - ../../git_storage:/src/git_storage
+      - ../../tests:/src/tests
 #
 #  flower:
 #    env_file: [ ../.envs/.env.dev.local ]

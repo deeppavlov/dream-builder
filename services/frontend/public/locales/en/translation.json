@@ -368,6 +368,14 @@
         "continue": "Continue"
       },
       "error": "Something went wrong..."
+    },
+    "feedback": {
+      "btns": {
+        "send": "Send",
+        "сlean": "Reset"
+      },
+      "description": "By leaving a review, you make us better",
+      "placeholder": "Describe your problem"
     }
   },
   "sidepanels": {
@@ -481,7 +489,8 @@
     "save": "Saving...",
     "create": "Creating...",
     "approve": "Approve...",
-    "decline": "Decline..."
+    "decline": "Decline...",
+    "send": "Sending..."
   },
   "ctx_menus": {
     "assistant": {

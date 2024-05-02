@@ -40,6 +40,7 @@
     "react-share": "^4.4.1",
     "react-syntax-highlighter": "^15.5.0",
     "react-tooltip": "^5.10.0",
+    "react-yandex-metrika": "^2.6.0",
     "store2": "^2.14.2",
     "url": "^0.11.0",
     "vite-plugin-svgr": "^2.2.2",

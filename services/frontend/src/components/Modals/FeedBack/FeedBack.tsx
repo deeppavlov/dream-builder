@@ -4,6 +4,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
+import ym from 'react-yandex-metrika'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as FeedBack } from 'assets/icons/feedBack.svg'
 import { ReactComponent as FileUpload } from 'assets/icons/fileUpload.svg'
@@ -96,6 +97,7 @@ export const Feedback: FC = () => {
       .promise(sendFeedBack(data), toasts().sendFeedBack)
       .then(() => clearingForm())
       .then(() => setIsOpen(false))
+      .then(() => ym('reachGoal', 'feedback_sent'))
   }
 
   const renderFiles = () =>
@@ -163,7 +165,10 @@ export const Feedback: FC = () => {
       <button
         id='FeedBack'
         data-tooltip-id='FeedBack'
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen)
+          ym('reachGoal', 'feedback_form_open')
+        }}
         className={cx('icon', isOpen && 'active')}
       >
         <FeedBack className={s.feedBackIcon} />

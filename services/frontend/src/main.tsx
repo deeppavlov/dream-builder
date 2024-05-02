@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client'
 import ReactGA from 'react-ga4'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
+import { YMInitializer } from 'react-yandex-metrika'
 import { router } from 'router/Router'
 import './i18n'
 
@@ -24,6 +25,17 @@ if (import.meta.env.MODE !== 'DEV') {
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <GaContextProvider>
+      {import.meta.env.MODE !== 'DEV' && (
+        <YMInitializer
+          accounts={[Number(import.meta.env.VITE_YANDEX_METRIC_ID)]}
+          options={{
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true,
+          }}
+        />
+      )}
       <AuthProvider>
         <UIOptionsProvider>
           <PreviewProvider>

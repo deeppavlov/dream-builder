@@ -129,8 +129,6 @@ services:
         PORT: 6997
     ports:
       - "6977:6997"
-    environment:
-      ENV_TYPE: stage
     volumes:
       - ../../services/feedback_api:/src/services/feedback_api
       - ../../database:/src/database

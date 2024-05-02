@@ -6,12 +6,28 @@ import { usePreview } from 'context/PreviewProvider'
 import { VISIBILITY_STATUS } from 'constants/constants'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
-import { AssistantModal, DeleteAssistantModal, DeleteSkillModal, PublishAssistantModal, ShareAssistantModal, SignInModal, SkillModal, SkillQuitModal, SkillsListModal } from 'components/Modals'
+import {
+  AssistantModal,
+  DeleteAssistantModal,
+  DeleteSkillModal,
+  PublishAssistantModal,
+  ShareAssistantModal,
+  SignInModal,
+  SkillModal,
+  SkillQuitModal,
+  SkillsListModal,
+} from 'components/Modals'
+import { Feedback } from 'components/Modals/FeedBack/FeedBack'
 import { BaseSidePanel } from 'components/Panels'
 import { Container } from 'components/UI'
 import { Sidebar } from 'components/Widgets'
-import { AssistantMenuInfo, DeepyHelperTab, IntegrationTab, SettingsTab, SkillsTab } from 'components/Widgets/Sidebar'
-
+import {
+  AssistantMenuInfo,
+  DeepyHelperTab,
+  IntegrationTab,
+  SettingsTab,
+  SkillsTab,
+} from 'components/Widgets/Sidebar'
 
 export const EditorPage = () => {
   const { setUIOption } = useUIOptions()
@@ -52,7 +68,8 @@ export const EditorPage = () => {
         </Container>
         <Container layoutForBottomBtns>
           <DeepyHelperTab />
-          <AssistantMenuInfo  />
+          <AssistantMenuInfo />
+          <Feedback />
           <SettingsTab />
         </Container>
       </Sidebar>

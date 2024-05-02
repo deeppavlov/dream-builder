@@ -16,6 +16,10 @@ export const api = axios.create({
   baseURL: import.meta.env['VITE_DIST_API_URL_' + MODE],
 })
 
+export const apiFeedback = axios.create({
+  baseURL: import.meta.env['VITE_FEEDBACK_API_URL_' + MODE],
+})
+
 /**
  * Axios instance of authorization API
  */

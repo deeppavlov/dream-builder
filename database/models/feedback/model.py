@@ -3,14 +3,33 @@ from sqlalchemy.orm import relationship
 from database.core import Base
 
 
+class FeedbackType(Base):
+    __tablename__ = "feedback_type"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+class FeedbackStatus(Base):
+    __tablename__ = "feedback_status"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+
 class FeedBack(Base):
     __tablename__ = "feedback"
 
     id = Column(Integer, primary_key=True)
     email = Column(String)
     text = Column(String)
+
+    type_id = Column(Integer, ForeignKey("feedback_type.id"))
+    status_id = Column(Integer, ForeignKey("feedback_status.id"), default=1)
+
     date_created = Column(DateTime, default=func.now())
 
+    type = relationship("FeedbackType")
+    status = relationship("FeedbackStatus")
     pictures = relationship("Picture", secondary="feedback_picture")
 
 

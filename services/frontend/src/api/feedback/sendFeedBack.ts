@@ -1,6 +1,5 @@
-import { IFeedback } from 'types/types';
-import { apiFeedback } from 'api/axiosConfig';
-
+import { IFeedback } from 'types/types'
+import { apiFeedback } from 'api/axiosConfig'
 
 export async function sendFeedBack(params: IFeedback) {
   try {

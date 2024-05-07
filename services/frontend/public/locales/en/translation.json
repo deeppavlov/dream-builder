@@ -375,7 +375,15 @@
         "сlean": "Reset"
       },
       "description": "By leaving a review, you make us better",
-      "placeholder": "Describe your problem"
+      "placeholder": "Describe your problem",
+      "types": {
+        "Review": "Review",
+        "Bug": "Bug",
+        "Complaint": "Complaint",
+        "Proposal": "Proposal",
+        "placeholder": "Choose type...",
+        "label": "Feedback type"
+      }
     }
   },
   "sidepanels": {

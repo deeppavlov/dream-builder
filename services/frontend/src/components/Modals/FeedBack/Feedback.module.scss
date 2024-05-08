@@ -63,10 +63,17 @@
       padding: 0px, 10px, 10px, 10px;
     }
 
+    .inputs {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-top: 20px;
+    }
+
     .emailInput {
       min-width: 250px;
-      width: 35%;
-      margin-top: 20px;
+      width: 60%;
     }
 
     .listFile {

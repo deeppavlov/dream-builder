@@ -98,6 +98,7 @@ export type TEvents =
   | 'ChangeLanguageModal'
   | 'AssistantDeleted'
   | 'PublishAssistantWizard'
+  | 'click'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
@@ -476,4 +477,13 @@ export interface IFeedback {
   text: string
   pictures: string[]
   email: string
+  feedback_type: {
+    id: number
+    name: string
+  } | null
+}
+
+export interface IFeedbackType {
+  id: number
+  name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
 }

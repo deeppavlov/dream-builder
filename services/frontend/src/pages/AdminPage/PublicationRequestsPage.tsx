@@ -63,7 +63,7 @@ export const PublicationRequestsPage = () => {
             />
           </div>
         )}
-        <Container gridForDeploys>
+        <Container gridForDeploys heightAuto>
           {sortedDeployment?.map((deployment, i: number) => (
             <DeploymentCard key={i} deployment={deployment} />
           ))}

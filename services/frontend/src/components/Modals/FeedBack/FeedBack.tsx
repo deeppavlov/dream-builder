@@ -9,7 +9,7 @@ import ym from 'react-yandex-metrika'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as FeedBackIcon } from 'assets/icons/feedBack.svg'
 import { ReactComponent as FileUpload } from 'assets/icons/fileUpload.svg'
-import { IFeedback } from 'types/types'
+import { IFeedbackFormData } from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
 import { sendFeedBack } from 'api/components/index'
@@ -39,7 +39,7 @@ export const Feedback: FC = () => {
     localStorage.getItem(localStorageKey) || '{}'
   )
 
-  const defaultValues: IFeedback = {
+  const defaultValues: IFeedbackFormData = {
     text: dataLocalStorage.text ?? '',
     pictures: [],
     email: dataLocalStorage.email ?? user?.email ?? '',
@@ -102,7 +102,7 @@ export const Feedback: FC = () => {
     })
   }
 
-  const onSubmit = (data: IFeedback) => {
+  const onSubmit = (data: IFeedbackFormData) => {
     toast
       .promise(sendFeedBack(data), toasts().sendFeedBack)
       .then(() => clearingForm())

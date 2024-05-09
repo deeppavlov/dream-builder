@@ -6,13 +6,13 @@ import { RoutesList } from 'router/RoutesList'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { SvgIcon } from 'components/Helpers'
 import { BaseToolTip } from 'components/Menus'
-import s from './UsersTab.module.scss'
+import s from './FeedbackTab.module.scss'
 
 interface Props {
   isActive?: boolean
 }
 
-export const UsersTab = ({ isActive }: Props) => {
+export const FeedbackTab = ({ isActive }: Props) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   let cx = classNames.bind(s)
@@ -21,20 +21,20 @@ export const UsersTab = ({ isActive }: Props) => {
   const isAdmin = user?.role.id === 3
   if (!isAdmin) return null
 
-  const usersClickHandler = () => {
-    navigate(RoutesList.admin.users)
+  const feedbackClickHandler = () => {
+    navigate(RoutesList.admin.feedback)
   }
   return (
     <button
-      onClick={usersClickHandler}
-      data-tooltip-id='sidebarUsersTab'
-      className={cx('users', isActive && 'active')}
+      onClick={feedbackClickHandler}
+      data-tooltip-id='sidebarFeedbackTab'
+      className={cx('feedback', isActive && 'active')}
     >
-      <SvgIcon iconName='users' />
+      <SvgIcon iconName='feedBack' />
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
-        id='sidebarUsersTab'
-        content={t('sidebar.tooltips.users')}
+        id='sidebarFeedbackTab'
+        content={t('sidebar.tooltips.feedback')}
         place='right'
       />
     </button>

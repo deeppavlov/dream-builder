@@ -568,7 +568,8 @@
     "integration": "Integration",
     "admin": "Administrator",
     "requests": "Publication Requests",
-    "users": "User list"
+    "users": "User list",
+    "feedback": "Feedback"
   },
   "sidebar": {
     "tooltips": {
@@ -577,7 +578,8 @@
       "settings": "Settings",
       "deepy": "Ask Deepy if you need help with building your Assistant",
       "requests": "Publication Requests",
-      "users": "User list"
+      "users": "User list",
+      "feedback": "Feedback"
     }
   },
   "assistantMenuInfo": {

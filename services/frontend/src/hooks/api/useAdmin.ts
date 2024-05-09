@@ -5,6 +5,7 @@ import { UserInterface } from 'types/types'
 import { confirmRequest, declineRequest, getPublishRequest } from 'api/admin'
 import { getUsers } from 'api/admin/getUsers'
 import { setRole } from 'api/admin/setRole'
+import { fetchFeedbackList } from 'api/feedback/fetchFeedbackList'
 
 export const useAdmin = () => {
   const queryClient = useQueryClient()
@@ -47,5 +48,13 @@ export const useAdmin = () => {
     },
   })
 
-  return { requests, confirm, decline, users, changeRole }
+  const getFeedbackList = (
+    type_id: number | null = null,
+    status_id: number | null = null
+  ) =>
+    useQuery(['feedback_list'], () => fetchFeedbackList(type_id, status_id), {
+      refetchOnMount: false,
+    })
+
+  return { requests, confirm, decline, users, changeRole, getFeedbackList }
 }

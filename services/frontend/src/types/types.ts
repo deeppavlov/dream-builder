@@ -473,7 +473,7 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
-export interface IFeedback {
+export interface IFeedbackFormData {
   text: string
   pictures: string[]
   email: string
@@ -481,6 +481,22 @@ export interface IFeedback {
     id: number
     name: string
   } | null
+}
+
+export interface IFeedback {
+  id: number
+  date_created: string
+  email: string
+  text: string
+  pictures: string[]
+  type: {
+    id: number
+    name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
+  }
+  status: {
+    id: number
+    name: 'New' | 'InProgress' | 'Completed' | 'Rejected'
+  }
 }
 
 export interface IFeedbackType {

@@ -1,13 +1,7 @@
 import { franc } from 'franc'
 import i18n from 'i18n'
 import { UseQueryResult } from 'react-query'
-import {
-  ICollectionError,
-  ISkill,
-  LanguageModel,
-  TComponents,
-} from 'types/types'
-import getTokensLength from 'utils/getTokensLength'
+import { ICollectionError, ISkill, TComponents } from 'types/types'
 
 const arrInitPromptBlock = [
   { 'Act as [YOUR INPUT].': /[Aa]ct as (?:\b\w+\b|\[.*?\]|[А-я_]+)/gm },
@@ -234,17 +228,14 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
     return
   }
 
-  const lmServiceName = skill?.lm_service?.name as LanguageModel
-
   const maxToken: number = skill.lm_service?.max_tokens ?? 0
 
-  const curentCountToken = getTokensLength(lmServiceName, skill.prompt)
-  const isСrowded = maxToken < curentCountToken
+  const isСrowded = maxToken < skill.count_token
 
   if (isСrowded) {
-    const message = `${i18n.t(
-      'error_message.prompt.lengthMax'
-    )} ${curentCountToken}/${maxToken}`
+    const message = `${i18n.t('error_message.prompt.lengthMax')} ${
+      skill.count_token
+    }/${maxToken}`
     acc.errors = [...acc.errors, message]
   }
 }

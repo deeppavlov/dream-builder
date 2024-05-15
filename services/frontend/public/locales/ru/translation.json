@@ -114,6 +114,12 @@
         "role_changing": "Изменение роли...",
         "self_role_change_error": "Нельзя менять свою роль"
       }
+    },
+    "feedback_list": {
+      "text": "Текст",
+      "date": "Дата",
+      "type": "Тип",
+      "status": "Статус"
     }
   },
   "modals": {
@@ -383,6 +389,12 @@
         "Proposal": "Предложение",
         "placeholder": "Выберите тип...",
         "label": "Тип обратной связи"
+      },
+      "statuses": {
+        "New": "Новая",
+        "InProgress": "В работе",
+        "Completed": "Сделано",
+        "Rejected": "Отклонено"
       }
     }
   },
@@ -479,6 +491,15 @@
       "id": "ID:",
       "email": "Почта:",
       "role": "Роль:"
+    },
+    "feedback": {
+      "details": "Детали",
+      "screenshots": "Снимки экрана",
+      "author": "Автор",
+      "type": "Тип",
+      "status": "Статус",
+      "date": "Дата",
+      "text": "Текст"
     }
   },
   "tooltips": {

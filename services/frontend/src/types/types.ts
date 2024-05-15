@@ -488,7 +488,7 @@ export interface IFeedback {
   date_created: string
   email: string
   text: string
-  pictures: string[]
+  pictures: { id: number; picture: string }[]
   type: {
     id: number
     name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'

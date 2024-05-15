@@ -27,18 +27,12 @@
       width: fit-content;
     }
     &.date {
-      font-weight: 600;
-    }
-  }
-}
+      @include t4;
+      color: $text2;
 
-.status {
-  &.new {
-  }
-  &.inprogress {
-  }
-  &.completed {
-  }
-  &.rejected {
+      .dateString {
+        white-space: nowrap;
+      }
+    }
   }
 }

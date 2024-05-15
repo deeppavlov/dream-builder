@@ -53,7 +53,7 @@ export const useAdmin = () => {
     status_id: number | null = null
   ) =>
     useQuery(['feedback_list'], () => fetchFeedbackList(type_id, status_id), {
-      refetchOnMount: false,
+      enabled: loc.pathname === RoutesList.admin.feedback,
     })
 
   return { requests, confirm, decline, users, changeRole, getFeedbackList }

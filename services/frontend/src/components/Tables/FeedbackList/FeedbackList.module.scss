@@ -58,14 +58,19 @@
     }
   }
 
-  .arrow {
-    @include icon_size_24;
-    path {
-      fill: $text3;
-    }
-    transition: all 200ms ease-in-out;
-    &.up {
-      transform: rotate(180deg);
+  .arrowContainer {
+    height: 24px;
+    width: 24px;
+
+    .arrow {
+      @include icon_size_24;
+      path {
+        fill: $text3;
+      }
+      transition: all 200ms ease-in-out;
+      &.up {
+        transform: rotate(180deg);
+      }
     }
   }
 }

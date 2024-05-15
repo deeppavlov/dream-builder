@@ -2,6 +2,7 @@ import { AssistantDialogSidePanel } from './AssistantDialogSidePanel/AssistantDi
 import AssistantSidePanel from './AssistantSidePanel/AssistantSidePanel'
 import { BaseSidePanel } from './BaseSidePanel/BaseSidePanel'
 import { CopilotSidePanel } from './CopilotSidePanel/CopilotSidePanel'
+import FeedbackSidePanel from './FeedbackSidePanel/FeedbackSidePanel'
 import SidePanel from './SidePanel/SidePanel'
 import SidePanelButtons from './SidePanelButtons/SidePanelButtons'
 import SidePanelHeader from './SidePanelHeader/SidePanelHeader'
@@ -24,4 +25,5 @@ export {
   SkillSidePanel,
   WarningsInfo,
   UserSidePanel,
+  FeedbackSidePanel,
 }

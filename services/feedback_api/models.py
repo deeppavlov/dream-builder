@@ -26,6 +26,14 @@ class FeedbackCreate(BaseModel):
     pictures: List[bytes] = []
 
 
+class FeedbackTypeResponse(BaseModel):
+    id: int
+    name: str
+
+class FeedbackStatusResponse(BaseModel):
+    id: int
+    name: str
+
 class PictureResponse(BaseModel):
     id: int
     picture: bytes
@@ -33,12 +41,15 @@ class PictureResponse(BaseModel):
 
 class FeedbackResponse(BaseModel):
     id: int
-    feedback_type: FeedbackType
-    status: FeedbackStatus
-    email: EmailStr
+    email: str
     text: str
-    pictures: List[dict] = []
     date_created: datetime
+    type: FeedbackTypeResponse
+    status: FeedbackStatusResponse
+    pictures: List[PictureResponse]
+
+    class Config:
+        orm_mode = True
 
 
 class RoleRead(BaseModel):

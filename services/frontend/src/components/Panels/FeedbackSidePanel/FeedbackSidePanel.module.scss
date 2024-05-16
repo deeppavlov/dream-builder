@@ -14,9 +14,11 @@
   justify-content: space-between;
   align-items: center;
 
-  & > b {
+  span {
+    @include b3;
+  }
+  & span:first-child {
     @include t4;
-    color: $text2;
   }
 }
 

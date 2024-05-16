@@ -119,7 +119,11 @@
       "text": "Text",
       "date": "Date",
       "type": "Type",
-      "status": "Status"
+      "status": "Status",
+      "toasts": {
+        "status_change": "Status change...",
+        "status_changed": "Status changed!"
+      }
     }
   },
   "modals": {

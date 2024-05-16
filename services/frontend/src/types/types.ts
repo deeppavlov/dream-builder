@@ -483,23 +483,21 @@ export interface IFeedbackFormData {
   } | null
 }
 
+export interface IFeedbackType {
+  id: number
+  name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
+}
+
+export interface IFeedbackStatus {
+  id: number
+  name: 'New' | 'InProgress' | 'Completed' | 'Rejected'
+}
 export interface IFeedback {
   id: number
   date_created: string
   email: string
   text: string
   pictures: { id: number; picture: string }[]
-  type: {
-    id: number
-    name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
-  }
-  status: {
-    id: number
-    name: 'New' | 'InProgress' | 'Completed' | 'Rejected'
-  }
-}
-
-export interface IFeedbackType {
-  id: number
-  name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
+  type: IFeedbackType
+  status: IFeedbackStatus
 }

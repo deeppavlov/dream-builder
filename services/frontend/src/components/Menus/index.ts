@@ -3,6 +3,7 @@ import SkillStackToolTip from '../Unused/SkillStackToolTip/SkillStackToolTip'
 import AssistantContextMenu from './AssistantContextMenu/AssistantContextMenu'
 import BaseContextMenu from './BaseContextMenu/BaseContextMenu'
 import BaseToolTip from './BaseToolTip/BaseToolTip'
+import FeedbackStatusMenu from './FeedbackStatusMenu/FeedbackStatusMenu'
 import MenuToolTip from './MenuToolTip/MenuToolTip'
 import { Profile } from './Profile/Profile'
 import { ProfileContextMenu } from './ProfileContextMenu/ProfileContextMenu'
@@ -22,4 +23,5 @@ export {
   SkillStackToolTip,
   StatusToolTip,
   UserRoleMenu,
+  FeedbackStatusMenu,
 }

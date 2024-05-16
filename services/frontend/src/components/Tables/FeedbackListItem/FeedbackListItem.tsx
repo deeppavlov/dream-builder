@@ -6,6 +6,7 @@ import { IFeedback, TLocale } from 'types/types'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { trigger } from 'utils/events'
+import { FeedbackStatusMenu } from 'components/Menus'
 import { FeedbackSidePanel } from 'components/Panels'
 import { TRIGGER_RIGHT_SP_EVENT } from 'components/Panels/BaseSidePanel/BaseSidePanel'
 import s from './FeedbackListItem.module.scss'
@@ -55,7 +56,7 @@ export const FeedbackListItem: FC<IProps> = ({ item }) => {
       </td>
       <td>{t(`modals.feedback.types.${item.type.name}`)}</td>
       <td className={cx('status', item.status.name.toLowerCase())}>
-        {t(`modals.feedback.statuses.${item.status.name}`)}
+        {<FeedbackStatusMenu feedback={item} />}
       </td>
     </tr>
   )

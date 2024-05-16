@@ -7,6 +7,7 @@ import useTabsManager from 'hooks/useTabsManager'
 import { consts } from 'utils/consts'
 import { dateToUTC } from 'utils/dateToUTC'
 import { Accordion } from 'components/Dropdowns'
+import { FeedbackStatusMenu } from 'components/Menus'
 import SidePanelHeader from '../SidePanelHeader/SidePanelHeader'
 import s from './FeedbackSidePanel.module.scss'
 
@@ -86,7 +87,9 @@ const FeedbackSidePanel: FC<IProps> = ({ feedback }) => {
 
           <div className={s.string}>
             <b>{t('status')}: </b>
-            <span>{feedback.status.name}</span>
+            <div>
+              <FeedbackStatusMenu feedback={feedback} />
+            </div>
           </div>
 
           <div className={s.string}>

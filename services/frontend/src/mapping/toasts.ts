@@ -26,6 +26,7 @@ type ToastKeys =
   | 'changeEmail'
   | 'changeUserRole'
   | 'sendFeedBack'
+  | 'changeFeedbackStatus'
 
 type Toasts = Record<ToastKeys, ToastSettings>
 
@@ -122,5 +123,10 @@ export const toasts: () => Toasts = () => ({
         ? i18n.t('admin_page.user_list.toasts.self_role_change_error')
         : i18n.t('toasts.error'),
     loading: i18n.t('admin_page.user_list.toasts.role_changing'),
+  },
+  changeFeedbackStatus: {
+    loading: i18n.t('admin_page.feedback_list.toasts.status_change'),
+    success: i18n.t('admin_page.feedback_list.toasts.status_changed'),
+    error: i18n.t('toasts.error'),
   },
 })

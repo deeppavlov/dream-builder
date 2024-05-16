@@ -2,8 +2,10 @@ import { useMutation, useQueries, useQuery, useQueryClient } from 'react-query'
 import {
   BotInfoInterface,
   ICloneComponent,
+  ISkill,
   IStackElement,
   LM_Service,
+  LanguageModel,
   StackType,
   TComponents,
 } from 'types/types'
@@ -20,6 +22,7 @@ import {
 } from 'api/components'
 import { IPatchComponentParams } from 'api/components/patchComponent'
 import { useGaSkills } from 'hooks/googleAnalytics/useGaSkills'
+import getTokensLength from 'utils/getTokensLength'
 
 interface IGet {
   distName: string
@@ -75,10 +78,23 @@ export const useComponent = () => {
 
   const { skillRenamed, skillDeleted, skillAdded } = useGaSkills()
 
+  const addTokenCount = (data: TComponents) => {
+    data.skills.forEach((el: ISkill) => {
+      if (el.display_name !== 'Dummy Skill') {
+        const lmModel = el.lm_service?.name as LanguageModel | undefined
+        el.count_token = getTokensLength(lmModel, el.prompt ?? '')
+      }
+    })
+  }
+
   const getAllComponents = (distName: string, options?: IOptions) =>
     useQuery<TComponents>(
       [ALL_COMPONENTS, distName],
-      () => getComponents(distName),
+      async () => {
+        const data = await getComponents(distName)
+        addTokenCount(data)
+        return data
+      },
       {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
@@ -94,7 +110,11 @@ export const useComponent = () => {
       sortedDists.map((el: BotInfoInterface) => {
         return {
           queryKey: ['skill', el.name],
-          queryFn: () => getComponents(el.name, el),
+          queryFn: async () => {
+            const data = await getComponents(el.name, el)
+            addTokenCount(data)
+            return data
+          },
         }
       })
     )

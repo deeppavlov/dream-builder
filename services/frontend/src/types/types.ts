@@ -260,6 +260,7 @@ export interface LM_Service {
 export interface ISkill extends IStackElement {
   prompt?: string
   lm_service?: LM_Service
+  count_token?: number
 }
 
 export interface SessionConfig {

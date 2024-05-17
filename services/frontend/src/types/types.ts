@@ -239,7 +239,6 @@ export interface IStackElement {
   cloned_from_id: number
   cloned_from_name: string
   creation_type: string
-  count_token?: number
 }
 
 export interface LM_Service {

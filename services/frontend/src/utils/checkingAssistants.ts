@@ -230,7 +230,7 @@ const lengthMaxPrompt = (skill: ISkill, acc: ICollectionError) => {
 
   const maxToken: number = skill.lm_service?.max_tokens ?? 0
 
-  const isСrowded = maxToken < skill.count_token
+  const isСrowded = skill.count_token ? maxToken < skill.count_token : false
 
   if (isСrowded) {
     const message = `${i18n.t('error_message.prompt.lengthMax')} ${

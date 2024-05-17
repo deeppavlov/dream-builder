@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import ym from 'react-yandex-metrika'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
 import { ReactComponent as FeedBackIcon } from 'assets/icons/feedBack.svg'
 import { ReactComponent as FileUpload } from 'assets/icons/fileUpload.svg'
@@ -15,6 +14,7 @@ import { toasts } from 'mapping/toasts'
 import { sendFeedBack } from 'api/components/index'
 import { getFeedbackTypes } from 'api/feedback/getFeedbackTypes'
 import { getValidationSchema } from 'utils/getValidationSchema'
+import { yandexMetrics } from 'utils/yandexMetrics'
 import { Button } from 'components/Buttons'
 import { Input, TextArea } from 'components/Inputs'
 import { BaseToolTip } from 'components/Menus'
@@ -107,7 +107,7 @@ export const Feedback: FC = () => {
       .promise(sendFeedBack(data), toasts().sendFeedBack)
       .then(() => clearingForm())
       .then(() => setIsOpen(false))
-      .then(() => ym('reachGoal', 'feedback_sent'))
+      .then(() => yandexMetrics('reachGoal', 'feedback_sent'))
   }
 
   const renderFiles = () =>
@@ -178,7 +178,7 @@ export const Feedback: FC = () => {
         data-tooltip-id='FeedBack'
         onClick={() => {
           setIsOpen(!isOpen)
-          ym('reachGoal', 'feedback_form_open')
+          yandexMetrics('reachGoal', 'feedback_form_open')
         }}
         className={cx('icon', isOpen && 'active')}
       >

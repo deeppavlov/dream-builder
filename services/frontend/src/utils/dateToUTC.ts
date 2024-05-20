@@ -12,9 +12,9 @@ export const dateToUTC = (
 ) => {
   const date = new Date(dateData)
 
-  if (!locale || locale == 'en') return format(new Date(date), 'mediumDate')
-
-  const ruFormat = date.toLocaleDateString('ru', options).toString()
-
-  return ruFormat
+  if (locale && locale.slice(0, 2) === 'ru') {
+    const ruFormat = date.toLocaleDateString('ru', options).toString()
+    return ruFormat
+  }
+  return format(new Date(date), 'mediumDate')
 }

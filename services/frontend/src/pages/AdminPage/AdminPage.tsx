@@ -9,9 +9,13 @@ import {
 import { BaseSidePanel } from 'components/Panels'
 import { Container } from 'components/UI'
 import { Sidebar, Topbar } from 'components/Widgets'
-import { DeepyHelperTab, SettingsTab } from 'components/Widgets/Sidebar'
-import { PublicationRequestsTab } from 'components/Widgets/Sidebar/PublicationRequestsTab'
-import { UsersTab } from 'components/Widgets/Sidebar/UsersTab'
+import {
+  DeepyHelperTab,
+  FeedbackTab,
+  PublicationRequestsTab,
+  SettingsTab,
+  UsersTab,
+} from 'components/Widgets/Sidebar'
 
 export const AdminPage = () => {
   const isAdminTab = Boolean(useMatch(RoutesList.admin.default))
@@ -19,6 +23,7 @@ export const AdminPage = () => {
     useMatch(RoutesList.admin.requests.slice(0, -1))
   )
   const isUsersTab = Boolean(useMatch(RoutesList.admin.users))
+  const isFeedbackTab = Boolean(useMatch(RoutesList.admin.feedback))
 
   return (
     <>
@@ -27,6 +32,7 @@ export const AdminPage = () => {
         <Container layoutForTabs>
           <PublicationRequestsTab isActive={isRequestsTab || isAdminTab} />
           <UsersTab isActive={isUsersTab} />
+          <FeedbackTab isActive={isFeedbackTab} />
         </Container>
         <Container layoutForBottomBtns>
           <DeepyHelperTab />

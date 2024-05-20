@@ -4,20 +4,23 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import ym from 'react-yandex-metrika'
+import { useQuery } from 'react-query'
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg'
-import { ReactComponent as FeedBack } from 'assets/icons/feedBack.svg'
+import { ReactComponent as FeedBackIcon } from 'assets/icons/feedBack.svg'
 import { ReactComponent as FileUpload } from 'assets/icons/fileUpload.svg'
-import { IFeedback } from 'types/types'
+import { IFeedbackFormData } from 'types/types'
 import { TOOLTIP_DELAY } from 'constants/constants'
 import { toasts } from 'mapping/toasts'
-import { sendFeedBack } from 'api/components/index'
+import { sendFeedBack } from 'api/feedback'
+import { getFeedbackTypes } from 'api/feedback/getFeedbackTypes'
 import { getValidationSchema } from 'utils/getValidationSchema'
+import { yandexMetrics } from 'utils/yandexMetrics'
 import { Button } from 'components/Buttons'
 import { Input, TextArea } from 'components/Inputs'
 import { BaseToolTip } from 'components/Menus'
 import BaseModal from '../BaseModal/BaseModal'
 import s from './Feedback.module.scss'
+import FeedbackTypesDropdown from './FeedbackTypesDropdown/FeedbackTypesDropdown'
 
 export const Feedback: FC = () => {
   const { user } = useAuth()
@@ -30,14 +33,17 @@ export const Feedback: FC = () => {
     keyPrefix: 'modals.feedback',
   })
 
+  const feedbackTypes = useQuery(['feedback_types'], () => getFeedbackTypes())
+
   const dataLocalStorage = JSON.parse(
     localStorage.getItem(localStorageKey) || '{}'
   )
 
-  const defaultValues: IFeedback = {
+  const defaultValues: IFeedbackFormData = {
     text: dataLocalStorage.text ?? '',
     pictures: [],
     email: dataLocalStorage.email ?? user?.email ?? '',
+    feedback_type: dataLocalStorage.feedback_type ?? null,
   }
 
   const { handleSubmit, setValue, control, getValues, watch, clearErrors } =
@@ -56,9 +62,13 @@ export const Feedback: FC = () => {
   }, [fileList])
 
   useEffect(() => {
-    const newDate = { text: getValues().text, email: getValues().email }
+    const newDate = {
+      text: getValues().text,
+      email: getValues().email,
+      feedback_type: getValues('feedback_type'),
+    }
     localStorage.setItem(localStorageKey, JSON.stringify(newDate))
-  }, [watch('text'), watch('email')])
+  }, [watch('text'), watch('email'), watch('feedback_type')])
 
   const handleAddFile = (event: any) => {
     const file = event.target.files
@@ -92,12 +102,12 @@ export const Feedback: FC = () => {
     })
   }
 
-  const onSubmit = (data: IFeedback) => {
+  const onSubmit = (data: IFeedbackFormData) => {
     toast
       .promise(sendFeedBack(data), toasts().sendFeedBack)
       .then(() => clearingForm())
       .then(() => setIsOpen(false))
-      .then(() => ym('reachGoal', 'feedback_sent'))
+      .then(() => yandexMetrics('reachGoal', 'feedback_sent'))
   }
 
   const renderFiles = () =>
@@ -123,9 +133,9 @@ export const Feedback: FC = () => {
     )
 
   const clearingForm = () => {
-    setValue('text', '')
-    setValue('pictures', [])
     if (user !== null) setValue('email', user?.email)
+    setValue('feedback_type', null)
+    setValue('text', '')
     setFileList([])
     clearErrors()
   }
@@ -134,6 +144,7 @@ export const Feedback: FC = () => {
     return (
       <div className={s.emailInput}>
         <Input
+          big
           name='email'
           label={'Email'}
           control={control}
@@ -167,11 +178,11 @@ export const Feedback: FC = () => {
         data-tooltip-id='FeedBack'
         onClick={() => {
           setIsOpen(!isOpen)
-          ym('reachGoal', 'feedback_form_open')
+          yandexMetrics('reachGoal', 'feedback_form_open')
         }}
         className={cx('icon', isOpen && 'active')}
       >
-        <FeedBack className={s.feedBackIcon} />
+        <FeedBackIcon className={s.feedBackIcon} />
         <BaseToolTip
           id='FeedBack'
           content={'Feedback'}
@@ -188,7 +199,17 @@ export const Feedback: FC = () => {
           <div>
             <mark>{t('description')}</mark>
           </div>
-          {emailForm()}
+          <div className={s.inputs}>
+            {emailForm()}
+            <FeedbackTypesDropdown
+              control={control}
+              list={feedbackTypes.data || []}
+              name={'feedback_type'}
+              label={t('types.label')}
+              props={{ placeholder: t('types.placeholder') }}
+              rules={{ required: true }}
+            />
+          </div>
           <div className={s.text}>
             <TextArea
               name={'text'}

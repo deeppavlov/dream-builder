@@ -5,6 +5,7 @@ import { ChangeLanguageModal } from './ChangeLanguageModal/ChangeLanguageModal'
 import { ConfirmApiTokenUpdate } from './ConfirmApiTokenUpdateModal/ConfirmApiTokenUpdateModal'
 import { DeleteAssistantModal } from './DeleteAssistantModal/DeleteAssistantModal'
 import { DeleteSkillModal } from './DeleteSkillModal/DeleteSkillModal'
+import { Gallery } from './Gallery/Gallery'
 import { ProfileSettings } from './ProfileSettings/ProfileSettings'
 import { PublicToPrivateModal } from './PublicToPrivateModal/PublicToPrivateModal'
 import { PublishAssistantModal } from './PublishAssistantModal/PublishAssistantModal'
@@ -34,4 +35,5 @@ export {
   SkillQuitModal,
   SkillsListModal,
   PublishAssistantWizard,
+  Gallery,
 }

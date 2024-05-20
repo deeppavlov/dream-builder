@@ -10,6 +10,7 @@ export const serviceCompanyMap: serviceCompanyMap = {
   'openai-api-chatgpt': 'openai_company',
   'openai-api-davinci3': 'openai_company',
   'openai-api-chatgpt-16k': 'openai_company',
+  'openai-api-gpt4o': 'openai_company',
   'anthropic-api-claude-v1': 'anthropic_company',
   'anthropic-api-claude-instant-v1': 'anthropic_company',
   'transformers-lm-rugpt35': 'sber_devices',

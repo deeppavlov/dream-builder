@@ -19,5 +19,6 @@ export const RoutesList = {
     default: '/admin',
     requests: '/admin/requests?',
     users: '/admin/users',
+    feedback: '/admin/feedback',
   },
 } as const

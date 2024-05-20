@@ -1,4 +1,5 @@
 import { AdminPage } from 'pages/AdminPage/AdminPage'
+import { FeedbackPage } from 'pages/AdminPage/FeedbackPage'
 import { PublicationRequestsPage } from 'pages/AdminPage/PublicationRequestsPage'
 import UsersPage from 'pages/AdminPage/UsersPage'
 import { AuthPage } from 'pages/AuthPage'
@@ -185,6 +186,17 @@ export const RouterConfig: CustomRouteConfig[] = [
               <Link to={RoutesList.admin.users}>{t('breadcrumbs.users')}</Link>,
             ]
           },
+        },
+      },
+      {
+        path: RoutesList.admin.feedback,
+        element: <FeedbackPage />,
+        handle: {
+          crumb: ({ t }: IRouterCrumb) => [
+            <Link to={RoutesList.admin.feedback}>
+              {t('breadcrumbs.feedback')}
+            </Link>,
+          ],
         },
       },
     ],

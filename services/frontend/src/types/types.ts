@@ -98,6 +98,7 @@ export type TEvents =
   | 'ChangeLanguageModal'
   | 'AssistantDeleted'
   | 'PublishAssistantWizard'
+  | 'click'
 
 export type TDistVisibility = 'UNLISTED_LINK' | 'PRIVATE' | 'PUBLIC_TEMPLATE'
 
@@ -259,6 +260,7 @@ export interface LM_Service {
 export interface ISkill extends IStackElement {
   prompt?: string
   lm_service?: LM_Service
+  count_token?: number
 }
 
 export interface SessionConfig {
@@ -472,8 +474,31 @@ export type PageType =
   | 'va_template_skillset_page'
   | 'va_skill_editor'
 
-export interface IFeedback {
+export interface IFeedbackFormData {
   text: string
   pictures: string[]
   email: string
+  feedback_type: {
+    id: number
+    name: string
+  } | null
+}
+
+export interface IFeedbackType {
+  id: number
+  name: 'Review' | 'Bug' | 'Proposal' | 'Complaint'
+}
+
+export interface IFeedbackStatus {
+  id: number
+  name: 'New' | 'InProgress' | 'Completed' | 'Rejected'
+}
+export interface IFeedback {
+  id: number
+  date_created: string
+  email: string
+  text: string
+  pictures: { id: number; picture: string }[]
+  type: IFeedbackType
+  status: IFeedbackStatus
 }

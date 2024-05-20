@@ -20,6 +20,17 @@ export const apiFeedback = axios.create({
   baseURL: import.meta.env['VITE_FEEDBACK_API_URL_' + MODE],
 })
 
+apiFeedback.interceptors.request.use(
+  config => {
+    if (!config.headers?.token) {
+      config.headers!.token = getAccessToken()
+      config.headers!['auth-type'] = getAuthType()
+    }
+    return config
+  },
+  error => Promise.reject(error)
+)
+
 /**
  * Axios instance of authorization API
  */

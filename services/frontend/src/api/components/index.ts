@@ -1,4 +1,3 @@
-import { sendFeedBack } from '../feedback/sendFeedBack'
 import { addComponent } from './addComponent'
 import { cloneComponent } from './cloneComponent'
 import { createComponent } from './createComponent'
@@ -21,5 +20,4 @@ export {
   getComponents,
   getComponentsGroup,
   patchComponent,
-  sendFeedBack,
 }

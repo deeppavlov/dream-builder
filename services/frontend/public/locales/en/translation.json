@@ -114,6 +114,16 @@
         "role_changing": "Role change...",
         "self_role_change_error": "You cannot change your own role"
       }
+    },
+    "feedback_list": {
+      "text": "Text",
+      "date": "Date",
+      "type": "Type",
+      "status": "Status",
+      "toasts": {
+        "status_change": "Status change...",
+        "status_changed": "Status changed!"
+      }
     }
   },
   "modals": {
@@ -383,6 +393,12 @@
         "Proposal": "Proposal",
         "placeholder": "Choose type...",
         "label": "Feedback type"
+      },
+      "statuses": {
+        "New": "New",
+        "InProgress": "In progress",
+        "Completed": "Completed",
+        "Rejected": "Rejected"
       }
     }
   },
@@ -479,6 +495,15 @@
       "id": "ID:",
       "email": "Email:",
       "role": "Role:"
+    },
+    "feedback": {
+      "details": "Details",
+      "screenshots": "Screenshots",
+      "author": "Author",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "text": "Text"
     }
   },
   "tooltips": {
@@ -568,7 +593,8 @@
     "integration": "Integration",
     "admin": "Administrator",
     "requests": "Publication Requests",
-    "users": "User list"
+    "users": "User list",
+    "feedback": "Feedback"
   },
   "sidebar": {
     "tooltips": {
@@ -577,7 +603,8 @@
       "settings": "Settings",
       "deepy": "Ask Deepy if you need help with building your Assistant",
       "requests": "Publication Requests",
-      "users": "User list"
+      "users": "User list",
+      "feedback": "Feedback"
     }
   },
   "assistantMenuInfo": {

@@ -41,6 +41,7 @@ const initialOptions: TOptionsMap = new Map<string, TOptionValue>([
   [consts.INTEGRATION_ACTIVE_TAB, defaultIntegrationTab],
   [consts.API_CALL_ACTIVE_TAB, defaultApiCallTab],
   [consts.WARNING_WINDOW_SP_IS_ACTIVE, false],
+  [consts.GALLERY_PICTURES, []],
 ])
 
 const UIOptionsContext = createContext({})

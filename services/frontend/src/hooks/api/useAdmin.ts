@@ -5,6 +5,11 @@ import { UserInterface } from 'types/types'
 import { confirmRequest, declineRequest, getPublishRequest } from 'api/admin'
 import { getUsers } from 'api/admin/getUsers'
 import { setRole } from 'api/admin/setRole'
+import {
+  fetchFeedbackList,
+  getFeedbackStatuses as fetchFeedbackStatuses,
+} from 'api/feedback'
+import { setFeedbackStatus } from 'api/feedback/setFeedbackStatus'
 
 export const useAdmin = () => {
   const queryClient = useQueryClient()
@@ -47,5 +52,42 @@ export const useAdmin = () => {
     },
   })
 
-  return { requests, confirm, decline, users, changeRole }
+  const getFeedbackList = (
+    type_id: number | null = null,
+    status_id: number | null = null
+  ) =>
+    useQuery(['feedback_list'], () => fetchFeedbackList(type_id, status_id), {
+      enabled: loc.pathname === RoutesList.admin.feedback,
+    })
+
+  const getFeedbackStatuses = () =>
+    useQuery(['feedback_statuses'], () => fetchFeedbackStatuses(), {
+      enabled: loc.pathname === RoutesList.admin.feedback,
+    })
+
+  const changeFeedbackStatus = useMutation({
+    mutationFn: ({
+      feedbackId,
+      statusId,
+    }: {
+      feedbackId: number
+      statusId: number
+    }) => {
+      return setFeedbackStatus(feedbackId, statusId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: 'feedback_list' })
+    },
+  })
+
+  return {
+    requests,
+    confirm,
+    decline,
+    users,
+    changeRole,
+    getFeedbackList,
+    getFeedbackStatuses,
+    changeFeedbackStatus,
+  }
 }

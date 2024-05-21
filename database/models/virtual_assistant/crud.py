@@ -110,6 +110,5 @@ def delete_by_name(db: Session, name: str) -> None:
 
 def count_active_user_deployments(user_id: int, session: Session) -> int:
     return session.query(func.count(VirtualAssistant.id)).join(Deployment).filter(
-        VirtualAssistant.author_id == user_id,
-        Deployment.state == 'UP'
+        VirtualAssistant.author_id == user_id
     ).scalar()

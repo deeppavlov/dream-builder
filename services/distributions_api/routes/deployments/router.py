@@ -1,9 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from database.models.virtual_assistant.crud import count_active_user_deployments
 from services.distributions_api import schemas
 from services.distributions_api.database_maker import get_db
 from services.distributions_api.routes.deployments import flows
@@ -29,6 +30,9 @@ async def get_deployments(
 async def create_deployment(
     payload: schemas.DeploymentCreate, user: schemas.UserRead = Depends(get_current_user), db: Session = Depends(get_db)
 ):
+    if count_active_user_deployments(user.id, db) >= user.plan.max_active_assistants:
+        raise HTTPException(status_code=403, detail="You have exceeded your deployment limit for virtual assistants!")
+
     deployment = flows.create_deployment(db, payload)
     return deployment
 

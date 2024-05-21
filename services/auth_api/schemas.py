@@ -17,11 +17,20 @@ class RoleRead(BaseOrmModel):
     can_set_roles: bool
 
 
+class PlanRead(BaseOrmModel):
+    id: int
+    name: str
+
+    max_active_assistants: int
+    price: int
+
+
 class User(BaseOrmModel):
     id: int
     email: EmailStr
     sub: str
     role: RoleRead
+    plan: PlanRead
     picture: Optional[str]
     fullname: Optional[str]
     given_name: Optional[str]

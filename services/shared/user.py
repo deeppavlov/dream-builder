@@ -19,6 +19,14 @@ class RoleRead(BaseOrmModel):
     can_set_roles: bool
 
 
+class PlanRead(BaseOrmModel):
+    id: int
+    name: str
+
+    max_active_assistants: int
+    price: int
+
+
 class User(BaseOrmModel):
     id: int
     email: Union[EmailStr, str, None]
@@ -26,6 +34,7 @@ class User(BaseOrmModel):
     picture: Optional[str]
     name: Optional[str]
     role: RoleRead
+    plan: PlanRead
     first_auth: Optional[bool]
 
     @classmethod
@@ -48,4 +57,6 @@ class User(BaseOrmModel):
         obj.picture = user.picture
         obj.name = user.fullname if hasattr(user, "fullname") else user.name
         obj.role = user.role
+        obj.plan = user.plan
+
         return super().from_orm(obj)

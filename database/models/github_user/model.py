@@ -22,6 +22,9 @@ class GithubUser(Base):
     role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     role = relationship("Role")
 
+    plan_id = Column(Integer, ForeignKey("plan.id"), nullable=False, default=1)
+    plan = relationship("Plan")
+
 
 # @listens_for(GithubUser.__table__, "after_create")
 # def pre_populate_google_user(target, connection, **kw):

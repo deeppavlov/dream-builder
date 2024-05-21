@@ -48,7 +48,7 @@ async def validate_jwt(
         user: google_user.model = google_user.crud.get_by_outer_id(db, "106152631136730592791")
         name = user.fullname
         return User(id=user.user_id, outer_id=user.sub, email=user.email, picture=user.picture, name=name,
-                    role=user.role)
+                    role=user.role, plan=user.plan)
 
     return await PROVIDERS[auth_type].validate_token(db, token)
 

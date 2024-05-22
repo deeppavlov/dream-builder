@@ -406,6 +406,35 @@ class TestDistributions:
         user.delete_va_by_name(va_name)
 
     @pytest.mark.regression
+    @pytest.mark.parametrize("lm_service_id", lm_service_id_en_list)
+    @qase.title(f"{counter()}. test_deployment_limit")
+    def test_deployment_limit(self, user, lm_service_id):
+        lite_limit = 5
+        va_names = []
+        for i in range(lite_limit+1):
+            name = f"assistant_lm_service_id_{i}"
+            va_name = user.create_virtual_assistant(name)["name"]
+            va_names.append(va_name)
+            default_component = user.get_va_components(va_name)["skills"]
+
+            for component in default_component:
+                if component["component_type"] == "Generative":
+                    component_id = component["component_id"]
+                    user.patch_component(
+                        component_id=component_id,
+                        lm_service_id=lm_service_id,
+                        prompt="TASK:  You are a chatbot that can only answers questions below. "
+                               "FAQ: What is your name? My name is Paul.",
+                    )
+            if i <= lite_limit+1:
+                deployment_id = user.create_deployment(va_name)["id"]
+            else:
+                deployment_id = user.create_deployment_no_access(va_name)["id"]
+            time.sleep(60)
+        for va_name in va_names:
+            user.delete_va_by_name(va_name)
+
+    @pytest.mark.regression
     @pytest.mark.parametrize("lm_service_id", lm_service_id_ru_list)
     @qase.title(f"{counter()}. test_build_assistant_on_various_lm_ru")
     def test_build_assistant_on_various_lm_ru(self, user, lm_service_id):

@@ -1,9 +1,10 @@
-from apiconfig.config import settings
-from database.core import Base
-from database.utils import DateTimeUtcNow, pre_populate_from_tsv
 from sqlalchemy import Column, Integer, String, DECIMAL
 from sqlalchemy.event import listens_for
 from sqlalchemy.types import DateTime
+
+from apiconfig.config import settings
+from database.core import Base
+from database.utils import DateTimeUtcNow, pre_populate_from_tsv
 
 
 class Plan(Base):

@@ -9,6 +9,7 @@ from services.distributions_api.routes.assistant_dists.router import assistant_d
 from services.distributions_api.routes.components.router import components_router
 from services.distributions_api.routes.deployments.router import deployments_router
 from services.distributions_api.routes.dialog_sessions.router import dialog_sessions_router
+from services.distributions_api.routes.plans.router import plans_router
 from services.distributions_api.routes.users.router import users_router
 from services.distributions_api.routes.lm_services.router import lm_services_router
 from services.distributions_api.routes.tokens.router import tokens_router
@@ -53,3 +54,4 @@ app.include_router(deployments_router)
 app.include_router(admin_router)
 app.include_router(lm_services_router)
 app.include_router(tokens_router)
+app.include_router(plans_router)

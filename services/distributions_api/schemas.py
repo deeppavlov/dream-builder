@@ -38,6 +38,10 @@ class PlanRead(BaseOrmModel):
     price: int
 
 
+class PlanResponse(PlanRead):
+    date_created: datetime
+
+
 class UserRead(User):
     role: RoleRead
     plan: PlanRead

@@ -1,4 +1,5 @@
-import { useAuth } from 'context'
+import { AxiosError } from 'axios'
+import { useAuth, useUIOptions } from 'context'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import store from 'store2'
@@ -10,10 +11,12 @@ import {
   getDeployments,
   startDeploy,
 } from 'api/deploy'
+import { consts } from 'utils/consts'
 
 export const useDeploy = () => {
   const queryClient = useQueryClient()
   const loc = useLocation()
+  const { setUIOption } = useUIOptions()
 
   const { user } = useAuth()
 
@@ -31,8 +34,13 @@ export const useDeploy = () => {
       queryClient.invalidateQueries(['privateDists'])
       queryClient.invalidateQueries([DIST, name])
     },
-    onError: data => {
-      console.log('error = ', data)
+    onError: (error: AxiosError<{ detail: string }>) => {
+      if (
+        error.response?.data.detail ===
+        'You have exceeded your deployment limit for virtual assistants!'
+      ) {
+        setUIOption({ name: consts.TARIFFS_MODAL_IS_OPEN, value: true })
+      }
     },
   })
   const deleteDeployment = useMutation({

@@ -16,6 +16,7 @@ import {
   PublishAssistantModal,
   ShareAssistantModal,
   SignInModal,
+  TariffsModal,
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import {
@@ -152,6 +153,7 @@ export const HomePage = () => {
         <ShareAssistantModal />
         <PublicToPrivateModal />
         <SignInModal />
+        <TariffsModal />
       </Main>
     </>
   )

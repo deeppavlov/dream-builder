@@ -35,6 +35,12 @@ export interface UserInterface {
     can_confirm_publish: boolean
     can_view_private_assistants: boolean
   }
+  plan: {
+    id: number
+    name: 'Lite' | 'Plus' | 'Team'
+    max_active_assistants: number
+    price: number
+  }
 }
 
 export interface UserContext {
@@ -501,4 +507,12 @@ export interface IFeedback {
   pictures: { id: number; picture: string }[]
   type: IFeedbackType
   status: IFeedbackStatus
+}
+
+export interface ITariffPlan {
+  id: number
+  name: 'Lite' | 'Plus' | 'Team'
+  max_active_assistants: number
+  price: number
+  date_created: string
 }

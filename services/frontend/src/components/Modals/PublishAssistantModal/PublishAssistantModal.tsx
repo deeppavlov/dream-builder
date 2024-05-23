@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -124,9 +125,16 @@ export const PublishAssistantModal = () => {
         success: isPublicTemplate
           ? t('modals.publish_assistant.toasts.submitted')
           : t('toasts.success'),
-        error: t('toasts.error'),
+        error: (error: AxiosError<{ detail: string }>) => {
+          return error.response?.data.detail ===
+            'You have exceeded your deployment limit for virtual assistants!'
+            ? t(
+                'sidepanels.assistant_dialog.toasts.deployment_limitation_error'
+              )
+            : t('toasts.error')
+        },
       })
-      .then(() => closeModal())
+      .finally(() => closeModal())
   }
 
   const closeModal = () => {

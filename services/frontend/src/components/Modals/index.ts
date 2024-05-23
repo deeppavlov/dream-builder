@@ -16,6 +16,7 @@ import { SkillModal } from './SkillModal/SkillModal'
 import SkillPromptModal from './SkillPromptModal/SkillPromptModal'
 import { SkillQuitModal } from './SkillQuitModal/SkillQuitModal'
 import { SkillsListModal } from './SkillsListModal/SkillsListModal'
+import { TariffsModal } from './TariffsModal/TariffsModal'
 
 export {
   AccessTokensModal,
@@ -36,4 +37,5 @@ export {
   SkillsListModal,
   PublishAssistantWizard,
   Gallery,
+  TariffsModal,
 }

@@ -134,13 +134,23 @@ export const useAssistants = () => {
   })
 
   const changeVisibility = useMutation({
-    onMutate: ({ name, newVisibility, deploymentState }) => {
+    mutationFn: ({
+      name,
+      newVisibility,
+      deploymentState,
+    }: IChangeVisibility) => {
       if (newVisibility !== VISIBILITY_STATUS.PRIVATE && !deploymentState) {
-        deploy.mutateAsync(name).then(() => vaChangeDeployState('VA_Deployed'))
+        return deploy
+          .mutateAsync(name)
+          .then(() => publishAssistant(name, newVisibility))
+          .then(() => vaChangeDeployState('VA_Deployed'))
+          .catch((e: AxiosError<{ detail: string }>) => {
+            throw e
+          })
+      } else {
+        return publishAssistant(name, newVisibility)
       }
     },
-    mutationFn: ({ name, newVisibility }: IChangeVisibility) =>
-      publishAssistant(name, newVisibility),
     onSuccess: (_, { name, newVisibility, inEditor }) => {
       vaVisibilityChanged(newVisibility)
       const requestToPublicTemplate =

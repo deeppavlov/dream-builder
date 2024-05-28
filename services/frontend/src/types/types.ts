@@ -28,6 +28,7 @@ export interface UserInterface {
   name: string
   token: string
   refresh_token: string
+  plan: ITariffPlan
   role: {
     id: number
     name: 'user' | 'moderator' | 'admin'
@@ -501,4 +502,12 @@ export interface IFeedback {
   pictures: { id: number; picture: string }[]
   type: IFeedbackType
   status: IFeedbackStatus
+}
+
+export interface ITariffPlan {
+  id: number
+  name: 'Lite' | 'Plus' | 'Team'
+  max_active_assistants: number
+  price: number
+  date_created?: string
 }

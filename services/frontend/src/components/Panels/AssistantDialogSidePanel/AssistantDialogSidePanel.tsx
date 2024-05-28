@@ -234,7 +234,17 @@ export const AssistantDialogSidePanel: FC<Props> = ({ dist }) => {
     toast.promise(
       deploy
         .mutateAsync(bot?.name!, {
-          onError: () => setError('deploy'),
+          onError: e =>
+            setErrorPanel({
+              type: 'deploy',
+              msg:
+                e.response?.data.detail ===
+                'You have exceeded your deployment limit for virtual assistants!'
+                  ? t(
+                      'sidepanels.assistant_dialog.toasts.deployment_limitation_error'
+                    )
+                  : t('toasts.error'),
+            }),
         })
         .then(() => vaChangeDeployState('VA_Deployed', 'va_sidepanel')),
       toasts().deploy

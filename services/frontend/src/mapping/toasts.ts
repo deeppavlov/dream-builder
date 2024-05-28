@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import i18n from 'i18n'
 import { Renderable, ValueOrFunction } from 'react-hot-toast'
 
@@ -49,7 +50,14 @@ export const toasts: () => Toasts = () => ({
   deploy: {
     loading: i18n.t('sidepanels.assistant_dialog.toasts.deploy_loading'),
     success: i18n.t('sidepanels.assistant_dialog.toasts.sent_for_deploy'),
-    error: i18n.t('toasts.error'),
+    error: (error: AxiosError<{ detail: string }>) => {
+      return error.response?.data.detail ===
+        'You have exceeded your deployment limit for virtual assistants!'
+        ? i18n.t(
+            'sidepanels.assistant_dialog.toasts.deployment_limitation_error'
+          )
+        : i18n.t('toasts.error')
+    },
   },
   createAssistant: {
     loading: i18n.t('modals.assistant.toasts.create'),

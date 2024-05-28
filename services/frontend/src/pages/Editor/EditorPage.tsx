@@ -16,6 +16,7 @@ import {
   SkillModal,
   SkillQuitModal,
   SkillsListModal,
+  TariffsModal,
 } from 'components/Modals'
 import { Feedback } from 'components/Modals/FeedBack/FeedBack'
 import { BaseSidePanel } from 'components/Panels'
@@ -84,6 +85,7 @@ export const EditorPage = () => {
       <ShareAssistantModal />
       <DeleteSkillModal />
       <SkillModal />
+      <TariffsModal />
     </>
   )
 }

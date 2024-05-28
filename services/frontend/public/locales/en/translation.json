@@ -407,7 +407,6 @@
       "input_placeholder": "Email",
       "input_label": "Enter your contact email",
       "deployment_limit": "Limit of the number of running assistants:",
-      "price": "Price:",
       "form_header": "To change the tariff leave your contact email and our manager will contact you",
       "send": "Send"
     }

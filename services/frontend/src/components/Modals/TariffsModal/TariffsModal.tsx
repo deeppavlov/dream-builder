@@ -32,7 +32,7 @@ export const TariffsModal = () => {
   })
 
   const submit = ({ email }: FormValues) => {
-    console.log(email)
+    // submit form data
     setUIOption({ name: consts.TARIFFS_MODAL_IS_OPEN, value: false })
     reset()
   }
@@ -66,10 +66,6 @@ export const TariffsModal = () => {
                   <div className={s.string}>
                     <span>{t('modals.tariffs_modal.deployment_limit')} </span>
                     {tariff.max_active_assistants}
-                  </div>
-                  <div className={s.string}>
-                    <span>{t('modals.tariffs_modal.price')} </span>
-                    {tariff.price}
                   </div>
                 </div>
               )

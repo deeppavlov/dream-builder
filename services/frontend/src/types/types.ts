@@ -28,18 +28,13 @@ export interface UserInterface {
   name: string
   token: string
   refresh_token: string
+  plan: ITariffPlan
   role: {
     id: number
     name: 'user' | 'moderator' | 'admin'
     can_set_roles: boolean
     can_confirm_publish: boolean
     can_view_private_assistants: boolean
-  }
-  plan: {
-    id: number
-    name: 'Lite' | 'Plus' | 'Team'
-    max_active_assistants: number
-    price: number
   }
 }
 
@@ -514,5 +509,5 @@ export interface ITariffPlan {
   name: 'Lite' | 'Plus' | 'Team'
   max_active_assistants: number
   price: number
-  date_created: string
+  date_created?: string
 }

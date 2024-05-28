@@ -80,7 +80,7 @@ def create_virtual_assistant(
             language.value,
         )
         new_dist.save(generate_configs=True)
-        dream_git.commit_all_files(author_id, 1)
+        # dream_git.commit_all_files(author_id, 1)
 
         new_components = []
         for group, name, dream_component in new_dist.pipeline.iter_components():
@@ -165,7 +165,7 @@ def patch_virtual_assistant(
     db.commit()
 
     dream_dist.save(overwrite=True)
-    dream_git.commit_all_files(user_id, 1)
+    # dream_git.commit_all_files(user_id, 1)
 
     return schemas.VirtualAssistantRead.from_orm(virtual_assistant)
 
@@ -174,7 +174,7 @@ def delete_virtual_assistant(db: Session, virtual_assistant: schemas.VirtualAssi
     try:
         dream_dist = AssistantDist.from_dist(settings.db.dream_root_path / virtual_assistant.source)
         dream_dist.delete()
-        dream_git.commit_all_files(user_id, 1)
+        # dream_git.commit_all_files(user_id, 1)
     except FileNotFoundError:
         pass
 
@@ -194,7 +194,7 @@ def add_virtual_assistant_component(
         DreamComponent.from_file(virtual_assistant_component.component.source, settings.db.dream_root_path)
     )
     dream_dist.save(overwrite=True, generate_configs=True)
-    dream_git.commit_all_files(1, 1)
+    # dream_git.commit_all_files(1, 1)
 
     return schemas.VirtualAssistantComponentRead.from_orm(virtual_assistant_component)
 
@@ -207,7 +207,7 @@ def delete_virtual_assistant_component(
     virtual_assistant_component = virtual_assistant_component_crud.get_by_id(db, virtual_assistant_component_id)
     dream_dist.remove_generative_prompted_skill(virtual_assistant_component.component.name)
     dream_dist.save(overwrite=True, generate_configs=True)
-    dream_git.commit_all_files(1, 1)
+    # dream_git.commit_all_files(1, 1)
 
     virtual_assistant_component_crud.delete_by_id(db, virtual_assistant_component_id)
     db.commit()

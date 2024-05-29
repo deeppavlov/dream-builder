@@ -28,3 +28,6 @@ jobs:
     - name: Build tests
       run: |
        docker-compose -f compose/stage/docker-compose.stage.yml up tests
+    - name: Run load tests
+      run: |
+       docker-compose -f compose/stage/docker-compose.stage.yml up locust-master locust-worker

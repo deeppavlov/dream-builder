@@ -1,10 +1,11 @@
 from typing import Optional, List
 
-from sqlalchemy import select, update, and_, delete
+from sqlalchemy import select, update, and_, delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from database import enums
+from database.models import Deployment
 from database.models.component.model import Component
 from database.models.virtual_assistant.model import VirtualAssistant
 from database.models.virtual_assistant_component import crud as virtual_assistant_component_crud
@@ -105,3 +106,9 @@ def update_metadata_by_name(db: Session, name: str, **kwargs) -> VirtualAssistan
 
 def delete_by_name(db: Session, name: str) -> None:
     db.execute(delete(VirtualAssistant).where(VirtualAssistant.name == name))
+
+
+def count_active_user_deployments(user_id: int, session: Session) -> int:
+    return session.query(func.count(VirtualAssistant.id)).join(Deployment).filter(
+        VirtualAssistant.author_id == user_id
+    ).scalar()

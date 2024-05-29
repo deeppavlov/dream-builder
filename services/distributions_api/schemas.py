@@ -30,8 +30,21 @@ class RoleRead(BaseOrmModel):
     can_set_roles: bool
 
 
+class PlanRead(BaseOrmModel):
+    id: int
+    name: str
+
+    max_active_assistants: int
+    price: int
+
+
+class PlanResponse(PlanRead):
+    date_created: datetime
+
+
 class UserRead(User):
     role: RoleRead
+    plan: PlanRead
 
 
 class UserUpdate(BaseModel):

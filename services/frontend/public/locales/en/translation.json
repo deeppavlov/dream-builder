@@ -400,6 +400,15 @@
         "Completed": "Completed",
         "Rejected": "Rejected"
       }
+    },
+    "tariffs_modal": {
+      "header": "Upgrade your plan",
+      "current_plan": "(Current plan)",
+      "input_placeholder": "Email",
+      "input_label": "Enter your contact email",
+      "deployment_limit": "Limit of the number of running assistants:",
+      "form_header": "To change the tariff leave your contact email and our manager will contact you",
+      "send": "Send"
     }
   },
   "sidepanels": {
@@ -444,7 +453,8 @@
         "deploy_loading": "Loading...",
         "sent_for_deploy": "Sent for deploy!",
         "stop_deploy": "Stop deploy...",
-        "deploy_stopped": "Deploy stopped!"
+        "deploy_stopped": "Deploy stopped!",
+        "deployment_limitation_error": "The limit on the number of running assistants has been exceeded"
       },
       "dummy_error": "Something went wrong<br />Restart the system"
     },

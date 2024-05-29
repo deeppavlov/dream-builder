@@ -116,7 +116,7 @@ def create_component(
                     if original_component.lm_service:
                         lm_service = original_component.lm_service
                     else:
-                        lm_service = lm_service_crud.get_lm_service(db, 4)
+                        lm_service = lm_service_crud.get_lm_service(db, 5)
                     prompt = original_component.prompt
                     prompt_goals = original_component.prompt_goals
         else:
@@ -124,7 +124,7 @@ def create_component(
             if new_component.lm_service_id:
                 lm_service = lm_service_crud.get_lm_service(db, new_component.lm_service_id)
             else:
-                lm_service = lm_service_crud.get_lm_service(db, 4)
+                lm_service = lm_service_crud.get_lm_service(db, 5)
 
             if new_component.prompt and new_component.prompt_goals:
                 prompt = new_component.prompt

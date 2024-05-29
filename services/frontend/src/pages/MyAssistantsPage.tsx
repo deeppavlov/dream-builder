@@ -2,6 +2,7 @@ import { useAuth, useUIOptions } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useAssistants } from 'hooks/api'
 import { consts } from 'utils/consts'
+import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 import { AddButton } from 'components/Buttons'
 import { DistList } from 'components/Helpers'
 import { CardsLoader, TableRowsLoader } from 'components/Loaders'
@@ -10,10 +11,10 @@ import {
   DeleteAssistantModal,
   PublishAssistantModal,
   ShareAssistantModal,
+  TariffsModal,
 } from 'components/Modals'
 import { BaseSidePanel } from 'components/Panels'
 import { Container, ErrorHandler, Main, Table, Wrapper } from 'components/UI'
-import { getAssistantTableHeaders } from 'utils/getAssistantTableHeaders'
 
 export const MyAssistantsPage = () => {
   const { t } = useTranslation('translation', {
@@ -78,6 +79,7 @@ export const MyAssistantsPage = () => {
         <PublishAssistantModal />
         <DeleteAssistantModal />
         <ShareAssistantModal />
+        <TariffsModal />
       </Main>
     </>
   )

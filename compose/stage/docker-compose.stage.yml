@@ -144,6 +144,24 @@ services:
       - ../../database:/src/database
       - ../../git_storage:/src/git_storage
       - ../../tests:/src/tests
+
+  locust-master:
+    env_file: [ ../.envs/.env.test ]
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ../../tests:/src/tests
+    command: -f /src/tests/backend/locustfile.py --master -H http://master:8089
+
+  locust-worker:
+    env_file: [ ../.envs/.env.test ]
+    build:
+      context: ../..
+    image: locustio/locust
+    volumes:
+      - ../../tests:/src/tests
+    command: -f /src/tests/backend/locustfile.py --worker --master-host master
 #
 #  flower:
 #    env_file: [ ../.envs/.env.dev.local ]

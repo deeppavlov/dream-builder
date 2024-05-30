@@ -25,7 +25,7 @@ if (import.meta.env.MODE !== 'DEV' && import.meta.env.MODE !== 'STAGE') {
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <GaContextProvider>
-      {import.meta.env.MODE !== 'DEV' && (
+      {import.meta.env.MODE !== 'DEV' && import.meta.env.MODE !== 'STAGE' && (
         <YMInitializer
           accounts={[Number(import.meta.env.VITE_YANDEX_METRIC_ID)]}
           options={{

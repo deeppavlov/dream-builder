@@ -18,14 +18,14 @@ const queryClient = new QueryClient({
   },
 })
 
-if (import.meta.env.MODE !== 'DEV') {
+if (import.meta.env.MODE !== 'DEV' && import.meta.env.MODE !== 'STAGE') {
   ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS)
 }
 
 prepare().then(() => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <GaContextProvider>
-      {import.meta.env.MODE !== 'DEV' && (
+      {import.meta.env.MODE !== 'DEV' && import.meta.env.MODE !== 'STAGE' && (
         <YMInitializer
           accounts={[Number(import.meta.env.VITE_YANDEX_METRIC_ID)]}
           options={{

@@ -2,9 +2,9 @@ import classNames from 'classnames/bind'
 import { useAuth } from 'context'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { ReactComponent as FeedbackIcon } from 'assets/icons/feedBack.svg'
 import { RoutesList } from 'router/RoutesList'
 import { TOOLTIP_DELAY } from 'constants/constants'
-import { SvgIcon } from 'components/Helpers'
 import { BaseToolTip } from 'components/Menus'
 import s from './FeedbackTab.module.scss'
 
@@ -30,7 +30,7 @@ export const FeedbackTab = ({ isActive }: Props) => {
       data-tooltip-id='sidebarFeedbackTab'
       className={cx('feedback', isActive && 'active')}
     >
-      <SvgIcon iconName='feedBack' />
+      <FeedbackIcon />
       <BaseToolTip
         delayShow={TOOLTIP_DELAY}
         id='sidebarFeedbackTab'

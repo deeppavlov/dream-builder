@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "msw": "vite --host --mode MSW",
-    "release-candidate": "vite --host --mode RELEASE-CANDIDATE",
+    "release-candidate": "vite --host --mode RELEASE",
     "dev": "vite --host --mode DEV",
     "stage": "vite --host --mode STAGE",
     "prod": "vite --host --mode PROD",
-    "build-release-candidate": "vite build --mode RELEASE-CANDIDATE",
+    "build-release-candidate": "vite build --mode RELEASE",
     "build-dev": "vite build --mode DEV",
     "build-stage": "vite build --mode STAGE",
     "build-prod": "vite build --mode PROD",

@@ -54,7 +54,8 @@ export const getSkillView = (pageType: PageType, isTableView: boolean) => {
 export const safeFunctionWrapper =
   <T extends any[]>(func: (...args: T) => void) =>
   (...args: T) => {
-    if (import.meta.env.MODE === 'DEV') return
+    const mode = import.meta.env.MODE
+    if (mode === 'DEV' || mode === 'STAGE') return
 
     try {
       func(...args)

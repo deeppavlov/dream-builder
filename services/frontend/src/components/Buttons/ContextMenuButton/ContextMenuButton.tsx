@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind'
+import { useEffect, useState } from 'react'
 import { trigger } from 'utils/events'
 import SvgIcon from 'components/Helpers/SvgIcon/SvgIcon'
 import s from './ContextMenuButton.module.scss'
@@ -61,6 +62,12 @@ const ContextMenuButton = ({
     />
   )
 
+  const [icon, setIcon] = useState<JSX.Element | null>(null)
+
+  useEffect(() => {
+    type && setIcon(getIconElement(type))
+  }, [type])
+
   return (
     <button
       id={id}
@@ -74,12 +81,12 @@ const ContextMenuButton = ({
           rel='noopener noreferrer'
           className={s.link}
         >
-          {type && getIconElement(type)}
+          {icon}
           {children || name}
         </a>
       ) : (
         <>
-          {type && getIconElement(type)}
+          {icon}
           <span>{children || name}</span>
         </>
       )}
